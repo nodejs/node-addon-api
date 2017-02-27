@@ -1,0 +1,23 @@
+{
+  "bugs": {
+    "url": "https://github.com/nodejs/abi-stable-node-wrapper/issues"
+  },
+  "dependencies": {},
+  "description": "Node.js API (NAPI) C++ Wrapper",
+  "devDependencies": {
+  },
+  "directories": {},
+  "homepage": "https://github.com/nodejs/abi-stable-node-wrapper",
+  "license": "MIT",
+  "main": "include_dirs.js",
+  "name": "napi",
+  "optionalDependencies": {},
+  "readme": "README.md",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/nodejs/abi-stable-node-wrapper.git"
+  },
+  "scripts": {
+  },
+  "version": "0.1.0"
+}
