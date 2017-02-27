@@ -1,4 +1,4 @@
-﻿#ifndef SRC_NODE_API_HELPERS_H_
+﻿#ifndef SRC_NAPI_H_
 #define SRC_NAPI_H_
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -241,7 +241,10 @@ namespace Napi {
   class ArrayBuffer : public Object {
   public:
     static ArrayBuffer New(Napi::Env env, size_t byteLength);
-    static ArrayBuffer New(Napi::Env env, void* externalData, size_t byteLength);
+    static ArrayBuffer New(Napi::Env env,
+                           void* externalData,
+                           size_t byteLength,
+                           napi_finalize finalizeCallback);
 
     ArrayBuffer();
     ArrayBuffer(napi_env env, napi_value value);
@@ -363,13 +366,20 @@ namespace Napi {
 
   class Buffer : public Object {
   public:
-    static Buffer New(Napi::Env env, char* data, size_t size);
-    static Buffer Copy(Napi::Env env, const char* data, size_t size);
+    static Buffer New(Napi::Env env, size_t length);
+    static Buffer New(Napi::Env env, char* data, size_t length, napi_finalize finalizeCallback);
+    static Buffer Copy(Napi::Env env, const char* data, size_t length);
 
     Buffer();
     Buffer(napi_env env, napi_value value);
     size_t Length() const;
     char* Data() const;
+
+  private:
+    size_t _length;
+    char* _data;
+
+    Buffer(napi_env env, napi_value value, size_t length, char* data);
   };
 
   /*
@@ -483,6 +493,9 @@ namespace Napi {
 
     Env Env() const;
     bool IsEmpty() const;
+
+    // Note when getting the value of a Reference it is usually correct to do so
+    // within a HandleScope so that the value handle gets cleaned up efficiently.
     T Value() const;
 
     int AddRef();
