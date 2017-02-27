@@ -701,6 +701,47 @@ namespace Napi {
     napi_escapable_handle_scope _scope;
   };
 
+  class AsyncWorker {
+  public:
+    virtual ~AsyncWorker();
+
+    // An async worker can be moved but cannot be copied.
+    AsyncWorker(AsyncWorker&& other);
+    AsyncWorker& operator =(AsyncWorker&& other);
+    AsyncWorker(const AsyncWorker&) = delete;
+    AsyncWorker& operator =(AsyncWorker&) = delete;
+
+    operator napi_work() const;
+
+    Env Env() const;
+
+    void Queue();
+    virtual void Execute() = 0;
+    virtual void WorkComplete();
+
+    Object Persistent();
+
+  protected:
+    explicit AsyncWorker(const Function& callback);
+
+    virtual void HandleOKCallback();
+    virtual void HandleErrorCallback();
+
+    void SetErrorMessage(const std::string& msg);
+    const std::string& ErrorMessage() const;
+
+  private:
+    static void OnExecute(void* this_pointer);
+    static void OnWorkComplete(void* this_pointer);
+    static void OnDestroy(void* this_pointer);
+
+    napi_env _env;
+    napi_work _work;
+    Reference<Function> _callback;
+    Reference<Object> _persistent;
+    std::string _errmsg;
+  };
+
 } // namespace Napi
 
 // Inline implementations of all the above class methods are included here.

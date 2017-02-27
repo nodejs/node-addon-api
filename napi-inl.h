@@ -1151,7 +1151,7 @@ inline Reference<T> Reference<T>::New(const T& value, int initialRefcount) {
   if (val == nullptr) {
     return Reference<T>(env, nullptr);
   }
-  
+
   napi_ref ref;
   napi_status status = napi_create_reference(env, value, initialRefcount, &ref);
   if (status != napi_ok) throw Error::New(Napi::Env(env));
@@ -1777,6 +1777,103 @@ inline Value EscapableHandleScope::Escape(Value escapee) {
   napi_status status = napi_escape_handle(_env, _scope, escapee, &result);
   if (status != napi_ok) throw Error::New(Env());
   return Value(_env, result);
+}
+
+
+////////////////////////////////////////////////////////////////////////////////
+// AsyncWorker class
+////////////////////////////////////////////////////////////////////////////////
+
+inline AsyncWorker::AsyncWorker(const Function& callback) : _env(callback.Env()) {
+  _persistent = Napi::Persistent(Object::New(Env()));
+  _work = napi_create_async_work();
+}
+
+inline AsyncWorker::~AsyncWorker() {
+  if (_work != nullptr) {
+    napi_delete_async_work(_work);
+    _work = nullptr;
+  }
+}
+
+inline AsyncWorker::AsyncWorker(AsyncWorker&& other) {
+  _env = other._env;
+  other._env = nullptr;
+  _work = other._work;
+  other._work = nullptr;
+  _persistent = std::move(other._persistent);
+  _errmsg = std::move(other._errmsg);
+}
+
+inline AsyncWorker& AsyncWorker::operator =(AsyncWorker&& other) {
+  _env = other._env;
+  other._env = nullptr;
+  _work = other._work;
+  other._work = nullptr;
+  _persistent = std::move(other._persistent);
+  _errmsg = std::move(other._errmsg);
+}
+
+inline AsyncWorker::operator napi_work() const {
+  return _work;
+}
+
+inline Env AsyncWorker::Env() const {
+  return Napi::Env(_env);
+}
+
+inline void AsyncWorker::Queue() {
+  napi_async_set_data(_work, static_cast<void*>(this));
+  napi_async_set_execute(_work, OnExecute);
+  napi_async_set_complete(_work, OnWorkComplete);
+  napi_async_set_destroy(_work, OnDestroy);
+  napi_async_queue_worker(_work);
+}
+
+inline void AsyncWorker::WorkComplete() {
+  if (_errmsg.size() == 0) {
+    HandleOKCallback();
+  }
+  else {
+    HandleErrorCallback();
+  }
+}
+
+inline Object AsyncWorker::Persistent() {
+  return _persistent.Value();
+}
+
+inline void AsyncWorker::HandleOKCallback() {
+  _callback.Value().MakeCallback({});
+}
+
+inline void AsyncWorker::HandleErrorCallback() {
+  _callback.Value().MakeCallback({
+    Error::New(Env(), _errmsg),
+  });
+}
+
+inline void AsyncWorker::SetErrorMessage(const std::string& msg) {
+  _errmsg = msg;
+}
+
+inline const std::string& AsyncWorker::ErrorMessage() const {
+  return _errmsg;
+}
+
+inline void AsyncWorker::OnExecute(void* this_pointer) {
+  AsyncWorker* self = static_cast<AsyncWorker*>(this_pointer);
+  self->Execute();
+}
+
+inline void AsyncWorker::OnWorkComplete(void* this_pointer) {
+  AsyncWorker* self = static_cast<AsyncWorker*>(this_pointer);
+  self->WorkComplete();
+}
+
+inline void AsyncWorker::OnDestroy(void* this_pointer) {
+  AsyncWorker* self = static_cast<AsyncWorker*>(this_pointer);
+  delete self;
 }
 
 } // namespace Napi
