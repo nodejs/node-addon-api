@@ -1003,56 +1003,71 @@ inline Function::CallbackData::CallbackData(FunctionCallback cb, void* data)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-// Buffer class
+// Buffer<T> class
 ////////////////////////////////////////////////////////////////////////////////
 
-inline Buffer Buffer::New(Napi::Env env, size_t length) {
+template <typename T>
+inline Buffer<T> Buffer<T>::New(Napi::Env env, size_t length) {
   napi_value value;
   char* data;
-  napi_status status = napi_create_buffer(env, length, &data, &value);
+  napi_status status = napi_create_buffer(env, length * sizeof(T), &data, &value);
   if (status != napi_ok) throw Error::New(env);
   return Buffer(env, value, length, data);
 }
 
-inline Buffer Buffer::New(Napi::Env env, char* data, size_t length, napi_finalize finalizeCallback) {
+template <typename T>
+inline Buffer<T> Buffer<T>::New(
+    Napi::Env env, T* data, size_t length, napi_finalize finalizeCallback) {
   napi_value value;
-  napi_status status = napi_create_external_buffer(env, length, data, finalizeCallback, &value);
+  napi_status status = napi_create_external_buffer(
+    env, length * sizeof(T), reinterpret_cast<char*>(data), finalizeCallback, &value);
   if (status != napi_ok) throw Error::New(env);
   return Buffer(env, value, length, data);
 }
 
-inline Buffer Buffer::Copy(Napi::Env env, const char* data, size_t size) {
+template <typename T>
+inline Buffer<T> Buffer<T>::Copy(Napi::Env env, const T* data, size_t length) {
   napi_value value;
-  napi_status status = napi_create_buffer_copy(env, data, size, &value);
+  napi_status status = napi_create_buffer_copy(
+    env, reinterpret_cast<const char*>(data), length * sizeof(T), &value);
   if (status != napi_ok) throw Error::New(env);
   return Buffer(env, value);
 }
 
-inline Buffer::Buffer() : Object(), _length(0), _data(nullptr) {
+template <typename T>
+inline Buffer<T>::Buffer() : Object(), _length(0), _data(nullptr) {
 }
 
-inline Buffer::Buffer(napi_env env, napi_value value)
+template <typename T>
+inline Buffer<T>::Buffer(napi_env env, napi_value value)
   : Object(env, value), _length(0), _data(nullptr) {
 }
 
-inline Buffer::Buffer(napi_env env, napi_value value, size_t length, char* data)
+template <typename T>
+inline Buffer<T>::Buffer(napi_env env, napi_value value, size_t length, T* data)
   : Object(env, value), _length(length), _data(data) {
 }
 
-inline size_t Buffer::Length() const {
+template <typename T>
+inline size_t Buffer<T>::Length() const {
   if (_data == nullptr) {
+    size_t byteLength;
     napi_status status = napi_get_buffer_info(
-      _env, _value, const_cast<char**>(&_data), const_cast<size_t*>(&_length));
+      _env, _value, reinterpret_cast<char**>(const_cast<T**>(&_data)), &byteLength);
     if (status != napi_ok) throw Error::New(Env());
+    *const_cast<size_t*>(&_length) = byteLength / sizeof(T);
   }
   return _length;
 }
 
-inline char* Buffer::Data() const {
+template <typename T>
+inline T* Buffer<T>::Data() const {
   if (_data == nullptr) {
+    size_t byteLength;
     napi_status status = napi_get_buffer_info(
-      _env, _value, const_cast<char**>(&_data), const_cast<size_t*>(&_length));
+      _env, _value, reinterpret_cast<char**>(const_cast<T**>(&_data)), &byteLength);
     if (status != napi_ok) throw Error::New(Env());
+    *const_cast<size_t*>(&_length) = byteLength / sizeof(T);
   }
   return _data;
 }

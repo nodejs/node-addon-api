@@ -24,7 +24,7 @@ namespace Napi {
   class Object;
   class Array;
   class Function;
-  class Buffer;
+  template <typename T> class Buffer;
   class Error;
   class PropertyDescriptor;
   class CallbackInfo;
@@ -364,22 +364,23 @@ namespace Napi {
     };
   };
 
+  template <typename T>
   class Buffer : public Object {
   public:
-    static Buffer New(Napi::Env env, size_t length);
-    static Buffer New(Napi::Env env, char* data, size_t length, napi_finalize finalizeCallback);
-    static Buffer Copy(Napi::Env env, const char* data, size_t length);
+    static Buffer<T> New(Napi::Env env, size_t length);
+    static Buffer<T> New(Napi::Env env, T* data, size_t length, napi_finalize finalizeCallback);
+    static Buffer<T> Copy(Napi::Env env, const T* data, size_t length);
 
     Buffer();
     Buffer(napi_env env, napi_value value);
     size_t Length() const;
-    char* Data() const;
+    T* Data() const;
 
   private:
     size_t _length;
-    char* _data;
+    T* _data;
 
-    Buffer(napi_env env, napi_value value, size_t length, char* data);
+    Buffer(napi_env env, napi_value value, size_t length, T* data);
   };
 
   /*
