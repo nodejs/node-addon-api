@@ -1,4 +1,4 @@
-﻿#ifndef SRC_NODE_API_HELPERS_H_
+﻿#ifndef SRC_NAPI_H_
 #define SRC_NAPI_H_
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -24,7 +24,7 @@ namespace Napi {
   class Object;
   class Array;
   class Function;
-  class Buffer;
+  template <typename T> class Buffer;
   class Error;
   class PropertyDescriptor;
   class CallbackInfo;
@@ -241,7 +241,10 @@ namespace Napi {
   class ArrayBuffer : public Object {
   public:
     static ArrayBuffer New(Napi::Env env, size_t byteLength);
-    static ArrayBuffer New(Napi::Env env, void* externalData, size_t byteLength);
+    static ArrayBuffer New(Napi::Env env,
+                           void* externalData,
+                           size_t byteLength,
+                           napi_finalize finalizeCallback);
 
     ArrayBuffer();
     ArrayBuffer(napi_env env, napi_value value);
@@ -361,15 +364,24 @@ namespace Napi {
     };
   };
 
+  template <typename T>
   class Buffer : public Object {
   public:
-    static Buffer New(Napi::Env env, char* data, size_t size);
-    static Buffer Copy(Napi::Env env, const char* data, size_t size);
+    static Buffer<T> New(Napi::Env env, size_t length);
+    static Buffer<T> New(Napi::Env env, T* data, size_t length, napi_finalize finalizeCallback);
+    static Buffer<T> Copy(Napi::Env env, const T* data, size_t length);
 
     Buffer();
     Buffer(napi_env env, napi_value value);
     size_t Length() const;
-    char* Data() const;
+    T* Data() const;
+
+  private:
+    mutable size_t _length;
+    mutable T* _data;
+
+    Buffer(napi_env env, napi_value value, size_t length, T* data);
+    void EnsureInfo() const;
   };
 
   /*
@@ -483,6 +495,9 @@ namespace Napi {
 
     Env Env() const;
     bool IsEmpty() const;
+
+    // Note when getting the value of a Reference it is usually correct to do so
+    // within a HandleScope so that the value handle gets cleaned up efficiently.
     T Value() const;
 
     int AddRef();
