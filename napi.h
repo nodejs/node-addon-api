@@ -53,7 +53,7 @@ namespace Napi {
    */
   class Env {
   public:
-    explicit Env(napi_env env);
+    Env(napi_env env);
 
     operator napi_env() const;
 
@@ -186,22 +186,31 @@ namespace Napi {
 
     Value operator [](const char* name) const;
     Value operator [](const std::string& name) const;
+    Value operator [](uint32_t index) const;
 
-    bool Has(const PropertyName& name) const;
+    bool Has(napi_propertyname name) const;
     bool Has(const char* utf8name) const;
     bool Has(const std::string& utf8name) const;
-    Value Get(const PropertyName& name) const;
+    Value Get(napi_propertyname name) const;
     Value Get(const char* utf8name) const;
     Value Get(const std::string& utf8name) const;
-    void Set(const PropertyName& name, const Value& value);
-    void Set(const char* utf8name, const Value& value);
+    void Set(napi_propertyname name, napi_value value);
+    void Set(const char* utf8name, napi_value value);
     void Set(const char* utf8name, const char* utf8value);
     void Set(const char* utf8name, bool boolValue);
     void Set(const char* utf8name, double numberValue);
-    void Set(const std::string& utf8name, const Value& value);
+    void Set(const std::string& utf8name, napi_value value);
     void Set(const std::string& utf8name, std::string& utf8value);
     void Set(const std::string& utf8name, bool boolValue);
     void Set(const std::string& utf8name, double numberValue);
+
+    bool Has(uint32_t index) const;
+    Value Get(uint32_t index) const;
+    void Set(uint32_t index, napi_value value);
+    void Set(uint32_t index, const char* utf8value);
+    void Set(uint32_t index, const std::string& utf8value);
+    void Set(uint32_t index, bool boolValue);
+    void Set(uint32_t index, double numberValue);
 
     void DefineProperty(const PropertyDescriptor& property);
     void DefineProperties(const std::vector<PropertyDescriptor>& properties);
@@ -226,16 +235,7 @@ namespace Napi {
     Array();
     Array(napi_env env, napi_value value);
 
-    Value operator [](uint32_t index) const;
-
     uint32_t Length() const;
-    bool Has(uint32_t index) const;
-    Value Get(uint32_t index) const;
-    void Set(uint32_t index, const Value& value);
-    void Set(uint32_t index, const char* utf8value);
-    void Set(uint32_t index, const std::string& utf8value);
-    void Set(uint32_t index, bool boolValue);
-    void Set(uint32_t index, double numberValue);
   };
 
   class ArrayBuffer : public Object {
@@ -332,12 +332,17 @@ namespace Napi {
     Function();
     Function(napi_env env, napi_value value);
 
+    napi_value operator ()(napi_value recv, const std::vector<napi_value>& args) const;
+    napi_value Call(napi_value recv, const std::vector<napi_value>& args) const;
+    napi_value MakeCallback(napi_value recv, const std::vector<napi_value>& args) const;
+    napi_value New(const std::vector<napi_value>& args);
+
     Value operator ()(const std::vector<Value>& args) const;
     Value operator ()(Object& recv, const std::vector<Value>& args) const;
     Value Call(const std::vector<Value>& args) const;
     Value Call(Object& recv, const std::vector<Value>& args) const;
     Value MakeCallback(const std::vector<Value>& args) const;
-    Value MakeCallback(Value& recv, const std::vector<Value>& args) const;
+    Value MakeCallback(Object& recv, const std::vector<Value>& args) const;
     Object New(const std::vector<Napi::Value>& args);
 
   private:
@@ -347,6 +352,7 @@ namespace Napi {
     struct CallbackData {
       CallbackData(VoidFunctionCallback cb, void* data);
       CallbackData(FunctionCallback cb, void* data);
+      ~CallbackData() {};
       union {
         VoidFunctionCallback voidFunctionCallback;
         FunctionCallback functionCallback;
@@ -495,11 +501,72 @@ namespace Napi {
     bool _suppressDestruct;
   };
 
-  // Shortcut to creating a new reference with inferred type and refcount = 0.
-  template <typename T> Reference<T> Weak(T value);
+  class ObjectReference: public Reference<Object> {
+  public:
+    ObjectReference();
+    ObjectReference(napi_env env, napi_ref ref);
 
-  // Shortcut to creating a new reference with inferred type and refcount = 1.
+    // A reference can be moved but cannot be copied.
+    ObjectReference(Reference<Object>&& other);
+    ObjectReference& operator =(Reference<Object>&& other);
+    ObjectReference(ObjectReference&& other);
+    ObjectReference& operator =(ObjectReference&& other);
+    ObjectReference(const ObjectReference&) = delete;
+    ObjectReference& operator =(ObjectReference&) = delete;
+
+    Napi::Value Get(const char* utf8name) const;
+    Napi::Value Get(const std::string& utf8name) const;
+    void Set(const char* utf8name, napi_value value);
+    void Set(const char* utf8name, const char* utf8value);
+    void Set(const char* utf8name, bool boolValue);
+    void Set(const char* utf8name, double numberValue);
+    void Set(const std::string& utf8name, napi_value value);
+    void Set(const std::string& utf8name, std::string& utf8value);
+    void Set(const std::string& utf8name, bool boolValue);
+    void Set(const std::string& utf8name, double numberValue);
+
+    Napi::Value Get(uint32_t index) const;
+    void Set(uint32_t index, const napi_value value);
+    void Set(uint32_t index, const char* utf8value);
+    void Set(uint32_t index, const std::string& utf8value);
+    void Set(uint32_t index, bool boolValue);
+    void Set(uint32_t index, double numberValue);
+  };
+
+  class FunctionReference: public Reference<Function> {
+  public:
+    FunctionReference();
+    FunctionReference(napi_env env, napi_ref ref);
+
+    // A reference can be moved but cannot be copied.
+    FunctionReference(Reference<Function>&& other);
+    FunctionReference& operator =(Reference<Function>&& other);
+    FunctionReference(FunctionReference&& other);
+    FunctionReference& operator =(FunctionReference&& other);
+    FunctionReference(const FunctionReference&) = delete;
+    FunctionReference& operator =(FunctionReference&) = delete;
+
+    napi_value operator ()(napi_value recv, const std::vector<napi_value>& args) const;
+    napi_value Call(napi_value recv, const std::vector<napi_value>& args) const;
+    napi_value MakeCallback(napi_value recv, const std::vector<napi_value>& args) const;
+
+    Napi::Value operator ()(const std::vector<Napi::Value>& args) const;
+    Napi::Value operator ()(Object& recv, const std::vector<Napi::Value>& args) const;
+    Napi::Value Call(const std::vector<Napi::Value>& args) const;
+    Napi::Value Call(Object& recv, const std::vector<Napi::Value>& args) const;
+    Napi::Value MakeCallback(const std::vector<Napi::Value>& args) const;
+    Napi::Value MakeCallback(Object& recv, const std::vector<Napi::Value>& args) const;
+  };
+
+  // Shortcuts to creating a new reference with inferred type and refcount = 0.
+  template <typename T> Reference<T> Weak(T value);
+  ObjectReference Weak(Object value);
+  FunctionReference Weak(Function value);
+
+  // Shortcuts to creating a new reference with inferred type and refcount = 1.
   template <typename T> Reference<T> Persistent(T value);
+  ObjectReference Persistent(Object value);
+  FunctionReference Persistent(Function value);
 
   class CallbackInfo {
   public:
@@ -694,11 +761,53 @@ namespace Napi {
     operator napi_escapable_handle_scope() const;
 
     Env Env() const;
-    Value Escape(Value escapee);
+    Value Escape(napi_value escapee);
 
   private:
     napi_env _env;
     napi_escapable_handle_scope _scope;
+  };
+
+  class AsyncWorker {
+  public:
+    virtual ~AsyncWorker();
+
+    // An async worker can be moved but cannot be copied.
+    AsyncWorker(AsyncWorker&& other);
+    AsyncWorker& operator =(AsyncWorker&& other);
+    AsyncWorker(const AsyncWorker&) = delete;
+    AsyncWorker& operator =(AsyncWorker&) = delete;
+
+    operator napi_work() const;
+
+    Env Env() const;
+
+    void Queue();
+    virtual void Execute() = 0;
+    virtual void WorkComplete();
+
+    ObjectReference& Persistent();
+
+  protected:
+    explicit AsyncWorker(const Function& callback);
+
+    virtual void OnOK();
+    virtual void OnError();
+
+    void SetErrorMessage(const std::string& msg);
+    const std::string& ErrorMessage() const;
+
+    FunctionReference _callback;
+    ObjectReference _persistent;
+
+  private:
+    static void OnExecute(void* this_pointer);
+    static void OnWorkComplete(void* this_pointer);
+    static void OnDestroy(void* this_pointer);
+
+    napi_env _env;
+    napi_work _work;
+    std::string _errmsg;
   };
 
 } // namespace Napi
