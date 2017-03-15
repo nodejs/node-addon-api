@@ -769,7 +769,7 @@ inline Float64Array TypedArray::AsFloat64Array() const {
 
 template <typename T, napi_typedarray_type A>
 inline TypedArray_<T,A> TypedArray_<T,A>::New(Napi::Env env, size_t elementLength) {
-  Napi::ArrayBuffer arrayBuffer = Napi::ArrayBuffer::New(env, elementLength * sizeof(T));
+  Napi::ArrayBuffer arrayBuffer = Napi::ArrayBuffer::New(env, elementLength * sizeof (T));
   return New(env, elementLength, arrayBuffer, 0);
 }
 
@@ -1010,7 +1010,7 @@ template <typename T>
 inline Buffer<T> Buffer<T>::New(Napi::Env env, size_t length) {
   napi_value value;
   void* data;
-  napi_status status = napi_create_buffer(env, length * sizeof(T), &data, &value);
+  napi_status status = napi_create_buffer(env, length * sizeof (T), &data, &value);
   if (status != napi_ok) throw Error::New(env);
   return Buffer(env, value, length, data);
 }
@@ -1020,7 +1020,7 @@ inline Buffer<T> Buffer<T>::New(
     Napi::Env env, T* data, size_t length, napi_finalize finalizeCallback) {
   napi_value value;
   napi_status status = napi_create_external_buffer(
-    env, length * sizeof(T), data, finalizeCallback, &value);
+    env, length * sizeof (T), data, finalizeCallback, &value);
   if (status != napi_ok) throw Error::New(env);
   return Buffer(env, value, length, data);
 }
@@ -1029,7 +1029,7 @@ template <typename T>
 inline Buffer<T> Buffer<T>::Copy(Napi::Env env, const T* data, size_t length) {
   napi_value value;
   napi_status status = napi_create_buffer_copy(
-    env, data, length * sizeof(T), &value);
+    env, data, length * sizeof (T), &value);
   if (status != napi_ok) throw Error::New(env);
   return Buffer(env, value);
 }
@@ -1070,8 +1070,8 @@ inline void Buffer<T>::EnsureInfo() const {
     void* voidData;
     napi_status status = napi_get_buffer_info(_env, _value, &voidData, &byteLength);
     if (status != napi_ok) throw Error::New(Env());
-    *const_cast<size_t*>(&_length) = byteLength / sizeof(T);
-    *const_cast<T**>(&_data) = static_cast<T*>(voidData);
+    _length = byteLength / sizeof (T);
+    _data = static_cast<T*>(voidData);
   }
 }
 

@@ -377,8 +377,8 @@ namespace Napi {
     T* Data() const;
 
   private:
-    size_t _length;
-    T* _data;
+    mutable size_t _length;
+    mutable T* _data;
 
     Buffer(napi_env env, napi_value value, size_t length, T* data);
     void EnsureInfo() const;
