@@ -381,6 +381,7 @@ namespace Napi {
     T* _data;
 
     Buffer(napi_env env, napi_value value, size_t length, T* data);
+    void EnsureInfo() const;
   };
 
   /*

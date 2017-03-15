@@ -1009,7 +1009,7 @@ inline Function::CallbackData::CallbackData(FunctionCallback cb, void* data)
 template <typename T>
 inline Buffer<T> Buffer<T>::New(Napi::Env env, size_t length) {
   napi_value value;
-  char* data;
+  void* data;
   napi_status status = napi_create_buffer(env, length * sizeof(T), &data, &value);
   if (status != napi_ok) throw Error::New(env);
   return Buffer(env, value, length, data);
@@ -1020,7 +1020,7 @@ inline Buffer<T> Buffer<T>::New(
     Napi::Env env, T* data, size_t length, napi_finalize finalizeCallback) {
   napi_value value;
   napi_status status = napi_create_external_buffer(
-    env, length * sizeof(T), reinterpret_cast<char*>(data), finalizeCallback, &value);
+    env, length * sizeof(T), data, finalizeCallback, &value);
   if (status != napi_ok) throw Error::New(env);
   return Buffer(env, value, length, data);
 }
@@ -1029,7 +1029,7 @@ template <typename T>
 inline Buffer<T> Buffer<T>::Copy(Napi::Env env, const T* data, size_t length) {
   napi_value value;
   napi_status status = napi_create_buffer_copy(
-    env, reinterpret_cast<const char*>(data), length * sizeof(T), &value);
+    env, data, length * sizeof(T), &value);
   if (status != napi_ok) throw Error::New(env);
   return Buffer(env, value);
 }
@@ -1050,26 +1050,29 @@ inline Buffer<T>::Buffer(napi_env env, napi_value value, size_t length, T* data)
 
 template <typename T>
 inline size_t Buffer<T>::Length() const {
-  if (_data == nullptr) {
-    size_t byteLength;
-    napi_status status = napi_get_buffer_info(
-      _env, _value, reinterpret_cast<char**>(const_cast<T**>(&_data)), &byteLength);
-    if (status != napi_ok) throw Error::New(Env());
-    *const_cast<size_t*>(&_length) = byteLength / sizeof(T);
-  }
+  EnsureInfo();
   return _length;
 }
 
 template <typename T>
 inline T* Buffer<T>::Data() const {
+  EnsureInfo();
+  return _data;
+}
+
+template <typename T>
+inline void Buffer<T>::EnsureInfo() const {
+  // The Buffer instance may have been constructed from a napi_value whose
+  // length/data are not yet known. Fetch and cache these values just once,
+  // since they can never change during the lifetime of the Buffer.
   if (_data == nullptr) {
     size_t byteLength;
-    napi_status status = napi_get_buffer_info(
-      _env, _value, reinterpret_cast<char**>(const_cast<T**>(&_data)), &byteLength);
+    void* voidData;
+    napi_status status = napi_get_buffer_info(_env, _value, &voidData, &byteLength);
     if (status != napi_ok) throw Error::New(Env());
     *const_cast<size_t*>(&_length) = byteLength / sizeof(T);
+    *const_cast<T**>(&_data) = static_cast<T*>(voidData);
   }
-  return _data;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
