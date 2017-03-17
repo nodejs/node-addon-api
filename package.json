@@ -1,13 +1,13 @@
 {
   "bugs": {
-    "url": "https://github.com/nodejs/abi-stable-node-wrapper/issues"
+    "url": "https://github.com/nodejs/node-api/issues"
   },
   "dependencies": {},
   "description": "Node.js API (N-API)",
   "devDependencies": {
   },
   "directories": {},
-  "homepage": "https://github.com/nodejs/abi-stable-node-wrapper",
+  "homepage": "https://github.com/nodejs/node-api",
   "license": "MIT",
   "main": "index.js",
   "name": "node-api",
@@ -15,7 +15,7 @@
   "readme": "README.md",
   "repository": {
     "type": "git",
-    "url": "git://github.com/nodejs/abi-stable-node-wrapper.git"
+    "url": "git://github.com/nodejs/node-api.git"
   },
   "scripts": {
   },
