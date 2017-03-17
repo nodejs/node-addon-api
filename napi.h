@@ -11,9 +11,10 @@
 
 #include "node_jsvmapi.h"
 #include "node_asyncapi.h"
+#include <functional>
+#include <initializer_list>
 #include <string>
 #include <vector>
-#include <functional>
 
 namespace Napi {
 
@@ -131,7 +132,7 @@ namespace Napi {
 
   class Boolean : public Value {
   public:
-    static Boolean New(Napi::Env env, bool val);
+    static Boolean New(napi_env env, bool val);
 
     Boolean();
     Boolean(napi_env env, napi_value value);
@@ -143,7 +144,7 @@ namespace Napi {
 
   class Number : public Value {
   public:
-    static Number New(Napi::Env env, double val);
+    static Number New(napi_env env, double val);
 
     Number();
     Number(napi_env env, napi_value value);
@@ -163,10 +164,10 @@ namespace Napi {
 
   class String : public Value {
   public:
-    static String New(Napi::Env env, const std::string& value);
-    static String New(Napi::Env env, const std::u16string& value);
-    static String New(Napi::Env env, const char* val, int length = -1);
-    static String New(Napi::Env env, const char16_t* val, int length = -1);
+    static String New(napi_env env, const std::string& value);
+    static String New(napi_env env, const std::u16string& value);
+    static String New(napi_env env, const char* val, int length = -1);
+    static String New(napi_env env, const char16_t* val, int length = -1);
 
     String();
     String(napi_env env, napi_value value);
@@ -179,7 +180,7 @@ namespace Napi {
 
   class Object : public Value {
   public:
-    static Object New(Napi::Env env);
+    static Object New(napi_env env);
 
     Object();
     Object(napi_env env, napi_value value);
@@ -213,13 +214,14 @@ namespace Napi {
     void Set(uint32_t index, double numberValue);
 
     void DefineProperty(const PropertyDescriptor& property);
+    void DefineProperties(const std::initializer_list<PropertyDescriptor>& properties);
     void DefineProperties(const std::vector<PropertyDescriptor>& properties);
     bool InstanceOf(const Function& constructor) const;
   };
 
   class External : public Value {
   public:
-    static External New(Napi::Env env, void* data, napi_finalize finalizeCallback = nullptr);
+    static External New(napi_env env, void* data, napi_finalize finalizeCallback = nullptr);
 
     External();
     External(napi_env env, napi_value value);
@@ -229,8 +231,8 @@ namespace Napi {
 
   class Array : public Object {
   public:
-    static Array New(Napi::Env env);
-    static Array New(Napi::Env env, int length);
+    static Array New(napi_env env);
+    static Array New(napi_env env, int length);
 
     Array();
     Array(napi_env env, napi_value value);
@@ -240,8 +242,8 @@ namespace Napi {
 
   class ArrayBuffer : public Object {
   public:
-    static ArrayBuffer New(Napi::Env env, size_t byteLength);
-    static ArrayBuffer New(Napi::Env env,
+    static ArrayBuffer New(napi_env env, size_t byteLength);
+    static ArrayBuffer New(napi_env env,
                            void* externalData,
                            size_t byteLength,
                            napi_finalize finalizeCallback);
@@ -292,8 +294,8 @@ namespace Napi {
   template <typename T, napi_typedarray_type A>
   class TypedArray_ : public TypedArray {
   public:
-    static TypedArray_ New(Napi::Env env, size_t elementLength);
-    static TypedArray_ New(Napi::Env env,
+    static TypedArray_ New(napi_env env, size_t elementLength);
+    static TypedArray_ New(napi_env env,
                            size_t elementLength,
                            Napi::ArrayBuffer arrayBuffer,
                            size_t bufferOffset);
@@ -315,19 +317,19 @@ namespace Napi {
 
   class Function : public Object {
   public:
-    static Function New(Napi::Env env,
+    static Function New(napi_env env,
                         VoidFunctionCallback cb,
                         const char* utf8name = nullptr,
                         void* data = nullptr);
-    static Function New(Napi::Env env,
+    static Function New(napi_env env,
                         FunctionCallback cb,
                         const char* utf8name = nullptr,
                         void* data = nullptr);
-    static Function New(Napi::Env env,
+    static Function New(napi_env env,
                         VoidFunctionCallback cb,
                         const std::string& utf8name,
                         void* data = nullptr);
-    static Function New(Napi::Env env,
+    static Function New(napi_env env,
                         FunctionCallback cb,
                         const std::string& utf8name,
                         void* data = nullptr);
@@ -335,18 +337,20 @@ namespace Napi {
     Function();
     Function(napi_env env, napi_value value);
 
-    napi_value operator ()(napi_value recv, const std::vector<napi_value>& args) const;
-    napi_value Call(napi_value recv, const std::vector<napi_value>& args) const;
-    napi_value MakeCallback(napi_value recv, const std::vector<napi_value>& args) const;
-    napi_value New(const std::vector<napi_value>& args);
+    Value operator ()(const std::initializer_list<napi_value>& args) const;
 
-    Value operator ()(const std::vector<Value>& args) const;
-    Value operator ()(Object& recv, const std::vector<Value>& args) const;
-    Value Call(const std::vector<Value>& args) const;
-    Value Call(Object& recv, const std::vector<Value>& args) const;
-    Value MakeCallback(const std::vector<Value>& args) const;
-    Value MakeCallback(Object& recv, const std::vector<Value>& args) const;
-    Object New(const std::vector<Napi::Value>& args);
+    Value Call(const std::initializer_list<napi_value>& args) const;
+    Value Call(const std::vector<napi_value>& args) const;
+    Value Call(napi_value recv, const std::initializer_list<napi_value>& args) const;
+    Value Call(napi_value recv, const std::vector<napi_value>& args) const;
+
+    Value MakeCallback(const std::initializer_list<napi_value>& args) const;
+    Value MakeCallback(const std::vector<napi_value>& args) const;
+    Value MakeCallback(napi_value recv, const std::initializer_list<napi_value>& args) const;
+    Value MakeCallback(napi_value recv, const std::vector<napi_value>& args) const;
+
+    Object New(const std::initializer_list<napi_value>& args) const;
+    Object New(const std::vector<napi_value>& args) const;
 
   private:
     static void VoidFunctionCallbackWrapper(napi_env env, napi_callback_info info);
@@ -367,9 +371,9 @@ namespace Napi {
   template <typename T>
   class Buffer : public Object {
   public:
-    static Buffer<T> New(Napi::Env env, size_t length);
-    static Buffer<T> New(Napi::Env env, T* data, size_t length, napi_finalize finalizeCallback);
-    static Buffer<T> Copy(Napi::Env env, const T* data, size_t length);
+    static Buffer<T> New(napi_env env, size_t length);
+    static Buffer<T> New(napi_env env, T* data, size_t length, napi_finalize finalizeCallback);
+    static Buffer<T> Copy(napi_env env, const T* data, size_t length);
 
     Buffer();
     Buffer(napi_env env, napi_value value);
@@ -434,9 +438,9 @@ namespace Napi {
    */
   class Error : public Object, public std::exception {
   public:
-    static Error New(Napi::Env env);
-    static Error New(Napi::Env env, const char* message);
-    static Error New(Napi::Env env, const std::string& message);
+    static Error New(napi_env env);
+    static Error New(napi_env env, const char* message);
+    static Error New(napi_env env, const std::string& message);
 
     Error();
     Error(napi_env env, napi_value value);
@@ -452,8 +456,8 @@ namespace Napi {
 
   class TypeError : public Error {
   public:
-    static TypeError New(Napi::Env env, const char* message);
-    static TypeError New(Napi::Env env, const std::string& message);
+    static TypeError New(napi_env env, const char* message);
+    static TypeError New(napi_env env, const std::string& message);
 
     TypeError();
     TypeError(napi_env env, napi_value value);
@@ -461,8 +465,8 @@ namespace Napi {
 
   class RangeError : public Error {
   public:
-    static RangeError New(Napi::Env env, const char* message);
-    static RangeError New(Napi::Env env, const std::string& message);
+    static RangeError New(napi_env env, const char* message);
+    static RangeError New(napi_env env, const std::string& message);
 
     RangeError();
     RangeError(napi_env env, napi_value value);
@@ -510,9 +514,11 @@ namespace Napi {
     // the environment is no longer valid.
     void SuppressDestruct();
 
-  private:
+  protected:
     napi_env _env;
     napi_ref _ref;
+
+  private:
     bool _suppressDestruct;
   };
 
@@ -561,16 +567,20 @@ namespace Napi {
     FunctionReference(const FunctionReference&) = delete;
     FunctionReference& operator =(FunctionReference&) = delete;
 
-    napi_value operator ()(napi_value recv, const std::vector<napi_value>& args) const;
-    napi_value Call(napi_value recv, const std::vector<napi_value>& args) const;
-    napi_value MakeCallback(napi_value recv, const std::vector<napi_value>& args) const;
+    Napi::Value operator ()(const std::initializer_list<napi_value>& args) const;
 
-    Napi::Value operator ()(const std::vector<Napi::Value>& args) const;
-    Napi::Value operator ()(Object& recv, const std::vector<Napi::Value>& args) const;
-    Napi::Value Call(const std::vector<Napi::Value>& args) const;
-    Napi::Value Call(Object& recv, const std::vector<Napi::Value>& args) const;
-    Napi::Value MakeCallback(const std::vector<Napi::Value>& args) const;
-    Napi::Value MakeCallback(Object& recv, const std::vector<Napi::Value>& args) const;
+    Napi::Value Call(const std::initializer_list<napi_value>& args) const;
+    Napi::Value Call(const std::vector<napi_value>& args) const;
+    Napi::Value Call(napi_value recv, const std::initializer_list<napi_value>& args) const;
+    Napi::Value Call(napi_value recv, const std::vector<napi_value>& args) const;
+
+    Napi::Value MakeCallback(const std::initializer_list<napi_value>& args) const;
+    Napi::Value MakeCallback(const std::vector<napi_value>& args) const;
+    Napi::Value MakeCallback(napi_value recv, const std::initializer_list<napi_value>& args) const;
+    Napi::Value MakeCallback(napi_value recv, const std::vector<napi_value>& args) const;
+
+    Object New(const std::initializer_list<napi_value>& args) const;
+    Object New(const std::vector<napi_value>& args) const;
   };
 
   // Shortcuts to creating a new reference with inferred type and refcount = 0.
@@ -684,6 +694,10 @@ namespace Napi {
 
     typedef ClassPropertyDescriptor<T> PropertyDescriptor;
 
+    static Function DefineClass(Napi::Env env,
+                                const char* utf8name,
+                                const std::initializer_list<PropertyDescriptor>& properties,
+                                void* data = nullptr);
     static Function DefineClass(Napi::Env env,
                                 const char* utf8name,
                                 const std::vector<PropertyDescriptor>& properties,
