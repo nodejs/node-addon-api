@@ -6,7 +6,7 @@ Node.js API (N-API).
 To use these headers in a native module:
   1. Add a dependency on this package to `package.json`.
   2. Reference this package's include directory in `binding.gyp`:
-```json
+```gyp
 {
   'target_name': 'example_module',
   'include_dirs': ["<!(node -p \"require('node-api').include\")"],
