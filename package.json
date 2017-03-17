@@ -1,0 +1,23 @@
+{
+  "bugs": {
+    "url": "https://github.com/nodejs/node-api/issues"
+  },
+  "dependencies": {},
+  "description": "Node.js API (N-API)",
+  "devDependencies": {
+  },
+  "directories": {},
+  "homepage": "https://github.com/nodejs/node-api",
+  "license": "MIT",
+  "main": "index.js",
+  "name": "node-api",
+  "optionalDependencies": {},
+  "readme": "README.md",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/nodejs/node-api.git"
+  },
+  "scripts": {
+  },
+  "version": "0.1.0"
+}
