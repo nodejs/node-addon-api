@@ -1257,7 +1257,7 @@ inline Reference<T>::operator napi_ref() const {
 
 template <typename T>
 inline bool Reference<T>::operator ==(const Reference<T> &other) const {
-  HandleScope scope = Handlescope(_env);
+  HandleScope scope(_env);
   return this->Value().StrictEquals(other.Value());
 }
 
