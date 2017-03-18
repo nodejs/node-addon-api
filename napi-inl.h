@@ -11,20 +11,37 @@
 
 namespace Napi {
 
-// Adapt the NODE_MODULE registration function to NAPI:
-//  - Wrap the arguments in NAPI wrappers.
-//  - Catch any NAPI errors that might be thrown.
-#define NAPI_MODULE(modname, regfunc)                                                 \
-  void __napi_ ## regfunc(napi_env env, napi_value exports, napi_value module) {      \
-    try {                                                                             \
-      regfunc(Napi::Env(env), Napi::Object(env, exports), Napi::Object(env, module)); \
-    }                                                                                 \
-    catch (const Napi::Error&) {                                                      \
-      assert(false); /* Uncaught error in native module registration. */              \
-    }                                                                                 \
-  }                                                                                   \
-  NODE_MODULE_ABI(modname, __napi_ ## regfunc);
+////////////////////////////////////////////////////////////////////////////////
+// Module registration
+////////////////////////////////////////////////////////////////////////////////
 
+#define NODE_API_MODULE(modname, regfunc)                 \
+  void __napi_ ## regfunc(napi_env env,                   \
+                          napi_value exports,             \
+                          napi_value module,              \
+                          void* priv) {                   \
+    Napi::RegisterModule(env, exports, module, regfunc);  \
+  }                                                       \
+  NAPI_MODULE(modname, __napi_ ## regfunc);
+
+// Adapt the NAPI_MODULE registration function:
+//  - Wrap the arguments in NAPI wrappers.
+//  - Catch any NAPI errors and rethrow as JS exceptions.
+inline void RegisterModule(napi_env env,
+                           napi_value exports,
+                           napi_value module,
+                           ModuleRegisterCallback registerCallback) {
+  try {
+      registerCallback(Napi::Env(env),
+                       Napi::Object(env, exports),
+                       Napi::Object(env, module));
+  }
+  catch (const Error& e) {
+    if (!Napi::Env(env).IsExceptionPending()) {
+      e.ThrowAsJavaScriptException();
+    }
+  }
+}
 
 ////////////////////////////////////////////////////////////////////////////////
 // Env class
@@ -63,30 +80,6 @@ inline bool Env::IsExceptionPending() const {
   napi_status status = napi_is_exception_pending(_env, &result);
   if (status != napi_ok) result = false; // Checking for a pending exception shouldn't throw.
   return result;
-}
-
-////////////////////////////////////////////////////////////////////////////////
-// PropertyName class
-////////////////////////////////////////////////////////////////////////////////
-
-inline PropertyName::PropertyName(napi_env env, napi_propertyname name) : _env(env), _name(name) {
-}
-
-inline PropertyName::PropertyName(napi_env env, const char* utf8name) : _env(env) {
-  napi_status status = napi_property_name(env, utf8name, &_name);
-  if (status != napi_ok) throw Error::New(_env);
-}
-
-inline PropertyName::PropertyName(napi_env env, const std::string& utf8name)
-  : PropertyName(env, utf8name.c_str()) {
-}
-
-inline PropertyName::operator napi_propertyname() const {
-  return _name;
-}
-
-inline Env PropertyName::Env() const {
-  return Napi::Env(_env);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -424,7 +417,14 @@ inline Value Object::operator [](uint32_t index) const {
   return Get(index);
 }
 
-inline bool Object::Has(napi_propertyname name) const {
+inline bool Object::Has(napi_value name) const {
+  bool result;
+  napi_status status = napi_has_property(_env, _value, name, &result);
+  if (status != napi_ok) throw Error::New(_env);
+  return result;
+}
+
+inline bool Object::Has(Value name) const {
   bool result;
   napi_status status = napi_has_property(_env, _value, name, &result);
   if (status != napi_ok) throw Error::New(_env);
@@ -432,14 +432,24 @@ inline bool Object::Has(napi_propertyname name) const {
 }
 
 inline bool Object::Has(const char* utf8name) const {
-  return Has(PropertyName(_env, utf8name));
+  bool result;
+  napi_status status = napi_has_named_property(_env, _value, utf8name, &result);
+  if (status != napi_ok) throw Error::New(Env());
+  return result;
 }
 
 inline bool Object::Has(const std::string& utf8name) const {
-  return Has(PropertyName(_env, utf8name));
+  return Has(utf8name.c_str());
 }
 
-inline Value Object::Get(napi_propertyname name) const {
+inline Value Object::Get(napi_value name) const {
+  napi_value result;
+  napi_status status = napi_get_property(_env, _value, name, &result);
+  if (status != napi_ok) throw Error::New(_env);
+  return Value(_env, result);
+}
+
+inline Value Object::Get(Value name) const {
   napi_value result;
   napi_status status = napi_get_property(_env, _value, name, &result);
   if (status != napi_ok) throw Error::New(_env);
@@ -447,48 +457,61 @@ inline Value Object::Get(napi_propertyname name) const {
 }
 
 inline Value Object::Get(const char* utf8name) const {
-  return Get(PropertyName(_env, utf8name));
+  napi_value result;
+  napi_status status = napi_get_named_property(_env, _value, utf8name, &result);
+  if (status != napi_ok) throw Error::New(Env());
+  return Value(_env, result);
 }
 
 inline Value Object::Get(const std::string& utf8name) const {
-  return Get(PropertyName(_env, utf8name));
+  return Get(utf8name.c_str());
 }
 
-inline void Object::Set(napi_propertyname name, napi_value value) {
+inline void Object::Set(napi_value name, napi_value value) {
   napi_status status = napi_set_property(_env, _value, name, value);
   if (status != napi_ok) throw Error::New(_env);
 }
 
+inline void Object::Set(const char* utf8name, Value value) {
+  napi_status status = napi_set_named_property(_env, _value, utf8name, value);
+  if (status != napi_ok) throw Error::New(Env());
+}
+
 inline void Object::Set(const char* utf8name, napi_value value) {
-  Set(PropertyName(_env, utf8name), value);
+  napi_status status = napi_set_named_property(_env, _value, utf8name, value);
+  if (status != napi_ok) throw Error::New(Env());
 }
 
 inline void Object::Set(const char* utf8name, const char* utf8value) {
-  Set(PropertyName(_env, utf8name), String::New(Env(), utf8value));
+  Set(utf8name, String::New(Env(), utf8value));
 }
 
 inline void Object::Set(const char* utf8name, bool boolValue) {
-  Set(PropertyName(_env, utf8name), Boolean::New(Env(), boolValue));
+  Set(utf8name, Boolean::New(Env(), boolValue));
 }
 
 inline void Object::Set(const char* utf8name, double numberValue) {
-  Set(PropertyName(_env, utf8name), Number::New(Env(), numberValue));
+  Set(utf8name, Number::New(Env(), numberValue));
 }
 
 inline void Object::Set(const std::string& utf8name, napi_value value) {
-  Set(PropertyName(_env, utf8name), value);
+  Set(utf8name.c_str(), value);
+}
+
+inline void Object::Set(const std::string& utf8name, Value value) {
+  Set(utf8name.c_str(), value);
 }
 
 inline void Object::Set(const std::string& utf8name, std::string& utf8value) {
-  Set(PropertyName(_env, utf8name), String::New(Env(), utf8value));
+  Set(utf8name.c_str(), String::New(Env(), utf8value));
 }
 
 inline void Object::Set(const std::string& utf8name, bool boolValue) {
-  Set(PropertyName(_env, utf8name), Boolean::New(Env(), boolValue));
+  Set(utf8name.c_str(), Boolean::New(Env(), boolValue));
 }
 
 inline void Object::Set(const std::string& utf8name, double numberValue) {
-  Set(PropertyName(_env, utf8name), Number::New(Env(), numberValue));
+  Set(utf8name.c_str(), Number::New(Env(), numberValue));
 }
 
 inline bool Object::Has(uint32_t index) const {
@@ -506,6 +529,11 @@ inline Value Object::Get(uint32_t index) const {
 }
 
 inline void Object::Set(uint32_t index, napi_value value) {
+  napi_status status = napi_set_element(_env, _value, index, value);
+  if (status != napi_ok) throw Error::New(_env);
+}
+
+inline void Object::Set(uint32_t index, Value value) {
   napi_status status = napi_set_element(_env, _value, index, value);
   if (status != napi_ok) throw Error::New(_env);
 }
@@ -555,26 +583,29 @@ inline bool Object::InstanceOf(const Function& constructor) const {
 // External class
 ////////////////////////////////////////////////////////////////////////////////
 
-inline External External::New(napi_env env, void* data, napi_finalize finalizeCallback) {
+template <typename T>
+inline External<T> External<T>::New(
+    napi_env env, T* data, napi_finalize finalizeCallback, void* finalizeHint) {
   napi_value value;
-  napi_status status = napi_create_external(env, data, finalizeCallback, &value);
+  napi_status status = napi_create_external(env, data, finalizeCallback, finalizeHint, &value);
   if (status != napi_ok) throw Error::New(env);
   return External(env, value);
 }
 
-inline External::External() : Value() {
-
+template <typename T>
+inline External<T>::External() : Value() {
 }
 
-inline External::External(napi_env env, napi_value value) : Value(env, value) {
-
+template <typename T>
+inline External<T>::External(napi_env env, napi_value value) : Value(env, value) {
 }
 
-inline void* External::Data() const {
+template <typename T>
+inline T* External<T>::Data() const {
   void* data;
   napi_status status = napi_get_value_external(_env, _value, &data);
   if (status != napi_ok) throw Error::New(_env);
-  return data;
+  return reinterpret_cast<T*>(data);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -627,10 +658,11 @@ inline ArrayBuffer ArrayBuffer::New(napi_env env, size_t byteLength) {
 inline ArrayBuffer ArrayBuffer::New(napi_env env,
                                     void* externalData,
                                     size_t byteLength,
-                                    napi_finalize finalizeCallback) {
+                                    napi_finalize finalizeCallback,
+                                    void* finalizeHint) {
   napi_value value;
   napi_status status = napi_create_external_arraybuffer(
-    env, externalData, byteLength, finalizeCallback, &value);
+    env, externalData, byteLength, finalizeCallback, finalizeHint, &value);
   if (status != napi_ok) throw Error::New(env);
 
   ArrayBuffer arrayBuffer(env, value);
@@ -1007,10 +1039,10 @@ inline Buffer<T> Buffer<T>::New(napi_env env, size_t length) {
 
 template <typename T>
 inline Buffer<T> Buffer<T>::New(
-    napi_env env, T* data, size_t length, napi_finalize finalizeCallback) {
+    napi_env env, T* data, size_t length, napi_finalize finalizeCallback, void* finalizeHint) {
   napi_value value;
   napi_status status = napi_create_external_buffer(
-    env, length * sizeof (T), data, finalizeCallback, &value);
+    env, length * sizeof (T), data, finalizeCallback, finalizeHint, &value);
   if (status != napi_ok) throw Error::New(env);
   return Buffer(env, value, length, data);
 }
@@ -1399,6 +1431,11 @@ inline void ObjectReference::Set(const char* utf8name, napi_value value) {
   Value().Set(utf8name, value);
 }
 
+inline void ObjectReference::Set(const char* utf8name, Napi::Value value) {
+  HandleScope scope(_env);
+  Value().Set(utf8name, value);
+}
+
 inline void ObjectReference::Set(const char* utf8name, const char* utf8value) {
   HandleScope scope(_env);
   Value().Set(utf8name, utf8value);
@@ -1415,6 +1452,11 @@ inline void ObjectReference::Set(const char* utf8name, double numberValue) {
 }
 
 inline void ObjectReference::Set(const std::string& utf8name, napi_value value) {
+  HandleScope scope(_env);
+  Value().Set(utf8name, value);
+}
+
+inline void ObjectReference::Set(const std::string& utf8name, Napi::Value value) {
   HandleScope scope(_env);
   Value().Set(utf8name, value);
 }
@@ -1440,6 +1482,11 @@ inline Napi::Value ObjectReference::Get(uint32_t index) const {
 }
 
 inline void ObjectReference::Set(uint32_t index, napi_value value) {
+  HandleScope scope(_env);
+  Value().Set(index, value);
+}
+
+inline void ObjectReference::Set(uint32_t index, Napi::Value value) {
   HandleScope scope(_env);
   Value().Set(index, value);
 }
@@ -1819,7 +1866,7 @@ inline void ObjectWrap<T>::ConstructorCallbackWrapper(
   }
 
   napi_ref ref;
-  status = napi_wrap(env, wrapper, instance, FinalizeCallback, &ref);
+  status = napi_wrap(env, wrapper, instance, FinalizeCallback, nullptr, &ref);
   if (status != napi_ok) return;
 
   Reference<Object>* instanceRef = instance;
@@ -1998,7 +2045,7 @@ inline void ObjectWrap<T>::InstanceSetterCallbackWrapper(
 }
 
 template <typename T>
-inline void ObjectWrap<T>::FinalizeCallback(void* data) {
+inline void ObjectWrap<T>::FinalizeCallback(void* data, void* /*hint*/) {
   T* instance = reinterpret_cast<T*>(data);
   delete instance;
 }

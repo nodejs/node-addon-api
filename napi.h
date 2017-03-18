@@ -9,8 +9,8 @@
 // The wrappers are all header-only so that they do not affect the ABI.
 ////////////////////////////////////////////////////////////////////////////////
 
-#include "node_jsvmapi.h"
-#include "node_asyncapi.h"
+#include "node_api.h"
+#include "node_api_async.h"
 #include <functional>
 #include <initializer_list>
 #include <string>
@@ -18,6 +18,7 @@
 
 namespace Napi {
 
+  class Env;
   class Value;
   class Boolean;
   class Number;
@@ -49,6 +50,9 @@ namespace Napi {
   typedef std::function<void(const CallbackInfo& info)> VoidFunctionCallback;
   typedef std::function<Value(const CallbackInfo& info)> FunctionCallback;
 
+  // A N-API C++ module's registration callback (init) function has this sinature.
+  typedef void ModuleRegisterCallback(Env env, Object exports, Object module);
+
   /*
    * Environment for NAPI operations. (In V8 this corresponds to an Isolate.)
    */
@@ -66,21 +70,6 @@ namespace Napi {
 
   private:
     napi_env _env;
-  };
-
-  class PropertyName {
-  public:
-    PropertyName(napi_env env, napi_propertyname name);
-    PropertyName(napi_env env, const char* utf8name);
-    PropertyName(napi_env env, const std::string& utf8name);
-
-    operator napi_propertyname() const;
-
-    Env Env() const;
-
-  private:
-    napi_env _env;
-    napi_propertyname _name;
   };
 
   /*
@@ -189,18 +178,22 @@ namespace Napi {
     Value operator [](const std::string& name) const;
     Value operator [](uint32_t index) const;
 
-    bool Has(napi_propertyname name) const;
+    bool Has(napi_value name) const;
+    bool Has(Value name) const;
     bool Has(const char* utf8name) const;
     bool Has(const std::string& utf8name) const;
-    Value Get(napi_propertyname name) const;
+    Value Get(napi_value name) const;
+    Value Get(Value name) const;
     Value Get(const char* utf8name) const;
     Value Get(const std::string& utf8name) const;
-    void Set(napi_propertyname name, napi_value value);
+    void Set(napi_value name, napi_value value);
     void Set(const char* utf8name, napi_value value);
+    void Set(const char* utf8name, Value value);
     void Set(const char* utf8name, const char* utf8value);
     void Set(const char* utf8name, bool boolValue);
     void Set(const char* utf8name, double numberValue);
     void Set(const std::string& utf8name, napi_value value);
+    void Set(const std::string& utf8name, Value value);
     void Set(const std::string& utf8name, std::string& utf8value);
     void Set(const std::string& utf8name, bool boolValue);
     void Set(const std::string& utf8name, double numberValue);
@@ -208,6 +201,7 @@ namespace Napi {
     bool Has(uint32_t index) const;
     Value Get(uint32_t index) const;
     void Set(uint32_t index, napi_value value);
+    void Set(uint32_t index, Value value);
     void Set(uint32_t index, const char* utf8value);
     void Set(uint32_t index, const std::string& utf8value);
     void Set(uint32_t index, bool boolValue);
@@ -219,14 +213,18 @@ namespace Napi {
     bool InstanceOf(const Function& constructor) const;
   };
 
+  template <typename T>
   class External : public Value {
   public:
-    static External New(napi_env env, void* data, napi_finalize finalizeCallback = nullptr);
+    static External New(napi_env env,
+                        T* data,
+                        napi_finalize finalizeCallback = nullptr,
+                        void* finalizeHint = nullptr);
 
     External();
     External(napi_env env, napi_value value);
 
-    void* Data() const;
+    T* Data() const;
   };
 
   class Array : public Object {
@@ -246,7 +244,8 @@ namespace Napi {
     static ArrayBuffer New(napi_env env,
                            void* externalData,
                            size_t byteLength,
-                           napi_finalize finalizeCallback);
+                           napi_finalize finalizeCallback = nullptr,
+                           void* finalizeHint = nullptr);
 
     ArrayBuffer();
     ArrayBuffer(napi_env env, napi_value value);
@@ -372,7 +371,10 @@ namespace Napi {
   class Buffer : public Object {
   public:
     static Buffer<T> New(napi_env env, size_t length);
-    static Buffer<T> New(napi_env env, T* data, size_t length, napi_finalize finalizeCallback);
+    static Buffer<T> New(napi_env env, T* data,
+                         size_t length,
+                         napi_finalize finalizeCallback = nullptr,
+                         void* finalizeHint = nullptr);
     static Buffer<T> Copy(napi_env env, const T* data, size_t length);
 
     Buffer();
@@ -538,16 +540,19 @@ namespace Napi {
     Napi::Value Get(const char* utf8name) const;
     Napi::Value Get(const std::string& utf8name) const;
     void Set(const char* utf8name, napi_value value);
+    void Set(const char* utf8name, Napi::Value value);
     void Set(const char* utf8name, const char* utf8value);
     void Set(const char* utf8name, bool boolValue);
     void Set(const char* utf8name, double numberValue);
     void Set(const std::string& utf8name, napi_value value);
+    void Set(const std::string& utf8name, Napi::Value value);
     void Set(const std::string& utf8name, std::string& utf8value);
     void Set(const std::string& utf8name, bool boolValue);
     void Set(const std::string& utf8name, double numberValue);
 
     Napi::Value Get(uint32_t index) const;
     void Set(uint32_t index, const napi_value value);
+    void Set(uint32_t index, const Napi::Value value);
     void Set(uint32_t index, const char* utf8value);
     void Set(uint32_t index, const std::string& utf8value);
     void Set(uint32_t index, bool boolValue);
@@ -745,7 +750,7 @@ namespace Napi {
     static void InstanceMethodCallbackWrapper(napi_env env, napi_callback_info info);
     static void InstanceGetterCallbackWrapper(napi_env env, napi_callback_info info);
     static void InstanceSetterCallbackWrapper(napi_env env, napi_callback_info info);
-    static void FinalizeCallback(void* data);
+    static void FinalizeCallback(void* data, void* hint);
 
     typedef struct {
       union {
