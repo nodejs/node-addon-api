@@ -18,6 +18,7 @@
 
 namespace Napi {
 
+  class Env;
   class Value;
   class Boolean;
   class Number;
@@ -48,6 +49,9 @@ namespace Napi {
   // (See ObjectWrap<T> for callbacks used when wrapping entire classes.)
   typedef std::function<void(const CallbackInfo& info)> VoidFunctionCallback;
   typedef std::function<Value(const CallbackInfo& info)> FunctionCallback;
+
+  // A N-API C++ module's registration callback (init) function has this sinature.
+  typedef void ModuleRegisterCallback(Env env, Object exports, Object module);
 
   /*
    * Environment for NAPI operations. (In V8 this corresponds to an Isolate.)

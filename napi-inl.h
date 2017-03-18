@@ -11,25 +11,37 @@
 
 namespace Napi {
 
-// Adapt the NAPI_MODULE registration function:
-//  - Wrap the arguments in NAPI wrappers.
-//  - Catch any NAPI errors that might be thrown.
-#define NODE_API_MODULE(modname, regfunc)                                \
-  void __napi_ ## regfunc(napi_env env,                                  \
-                          napi_value exports,                            \
-                          napi_value module,                             \
-                          void* priv) {                                  \
-    try {                                                                \
-      regfunc(Napi::Env(env),                                            \
-              Napi::Object(env, exports),                                \
-              Napi::Object(env, module));                                \
-    }                                                                    \
-    catch (const Napi::Error&) {                                         \
-      assert(false); /* Uncaught error in native module registration. */ \
-    }                                                                    \
-  }                                                                      \
+////////////////////////////////////////////////////////////////////////////////
+// Module registration
+////////////////////////////////////////////////////////////////////////////////
+
+#define NODE_API_MODULE(modname, regfunc)                 \
+  void __napi_ ## regfunc(napi_env env,                   \
+                          napi_value exports,             \
+                          napi_value module,              \
+                          void* priv) {                   \
+    Napi::RegisterModule(env, exports, module, regfunc);  \
+  }                                                       \
   NAPI_MODULE(modname, __napi_ ## regfunc);
 
+// Adapt the NAPI_MODULE registration function:
+//  - Wrap the arguments in NAPI wrappers.
+//  - Catch any NAPI errors and rethrow as JS exceptions.
+inline void RegisterModule(napi_env env,
+                           napi_value exports,
+                           napi_value module,
+                           ModuleRegisterCallback registerCallback) {
+  try {
+      registerCallback(Napi::Env(env),
+                       Napi::Object(env, exports),
+                       Napi::Object(env, module));
+  }
+  catch (const Error& e) {
+    if (!Napi::Env(env).IsExceptionPending()) {
+      e.ThrowAsJavaScriptException();
+    }
+  }
+}
 
 ////////////////////////////////////////////////////////////////////////////////
 // Env class
