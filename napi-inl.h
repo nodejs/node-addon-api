@@ -1176,7 +1176,7 @@ inline void Error::ThrowAsJavaScriptException() const {
   }
 }
 
-inline const char* Error::what() const {
+inline const char* Error::what() const _NOEXCEPT {
   return Message().c_str();
 }
 
@@ -1720,7 +1720,8 @@ inline ClassPropertyDescriptor<T> ObjectWrap<T>::StaticMethod(
   callbackData->staticVoidMethodCallback = method;
   callbackData->data = data;
 
-  napi_property_descriptor desc = { utf8name };
+  napi_property_descriptor desc = {};
+  desc.utf8name = utf8name;
   desc.method = T::StaticVoidMethodCallbackWrapper;
   desc.data = callbackData;
   desc.attributes = static_cast<napi_property_attributes>(attributes | napi_static_property);
@@ -1737,7 +1738,8 @@ inline ClassPropertyDescriptor<T> ObjectWrap<T>::StaticMethod(
   callbackData->staticMethodCallback = method;
   callbackData->data = data;
 
-  napi_property_descriptor desc = { utf8name };
+  napi_property_descriptor desc = {};
+  desc.utf8name = utf8name;
   desc.method = T::StaticMethodCallbackWrapper;
   desc.data = callbackData;
   desc.attributes = static_cast<napi_property_attributes>(attributes | napi_static_property);
@@ -1756,7 +1758,8 @@ inline ClassPropertyDescriptor<T> ObjectWrap<T>::StaticAccessor(
   callbackData->staticSetterCallback = setter;
   callbackData->data = data;
 
-  napi_property_descriptor desc = { utf8name };
+  napi_property_descriptor desc = {};
+  desc.utf8name = utf8name;
   desc.getter = getter != nullptr ? T::StaticGetterCallbackWrapper : nullptr;
   desc.setter = setter != nullptr ? T::StaticSetterCallbackWrapper : nullptr;
   desc.data = callbackData;
@@ -1774,7 +1777,8 @@ inline ClassPropertyDescriptor<T> ObjectWrap<T>::InstanceMethod(
   callbackData->instanceVoidMethodCallback = method;
   callbackData->data = data;
 
-  napi_property_descriptor desc = { utf8name };
+  napi_property_descriptor desc = {};
+  desc.utf8name = utf8name;
   desc.method = T::InstanceVoidMethodCallbackWrapper;
   desc.data = callbackData;
   desc.attributes = attributes;
@@ -1791,7 +1795,8 @@ inline ClassPropertyDescriptor<T> ObjectWrap<T>::InstanceMethod(
   callbackData->instanceMethodCallback = method;
   callbackData->data = data;
 
-  napi_property_descriptor desc = { utf8name };
+  napi_property_descriptor desc = {};
+  desc.utf8name = utf8name;
   desc.method = T::InstanceMethodCallbackWrapper;
   desc.data = callbackData;
   desc.attributes = attributes;
@@ -1810,7 +1815,8 @@ inline ClassPropertyDescriptor<T> ObjectWrap<T>::InstanceAccessor(
   callbackData->instanceSetterCallback = setter;
   callbackData->data = data;
 
-  napi_property_descriptor desc = { utf8name };
+  napi_property_descriptor desc = {};
+  desc.utf8name = utf8name;
   desc.getter = T::InstanceGetterCallbackWrapper;
   desc.setter = T::InstanceSetterCallbackWrapper;
   desc.data = callbackData;
@@ -1821,7 +1827,8 @@ inline ClassPropertyDescriptor<T> ObjectWrap<T>::InstanceAccessor(
 template <typename T>
 inline ClassPropertyDescriptor<T> ObjectWrap<T>::StaticValue(const char* utf8name,
     Napi::Value value, napi_property_attributes attributes) {
-  napi_property_descriptor desc = { utf8name };
+  napi_property_descriptor desc = {};
+  desc.utf8name = utf8name;
   desc.value = value;
   desc.attributes = static_cast<napi_property_attributes>(attributes | napi_static_property);
   return desc;
@@ -1832,7 +1839,8 @@ inline ClassPropertyDescriptor<T> ObjectWrap<T>::InstanceValue(
     const char* utf8name,
     Napi::Value value,
     napi_property_attributes attributes) {
-  napi_property_descriptor desc = { utf8name };
+  napi_property_descriptor desc = {};
+  desc.utf8name = utf8name;
   desc.value = value;
   desc.attributes = attributes;
   return desc;
@@ -1870,7 +1878,7 @@ inline void ObjectWrap<T>::ConstructorCallbackWrapper(
   if (status != napi_ok) return;
 
   Reference<Object>* instanceRef = instance;
-  *instanceRef = std::move(Reference<Object>(env, ref));
+  *instanceRef = Reference<Object>(env, ref);
 
   status = napi_set_return_value(env, info, wrapper);
   if (status != napi_ok) return;
@@ -2112,9 +2120,9 @@ inline Value EscapableHandleScope::Escape(napi_value escapee) {
 ////////////////////////////////////////////////////////////////////////////////
 
 inline AsyncWorker::AsyncWorker(const Function& callback)
-  : _env(callback.Env()),
+  : _callback(Napi::Persistent(callback)),
     _persistent(Napi::Persistent(Object::New(callback.Env()))),
-    _callback(Napi::Persistent(callback)) {
+    _env(callback.Env()) {
   _work = napi_create_async_work();
 }
 
@@ -2141,6 +2149,7 @@ inline AsyncWorker& AsyncWorker::operator =(AsyncWorker&& other) {
   other._work = nullptr;
   _persistent = std::move(other._persistent);
   _errmsg = std::move(other._errmsg);
+  return *this;
 }
 
 inline AsyncWorker::operator napi_work() const {

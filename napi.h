@@ -450,7 +450,7 @@ namespace Napi {
     std::string Message() const;
     void ThrowAsJavaScriptException() const;
 
-    const char* what() const override;
+    const char* what() const _NOEXCEPT override;
 
   private:
     std::string _message;
