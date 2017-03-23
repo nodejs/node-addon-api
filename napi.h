@@ -452,6 +452,15 @@ namespace Napi {
 
     const char* what() const _NOEXCEPT override;
 
+  protected:
+    typedef napi_status (*create_error_fn)(napi_env env, napi_value msg, napi_value* result);
+
+    template <typename TError>
+    static TError New(napi_env env,
+                      const char* message,
+                      size_t length,
+                      create_error_fn create_error);
+
   private:
     std::string _message;
   };
@@ -506,8 +515,8 @@ namespace Napi {
     // within a HandleScope so that the value handle gets cleaned up efficiently.
     T Value() const;
 
-    int AddRef();
-    int Release();
+    int Ref();
+    int Unref();
     void Reset();
     void Reset(const T& value, int refcount = 0);
 
@@ -614,7 +623,7 @@ namespace Napi {
     const int _staticArgCount = 6;
     napi_env _env;
     napi_value _this;
-    int _argc;
+    size_t _argc;
     napi_value* _argv;
     napi_value _staticArgs[6];
     napi_value* _dynamicArgs;
