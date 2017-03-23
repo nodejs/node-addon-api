@@ -121,7 +121,7 @@ inline napi_valuetype Value::Type() const {
   }
 
   napi_valuetype type;
-  napi_status status = napi_get_type_of_value(_env, _value, &type);
+  napi_status status = napi_typeof(_env, _value, &type);
   if (status != napi_ok) throw Error::New(_env);
   return type;
 }
@@ -241,7 +241,7 @@ inline Object Value::ToObject() const {
 
 inline Boolean Boolean::New(napi_env env, bool val) {
   napi_value value;
-  napi_status status = napi_create_boolean(env, val, &value);
+  napi_status status = napi_get_boolean(env, val, &value);
   if (status != napi_ok) throw Error::New(env);
   return Boolean(env, value);
 }
@@ -365,8 +365,8 @@ inline String::operator std::u16string() const {
 }
 
 inline std::string String::Utf8Value() const {
-  int length;
-  napi_status status = napi_get_value_string_utf8_length(_env, _value, &length);
+  size_t length;
+  napi_status status = napi_get_value_string_utf8(_env, _value, nullptr, 0, &length);
   if (status != napi_ok) throw Error::New(_env);
 
   std::string value;
@@ -377,8 +377,8 @@ inline std::string String::Utf8Value() const {
 }
 
 inline std::u16string String::Utf16Value() const {
-  int length;
-  napi_status status = napi_get_value_string_utf16_length(_env, _value, &length);
+  size_t length;
+  napi_status status = napi_get_value_string_utf16(_env, _value, nullptr, 0, &length);
   if (status != napi_ok) throw Error::New(_env);
 
   std::u16string value;
@@ -1051,7 +1051,7 @@ template <typename T>
 inline Buffer<T> Buffer<T>::Copy(napi_env env, const T* data, size_t length) {
   napi_value value;
   napi_status status = napi_create_buffer_copy(
-    env, data, length * sizeof (T), &value);
+    env, length * sizeof (T), data, nullptr, &value);
   if (status != napi_ok) throw Error::New(env);
   return Buffer(env, value);
 }
@@ -1110,11 +1110,13 @@ inline Error Error::New(napi_env env) {
     // No JS exception is pending, so check for NAPI error info.
     const napi_extended_error_info* info = napi_get_last_error_info();
 
+    const char* error_message = info->error_message != nullptr ?
+      info->error_message : "Error in native callback";
     napi_value message;
     napi_status status = napi_create_string_utf8(
       env,
-      info->error_message != nullptr ? info->error_message : "Error in native callback",
-      -1,
+      error_message,
+      strlen(error_message),
       &message);
     assert(status == napi_ok);
 
@@ -1138,19 +1140,11 @@ inline Error Error::New(napi_env env) {
 }
 
 inline Error Error::New(napi_env env, const char* message) {
-  napi_value str;
-  napi_status status = napi_create_string_utf8(env, message, -1, &str);
-  if (status != napi_ok) throw Error::New(env);
-
-  napi_value error;
-  status = napi_create_error(env, str, &error);
-  if (status != napi_ok) throw Error::New(env);
-
-  return Error(env, error);
+  return Error::New<Error>(env, message, strlen(message), napi_create_error);
 }
 
 inline Error Error::New(napi_env env, const std::string& message) {
-  return New(env, message.c_str());
+  return Error::New<Error>(env, message.c_str(), message.size(), napi_create_error);
 }
 
 inline Error::Error() : Object(), _message(nullptr) {
@@ -1180,20 +1174,28 @@ inline const char* Error::what() const _NOEXCEPT {
   return Message().c_str();
 }
 
-inline TypeError TypeError::New(napi_env env, const char* message) {
+template <typename TError>
+inline TError Error::New(napi_env env,
+                         const char* message,
+                         size_t length,
+                         create_error_fn create_error) {
   napi_value str;
-  napi_status status = napi_create_string_utf8(env, message, -1, &str);
+  napi_status status = napi_create_string_utf8(env, message, length, &str);
   if (status != napi_ok) throw Error::New(env);
 
   napi_value error;
-  status = napi_create_type_error(env, str, &error);
+  status = create_error(env, str, &error);
   if (status != napi_ok) throw Error::New(env);
 
-  return TypeError(env, error);
+  return TError(env, error);
+}
+
+inline TypeError TypeError::New(napi_env env, const char* message) {
+  return Error::New<TypeError>(env, message, strlen(message), napi_create_type_error);
 }
 
 inline TypeError TypeError::New(napi_env env, const std::string& message) {
-  return New(env, message.c_str());
+  return Error::New<TypeError>(env, message.c_str(), message.size(), napi_create_type_error);
 }
 
 inline TypeError::TypeError() : Error() {
@@ -1203,19 +1205,11 @@ inline TypeError::TypeError(napi_env env, napi_value value) : Error(env, value) 
 }
 
 inline RangeError RangeError::New(napi_env env, const char* message) {
-  napi_value str;
-  napi_status status = napi_create_string_utf8(env, message, -1, &str);
-  if (status != napi_ok) throw Error::New(env);
-
-  napi_value error;
-  status = napi_create_range_error(env, str, &error);
-  if (status != napi_ok) throw Error::New(env);
-
-  return RangeError(env, error);
+  return Error::New<RangeError>(env, message, strlen(message), napi_create_range_error);
 }
 
 inline RangeError RangeError::New(napi_env env, const std::string& message) {
-  return New(env, message.c_str());
+  return Error::New<RangeError>(env, message.c_str(), message.size(), napi_create_range_error);
 }
 
 inline RangeError::RangeError() : Error() {
@@ -1321,17 +1315,17 @@ inline T Reference<T>::Value() const {
 }
 
 template <typename T>
-inline int Reference<T>::AddRef() {
+inline int Reference<T>::Ref() {
   int result;
-  napi_status status = napi_reference_addref(_env, _ref, &result);
+  napi_status status = napi_reference_ref(_env, _ref, &result);
   if (status != napi_ok) throw Error::New(_env);
   return result;
 }
 
 template <typename T>
-inline int Reference<T>::Release() {
+inline int Reference<T>::Unref() {
   int result;
-  napi_status status = napi_reference_release(_env, _ref, &result);
+  napi_status status = napi_reference_unref(_env, _ref, &result);
   if (status != napi_ok) throw Error::New(_env);
   return result;
 }
