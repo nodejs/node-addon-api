@@ -2047,7 +2047,7 @@ inline void ObjectWrap<T>::InstanceSetterCallbackWrapper(
 }
 
 template <typename T>
-inline void ObjectWrap<T>::FinalizeCallback(void* data, void* /*hint*/) {
+inline void ObjectWrap<T>::FinalizeCallback(napi_env /*env*/, void* data, void* /*hint*/) {
   T* instance = reinterpret_cast<T*>(data);
   delete instance;
 }

@@ -759,7 +759,7 @@ namespace Napi {
     static void InstanceMethodCallbackWrapper(napi_env env, napi_callback_info info);
     static void InstanceGetterCallbackWrapper(napi_env env, napi_callback_info info);
     static void InstanceSetterCallbackWrapper(napi_env env, napi_callback_info info);
-    static void FinalizeCallback(void* data, void* hint);
+    static void FinalizeCallback(napi_env env, void* data, void* hint);
 
     typedef struct {
       union {
