@@ -1102,37 +1102,43 @@ inline void Buffer<T>::EnsureInfo() const {
 ////////////////////////////////////////////////////////////////////////////////
 
 inline Error Error::New(napi_env env) {
+  napi_status status;
   napi_value error = nullptr;
   if (Napi::Env(env).IsExceptionPending()) {
-    napi_get_and_clear_last_exception(env, &error);
+    status = napi_get_and_clear_last_exception(env, &error);
+    assert(status == napi_ok);
   }
   else {
     // No JS exception is pending, so check for NAPI error info.
-    const napi_extended_error_info* info = napi_get_last_error_info();
-
-    const char* error_message = info->error_message != nullptr ?
-      info->error_message : "Error in native callback";
-    napi_value message;
-    napi_status status = napi_create_string_utf8(
-      env,
-      error_message,
-      strlen(error_message),
-      &message);
+    const napi_extended_error_info* info;
+    status = napi_get_last_error_info(env, &info);
     assert(status == napi_ok);
 
     if (status == napi_ok) {
-      switch (info->error_code) {
-      case napi_object_expected:
-      case napi_string_expected:
-      case napi_boolean_expected:
-      case napi_number_expected:
-        status = napi_create_type_error(env, message, &error);
-        break;
-      default:
-        status = napi_create_error(env, message, &error);
-        break;
-      }
+      const char* error_message = info->error_message != nullptr ?
+        info->error_message : "Error in native callback";
+      napi_value message;
+      status = napi_create_string_utf8(
+        env,
+        error_message,
+        strlen(error_message),
+        &message);
       assert(status == napi_ok);
+
+      if (status == napi_ok) {
+        switch (info->error_code) {
+        case napi_object_expected:
+        case napi_string_expected:
+        case napi_boolean_expected:
+        case napi_number_expected:
+          status = napi_create_type_error(env, message, &error);
+          break;
+        default:
+          status = napi_create_error(env, message, &error);
+          break;
+        }
+        assert(status == napi_ok);
+      }
     }
   }
 
@@ -1316,7 +1322,7 @@ inline T Reference<T>::Value() const {
 
 template <typename T>
 inline int Reference<T>::Ref() {
-  int result;
+  uint32_t result;
   napi_status status = napi_reference_ref(_env, _ref, &result);
   if (status != napi_ok) throw Error::New(_env);
   return result;
@@ -1324,7 +1330,7 @@ inline int Reference<T>::Ref() {
 
 template <typename T>
 inline int Reference<T>::Unref() {
-  int result;
+  uint32_t result;
   napi_status status = napi_reference_unref(_env, _ref, &result);
   if (status != napi_ok) throw Error::New(_env);
   return result;
@@ -2117,12 +2123,14 @@ inline AsyncWorker::AsyncWorker(const Function& callback)
   : _callback(Napi::Persistent(callback)),
     _persistent(Napi::Persistent(Object::New(callback.Env()))),
     _env(callback.Env()) {
-  _work = napi_create_async_work();
+  napi_status status = napi_create_async_work(
+    _env, OnExecute, OnWorkComplete, this, &_work);
+  if (status != napi_ok) throw Error::New(_env);
 }
 
 inline AsyncWorker::~AsyncWorker() {
   if (_work != nullptr) {
-    napi_delete_async_work(_work);
+    napi_delete_async_work(_env, _work);
     _work = nullptr;
   }
 }
@@ -2133,7 +2141,7 @@ inline AsyncWorker::AsyncWorker(AsyncWorker&& other) {
   _work = other._work;
   other._work = nullptr;
   _persistent = std::move(other._persistent);
-  _errmsg = std::move(other._errmsg);
+  _error = std::move(other._error);
 }
 
 inline AsyncWorker& AsyncWorker::operator =(AsyncWorker&& other) {
@@ -2142,11 +2150,11 @@ inline AsyncWorker& AsyncWorker::operator =(AsyncWorker&& other) {
   _work = other._work;
   other._work = nullptr;
   _persistent = std::move(other._persistent);
-  _errmsg = std::move(other._errmsg);
+  _error = std::move(other._error);
   return *this;
 }
 
-inline AsyncWorker::operator napi_work() const {
+inline AsyncWorker::operator napi_async_work() const {
   return _work;
 }
 
@@ -2155,20 +2163,22 @@ inline Env AsyncWorker::Env() const {
 }
 
 inline void AsyncWorker::Queue() {
-  napi_async_set_data(_work, static_cast<void*>(this));
-  napi_async_set_execute(_work, OnExecute);
-  napi_async_set_complete(_work, OnWorkComplete);
-  napi_async_set_destroy(_work, OnDestroy);
-  napi_async_queue_worker(_work);
+  napi_status status = napi_queue_async_work(_env, _work);
+  if (status != napi_ok) throw Error::New(_env);
+}
+
+inline void AsyncWorker::Cancel() {
+  napi_status status = napi_cancel_async_work(_env, _work);
+  if (status != napi_ok) throw Error::New(_env);
 }
 
 inline void AsyncWorker::WorkComplete() {
   HandleScope scope(_env);
-  if (_errmsg.size() == 0) {
+  if (_error.IsEmpty()) {
     OnOK();
   }
   else {
-    OnError();
+    OnError(_error.Value());
   }
 }
 
@@ -2180,32 +2190,30 @@ inline void AsyncWorker::OnOK() {
   _callback.MakeCallback(Env().Global(), std::vector<napi_value>());
 }
 
-inline void AsyncWorker::OnError() {
-  _callback.MakeCallback(Env().Global(), std::vector<napi_value>({
-    Error::New(Env(), _errmsg),
-  }));
+inline void AsyncWorker::OnError(Error e) {
+  _callback.MakeCallback(Env().Global(), std::vector<napi_value>({ e }));
 }
 
-inline void AsyncWorker::SetErrorMessage(const std::string& msg) {
-  _errmsg = msg;
+inline void AsyncWorker::SetError(Error error) {
+  _error.Reset(error, 1);
 }
 
-inline const std::string& AsyncWorker::ErrorMessage() const {
-  return _errmsg;
-}
-
-inline void AsyncWorker::OnExecute(void* this_pointer) {
+inline void AsyncWorker::OnExecute(napi_env env, void* this_pointer) {
   AsyncWorker* self = static_cast<AsyncWorker*>(this_pointer);
-  self->Execute();
+  try {
+    self->Execute();
+  }
+  catch (const Error& e) {
+    self->SetError(e);
+  }
 }
 
-inline void AsyncWorker::OnWorkComplete(void* this_pointer) {
+inline void AsyncWorker::OnWorkComplete(
+    napi_env env, napi_status status, void* this_pointer) {
   AsyncWorker* self = static_cast<AsyncWorker*>(this_pointer);
-  self->WorkComplete();
-}
-
-inline void AsyncWorker::OnDestroy(void* this_pointer) {
-  AsyncWorker* self = static_cast<AsyncWorker*>(this_pointer);
+  if (status != napi_cancelled) {
+    self->WorkComplete();
+  }
   delete self;
 }
 

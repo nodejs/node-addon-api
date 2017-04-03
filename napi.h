@@ -10,7 +10,6 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 #include "node_api.h"
-#include "node_api_async.h"
 #include <functional>
 #include <initializer_list>
 #include <string>
@@ -821,11 +820,13 @@ namespace Napi {
     AsyncWorker(const AsyncWorker&) = delete;
     AsyncWorker& operator =(AsyncWorker&) = delete;
 
-    operator napi_work() const;
+    operator napi_async_work() const;
 
     Env Env() const;
 
     void Queue();
+    void Cancel();
+
     virtual void Execute() = 0;
     virtual void WorkComplete();
 
@@ -835,22 +836,22 @@ namespace Napi {
     explicit AsyncWorker(const Function& callback);
 
     virtual void OnOK();
-    virtual void OnError();
+    virtual void OnError(Error e);
 
-    void SetErrorMessage(const std::string& msg);
-    const std::string& ErrorMessage() const;
+    void SetError(Error error);
 
     FunctionReference _callback;
     ObjectReference _persistent;
 
   private:
-    static void OnExecute(void* this_pointer);
-    static void OnWorkComplete(void* this_pointer);
-    static void OnDestroy(void* this_pointer);
+    static void OnExecute(napi_env env, void* this_pointer);
+    static void OnWorkComplete(napi_env env,
+                               napi_status status,
+                               void* this_pointer);
 
     napi_env _env;
-    napi_work _work;
-    std::string _errmsg;
+    napi_async_work _work;
+    Reference<Error> _error;
   };
 
 } // namespace Napi
