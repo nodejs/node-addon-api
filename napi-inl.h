@@ -1229,7 +1229,7 @@ inline RangeError::RangeError(napi_env env, napi_value value) : Error(env, value
 ////////////////////////////////////////////////////////////////////////////////
 
 template <typename T>
-inline Reference<T> Reference<T>::New(const T& value, int initialRefcount) {
+inline Reference<T> Reference<T>::New(const T& value, uint32_t initialRefcount) {
   napi_env env = value.Env();
   napi_value val = value;
 
@@ -1321,7 +1321,7 @@ inline T Reference<T>::Value() const {
 }
 
 template <typename T>
-inline int Reference<T>::Ref() {
+inline uint32_t Reference<T>::Ref() {
   uint32_t result;
   napi_status status = napi_reference_ref(_env, _ref, &result);
   if (status != napi_ok) throw Error::New(_env);
@@ -1329,7 +1329,7 @@ inline int Reference<T>::Ref() {
 }
 
 template <typename T>
-inline int Reference<T>::Unref() {
+inline uint32_t Reference<T>::Unref() {
   uint32_t result;
   napi_status status = napi_reference_unref(_env, _ref, &result);
   if (status != napi_ok) throw Error::New(_env);
@@ -1346,7 +1346,7 @@ inline void Reference<T>::Reset() {
 }
 
 template <typename T>
-inline void Reference<T>::Reset(const T& value, int refcount) {
+inline void Reference<T>::Reset(const T& value, uint32_t refcount) {
   Reset();
   _env = value.Env();
 

@@ -491,7 +491,7 @@ namespace Napi {
   template <typename T>
   class Reference {
   public:
-    static Reference<T> New(const T& value, int initialRefcount = 0);
+    static Reference<T> New(const T& value, uint32_t initialRefcount = 0);
 
     Reference();
     Reference(napi_env env, napi_ref ref);
@@ -514,10 +514,10 @@ namespace Napi {
     // within a HandleScope so that the value handle gets cleaned up efficiently.
     T Value() const;
 
-    int Ref();
-    int Unref();
+    uint32_t Ref();
+    uint32_t Unref();
     void Reset();
-    void Reset(const T& value, int refcount = 0);
+    void Reset(const T& value, uint32_t refcount = 0);
 
     // Call this on a reference that is declared as static data, to prevent its destructor
     // from running at program shutdown time, which would attempt to reset the reference when
