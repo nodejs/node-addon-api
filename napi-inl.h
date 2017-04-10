@@ -425,6 +425,21 @@ inline std::u16string String::Utf16Value() const {
 // Object class
 ////////////////////////////////////////////////////////////////////////////////
 
+template <typename Key>
+inline PropertyLValue<Key>::operator Value() const {
+  return _object.Get(_key);
+}
+
+template <typename Key> template <typename ValueType>
+inline PropertyLValue<Key>& PropertyLValue<Key>::operator =(ValueType value) {
+  _object.Set(_key, value);
+  return *this;
+}
+
+template <typename Key>
+inline PropertyLValue<Key>::PropertyLValue(Object object, Key key)
+  : _object(object), _key(key) {}
+
 inline Object Object::New(napi_env env) {
   napi_value value;
   napi_status status = napi_create_object(env, &value);
@@ -436,6 +451,18 @@ inline Object::Object() : Value() {
 }
 
 inline Object::Object(napi_env env, napi_value value) : Value(env, value) {
+}
+
+inline PropertyLValue<std::string> Object::operator [](const char* name) {
+  return PropertyLValue<std::string>(*this, name);
+}
+
+inline PropertyLValue<std::string> Object::operator [](const std::string& name) {
+  return PropertyLValue<std::string>(*this, name);
+}
+
+inline PropertyLValue<uint32_t> Object::operator [](uint32_t index) {
+  return PropertyLValue<uint32_t>(*this, index);
 }
 
 inline Value Object::operator [](const char* name) const {
