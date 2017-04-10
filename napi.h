@@ -36,6 +36,7 @@ namespace Napi {
   class PropertyDescriptor;
   class CallbackInfo;
   template <typename T> class Reference;
+  template <typename Key> class PropertyLValue;
 
   class TypedArray;
   template <typename T, napi_typedarray_type A> class TypedArray_;
@@ -175,6 +176,10 @@ namespace Napi {
     Object();
     Object(napi_env env, napi_value value);
 
+    PropertyLValue<std::string> operator [](const char* name);
+    PropertyLValue<std::string> operator [](const std::string& name);
+    PropertyLValue<uint32_t> operator [](uint32_t index);
+
     Value operator [](const char* name) const;
     Value operator [](const std::string& name) const;
     Value operator [](uint32_t index) const;
@@ -212,6 +217,23 @@ namespace Napi {
     void DefineProperties(const std::initializer_list<PropertyDescriptor>& properties);
     void DefineProperties(const std::vector<PropertyDescriptor>& properties);
     bool InstanceOf(const Function& constructor) const;
+  };
+
+  template <typename Key>
+  class PropertyLValue {
+  public:
+    operator Value() const;
+
+    // |ValueType| can be anything supported by Object::Set.
+    template <typename ValueType>
+    PropertyLValue& operator =(ValueType value);
+    PropertyLValue() = delete;
+  private:
+    PropertyLValue(Object object, Key key);
+    Object _object;
+    Key _key;
+
+    friend class Napi::Object;
   };
 
   template <typename T>
