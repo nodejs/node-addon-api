@@ -49,12 +49,6 @@ namespace Napi {
   typedef TypedArray_<float, napi_float32_array> Float32Array;
   typedef TypedArray_<double, napi_float64_array> Float64Array;
 
-  // Functions exposed to JavaScript must conform to one these callback signatures.
-  // These are std::function<> typedefs instead of function pointers to enable lambdas.
-  // (See ObjectWrap<T> for callbacks used when wrapping entire classes.)
-  typedef std::function<void(const CallbackInfo& info)> VoidFunctionCallback;
-  typedef std::function<Value(const CallbackInfo& info)> FunctionCallback;
-
   // A N-API C++ module's registration callback (init) function has this sinature.
   typedef void ModuleRegisterCallback(Env env, Object exports, Object module);
 
@@ -323,22 +317,16 @@ namespace Napi {
 
   class Function : public Object {
   public:
+    // Callable must implement operator() accepting a const CallbackInfo&
+    // and return either void or Value.
+    template <typename Callable>
     static Function New(napi_env env,
-                        VoidFunctionCallback cb,
-                        const char* utf8name = nullptr,
-                        void* data = nullptr);
+                        Callable cb,
+                        const char* utf8name = nullptr);
+    template <typename Callable>
     static Function New(napi_env env,
-                        FunctionCallback cb,
-                        const char* utf8name = nullptr,
-                        void* data = nullptr);
-    static Function New(napi_env env,
-                        VoidFunctionCallback cb,
-                        const std::string& utf8name,
-                        void* data = nullptr);
-    static Function New(napi_env env,
-                        FunctionCallback cb,
-                        const std::string& utf8name,
-                        void* data = nullptr);
+                        Callable cb,
+                        const std::string& utf8name);
 
     Function();
     Function(napi_env env, napi_value value);
@@ -357,18 +345,6 @@ namespace Napi {
 
     Object New(const std::initializer_list<napi_value>& args) const;
     Object New(const std::vector<napi_value>& args) const;
-
-  private:
-    static napi_value VoidFunctionCallbackWrapper(napi_env env, napi_callback_info info);
-    static napi_value FunctionCallbackWrapper(napi_env env, napi_callback_info info);
-
-    template <typename TCallback>
-    struct CallbackData {
-      TCallback callback;
-      void* data;
-    };
-    typedef CallbackData<VoidFunctionCallback> VoidFunctionCallbackData;
-    typedef CallbackData<FunctionCallback> FunctionCallbackData;
   };
 
   template <typename T>

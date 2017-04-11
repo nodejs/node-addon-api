@@ -898,47 +898,66 @@ inline const T* TypedArray_<T,A>::Data() const {
 // Function class
 ////////////////////////////////////////////////////////////////////////////////
 
+// Helpers to handle functions exposed from C++.
+namespace details {
+
+template <typename Callable, typename Return>
+struct CallbackData {
+  static inline
+  napi_value Wrapper(napi_env env, napi_callback_info info) {
+    try {
+      CallbackInfo callbackInfo(env, info);
+      CallbackData* callbackData =
+        static_cast<CallbackData*>(callbackInfo.Data());
+      return callbackData->callback(callbackInfo);
+    }
+    NAPI_RETHROW_JS_ERROR(env)
+  }
+
+  Callable callback;
+};
+
+template <typename Callable>
+struct CallbackData<Callable, void> {
+  static inline
+  napi_value Wrapper(napi_env env, napi_callback_info info) {
+    try {
+      CallbackInfo callbackInfo(env, info);
+      CallbackData* callbackData =
+        static_cast<CallbackData*>(callbackInfo.Data());
+      callbackData->callback(callbackInfo);
+      return nullptr;
+    }
+    NAPI_RETHROW_JS_ERROR(env)
+  }
+
+  Callable callback;
+};
+
+}  // namespace details
+
+template <typename Callable>
 inline Function Function::New(napi_env env,
-                              VoidFunctionCallback cb,
-                              const char* utf8name,
-                              void* data) {
+                              Callable cb,
+                              const char* utf8name) {
+  typedef decltype(cb(CallbackInfo(nullptr, nullptr))) ReturnType;
+  typedef details::CallbackData<Callable, ReturnType> CbData;
   // TODO: Delete when the function is destroyed
-  VoidFunctionCallbackData* callbackData = new VoidFunctionCallbackData({ cb, data });
+  auto callbackData = new CbData({ cb });
 
   // TODO: set the function name
   napi_value value;
   napi_status status = napi_create_function(
-    env, utf8name, VoidFunctionCallbackWrapper, callbackData, &value);
+    env, utf8name, CbData::Wrapper, callbackData, &value);
   if (status != napi_ok) throw Error::New(env);
   return Function(env, value);
 }
 
+template <typename Callable>
 inline Function Function::New(napi_env env,
-                              FunctionCallback cb,
-                              const char* utf8name,
-                              void* data) {
-  // TODO: Delete when the function is destroyed
-  FunctionCallbackData* callbackData = new FunctionCallbackData({cb, data});
-
-  napi_value value;
-  napi_status status = napi_create_function(
-    env, utf8name, FunctionCallbackWrapper, callbackData, &value);
-  if (status != napi_ok) throw Error::New(env);
-  return Function(env, value);
-}
-
-inline Function Function::New(napi_env env,
-                              VoidFunctionCallback cb,
-                              const std::string& utf8name,
-                              void* data) {
-  return New(env, cb, utf8name.c_str(), data);
-}
-
-inline Function Function::New(napi_env env,
-                              FunctionCallback cb,
-                              const std::string& utf8name,
-                              void* data) {
-  return New(env, cb, utf8name.c_str(), data);
+                              Callable cb,
+                              const std::string& utf8name) {
+  return New(env, cb, utf8name.c_str());
 }
 
 inline Function::Function() : Object() {
@@ -1015,27 +1034,6 @@ inline Object Function::New(const std::vector<napi_value>& args) const {
     _env, _value, args.size(), args.data(), &result);
   if (status != napi_ok) throw Error::New(_env);
   return Object(_env, result);
-}
-
-inline napi_value Function::VoidFunctionCallbackWrapper(napi_env env, napi_callback_info info) {
-  try {
-    CallbackInfo callbackInfo(env, info);
-    VoidFunctionCallbackData* callbackData =
-      reinterpret_cast<VoidFunctionCallbackData*>(callbackInfo.Data());
-    callbackData->callback(callbackInfo);
-    return nullptr;
-  }
-  NAPI_RETHROW_JS_ERROR(env)
-}
-
-inline napi_value Function::FunctionCallbackWrapper(napi_env env, napi_callback_info info) {
-  try {
-    CallbackInfo callbackInfo(env, info);
-    FunctionCallbackData* callbackData =
-      reinterpret_cast<FunctionCallbackData*>(callbackInfo.Data());
-    return callbackData->callback(callbackInfo);
-  }
-  NAPI_RETHROW_JS_ERROR(env)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
