@@ -8,6 +8,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 #include <cassert>
+#include <cstring>
 
 namespace Napi {
 
@@ -42,6 +43,16 @@ inline void RegisterModule(napi_env env,
     }
   }
 }
+
+// For use in JS to C++ callback wrappers to catch any Napi::Error exceptions
+// and rethrow them as JavaScript exceptions before returning from the callback.
+#define NAPI_RETHROW_JS_ERROR(env)               \
+  catch (const Error& e) {                       \
+    if (!Napi::Env(env).IsExceptionPending()) {  \
+      e.ThrowAsJavaScriptException();            \
+    }                                            \
+    return nullptr;                              \
+  }
 
 ////////////////////////////////////////////////////////////////////////////////
 // Env class
@@ -111,7 +122,7 @@ inline bool Value::StrictEquals(const Value& other) const {
   return result;
 }
 
-inline Env Value::Env() const {
+inline Napi::Env Value::Env() const {
   return Napi::Env(_env);
 }
 
@@ -336,14 +347,36 @@ inline double Number::DoubleValue() const {
 // String class
 ////////////////////////////////////////////////////////////////////////////////
 
-inline String String::New(napi_env env, const char* val, int length) {
+inline String String::New(napi_env env, const std::string& val) {
+  return String::New(env, val.c_str(), val.size());
+}
+
+inline String String::New(napi_env env, const std::u16string& val) {
+  return String::New(env, val.c_str(), val.size());
+}
+
+inline String String::New(napi_env env, const char* val) {
+  napi_value value;
+  napi_status status = napi_create_string_utf8(env, val, std::strlen(val), &value);
+  if (status != napi_ok) throw Error::New(env);
+  return String(env, value);
+}
+
+inline String String::New(napi_env env, const char16_t* val) {
+  napi_value value;
+  napi_status status = napi_create_string_utf16(env, val, std::u16string(val).size(), &value);
+  if (status != napi_ok) throw Error::New(env);
+  return String(env, value);
+}
+
+inline String String::New(napi_env env, const char* val, size_t length) {
   napi_value value;
   napi_status status = napi_create_string_utf8(env, val, length, &value);
   if (status != napi_ok) throw Error::New(env);
   return String(env, value);
 }
 
-inline String String::New(napi_env env, const char16_t* val, int length) {
+inline String String::New(napi_env env, const char16_t* val, size_t length) {
   napi_value value;
   napi_status status = napi_create_string_utf16(env, val, length, &value);
   if (status != napi_ok) throw Error::New(env);
@@ -619,7 +652,7 @@ inline Array Array::New(napi_env env) {
   return Array(env, value);
 }
 
-inline Array Array::New(napi_env env, int length) {
+inline Array Array::New(napi_env env, size_t length) {
   napi_value value;
   napi_status status = napi_create_array_with_length(env, length, &value);
   if (status != napi_ok) throw Error::New(env);
@@ -716,18 +749,18 @@ inline napi_typedarray_type TypedArray::TypedArrayType() const {
 
 inline uint8_t TypedArray::ElementSize() const {
   switch (TypedArrayType()) {
-    case napi_int8:
-    case napi_uint8:
-    case napi_uint8_clamped:
+    case napi_int8_array:
+    case napi_uint8_array:
+    case napi_uint8_clamped_array:
       return 1;
-    case napi_int16:
-    case napi_uint16:
+    case napi_int16_array:
+    case napi_uint16_array:
       return 2;
-    case napi_int32:
-    case napi_uint32:
-    case napi_float32:
+    case napi_int32_array:
+    case napi_uint32_array:
+    case napi_float32_array:
       return 4;
-    case napi_float64:
+    case napi_float64_array:
       return 8;
     default:
       return 0;
@@ -757,7 +790,7 @@ inline size_t TypedArray::ByteLength() const {
   return ElementSize() * ElementLength();
 }
 
-inline ArrayBuffer TypedArray::ArrayBuffer() const {
+inline Napi::ArrayBuffer TypedArray::ArrayBuffer() const {
   napi_value arrayBuffer;
   napi_status status = napi_get_typedarray_info(
     _env, _value, nullptr, nullptr, nullptr, &arrayBuffer, nullptr);
@@ -870,7 +903,7 @@ inline Function Function::New(napi_env env,
                               const char* utf8name,
                               void* data) {
   // TODO: Delete when the function is destroyed
-  CallbackData* callbackData = new CallbackData(cb, data);
+  VoidFunctionCallbackData* callbackData = new VoidFunctionCallbackData({ cb, data });
 
   // TODO: set the function name
   napi_value value;
@@ -885,7 +918,7 @@ inline Function Function::New(napi_env env,
                               const char* utf8name,
                               void* data) {
   // TODO: Delete when the function is destroyed
-  CallbackData* callbackData = new CallbackData(cb, data);
+  FunctionCallbackData* callbackData = new FunctionCallbackData({cb, data});
 
   napi_value value;
   napi_status status = napi_create_function(
@@ -984,44 +1017,25 @@ inline Object Function::New(const std::vector<napi_value>& args) const {
   return Object(_env, result);
 }
 
-inline void Function::VoidFunctionCallbackWrapper(napi_env env, napi_callback_info info) {
+inline napi_value Function::VoidFunctionCallbackWrapper(napi_env env, napi_callback_info info) {
   try {
     CallbackInfo callbackInfo(env, info);
-    CallbackData* callbackData = reinterpret_cast<CallbackData*>(callbackInfo.Data());
-    callbackData->functionCallback(callbackInfo);
+    VoidFunctionCallbackData* callbackData =
+      reinterpret_cast<VoidFunctionCallbackData*>(callbackInfo.Data());
+    callbackData->callback(callbackInfo);
+    return nullptr;
   }
-  catch (const Error& e) {
-    if (!Napi::Env(env).IsExceptionPending()) {
-      e.ThrowAsJavaScriptException();
-    }
-    return;
-  }
+  NAPI_RETHROW_JS_ERROR(env)
 }
 
-inline void Function::FunctionCallbackWrapper(napi_env env, napi_callback_info info) {
-  napi_value result;
+inline napi_value Function::FunctionCallbackWrapper(napi_env env, napi_callback_info info) {
   try {
     CallbackInfo callbackInfo(env, info);
-    CallbackData* callbackData = reinterpret_cast<CallbackData*>(callbackInfo.Data());
-    result = callbackData->functionCallback(callbackInfo);
+    FunctionCallbackData* callbackData =
+      reinterpret_cast<FunctionCallbackData*>(callbackInfo.Data());
+    return callbackData->callback(callbackInfo);
   }
-  catch (const Error& e) {
-    if (!Napi::Env(env).IsExceptionPending()) {
-      e.ThrowAsJavaScriptException();
-    }
-    return;
-  }
-
-  napi_status status = napi_set_return_value(env, info, result);
-  if (status != napi_ok) return;
-}
-
-inline Function::CallbackData::CallbackData(VoidFunctionCallback cb, void* data)
-  : voidFunctionCallback(cb), data(data) {
-}
-
-inline Function::CallbackData::CallbackData(FunctionCallback cb, void* data)
-  : functionCallback(cb), data(data) {
+  NAPI_RETHROW_JS_ERROR(env)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -1121,7 +1135,7 @@ inline Error Error::New(napi_env env) {
       status = napi_create_string_utf8(
         env,
         error_message,
-        strlen(error_message),
+        std::strlen(error_message),
         &message);
       assert(status == napi_ok);
 
@@ -1146,7 +1160,7 @@ inline Error Error::New(napi_env env) {
 }
 
 inline Error Error::New(napi_env env, const char* message) {
-  return Error::New<Error>(env, message, strlen(message), napi_create_error);
+  return Error::New<Error>(env, message, std::strlen(message), napi_create_error);
 }
 
 inline Error Error::New(napi_env env, const std::string& message) {
@@ -1176,7 +1190,7 @@ inline void Error::ThrowAsJavaScriptException() const {
   }
 }
 
-inline const char* Error::what() const _NOEXCEPT {
+inline const char* Error::what() const NAPI_NOEXCEPT {
   return Message().c_str();
 }
 
@@ -1197,7 +1211,7 @@ inline TError Error::New(napi_env env,
 }
 
 inline TypeError TypeError::New(napi_env env, const char* message) {
-  return Error::New<TypeError>(env, message, strlen(message), napi_create_type_error);
+  return Error::New<TypeError>(env, message, std::strlen(message), napi_create_type_error);
 }
 
 inline TypeError TypeError::New(napi_env env, const std::string& message) {
@@ -1211,7 +1225,7 @@ inline TypeError::TypeError(napi_env env, napi_value value) : Error(env, value) 
 }
 
 inline RangeError RangeError::New(napi_env env, const char* message) {
-  return Error::New<RangeError>(env, message, strlen(message), napi_create_range_error);
+  return Error::New<RangeError>(env, message, std::strlen(message), napi_create_range_error);
 }
 
 inline RangeError RangeError::New(napi_env env, const std::string& message) {
@@ -1299,7 +1313,7 @@ inline bool Reference<T>::operator !=(const Reference<T> &other) const {
 }
 
 template <typename T>
-inline Env Reference<T>::Env() const {
+inline Napi::Env Reference<T>::Env() const {
   return Napi::Env(_env);
 }
 
@@ -1606,29 +1620,20 @@ inline Object FunctionReference::New(const std::vector<napi_value>& args) const 
 
 inline CallbackInfo::CallbackInfo(napi_env env, napi_callback_info info)
     : _env(env), _this(nullptr), _dynamicArgs(nullptr), _data(nullptr) {
-  napi_status status = napi_get_cb_this(env, info, &_this);
+  _argc = _staticArgCount;
+  _argv = _staticArgs;
+  napi_status status = napi_get_cb_info(env, info, &_argc, _argv, &_this, &_data);
   if (status != napi_ok) throw Error::New(_env);
 
-  status = napi_get_cb_args_length(env, info, &_argc);
-  if (status != napi_ok) throw Error::New(_env);
-
-  if (_argc > 0) {
+  if (_argc > _staticArgCount) {
     // Use either a fixed-size array (on the stack) or a dynamically-allocated
     // array (on the heap) depending on the number of args.
-    if (_argc <= _staticArgCount) {
-      _argv = _staticArgs;
-    }
-    else {
-      _dynamicArgs = new napi_value[_argc];
-      _argv = _dynamicArgs;
-    }
+    _dynamicArgs = new napi_value[_argc];
+    _argv = _dynamicArgs;
 
-    status = napi_get_cb_args(env, info, _argv, _argc);
+    status = napi_get_cb_info(env, info, &_argc, _argv, nullptr, nullptr);
     if (status != napi_ok) throw Error::New(_env);
   }
-
-  status = napi_get_cb_data(env, info, reinterpret_cast<void**>(&_data));
-  if (status != napi_ok) throw Error::New(_env);
 }
 
 inline CallbackInfo::~CallbackInfo() {
@@ -1637,15 +1642,15 @@ inline CallbackInfo::~CallbackInfo() {
   }
 }
 
-inline Env CallbackInfo::Env() const {
+inline Napi::Env CallbackInfo::Env() const {
   return Napi::Env(_env);
 }
 
-inline int CallbackInfo::Length() const {
+inline size_t CallbackInfo::Length() const {
   return _argc;
 }
 
-inline const Value CallbackInfo::operator [](int index) const {
+inline const Value CallbackInfo::operator [](size_t index) const {
   return index < _argc ? Value(_env, _argv[index]) : Env().Undefined();
 }
 
@@ -1716,15 +1721,14 @@ inline ClassPropertyDescriptor<T> ObjectWrap<T>::StaticMethod(
     StaticVoidMethodCallback method,
     napi_property_attributes attributes,
     void* data) {
-  CallbackData* callbackData = new CallbackData({}); // TODO: Delete when the class is destroyed
-  callbackData->staticVoidMethodCallback = method;
-  callbackData->data = data;
+  // TODO: Delete when the class is destroyed
+  StaticVoidMethodCallbackData* callbackData = new StaticVoidMethodCallbackData({ method, data });
 
   napi_property_descriptor desc = {};
   desc.utf8name = utf8name;
   desc.method = T::StaticVoidMethodCallbackWrapper;
   desc.data = callbackData;
-  desc.attributes = static_cast<napi_property_attributes>(attributes | napi_static_property);
+  desc.attributes = static_cast<napi_property_attributes>(attributes | napi_static);
   return desc;
 }
 
@@ -1734,15 +1738,14 @@ inline ClassPropertyDescriptor<T> ObjectWrap<T>::StaticMethod(
     StaticMethodCallback method,
     napi_property_attributes attributes,
     void* data) {
-  CallbackData* callbackData = new CallbackData({}); // TODO: Delete when the class is destroyed
-  callbackData->staticMethodCallback = method;
-  callbackData->data = data;
+  // TODO: Delete when the class is destroyed
+  StaticMethodCallbackData* callbackData = new StaticMethodCallbackData({ method, data });
 
   napi_property_descriptor desc = {};
   desc.utf8name = utf8name;
   desc.method = T::StaticMethodCallbackWrapper;
   desc.data = callbackData;
-  desc.attributes = static_cast<napi_property_attributes>(attributes | napi_static_property);
+  desc.attributes = static_cast<napi_property_attributes>(attributes | napi_static);
   return desc;
 }
 
@@ -1753,17 +1756,16 @@ inline ClassPropertyDescriptor<T> ObjectWrap<T>::StaticAccessor(
     StaticSetterCallback setter,
     napi_property_attributes attributes,
     void* data) {
-  CallbackData* callbackData = new CallbackData({}); // TODO: Delete when the class is destroyed
-  callbackData->staticGetterCallback = getter;
-  callbackData->staticSetterCallback = setter;
-  callbackData->data = data;
+  // TODO: Delete when the class is destroyed
+  StaticAccessorCallbackData* callbackData =
+    new StaticAccessorCallbackData({ getter, setter, data });
 
   napi_property_descriptor desc = {};
   desc.utf8name = utf8name;
   desc.getter = getter != nullptr ? T::StaticGetterCallbackWrapper : nullptr;
   desc.setter = setter != nullptr ? T::StaticSetterCallbackWrapper : nullptr;
   desc.data = callbackData;
-  desc.attributes = static_cast<napi_property_attributes>(attributes | napi_static_property);
+  desc.attributes = static_cast<napi_property_attributes>(attributes | napi_static);
   return desc;
 }
 
@@ -1773,9 +1775,9 @@ inline ClassPropertyDescriptor<T> ObjectWrap<T>::InstanceMethod(
     InstanceVoidMethodCallback method,
     napi_property_attributes attributes,
     void* data) {
-  CallbackData* callbackData = new CallbackData({}); // TODO: Delete when the class is destroyed
-  callbackData->instanceVoidMethodCallback = method;
-  callbackData->data = data;
+  // TODO: Delete when the class is destroyed
+  InstanceVoidMethodCallbackData* callbackData =
+    new InstanceVoidMethodCallbackData({ method, data});
 
   napi_property_descriptor desc = {};
   desc.utf8name = utf8name;
@@ -1791,9 +1793,8 @@ inline ClassPropertyDescriptor<T> ObjectWrap<T>::InstanceMethod(
     InstanceMethodCallback method,
     napi_property_attributes attributes,
     void* data) {
-  CallbackData* callbackData = new CallbackData({}); // TODO: Delete when the class is destroyed
-  callbackData->instanceMethodCallback = method;
-  callbackData->data = data;
+  // TODO: Delete when the class is destroyed
+  InstanceMethodCallbackData* callbackData = new InstanceMethodCallbackData({ method, data });
 
   napi_property_descriptor desc = {};
   desc.utf8name = utf8name;
@@ -1810,10 +1811,9 @@ inline ClassPropertyDescriptor<T> ObjectWrap<T>::InstanceAccessor(
     InstanceSetterCallback setter,
     napi_property_attributes attributes,
     void* data) {
-  CallbackData* callbackData = new CallbackData({}); // TODO: Delete when the class is destroyed
-  callbackData->instanceGetterCallback = getter;
-  callbackData->instanceSetterCallback = setter;
-  callbackData->data = data;
+  // TODO: Delete when the class is destroyed
+  InstanceAccessorCallbackData* callbackData =
+    new InstanceAccessorCallbackData({ getter, setter, data });
 
   napi_property_descriptor desc = {};
   desc.utf8name = utf8name;
@@ -1830,7 +1830,7 @@ inline ClassPropertyDescriptor<T> ObjectWrap<T>::StaticValue(const char* utf8nam
   napi_property_descriptor desc = {};
   desc.utf8name = utf8name;
   desc.value = value;
-  desc.attributes = static_cast<napi_property_attributes>(attributes | napi_static_property);
+  desc.attributes = static_cast<napi_property_attributes>(attributes | napi_static);
   return desc;
 }
 
@@ -1847,16 +1847,16 @@ inline ClassPropertyDescriptor<T> ObjectWrap<T>::InstanceValue(
 }
 
 template <typename T>
-inline void ObjectWrap<T>::ConstructorCallbackWrapper(
+inline napi_value ObjectWrap<T>::ConstructorCallbackWrapper(
     napi_env env,
     napi_callback_info info) {
   bool isConstructCall;
   napi_status status = napi_is_construct_call(env, info, &isConstructCall);
-  if (status != napi_ok) return;
+  if (status != napi_ok) return nullptr;
 
   if (!isConstructCall) {
     napi_throw_type_error(env, "Class constructors cannot be invoked without 'new'");
-    return;
+    return nullptr;
   }
 
   T* instance;
@@ -1866,190 +1866,140 @@ inline void ObjectWrap<T>::ConstructorCallbackWrapper(
     instance = new T(callbackInfo);
     wrapper = callbackInfo.This();
   }
-  catch (const Error& e) {
-    if (!Napi::Env(env).IsExceptionPending()) {
-      e.ThrowAsJavaScriptException();
-    }
-    return;
-  }
+  NAPI_RETHROW_JS_ERROR(env)
 
   napi_ref ref;
   status = napi_wrap(env, wrapper, instance, FinalizeCallback, nullptr, &ref);
-  if (status != napi_ok) return;
+  if (status != napi_ok) return nullptr;
 
   Reference<Object>* instanceRef = instance;
   *instanceRef = Reference<Object>(env, ref);
 
-  status = napi_set_return_value(env, info, wrapper);
-  if (status != napi_ok) return;
+  return wrapper;
 }
 
 template <typename T>
-inline void ObjectWrap<T>::StaticVoidMethodCallbackWrapper(
+inline napi_value ObjectWrap<T>::StaticVoidMethodCallbackWrapper(
     napi_env env,
     napi_callback_info info) {
   try {
     CallbackInfo callbackInfo(env, info);
-    CallbackData* callbackData = reinterpret_cast<CallbackData*>(callbackInfo.Data());
+    StaticVoidMethodCallbackData* callbackData =
+      reinterpret_cast<StaticVoidMethodCallbackData*>(callbackInfo.Data());
     callbackInfo.SetData(callbackData->data);
-    callbackData->staticVoidMethodCallback(callbackInfo);
+    callbackData->callback(callbackInfo);
+    return nullptr;
   }
-  catch (const Error& e) {
-    if (!Napi::Env(env).IsExceptionPending()) {
-      e.ThrowAsJavaScriptException();
-    }
-    return;
-  }
+  NAPI_RETHROW_JS_ERROR(env)
 }
 
 template <typename T>
-inline void ObjectWrap<T>::StaticMethodCallbackWrapper(
+inline napi_value ObjectWrap<T>::StaticMethodCallbackWrapper(
     napi_env env,
     napi_callback_info info) {
-  napi_value result;
   try {
     CallbackInfo callbackInfo(env, info);
-    CallbackData* callbackData = reinterpret_cast<CallbackData*>(callbackInfo.Data());
+    StaticMethodCallbackData* callbackData =
+      reinterpret_cast<StaticMethodCallbackData*>(callbackInfo.Data());
     callbackInfo.SetData(callbackData->data);
-    result = callbackData->staticMethodCallback(callbackInfo);
+    return callbackData->callback(callbackInfo);
   }
-  catch (const Error& e) {
-    if (!Napi::Env(env).IsExceptionPending()) {
-      e.ThrowAsJavaScriptException();
-    }
-    return;
-  }
-
-  napi_status status = napi_set_return_value(env, info, result);
-  if (status != napi_ok) return;
+  NAPI_RETHROW_JS_ERROR(env)
 }
 
 template <typename T>
-inline void ObjectWrap<T>::StaticGetterCallbackWrapper(
+inline napi_value ObjectWrap<T>::StaticGetterCallbackWrapper(
     napi_env env,
     napi_callback_info info) {
-  napi_value result;
   try {
     CallbackInfo callbackInfo(env, info);
-    CallbackData* callbackData = reinterpret_cast<CallbackData*>(callbackInfo.Data());
+    StaticAccessorCallbackData* callbackData =
+      reinterpret_cast<StaticAccessorCallbackData*>(callbackInfo.Data());
     callbackInfo.SetData(callbackData->data);
-    result = callbackData->staticGetterCallback(callbackInfo);
+    return callbackData->getterCallback(callbackInfo);
   }
-  catch (const Error& e) {
-    if (!Napi::Env(env).IsExceptionPending()) {
-      e.ThrowAsJavaScriptException();
-    }
-    return;
-  }
-
-  napi_status status = napi_set_return_value(env, info, result);
-  if (status != napi_ok) return;
+  NAPI_RETHROW_JS_ERROR(env)
 }
 
 template <typename T>
-inline void ObjectWrap<T>::StaticSetterCallbackWrapper(
+inline napi_value ObjectWrap<T>::StaticSetterCallbackWrapper(
     napi_env env,
     napi_callback_info info) {
   try {
     CallbackInfo callbackInfo(env, info);
-    CallbackData* callbackData = reinterpret_cast<CallbackData*>(callbackInfo.Data());
+    StaticAccessorCallbackData* callbackData =
+      reinterpret_cast<StaticAccessorCallbackData*>(callbackInfo.Data());
     callbackInfo.SetData(callbackData->data);
-    callbackData->staticSetterCallback(callbackInfo, callbackInfo[0]);
+    callbackData->setterCallback(callbackInfo, callbackInfo[0]);
+    return nullptr;
   }
-  catch (const Error& e) {
-    if (!Napi::Env(env).IsExceptionPending()) {
-      e.ThrowAsJavaScriptException();
-    }
-    return;
-  }
+  NAPI_RETHROW_JS_ERROR(env)
 }
 
 template <typename T>
-inline void ObjectWrap<T>::InstanceVoidMethodCallbackWrapper(
+inline napi_value ObjectWrap<T>::InstanceVoidMethodCallbackWrapper(
     napi_env env,
     napi_callback_info info) {
   try {
     CallbackInfo callbackInfo(env, info);
-    CallbackData* callbackData = reinterpret_cast<CallbackData*>(callbackInfo.Data());
+    InstanceVoidMethodCallbackData* callbackData =
+      reinterpret_cast<InstanceVoidMethodCallbackData*>(callbackInfo.Data());
     callbackInfo.SetData(callbackData->data);
     T* instance = Unwrap(callbackInfo.This());
-    auto cb = callbackData->instanceVoidMethodCallback;
+    auto cb = callbackData->callback;
     (instance->*cb)(callbackInfo);
+    return nullptr;
   }
-  catch (const Error& e) {
-    if (!Napi::Env(env).IsExceptionPending()) {
-      e.ThrowAsJavaScriptException();
-    }
-    return;
-  }
+  NAPI_RETHROW_JS_ERROR(env)
 }
 
 template <typename T>
-inline void ObjectWrap<T>::InstanceMethodCallbackWrapper(
-    napi_env env,
-    napi_callback_info info) {
-  napi_value result;
-  try {
-    CallbackInfo callbackInfo(env, info);
-    CallbackData* callbackData = reinterpret_cast<CallbackData*>(callbackInfo.Data());
-    callbackInfo.SetData(callbackData->data);
-    T* instance = Unwrap(callbackInfo.This());
-    auto cb = callbackData->instanceMethodCallback;
-    result = (instance->*cb)(callbackInfo);
-  }
-  catch (const Error& e) {
-    if (!Napi::Env(env).IsExceptionPending()) {
-      e.ThrowAsJavaScriptException();
-    }
-    return;
-  }
-
-  napi_status status = napi_set_return_value(env, info, result);
-  if (status != napi_ok) return;
-}
-
-template <typename T>
-inline void ObjectWrap<T>::InstanceGetterCallbackWrapper(
-    napi_env env,
-    napi_callback_info info) {
-  napi_value result;
-  try {
-    CallbackInfo callbackInfo(env, info);
-    CallbackData* callbackData = reinterpret_cast<CallbackData*>(callbackInfo.Data());
-    callbackInfo.SetData(callbackData->data);
-    T* instance = Unwrap(callbackInfo.This());
-    auto cb = callbackData->instanceGetterCallback;
-    result = (instance->*cb)(callbackInfo);
-  }
-  catch (const Error& e) {
-    if (!Napi::Env(env).IsExceptionPending()) {
-      e.ThrowAsJavaScriptException();
-    }
-    return;
-  }
-
-  napi_status status = napi_set_return_value(env, info, result);
-  if (status != napi_ok) return;
-}
-
-template <typename T>
-inline void ObjectWrap<T>::InstanceSetterCallbackWrapper(
+inline napi_value ObjectWrap<T>::InstanceMethodCallbackWrapper(
     napi_env env,
     napi_callback_info info) {
   try {
     CallbackInfo callbackInfo(env, info);
-    CallbackData* callbackData = reinterpret_cast<CallbackData*>(callbackInfo.Data());
+    InstanceMethodCallbackData* callbackData =
+      reinterpret_cast<InstanceMethodCallbackData*>(callbackInfo.Data());
     callbackInfo.SetData(callbackData->data);
     T* instance = Unwrap(callbackInfo.This());
-    auto cb = callbackData->instanceSetterCallback;
+    auto cb = callbackData->callback;
+    return (instance->*cb)(callbackInfo);
+  }
+  NAPI_RETHROW_JS_ERROR(env)
+}
+
+template <typename T>
+inline napi_value ObjectWrap<T>::InstanceGetterCallbackWrapper(
+    napi_env env,
+    napi_callback_info info) {
+  try {
+    CallbackInfo callbackInfo(env, info);
+    InstanceAccessorCallbackData* callbackData =
+      reinterpret_cast<InstanceAccessorCallbackData*>(callbackInfo.Data());
+    callbackInfo.SetData(callbackData->data);
+    T* instance = Unwrap(callbackInfo.This());
+    auto cb = callbackData->getterCallback;
+    return (instance->*cb)(callbackInfo);
+  }
+  NAPI_RETHROW_JS_ERROR(env)
+}
+
+template <typename T>
+inline napi_value ObjectWrap<T>::InstanceSetterCallbackWrapper(
+    napi_env env,
+    napi_callback_info info) {
+  try {
+    CallbackInfo callbackInfo(env, info);
+    InstanceAccessorCallbackData* callbackData =
+      reinterpret_cast<InstanceAccessorCallbackData*>(callbackInfo.Data());
+    callbackInfo.SetData(callbackData->data);
+    T* instance = Unwrap(callbackInfo.This());
+    auto cb = callbackData->setterCallback;
     (instance->*cb)(callbackInfo, callbackInfo[0]);
+    return nullptr;
   }
-  catch (const Error& e) {
-    if (!Napi::Env(env).IsExceptionPending()) {
-      e.ThrowAsJavaScriptException();
-    }
-    return;
-  }
+  NAPI_RETHROW_JS_ERROR(env)
 }
 
 template <typename T>
@@ -2079,7 +2029,7 @@ inline HandleScope::operator napi_handle_scope() const {
   return _scope;
 }
 
-inline Env HandleScope::Env() const {
+inline Napi::Env HandleScope::Env() const {
   return Napi::Env(_env);
 }
 
@@ -2104,7 +2054,7 @@ inline EscapableHandleScope::operator napi_escapable_handle_scope() const {
   return _scope;
 }
 
-inline Env EscapableHandleScope::Env() const {
+inline Napi::Env EscapableHandleScope::Env() const {
   return Napi::Env(_env);
 }
 
@@ -2158,7 +2108,7 @@ inline AsyncWorker::operator napi_async_work() const {
   return _work;
 }
 
-inline Env AsyncWorker::Env() const {
+inline Napi::Env AsyncWorker::Env() const {
   return Napi::Env(_env);
 }
 
@@ -2216,6 +2166,10 @@ inline void AsyncWorker::OnWorkComplete(
   }
   delete self;
 }
+
+// This macro shouldn't be useful in user code, because all
+// callbacks from JavaScript to C++ are wrapped here.
+#undef NAPI_RETHROW_JS_ERROR
 
 } // namespace Napi
 

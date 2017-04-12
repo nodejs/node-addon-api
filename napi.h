@@ -15,6 +15,12 @@
 #include <string>
 #include <vector>
 
+#ifdef _NOEXCEPT
+  #define NAPI_NOEXCEPT _NOEXCEPT
+#else
+  #define NAPI_NOEXCEPT noexcept
+#endif
+
 namespace Napi {
 
   class Env;
@@ -33,15 +39,15 @@ namespace Napi {
 
   class TypedArray;
   template <typename T, napi_typedarray_type A> class TypedArray_;
-  typedef TypedArray_<int8_t, napi_int8> Int8Array;
-  typedef TypedArray_<uint8_t, napi_uint8> Uint8Array;
-  typedef TypedArray_<uint8_t, napi_uint8_clamped> Uint8ClampedArray;
-  typedef TypedArray_<int16_t, napi_int16> Int16Array;
-  typedef TypedArray_<uint16_t, napi_uint16> Uint16Array;
-  typedef TypedArray_<int32_t, napi_int32> Int32Array;
-  typedef TypedArray_<uint32_t, napi_uint32> Uint32Array;
-  typedef TypedArray_<float, napi_float32> Float32Array;
-  typedef TypedArray_<double, napi_float64> Float64Array;
+  typedef TypedArray_<int8_t, napi_int8_array> Int8Array;
+  typedef TypedArray_<uint8_t, napi_uint8_array> Uint8Array;
+  typedef TypedArray_<uint8_t, napi_uint8_clamped_array> Uint8ClampedArray;
+  typedef TypedArray_<int16_t, napi_int16_array> Int16Array;
+  typedef TypedArray_<uint16_t, napi_uint16_array> Uint16Array;
+  typedef TypedArray_<int32_t, napi_int32_array> Int32Array;
+  typedef TypedArray_<uint32_t, napi_uint32_array> Uint32Array;
+  typedef TypedArray_<float, napi_float32_array> Float32Array;
+  typedef TypedArray_<double, napi_float64_array> Float64Array;
 
   // Functions exposed to JavaScript must conform to one these callback signatures.
   // These are std::function<> typedefs instead of function pointers to enable lambdas.
@@ -87,7 +93,7 @@ namespace Napi {
     bool operator !=(const Value& other) const;
     bool StrictEquals(const Value& other) const;
 
-    Env Env() const;
+    Napi::Env Env() const;
 
     napi_valuetype Type() const;
     bool IsUndefined() const;
@@ -154,8 +160,10 @@ namespace Napi {
   public:
     static String New(napi_env env, const std::string& value);
     static String New(napi_env env, const std::u16string& value);
-    static String New(napi_env env, const char* val, int length = -1);
-    static String New(napi_env env, const char16_t* val, int length = -1);
+    static String New(napi_env env, const char* value);
+    static String New(napi_env env, const char16_t* value);
+    static String New(napi_env env, const char* value, size_t length);
+    static String New(napi_env env, const char16_t* value, size_t length);
 
     String();
     String(napi_env env, napi_value value);
@@ -229,7 +237,7 @@ namespace Napi {
   class Array : public Object {
   public:
     static Array New(napi_env env);
-    static Array New(napi_env env, int length);
+    static Array New(napi_env env, size_t length);
 
     Array();
     Array(napi_env env, napi_value value);
@@ -267,7 +275,7 @@ namespace Napi {
     size_t ElementLength() const;
     size_t ByteOffset() const;
     size_t ByteLength() const;
-    ArrayBuffer ArrayBuffer() const;
+    Napi::ArrayBuffer ArrayBuffer() const;
 
     Int8Array AsInt8Array() const;
     Uint8Array AsUint8Array() const;
@@ -351,19 +359,16 @@ namespace Napi {
     Object New(const std::vector<napi_value>& args) const;
 
   private:
-    static void VoidFunctionCallbackWrapper(napi_env env, napi_callback_info info);
-    static void FunctionCallbackWrapper(napi_env env, napi_callback_info info);
+    static napi_value VoidFunctionCallbackWrapper(napi_env env, napi_callback_info info);
+    static napi_value FunctionCallbackWrapper(napi_env env, napi_callback_info info);
 
+    template <typename TCallback>
     struct CallbackData {
-      CallbackData(VoidFunctionCallback cb, void* data);
-      CallbackData(FunctionCallback cb, void* data);
-      ~CallbackData() {};
-      union {
-        VoidFunctionCallback voidFunctionCallback;
-        FunctionCallback functionCallback;
-      };
+      TCallback callback;
       void* data;
     };
+    typedef CallbackData<VoidFunctionCallback> VoidFunctionCallbackData;
+    typedef CallbackData<FunctionCallback> FunctionCallbackData;
   };
 
   template <typename T>
@@ -449,10 +454,10 @@ namespace Napi {
     std::string Message() const;
     void ThrowAsJavaScriptException() const;
 
-    const char* what() const _NOEXCEPT override;
+    const char* what() const NAPI_NOEXCEPT override;
 
   protected:
-    typedef napi_status (*create_error_fn)(napi_env env, napi_value msg, napi_value* result);
+    typedef napi_status (*create_error_fn)(napi_env envb, napi_value msg, napi_value* result);
 
     template <typename TError>
     static TError New(napi_env env,
@@ -507,7 +512,7 @@ namespace Napi {
     bool operator ==(const Reference<T> &other) const;
     bool operator !=(const Reference<T> &other) const;
 
-    Env Env() const;
+    Napi::Env Env() const;
     bool IsEmpty() const;
 
     // Note when getting the value of a Reference it is usually correct to do so
@@ -611,15 +616,15 @@ namespace Napi {
     CallbackInfo(napi_env env, napi_callback_info info);
     ~CallbackInfo();
 
-    Env Env() const;
-    int Length() const;
-    const Value operator [](int index) const;
+    Napi::Env Env() const;
+    size_t Length() const;
+    const Value operator [](size_t index) const;
     Object This() const;
     void* Data() const;
     void SetData(void* data);
 
   private:
-    const int _staticArgCount = 6;
+    const size_t _staticArgCount = 6;
     napi_env _env;
     napi_value _this;
     size_t _argc;
@@ -749,34 +754,37 @@ namespace Napi {
                                             napi_property_attributes attributes = napi_default);
 
   private:
-    static void ConstructorCallbackWrapper(napi_env env, napi_callback_info info);
-    static void StaticVoidMethodCallbackWrapper(napi_env env, napi_callback_info info);
-    static void StaticMethodCallbackWrapper(napi_env env, napi_callback_info info);
-    static void StaticGetterCallbackWrapper(napi_env env, napi_callback_info info);
-    static void StaticSetterCallbackWrapper(napi_env env, napi_callback_info info);
-    static void InstanceVoidMethodCallbackWrapper(napi_env env, napi_callback_info info);
-    static void InstanceMethodCallbackWrapper(napi_env env, napi_callback_info info);
-    static void InstanceGetterCallbackWrapper(napi_env env, napi_callback_info info);
-    static void InstanceSetterCallbackWrapper(napi_env env, napi_callback_info info);
+    static napi_value ConstructorCallbackWrapper(napi_env env, napi_callback_info info);
+    static napi_value StaticVoidMethodCallbackWrapper(napi_env env, napi_callback_info info);
+    static napi_value StaticMethodCallbackWrapper(napi_env env, napi_callback_info info);
+    static napi_value StaticGetterCallbackWrapper(napi_env env, napi_callback_info info);
+    static napi_value StaticSetterCallbackWrapper(napi_env env, napi_callback_info info);
+    static napi_value InstanceVoidMethodCallbackWrapper(napi_env env, napi_callback_info info);
+    static napi_value InstanceMethodCallbackWrapper(napi_env env, napi_callback_info info);
+    static napi_value InstanceGetterCallbackWrapper(napi_env env, napi_callback_info info);
+    static napi_value InstanceSetterCallbackWrapper(napi_env env, napi_callback_info info);
     static void FinalizeCallback(napi_env env, void* data, void* hint);
 
-    typedef struct {
-      union {
-        StaticVoidMethodCallback staticVoidMethodCallback;
-        StaticMethodCallback staticMethodCallback;
-        struct {
-          StaticGetterCallback staticGetterCallback;
-          StaticSetterCallback staticSetterCallabck;
-        };
-        InstanceVoidMethodCallback instanceVoidMethodCallback;
-        InstanceMethodCallback instanceMethodCallback;
-        struct {
-          InstanceGetterCallback instanceGetterCallback;
-          InstanceSetterCallback instanceSetterCallback;
-        };
-      };
+    template <typename TCallback>
+    struct MethodCallbackData {
+      TCallback callback;
       void* data;
-    } CallbackData;
+    };
+    typedef MethodCallbackData<StaticVoidMethodCallback> StaticVoidMethodCallbackData;
+    typedef MethodCallbackData<StaticMethodCallback> StaticMethodCallbackData;
+    typedef MethodCallbackData<InstanceVoidMethodCallback> InstanceVoidMethodCallbackData;
+    typedef MethodCallbackData<InstanceMethodCallback> InstanceMethodCallbackData;
+
+    template <typename TGetterCallback, typename TSetterCallback>
+    struct AccessorCallbackData {
+      TGetterCallback getterCallback;
+      TSetterCallback setterCallback;
+      void* data;
+    };
+    typedef AccessorCallbackData<StaticGetterCallback, StaticSetterCallback>
+      StaticAccessorCallbackData;
+    typedef AccessorCallbackData<InstanceGetterCallback, InstanceSetterCallback>
+      InstanceAccessorCallbackData;
   };
 
   class HandleScope {
@@ -787,7 +795,7 @@ namespace Napi {
 
     operator napi_handle_scope() const;
 
-    Env Env() const;
+    Napi::Env Env() const;
 
   private:
     napi_env _env;
@@ -802,7 +810,7 @@ namespace Napi {
 
     operator napi_escapable_handle_scope() const;
 
-    Env Env() const;
+    Napi::Env Env() const;
     Value Escape(napi_value escapee);
 
   private:
@@ -822,7 +830,7 @@ namespace Napi {
 
     operator napi_async_work() const;
 
-    Env Env() const;
+    Napi::Env Env() const;
 
     void Queue();
     void Cancel();
