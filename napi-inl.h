@@ -1198,12 +1198,15 @@ inline Error::Error() : Object(), _message(nullptr) {
 inline Error::Error(napi_env env, napi_value value) : Object(env, value) {
 }
 
-inline std::string Error::Message() const {
+inline const std::string& Error::Message() const NAPI_NOEXCEPT {
   if (_message.size() == 0 && _env != nullptr) {
     try {
-      const_cast<Error*>(this)->_message = (*this)["message"].As<String>();
+      _message = (*this)["message"].As<String>();
     }
-    catch (const Error&) {
+    catch (...) {
+      // Catch all errors here, to include e.g. a std::bad_alloc from
+      // the std::string::operator=, because this is used by the
+      // Error::what() noexcept method.
     }
   }
   return _message;

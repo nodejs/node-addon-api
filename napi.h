@@ -449,7 +449,7 @@ namespace Napi {
     Error();
     Error(napi_env env, napi_value value);
 
-    std::string Message() const;
+    const std::string& Message() const NAPI_NOEXCEPT;
     void ThrowAsJavaScriptException() const;
 
     const char* what() const NAPI_NOEXCEPT override;
@@ -464,7 +464,7 @@ namespace Napi {
                       create_error_fn create_error);
 
   private:
-    std::string _message;
+    mutable std::string _message;
   };
 
   class TypeError : public Error {
