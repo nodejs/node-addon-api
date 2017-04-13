@@ -994,15 +994,15 @@ inline Function::Function(napi_env env, napi_value value) : Object(env, value) {
 }
 
 inline Value Function::operator ()(const std::initializer_list<napi_value>& args) const {
-  return Call(Env().Global(), args);
+  return Call(Env().Undefined(), args);
 }
 
 inline Value Function::Call(const std::initializer_list<napi_value>& args) const {
-  return Call(Env().Global(), args);
+  return Call(Env().Undefined(), args);
 }
 
 inline Value Function::Call(const std::vector<napi_value>& args) const {
-  return Call(Env().Global(), args);
+  return Call(Env().Undefined(), args);
 }
 
 inline Value Function::Call(napi_value recv, const std::initializer_list<napi_value>& args) const {
@@ -1022,11 +1022,11 @@ inline Value Function::Call(napi_value recv, const std::vector<napi_value>& args
 }
 
 inline Value Function::MakeCallback(const std::initializer_list<napi_value>& args) const {
-  return MakeCallback(Env().Global(), args);
+  return MakeCallback(Env().Undefined(), args);
 }
 
 inline Value Function::MakeCallback(const std::vector<napi_value>& args) const {
-  return MakeCallback(Env().Global(), args);
+  return MakeCallback(Env().Undefined(), args);
 }
 
 inline Value Function::MakeCallback(
@@ -1681,7 +1681,7 @@ inline const Value CallbackInfo::operator [](size_t index) const {
 
 inline Object CallbackInfo::This() const {
   if (_this == nullptr) {
-    return Env().Global();
+    return Env().Undefined();
   }
   return Object(_env, _this);
 }
@@ -2162,11 +2162,11 @@ inline ObjectReference& AsyncWorker::Persistent() {
 }
 
 inline void AsyncWorker::OnOK() {
-  _callback.MakeCallback(Env().Global(), std::vector<napi_value>());
+  _callback.MakeCallback(Env().Undefined(), std::vector<napi_value>());
 }
 
 inline void AsyncWorker::OnError(Error e) {
-  _callback.MakeCallback(Env().Global(), std::vector<napi_value>({ e }));
+  _callback.MakeCallback(Env().Undefined(), std::vector<napi_value>({ e }));
 }
 
 inline void AsyncWorker::SetError(Error error) {
