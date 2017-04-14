@@ -20,7 +20,7 @@
   },
   "scripts": {
     "pretest": "node-gyp rebuild -C test",
-    "test": "node test"
+    "test": "node --expose-gc test"
   },
   "version": "0.1.0"
 }

@@ -49,6 +49,12 @@ obj = binding.function.callConstructorWithVector(testConstructor, 6, 7, 8);
 assert(obj instanceof testConstructor);
 assert.deepStrictEqual(args, [ 6, 7, 8 ]);
 
+obj = {};
+assert.deepStrictEqual(binding.function.voidCallbackWithData(obj), undefined);
+assert.deepStrictEqual(obj, { "foo": "bar", "data": 1 });
+
+assert.deepStrictEqual(binding.function.valueCallbackWithData(), { "foo": "bar", "data": 1 });
+
 assert.equal(binding.function.voidCallback.name, 'voidCallback');
 assert.equal(binding.function.valueCallback.name, 'valueCallback');
 

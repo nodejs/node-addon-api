@@ -2,6 +2,8 @@
 
 using namespace Napi;
 
+namespace {
+
 void ThrowError(const CallbackInfo& info) {
   std::string message = info[0].As<String>().Utf8Value();
   throw Error::New(info.Env(), message);
@@ -52,6 +54,8 @@ void CatchAndRethrowError(const CallbackInfo& info) {
      throw e;
   }
 }
+
+} // end anonymous namespace
 
 Object InitError(Env env) {
   Object exports = Object::New(env);
