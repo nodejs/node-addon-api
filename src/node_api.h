@@ -11,6 +11,7 @@
 #define SRC_NODE_API_H_
 
 #include <stddef.h>
+#include <stdbool.h>
 #include "node_api_types.h"
 
 #ifdef _WIN32
@@ -37,23 +38,20 @@
 #endif
 
 
-namespace node {
+typedef void (*napi_addon_register_func)(napi_env env,
+                                         napi_value exports,
+                                         napi_value module,
+                                         void* priv);
 
-NAPI_EXTERN typedef void (*napi_addon_register_func)(napi_env env,
-                                                     napi_value exports,
-                                                     napi_value module,
-                                                     void* priv);
-}  // namespace node
-
-struct napi_module {
+typedef struct {
   int nm_version;
   unsigned int nm_flags;
   const char* nm_filename;
-  node::napi_addon_register_func nm_register_func;
+  napi_addon_register_func nm_register_func;
   const char* nm_modname;
   void* nm_priv;
   void* reserved[4];
-};
+} napi_module;
 
 #define NAPI_MODULE_VERSION  1
 
@@ -70,8 +68,16 @@ struct napi_module {
   static void fn(void)
 #endif
 
+#ifdef __cplusplus
+#define EXTERN_C_START extern "C" {
+#define EXTERN_C_END }
+#else
+#define EXTERN_C_START
+#define EXTERN_C_END
+#endif
+
 #define NAPI_MODULE_X(modname, regfunc, priv, flags)                  \
-  extern "C" {                                                        \
+  EXTERN_C_START                                                      \
     static napi_module _module =                                      \
     {                                                                 \
       NAPI_MODULE_VERSION,                                            \
@@ -85,212 +91,201 @@ struct napi_module {
     NAPI_C_CTOR(_register_ ## modname) {                              \
       napi_module_register(&_module);                                 \
     }                                                                 \
-  }
+  EXTERN_C_END
 
 #define NAPI_MODULE(modname, regfunc) \
   NAPI_MODULE_X(modname, regfunc, NULL, 0)
 
-extern "C" {
+EXTERN_C_START
 
 NAPI_EXTERN void napi_module_register(napi_module* mod);
 
-NAPI_EXTERN const napi_extended_error_info* napi_get_last_error_info();
+NAPI_EXTERN napi_status
+napi_get_last_error_info(napi_env env,
+                         const napi_extended_error_info** result);
 
 // Getters for defined singletons
-NAPI_EXTERN napi_status napi_get_undefined(napi_env e, napi_value* result);
-NAPI_EXTERN napi_status napi_get_null(napi_env e, napi_value* result);
-NAPI_EXTERN napi_status napi_get_false(napi_env e, napi_value* result);
-NAPI_EXTERN napi_status napi_get_true(napi_env e, napi_value* result);
-NAPI_EXTERN napi_status napi_get_global(napi_env e, napi_value* result);
+NAPI_EXTERN napi_status napi_get_undefined(napi_env env, napi_value* result);
+NAPI_EXTERN napi_status napi_get_null(napi_env env, napi_value* result);
+NAPI_EXTERN napi_status napi_get_global(napi_env env, napi_value* result);
+NAPI_EXTERN napi_status napi_get_boolean(napi_env env,
+                                         bool value,
+                                         napi_value* result);
 
 // Methods to create Primitive types/Objects
-NAPI_EXTERN napi_status napi_create_object(napi_env e, napi_value* result);
-NAPI_EXTERN napi_status napi_create_array(napi_env e, napi_value* result);
-NAPI_EXTERN napi_status napi_create_array_with_length(napi_env e,
-                                                      int length,
+NAPI_EXTERN napi_status napi_create_object(napi_env env, napi_value* result);
+NAPI_EXTERN napi_status napi_create_array(napi_env env, napi_value* result);
+NAPI_EXTERN napi_status napi_create_array_with_length(napi_env env,
+                                                      size_t length,
                                                       napi_value* result);
-NAPI_EXTERN napi_status napi_create_number(napi_env e,
-                                           double val,
+NAPI_EXTERN napi_status napi_create_number(napi_env env,
+                                           double value,
                                            napi_value* result);
-NAPI_EXTERN napi_status napi_create_string_utf8(napi_env e,
-                                                const char* s,
-                                                int length,
+NAPI_EXTERN napi_status napi_create_string_utf8(napi_env env,
+                                                const char* str,
+                                                size_t length,
                                                 napi_value* result);
-NAPI_EXTERN napi_status napi_create_string_utf16(napi_env e,
-                                                 const char16_t* s,
-                                                 int length,
+NAPI_EXTERN napi_status napi_create_string_utf16(napi_env env,
+                                                 const char16_t* str,
+                                                 size_t length,
                                                  napi_value* result);
-NAPI_EXTERN napi_status napi_create_boolean(napi_env e,
-                                            bool b,
-                                            napi_value* result);
-NAPI_EXTERN napi_status napi_create_symbol(napi_env e,
-                                           const char* s,
+NAPI_EXTERN napi_status napi_create_symbol(napi_env env,
+                                           napi_value description,
                                            napi_value* result);
-NAPI_EXTERN napi_status napi_create_function(napi_env e,
+NAPI_EXTERN napi_status napi_create_function(napi_env env,
                                              const char* utf8name,
                                              napi_callback cb,
                                              void* data,
                                              napi_value* result);
-NAPI_EXTERN napi_status napi_create_error(napi_env e,
+NAPI_EXTERN napi_status napi_create_error(napi_env env,
                                           napi_value msg,
                                           napi_value* result);
-NAPI_EXTERN napi_status napi_create_type_error(napi_env e,
+NAPI_EXTERN napi_status napi_create_type_error(napi_env env,
                                                napi_value msg,
                                                napi_value* result);
-NAPI_EXTERN napi_status napi_create_range_error(napi_env e,
+NAPI_EXTERN napi_status napi_create_range_error(napi_env env,
                                                 napi_value msg,
                                                 napi_value* result);
 
 // Methods to get the the native napi_value from Primitive type
-NAPI_EXTERN napi_status napi_get_type_of_value(napi_env e,
-                                               napi_value value,
-                                               napi_valuetype* result);
-NAPI_EXTERN napi_status napi_get_value_double(napi_env e,
+NAPI_EXTERN napi_status napi_typeof(napi_env env,
+                                    napi_value value,
+                                    napi_valuetype* result);
+NAPI_EXTERN napi_status napi_get_value_double(napi_env env,
                                               napi_value value,
                                               double* result);
-NAPI_EXTERN napi_status napi_get_value_int32(napi_env e,
+NAPI_EXTERN napi_status napi_get_value_int32(napi_env env,
                                              napi_value value,
                                              int32_t* result);
-NAPI_EXTERN napi_status napi_get_value_uint32(napi_env e,
+NAPI_EXTERN napi_status napi_get_value_uint32(napi_env env,
                                               napi_value value,
                                               uint32_t* result);
-NAPI_EXTERN napi_status napi_get_value_int64(napi_env e,
+NAPI_EXTERN napi_status napi_get_value_int64(napi_env env,
                                              napi_value value,
                                              int64_t* result);
-NAPI_EXTERN napi_status napi_get_value_bool(napi_env e,
+NAPI_EXTERN napi_status napi_get_value_bool(napi_env env,
                                             napi_value value,
                                             bool* result);
 
 // Gets the number of CHARACTERS in the string.
-NAPI_EXTERN napi_status napi_get_value_string_length(napi_env e,
+NAPI_EXTERN napi_status napi_get_value_string_length(napi_env env,
                                                      napi_value value,
-                                                     int* result);
-
-// Gets the number of BYTES in the UTF-8 encoded representation of the string.
-NAPI_EXTERN napi_status napi_get_value_string_utf8_length(napi_env e,
-                                                          napi_value value,
-                                                          int* result);
+                                                     size_t* result);
 
 // Copies UTF-8 encoded bytes from a string into a buffer.
-NAPI_EXTERN napi_status napi_get_value_string_utf8(napi_env e,
+NAPI_EXTERN napi_status napi_get_value_string_utf8(napi_env env,
                                                    napi_value value,
                                                    char* buf,
-                                                   int bufsize,
-                                                   int* result);
-
-// Gets the number of 2-byte code units in the UTF-16 encoded
-// representation of the string.
-NAPI_EXTERN napi_status napi_get_value_string_utf16_length(napi_env e,
-                                                           napi_value value,
-                                                           int* result);
+                                                   size_t bufsize,
+                                                   size_t* result);
 
 // Copies UTF-16 encoded bytes from a string into a buffer.
-NAPI_EXTERN napi_status napi_get_value_string_utf16(napi_env e,
+NAPI_EXTERN napi_status napi_get_value_string_utf16(napi_env env,
                                                     napi_value value,
                                                     char16_t* buf,
-                                                    int bufsize,
-                                                    int* result);
+                                                    size_t bufsize,
+                                                    size_t* result);
 
 // Methods to coerce values
-// These APIs may execute user script
-NAPI_EXTERN napi_status napi_coerce_to_bool(napi_env e,
+// These APIs may execute user scripts
+NAPI_EXTERN napi_status napi_coerce_to_bool(napi_env env,
                                             napi_value value,
                                             napi_value* result);
-NAPI_EXTERN napi_status napi_coerce_to_number(napi_env e,
+NAPI_EXTERN napi_status napi_coerce_to_number(napi_env env,
                                               napi_value value,
                                               napi_value* result);
-NAPI_EXTERN napi_status napi_coerce_to_object(napi_env e,
+NAPI_EXTERN napi_status napi_coerce_to_object(napi_env env,
                                               napi_value value,
                                               napi_value* result);
-NAPI_EXTERN napi_status napi_coerce_to_string(napi_env e,
+NAPI_EXTERN napi_status napi_coerce_to_string(napi_env env,
                                               napi_value value,
                                               napi_value* result);
 
 // Methods to work with Objects
-NAPI_EXTERN napi_status napi_get_prototype(napi_env e,
+NAPI_EXTERN napi_status napi_get_prototype(napi_env env,
                                            napi_value object,
                                            napi_value* result);
-NAPI_EXTERN napi_status napi_get_propertynames(napi_env e,
-                                               napi_value object,
-                                               napi_value* result);
-NAPI_EXTERN napi_status napi_set_property(napi_env e,
+NAPI_EXTERN napi_status napi_get_property_names(napi_env env,
+                                                napi_value object,
+                                                napi_value* result);
+NAPI_EXTERN napi_status napi_set_property(napi_env env,
                                           napi_value object,
                                           napi_value key,
                                           napi_value value);
-NAPI_EXTERN napi_status napi_has_property(napi_env e,
+NAPI_EXTERN napi_status napi_has_property(napi_env env,
                                           napi_value object,
                                           napi_value key,
                                           bool* result);
-NAPI_EXTERN napi_status napi_get_property(napi_env e,
+NAPI_EXTERN napi_status napi_get_property(napi_env env,
                                           napi_value object,
                                           napi_value key,
                                           napi_value* result);
-NAPI_EXTERN napi_status napi_set_named_property(napi_env e,
+NAPI_EXTERN napi_status napi_set_named_property(napi_env env,
                                           napi_value object,
                                           const char* utf8name,
                                           napi_value value);
-NAPI_EXTERN napi_status napi_has_named_property(napi_env e,
+NAPI_EXTERN napi_status napi_has_named_property(napi_env env,
                                           napi_value object,
                                           const char* utf8name,
                                           bool* result);
-NAPI_EXTERN napi_status napi_get_named_property(napi_env e,
+NAPI_EXTERN napi_status napi_get_named_property(napi_env env,
                                           napi_value object,
                                           const char* utf8name,
                                           napi_value* result);
-NAPI_EXTERN napi_status napi_set_element(napi_env e,
+NAPI_EXTERN napi_status napi_set_element(napi_env env,
                                          napi_value object,
                                          uint32_t index,
                                          napi_value value);
-NAPI_EXTERN napi_status napi_has_element(napi_env e,
+NAPI_EXTERN napi_status napi_has_element(napi_env env,
                                          napi_value object,
                                          uint32_t index,
                                          bool* result);
-NAPI_EXTERN napi_status napi_get_element(napi_env e,
+NAPI_EXTERN napi_status napi_get_element(napi_env env,
                                          napi_value object,
                                          uint32_t index,
                                          napi_value* result);
 NAPI_EXTERN napi_status
-napi_define_properties(napi_env e,
+napi_define_properties(napi_env env,
                        napi_value object,
-                       int property_count,
+                       size_t property_count,
                        const napi_property_descriptor* properties);
 
 // Methods to work with Arrays
-NAPI_EXTERN napi_status napi_is_array(napi_env e,
+NAPI_EXTERN napi_status napi_is_array(napi_env env,
                                       napi_value value,
                                       bool* result);
-NAPI_EXTERN napi_status napi_get_array_length(napi_env e,
+NAPI_EXTERN napi_status napi_get_array_length(napi_env env,
                                               napi_value value,
                                               uint32_t* result);
 
 // Methods to compare values
-NAPI_EXTERN napi_status napi_strict_equals(napi_env e,
+NAPI_EXTERN napi_status napi_strict_equals(napi_env env,
                                            napi_value lhs,
                                            napi_value rhs,
                                            bool* result);
 
 // Methods to work with Functions
-NAPI_EXTERN napi_status napi_call_function(napi_env e,
+NAPI_EXTERN napi_status napi_call_function(napi_env env,
                                            napi_value recv,
                                            napi_value func,
-                                           int argc,
+                                           size_t argc,
                                            const napi_value* argv,
                                            napi_value* result);
-NAPI_EXTERN napi_status napi_new_instance(napi_env e,
+NAPI_EXTERN napi_status napi_new_instance(napi_env env,
                                           napi_value constructor,
-                                          int argc,
+                                          size_t argc,
                                           const napi_value* argv,
                                           napi_value* result);
-NAPI_EXTERN napi_status napi_instanceof(napi_env e,
+NAPI_EXTERN napi_status napi_instanceof(napi_env env,
                                         napi_value object,
                                         napi_value constructor,
                                         bool* result);
 
 // Napi version of node::MakeCallback(...)
-NAPI_EXTERN napi_status napi_make_callback(napi_env e,
+NAPI_EXTERN napi_status napi_make_callback(napi_env env,
                                            napi_value recv,
                                            napi_value func,
-                                           int argc,
+                                           size_t argc,
                                            const napi_value* argv,
                                            napi_value* result);
 
@@ -298,151 +293,131 @@ NAPI_EXTERN napi_status napi_make_callback(napi_env e,
 
 // Gets all callback info in a single call. (Ugly, but faster.)
 NAPI_EXTERN napi_status napi_get_cb_info(
-    napi_env e,                 // [in] NAPI environment handle
+    napi_env env,               // [in] NAPI environment handle
     napi_callback_info cbinfo,  // [in] Opaque callback-info handle
-    int* argc,         // [in-out] Specifies the size of the provided argv array
+    size_t* argc,      // [in-out] Specifies the size of the provided argv array
                        // and receives the actual count of args.
     napi_value* argv,  // [out] Array of values
-    napi_value* thisArg,  // [out] Receives the JS 'this' arg for the call
-    void** data);         // [out] Receives the data pointer for the callback.
+    napi_value* this_arg,  // [out] Receives the JS 'this' arg for the call
+    void** data);          // [out] Receives the data pointer for the callback.
 
-NAPI_EXTERN napi_status napi_get_cb_args_length(napi_env e,
-                                                napi_callback_info cbinfo,
-                                                int* result);
-NAPI_EXTERN napi_status napi_get_cb_args(napi_env e,
-                                         napi_callback_info cbinfo,
-                                         napi_value* buffer,
-                                         int bufferlength);
-NAPI_EXTERN napi_status napi_get_cb_this(napi_env e,
-                                         napi_callback_info cbinfo,
-                                         napi_value* result);
-
-// V8 concept; see note in .cc file
-NAPI_EXTERN napi_status napi_get_cb_holder(napi_env e,
-                                           napi_callback_info cbinfo,
-                                           napi_value* result);
-NAPI_EXTERN napi_status napi_get_cb_data(napi_env e,
-                                         napi_callback_info cbinfo,
-                                         void** result);
-NAPI_EXTERN napi_status napi_is_construct_call(napi_env e,
+NAPI_EXTERN napi_status napi_is_construct_call(napi_env env,
                                                napi_callback_info cbinfo,
                                                bool* result);
-NAPI_EXTERN napi_status napi_set_return_value(napi_env e,
-                                              napi_callback_info cbinfo,
-                                              napi_value value);
 NAPI_EXTERN napi_status
-napi_define_class(napi_env e,
+napi_define_class(napi_env env,
                   const char* utf8name,
                   napi_callback constructor,
                   void* data,
-                  int property_count,
+                  size_t property_count,
                   const napi_property_descriptor* properties,
                   napi_value* result);
 
 // Methods to work with external data objects
-NAPI_EXTERN napi_status napi_wrap(napi_env e,
-                                  napi_value jsObject,
-                                  void* nativeObj,
+NAPI_EXTERN napi_status napi_wrap(napi_env env,
+                                  napi_value js_object,
+                                  void* native_object,
                                   napi_finalize finalize_cb,
                                   void* finalize_hint,
                                   napi_ref* result);
-NAPI_EXTERN napi_status napi_unwrap(napi_env e,
-                                    napi_value jsObject,
+NAPI_EXTERN napi_status napi_unwrap(napi_env env,
+                                    napi_value js_object,
                                     void** result);
-NAPI_EXTERN napi_status napi_create_external(napi_env e,
+NAPI_EXTERN napi_status napi_create_external(napi_env env,
                                              void* data,
                                              napi_finalize finalize_cb,
                                              void* finalize_hint,
                                              napi_value* result);
-NAPI_EXTERN napi_status napi_get_value_external(napi_env e,
+NAPI_EXTERN napi_status napi_get_value_external(napi_env env,
                                                 napi_value value,
                                                 void** result);
 
 // Methods to control object lifespan
 
 // Set initial_refcount to 0 for a weak reference, >0 for a strong reference.
-NAPI_EXTERN napi_status napi_create_reference(napi_env e,
+NAPI_EXTERN napi_status napi_create_reference(napi_env env,
                                               napi_value value,
-                                              int initial_refcount,
+                                              uint32_t initial_refcount,
                                               napi_ref* result);
 
 // Deletes a reference. The referenced value is released, and may
 // be GC'd unless there are other references to it.
-NAPI_EXTERN napi_status napi_delete_reference(napi_env e, napi_ref ref);
+NAPI_EXTERN napi_status napi_delete_reference(napi_env env, napi_ref ref);
 
 // Increments the reference count, optionally returning the resulting count.
 // After this call the  reference will be a strong reference because its
 // refcount is >0, and the referenced object is effectively "pinned".
-// Calling this when the refcount is 0 and the object isunavailable
+// Calling this when the refcount is 0 and the object is unavailable
 // results in an error.
-NAPI_EXTERN napi_status napi_reference_addref(napi_env e,
-                                              napi_ref ref,
-                                              int* result);
+NAPI_EXTERN napi_status napi_reference_ref(napi_env env,
+                                           napi_ref ref,
+                                           uint32_t* result);
 
 // Decrements the reference count, optionally returning the resulting count.
 // If the result is 0 the reference is now weak and the object may be GC'd
 // at any time if there are no other references. Calling this when the
-// refcount is already 0 results in an error.
-NAPI_EXTERN napi_status napi_reference_release(napi_env e,
-                                               napi_ref ref,
-                                               int* result);
+// refcount is already 0 results in an error.
+NAPI_EXTERN napi_status napi_reference_unref(napi_env env,
+                                             napi_ref ref,
+                                             uint32_t* result);
 
 // Attempts to get a referenced value. If the reference is weak,
 // the value might no longer be available, in that case the call
-// is still successful but the result is NULL.
-NAPI_EXTERN napi_status napi_get_reference_value(napi_env e,
+// is still successful but the result is NULL.
+NAPI_EXTERN napi_status napi_get_reference_value(napi_env env,
                                                  napi_ref ref,
                                                  napi_value* result);
 
-NAPI_EXTERN napi_status napi_open_handle_scope(napi_env e,
+NAPI_EXTERN napi_status napi_open_handle_scope(napi_env env,
                                                napi_handle_scope* result);
-NAPI_EXTERN napi_status napi_close_handle_scope(napi_env e,
+NAPI_EXTERN napi_status napi_close_handle_scope(napi_env env,
                                                 napi_handle_scope scope);
 NAPI_EXTERN napi_status
-napi_open_escapable_handle_scope(napi_env e,
+napi_open_escapable_handle_scope(napi_env env,
                                  napi_escapable_handle_scope* result);
 NAPI_EXTERN napi_status
-napi_close_escapable_handle_scope(napi_env e,
+napi_close_escapable_handle_scope(napi_env env,
                                   napi_escapable_handle_scope scope);
 
-NAPI_EXTERN napi_status napi_escape_handle(napi_env e,
+NAPI_EXTERN napi_status napi_escape_handle(napi_env env,
                                            napi_escapable_handle_scope scope,
                                            napi_value escapee,
                                            napi_value* result);
 
 // Methods to support error handling
-NAPI_EXTERN napi_status napi_throw(napi_env e, napi_value error);
-NAPI_EXTERN napi_status napi_throw_error(napi_env e, const char* msg);
-NAPI_EXTERN napi_status napi_throw_type_error(napi_env e, const char* msg);
-NAPI_EXTERN napi_status napi_throw_range_error(napi_env e, const char* msg);
-NAPI_EXTERN napi_status napi_is_error(napi_env e,
+NAPI_EXTERN napi_status napi_throw(napi_env env, napi_value error);
+NAPI_EXTERN napi_status napi_throw_error(napi_env env, const char* msg);
+NAPI_EXTERN napi_status napi_throw_type_error(napi_env env, const char* msg);
+NAPI_EXTERN napi_status napi_throw_range_error(napi_env env, const char* msg);
+NAPI_EXTERN napi_status napi_is_error(napi_env env,
                                       napi_value value,
                                       bool* result);
 
 // Methods to support catching exceptions
-NAPI_EXTERN napi_status napi_is_exception_pending(napi_env e, bool* result);
-NAPI_EXTERN napi_status napi_get_and_clear_last_exception(napi_env e,
+NAPI_EXTERN napi_status napi_is_exception_pending(napi_env env, bool* result);
+NAPI_EXTERN napi_status napi_get_and_clear_last_exception(napi_env env,
                                                           napi_value* result);
 
 // Methods to provide node::Buffer functionality with napi types
-NAPI_EXTERN napi_status napi_create_buffer(napi_env e,
-                                           size_t size,
+NAPI_EXTERN napi_status napi_create_buffer(napi_env env,
+                                           size_t length,
                                            void** data,
                                            napi_value* result);
-NAPI_EXTERN napi_status napi_create_external_buffer(napi_env e,
-                                                    size_t size,
+NAPI_EXTERN napi_status napi_create_external_buffer(napi_env env,
+                                                    size_t length,
                                                     void* data,
                                                     napi_finalize finalize_cb,
                                                     void* finalize_hint,
                                                     napi_value* result);
-NAPI_EXTERN napi_status napi_create_buffer_copy(napi_env e,
+NAPI_EXTERN napi_status napi_create_buffer_copy(napi_env env,
+                                                size_t length,
                                                 const void* data,
-                                                size_t size,
+                                                void** result_data,
                                                 napi_value* result);
-NAPI_EXTERN napi_status napi_is_buffer(napi_env e,
+NAPI_EXTERN napi_status napi_is_buffer(napi_env env,
                                        napi_value value,
                                        bool* result);
-NAPI_EXTERN napi_status napi_get_buffer_info(napi_env e,
+NAPI_EXTERN napi_status napi_get_buffer_info(napi_env env,
                                              napi_value value,
                                              void** data,
                                              size_t* length);
@@ -482,6 +457,21 @@ NAPI_EXTERN napi_status napi_get_typedarray_info(napi_env env,
                                                  void** data,
                                                  napi_value* arraybuffer,
                                                  size_t* byte_offset);
-}  // extern "C"
+
+// Methods to manage simple async operations
+NAPI_EXTERN
+napi_status napi_create_async_work(napi_env env,
+                                   napi_async_execute_callback execute,
+                                   napi_async_complete_callback complete,
+                                   void* data,
+                                   napi_async_work* result);
+NAPI_EXTERN napi_status napi_delete_async_work(napi_env env,
+                                               napi_async_work work);
+NAPI_EXTERN napi_status napi_queue_async_work(napi_env env,
+                                              napi_async_work work);
+NAPI_EXTERN napi_status napi_cancel_async_work(napi_env env,
+                                               napi_async_work work);
+
+EXTERN_C_END
 
 #endif  // SRC_NODE_API_H__
