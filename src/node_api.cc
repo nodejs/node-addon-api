@@ -12,10 +12,11 @@
 #include <node_object_wrap.h>
 #include <string.h>
 #include <algorithm>
+#include <cassert>
 #include <cmath>
 #include <vector>
+#include "uv.h"
 #include "node_api.h"
-#include "env-inl.h"
 
 napi_status napi_set_last_error(napi_env env, napi_status error_code,
                                 uint32_t engine_error_code = 0,
@@ -43,9 +44,9 @@ struct napi_env__ {
     }                                                                   \
   } while (0)
 
-#define CHECK_ENV(env)                                               \
-  if ((env) == nullptr) {                                            \
-    node::FatalError(__func__, "environment(env) must not be null"); \
+#define CHECK_ENV(env)        \
+  if ((env) == nullptr) {     \
+    return napi_invalid_arg;  \
   }
 
 #define CHECK_ARG(env, arg) \
@@ -570,8 +571,7 @@ class SetterCallbackWrapper
 
   /*virtual*/
   void SetReturnValue(napi_value value) override {
-    node::FatalError("napi_set_return_value",
-      "Cannot return a value from a setter callback.");
+    // Ignore any value returned from a setter callback.
   }
 
  private:
@@ -730,7 +730,8 @@ napi_status napi_get_last_error_info(napi_env env,
                                      const napi_extended_error_info** result) {
   CHECK_ENV(env);
 
-  static_assert(node::arraysize(error_messages) == napi_status_last,
+  static_assert(
+      (sizeof (error_messages) / sizeof (*error_messages)) == napi_status_last,
       "Count of error messages must match count of error values");
   assert(env->last_error.error_code < napi_status_last);
 
@@ -1634,7 +1635,7 @@ napi_status napi_get_value_int32(napi_env env,
 
   v8::Isolate* isolate = env->isolate;
   v8::Local<v8::Context> context = isolate->GetCurrentContext();
-  *result = val->Int32Value(context).ToChecked();
+  *result = val->Int32Value(context).FromJust();
 
   return napi_ok;
 }
@@ -1653,7 +1654,7 @@ napi_status napi_get_value_uint32(napi_env env,
 
   v8::Isolate* isolate = env->isolate;
   v8::Local<v8::Context> context = isolate->GetCurrentContext();
-  *result = val->Uint32Value(context).ToChecked();
+  *result = val->Uint32Value(context).FromJust();
 
   return napi_ok;
 }
@@ -1678,7 +1679,7 @@ napi_status napi_get_value_int64(napi_env env,
   } else {
     v8::Isolate* isolate = env->isolate;
     v8::Local<v8::Context> context = isolate->GetCurrentContext();
-    *result = val->IntegerValue(context).ToChecked();
+    *result = val->IntegerValue(context).FromJust();
   }
 
   return napi_ok;
@@ -2684,9 +2685,11 @@ napi_status napi_queue_async_work(napi_env env, napi_async_work work) {
   CHECK_ENV(env);
   CHECK_ARG(env, work);
 
-  // Consider: Encapsulate the uv_loop_t into an opaque pointer parameter
-  uv_loop_t* event_loop =
-    node::Environment::GetCurrent(env->isolate)->event_loop();
+  // Consider: Encapsulate the uv_loop_t into an opaque pointer parameter.
+  // Currently the environment event loop is the same as the UV default loop.
+  // Someday (if node ever supports multiple isolates), it may be better to get
+  // the loop from node::Environment::GetCurrent(env->isolate)->event_loop();
+  uv_loop_t* event_loop = uv_default_loop();
 
   uvimpl::Work* w = reinterpret_cast<uvimpl::Work*>(work);
 
