@@ -1,4 +1,7 @@
 'use strict';
+const buildType = process.config.target_defaults.default_configuration;
+const binding = require(`./build/${buildType}/binding.node`);
+const assert = require('assert');
 
 let obj = {};
 assert.deepStrictEqual(binding.function.voidCallback(obj), undefined);

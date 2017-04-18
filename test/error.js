@@ -1,4 +1,7 @@
 'use strict';
+const buildType = process.config.target_defaults.default_configuration;
+const binding = require(`./build/${buildType}/binding.node`);
+const assert = require('assert');
 
 assert.throws(() => binding.error.throwError('test'), err => {
    return err instanceof Error && err.message === 'test';
@@ -30,11 +33,11 @@ assert.throws(
     return err instanceof TypeError && err.message === 'test' && err.caught;
   });
 
-let err = binding.error.catchError(
+const err = binding.error.catchError(
    () => { throw new TypeError('test'); });
 assert(err instanceof TypeError);
-assert.equal(err.message, 'test');
+assert.strictEqual(err.message, 'test');
 
-let msg = binding.error.catchErrorMessage(
+const msg = binding.error.catchErrorMessage(
    () => { throw new TypeError('test'); });
-assert.equal(msg, 'test');
+assert.strictEqual(msg, 'test');
