@@ -617,7 +617,7 @@ namespace Napi {
     Napi::Env Env() const;
     size_t Length() const;
     const Value operator [](size_t index) const;
-    Object This() const;
+    Value This() const;
     void* Data() const;
     void SetData(void* data);
 

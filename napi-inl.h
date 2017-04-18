@@ -1682,7 +1682,7 @@ inline const Value CallbackInfo::operator [](size_t index) const {
   return index < _argc ? Value(_env, _argv[index]) : Env().Undefined();
 }
 
-inline Object CallbackInfo::This() const {
+inline Value CallbackInfo::This() const {
   if (_this == nullptr) {
     return Env().Undefined();
   }

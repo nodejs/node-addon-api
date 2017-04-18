@@ -6,7 +6,7 @@ backward-compatibility with use with older versions of Node.js that do
 not have N-API built-in.
 
 To use N-API in a native module:
-  1. Add a dependency on this package to `package.json`. 
+  1. Add a dependency on this package to `package.json`.
   It is not yet published to npm, so reference it directly from GitHub.
 ```json
   "dependencies": {
@@ -27,6 +27,9 @@ To use N-API in a native module:
   'cflags!': [ '-fno-exceptions' ],
   'cflags_cc!': [ '-fno-exceptions' ],
   'xcode_settings': { 'GCC_ENABLE_CPP_EXCEPTIONS': 'YES' },
+  'msvs_settings': {
+    'VCCLCompilerTool': { 'ExceptionHandling': 1 },
+  },
 ```
 
   4. Include `napi.h` in the native module code.

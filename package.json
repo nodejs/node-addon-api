@@ -5,6 +5,7 @@
   "dependencies": {},
   "description": "Node.js API (N-API)",
   "devDependencies": {
+    "node-gyp": "^3.6.0"
   },
   "directories": {},
   "homepage": "https://github.com/nodejs/node-api",
@@ -18,6 +19,8 @@
     "url": "git://github.com/nodejs/node-api.git"
   },
   "scripts": {
+    "pretest": "node-gyp rebuild -C test",
+    "test": "node test"
   },
   "version": "0.1.0"
 }
