@@ -7,7 +7,7 @@ if (!dir) {
   process.exit(1);
 }
 
-const NodeApiVersion = require('./package.json').version;
+const NodeApiVersion = require('../package.json').version;
 
 var ConfigFileOperations = {
   // ex. String::Utf8Value str(info[0]) to Napi::String str(env, info[0])
@@ -199,7 +199,7 @@ function listFiles(dir, filelist) {
   filelist = filelist || [];
   files.forEach(function(file) {
     if (fs.statSync(path.join(dir, file)).isDirectory()) {
-      filelist = listFiles(path.join(dir, file), fs, filelist);
+      filelist = listFiles(path.join(dir, file), filelist);
     } else {
       filelist.push(path.join(dir, file));
     }
