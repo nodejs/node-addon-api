@@ -6,6 +6,7 @@
         'binding.cc',
         'error.cc',
         'function.cc',
+        'name.cc',
       ],
       'include_dirs': ["<!(node -p \"require('../').include\")"],
       'dependencies': ["<!(node -p \"require('../').gyp\")"],

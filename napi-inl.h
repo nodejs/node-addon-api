@@ -344,6 +344,16 @@ inline double Number::DoubleValue() const {
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+// Name class
+////////////////////////////////////////////////////////////////////////////////
+
+inline Name::Name() : Value() {
+}
+
+inline Name::Name(napi_env env, napi_value value) : Value(env, value) {
+}
+
+////////////////////////////////////////////////////////////////////////////////
 // String class
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -383,10 +393,10 @@ inline String String::New(napi_env env, const char16_t* val, size_t length) {
   return String(env, value);
 }
 
-inline String::String() : Value() {
+inline String::String() : Name() {
 }
 
-inline String::String(napi_env env, napi_value value) : Value(env, value) {
+inline String::String(napi_env env, napi_value value) : Name(env, value) {
 }
 
 inline String::operator std::string() const {
@@ -419,6 +429,39 @@ inline std::u16string String::Utf16Value() const {
   status = napi_get_value_string_utf16(_env, _value, &value[0], value.capacity(), nullptr);
   if (status != napi_ok) throw Error::New(_env);
   return value;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// Symbol class
+////////////////////////////////////////////////////////////////////////////////
+
+inline Symbol Symbol::New(napi_env env, const char* description) {
+  napi_value descriptionValue = description != nullptr ?
+    String::New(env, description) : static_cast<napi_value>(nullptr);
+  return Symbol::New(env, descriptionValue);
+}
+
+inline Symbol Symbol::New(napi_env env, const std::string& description) {
+  napi_value descriptionValue = String::New(env, description);
+  return Symbol::New(env, descriptionValue);
+}
+
+inline Symbol Symbol::New(napi_env env, String description) {
+  napi_value descriptionValue = description;
+  return Symbol::New(env, descriptionValue);
+}
+
+inline Symbol Symbol::New(napi_env env, napi_value description) {
+  napi_value value;
+  napi_status status = napi_create_symbol(env, description, &value);
+  if (status != napi_ok) throw Error::New(env);
+  return Symbol(env, value);
+}
+
+inline Symbol::Symbol() : Name() {
+}
+
+inline Symbol::Symbol(napi_env env, napi_value value) : Name(env, value) {
 }
 
 ////////////////////////////////////////////////////////////////////////////////
