@@ -50,6 +50,8 @@ targeted node version *does not* have N-API built-in.
 
 ## Conversion Tool
 To make the migration to node-api easier, we have also provide a script to do these steps above for you. To use the conversion script:
+To make the migration to node-api easier, we have provided a script to help complete the steps listed above. To use the conversion script:
+>>>>>>> Modify the instruction of migration tool
   1. Go to your module directory
 ```
 cd [module_path]
@@ -62,7 +64,7 @@ npm install node-api
 ```
 node ./node_modules/node-api/tools/conversion.js ./
 ```
-  4. This script is to make the migration easier and it is possible to miss out some conversion. So next step is trying to build your module and fix what the script is missing.
+  4. This script converts as much of your code to using the node-api wrapper as possible, however, the conversion will likely be incomplete. Once converted, the next step is trying to build your module and fixing the parts that the script could not convert for you.  
 
 
 <a name="collaborators"></a>
