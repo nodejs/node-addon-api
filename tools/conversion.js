@@ -47,6 +47,7 @@ var SourceFileOperations = [
   // ex. Local<Value> to Napi::Value
   [/v8::Local<v8::(Value|Boolean|String|Number|Object|Array|Symbol|External|Function)>/g, 'Napi::$1'],
   [/Local<(Value|Boolean|String|Number|Object|Array|Symbol|External|Function)>/g, 'Napi::$1'],
+  [/v8::(Value|Boolean|String|Number|Object|Array|Symbol|External|Function)/g, 'Napi::$1'],
   // ex. .As<Function>() to .As<Napi::Object>()
   [/\.As<v8::(Value|Boolean|String|Number|Object|Array|Symbol|External|Function)>\(\)/g, '.As<Napi::$1>()'],
   [/\.As<(Value|Boolean|String|Number|Object|Array|Symbol|External|Function)>\(\)/g, '.As<Napi::$1>()'],
@@ -87,7 +88,7 @@ var SourceFileOperations = [
   [/Nan::Get\(([^)]+),\s*/gm, '($1).Get('],
   [/\.Get\([\s|\\]*Nan::New\(([^)]+)\)\)/gm, '.Get($1)'],
 
-  [/Nan::Set\(([^,]+),/gm, '($1).Set('],
+  [/Nan::Set\(([^,]+),\s*/gm, '($1).Set('],
   [/\.Set\([\s|\\]*Nan::New\(([^)]+)\),/gm, '.Set($1,'],
 
 
@@ -125,20 +126,20 @@ var SourceFileOperations = [
 
 
   [/Nan::Callback/g, 'Napi::Function'],
-  [/Nan::Persistent<FunctionTemplate>/g, 'Napi::FunctionReference'],
+  [/Nan::Persistent<(v8::)*FunctionTemplate>/g, 'Napi::FunctionReference'],
   [/Nan::Persistent<Object>/g, 'Napi::ObjectReference'],
   [/Nan::ADDON_REGISTER_FUNCTION_ARGS_TYPE target/g, 'Napi::Env& env, Napi::Object& target'],
 
   [/(\w+)\*\s+(\w+)\s*=\s*Nan::ObjectWrap::Unwrap<\w+>\(info\.This\(\)\);/g, '$1* $2 = this;'],
   [/Nan::ObjectWrap::Unwrap<(\w+)>\((.*)\);/g, '$2.Unwrap<$1>();'],
 
-  [/static\s*NAN_METHOD\((\w+?)\)/g, 'Napi::Value $1(const Napi::CallbackInfo& info)'],
-  [/NAN_METHOD\((\w+?)\)/g, 'Napi::Value $1(const Napi::CallbackInfo& info)'],
-  [/static\s*NAN_GETTER\((\w+?)\)/g, 'Napi::Value $1(const Napi::CallbackInfo& info)'],
-  [/NAN_GETTER\((\w+?)\)/g, 'Napi::Value $1(const Napi::CallbackInfo& info)'],
-  [/static\s*NAN_SETTER\((\w+?)\)/g, 'Napi::Value $1(const Napi::CallbackInfo& info, const Napi::Value& value)'],
-  [/NAN_SETTER\((\w+?)\)/g, 'Napi::Value $1(const Napi::CallbackInfo& info, const Napi::Value& value)'],
-  [/NAN_MODULE_INIT\(([\w:]+?)\)/g, 'void $1(Napi::Env env, Napi::Object exports, Napi::Object module)'],
+  [/static\s*NAN_METHOD\s*\((\w+?)\)\s*{/g, 'Napi::Value $1(const Napi::CallbackInfo& info) {\n  Napi::Env env = info.Env();'],
+  [/NAN_METHOD\s*\((\w+?)\)\s*{/g, 'Napi::Value $1(const Napi::CallbackInfo& info) {\n  Napi::Env env = info.Env();'],
+  [/static\s*NAN_GETTER\s*\((\w+?)\)\s*{/g, 'Napi::Value $1(const Napi::CallbackInfo& info) {\n  Napi::Env env = info.Env();'],
+  [/NAN_GETTER\s*\((\w+?)\)\s*{/g, 'Napi::Value $1(const Napi::CallbackInfo& info) {\n  Napi::Env env = info.Env();'],
+  [/static\s*NAN_SETTER\s*\((\w+?)\)\s*{/g, 'Napi::Value $1(const Napi::CallbackInfo& info, const Napi::Value& value) {\n  Napi::Env env = info.Env();'],
+  [/NAN_SETTER\s*\((\w+?)\)\s*{/g, 'Napi::Value $1(const Napi::CallbackInfo& info, const Napi::Value& value) {\n  Napi::Env env = info.Env();'],
+  [/NAN_MODULE_INIT\s*\(([\w:]+?)\)/g, 'void $1(Napi::Env env, Napi::Object exports, Napi::Object module)'],
   [/Nan::NAN_METHOD_ARGS_TYPE/g, 'const Napi::CallbackInfo&'],
   [/::(Init(?:ialize)?)\(target\)/g, '::$1(env, target, module)'],
   [/Local<FunctionTemplate>\s+(\w+)\s*=\s*Nan::New<FunctionTemplate>\([\w:]+\);(?:\w+->Reset\(\1\))?\s+\1->SetClassName\(Napi::String::New\(env, "(\w+)"\)\);/g, 'Napi::Function $1 = DefineClass(env, "$2", {'],
