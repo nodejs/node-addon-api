@@ -64,7 +64,7 @@ npm install node-api
 ```
 node ./node_modules/node-api/tools/conversion.js ./
 ```
-  4. This script converts as much of your code to using the node-api wrapper as possible, however, the conversion will likely be incomplete. Once converted, the next step is trying to build your module and fixing the parts that the script could not convert for you.  
+  4. While this script makes conversion easier, it still cannot fully convert the module.  The next step is to try to build the module and complete the remaining conversions necessary to allow it to compile and pass all of the module's tests.
 
 
 <a name="collaborators"></a>
