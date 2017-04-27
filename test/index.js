@@ -3,6 +3,7 @@
 let testModules = [
    'error',
    'function',
+   'name',
 ];
 
 testModules.forEach(name => {

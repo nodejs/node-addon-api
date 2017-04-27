@@ -151,7 +151,13 @@ namespace Napi {
     double DoubleValue() const;
   };
 
-  class String : public Value {
+  class Name : public Value {
+  protected:
+    Name();
+    Name(napi_env env, napi_value value);
+  };
+
+  class String : public Name {
   public:
     static String New(napi_env env, const std::string& value);
     static String New(napi_env env, const std::u16string& value);
@@ -167,6 +173,17 @@ namespace Napi {
     operator std::u16string() const;
     std::string Utf8Value() const;
     std::u16string Utf16Value() const;
+  };
+
+  class Symbol : public Name {
+  public:
+    static Symbol New(napi_env env, const char* description = nullptr);
+    static Symbol New(napi_env env, const std::string& description);
+    static Symbol New(napi_env env, String description);
+    static Symbol New(napi_env env, napi_value description);
+
+    Symbol();
+    Symbol(napi_env env, napi_value value);
   };
 
   class Object : public Value {
