@@ -1,4 +1,4 @@
-﻿#ifndef SRC_NAPI_H_
+#ifndef SRC_NAPI_H_
 #define SRC_NAPI_H_
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -401,8 +401,6 @@ namespace Napi {
     Value Call(napi_value recv, const std::initializer_list<napi_value>& args) const;
     Value Call(napi_value recv, const std::vector<napi_value>& args) const;
 
-    Value MakeCallback(const std::initializer_list<napi_value>& args) const;
-    Value MakeCallback(const std::vector<napi_value>& args) const;
     Value MakeCallback(napi_value recv, const std::initializer_list<napi_value>& args) const;
     Value MakeCallback(napi_value recv, const std::vector<napi_value>& args) const;
 
@@ -548,8 +546,6 @@ namespace Napi {
     Napi::Value Call(napi_value recv, const std::initializer_list<napi_value>& args) const;
     Napi::Value Call(napi_value recv, const std::vector<napi_value>& args) const;
 
-    Napi::Value MakeCallback(const std::initializer_list<napi_value>& args) const;
-    Napi::Value MakeCallback(const std::vector<napi_value>& args) const;
     Napi::Value MakeCallback(napi_value recv, const std::initializer_list<napi_value>& args) const;
     Napi::Value MakeCallback(napi_value recv, const std::vector<napi_value>& args) const;
 
@@ -966,21 +962,18 @@ namespace Napi {
     void Queue();
     void Cancel();
 
-    virtual void Execute() = 0;
-    virtual void WorkComplete();
-
-    ObjectReference& Persistent();
+    ObjectReference& Receiver();
+    FunctionReference& Callback();
 
   protected:
     explicit AsyncWorker(const Function& callback);
+    explicit AsyncWorker(const Object& receiver, const Function& callback);
 
+    virtual void Execute() = 0;
     virtual void OnOK();
-    virtual void OnError(Error e);
+    virtual void OnError(Error& e);
 
-    void SetError(Error error);
-
-    FunctionReference _callback;
-    ObjectReference _persistent;
+    void SetError(const std::string& error);
 
   private:
     static void OnExecute(napi_env env, void* this_pointer);
@@ -990,7 +983,9 @@ namespace Napi {
 
     napi_env _env;
     napi_async_work _work;
-    Error _error;
+    ObjectReference _receiver;
+    FunctionReference _callback;
+    std::string _error;
   };
 
 } // namespace Napi

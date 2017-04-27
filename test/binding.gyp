@@ -4,6 +4,7 @@
       'target_name': 'binding',
       'sources': [
         'arraybuffer.cc',
+        'asyncworker.cc',
         'binding.cc',
         'buffer.cc',
         'error.cc',

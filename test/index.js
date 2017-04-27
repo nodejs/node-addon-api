@@ -6,6 +6,7 @@ if (typeof global.gc !== 'function') {
 
 let testModules = [
    'arraybuffer',
+   'asyncworker',
    'buffer',
    'error',
    'external',
