@@ -14,12 +14,24 @@ var ConfigFileOperations = {
   'package.json': [
     [/"nan": *"[^"]+"/g, '"node-api": "' + NodeApiVersion + '"'],
   ],
+  // TODO: Add 'cflags!': [ '-fno-exceptions' ],
+  //           'cflags_cc!': [ '-fno-exceptions' ]
   'binding.gyp': [
     [/node -e \\"require\('nan'\)\\"/g, 'node -p \\"require(\'node-api\').include\\"'],
   ]
 };
 
 var SourceFileOperations = [
+  [/Local<FunctionTemplate>\s+(\w+)\s*=\s*Nan::New<FunctionTemplate>\([\w:]+\);(?:\w+->Reset\(\1\))?\s+\1->SetClassName\(Nan::New\("(\w+)"\)\);/g, 'Napi::Function $1 = DefineClass(env, "$2", {'],
+  [/v8::Local<v8:FunctionTemplate>\s+(\w+)\s*=\s*Nan::New<v8::FunctionTemplate>\([\w:]+\);(?:\w+->Reset\(\1\))?\s+\1->SetClassName\(Nan::New\("(\w+)"\)\);/gm, 'Napi::Function $1 = DefineClass(env, "$2", {'],
+  [/Nan::SetPrototypeMethod\(\w+, "(\w+)", (\w+)\);/g, '  InstanceMethod("$1", &$2),'],
+  [/(?:\w+\.Reset\(\w+\);\s+)?\(target\)\.Set\("(\w+)",\s*Nan::GetFunction\((\w+)\)\);/gm,
+    '});\n\n' +
+    '  constructor = Napi::Persistent($2);\n' +
+    '  constructor.SuppressDestruct();\n' +
+    '  target.Set("$1", $2);'],
+  [/constructor_template/g, 'constructor'],
+
   [/([\w:]+?)::Cast\((.+?)\)/g, '$2.As<$1>()'],
 
   [/\*Nan::Utf8String\(([^)]+)\)/g, '$1->As<Napi::String>().Utf8Value().c_str()'],
@@ -35,14 +47,23 @@ var SourceFileOperations = [
   [/class\s+(\w+)\s*:\s*public\s+Nan::ObjectWrap/g, 'class $1 : public Napi::ObjectWrap<$1>'],
   [/(\w+)\(([^\)]*)\)\s*:\s*Nan::ObjectWrap\(\)\s*(,)?/gm, '$1($2) : Napi::ObjectWrap<$1>()$3'],
 
-  // FunctionTemplate to FunctionReference
-  [/v8::FunctionTemplate/g, 'Napi::FunctionReference'],
-  [/FunctionTemplate/g, 'Napi::FunctionReference'],
-
   // HandleOKCallback to OnOK
   [/HandleOKCallback/g, 'OnOK'],
   // HandleErrorCallback to OnError
   [/HandleErrorCallback/g, 'OnError'],
+
+
+  [/Nan::Callback/g, 'Napi::Function'],
+  [/Nan::Persistent<(v8::)*FunctionTemplate>/g, 'Napi::FunctionReference'],
+  [/Nan::Persistent<(v8::)*Function>/g, 'Napi::FunctionReference'],
+  [/Nan::Persistent<(v8::)*Object>/g, 'Napi::ObjectReference'],
+  [/(v8::)*Persistent<(v8::)*FunctionTemplate>/g, 'Napi::FunctionReference'],
+  [/(v8::)*Persistent<(v8::)*Function>/g, 'Napi::FunctionReference'],
+  [/(v8::)*Persistent<(v8::)*Object>/g, 'Napi::FunctionReference'],
+  [/Nan::ADDON_REGISTER_FUNCTION_ARGS_TYPE target/g, 'Napi::Env& env, Napi::Object& target'],
+  [/v8::FunctionTemplate/g, 'Napi::FunctionReference'],
+  [/FunctionTemplate/g, 'Napi::FunctionReference'],
+
 
   // ex. Local<Value> to Napi::Value
   [/v8::Local<v8::(Value|Boolean|String|Number|Object|Array|Symbol|External|Function)>/g, 'Napi::$1'],
@@ -125,11 +146,6 @@ var SourceFileOperations = [
 
 
 
-  [/Nan::Callback/g, 'Napi::Function'],
-  [/Nan::Persistent<(v8::)*FunctionTemplate>/g, 'Napi::FunctionReference'],
-  [/Nan::Persistent<Object>/g, 'Napi::ObjectReference'],
-  [/Nan::ADDON_REGISTER_FUNCTION_ARGS_TYPE target/g, 'Napi::Env& env, Napi::Object& target'],
-
   [/(\w+)\*\s+(\w+)\s*=\s*Nan::ObjectWrap::Unwrap<\w+>\(info\.This\(\)\);/g, '$1* $2 = this;'],
   [/Nan::ObjectWrap::Unwrap<(\w+)>\((.*)\);/g, '$2.Unwrap<$1>();'],
 
@@ -141,15 +157,8 @@ var SourceFileOperations = [
   [/NAN_SETTER\s*\((\w+?)\)\s*{/g, 'Napi::Value $1(const Napi::CallbackInfo& info, const Napi::Value& value) {\n  Napi::Env env = info.Env();'],
   [/NAN_MODULE_INIT\s*\(([\w:]+?)\)/g, 'void $1(Napi::Env env, Napi::Object exports, Napi::Object module)'],
   [/Nan::NAN_METHOD_ARGS_TYPE/g, 'const Napi::CallbackInfo&'],
+  [/(Nan::)*FunctionCallbackInfo<(.+?)*>&*/g, 'Napi::CallbackInfo&'],
   [/::(Init(?:ialize)?)\(target\)/g, '::$1(env, target, module)'],
-  [/Local<FunctionTemplate>\s+(\w+)\s*=\s*Nan::New<FunctionTemplate>\([\w:]+\);(?:\w+->Reset\(\1\))?\s+\1->SetClassName\(Napi::String::New\(env, "(\w+)"\)\);/g, 'Napi::Function $1 = DefineClass(env, "$2", {'],
-  [/Nan::SetPrototypeMethod\(\w+, "(\w+)", (\w+)\);/g, '  InstanceMethod("$1", &$2),'],
-  [/(?:\w+\.Reset\(\w+\);\s+)?\(target\)\.Set\("(\w+)",\s*Nan::GetFunction\((\w+)\)\);/gm,
-    '});\n\n' +
-    '  constructor = Napi::Persistent($2);\n' +
-    '  constructor.SuppressDestruct();\n' +
-    '  target.Set("$1", $2);'],
-  [/constructor_template/g, 'constructor'],
 
   // TODO: Other attribute combinations
   [/static_cast<PropertyAttribute>\(ReadOnly\s*\|\s*DontDelete\)/gm,
