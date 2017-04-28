@@ -1125,6 +1125,35 @@ struct FinalizeData {
   Hint* hint;
 };
 
+template <typename Getter, typename Setter>
+struct AccessorCallbackData {
+  static inline
+  napi_value GetterWrapper(napi_env env, napi_callback_info info) {
+    try {
+      CallbackInfo callbackInfo(env, info);
+      AccessorCallbackData* callbackData =
+        static_cast<AccessorCallbackData*>(callbackInfo.Data());
+      return callbackData->getterCallback(callbackInfo);
+    }
+    NAPI_RETHROW_JS_ERROR(env)
+  }
+
+  static inline
+  napi_value SetterWrapper(napi_env env, napi_callback_info info) {
+    try {
+      CallbackInfo callbackInfo(env, info);
+      AccessorCallbackData* callbackData =
+        static_cast<AccessorCallbackData*>(callbackInfo.Data());
+      callbackData->setterCallback(callbackInfo);
+      return nullptr;
+    }
+    NAPI_RETHROW_JS_ERROR(env)
+  }
+
+  Getter getterCallback;
+  Setter setterCallback;
+};
+
 }  // namespace details
 
 template <typename Callable>
@@ -1906,6 +1935,236 @@ inline void* CallbackInfo::Data() const {
 
 inline void CallbackInfo::SetData(void* data) {
   _data = data;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// PropertyDescriptor class
+////////////////////////////////////////////////////////////////////////////////
+
+template <typename Getter>
+inline PropertyDescriptor
+PropertyDescriptor::Accessor(const char* utf8name,
+                             Getter getter,
+                             napi_property_attributes attributes,
+                             void* data) {
+  typedef details::CallbackData<Getter, Napi::Value> CbData;
+  // TODO: Delete when the function is destroyed
+  auto callbackData = new CbData({ getter });
+
+  return PropertyDescriptor({
+    utf8name,
+    nullptr,
+    nullptr,
+    CbData::Wrapper,
+    nullptr,
+    nullptr,
+    attributes,
+    callbackData
+  });
+}
+
+template <typename Getter>
+inline PropertyDescriptor PropertyDescriptor::Accessor(const std::string& utf8name,
+                                                       Getter getter,
+                                                       napi_property_attributes attributes,
+                                                       void* data) {
+  return Accessor(utf8name.c_str(), getter, attributes, data);
+}
+
+template <typename Getter>
+inline PropertyDescriptor PropertyDescriptor::Accessor(napi_value name,
+                                                       Getter getter,
+                                                       napi_property_attributes attributes,
+                                                       void* data) {
+  typedef details::CallbackData<Getter, Napi::Value> CbData;
+  // TODO: Delete when the function is destroyed
+  auto callbackData = new CbData({ getter });
+
+  return PropertyDescriptor({
+    nullptr,
+    name,
+    nullptr,
+    CbData::Wrapper,
+    nullptr,
+    nullptr,
+    attributes,
+    callbackData
+  });
+}
+
+template <typename Getter>
+inline PropertyDescriptor PropertyDescriptor::Accessor(Name name,
+                                                       Getter getter,
+                                                       napi_property_attributes attributes,
+                                                       void* data) {
+  napi_value nameValue = name;
+  return PropertyDescriptor::Accessor(nameValue, getter, attributes, data);
+}
+
+template <typename Getter, typename Setter>
+inline PropertyDescriptor PropertyDescriptor::Accessor(const char* utf8name,
+                                                       Getter getter,
+                                                       Setter setter,
+                                                       napi_property_attributes attributes,
+                                                       void* data) {
+  typedef details::AccessorCallbackData<Getter, Setter> CbData;
+  // TODO: Delete when the function is destroyed
+  auto callbackData = new CbData({ getter, setter });
+
+  return PropertyDescriptor({
+    utf8name,
+    nullptr,
+    nullptr,
+    CbData::GetterWrapper,
+    CbData::SetterWrapper,
+    nullptr,
+    attributes,
+    callbackData
+  });
+}
+
+template <typename Getter, typename Setter>
+inline PropertyDescriptor PropertyDescriptor::Accessor(const std::string& utf8name,
+                                                       Getter getter,
+                                                       Setter setter,
+                                                       napi_property_attributes attributes,
+                                                       void* data) {
+  return Accessor(utf8name.c_str(), getter, setter, attributes, data);
+}
+
+template <typename Getter, typename Setter>
+inline PropertyDescriptor PropertyDescriptor::Accessor(napi_value name,
+                                                       Getter getter,
+                                                       Setter setter,
+                                                       napi_property_attributes attributes,
+                                                       void* data) {
+  typedef details::AccessorCallbackData<Getter, Setter> CbData;
+  // TODO: Delete when the function is destroyed
+  auto callbackData = new CbData({ getter, setter });
+
+  return PropertyDescriptor({
+    nullptr,
+    name,
+    nullptr,
+    CbData::GetterWrapper,
+    CbData::SetterWrapper,
+    nullptr,
+    attributes,
+    callbackData
+  });
+}
+
+template <typename Getter, typename Setter>
+inline PropertyDescriptor PropertyDescriptor::Accessor(Name name,
+                                                       Getter getter,
+                                                       Setter setter,
+                                                       napi_property_attributes attributes,
+                                                       void* data) {
+  napi_value nameValue = name;
+  return PropertyDescriptor::Accessor(nameValue, getter, setter, attributes, data);
+}
+
+template <typename Callable>
+inline PropertyDescriptor PropertyDescriptor::Function(const char* utf8name,
+                                                       Callable cb,
+                                                       napi_property_attributes attributes,
+                                                       void* data) {
+  typedef decltype(cb(CallbackInfo(nullptr, nullptr))) ReturnType;
+  typedef details::CallbackData<Callable, ReturnType> CbData;
+  // TODO: Delete when the function is destroyed
+  auto callbackData = new CbData({ cb });
+
+  return PropertyDescriptor({
+    utf8name,
+    nullptr,
+    CbData::Wrapper,
+    nullptr,
+    nullptr,
+    nullptr,
+    attributes,
+    callbackData
+  });
+}
+
+template <typename Callable>
+inline PropertyDescriptor PropertyDescriptor::Function(const std::string& utf8name,
+                                                       Callable cb,
+                                                       napi_property_attributes attributes,
+                                                       void* data) {
+  return Function(utf8name.c_str(), cb, attributes, data);
+}
+
+template <typename Callable>
+inline PropertyDescriptor PropertyDescriptor::Function(napi_value name,
+                                                       Callable cb,
+                                                       napi_property_attributes attributes,
+                                                       void* data) {
+  typedef decltype(cb(CallbackInfo(nullptr, nullptr))) ReturnType;
+  typedef details::CallbackData<Callable, ReturnType> CbData;
+  // TODO: Delete when the function is destroyed
+  auto callbackData = new CbData({ cb });
+
+  return PropertyDescriptor({
+    nullptr,
+    name,
+    CbData::Wrapper,
+    nullptr,
+    nullptr,
+    nullptr,
+    attributes,
+    callbackData
+  });
+}
+
+template <typename Callable>
+inline PropertyDescriptor PropertyDescriptor::Function(Name name,
+                                                       Callable cb,
+                                                       napi_property_attributes attributes,
+                                                       void* data) {
+  napi_value nameValue = name;
+  return PropertyDescriptor::Function(nameValue, cb, attributes, data);
+}
+
+inline PropertyDescriptor PropertyDescriptor::Value(const char* utf8name,
+                                                    napi_value value,
+                                                    napi_property_attributes attributes) {
+  return PropertyDescriptor({
+    utf8name, nullptr, nullptr, nullptr, nullptr, value, attributes, nullptr
+  });
+}
+
+inline PropertyDescriptor PropertyDescriptor::Value(const std::string& utf8name,
+                                                    napi_value value,
+                                                    napi_property_attributes attributes) {
+  return Value(utf8name.c_str(), value, attributes);
+}
+
+inline PropertyDescriptor PropertyDescriptor::Value(napi_value name,
+                                                    napi_value value,
+                                                    napi_property_attributes attributes) {
+  return PropertyDescriptor({
+    nullptr, name, nullptr, nullptr, nullptr, value, attributes, nullptr
+  });
+}
+
+inline PropertyDescriptor PropertyDescriptor::Value(Name name,
+                                                    Napi::Value value,
+                                                    napi_property_attributes attributes) {
+  napi_value nameValue = name;
+  napi_value valueValue = value;
+  return PropertyDescriptor::Value(nameValue, valueValue, attributes);
+}
+
+inline PropertyDescriptor::PropertyDescriptor(napi_property_descriptor desc)
+  : _desc(desc) {
+}
+
+inline PropertyDescriptor::operator napi_property_descriptor&() {
+  return _desc;
+}
+
+inline PropertyDescriptor::operator const napi_property_descriptor&() const {
+  return _desc;
 }
 
 ////////////////////////////////////////////////////////////////////////////////

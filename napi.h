@@ -152,7 +152,7 @@ namespace Napi {
   };
 
   class Name : public Value {
-  protected:
+  public:
     Name();
     Name(napi_env env, napi_value value);
   };
@@ -685,10 +685,87 @@ namespace Napi {
 
   class PropertyDescriptor {
   public:
-    PropertyDescriptor(napi_property_descriptor desc) : _desc(desc) {}
+    template <typename Getter>
+    static PropertyDescriptor Accessor(const char* utf8name,
+                                       Getter getter,
+                                       napi_property_attributes attributes = napi_default,
+                                       void* data = nullptr);
+    template <typename Getter>
+    static PropertyDescriptor Accessor(const std::string& utf8name,
+                                       Getter getter,
+                                       napi_property_attributes attributes = napi_default,
+                                       void* data = nullptr);
+    template <typename Getter>
+    static PropertyDescriptor Accessor(napi_value name,
+                                       Getter getter,
+                                       napi_property_attributes attributes = napi_default,
+                                       void* data = nullptr);
+    template <typename Getter>
+    static PropertyDescriptor Accessor(Name name,
+                                       Getter getter,
+                                       napi_property_attributes attributes = napi_default,
+                                       void* data = nullptr);
+    template <typename Getter, typename Setter>
+    static PropertyDescriptor Accessor(const char* utf8name,
+                                       Getter getter,
+                                       Setter setter,
+                                       napi_property_attributes attributes = napi_default,
+                                       void* data = nullptr);
+    template <typename Getter, typename Setter>
+    static PropertyDescriptor Accessor(const std::string& utf8name,
+                                       Getter getter,
+                                       Setter setter,
+                                       napi_property_attributes attributes = napi_default,
+                                       void* data = nullptr);
+    template <typename Getter, typename Setter>
+    static PropertyDescriptor Accessor(napi_value name,
+                                       Getter getter,
+                                       Setter setter,
+                                       napi_property_attributes attributes = napi_default,
+                                       void* data = nullptr);
+    template <typename Getter, typename Setter>
+    static PropertyDescriptor Accessor(Name name,
+                                       Getter getter,
+                                       Setter setter,
+                                       napi_property_attributes attributes = napi_default,
+                                       void* data = nullptr);
+    template <typename Callable>
+    static PropertyDescriptor Function(const char* utf8name,
+                                       Callable cb,
+                                       napi_property_attributes attributes = napi_default,
+                                       void* data = nullptr);
+    template <typename Callable>
+    static PropertyDescriptor Function(const std::string& utf8name,
+                                       Callable cb,
+                                       napi_property_attributes attributes = napi_default,
+                                       void* data = nullptr);
+    template <typename Callable>
+    static PropertyDescriptor Function(napi_value name,
+                                       Callable cb,
+                                       napi_property_attributes attributes = napi_default,
+                                       void* data = nullptr);
+    template <typename Callable>
+    static PropertyDescriptor Function(Name name,
+                                       Callable cb,
+                                       napi_property_attributes attributes = napi_default,
+                                       void* data = nullptr);
+    static PropertyDescriptor Value(const char* utf8name,
+                                    napi_value value,
+                                    napi_property_attributes attributes = napi_default);
+    static PropertyDescriptor Value(const std::string& utf8name,
+                                    napi_value value,
+                                    napi_property_attributes attributes = napi_default);
+    static PropertyDescriptor Value(napi_value name,
+                                    napi_value value,
+                                    napi_property_attributes attributes = napi_default);
+    static PropertyDescriptor Value(Name name,
+                                    Napi::Value value,
+                                    napi_property_attributes attributes = napi_default);
 
-    operator napi_property_descriptor&() { return _desc; }
-    operator const napi_property_descriptor&() const { return _desc; }
+    PropertyDescriptor(napi_property_descriptor desc);
+
+    operator napi_property_descriptor&();
+    operator const napi_property_descriptor&() const;
 
   private:
     napi_property_descriptor _desc;
