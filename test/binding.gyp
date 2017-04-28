@@ -3,8 +3,11 @@
     {
       'target_name': 'binding',
       'sources': [
+        'arraybuffer.cc',
         'binding.cc',
+        'buffer.cc',
         'error.cc',
+        'external.cc',
         'function.cc',
         'name.cc',
       ],

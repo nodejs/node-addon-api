@@ -256,10 +256,19 @@ namespace Napi {
   template <typename T>
   class External : public Value {
   public:
+    static External New(napi_env env, T* data);
+
+    // Finalizer must implement operator() accepting a T* and returning void.
+    template <typename Finalizer>
     static External New(napi_env env,
                         T* data,
-                        napi_finalize finalizeCallback = nullptr,
-                        void* finalizeHint = nullptr);
+                        Finalizer finalizeCallback);
+    // Finalizer must implement operator() accepting a T* and Hint* and returning void.
+    template <typename Finalizer, typename Hint>
+    static External New(napi_env env,
+                        T* data,
+                        Finalizer finalizeCallback,
+                        Hint* finalizeHint);
 
     External();
     External(napi_env env, napi_value value);
@@ -281,11 +290,21 @@ namespace Napi {
   class ArrayBuffer : public Object {
   public:
     static ArrayBuffer New(napi_env env, size_t byteLength);
+    static ArrayBuffer New(napi_env env, void* externalData, size_t byteLength);
+
+    // Finalizer must implement operator() accepting a void* and returning void.
+    template <typename Finalizer>
     static ArrayBuffer New(napi_env env,
                            void* externalData,
                            size_t byteLength,
-                           napi_finalize finalizeCallback = nullptr,
-                           void* finalizeHint = nullptr);
+                           Finalizer finalizeCallback);
+    // Finalizer must implement operator() accepting a void* and Hint* and returning void.
+    template <typename Finalizer, typename Hint>
+    static ArrayBuffer New(napi_env env,
+                           void* externalData,
+                           size_t byteLength,
+                           Finalizer finalizeCallback,
+                           Hint* finalizeHint);
 
     ArrayBuffer();
     ArrayBuffer(napi_env env, napi_value value);
@@ -294,8 +313,11 @@ namespace Napi {
     size_t ByteLength();
 
   private:
-    void* _data;
-    size_t _length;
+    mutable void* _data;
+    mutable size_t _length;
+
+    ArrayBuffer(napi_env env, napi_value value, void* data, size_t length);
+    void EnsureInfo() const;
   };
 
   class TypedArray : public Object {
@@ -361,11 +383,13 @@ namespace Napi {
     template <typename Callable>
     static Function New(napi_env env,
                         Callable cb,
-                        const char* utf8name = nullptr);
+                        const char* utf8name = nullptr,
+                        void* data = nullptr);
     template <typename Callable>
     static Function New(napi_env env,
                         Callable cb,
-                        const std::string& utf8name);
+                        const std::string& utf8name,
+                        void* data = nullptr);
 
     Function();
     Function(napi_env env, napi_value value);
@@ -390,10 +414,20 @@ namespace Napi {
   class Buffer : public Object {
   public:
     static Buffer<T> New(napi_env env, size_t length);
+    static Buffer<T> New(napi_env env, T* data, size_t length);
+
+    // Finalizer must implement operator() accepting a T* and returning void.
+    template <typename Finalizer>
     static Buffer<T> New(napi_env env, T* data,
                          size_t length,
-                         napi_finalize finalizeCallback = nullptr,
-                         void* finalizeHint = nullptr);
+                         Finalizer finalizeCallback);
+    // Finalizer must implement operator() accepting a T* and Hint* and returning void.
+    template <typename Finalizer, typename Hint>
+    static Buffer<T> New(napi_env env, T* data,
+                         size_t length,
+                         Finalizer finalizeCallback,
+                         Hint* finalizeHint);
+
     static Buffer<T> Copy(napi_env env, const T* data, size_t length);
 
     Buffer();

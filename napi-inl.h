@@ -687,11 +687,53 @@ inline bool Object::InstanceOf(const Function& constructor) const {
 ////////////////////////////////////////////////////////////////////////////////
 
 template <typename T>
-inline External<T> External<T>::New(
-    napi_env env, T* data, napi_finalize finalizeCallback, void* finalizeHint) {
+inline External<T> External<T>::New(napi_env env, T* data) {
   napi_value value;
-  napi_status status = napi_create_external(env, data, finalizeCallback, finalizeHint, &value);
+  napi_status status = napi_create_external(env, data, nullptr, nullptr, &value);
   if (status != napi_ok) throw Error::New(env);
+  return External(env, value);
+}
+
+template <typename T>
+template <typename Finalizer>
+inline External<T> External<T>::New(napi_env env,
+                                    T* data,
+                                    Finalizer finalizeCallback) {
+  napi_value value;
+  details::FinalizeData<T, Finalizer>* finalizeData =
+    new details::FinalizeData<T, Finalizer>({ finalizeCallback, nullptr });
+  napi_status status = napi_create_external(
+    env,
+    data,
+    details::FinalizeData<T, Finalizer>::Wrapper,
+    finalizeData,
+    &value);
+  if (status != napi_ok) {
+    delete finalizeData;
+    throw Error::New(env);
+  }
+  return External(env, value);
+}
+
+template <typename T>
+template <typename Finalizer, typename Hint>
+inline External<T> External<T>::New(napi_env env,
+                                    T* data,
+                                    Finalizer finalizeCallback,
+                                    Hint* finalizeHint) {
+  napi_value value;
+  details::FinalizeData<T, Finalizer, Hint>* finalizeData =
+    new details::FinalizeData<T, Finalizer, Hint>({ finalizeCallback, finalizeHint });
+  napi_status status = napi_create_external(
+    env,
+    data,
+    details::FinalizeData<T, Finalizer, Hint>::WrapperWithHint,
+    finalizeData,
+    &value);
+  if (status != napi_ok) {
+    delete finalizeData;
+    throw Error::New(env);
+  }
   return External(env, value);
 }
 
@@ -752,26 +794,65 @@ inline ArrayBuffer ArrayBuffer::New(napi_env env, size_t byteLength) {
   napi_status status = napi_create_arraybuffer(env, byteLength, &data, &value);
   if (status != napi_ok) throw Error::New(env);
 
-  ArrayBuffer arrayBuffer(env, value);
-  arrayBuffer._data = data;
-  arrayBuffer._length = byteLength;
-  return arrayBuffer;
+  return ArrayBuffer(env, value, data, byteLength);
 }
 
 inline ArrayBuffer ArrayBuffer::New(napi_env env,
                                     void* externalData,
-                                    size_t byteLength,
-                                    napi_finalize finalizeCallback,
-                                    void* finalizeHint) {
+                                    size_t byteLength) {
   napi_value value;
   napi_status status = napi_create_external_arraybuffer(
-    env, externalData, byteLength, finalizeCallback, finalizeHint, &value);
+    env, externalData, byteLength, nullptr, nullptr, &value);
   if (status != napi_ok) throw Error::New(env);
 
-  ArrayBuffer arrayBuffer(env, value);
-  arrayBuffer._data = externalData;
-  arrayBuffer._length = byteLength;
-  return arrayBuffer;
+  return ArrayBuffer(env, value, externalData, byteLength);
+}
+
+template <typename Finalizer>
+inline ArrayBuffer ArrayBuffer::New(napi_env env,
+                                    void* externalData,
+                                    size_t byteLength,
+                                    Finalizer finalizeCallback) {
+  napi_value value;
+  details::FinalizeData<void, Finalizer>* finalizeData =
+    new details::FinalizeData<void, Finalizer>({ finalizeCallback, nullptr });
+  napi_status status = napi_create_external_arraybuffer(
+    env,
+    externalData,
+    byteLength,
+    details::FinalizeData<void, Finalizer>::Wrapper,
+    finalizeData,
+    &value);
+  if (status != napi_ok) {
+    delete finalizeData;
+    throw Error::New(env);
+  }
+
+  return ArrayBuffer(env, value, externalData, byteLength);
+}
+
+template <typename Finalizer, typename Hint>
+inline ArrayBuffer ArrayBuffer::New(napi_env env,
+                                    void* externalData,
+                                    size_t byteLength,
+                                    Finalizer finalizeCallback,
+                                    Hint* finalizeHint) {
+  napi_value value;
+  details::FinalizeData<void, Finalizer, Hint>* finalizeData =
+    new details::FinalizeData<void, Finalizer, Hint>({ finalizeCallback, finalizeHint });
+  napi_status status = napi_create_external_arraybuffer(
+    env,
+    externalData,
+    byteLength,
+    details::FinalizeData<void, Finalizer, Hint>::WrapperWithHint,
+    finalizeData,
+    &value);
+  if (status != napi_ok) {
+    delete finalizeData;
+    throw Error::New(env);
+  }
+
+  return ArrayBuffer(env, value, externalData, byteLength);
 }
 
 inline ArrayBuffer::ArrayBuffer() : Object(), _data(nullptr), _length(0) {
@@ -781,12 +862,28 @@ inline ArrayBuffer::ArrayBuffer(napi_env env, napi_value value)
   : Object(env, value), _data(nullptr), _length(0) {
 }
 
+inline ArrayBuffer::ArrayBuffer(napi_env env, napi_value value, void* data, size_t length)
+  : Object(env, value), _data(data), _length(length) {
+}
+
 inline void* ArrayBuffer::Data() {
+  EnsureInfo();
   return _data;
 }
 
 inline size_t ArrayBuffer::ByteLength() {
+  EnsureInfo();
   return _length;
+}
+
+inline void ArrayBuffer::EnsureInfo() const {
+  // The ArrayBuffer instance may have been constructed from a napi_value whose
+  // length/data are not yet known. Fetch and cache these values just once,
+  // since they can never change during the lifetime of the ArrayBuffer.
+  if (_data == nullptr) {
+    napi_status status = napi_get_arraybuffer_info(_env, _value, &_data, &_length);
+    if (status != napi_ok) throw Error::New(_env);
+  }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -979,12 +1076,14 @@ struct CallbackData {
       CallbackInfo callbackInfo(env, info);
       CallbackData* callbackData =
         static_cast<CallbackData*>(callbackInfo.Data());
+      callbackInfo.SetData(callbackData->data);
       return callbackData->callback(callbackInfo);
     }
     NAPI_RETHROW_JS_ERROR(env)
   }
 
   Callable callback;
+  void* data;
 };
 
 template <typename Callable>
@@ -995,6 +1094,7 @@ struct CallbackData<Callable, void> {
       CallbackInfo callbackInfo(env, info);
       CallbackData* callbackData =
         static_cast<CallbackData*>(callbackInfo.Data());
+      callbackInfo.SetData(callbackData->data);
       callbackData->callback(callbackInfo);
       return nullptr;
     }
@@ -1002,6 +1102,27 @@ struct CallbackData<Callable, void> {
   }
 
   Callable callback;
+  void* data;
+};
+
+template <typename T, typename Finalizer, typename Hint = void>
+struct FinalizeData {
+  static inline
+  void Wrapper(napi_env env, void* data, void* finalizeHint) {
+    FinalizeData* finalizeData = static_cast<FinalizeData*>(finalizeHint);
+    finalizeData->callback(Env(env), static_cast<T*>(data));
+    delete finalizeData;
+  }
+
+  static inline
+  void WrapperWithHint(napi_env env, void* data, void* finalizeHint) {
+    FinalizeData* finalizeData = static_cast<FinalizeData*>(finalizeHint);
+    finalizeData->callback(Env(env), static_cast<T*>(data), finalizeData->hint);
+    delete finalizeData;
+  }
+
+  Finalizer callback;
+  Hint* hint;
 };
 
 }  // namespace details
@@ -1009,13 +1130,13 @@ struct CallbackData<Callable, void> {
 template <typename Callable>
 inline Function Function::New(napi_env env,
                               Callable cb,
-                              const char* utf8name) {
+                              const char* utf8name,
+                              void* data) {
   typedef decltype(cb(CallbackInfo(nullptr, nullptr))) ReturnType;
   typedef details::CallbackData<Callable, ReturnType> CbData;
   // TODO: Delete when the function is destroyed
-  auto callbackData = new CbData({ cb });
+  auto callbackData = new CbData({ cb, data });
 
-  // TODO: set the function name
   napi_value value;
   napi_status status = napi_create_function(
     env, utf8name, CbData::Wrapper, callbackData, &value);
@@ -1026,8 +1147,9 @@ inline Function Function::New(napi_env env,
 template <typename Callable>
 inline Function Function::New(napi_env env,
                               Callable cb,
-                              const std::string& utf8name) {
-  return New(env, cb, utf8name.c_str());
+                              const std::string& utf8name,
+                              void* data) {
+  return New(env, cb, utf8name.c_str(), data);
 }
 
 inline Function::Function() : Object() {
@@ -1116,16 +1238,62 @@ inline Buffer<T> Buffer<T>::New(napi_env env, size_t length) {
   void* data;
   napi_status status = napi_create_buffer(env, length * sizeof (T), &data, &value);
   if (status != napi_ok) throw Error::New(env);
+  return Buffer(env, value, length, static_cast<T*>(data));
+}
+
+template <typename T>
+inline Buffer<T> Buffer<T>::New(napi_env env, T* data, size_t length) {
+  napi_value value;
+  napi_status status = napi_create_external_buffer(
+    env, length * sizeof (T), data, nullptr, nullptr, &value);
+  if (status != napi_ok) throw Error::New(env);
   return Buffer(env, value, length, data);
 }
 
 template <typename T>
-inline Buffer<T> Buffer<T>::New(
-    napi_env env, T* data, size_t length, napi_finalize finalizeCallback, void* finalizeHint) {
+template <typename Finalizer>
+inline Buffer<T> Buffer<T>::New(napi_env env,
+                                T* data,
+                                size_t length,
+                                Finalizer finalizeCallback) {
   napi_value value;
+  details::FinalizeData<T, Finalizer>* finalizeData =
+    new details::FinalizeData<T, Finalizer>({ finalizeCallback, nullptr });
   napi_status status = napi_create_external_buffer(
-    env, length * sizeof (T), data, finalizeCallback, finalizeHint, &value);
-  if (status != napi_ok) throw Error::New(env);
+    env,
+    length * sizeof (T),
+    data,
+    details::FinalizeData<T, Finalizer>::Wrapper,
+    finalizeData,
+    &value);
+  if (status != napi_ok) {
+    delete finalizeData;
+    throw Error::New(env);
+  }
+  return Buffer(env, value, length, data);
+}
+
+template <typename T>
+template <typename Finalizer, typename Hint>
+inline Buffer<T> Buffer<T>::New(napi_env env,
+                                T* data,
+                                size_t length,
+                                Finalizer finalizeCallback,
+                                Hint* finalizeHint) {
+  napi_value value;
+  details::FinalizeData<T, Finalizer, Hint>* finalizeData =
+    new details::FinalizeData<T, Finalizer, Hint>({ finalizeCallback, finalizeHint });
+  napi_status status = napi_create_external_buffer(
+    env,
+    length * sizeof (T),
+    data,
+    details::FinalizeData<T, Finalizer, Hint>::WrapperWithHint,
+    finalizeData,
+    &value);
+  if (status != napi_ok) {
+    delete finalizeData;
+    throw Error::New(env);
+  }
   return Buffer(env, value, length, data);
 }
 
@@ -1135,7 +1303,7 @@ inline Buffer<T> Buffer<T>::Copy(napi_env env, const T* data, size_t length) {
   napi_status status = napi_create_buffer_copy(
     env, length * sizeof (T), data, nullptr, &value);
   if (status != napi_ok) throw Error::New(env);
-  return Buffer(env, value);
+  return Buffer<T>(env, value);
 }
 
 template <typename T>

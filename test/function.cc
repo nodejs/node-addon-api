@@ -2,6 +2,10 @@
 
 using namespace Napi;
 
+namespace {
+
+int testData = 1;
+
 void VoidCallback(const CallbackInfo& info) {
   auto env = info.Env();
   Object obj = info[0].As<Object>();
@@ -14,6 +18,28 @@ Value ValueCallback(const CallbackInfo& info) {
   Object obj = Object::New(env);
 
   obj["foo"] = String::New(env, "bar");
+
+  return obj;
+}
+
+void VoidCallbackWithData(const CallbackInfo& info) {
+  auto env = info.Env();
+  Object obj = info[0].As<Object>();
+
+  obj["foo"] = String::New(env, "bar");
+
+  int* data = static_cast<int*>(info.Data());
+  obj["data"] = Number::New(env, *data);
+}
+
+Value ValueCallbackWithData(const CallbackInfo& info) {
+  auto env = info.Env();
+  Object obj = Object::New(env);
+
+  obj["foo"] = String::New(env, "bar");
+
+  int* data = static_cast<int*>(info.Data());
+  obj["data"] = Number::New(env, *data);
 
   return obj;
 }
@@ -65,10 +91,16 @@ Value CallConstructorWithVector(const CallbackInfo& info) {
    return func.New(args);
 }
 
+} // end anonymous namespace
+
 Object InitFunction(Env env) {
   Object exports = Object::New(env);
   exports["voidCallback"] = Function::New(env, VoidCallback, "voidCallback");
   exports["valueCallback"] = Function::New(env, ValueCallback, std::string("valueCallback"));
+  exports["voidCallbackWithData"] =
+    Function::New(env, VoidCallbackWithData, nullptr, &testData);
+  exports["valueCallbackWithData"] =
+    Function::New(env, ValueCallbackWithData, nullptr, &testData);
   exports["callWithArgs"] = Function::New(env, CallWithArgs);
   exports["callWithVector"] = Function::New(env, CallWithVector);
   exports["callWithReceiverAndArgs"] = Function::New(env, CallWithReceiverAndArgs);
