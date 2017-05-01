@@ -1381,6 +1381,8 @@ inline void Buffer<T>::EnsureInfo() const {
 ////////////////////////////////////////////////////////////////////////////////
 
 inline Error Error::New(napi_env env) {
+  HandleScope scope(env);
+
   napi_status status;
   napi_value error = nullptr;
   if (Napi::Env(env).IsExceptionPending()) {
@@ -1432,16 +1434,49 @@ inline Error Error::New(napi_env env, const std::string& message) {
   return Error::New<Error>(env, message.c_str(), message.size(), napi_create_error);
 }
 
-inline Error::Error() : Object(), _message(nullptr) {
+inline Error::Error() : ObjectReference(), _message(nullptr) {
 }
 
-inline Error::Error(napi_env env, napi_value value) : Object(env, value) {
+inline Error::Error(napi_env env, napi_value value) : ObjectReference(env, nullptr) {
+  if (value != nullptr) {
+    napi_status status = napi_create_reference(env, value, 1, &_ref);
+
+    // Avoid infinite recursion in the failure case.
+    // Don't try to construct & throw another Error instance.
+    assert(status == napi_ok);
+  }
+}
+
+inline Error::Error(Error&& other) : ObjectReference(std::move(other)) {
+}
+
+inline Error& Error::operator =(Error&& other) {
+  static_cast<Reference<Object>*>(this)->operator=(std::move(other));
+  return *this;
+}
+
+inline Error::Error(const Error& other) : Error(other.Env(), other.Value()) {
+}
+
+inline Error& Error::operator =(Error& other) {
+  Reset();
+
+  _env = other.Env();
+  HandleScope scope(_env);
+
+  napi_value value = other.Value();
+  if (value != nullptr) {
+    napi_status status = napi_create_reference(_env, value, 1, &_ref);
+    if (status != napi_ok) throw Error::New(_env);
+  }
+
+  return *this;
 }
 
 inline const std::string& Error::Message() const NAPI_NOEXCEPT {
   if (_message.size() == 0 && _env != nullptr) {
     try {
-      _message = (*this)["message"].As<String>();
+      _message = Get("message").As<String>();
     }
     catch (...) {
       // Catch all errors here, to include e.g. a std::bad_alloc from
@@ -1453,8 +1488,10 @@ inline const std::string& Error::Message() const NAPI_NOEXCEPT {
 }
 
 inline void Error::ThrowAsJavaScriptException() const {
-  if (_value != nullptr) {
-    napi_throw(_env, _value);
+  HandleScope scope(_env);
+  if (!IsEmpty()) {
+    napi_status status = napi_throw(_env, Value());
+    if (status != napi_ok) throw Error::New(_env);
   }
 }
 
@@ -1532,8 +1569,8 @@ inline Reference<T>::Reference() : _env(nullptr), _ref(nullptr), _suppressDestru
 }
 
 template <typename T>
-inline Reference<T>::Reference(napi_env env, napi_ref persistent)
-  : _env(env), _ref(persistent) {
+inline Reference<T>::Reference(napi_env env, napi_ref ref)
+  : _env(env), _ref(ref) {
 }
 
 template <typename T>
@@ -1557,6 +1594,7 @@ inline Reference<T>::Reference(Reference<T>&& other) {
 
 template <typename T>
 inline Reference<T>& Reference<T>::operator =(Reference<T>&& other) {
+  Reset();
   _env = other._env;
   _ref = other._ref;
   other._env = nullptr;
@@ -2626,7 +2664,7 @@ inline void AsyncWorker::WorkComplete() {
     OnOK();
   }
   else {
-    OnError(_error.Value());
+    OnError(_error);
   }
 }
 
@@ -2639,11 +2677,12 @@ inline void AsyncWorker::OnOK() {
 }
 
 inline void AsyncWorker::OnError(Error e) {
-  _callback.MakeCallback(Env().Undefined(), std::vector<napi_value>({ e }));
+  HandleScope scope(Env());
+  _callback.MakeCallback(Env().Undefined(), std::vector<napi_value>({ e.Value() }));
 }
 
 inline void AsyncWorker::SetError(Error error) {
-  _error.Reset(error, 1);
+  _error = error;
 }
 
 inline void AsyncWorker::OnExecute(napi_env env, void* this_pointer) {
