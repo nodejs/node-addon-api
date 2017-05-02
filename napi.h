@@ -2,9 +2,9 @@
 #define SRC_NAPI_H_
 
 ////////////////////////////////////////////////////////////////////////////////
-// NAPI C++ Wrapper Classes
+// N-API C++ Wrapper Classes
 //
-// These classes wrap the "NAPI" ABI-stable C APIs for Node.js, providing a
+// These classes wrap the "N-API" ABI-stable C APIs for Node.js, providing a
 // C++ object model and C++ exception-handling semantics with low overhead.
 // The wrappers are all header-only so that they do not affect the ABI.
 ////////////////////////////////////////////////////////////////////////////////
