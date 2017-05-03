@@ -124,7 +124,7 @@ namespace Napi {
     /// Converts to another type of `Napi::Value`, when the actual type is known or assumed.
     ///
     /// This conversion does NOT coerce the type. Calling any methods inappropriate for the actual
-    /// value type will cause `Napi::Error`s to be thrown.
+    /// value type will throw `Napi::Error`.
     template <typename T> T As() const;
 
     Boolean ToBoolean() const; ///< Coerces a value to a JavaScript boolean.
@@ -196,27 +196,27 @@ namespace Napi {
     /// Creates a new String value from a UTF-8 encoded C string.
     static String New(
       napi_env env,     ///< N-API environment
-      const char* value ///< UTF-8 encoded C string
+      const char* value ///< UTF-8 encoded null-terminated C string
     );
 
     /// Creates a new String value from a UTF-16 encoded C string.
     static String New(
       napi_env env,         ///< N-API environment
-      const char16_t* value ///< UTF-16 encoded C string
+      const char16_t* value ///< UTF-16 encoded null-terminated C string
     );
 
     /// Creates a new String value from a UTF-8 encoded C string with specified length.
     static String New(
       napi_env env,      ///< N-API environment
-      const char* value, ///< UTF-8 encoded C string
+      const char* value, ///< UTF-8 encoded C string (not necessarily null-terminated)
       size_t length      ///< length of the string in bytes
     );
 
     /// Creates a new String value from a UTF-16 encoded C string with specified length.
     static String New(
       napi_env env,          ///< N-API environment
-      const char16_t* value, ///< UTF-16 encoded C string
-      size_t length          ///< length of the string in 2-byte code units
+      const char16_t* value, ///< UTF-16 encoded C string (not necessarily null-terminated)
+      size_t length          ///< Length of the string in 2-byte code units
     );
 
     String(); ///< Creates a new _empty_ String instance.
@@ -592,7 +592,7 @@ namespace Napi {
   /// may be changed to/from a strong reference by adjusting the refcount.
   ///
   /// The referenced value is not immediately destroyed when the reference count is zero; it is
-  /// merely then eligible for if there are no other references to the value.
+  /// merely then eligible for garbage-collection if there are no other references to the value.
   template <typename T>
   class Reference {
   public:
@@ -959,7 +959,7 @@ namespace Napi {
   ///         Napi::Value GetSomething(const Napi::CallbackInfo& info);
   ///         void SetSomething(const Napi::CallbackInfo& info, const Napi::Value& value);
   ///         Napi::Value DoSomething(const Napi::CallbackInfo& info);
-  ///       }
+  ///     }
   template <typename T>
   class ObjectWrap : public Reference<Object> {
   public:
