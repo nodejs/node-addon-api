@@ -1,4 +1,4 @@
-﻿#ifndef SRC_NAPI_INL_H_
+#ifndef SRC_NAPI_INL_H_
 #define SRC_NAPI_INL_H_
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -38,9 +38,7 @@ inline void RegisterModule(napi_env env,
                        Napi::Object(env, module));
   }
   catch (const Error& e) {
-    if (!Napi::Env(env).IsExceptionPending()) {
-      e.ThrowAsJavaScriptException();
-    }
+    e.ThrowAsJavaScriptException();
   }
 }
 
@@ -48,9 +46,7 @@ inline void RegisterModule(napi_env env,
 // and rethrow them as JavaScript exceptions before returning from the callback.
 #define NAPI_RETHROW_JS_ERROR(env)               \
   catch (const Error& e) {                       \
-    if (!Napi::Env(env).IsExceptionPending()) {  \
-      e.ThrowAsJavaScriptException();            \
-    }                                            \
+    e.ThrowAsJavaScriptException();              \
     return nullptr;                              \
   }
 
@@ -1215,14 +1211,6 @@ inline Value Function::Call(napi_value recv, const std::vector<napi_value>& args
   return Value(_env, result);
 }
 
-inline Value Function::MakeCallback(const std::initializer_list<napi_value>& args) const {
-  return MakeCallback(Env().Undefined(), args);
-}
-
-inline Value Function::MakeCallback(const std::vector<napi_value>& args) const {
-  return MakeCallback(Env().Undefined(), args);
-}
-
 inline Value Function::MakeCallback(
     napi_value recv, const std::initializer_list<napi_value>& args) const {
   napi_value result;
@@ -1888,16 +1876,6 @@ inline Napi::Value FunctionReference::Call(
   return scope.Escape(Value().Call(recv, args));
 }
 
-inline Napi::Value FunctionReference::MakeCallback(const std::initializer_list<napi_value>& args) const {
-  EscapableHandleScope scope(_env);
-  return scope.Escape(Value().MakeCallback(args));
-}
-
-inline Napi::Value FunctionReference::MakeCallback(const std::vector<napi_value>& args) const {
-  EscapableHandleScope scope(_env);
-  return scope.Escape(Value().MakeCallback(args));
-}
-
 inline Napi::Value FunctionReference::MakeCallback(
     napi_value recv, const std::initializer_list<napi_value>& args) const {
   EscapableHandleScope scope(_env);
@@ -2481,7 +2459,7 @@ inline napi_value ObjectWrap<T>::InstanceVoidMethodCallbackWrapper(
     InstanceVoidMethodCallbackData* callbackData =
       reinterpret_cast<InstanceVoidMethodCallbackData*>(callbackInfo.Data());
     callbackInfo.SetData(callbackData->data);
-    T* instance = Unwrap(callbackInfo.This());
+    T* instance = Unwrap(callbackInfo.This().As<Object>());
     auto cb = callbackData->callback;
     (instance->*cb)(callbackInfo);
     return nullptr;
@@ -2498,7 +2476,7 @@ inline napi_value ObjectWrap<T>::InstanceMethodCallbackWrapper(
     InstanceMethodCallbackData* callbackData =
       reinterpret_cast<InstanceMethodCallbackData*>(callbackInfo.Data());
     callbackInfo.SetData(callbackData->data);
-    T* instance = Unwrap(callbackInfo.This());
+    T* instance = Unwrap(callbackInfo.This().As<Object>());
     auto cb = callbackData->callback;
     return (instance->*cb)(callbackInfo);
   }
@@ -2514,7 +2492,7 @@ inline napi_value ObjectWrap<T>::InstanceGetterCallbackWrapper(
     InstanceAccessorCallbackData* callbackData =
       reinterpret_cast<InstanceAccessorCallbackData*>(callbackInfo.Data());
     callbackInfo.SetData(callbackData->data);
-    T* instance = Unwrap(callbackInfo.This());
+    T* instance = Unwrap(callbackInfo.This().As<Object>());
     auto cb = callbackData->getterCallback;
     return (instance->*cb)(callbackInfo);
   }
@@ -2530,7 +2508,7 @@ inline napi_value ObjectWrap<T>::InstanceSetterCallbackWrapper(
     InstanceAccessorCallbackData* callbackData =
       reinterpret_cast<InstanceAccessorCallbackData*>(callbackInfo.Data());
     callbackInfo.SetData(callbackData->data);
-    T* instance = Unwrap(callbackInfo.This());
+    T* instance = Unwrap(callbackInfo.This().As<Object>());
     auto cb = callbackData->setterCallback;
     (instance->*cb)(callbackInfo, callbackInfo[0]);
     return nullptr;
@@ -2606,9 +2584,13 @@ inline Value EscapableHandleScope::Escape(napi_value escapee) {
 ////////////////////////////////////////////////////////////////////////////////
 
 inline AsyncWorker::AsyncWorker(const Function& callback)
-  : _callback(Napi::Persistent(callback)),
-    _persistent(Napi::Persistent(Object::New(callback.Env()))),
-    _env(callback.Env()) {
+  : AsyncWorker(Object::New(callback.Env()), callback) {
+}
+
+inline AsyncWorker::AsyncWorker(const Object& receiver, const Function& callback)
+  : _env(callback.Env()),
+    _receiver(Napi::Persistent(receiver)),
+    _callback(Napi::Persistent(callback)) {
   napi_status status = napi_create_async_work(
     _env, OnExecute, OnWorkComplete, this, &_work);
   if (status != napi_ok) throw Error::New(_env);
@@ -2626,7 +2608,8 @@ inline AsyncWorker::AsyncWorker(AsyncWorker&& other) {
   other._env = nullptr;
   _work = other._work;
   other._work = nullptr;
-  _persistent = std::move(other._persistent);
+  _receiver = std::move(other._receiver);
+  _callback = std::move(other._callback);
   _error = std::move(other._error);
 }
 
@@ -2635,7 +2618,8 @@ inline AsyncWorker& AsyncWorker::operator =(AsyncWorker&& other) {
   other._env = nullptr;
   _work = other._work;
   other._work = nullptr;
-  _persistent = std::move(other._persistent);
+  _receiver = std::move(other._receiver);
+  _callback = std::move(other._callback);
   _error = std::move(other._error);
   return *this;
 }
@@ -2658,30 +2642,23 @@ inline void AsyncWorker::Cancel() {
   if (status != napi_ok) throw Error::New(_env);
 }
 
-inline void AsyncWorker::WorkComplete() {
-  HandleScope scope(_env);
-  if (_error.IsEmpty()) {
-    OnOK();
-  }
-  else {
-    OnError(_error);
-  }
+inline ObjectReference& AsyncWorker::Receiver() {
+  return _receiver;
 }
 
-inline ObjectReference& AsyncWorker::Persistent() {
-  return _persistent;
+inline FunctionReference& AsyncWorker::Callback() {
+  return _callback;
 }
 
 inline void AsyncWorker::OnOK() {
-  _callback.MakeCallback(Env().Undefined(), std::vector<napi_value>());
+  _callback.MakeCallback(_receiver.Value(), {});
 }
 
-inline void AsyncWorker::OnError(Error e) {
-  HandleScope scope(Env());
-  _callback.MakeCallback(Env().Undefined(), std::vector<napi_value>({ e.Value() }));
+inline void AsyncWorker::OnError(Error& e) {
+  _callback.MakeCallback(_receiver.Value(), { e.Value() });
 }
 
-inline void AsyncWorker::SetError(Error error) {
+inline void AsyncWorker::SetError(const std::string& error) {
   _error = error;
 }
 
@@ -2689,9 +2666,8 @@ inline void AsyncWorker::OnExecute(napi_env env, void* this_pointer) {
   AsyncWorker* self = static_cast<AsyncWorker*>(this_pointer);
   try {
     self->Execute();
-  }
-  catch (const Error& e) {
-    self->SetError(e);
+  } catch (const std::exception& e) {
+    self->SetError(e.what());
   }
 }
 
@@ -2699,7 +2675,17 @@ inline void AsyncWorker::OnWorkComplete(
     napi_env env, napi_status status, void* this_pointer) {
   AsyncWorker* self = static_cast<AsyncWorker*>(this_pointer);
   if (status != napi_cancelled) {
-    self->WorkComplete();
+    HandleScope scope(self->_env);
+    try {
+      if (self->_error.size() == 0) {
+        self->OnOK();
+      }
+      else {
+        self->OnError(Error::New(self->_env, self->_error));
+      }
+    } catch (const Error& e) {
+      e.ThrowAsJavaScriptException();
+    }
   }
   delete self;
 }
