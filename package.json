@@ -2,6 +2,17 @@
   "bugs": {
     "url": "https://github.com/nodejs/node-api/issues"
   },
+  "contributors": [
+    "Anna Henningsen (https://github.com/addaleax)",
+    "Arunesh Chandra (https://github.com/aruneshchandra)",
+    "Benjamin Byholm (https://github.com/kkoopa)",
+    "Gabriel Schulhof (https://github.com/gabrielschulhof)",
+    "Hitesh Kanwathirtha (https://github.com/digitalinfinity)",
+    "Jason Ginchereau (https://github.com/jasongin)",
+    "Michael Dawson (https://github.com/mhdawson)",
+    "Sampson Gao (https://github.com/sampsongao)",
+    "Taylor Woll (https://github.com/boingoing)"
+  ],
   "dependencies": {},
   "description": "Node.js API (N-API)",
   "devDependencies": {
@@ -11,7 +22,7 @@
   "homepage": "https://github.com/nodejs/node-api",
   "license": "MIT",
   "main": "index.js",
-  "name": "node-api",
+  "name": "node-addon-api",
   "optionalDependencies": {},
   "readme": "README.md",
   "repository": {

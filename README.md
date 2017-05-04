@@ -6,18 +6,17 @@ backward-compatibility with use with older versions of Node.js that do
 not have N-API built-in.
 
 To use N-API in a native module:
-  1. Add a dependency on this package to `package.json`.
-  It is not yet published to npm, so reference it directly from GitHub.
+  1. Add a dependency on this package to `package.json`:
 ```json
   "dependencies": {
-    "node-api": "github:nodejs/node-api",
+    "node-addon-api": "github:nodejs/node-addon-api",
   }
 ```
 
   2. Reference this package's include directory and gyp file in `binding.gyp`:
 ```gyp
-  'include_dirs': ["<!(node -p \"require('node-api').include\")"],
-  'dependencies': ["<!(node -p \"require('node-api').gyp\")"],
+  'include_dirs': ["<!(node -p \"require('node-addon-api').include\")"],
+  'dependencies': ["<!(node -p \"require('node-addon-api').gyp\")"],
 ```
 
   3. Ensure C++ exceptions are enabled in `binding.gyp`.
@@ -33,13 +32,30 @@ To use N-API in a native module:
 ```
 
   4. Include `napi.h` in the native module code.
-     To ensure only ABI-stable APIs are used, DO NOT include `node.h` or `v8.h`.
+     To ensure only ABI-stable APIs are used, DO NOT include
+     `node.h`, `nan.h`, or `v8.h`.
 ```C++
 #include "napi.h"
 ```
 
-At build time, the N-API back-compat library code will be used only when the targeted node version *does not* have N-API built-in.
+At build time, the N-API back-compat library code will be used only when the
+targeted node version *does not* have N-API built-in.
 
 See the [main project README](
    https://github.com/nodejs/abi-stable-node/blob/doc/README.md)
+or [preliminary documentation](https://github.com/nodejs/node/blob/v8.x/doc/api/n-api.md)
 for more details about N-API.
+
+<a name="collaborators"></a>
+### WG Members / Collaborators
+| Name                | GitHub link                                            |
+| ------------------- | ------------------------------------------------------ |
+| Anna Henningsen     | [@addaleax](https://github.com/addaleax)               |
+| Arunesh Chandra     | [@aruneshchandra](https://github.com/aruneshchandra)   |
+| Benjamin Byholm     | [@kkoopa](https://github.com/kkoopa)                   |
+| Gabriel Schulhof    | [@gabrielschulhof](https://github.com/gabrielschulhof) |
+| Hitesh Kanwathirtha | [@digitalinfinity](https://github.com/digitalinfinity) |
+| Jason Ginchereau    | [@jasongin](https://github.com/jasongin)               |
+| Michael Dawson      | [@mhdawson](https://github.com/mhdawson)               |
+| Sampson Gao         | [@sampsongao](https://github.com/sampsongao)           |
+| Taylor Woll         | [@boingoing](https://github.com/boingoing)             |
