@@ -24,7 +24,7 @@ Value CatchError(const CallbackInfo& info) {
   try {
     thrower({});
   } catch (const Error& e) {
-     return e;
+     return e.Value();
   }
   return info.Env().Null();
 }
@@ -50,8 +50,25 @@ void CatchAndRethrowError(const CallbackInfo& info) {
   try {
     thrower({});
   } catch (Error& e) {
-     e["caught"] = Boolean::New(info.Env(), true);
+     e.Set("caught", Boolean::New(info.Env(), true));
      throw e;
+  }
+}
+
+void ThrowErrorThatEscapesScope(const CallbackInfo& info) {
+  HandleScope scope(info.Env());
+
+  std::string message = info[0].As<String>().Utf8Value();
+  throw Error::New(info.Env(), message);
+}
+
+void CatchAndRethrowErrorThatEscapesScope(const CallbackInfo& info) {
+  HandleScope scope(info.Env());
+  try {
+    ThrowErrorThatEscapesScope(info);
+  } catch (Error& e) {
+    e.Set("caught", Boolean::New(info.Env(), true));
+    throw e;
   }
 }
 
@@ -66,5 +83,8 @@ Object InitError(Env env) {
   exports["catchErrorMessage"] = Function::New(env, CatchErrorMessage);
   exports["doNotCatch"] = Function::New(env, DoNotCatch);
   exports["catchAndRethrowError"] = Function::New(env, CatchAndRethrowError);
+  exports["throwErrorThatEscapesScope"] = Function::New(env, ThrowErrorThatEscapesScope);
+  exports["catchAndRethrowErrorThatEscapesScope"] =
+    Function::New(env, CatchAndRethrowErrorThatEscapesScope);
   return exports;
 }

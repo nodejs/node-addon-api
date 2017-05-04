@@ -41,3 +41,11 @@ assert.strictEqual(err.message, 'test');
 const msg = binding.error.catchErrorMessage(
    () => { throw new TypeError('test'); });
 assert.strictEqual(msg, 'test');
+
+assert.throws(() => binding.error.throwErrorThatEscapesScope('test'), err => {
+   return err instanceof Error && err.message === 'test';
+});
+
+assert.throws(() => binding.error.catchAndRethrowErrorThatEscapesScope('test'), err => {
+  return err instanceof Error && err.message === 'test' && err.caught;
+});
