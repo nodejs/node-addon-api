@@ -2684,16 +2684,7 @@ inline void AsyncWorker::OnWorkComplete(
         self->OnError(Error::New(self->_env, self->_error));
       }
     } catch (const Error& e) {
-      // A JS or N-API exception was thrown, and propagated as a C++ exception.
-      // But throwing a JS exception here would have no effect because there
-      // is no JS on the callstack.
-
-      // TODO: Print the exception details and abort, just like Node.js normally
-      // does for unhandled exceptions. But there is no N-API function for that.
-      // For now just assert, so at least the exception message is discoverable
-      // in a debug build.
-      const char* message = e.what();
-      assert(false);
+      e.ThrowAsJavaScriptException();
     }
   }
   delete self;
