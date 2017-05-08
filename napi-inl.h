@@ -979,21 +979,23 @@ inline void ArrayBuffer::EnsureInfo() const {
 // TypedArray class
 ////////////////////////////////////////////////////////////////////////////////
 
-inline TypedArray::TypedArray() : Object(), _type(TypedArray::unknown_type), _length(0) {
+inline TypedArray::TypedArray()
+  : Object(), _type(TypedArray::unknown_array_type), _length(0) {
 }
 
 inline TypedArray::TypedArray(napi_env env, napi_value value)
-  : Object(env, value), _type(TypedArray::unknown_type), _length(0) {
+  : Object(env, value), _type(TypedArray::unknown_array_type), _length(0) {
 }
 
 inline TypedArray::TypedArray(napi_env env,
                               napi_value value,
                               napi_typedarray_type type,
-                              size_t length) : Object(env, value), _type(type), _length(length) {
+                              size_t length)
+  : Object(env, value), _type(type), _length(length) {
 }
 
 inline napi_typedarray_type TypedArray::TypedArrayType() const {
-  if (_type == TypedArray::unknown_type) {
+  if (_type == TypedArray::unknown_array_type) {
     napi_status status = napi_get_typedarray_info(_env, _value,
       &const_cast<TypedArray*>(this)->_type, &const_cast<TypedArray*>(this)->_length,
       nullptr, nullptr, nullptr);
@@ -1024,7 +1026,7 @@ inline uint8_t TypedArray::ElementSize() const {
 }
 
 inline size_t TypedArray::ElementLength() const {
-  if (_type == TypedArray::unknown_type) {
+  if (_type == TypedArray::unknown_array_type) {
     napi_status status = napi_get_typedarray_info(_env, _value,
       &const_cast<TypedArray*>(this)->_type, &const_cast<TypedArray*>(this)->_length,
       nullptr, nullptr, nullptr);
@@ -1054,99 +1056,75 @@ inline Napi::ArrayBuffer TypedArray::ArrayBuffer() const {
   return Napi::ArrayBuffer(_env, arrayBuffer);
 }
 
-inline Int8Array TypedArray::AsInt8Array() const {
-  return Int8Array(_env, _value);
-}
-
-inline Uint8Array TypedArray::AsUint8Array() const {
-  return Uint8Array(_env, _value);
-}
-
-inline Uint8ClampedArray TypedArray::AsUint8ClampedArray() const {
-  return Uint8ClampedArray(_env, _value);
-}
-
-inline Int16Array TypedArray::AsInt16Array() const {
-  return Int16Array(_env, _value);
-}
-
-inline Uint16Array TypedArray::AsUint16Array() const {
-  return Uint16Array(_env, _value);
-}
-
-inline Int32Array TypedArray::AsInt32Array() const {
-  return Int32Array(_env, _value);
-}
-
-inline Uint32Array TypedArray::AsUint32Array() const {
-  return Uint32Array(_env, _value);
-}
-
-inline Float32Array TypedArray::AsFloat32Array() const {
-  return Float32Array(_env, _value);
-}
-
-inline Float64Array TypedArray::AsFloat64Array() const {
-  return Float64Array(_env, _value);
-}
-
 ////////////////////////////////////////////////////////////////////////////////
-// TypedArray_<T,A> class
+// TypedArrayOf<T> class
 ////////////////////////////////////////////////////////////////////////////////
 
-template <typename T, napi_typedarray_type A>
-inline TypedArray_<T,A> TypedArray_<T,A>::New(napi_env env, size_t elementLength) {
+template <typename T>
+inline TypedArrayOf<T> TypedArrayOf<T>::New(napi_env env,
+                                            size_t elementLength,
+                                            napi_typedarray_type type) {
   Napi::ArrayBuffer arrayBuffer = Napi::ArrayBuffer::New(env, elementLength * sizeof (T));
-  return New(env, elementLength, arrayBuffer, 0);
+  return New(env, elementLength, arrayBuffer, 0, type);
 }
 
-template <typename T, napi_typedarray_type A>
-inline TypedArray_<T,A> TypedArray_<T,A>::New(napi_env env,
-                                              size_t elementLength,
-                                              Napi::ArrayBuffer arrayBuffer,
-                                              size_t bufferOffset) {
+template <typename T>
+inline TypedArrayOf<T> TypedArrayOf<T>::New(napi_env env,
+                                            size_t elementLength,
+                                            Napi::ArrayBuffer arrayBuffer,
+                                            size_t bufferOffset,
+                                            napi_typedarray_type type) {
   napi_value value;
   napi_status status = napi_create_typedarray(
-    env, A, elementLength, arrayBuffer, bufferOffset, &value);
+    env, type, elementLength, arrayBuffer, bufferOffset, &value);
   if (status != napi_ok) throw Error::New(env);
 
-  return TypedArray_<T,A>(env, value, elementLength, reinterpret_cast<T*>(arrayBuffer.Data()));
+  return TypedArrayOf<T>(env, value, type, elementLength, reinterpret_cast<T*>(arrayBuffer.Data()));
 }
 
-template <typename T, napi_typedarray_type A>
-inline TypedArray_<T,A>::TypedArray_() : TypedArray(), _data(nullptr) {
+template <typename T>
+inline TypedArrayOf<T>::TypedArrayOf() : TypedArray(), _data(nullptr) {
 }
 
-template <typename T, napi_typedarray_type A>
-inline TypedArray_<T,A>::TypedArray_(napi_env env, napi_value value)
-  : TypedArray(env, value, A, 0), _data(nullptr) {
+template <typename T>
+inline TypedArrayOf<T>::TypedArrayOf(napi_env env, napi_value value)
+  : TypedArray(env, value), _data(nullptr) {
   napi_status status = napi_get_typedarray_info(
-    _env, _value, nullptr, &_length, reinterpret_cast<void**>(&_data), nullptr, nullptr);
+    _env, _value, &_type, &_length, reinterpret_cast<void**>(&_data), nullptr, nullptr);
   if (status != napi_ok) throw Error::New(_env);
 }
 
-template <typename T, napi_typedarray_type A>
-inline TypedArray_<T,A>::TypedArray_(napi_env env, napi_value value, size_t length, T* data)
-  : TypedArray(env, value, A, length), _data(data) {
+template <typename T>
+inline TypedArrayOf<T>::TypedArrayOf(napi_env env,
+                                     napi_value value,
+                                     napi_typedarray_type type,
+                                     size_t length,
+                                     T* data)
+  : TypedArray(env, value, type, length), _data(data) {
+  if (!(type == TypedArrayTypeForPrimitiveType<T>() ||
+      (type == napi_uint8_clamped_array && std::is_same<T, uint8_t>::value))) {
+    throw TypeError::New(env, "Array type must match the template parameter. "
+      "(Uint8 arrays may optionally have the \"clamped\" array type.)");
+  }
 }
 
-template <typename T, napi_typedarray_type A>
-inline T& TypedArray_<T,A>::operator [](size_t index) {
+template <typename T>
+inline T& TypedArrayOf<T>::operator [](size_t index) {
   return _data[index];
 }
 
-template <typename T, napi_typedarray_type A>
-inline const T& TypedArray_<T,A>::operator [](size_t index) const {
+template <typename T>
+inline const T& TypedArrayOf<T>::operator [](size_t index) const {
   return _data[index];
 }
 
-template <typename T, napi_typedarray_type A>
-inline T* TypedArray_<T,A>::Data() {
+template <typename T>
+inline T* TypedArrayOf<T>::Data() {
   return _data;
 }
 
-template <typename T, napi_typedarray_type A>
-inline const T* TypedArray_<T,A>::Data() const {
+template <typename T>
+inline const T* TypedArrayOf<T>::Data() const {
   return _data;
 }
 

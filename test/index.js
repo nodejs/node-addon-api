@@ -12,6 +12,7 @@ let testModules = [
    'external',
    'function',
    'name',
+   'typedarray',
 ];
 
 testModules.forEach(name => {

@@ -10,6 +10,7 @@ Object InitExternal(Env env);
 Object InitFunction(Env env);
 Object InitName(Env env);
 Object InitObject(Env env);
+Object InitTypedArray(Env env);
 
 void Init(Env env, Object exports, Object module) {
   exports.Set("arraybuffer", InitArrayBuffer(env));
@@ -20,6 +21,7 @@ void Init(Env env, Object exports, Object module) {
   exports.Set("function", InitFunction(env));
   exports.Set("name", InitName(env));
   exports.Set("object", InitObject(env));
+  exports.Set("typedarray", InitTypedArray(env));
 }
 
 NODE_API_MODULE(addon, Init)
