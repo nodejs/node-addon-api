@@ -7,7 +7,7 @@ not have N-API built-in.
 
 ### API Documentation
 
- - [ABI-Stable C APIs in Node.js](https://nodejs.org/dist/latest-v7.x/docs/api/n-api.html)
+ - [ABI-Stable C APIs in Node.js](https://nodejs.org/api/n-api.html)
  - [C++ APIs in this package](https://nodejs.github.io/node-api/namespace_napi.html)
 
 ### Getting Started

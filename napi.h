@@ -494,100 +494,6 @@ namespace Napi {
     void EnsureInfo() const;
   };
 
-  /// Wraps a JavaScript error object in a way that enables it to traverse a C++ stack and be
-  /// thrown and caught as a C++ exception.
-  ///
-  /// If a N-API call fails without executing any JavaScript code (for example due to an invalid
-  /// argument), then the N-API wrapper automatically converts and throws the error as a C++
-  /// exception of type `Napi::Error`. Or if a JavaScript function called by C++ code via N-API
-  /// throws a JavaScript exception, then the N-API wrapper automatically converts and throws it as
-  /// a C++ exception of type `Napi::Error`.
-  ///
-  /// If a C++ exception of type `Napi::Error` escapes from a N-API C++ callback, then the N-API
-  /// wrapper automatically converts and throws it as a JavaScript exception.
-  ///
-  /// Catching a C++ exception of type `Napi::Error` also clears the JavaScript exception. Of
-  /// course it may be then re-thrown, which restores the JavaScript exception.
-  ///
-  /// #### Example 1 - Throwing an exception:
-  ///
-  ///     Napi::Env env = ...
-  ///     throw Napi::Error::New(env, "Example exception");
-  ///
-  /// Following C++ statements will not be executed. The exception will bubble up as a C++
-  /// exception of type `Napi::Error`, until it is either caught while still in C++, or else
-  /// automatically re-thrown as a JavaScript exception when the callback returns to JavaScript.
-  ///
-  /// #### Example 2 - Ignoring a NAPI exception:
-  ///
-  ///     Napi::Function jsFunctionThatThrows = someObj.As<Napi::Function>();
-  ///     jsFunctionThatThrows({ arg1, arg2 });
-  ///
-  /// Following C++ statements will not be executed. The exception will bubble up as a C++
-  /// exception of type `Napi::Error`, until it is either caught while still in C++, or else
-  /// automatically re-thrown as a JavaScript exception when the callback returns to JavaScript.
-  ///
-  /// #### Example 3 - Handling a NAPI exception:
-  ///
-  ///     Napi::Function jsFunctionThatThrows = someObj.As<Napi::Function>();
-  ///     try {
-  ///        jsFunctionThatThrows({ arg1, arg2 });
-  ///     } catch (const Napi::Error& e) {
-  ///       cerr << "Caught JavaScript exception: " + e.what();
-  ///     }
-  ///
-  /// Since the exception was caught here, it will not be re-thrown as a JavaScript exception.
-  class Error : public Object, public std::exception {
-  public:
-    /// Creates a new Error object with no message.
-    static Error New(napi_env env);
-
-    /// Creates a new Error object from a UTF-8 encoded C string.
-    static Error New(napi_env env, const char* message);
-
-    /// Creates a new Error object from a UTF-8 encoded C++ string.
-    static Error New(napi_env env, const std::string& message);
-
-    Error(); ///< Creates a new _empty_ Error instance.
-    Error(napi_env env, napi_value value); ///< Wraps a N-API value primitive.
-
-    const std::string& Message() const NAPI_NOEXCEPT;
-    void ThrowAsJavaScriptException() const;
-
-    const char* what() const NAPI_NOEXCEPT override;
-
-  protected:
-    /// @cond INTERNAL
-    typedef napi_status (*create_error_fn)(napi_env envb, napi_value msg, napi_value* result);
-    template <typename TError>
-    static TError New(napi_env env,
-                      const char* message,
-                      size_t length,
-                      create_error_fn create_error);
-    /// @endcond
-
-  private:
-    mutable std::string _message;
-  };
-
-  class TypeError : public Error {
-  public:
-    static TypeError New(napi_env env, const char* message);
-    static TypeError New(napi_env env, const std::string& message);
-
-    TypeError();
-    TypeError(napi_env env, napi_value value);
-  };
-
-  class RangeError : public Error {
-  public:
-    static RangeError New(napi_env env, const char* message);
-    static RangeError New(napi_env env, const std::string& message);
-
-    RangeError();
-    RangeError(napi_env env, napi_value value);
-  };
-
   /// Holds a counted reference to a value; initially a weak reference unless otherwise specified,
   /// may be changed to/from a strong reference by adjusting the refcount.
   ///
@@ -709,53 +615,47 @@ namespace Napi {
   ObjectReference Persistent(Object value);
   FunctionReference Persistent(Function value);
 
-  /*
-   * The NAPI Error class wraps a JavaScript Error object in a way that enables it
-   * to traverse a C++ stack and be thrown and caught as a C++ exception.
-   *
-   * If a NAPI API call fails without executing any JavaScript code (for example due
-   * to an invalid argument), then the NAPI wrapper automatically converts and throws
-   * the error as a C++ exception of type Napi::Error.
-   *
-   * If a JavaScript function called by C++ code via NAPI throws a JavaScript exception,
-   * then the NAPI wrapper automatically converts and throws it as a C++ exception of type
-   * Napi::Error.
-   *
-   * If a C++ exception of type Napi::Error escapes from a NAPI C++ callback, then
-   * the NAPI wrapper automatically converts and throws it as a JavaScript exception.
-   *
-   * Catching a C++ exception of type Napi::Error also clears the JavaScript exception.
-   * Of course it may be then re-thrown, which restores the JavaScript exception.
-   *
-   * Example 1 - Throwing a N-API exception:
-   *
-   *   Napi::Env env = ...
-   *   throw Napi::Error::New(env, "Example exception");
-   *   // Following C++ statements will not be executed.
-   *   // The exception will bubble up as a C++ exception of type Napi::Error,
-   *   // until it is either caught while still in C++, or else automatically
-   *   // re-thrown as a JavaScript exception when the callback returns to JavaScript.
-   *
-   * Example 2 - Ignoring a N-API exception:
-   *
-   *   Napi::Function jsFunctionThatThrows = someObj.As<Napi::Function>();
-   *   jsFunctionThatThrows({ arg1, arg2 });
-   *   // Following C++ statements will not be executed.
-   *   // The exception will bubble up as a C++ exception of type Napi::Error,
-   *   // until it is either caught while still in C++, or else automatically
-   *   // re-thrown as a JavaScript exception when the callback returns to JavaScript.
-   *
-   * Example 3 - Handling a N-API exception:
-   *
-   *   Napi::Function jsFunctionThatThrows = someObj.As<Napi::Function>();
-   *   try {
-   *     jsFunctionThatThrows({ arg1, arg2 });
-   *   } catch (const Napi::Error& e) {
-   *     cerr << "Caught JavaScript exception: " + e.Message();
-   *     // Since the exception was caught here, it will not be re-thrown as
-   *     // a JavaScript exception.
-   *   }
-   */
+  /// Wraps a JavaScript error object in a way that enables it to traverse a C++ stack and be
+  /// thrown and caught as a C++ exception.
+  ///
+  /// If a N-API call fails without executing any JavaScript code (for example due to an invalid
+  /// argument), then the N-API wrapper automatically converts and throws the error as a C++
+  /// exception of type `Napi::Error`. Or if a JavaScript function called by C++ code via N-API
+  /// throws a JavaScript exception, then the N-API wrapper automatically converts and throws it as
+  /// a C++ exception of type `Napi::Error`.
+  ///
+  /// If a C++ exception of type `Napi::Error` escapes from a N-API C++ callback, then the N-API
+  /// wrapper automatically converts and throws it as a JavaScript exception. Therefore, catching
+  /// a C++ exception of type `Napi::Error` prevents a JavaScript exception from being thrown.
+  ///
+  /// #### Example 1 - Throwing an exception:
+  ///
+  ///     Napi::Env env = ...
+  ///     throw Napi::Error::New(env, "Example exception");
+  ///
+  /// Following C++ statements will not be executed. The exception will bubble up as a C++
+  /// exception of type `Napi::Error`, until it is either caught while still in C++, or else
+  /// automatically re-thrown as a JavaScript exception when the callback returns to JavaScript.
+  ///
+  /// #### Example 2 - Not catching a N-API exception:
+  ///
+  ///     Napi::Function jsFunctionThatThrows = someObj.As<Napi::Function>();
+  ///     jsFunctionThatThrows({ arg1, arg2 });
+  ///
+  /// Following C++ statements will not be executed. The exception will bubble up as a C++
+  /// exception of type `Napi::Error`, until it is either caught while still in C++, or else
+  /// automatically re-thrown as a JavaScript exception when the callback returns to JavaScript.
+  ///
+  /// #### Example 3 - Handling a N-API exception:
+  ///
+  ///     Napi::Function jsFunctionThatThrows = someObj.As<Napi::Function>();
+  ///     try {
+  ///        jsFunctionThatThrows({ arg1, arg2 });
+  ///     } catch (const Napi::Error& e) {
+  ///       cerr << "Caught JavaScript exception: " + e.what();
+  ///     }
+  ///
+  /// Since the exception was caught here, it will not be re-thrown as a JavaScript exception.
   class Error : public ObjectReference, public std::exception {
   public:
     static Error New(napi_env env);
