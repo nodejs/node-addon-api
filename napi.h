@@ -1,14 +1,6 @@
 #ifndef SRC_NAPI_H_
 #define SRC_NAPI_H_
 
-////////////////////////////////////////////////////////////////////////////////
-// N-API C++ Wrapper Classes
-//
-// These classes wrap the "N-API" ABI-stable C APIs for Node.js, providing a
-// C++ object model and C++ exception-handling semantics with low overhead.
-// The wrappers are all header-only so that they do not affect the ABI.
-////////////////////////////////////////////////////////////////////////////////
-
 #include "node_api.h"
 #include <functional>
 #include <initializer_list>
@@ -21,8 +13,16 @@
   #define NAPI_NOEXCEPT noexcept
 #endif
 
+////////////////////////////////////////////////////////////////////////////////
+/// N-API C++ Wrapper Classes
+///
+/// These classes wrap the "N-API" ABI-stable C APIs for Node.js, providing a
+/// C++ object model and C++ exception-handling semantics with low overhead.
+/// The wrappers are all header-only so that they do not affect the ABI.
+////////////////////////////////////////////////////////////////////////////////
 namespace Napi {
 
+  // Forward declarations
   class Env;
   class Value;
   class Boolean;
@@ -37,9 +37,9 @@ namespace Napi {
   class CallbackInfo;
   template <typename T> class Reference;
   template <typename Key> class PropertyLValue;
-
   class TypedArray;
   template <typename T, napi_typedarray_type A> class TypedArray_;
+
   typedef TypedArray_<int8_t, napi_int8_array> Int8Array;
   typedef TypedArray_<uint8_t, napi_uint8_array> Uint8Array;
   typedef TypedArray_<uint8_t, napi_uint8_clamped_array> Uint8ClampedArray;
@@ -50,12 +50,20 @@ namespace Napi {
   typedef TypedArray_<float, napi_float32_array> Float32Array;
   typedef TypedArray_<double, napi_float64_array> Float64Array;
 
-  // A N-API C++ module's registration callback (init) function has this sinature.
+  /// Defines the signature of a N-API C++ module's registration callback (init) function.
   typedef void ModuleRegisterCallback(Env env, Object exports, Object module);
 
-  /*
-   * Environment for NAPI operations. (In V8 this corresponds to an Isolate.)
-   */
+  /// Environment for N-API values and operations.
+  ///
+  /// All N-API values and operations must be associated with an environment. An environment
+  /// instance is always provided to callback functions; that environment must then be used for any
+  /// creation of N-API values or other N-API operations within the callback. (Many methods infer
+  /// the environment from the `this` instance that the method is called on.)
+  ///
+  /// In the future, multiple environments per process may be supported, although current
+  /// implementations only support one environment per process.
+  ///
+  /// In the V8 JavaScript engine, a N-API environment approximately corresponds to an Isolate.
   class Env {
   public:
     Env(napi_env env);
@@ -72,51 +80,63 @@ namespace Napi {
     napi_env _env;
   };
 
-  /*
-   * Represents a JavaScript value of unknown type.
-   *
-   * For type-specific operations, convert to one of the Value subclasses using a
-   * To* or As* method. The To* methods do type coercion; the As* methods do not.
-   */
+  /// A JavaScript value of unknown type.
+  ///
+  /// For type-specific operations, convert to one of the Value subclasses using a `To*` or `As*`
+  /// method. The `To*` methods do type coercion; the `As*` methods do not.
   class Value {
   public:
-    Value();
-    Value(napi_env env, napi_value value);
+    Value(); ///< Creates a new _empty_ Value instance.
+    Value(napi_env env, napi_value value); ///< Wraps a N-API value primitive.
 
+    /// Converts to a N-API value primitive.
+    ///
+    /// If the instance is _empty_, this returns `nullptr`.
     operator napi_value() const;
+
+    /// Tests if this value strictly equals another value.
     bool operator ==(const Value& other) const;
+
+    /// Tests if this value does not strictly equal another value.
     bool operator !=(const Value& other) const;
+
+    /// Tests if this value strictly equals another value.
     bool StrictEquals(const Value& other) const;
 
+    /// Gets the environment the value is associated with.
     Napi::Env Env() const;
 
-    napi_valuetype Type() const;
-    bool IsUndefined() const;
-    bool IsNull() const;
-    bool IsBoolean() const;
-    bool IsNumber() const;
-    bool IsString() const;
-    bool IsSymbol() const;
-    bool IsArray() const;
-    bool IsArrayBuffer() const;
-    bool IsTypedArray() const;
-    bool IsObject() const;
-    bool IsFunction() const;
-    bool IsBuffer() const;
+    napi_valuetype Type() const; ///< Gets the type of the value.
 
-    // Use As<T> to convert to another type of Napi::Value, when the actual type is
-    // known or assumed. This conversion does NOT very the type. But calling any methods
-    // inappropriate for the actual value type will cause Napi::Errors to be thrown.
+    bool IsUndefined() const;   ///< Tests if a value is an undefined JavaScript value.
+    bool IsNull() const;        ///< Tests if a value is a null JavaScript value.
+    bool IsBoolean() const;     ///< Tests if a value is a JavaScript boolean.
+    bool IsNumber() const;      ///< Tests if a value is a JavaScript number.
+    bool IsString() const;      ///< Tests if a value is a JavaScript string.
+    bool IsSymbol() const;      ///< Tests if a value is a JavaScript symbol.
+    bool IsArray() const;       ///< Tests if a value is a JavaScript array.
+    bool IsArrayBuffer() const; ///< Tests if a value is a JavaScript array buffer.
+    bool IsTypedArray() const;  ///< Tests if a value is a JavaScript typed array.
+    bool IsObject() const;      ///< Tests if a value is a JavaScript object.
+    bool IsFunction() const;    ///< Tests if a value is a JavaScript function.
+    bool IsBuffer() const;      ///< Tests if a value is a Node buffer.
+
+    /// Converts to another type of `Napi::Value`, when the actual type is known or assumed.
+    ///
+    /// This conversion does NOT coerce the type. Calling any methods inappropriate for the actual
+    /// value type will throw `Napi::Error`.
     template <typename T> T As() const;
 
-    Boolean ToBoolean() const;
-    Number ToNumber() const;
-    String ToString() const;
-    Object ToObject() const;
+    Boolean ToBoolean() const; ///< Coerces a value to a JavaScript boolean.
+    Number ToNumber() const;   ///< Coerces a value to a JavaScript number.
+    String ToString() const;   ///< Coerces a value to a JavaScript string.
+    Object ToObject() const;   ///< Coerces a value to a JavaScript object.
 
   protected:
+    /// @cond INTERNAL
     napi_env _env;
     napi_value _value;
+    /// @endcond
   };
 
   class Boolean : public Value {
@@ -151,28 +171,61 @@ namespace Napi {
     double DoubleValue() const;
   };
 
+  /// A JavaScript string or symbol value (that can be used as a property name).
   class Name : public Value {
   public:
-    Name();
-    Name(napi_env env, napi_value value);
+    Name(); ///< Creates a new _empty_ Name instance.
+    Name(napi_env env, napi_value value); ///< Wraps a N-API value primitive.
   };
 
+  /// A JavaScript string value.
   class String : public Name {
   public:
-    static String New(napi_env env, const std::string& value);
-    static String New(napi_env env, const std::u16string& value);
-    static String New(napi_env env, const char* value);
-    static String New(napi_env env, const char16_t* value);
-    static String New(napi_env env, const char* value, size_t length);
-    static String New(napi_env env, const char16_t* value, size_t length);
+    /// Creates a new String value from a UTF-8 encoded C++ string.
+    static String New(
+      napi_env env,            ///< N-API environment
+      const std::string& value ///< UTF-8 encoded C++ string
+    );
 
-    String();
-    String(napi_env env, napi_value value);
+    /// Creates a new String value from a UTF-16 encoded C++ string.
+    static String New(
+      napi_env env,               ///< N-API environment
+      const std::u16string& value ///< UTF-16 encoded C++ string
+    );
 
-    operator std::string() const;
-    operator std::u16string() const;
-    std::string Utf8Value() const;
-    std::u16string Utf16Value() const;
+    /// Creates a new String value from a UTF-8 encoded C string.
+    static String New(
+      napi_env env,     ///< N-API environment
+      const char* value ///< UTF-8 encoded null-terminated C string
+    );
+
+    /// Creates a new String value from a UTF-16 encoded C string.
+    static String New(
+      napi_env env,         ///< N-API environment
+      const char16_t* value ///< UTF-16 encoded null-terminated C string
+    );
+
+    /// Creates a new String value from a UTF-8 encoded C string with specified length.
+    static String New(
+      napi_env env,      ///< N-API environment
+      const char* value, ///< UTF-8 encoded C string (not necessarily null-terminated)
+      size_t length      ///< length of the string in bytes
+    );
+
+    /// Creates a new String value from a UTF-16 encoded C string with specified length.
+    static String New(
+      napi_env env,          ///< N-API environment
+      const char16_t* value, ///< UTF-16 encoded C string (not necessarily null-terminated)
+      size_t length          ///< Length of the string in 2-byte code units
+    );
+
+    String(); ///< Creates a new _empty_ String instance.
+    String(napi_env env, napi_value value); ///< Wraps a N-API value primitive.
+
+    operator std::string() const;      ///< Converts a String value to a UTF-8 encoded C++ string.
+    operator std::u16string() const;   ///< Converts a String value to a UTF-16 encoded C++ string.
+    std::string Utf8Value() const;     ///< Converts a String value to a UTF-8 encoded C++ string.
+    std::u16string Utf16Value() const; ///< Converts a String value to a UTF-16 encoded C++ string.
   };
 
   class Symbol : public Name {
@@ -441,12 +494,11 @@ namespace Napi {
     void EnsureInfo() const;
   };
 
-  /*
-   * Holds a counted reference to a value; initially a weak reference unless otherwise specified.
-   * May be changed to/from a strong reference by adjusting the refcount. The referenced value
-   * is not immediately destroyed when the reference count is zero; it merely then eligible for
-   * GC if there are no other references to the value.
-   */
+  /// Holds a counted reference to a value; initially a weak reference unless otherwise specified,
+  /// may be changed to/from a strong reference by adjusting the refcount.
+  ///
+  /// The referenced value is not immediately destroyed when the reference count is zero; it is
+  /// merely then eligible for garbage-collection if there are no other references to the value.
   template <typename T>
   class Reference {
   public:
@@ -563,53 +615,47 @@ namespace Napi {
   ObjectReference Persistent(Object value);
   FunctionReference Persistent(Function value);
 
-  /*
-   * The NAPI Error class wraps a JavaScript Error object in a way that enables it
-   * to traverse a C++ stack and be thrown and caught as a C++ exception.
-   *
-   * If a NAPI API call fails without executing any JavaScript code (for example due
-   * to an invalid argument), then the NAPI wrapper automatically converts and throws
-   * the error as a C++ exception of type Napi::Error.
-   *
-   * If a JavaScript function called by C++ code via NAPI throws a JavaScript exception,
-   * then the NAPI wrapper automatically converts and throws it as a C++ exception of type
-   * Napi::Error.
-   *
-   * If a C++ exception of type Napi::Error escapes from a NAPI C++ callback, then
-   * the NAPI wrapper automatically converts and throws it as a JavaScript exception.
-   *
-   * Catching a C++ exception of type Napi::Error also clears the JavaScript exception.
-   * Of course it may be then re-thrown, which restores the JavaScript exception.
-   *
-   * Example 1 - Throwing a N-API exception:
-   *
-   *   Napi::Env env = ...
-   *   throw Napi::Error::New(env, "Example exception");
-   *   // Following C++ statements will not be executed.
-   *   // The exception will bubble up as a C++ exception of type Napi::Error,
-   *   // until it is either caught while still in C++, or else automatically
-   *   // re-thrown as a JavaScript exception when the callback returns to JavaScript.
-   *
-   * Example 2 - Ignoring a N-API exception:
-   *
-   *   Napi::Function jsFunctionThatThrows = someObj.As<Napi::Function>();
-   *   jsFunctionThatThrows({ arg1, arg2 });
-   *   // Following C++ statements will not be executed.
-   *   // The exception will bubble up as a C++ exception of type Napi::Error,
-   *   // until it is either caught while still in C++, or else automatically
-   *   // re-thrown as a JavaScript exception when the callback returns to JavaScript.
-   *
-   * Example 3 - Handling a N-API exception:
-   *
-   *   Napi::Function jsFunctionThatThrows = someObj.As<Napi::Function>();
-   *   try {
-   *     jsFunctionThatThrows({ arg1, arg2 });
-   *   } catch (const Napi::Error& e) {
-   *     cerr << "Caught JavaScript exception: " + e.Message();
-   *     // Since the exception was caught here, it will not be re-thrown as
-   *     // a JavaScript exception.
-   *   }
-   */
+  /// Wraps a JavaScript error object in a way that enables it to traverse a C++ stack and be
+  /// thrown and caught as a C++ exception.
+  ///
+  /// If a N-API call fails without executing any JavaScript code (for example due to an invalid
+  /// argument), then the N-API wrapper automatically converts and throws the error as a C++
+  /// exception of type `Napi::Error`. Or if a JavaScript function called by C++ code via N-API
+  /// throws a JavaScript exception, then the N-API wrapper automatically converts and throws it as
+  /// a C++ exception of type `Napi::Error`.
+  ///
+  /// If a C++ exception of type `Napi::Error` escapes from a N-API C++ callback, then the N-API
+  /// wrapper automatically converts and throws it as a JavaScript exception. Therefore, catching
+  /// a C++ exception of type `Napi::Error` prevents a JavaScript exception from being thrown.
+  ///
+  /// #### Example 1 - Throwing an exception:
+  ///
+  ///     Napi::Env env = ...
+  ///     throw Napi::Error::New(env, "Example exception");
+  ///
+  /// Following C++ statements will not be executed. The exception will bubble up as a C++
+  /// exception of type `Napi::Error`, until it is either caught while still in C++, or else
+  /// automatically re-thrown as a JavaScript exception when the callback returns to JavaScript.
+  ///
+  /// #### Example 2 - Not catching a N-API exception:
+  ///
+  ///     Napi::Function jsFunctionThatThrows = someObj.As<Napi::Function>();
+  ///     jsFunctionThatThrows({ arg1, arg2 });
+  ///
+  /// Following C++ statements will not be executed. The exception will bubble up as a C++
+  /// exception of type `Napi::Error`, until it is either caught while still in C++, or else
+  /// automatically re-thrown as a JavaScript exception when the callback returns to JavaScript.
+  ///
+  /// #### Example 3 - Handling a N-API exception:
+  ///
+  ///     Napi::Function jsFunctionThatThrows = someObj.As<Napi::Function>();
+  ///     try {
+  ///        jsFunctionThatThrows({ arg1, arg2 });
+  ///     } catch (const Napi::Error& e) {
+  ///       cerr << "Caught JavaScript exception: " + e.what();
+  ///     }
+  ///
+  /// Since the exception was caught here, it will not be re-thrown as a JavaScript exception.
   class Error : public ObjectReference, public std::exception {
   public:
     static Error New(napi_env env);
@@ -772,12 +818,11 @@ namespace Napi {
     napi_property_descriptor _desc;
   };
 
-  /*
-  * Property descriptor for use with ObjectWrap<T>::DefineClass(). This is different from
-  * the standalone PropertyDescriptor because it is specific to each ObjectWrap<T>
-  * subclass. This prevents using descriptors from a different class when defining a new class
-  * (preventing the callbacks from having incorrect `this` pointers).
-  */
+  /// Property descriptor for use with `ObjectWrap::DefineClass()`.
+  ///
+  /// This is different from the standalone `PropertyDescriptor` because it is specific to each
+  /// `ObjectWrap<T>` subclass. This prevents using descriptors from a different class when
+  /// defining a new class (preventing the callbacks from having incorrect `this` pointers).
   template <typename T>
   class ClassPropertyDescriptor {
   public:
@@ -790,36 +835,31 @@ namespace Napi {
     napi_property_descriptor _desc;
   };
 
-  /*
-   * Base class to be extended by C++ classes exposed to JavaScript.
-   * Each C++ class instance gets "wrapped" by a JavaScript object.
-   *
-   * At initialization time, the DefineClass() method must be used to
-   * hook up the accessor and method callbacks. It takes a list of
-   * property descriptors, which can be constructed via the various
-   * static methods on the base class.
-   *
-   * Example:
-   *
-   *   class Example: public Napi::ObjectWrap<Example> {
-   *   public:
-   *     static void Initialize(Napi::Env& env, Napi::Object& target) {
-   *       Napi::Function constructor = DefineClass(env, "Example", New, {
-   *         InstanceAccessor("value", &GetValue, &SetValue),
-   *         InstanceMethod("doSomething", &DoSomething),
-   *       });
-   *       target.Set("Example", constructor);
-   *     }
-   *
-   *     static Example* New(const Napi::CallbackInfo& info) {
-   *       return new Example();
-   *     }
-   *
-   *     Napi::Value GetValue(const Napi::CallbackInfo& info);
-   *     void SetValue(const Napi::CallbackInfo& info, const Napi::Value& value);
-   *     Napi::Value DoSomething(const Napi::CallbackInfo& info);
-   *   }
-   */
+  /// Base class to be extended by C++ classes exposed to JavaScript; each C++ class instance gets
+  /// "wrapped" by a JavaScript object that is managed by this class.
+  ///
+  /// At initialization time, the `DefineClass()` method must be used to
+  /// hook up the accessor and method callbacks. It takes a list of
+  /// property descriptors, which can be constructed via the various
+  /// static methods on the base class.
+  ///
+  /// #### Example:
+  ///
+  ///     class Example: public Napi::ObjectWrap<Example> {
+  ///       public:
+  ///         static void Initialize(Napi::Env& env, Napi::Object& target) {
+  ///           Napi::Function constructor = DefineClass(env, "Example", {
+  ///             InstanceAccessor("value", &GetSomething, &SetSomething),
+  ///             InstanceMethod("doSomething", &DoSomething),
+  ///           });
+  ///           target.Set("Example", constructor);
+  ///         }
+  ///
+  ///         Example(const Napi::CallbackInfo& info); // Constructor
+  ///         Napi::Value GetSomething(const Napi::CallbackInfo& info);
+  ///         void SetSomething(const Napi::CallbackInfo& info, const Napi::Value& value);
+  ///         Napi::Value DoSomething(const Napi::CallbackInfo& info);
+  ///     }
   template <typename T>
   class ObjectWrap : public Reference<Object> {
   public:

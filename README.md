@@ -5,6 +5,13 @@ Node.js API (N-API), along with library code that enables
 backward-compatibility with use with older versions of Node.js that do
 not have N-API built-in.
 
+### API Documentation
+
+ - [ABI-Stable C APIs in Node.js](https://nodejs.org/api/n-api.html)
+ - [C++ APIs in this package](https://nodejs.github.io/node-api/namespace_napi.html)
+
+### Getting Started
+
 To use N-API in a native module:
   1. Add a dependency on this package to `package.json`:
 ```json
@@ -41,21 +48,16 @@ To use N-API in a native module:
 At build time, the N-API back-compat library code will be used only when the
 targeted node version *does not* have N-API built-in.
 
-See the [main project README](
-   https://github.com/nodejs/abi-stable-node/blob/doc/README.md)
-or [preliminary documentation](https://github.com/nodejs/node/blob/v8.x/doc/api/n-api.md)
-for more details about N-API.
-
 <a name="collaborators"></a>
 ### WG Members / Collaborators
-| Name                | GitHub link                                            |
-| ------------------- | ------------------------------------------------------ |
-| Anna Henningsen     | [@addaleax](https://github.com/addaleax)               |
-| Arunesh Chandra     | [@aruneshchandra](https://github.com/aruneshchandra)   |
-| Benjamin Byholm     | [@kkoopa](https://github.com/kkoopa)                   |
-| Gabriel Schulhof    | [@gabrielschulhof](https://github.com/gabrielschulhof) |
-| Hitesh Kanwathirtha | [@digitalinfinity](https://github.com/digitalinfinity) |
-| Jason Ginchereau    | [@jasongin](https://github.com/jasongin)               |
-| Michael Dawson      | [@mhdawson](https://github.com/mhdawson)               |
-| Sampson Gao         | [@sampsongao](https://github.com/sampsongao)           |
-| Taylor Woll         | [@boingoing](https://github.com/boingoing)             |
+| Name                | GitHub link                                           |
+| ------------------- | ----------------------------------------------------- |
+| Anna Henningsen     | [addaleax](https://github.com/addaleax)               |
+| Arunesh Chandra     | [aruneshchandra](https://github.com/aruneshchandra)   |
+| Benjamin Byholm     | [kkoopa](https://github.com/kkoopa)                   |
+| Gabriel Schulhof    | [gabrielschulhof](https://github.com/gabrielschulhof) |
+| Hitesh Kanwathirtha | [digitalinfinity](https://github.com/digitalinfinity) |
+| Jason Ginchereau    | [jasongin](https://github.com/jasongin)               |
+| Michael Dawson      | [mhdawson](https://github.com/mhdawson)               |
+| Sampson Gao         | [sampsongao](https://github.com/sampsongao)           |
+| Taylor Woll         | [boingoing](https://github.com/boingoing)             |
