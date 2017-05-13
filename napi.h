@@ -1011,7 +1011,7 @@ namespace Napi {
 
     virtual void Execute() = 0;
     virtual void OnOK();
-    virtual void OnError(Error& e);
+    virtual void OnError(const Error& e);
 
     void SetError(const std::string& error);
 

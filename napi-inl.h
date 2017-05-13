@@ -14,6 +14,105 @@
 
 namespace Napi {
 
+// For use in JS to C++ callback wrappers to catch any Napi::Error exceptions
+// and rethrow them as JavaScript exceptions before returning from the callback.
+#define NAPI_RETHROW_JS_ERROR(env)               \
+  catch (const Error& e) {                       \
+    e.ThrowAsJavaScriptException();              \
+    return nullptr;                              \
+  }
+
+// Helpers to handle functions exposed from C++.
+namespace details {
+
+template <typename Callable, typename Return>
+struct CallbackData {
+  static inline
+  napi_value Wrapper(napi_env env, napi_callback_info info) {
+    try {
+      CallbackInfo callbackInfo(env, info);
+      CallbackData* callbackData =
+        static_cast<CallbackData*>(callbackInfo.Data());
+      callbackInfo.SetData(callbackData->data);
+      return callbackData->callback(callbackInfo);
+    }
+    NAPI_RETHROW_JS_ERROR(env)
+  }
+
+  Callable callback;
+  void* data;
+};
+
+template <typename Callable>
+struct CallbackData<Callable, void> {
+  static inline
+  napi_value Wrapper(napi_env env, napi_callback_info info) {
+    try {
+      CallbackInfo callbackInfo(env, info);
+      CallbackData* callbackData =
+        static_cast<CallbackData*>(callbackInfo.Data());
+      callbackInfo.SetData(callbackData->data);
+      callbackData->callback(callbackInfo);
+      return nullptr;
+    }
+    NAPI_RETHROW_JS_ERROR(env)
+  }
+
+  Callable callback;
+  void* data;
+};
+
+template <typename T, typename Finalizer, typename Hint = void>
+struct FinalizeData {
+  static inline
+  void Wrapper(napi_env env, void* data, void* finalizeHint) {
+    FinalizeData* finalizeData = static_cast<FinalizeData*>(finalizeHint);
+    finalizeData->callback(Env(env), static_cast<T*>(data));
+    delete finalizeData;
+  }
+
+  static inline
+  void WrapperWithHint(napi_env env, void* data, void* finalizeHint) {
+    FinalizeData* finalizeData = static_cast<FinalizeData*>(finalizeHint);
+    finalizeData->callback(Env(env), static_cast<T*>(data), finalizeData->hint);
+    delete finalizeData;
+  }
+
+  Finalizer callback;
+  Hint* hint;
+};
+
+template <typename Getter, typename Setter>
+struct AccessorCallbackData {
+  static inline
+  napi_value GetterWrapper(napi_env env, napi_callback_info info) {
+    try {
+      CallbackInfo callbackInfo(env, info);
+      AccessorCallbackData* callbackData =
+        static_cast<AccessorCallbackData*>(callbackInfo.Data());
+      return callbackData->getterCallback(callbackInfo);
+    }
+    NAPI_RETHROW_JS_ERROR(env)
+  }
+
+  static inline
+  napi_value SetterWrapper(napi_env env, napi_callback_info info) {
+    try {
+      CallbackInfo callbackInfo(env, info);
+      AccessorCallbackData* callbackData =
+        static_cast<AccessorCallbackData*>(callbackInfo.Data());
+      callbackData->setterCallback(callbackInfo);
+      return nullptr;
+    }
+    NAPI_RETHROW_JS_ERROR(env)
+  }
+
+  Getter getterCallback;
+  Setter setterCallback;
+};
+
+}  // namespace details
+
 ////////////////////////////////////////////////////////////////////////////////
 // Module registration
 ////////////////////////////////////////////////////////////////////////////////
@@ -43,14 +142,6 @@ inline void RegisterModule(napi_env env,
     e.ThrowAsJavaScriptException();
   }
 }
-
-// For use in JS to C++ callback wrappers to catch any Napi::Error exceptions
-// and rethrow them as JavaScript exceptions before returning from the callback.
-#define NAPI_RETHROW_JS_ERROR(env)               \
-  catch (const Error& e) {                       \
-    e.ThrowAsJavaScriptException();              \
-    return nullptr;                              \
-  }
 
 ////////////////////////////////////////////////////////////////////////////////
 // Env class
@@ -1063,97 +1154,6 @@ inline const T* TypedArray_<T,A>::Data() const {
 // Function class
 ////////////////////////////////////////////////////////////////////////////////
 
-// Helpers to handle functions exposed from C++.
-namespace details {
-
-template <typename Callable, typename Return>
-struct CallbackData {
-  static inline
-  napi_value Wrapper(napi_env env, napi_callback_info info) {
-    try {
-      CallbackInfo callbackInfo(env, info);
-      CallbackData* callbackData =
-        static_cast<CallbackData*>(callbackInfo.Data());
-      callbackInfo.SetData(callbackData->data);
-      return callbackData->callback(callbackInfo);
-    }
-    NAPI_RETHROW_JS_ERROR(env)
-  }
-
-  Callable callback;
-  void* data;
-};
-
-template <typename Callable>
-struct CallbackData<Callable, void> {
-  static inline
-  napi_value Wrapper(napi_env env, napi_callback_info info) {
-    try {
-      CallbackInfo callbackInfo(env, info);
-      CallbackData* callbackData =
-        static_cast<CallbackData*>(callbackInfo.Data());
-      callbackInfo.SetData(callbackData->data);
-      callbackData->callback(callbackInfo);
-      return nullptr;
-    }
-    NAPI_RETHROW_JS_ERROR(env)
-  }
-
-  Callable callback;
-  void* data;
-};
-
-template <typename T, typename Finalizer, typename Hint = void>
-struct FinalizeData {
-  static inline
-  void Wrapper(napi_env env, void* data, void* finalizeHint) {
-    FinalizeData* finalizeData = static_cast<FinalizeData*>(finalizeHint);
-    finalizeData->callback(Env(env), static_cast<T*>(data));
-    delete finalizeData;
-  }
-
-  static inline
-  void WrapperWithHint(napi_env env, void* data, void* finalizeHint) {
-    FinalizeData* finalizeData = static_cast<FinalizeData*>(finalizeHint);
-    finalizeData->callback(Env(env), static_cast<T*>(data), finalizeData->hint);
-    delete finalizeData;
-  }
-
-  Finalizer callback;
-  Hint* hint;
-};
-
-template <typename Getter, typename Setter>
-struct AccessorCallbackData {
-  static inline
-  napi_value GetterWrapper(napi_env env, napi_callback_info info) {
-    try {
-      CallbackInfo callbackInfo(env, info);
-      AccessorCallbackData* callbackData =
-        static_cast<AccessorCallbackData*>(callbackInfo.Data());
-      return callbackData->getterCallback(callbackInfo);
-    }
-    NAPI_RETHROW_JS_ERROR(env)
-  }
-
-  static inline
-  napi_value SetterWrapper(napi_env env, napi_callback_info info) {
-    try {
-      CallbackInfo callbackInfo(env, info);
-      AccessorCallbackData* callbackData =
-        static_cast<AccessorCallbackData*>(callbackInfo.Data());
-      callbackData->setterCallback(callbackInfo);
-      return nullptr;
-    }
-    NAPI_RETHROW_JS_ERROR(env)
-  }
-
-  Getter getterCallback;
-  Setter setterCallback;
-};
-
-}  // namespace details
-
 template <typename Callable>
 inline Function Function::New(napi_env env,
                               Callable cb,
@@ -1371,8 +1371,6 @@ inline void Buffer<T>::EnsureInfo() const {
 ////////////////////////////////////////////////////////////////////////////////
 
 inline Error Error::New(napi_env env) {
-  HandleScope scope(env);
-
   napi_status status;
   napi_value error = nullptr;
   if (Napi::Env(env).IsExceptionPending()) {
@@ -2656,7 +2654,7 @@ inline void AsyncWorker::OnOK() {
   _callback.MakeCallback(_receiver.Value(), {});
 }
 
-inline void AsyncWorker::OnError(Error& e) {
+inline void AsyncWorker::OnError(const Error& e) {
   _callback.MakeCallback(_receiver.Value(), { e.Value() });
 }
 
