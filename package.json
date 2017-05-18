@@ -1,6 +1,6 @@
 {
   "bugs": {
-    "url": "https://github.com/nodejs/node-api/issues"
+    "url": "https://github.com/nodejs/node-addon-api/issues"
   },
   "contributors": [
     "Anna Henningsen (https://github.com/addaleax)",
@@ -19,7 +19,7 @@
     "node-gyp": "^3.6.0"
   },
   "directories": {},
-  "homepage": "https://github.com/nodejs/node-api",
+  "homepage": "https://github.com/nodejs/node-addon-api",
   "license": "MIT",
   "main": "index.js",
   "name": "node-addon-api",
@@ -27,7 +27,7 @@
   "readme": "README.md",
   "repository": {
     "type": "git",
-    "url": "git://github.com/nodejs/node-api.git"
+    "url": "git://github.com/nodejs/node-addon-api.git"
   },
   "scripts": {
     "pretest": "node-gyp rebuild -C test",

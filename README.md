@@ -8,7 +8,7 @@ not have N-API built-in.
 ### API Documentation
 
  - [ABI-Stable C APIs in Node.js](https://nodejs.org/api/n-api.html)
- - [C++ APIs in this package](https://nodejs.github.io/node-api/namespace_napi.html)
+ - [C++ APIs in this package](https://nodejs.github.io/node-addon-api/namespace_napi.html)
 
 ### Getting Started
 
@@ -16,7 +16,7 @@ To use N-API in a native module:
   1. Add a dependency on this package to `package.json`:
 ```json
   "dependencies": {
-    "node-addon-api": "github:nodejs/node-addon-api",
+    "node-addon-api": "0.2.0",
   }
 ```
 
