@@ -4,7 +4,12 @@ using namespace Napi;
 
 namespace {
 
-void ThrowError(const CallbackInfo& info) {
+void ThrowApiError(const CallbackInfo& info) {
+  // Attempting to call an empty function value will throw an API error.
+  Function(info.Env(), nullptr).Call({});
+}
+
+void ThrowJSError(const CallbackInfo& info) {
   std::string message = info[0].As<String>().Utf8Value();
   throw Error::New(info.Env(), message);
 }
@@ -76,7 +81,8 @@ void CatchAndRethrowErrorThatEscapesScope(const CallbackInfo& info) {
 
 Object InitError(Env env) {
   Object exports = Object::New(env);
-  exports["throwError"] = Function::New(env, ThrowError);
+  exports["throwApiError"] = Function::New(env, ThrowApiError);
+  exports["throwJSError"] = Function::New(env, ThrowJSError);
   exports["throwTypeError"] = Function::New(env, ThrowTypeError);
   exports["throwRangeError"] = Function::New(env, ThrowRangeError);
   exports["catchError"] = Function::New(env, CatchError);
