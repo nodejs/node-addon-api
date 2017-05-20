@@ -37,6 +37,8 @@ Value CreateBuffer(const CallbackInfo& info) {
 }
 
 Value CreateExternalBuffer(const CallbackInfo& info) {
+  finalizeCount = 0;
+
   Buffer<uint16_t> buffer = Buffer<uint16_t>::New(
     info.Env(),
     testData,
@@ -55,6 +57,8 @@ Value CreateExternalBuffer(const CallbackInfo& info) {
 }
 
 Value CreateExternalBufferWithFinalize(const CallbackInfo& info) {
+  finalizeCount = 0;
+
   uint16_t* data = new uint16_t[testLength];
 
   Buffer<uint16_t> buffer = Buffer<uint16_t>::New(
@@ -79,6 +83,8 @@ Value CreateExternalBufferWithFinalize(const CallbackInfo& info) {
 }
 
 Value CreateExternalBufferWithFinalizeHint(const CallbackInfo& info) {
+  finalizeCount = 0;
+
   uint16_t* data = new uint16_t[testLength];
 
   char* hint = nullptr;

@@ -19,12 +19,10 @@ function testDefineProperties(nameType) {
   const obj = {};
   binding.object.defineProperties(obj, nameType);
 
-  assertPropertyIsNot(obj, 'readonlyAccessor', 'writable');
   assertPropertyIsNot(obj, 'readonlyAccessor', 'enumerable');
   assertPropertyIsNot(obj, 'readonlyAccessor', 'configurable');
   assert.strictEqual(obj.readonlyAccessor, true);
 
-  assertPropertyIs(obj, 'readwriteAccessor', 'writable');
   assertPropertyIsNot(obj, 'readwriteAccessor', 'enumerable');
   assertPropertyIsNot(obj, 'readwriteAccessor', 'configurable');
   obj.readwriteAccessor = false;
