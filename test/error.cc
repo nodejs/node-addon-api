@@ -51,7 +51,7 @@ void CatchAndRethrowError(const CallbackInfo& info) {
     thrower({});
   } catch (Error& e) {
      e.Set("caught", Boolean::New(info.Env(), true));
-     throw e;
+     throw;
   }
 }
 
@@ -68,7 +68,7 @@ void CatchAndRethrowErrorThatEscapesScope(const CallbackInfo& info) {
     ThrowErrorThatEscapesScope(info);
   } catch (Error& e) {
     e.Set("caught", Boolean::New(info.Env(), true));
-    throw e;
+    throw;
   }
 }
 
