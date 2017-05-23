@@ -61,7 +61,7 @@ Value CreateExternalBufferWithFinalize(const CallbackInfo& info) {
     data,
     testLength,
     [](Env env, void* finalizeData) {
-      delete[] finalizeData;
+      delete[] static_cast<uint8_t*>(finalizeData);
       finalizeCount++;
     });
 
@@ -88,7 +88,7 @@ Value CreateExternalBufferWithFinalizeHint(const CallbackInfo& info) {
     data,
     testLength,
     [](Env env, void* finalizeData, char* finalizeHint) {
-      delete[] finalizeData;
+      delete[] static_cast<uint8_t*>(finalizeData);
       finalizeCount++;
     },
     hint);
