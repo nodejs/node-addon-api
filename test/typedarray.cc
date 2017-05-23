@@ -109,7 +109,7 @@ void SetTypedArrayElement(const CallbackInfo& info) {
       array.As<Uint8Array>()[index] = static_cast<uint8_t>(value.Uint32Value());
       break;
     case napi_int16_array:
-      array.As<Int16Array>()[index] = static_cast<int16_t>(value.Uint32Value());
+      array.As<Int16Array>()[index] = static_cast<int16_t>(value.Int32Value());
       break;
     case napi_uint16_array:
       array.As<Uint16Array>()[index] = static_cast<uint16_t>(value.Uint32Value());

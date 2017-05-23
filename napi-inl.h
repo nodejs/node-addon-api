@@ -1079,7 +1079,9 @@ inline TypedArrayOf<T> TypedArrayOf<T>::New(napi_env env,
     env, type, elementLength, arrayBuffer, bufferOffset, &value);
   if (status != napi_ok) throw Error::New(env);
 
-  return TypedArrayOf<T>(env, value, type, elementLength, reinterpret_cast<T*>(arrayBuffer.Data()));
+  return TypedArrayOf<T>(
+    env, value, type, elementLength,
+    reinterpret_cast<T*>(reinterpret_cast<uint8_t*>(arrayBuffer.Data()) + bufferOffset));
 }
 
 template <typename T>
