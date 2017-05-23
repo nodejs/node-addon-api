@@ -14,7 +14,7 @@
         'object.cc',
         'typedarray.cc',
       ],
-      'include_dirs': ["<!(node -p \"require('../').include\")"],
+      'include_dirs': ["<!@(node -p \"require('../').include\")"],
       'dependencies': ["<!(node -p \"require('../').gyp\")"],
       'cflags!': [ '-fno-exceptions' ],
       'cflags_cc!': [ '-fno-exceptions' ],

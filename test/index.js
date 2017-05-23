@@ -9,7 +9,7 @@ let testModules = [
   'function',
   'name',
   'object',
-  'typedaray',
+  'typedarray',
 ];
 
 if (typeof global.gc === 'function') {
