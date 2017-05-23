@@ -15,9 +15,7 @@
   ],
   "dependencies": {},
   "description": "Node.js API (N-API)",
-  "devDependencies": {
-    "node-gyp": "^3.6.0"
-  },
+  "devDependencies": {},
   "directories": {},
   "homepage": "https://github.com/nodejs/node-addon-api",
   "license": "MIT",
@@ -31,7 +29,7 @@
   },
   "scripts": {
     "pretest": "node-gyp rebuild -C test",
-    "test": "node --expose-gc test"
+    "test": "node test"
   },
   "version": "0.3.0"
 }

@@ -35,6 +35,8 @@ Value CreateBuffer(const CallbackInfo& info) {
 }
 
 Value CreateExternalBuffer(const CallbackInfo& info) {
+  finalizeCount = 0;
+
   ArrayBuffer buffer = ArrayBuffer::New(info.Env(), testData, testLength);
 
   if (buffer.ByteLength() != testLength) {
@@ -50,6 +52,8 @@ Value CreateExternalBuffer(const CallbackInfo& info) {
 }
 
 Value CreateExternalBufferWithFinalize(const CallbackInfo& info) {
+  finalizeCount = 0;
+
   uint8_t* data = new uint8_t[testLength];
 
   ArrayBuffer buffer = ArrayBuffer::New(
@@ -74,6 +78,8 @@ Value CreateExternalBufferWithFinalize(const CallbackInfo& info) {
 }
 
 Value CreateExternalBufferWithFinalizeHint(const CallbackInfo& info) {
+  finalizeCount = 0;
+
   uint8_t* data = new uint8_t[testLength];
 
   char* hint = nullptr;

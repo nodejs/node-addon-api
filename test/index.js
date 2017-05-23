@@ -1,25 +1,30 @@
 'use strict';
 
-if (typeof global.gc !== 'function') {
-   throw new Error('Tests require --expose-gc flag.')
-}
-
 let testModules = [
-   'arraybuffer',
-   'asyncworker',
-   'buffer',
-   'error',
-   'external',
-   'function',
-   'name',
-   'typedarray',
+  'arraybuffer',
+  'asyncworker',
+  'buffer',
+  'error',
+  'external',
+  'function',
+  'name',
+  'object',
+  'typedaray',
 ];
 
-testModules.forEach(name => {
-   try {
-      require('./' + name);
-   }
-   catch (e) {
-      console.error(e);
-   }
-});
+if (typeof global.gc === 'function') {
+  // Requiring each module runs tests in the module.
+  testModules.forEach(name => {
+    require('./' + name);
+  });
+} else {
+  // Make it easier to run with the correct (version-dependent) command-line args.
+  const args = [ '--expose-gc', __filename ];
+  if (require('../index').isNodeApiBuiltin) {
+    args.splice(0, 0, '--napi-modules');
+  }
+  const child = require('child_process').spawnSync(process.argv[0], args, {
+    stdio: 'inherit',
+  });
+  process.exitCode = child.status;
+}
