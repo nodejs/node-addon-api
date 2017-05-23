@@ -40,3 +40,12 @@ assert.ok(binding.name.checkSymbol(sym1));
 const sym2 = binding.name.createSymbol('test');
 assert.strictEqual(typeof sym2, 'symbol');
 assert.ok(binding.name.checkSymbol(sym1));
+
+// Check for off-by-one errors which might only appear for strings of certain sizes,
+// due to how std::string increments its capacity in chunks.
+const longString = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
+for (let i = 10; i <= longString.length; i++) {
+   const str = longString.substr(0, i);
+   assert.strictEqual(binding.name.echoString(str, 'utf8'), str);
+   assert.strictEqual(binding.name.echoString(str, 'utf16'), str);
+}
