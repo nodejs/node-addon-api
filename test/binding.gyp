@@ -12,6 +12,7 @@
         'function.cc',
         'name.cc',
         'object.cc',
+        'typedarray.cc',
       ],
       'include_dirs': ["<!(node -p \"require('../').include\")"],
       'dependencies': ["<!(node -p \"require('../').gyp\")"],

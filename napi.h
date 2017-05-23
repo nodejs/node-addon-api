@@ -38,17 +38,16 @@ namespace Napi {
   template <typename T> class Reference;
   template <typename Key> class PropertyLValue;
   class TypedArray;
-  template <typename T, napi_typedarray_type A> class TypedArray_;
+  template <typename T> class TypedArrayOf;
 
-  typedef TypedArray_<int8_t, napi_int8_array> Int8Array;
-  typedef TypedArray_<uint8_t, napi_uint8_array> Uint8Array;
-  typedef TypedArray_<uint8_t, napi_uint8_clamped_array> Uint8ClampedArray;
-  typedef TypedArray_<int16_t, napi_int16_array> Int16Array;
-  typedef TypedArray_<uint16_t, napi_uint16_array> Uint16Array;
-  typedef TypedArray_<int32_t, napi_int32_array> Int32Array;
-  typedef TypedArray_<uint32_t, napi_uint32_array> Uint32Array;
-  typedef TypedArray_<float, napi_float32_array> Float32Array;
-  typedef TypedArray_<double, napi_float64_array> Float64Array;
+  typedef TypedArrayOf<int8_t> Int8Array;     ///< Typed-array of signed 8-bit integers
+  typedef TypedArrayOf<uint8_t> Uint8Array;   ///< Typed-array of unsigned 8-bit integers
+  typedef TypedArrayOf<int16_t> Int16Array;   ///< Typed-array of signed 16-bit integers
+  typedef TypedArrayOf<uint16_t> Uint16Array; ///< Typed-array of unsigned 16-bit integers
+  typedef TypedArrayOf<int32_t> Int32Array;   ///< Typed-array of signed 32-bit integers
+  typedef TypedArrayOf<uint32_t> Uint32Array; ///< Typed-array of unsigned 32-bit integers
+  typedef TypedArrayOf<float> Float32Array;   ///< Typed-array of 32-bit floating-point values
+  typedef TypedArrayOf<double> Float64Array;  ///< Typed-array of 64-bit floating-point values
 
   /// Defines the signature of a N-API C++ module's registration callback (init) function.
   typedef void ModuleRegisterCallback(Env env, Object exports, Object module);
@@ -82,8 +81,15 @@ namespace Napi {
 
   /// A JavaScript value of unknown type.
   ///
-  /// For type-specific operations, convert to one of the Value subclasses using a `To*` or `As*`
-  /// method. The `To*` methods do type coercion; the `As*` methods do not.
+  /// For type-specific operations, convert to one of the Value subclasses using a `To*` or `As()`
+  /// method. The `To*` methods do type coercion; the `As()` method does not.
+  ///
+  ///     Napi::Value value = ...
+  ///     if (!value.IsString()) throw Napi::TypeError::New(env, "Invalid arg...");
+  ///     Napi::String str = value.As<Napi::String>(); // Cast to a string value
+  ///
+  ///     Napi::Value anotherValue = ...
+  ///     bool isTruthy = anotherValue.ToBoolean(); // Coerce to a boolean value
   class Value {
   public:
     Value(); ///< Creates a new _empty_ Value instance.
@@ -121,7 +127,7 @@ namespace Napi {
     bool IsFunction() const;    ///< Tests if a value is a JavaScript function.
     bool IsBuffer() const;      ///< Tests if a value is a Node buffer.
 
-    /// Converts to another type of `Napi::Value`, when the actual type is known or assumed.
+    /// Casts to another type of `Napi::Value`, when the actual type is known or assumed.
     ///
     /// This conversion does NOT coerce the type. Calling any methods inappropriate for the actual
     /// value type will throw `Napi::Error`.
@@ -133,10 +139,10 @@ namespace Napi {
     Object ToObject() const;   ///< Coerces a value to a JavaScript object.
 
   protected:
-    /// @cond INTERNAL
+    /// !cond INTERNAL
     napi_env _env;
     napi_value _value;
-    /// @endcond
+    /// !endcond
   };
 
   class Boolean : public Value {
@@ -340,30 +346,52 @@ namespace Napi {
     uint32_t Length() const;
   };
 
+  /// A JavaScript array buffer value.
   class ArrayBuffer : public Object {
   public:
-    static ArrayBuffer New(napi_env env, size_t byteLength);
-    static ArrayBuffer New(napi_env env, void* externalData, size_t byteLength);
+    /// Creates a new ArrayBuffer instance over a new automatically-allocated buffer.
+    static ArrayBuffer New(
+      napi_env env,     ///< N-API environment
+      size_t byteLength ///< Length of the buffer to be allocated, in bytes
+    );
 
-    // Finalizer must implement operator() accepting a void* and returning void.
+    /// Creates a new ArrayBuffer instance, using an external buffer with specified byte length.
+    static ArrayBuffer New(
+      napi_env env,       ///< N-API environment
+      void* externalData, ///< Pointer to the external buffer to be used by the array
+      size_t byteLength   ///< Length of the external buffer to be used by the array, in bytes
+    );
+
+    /// Creates a new ArrayBuffer instance, using an external buffer with specified byte length.
     template <typename Finalizer>
-    static ArrayBuffer New(napi_env env,
-                           void* externalData,
-                           size_t byteLength,
-                           Finalizer finalizeCallback);
-    // Finalizer must implement operator() accepting a void* and Hint* and returning void.
+    static ArrayBuffer New(
+      napi_env env,              ///< N-API environment
+      void* externalData,        ///< Pointer to the external buffer to be used by the array
+      size_t byteLength,         ///< Length of the external buffer to be used by the array,
+                                 ///  in bytes
+      Finalizer finalizeCallback ///< Function to be called when the array buffer is destroyed;
+                                 ///  must implement `operator()`, accept a `void*` (which is the
+                                 ///  data buffer pointer), and return `void`
+    );
+
+    /// Creates a new ArrayBuffer instance, using an external buffer with specified byte length.
     template <typename Finalizer, typename Hint>
-    static ArrayBuffer New(napi_env env,
-                           void* externalData,
-                           size_t byteLength,
-                           Finalizer finalizeCallback,
-                           Hint* finalizeHint);
+    static ArrayBuffer New(
+      napi_env env,               ///< N-API environment
+      void* externalData,         ///< Pointer to the external buffer to be used by the array
+      size_t byteLength,          ///< Length of the external buffer to be used by the array,
+                                  ///  in bytes
+      Finalizer finalizeCallback, ///< Function to be called when the array buffer is destroyed;
+                                  ///  must implement `operator()`, accept a `void*` (which is the
+                                  ///  data buffer pointer) and `Hint*`, and return `void`
+      Hint* finalizeHint          ///< Hint (second parameter) to be passed to the finalize callback
+    );
 
-    ArrayBuffer();
-    ArrayBuffer(napi_env env, napi_value value);
+    ArrayBuffer();                               ///< Creates a new _empty_ ArrayBuffer instance.
+    ArrayBuffer(napi_env env, napi_value value); ///< Wraps a N-API value primitive.
 
-    void* Data();
-    size_t ByteLength();
+    void* Data();        ///< Gets a pointer to the data buffer.
+    size_t ByteLength(); ///< Gets the length of the array buffer in bytes.
 
   private:
     mutable void* _data;
@@ -373,60 +401,113 @@ namespace Napi {
     void EnsureInfo() const;
   };
 
+  /// A JavaScript typed-array value with unknown array type.
+  ///
+  /// For type-specific operations, cast to a `TypedArrayOf<T>` instance using the `As()`
+  /// method:
+  ///
+  ///     Napi::TypedArray array = ...
+  ///     if (t.TypedArrayType() == napi_int32_array) {
+  ///         Napi::Int32Array int32Array = t.As<Napi::Int32Array>();
+  ///     }
   class TypedArray : public Object {
   public:
-    TypedArray();
-    TypedArray(napi_env env, napi_value value);
+    TypedArray();                               ///< Creates a new _empty_ TypedArray instance.
+    TypedArray(napi_env env, napi_value value); ///< Wraps a N-API value primitive.
 
-    napi_typedarray_type TypedArrayType() const;
-    uint8_t ElementSize() const;
-    size_t ElementLength() const;
-    size_t ByteOffset() const;
-    size_t ByteLength() const;
-    Napi::ArrayBuffer ArrayBuffer() const;
+    napi_typedarray_type TypedArrayType() const; ///< Gets the type of this typed-array.
+    Napi::ArrayBuffer ArrayBuffer() const;       ///< Gets the backing array buffer.
 
-    Int8Array AsInt8Array() const;
-    Uint8Array AsUint8Array() const;
-    Uint8ClampedArray AsUint8ClampedArray() const;
-    Int16Array AsInt16Array() const;
-    Uint16Array AsUint16Array() const;
-    Int32Array AsInt32Array() const;
-    Uint32Array AsUint32Array() const;
-    Float32Array AsFloat32Array() const;
-    Float64Array AsFloat64Array() const;
+    uint8_t ElementSize() const;  ///< Gets the size in bytes of one element in the array.
+    size_t ElementLength() const; ///< Gets the number of elements in the array.
+    size_t ByteOffset() const;    ///< Gets the offset into the buffer where the array starts.
+    size_t ByteLength() const;    ///< Gets the length of the array in bytes.
 
   protected:
+    /// !cond INTERNAL
     napi_typedarray_type _type;
     size_t _length;
 
     TypedArray(napi_env env, napi_value value, napi_typedarray_type type, size_t length);
 
-  private:
-    static const napi_typedarray_type unknown_type = static_cast<napi_typedarray_type>(-1);
+    static const napi_typedarray_type unknown_array_type = static_cast<napi_typedarray_type>(-1);
+
+    template <typename T>
+    static constexpr napi_typedarray_type TypedArrayTypeForPrimitiveType() {
+      return std::is_same<T, int8_t>::value ? napi_int8_array
+        : std::is_same<T, uint8_t>::value ? napi_uint8_array
+        : std::is_same<T, int16_t>::value ? napi_int16_array
+        : std::is_same<T, uint16_t>::value ? napi_uint16_array
+        : std::is_same<T, int32_t>::value ? napi_int32_array
+        : std::is_same<T, uint32_t>::value ? napi_uint32_array
+        : std::is_same<T, float>::value ? napi_float32_array
+        : std::is_same<T, double>::value ? napi_float64_array
+        : unknown_array_type;
+    }
+    /// !endcond
   };
 
-  template <typename T, napi_typedarray_type A>
-  class TypedArray_ : public TypedArray {
+  /// A JavaScript typed-array value with known array type.
+  ///
+  /// Note while it is possible to create and access Uint8 "clamped" arrays using this class,
+  /// the _clamping_ behavior is only applied in JavaScript.
+  template <typename T>
+  class TypedArrayOf : public TypedArray {
   public:
-    static TypedArray_ New(napi_env env, size_t elementLength);
-    static TypedArray_ New(napi_env env,
-                           size_t elementLength,
-                           Napi::ArrayBuffer arrayBuffer,
-                           size_t bufferOffset);
+    /// Creates a new TypedArray instance over a new automatically-allocated array buffer.
+    ///
+    /// The array type parameter can normally be omitted (because it is inferred from the template
+    /// parameter T), except when creating a "clamped" array:
+    ///
+    ///     Uint8Array::New(env, length, napi_uint8_clamped_array)
+    static TypedArrayOf New(
+      napi_env env,         ///< N-API environment
+      size_t elementLength, ///< Length of the created array, as a number of elements
+      napi_typedarray_type type = TypedArray::TypedArrayTypeForPrimitiveType<T>()
+        ///< Type of array, if different from the default array type for the template parameter T.
+    );
 
-    TypedArray_();
-    TypedArray_(napi_env env, napi_value value);
+    /// Creates a new TypedArray instance over a provided array buffer.
+    ///
+    /// The array type parameter can normally be omitted (because it is inferred from the template
+    /// parameter T), except when creating a "clamped" array:
+    ///
+    ///     Uint8Array::New(env, length, buffer, 0, napi_uint8_clamped_array)
+    static TypedArrayOf New(
+      napi_env env,                  ///< N-API environment
+      size_t elementLength,          ///< Length of the created array, as a number of elements
+      Napi::ArrayBuffer arrayBuffer, ///< Backing array buffer instance to use
+      size_t bufferOffset,           ///< Offset into the array buffer where the typed-array starts
+      napi_typedarray_type type = TypedArray::TypedArrayTypeForPrimitiveType<T>()
+        ///< Type of array, if different from the default array type for the template parameter T.
+    );
 
-    T& operator [](size_t index);
-    const T& operator [](size_t index) const;
+    TypedArrayOf();                               ///< Creates a new _empty_ TypedArray instance.
+    TypedArrayOf(napi_env env, napi_value value); ///< Wraps a N-API value primitive.
 
+    T& operator [](size_t index);             ///< Gets or sets an element in the array.
+    const T& operator [](size_t index) const; ///< Gets an element in the array.
+
+    /// Gets a pointer to the array's backing buffer.
+    ///
+    /// This is not necessarily the same as the `ArrayBuffer::Data()` pointer, because the
+    /// typed-array may have a non-zero `ByteOffset()` into the `ArrayBuffer`.
     T* Data();
+
+    /// Gets a pointer to the array's backing buffer.
+    ///
+    /// This is not necessarily the same as the `ArrayBuffer::Data()` pointer, because the
+    /// typed-array may have a non-zero `ByteOffset()` into the `ArrayBuffer`.
     const T* Data() const;
 
   private:
     T* _data;
 
-    TypedArray_(napi_env env, napi_value value, size_t length, T* data);
+    TypedArrayOf(napi_env env,
+                 napi_value value,
+                 napi_typedarray_type type,
+                 size_t length,
+                 T* data);
   };
 
   class Function : public Object {
@@ -536,8 +617,10 @@ namespace Napi {
     void SuppressDestruct();
 
   protected:
+    /// !cond INTERNAL
     napi_env _env;
     napi_ref _ref;
+    /// !endcond
 
   private:
     bool _suppressDestruct;
@@ -677,6 +760,7 @@ namespace Napi {
     const char* what() const NAPI_NOEXCEPT override;
 
   protected:
+    /// !cond INTERNAL
     typedef napi_status (*create_error_fn)(napi_env envb, napi_value msg, napi_value* result);
 
     template <typename TError>
@@ -684,6 +768,7 @@ namespace Napi {
                       const char* message,
                       size_t length,
                       create_error_fn create_error);
+    /// !endcond
 
   private:
     mutable std::string _message;
