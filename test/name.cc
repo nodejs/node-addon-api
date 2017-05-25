@@ -5,6 +5,19 @@ using namespace Napi;
 const char* testValueUtf8 = "123456789";
 const char16_t* testValueUtf16 = u"123456789";
 
+Value EchoString(const CallbackInfo& info) {
+  String value = info[0].As<String>();
+  String encoding = info[1].As<String>();
+
+  if (encoding.Utf8Value() == "utf8") {
+    return String::New(info.Env(), value.Utf8Value().c_str());
+  } else if (encoding.Utf8Value() == "utf16") {
+    return String::New(info.Env(), value.Utf16Value().c_str());
+  } else {
+    throw Error::New(info.Env(), "Invalid encoding.");
+  }
+}
+
 Value CreateString(const CallbackInfo& info) {
   String encoding = info[0].As<String>();
   Number length = info[1].As<Number>();
@@ -69,6 +82,7 @@ Value CheckSymbol(const CallbackInfo& info) {
 Object InitName(Env env) {
   Object exports = Object::New(env);
 
+  exports["echoString"] = Function::New(env, EchoString);
   exports["createString"] = Function::New(env, CreateString);
   exports["checkString"] = Function::New(env, CheckString);
   exports["createSymbol"] = Function::New(env, CreateSymbol);

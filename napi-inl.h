@@ -502,6 +502,7 @@ inline std::string String::Utf8Value() const {
   if (status != napi_ok) throw Error::New(_env);
 
   std::string value;
+  value.reserve(length + 1);
   value.resize(length);
   status = napi_get_value_string_utf8(_env, _value, &value[0], value.capacity(), nullptr);
   if (status != napi_ok) throw Error::New(_env);
@@ -514,6 +515,7 @@ inline std::u16string String::Utf16Value() const {
   if (status != napi_ok) throw Error::New(_env);
 
   std::u16string value;
+  value.reserve(length + 1);
   value.resize(length);
   status = napi_get_value_string_utf16(_env, _value, &value[0], value.capacity(), nullptr);
   if (status != napi_ok) throw Error::New(_env);
