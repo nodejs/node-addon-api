@@ -1,0 +1,26 @@
+# https://www.appveyor.com/docs/lang/nodejs-iojs/#testing-under-multiple-versions-of-nodejs-or-iojs
+environment:
+  fast_finish: true
+  matrix:
+    - nodejs_version: "7"
+    - nodejs_version: "4"
+    - nodejs_version: "6"
+
+platform:
+  - x86
+  - x64
+
+install:
+  - ps: Install-Product node $env:nodejs_version $env:platform
+  - node -p process.arch
+  - node -p process.version
+
+test_script:
+  - npm test
+
+build: off
+
+version: "{build}"
+
+cache:
+  - node_modules
