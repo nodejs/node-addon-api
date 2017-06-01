@@ -53,19 +53,19 @@ At build time, the N-API back-compat library code will be used only when the
 targeted node version *does not* have N-API built-in.
 
 ## Conversion Tool
-To make the migration to node-api easier, we have provided a script to help
+To make the migration to node-addon-api easier, we have provided a script to help
 complete the steps listed above. To use the conversion script:
   1. Go to your module directory
 ```
 cd [module_path]
 ```
-  2. Install node-api module
+  2. Install node-addon-api module
 ```
-npm install node-api
+npm install node-addon-api
 ```
-  3. Run node-api conversion script
+  3. Run node-addon-api conversion script
 ```
-node ./node_modules/node-api/tools/conversion.js ./
+node ./node_modules/node-addon-api/tools/conversion.js ./
 ```
   4. While this script makes conversion easier, it still cannot fully convert
 the module. The next step is to try to build the module and complete the
