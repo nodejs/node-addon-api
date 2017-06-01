@@ -70,11 +70,27 @@ void DefineValueProperty(const CallbackInfo& info) {
   obj.DefineProperty(PropertyDescriptor::Value(name, value));
 }
 
+Value GetProperty(const CallbackInfo& info) {
+  Object obj = info[0].As<Object>();
+  Name name = info[1].As<Name>();
+  Value value = obj.Get(name);
+  return value;
+}
+
+void SetProperty(const CallbackInfo& info) {
+  Object obj = info[0].As<Object>();
+  Name name = info[1].As<Name>();
+  Value value = info[2];
+  obj.Set(name, value);
+}
+
 Object InitObject(Env env) {
   Object exports = Object::New(env);
 
   exports["defineProperties"] = Function::New(env, DefineProperties);
   exports["defineValueProperty"] = Function::New(env, DefineValueProperty);
+  exports["getProperty"] = Function::New(env, GetProperty);
+  exports["setProperty"] = Function::New(env, SetProperty);
 
   return exports;
 }

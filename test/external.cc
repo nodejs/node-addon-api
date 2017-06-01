@@ -35,13 +35,15 @@ Value CreateExternalWithFinalizeHint(const CallbackInfo& info) {
 void CheckExternal(const CallbackInfo& info) {
    Value arg = info[0];
    if (arg.Type() != napi_external) {
-      throw Error::New(info.Env(), "An external argument was expected.");
+      Error::New(info.Env(), "An external argument was expected.").ThrowAsJavaScriptException();
+      return;
    }
 
    External<int> external = arg.As<External<int>>();
    int* externalData = external.Data();
    if (externalData == nullptr || *externalData != 1) {
-      throw Error::New(info.Env(), "An external value of 1 was expected.");
+      Error::New(info.Env(), "An external value of 1 was expected.").ThrowAsJavaScriptException();
+      return;
    }
 }
 

@@ -26,9 +26,12 @@ To use N-API in a native module:
   'dependencies': ["<!(node -p \"require('node-addon-api').gyp\")"],
 ```
 
-  3. Ensure C++ exceptions are enabled in `binding.gyp`.
-     The N-API C++ wrapper classes use exceptions for error-handling;
-     the base ABI-stable C APIs do not.
+  3. Decide whether the package will enable C++ exceptions in the N-API wrapper.
+     The base ABI-stable C APIs do not throw or handle C++ exceptions, but the
+     N-API C++ wrapper classes may _optionally_
+     [integrate C++ and JavaScript exception-handling
+     ](https://nodejs.github.io/node-addon-api/class_napi_1_1_error.html).
+     To enable that capability, C++ exceptions must be enabled in `binding.gyp`:
 ```gyp
   'cflags!': [ '-fno-exceptions' ],
   'cflags_cc!': [ '-fno-exceptions' ],
@@ -40,6 +43,10 @@ To use N-API in a native module:
   'msvs_settings': {
     'VCCLCompilerTool': { 'ExceptionHandling': 1 },
   },
+```
+  Alternatively, disable use of C++ exceptions in N-API:
+```gyp
+  'defines': [ 'NAPI_DISABLE_CPP_EXCEPTIONS' ],
 ```
 
   4. Include `napi.h` in the native module code.

@@ -19,6 +19,9 @@ env:
     - NODEJS_VERSION=chakracore-nightly
 matrix:
   fast_finish: true
+  allow_failures:
+    - env: NODEJS_VERSION=nightly
+    - env: NODEJS_VERSION=chakracore-nightly
 sudo: false
 cache:
   directories:

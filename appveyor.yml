@@ -9,6 +9,12 @@ environment:
     - NODEJS_VERSION: nightly
     - NODEJS_VERSION: chakracore-nightly
 
+matrix:
+  fast_finish: true
+  allow_failures:
+    - NODEJS_VERSION: nightly
+    - NODEJS_VERSION: chakracore-nightly
+
 platform:
   - x86
   - x64

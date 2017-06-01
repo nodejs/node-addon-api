@@ -27,7 +27,8 @@ Value CreateBuffer(const CallbackInfo& info) {
   ArrayBuffer buffer = ArrayBuffer::New(info.Env(), testLength);
 
   if (buffer.ByteLength() != testLength) {
-    throw Error::New(info.Env(), "Incorrect buffer length.");
+    Error::New(info.Env(), "Incorrect buffer length.").ThrowAsJavaScriptException();
+    return Value();
   }
 
   InitData(static_cast<uint8_t*>(buffer.Data()), testLength);
@@ -40,11 +41,13 @@ Value CreateExternalBuffer(const CallbackInfo& info) {
   ArrayBuffer buffer = ArrayBuffer::New(info.Env(), testData, testLength);
 
   if (buffer.ByteLength() != testLength) {
-    throw Error::New(info.Env(), "Incorrect buffer length.");
+    Error::New(info.Env(), "Incorrect buffer length.").ThrowAsJavaScriptException();
+    return Value();
   }
 
   if (buffer.Data() != testData) {
-    throw Error::New(info.Env(), "Incorrect buffer data.");
+    Error::New(info.Env(), "Incorrect buffer data.").ThrowAsJavaScriptException();
+    return Value();
   }
 
   InitData(testData, testLength);
@@ -66,11 +69,13 @@ Value CreateExternalBufferWithFinalize(const CallbackInfo& info) {
     });
 
   if (buffer.ByteLength() != testLength) {
-    throw Error::New(info.Env(), "Incorrect buffer length.");
+    Error::New(info.Env(), "Incorrect buffer length.").ThrowAsJavaScriptException();
+    return Value();
   }
 
   if (buffer.Data() != data) {
-    throw Error::New(info.Env(), "Incorrect buffer data.");
+    Error::New(info.Env(), "Incorrect buffer data.").ThrowAsJavaScriptException();
+    return Value();
   }
 
   InitData(data, testLength);
@@ -94,11 +99,13 @@ Value CreateExternalBufferWithFinalizeHint(const CallbackInfo& info) {
     hint);
 
   if (buffer.ByteLength() != testLength) {
-    throw Error::New(info.Env(), "Incorrect buffer length.");
+    Error::New(info.Env(), "Incorrect buffer length.").ThrowAsJavaScriptException();
+    return Value();
   }
 
   if (buffer.Data() != data) {
-    throw Error::New(info.Env(), "Incorrect buffer data.");
+    Error::New(info.Env(), "Incorrect buffer data.").ThrowAsJavaScriptException();
+    return Value();
   }
 
   InitData(data, testLength);
@@ -107,17 +114,20 @@ Value CreateExternalBufferWithFinalizeHint(const CallbackInfo& info) {
 
 void CheckBuffer(const CallbackInfo& info) {
   if (!info[0].IsArrayBuffer()) {
-    throw Error::New(info.Env(), "A buffer was expected.");
+    Error::New(info.Env(), "A buffer was expected.").ThrowAsJavaScriptException();
+    return;
   }
 
   ArrayBuffer buffer = info[0].As<ArrayBuffer>();
 
   if (buffer.ByteLength() != testLength) {
-    throw Error::New(info.Env(), "Incorrect buffer length.");
+    Error::New(info.Env(), "Incorrect buffer length.").ThrowAsJavaScriptException();
+    return;
   }
 
   if (!VerifyData(static_cast<uint8_t*>(buffer.Data()), testLength)) {
-    throw Error::New(info.Env(), "Incorrect buffer data.");
+    Error::New(info.Env(), "Incorrect buffer data.").ThrowAsJavaScriptException();
+    return;
   }
 }
 

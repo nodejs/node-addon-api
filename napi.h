@@ -7,10 +7,25 @@
 #include <string>
 #include <vector>
 
-#ifdef _NOEXCEPT
-  #define NAPI_NOEXCEPT _NOEXCEPT
+// If C++ exceptions are not explicitly enabled or disabled, enable them
+// if exceptions were enabled in the compiler settings.
+#if !defined(NAPI_CPP_EXCEPTIONS) && !defined(NAPI_DISABLE_CPP_EXCEPTIONS)
+  #if defined(_CPPUNWIND) || defined (__EXCEPTIONS)
+    #define NAPI_CPP_EXCEPTIONS
+  #else
+    #error Exception support not detected. \
+      Define either NAPI_CPP_EXCEPTIONS or NAPI_DISABLE_CPP_EXCEPTIONS.
+  #endif
+#endif
+
+#ifdef NAPI_CPP_EXCEPTIONS
+  #ifdef _NOEXCEPT
+    #define NAPI_NOEXCEPT _NOEXCEPT
+  #else
+    #define NAPI_NOEXCEPT noexcept
+  #endif
 #else
-  #define NAPI_NOEXCEPT noexcept
+  #define NAPI_NOEXCEPT
 #endif
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -74,6 +89,7 @@ namespace Napi {
     Value Null() const;
 
     bool IsExceptionPending() const;
+    Error GetAndClearPendingException();
 
   private:
     napi_env _env;
@@ -111,6 +127,17 @@ namespace Napi {
 
     /// Gets the environment the value is associated with.
     Napi::Env Env() const;
+
+    /// Checks if the value is empty (uninitialized).
+    ///
+    /// An empty value is invalid, and most attempts to perform an operation on an empty value
+    /// will result in an exception. Note an empty value is distinct from JavaScript `null` or
+    /// `undefined`, which are valid values.
+    ///
+    /// When C++ exceptions are disabled at compile time, a method with a `Value` return type may
+    /// return an empty value to indicate a pending exception. So when not using C++ exceptions,
+    /// callers should check whether the value is empty before attempting to use it.
+    bool IsEmpty() const;
 
     napi_valuetype Type() const; ///< Gets the type of the value.
 
@@ -698,8 +725,13 @@ namespace Napi {
   ObjectReference Persistent(Object value);
   FunctionReference Persistent(Function value);
 
-  /// Wraps a JavaScript error object in a way that enables it to traverse a C++ stack and be
-  /// thrown and caught as a C++ exception.
+  /// A persistent reference to a JavaScript error object. Use of this class depends somewhat
+  /// on whether C++ exceptions are enabled at compile time.
+  ///
+  /// ### Handling Errors With C++ Exceptions
+  ///
+  /// If C++ exceptions are enabled, then the `Error` class extends `std::exception` and enables
+  /// integrated error-handling for C++ exceptions and JavaScript exceptions.
   ///
   /// If a N-API call fails without executing any JavaScript code (for example due to an invalid
   /// argument), then the N-API wrapper automatically converts and throws the error as a C++
@@ -711,35 +743,81 @@ namespace Napi {
   /// wrapper automatically converts and throws it as a JavaScript exception. Therefore, catching
   /// a C++ exception of type `Napi::Error` prevents a JavaScript exception from being thrown.
   ///
-  /// #### Example 1 - Throwing an exception:
+  /// #### Example 1A - Throwing a C++ exception:
   ///
   ///     Napi::Env env = ...
   ///     throw Napi::Error::New(env, "Example exception");
   ///
   /// Following C++ statements will not be executed. The exception will bubble up as a C++
   /// exception of type `Napi::Error`, until it is either caught while still in C++, or else
-  /// automatically re-thrown as a JavaScript exception when the callback returns to JavaScript.
+  /// automatically propataged as a JavaScript exception when the callback returns to JavaScript.
   ///
-  /// #### Example 2 - Not catching a N-API exception:
+  /// #### Example 2A - Propagating a N-API C++ exception:
   ///
   ///     Napi::Function jsFunctionThatThrows = someObj.As<Napi::Function>();
-  ///     jsFunctionThatThrows({ arg1, arg2 });
+  ///     Napi::Value result = jsFunctionThatThrows({ arg1, arg2 });
   ///
   /// Following C++ statements will not be executed. The exception will bubble up as a C++
   /// exception of type `Napi::Error`, until it is either caught while still in C++, or else
-  /// automatically re-thrown as a JavaScript exception when the callback returns to JavaScript.
+  /// automatically propagated as a JavaScript exception when the callback returns to JavaScript.
   ///
-  /// #### Example 3 - Handling a N-API exception:
+  /// #### Example 3A - Handling a N-API C++ exception:
   ///
   ///     Napi::Function jsFunctionThatThrows = someObj.As<Napi::Function>();
+  ///     Napi::Value result;
   ///     try {
-  ///        jsFunctionThatThrows({ arg1, arg2 });
+  ///        result = jsFunctionThatThrows({ arg1, arg2 });
   ///     } catch (const Napi::Error& e) {
   ///       cerr << "Caught JavaScript exception: " + e.what();
   ///     }
   ///
-  /// Since the exception was caught here, it will not be re-thrown as a JavaScript exception.
-  class Error : public ObjectReference, public std::exception {
+  /// Since the exception was caught here, it will not be propagated as a JavaScript exception.
+  ///
+  /// ### Handling Errors Without C++ Exceptions
+  ///
+  /// If C++ exceptions are disabled (by defining `NAPI_DISABLE_CPP_EXCEPTIONS`) then this class
+  /// does not extend `std::exception`, and APIs in the `Napi` namespace do not throw C++
+  /// exceptions when they fail. Instead, they raise _pending_ JavaScript exceptions and
+  /// return _empty_ `Value`s. Calling code should check `Value::IsEmpty()` before attempting
+  /// to use a returned value, and may use methods on the `Env` class to check for, get, and
+  /// clear a pending JavaScript exception. If the pending exception is not cleared, it will
+  /// be thrown when the native callback returns to JavaScript.
+  ///
+  /// #### Example 1B - Throwing a JS exception
+  ///
+  ///     Napi::Env env = ...
+  ///     Napi::Error::New(env, "Example exception").ThrowAsJavaScriptException();
+  ///     return;
+  ///
+  /// After throwing a JS exception, the code should generally return immediately from the native
+  /// callback, after performing any necessary cleanup.
+  ///
+  /// #### Example 2B - Propagating a N-API JS exception:
+  ///
+  ///     Napi::Function jsFunctionThatThrows = someObj.As<Napi::Function>();
+  ///     Napi::Value result = jsFunctionThatThrows({ arg1, arg2 });
+  ///     if (result.IsEmpty()) return;
+  ///
+  /// An empty value result from a N-API call indicates an error occurred, and a JavaScript
+  /// exception is pending. To let the exception propagate, the code should generally return
+  /// immediately from the native callback, after performing any necessary cleanup.
+  ///
+  /// #### Example 3B - Handling a N-API JS exception:
+  ///
+  ///     Napi::Function jsFunctionThatThrows = someObj.As<Napi::Function>();
+  ///     Napi::Value result = jsFunctionThatThrows({ arg1, arg2 });
+  ///     if (result.IsEmpty()) {
+  ///       Napi::Error e = env.GetAndClearPendingException();
+  ///       cerr << "Caught JavaScript exception: " + e.Message();
+  ///     }
+  ///
+  /// Since the exception was cleared here, it will not be propagated as a JavaScript exception
+  /// after the native callback returns.
+  class Error : public ObjectReference
+#ifdef NAPI_CPP_EXCEPTIONS
+    , public std::exception
+#endif // NAPI_CPP_EXCEPTIONS
+    {
   public:
     static Error New(napi_env env);
     static Error New(napi_env env, const char* message);
@@ -757,7 +835,9 @@ namespace Napi {
     const std::string& Message() const NAPI_NOEXCEPT;
     void ThrowAsJavaScriptException() const;
 
+#ifdef NAPI_CPP_EXCEPTIONS
     const char* what() const NAPI_NOEXCEPT override;
+#endif // NAPI_CPP_EXCEPTIONS
 
   protected:
     /// !cond INTERNAL

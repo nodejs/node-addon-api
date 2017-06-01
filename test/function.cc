@@ -76,6 +76,11 @@ Value CallWithReceiverAndVector(const CallbackInfo& info) {
    return func.Call(receiver, args);
 }
 
+Value CallWithInvalidReceiver(const CallbackInfo& info) {
+   Function func = info[0].As<Function>();
+   return func.Call(Value(), {});
+}
+
 Value CallConstructorWithArgs(const CallbackInfo& info) {
    Function func = info[0].As<Function>();
    return func.New({ info[1], info[2], info[3] });
@@ -105,6 +110,7 @@ Object InitFunction(Env env) {
   exports["callWithVector"] = Function::New(env, CallWithVector);
   exports["callWithReceiverAndArgs"] = Function::New(env, CallWithReceiverAndArgs);
   exports["callWithReceiverAndVector"] = Function::New(env, CallWithReceiverAndVector);
+  exports["callWithInvalidReceiver"] = Function::New(env, CallWithInvalidReceiver);
   exports["callConstructorWithArgs"] = Function::New(env, CallConstructorWithArgs);
   exports["callConstructorWithVector"] = Function::New(env, CallConstructorWithVector);
   return exports;
