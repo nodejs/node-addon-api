@@ -1355,17 +1355,17 @@ inline void Buffer<T>::EnsureInfo() const {
 inline Error Error::New(napi_env env) {
   napi_status status;
   napi_value error = nullptr;
-  if (Napi::Env(env).IsExceptionPending()) {
-    status = napi_get_and_clear_last_exception(env, &error);
-    assert(status == napi_ok);
-  }
-  else {
-    // No JS exception is pending, so check for NAPI error info.
-    const napi_extended_error_info* info;
-    status = napi_get_last_error_info(env, &info);
-    assert(status == napi_ok);
 
-    if (status == napi_ok) {
+  const napi_extended_error_info* info;
+  status = napi_get_last_error_info(env, &info);
+  assert(status == napi_ok);
+
+  if (status == napi_ok) {
+    if (info->error_code == napi_pending_exception) {
+      status = napi_get_and_clear_last_exception(env, &error);
+      assert(status == napi_ok);
+    }
+    else {
       const char* error_message = info->error_message != nullptr ?
         info->error_message : "Error in native callback";
       napi_value message;

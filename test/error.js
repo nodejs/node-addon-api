@@ -3,7 +3,11 @@ const buildType = process.config.target_defaults.default_configuration;
 const binding = require(`./build/${buildType}/binding.node`);
 const assert = require('assert');
 
-assert.throws(() => binding.error.throwError('test'), err => {
+assert.throws(() => binding.error.throwApiError('test'), err => {
+   return err instanceof Error && err.message.includes('Invalid');
+});
+
+assert.throws(() => binding.error.throwJSError('test'), err => {
    return err instanceof Error && err.message === 'test';
 });
 
