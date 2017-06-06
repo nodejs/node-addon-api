@@ -603,19 +603,19 @@ inline Symbol::Symbol(napi_env env, napi_value value) : Name(env, value) {
 ////////////////////////////////////////////////////////////////////////////////
 
 template <typename Key>
-inline PropertyLValue<Key>::operator Value() const {
-  return _object.Get(_key);
+inline Object::PropertyLValue<Key>::operator Value() const {
+  return Object(_env, _object).Get(_key);
 }
 
 template <typename Key> template <typename ValueType>
-inline PropertyLValue<Key>& PropertyLValue<Key>::operator =(ValueType value) {
-  _object.Set(_key, value);
+inline Object::PropertyLValue<Key>& Object::PropertyLValue<Key>::operator =(ValueType value) {
+  Object(_env, _object).Set(_key, value);
   return *this;
 }
 
 template <typename Key>
-inline PropertyLValue<Key>::PropertyLValue(Object object, Key key)
-  : _object(object), _key(key) {}
+inline Object::PropertyLValue<Key>::PropertyLValue(Object object, Key key)
+  : _env(object.Env()), _object(object), _key(key) {}
 
 inline Object Object::New(napi_env env) {
   napi_value value;
@@ -630,40 +630,40 @@ inline Object::Object() : Value() {
 inline Object::Object(napi_env env, napi_value value) : Value(env, value) {
 }
 
-inline PropertyLValue<std::string> Object::operator [](const char* name) {
-  return PropertyLValue<std::string>(*this, name);
+inline Object::PropertyLValue<std::string> Object::operator [](const char* utf8name) {
+  return PropertyLValue<std::string>(*this, utf8name);
 }
 
-inline PropertyLValue<std::string> Object::operator [](const std::string& name) {
-  return PropertyLValue<std::string>(*this, name);
+inline Object::PropertyLValue<std::string> Object::operator [](const std::string& utf8name) {
+  return PropertyLValue<std::string>(*this, utf8name);
 }
 
-inline PropertyLValue<uint32_t> Object::operator [](uint32_t index) {
+inline Object::PropertyLValue<uint32_t> Object::operator [](uint32_t index) {
   return PropertyLValue<uint32_t>(*this, index);
 }
 
-inline Value Object::operator [](const char* name) const {
-  return Get(name);
+inline Value Object::operator [](const char* utf8name) const {
+  return Get(utf8name);
 }
 
-inline Value Object::operator [](const std::string& name) const {
-  return Get(name);
+inline Value Object::operator [](const std::string& utf8name) const {
+  return Get(utf8name);
 }
 
 inline Value Object::operator [](uint32_t index) const {
   return Get(index);
 }
 
-inline bool Object::Has(napi_value name) const {
+inline bool Object::Has(napi_value key) const {
   bool result;
-  napi_status status = napi_has_property(_env, _value, name, &result);
+  napi_status status = napi_has_property(_env, _value, key, &result);
   NAPI_THROW_IF_FAILED(_env, status, false);
   return result;
 }
 
-inline bool Object::Has(Value name) const {
+inline bool Object::Has(Value key) const {
   bool result;
-  napi_status status = napi_has_property(_env, _value, name, &result);
+  napi_status status = napi_has_property(_env, _value, key, &result);
   NAPI_THROW_IF_FAILED(_env, status, false);
   return result;
 }
@@ -679,16 +679,16 @@ inline bool Object::Has(const std::string& utf8name) const {
   return Has(utf8name.c_str());
 }
 
-inline Value Object::Get(napi_value name) const {
+inline Value Object::Get(napi_value key) const {
   napi_value result;
-  napi_status status = napi_get_property(_env, _value, name, &result);
+  napi_status status = napi_get_property(_env, _value, key, &result);
   NAPI_THROW_IF_FAILED(_env, status, Value());
   return Value(_env, result);
 }
 
-inline Value Object::Get(Value name) const {
+inline Value Object::Get(Value key) const {
   napi_value result;
-  napi_status status = napi_get_property(_env, _value, name, &result);
+  napi_status status = napi_get_property(_env, _value, key, &result);
   NAPI_THROW_IF_FAILED(_env, status, Value());
   return Value(_env, result);
 }
@@ -704,8 +704,13 @@ inline Value Object::Get(const std::string& utf8name) const {
   return Get(utf8name.c_str());
 }
 
-inline void Object::Set(napi_value name, napi_value value) {
-  napi_status status = napi_set_property(_env, _value, name, value);
+inline void Object::Set(napi_value key, napi_value value) {
+  napi_status status = napi_set_property(_env, _value, key, value);
+  NAPI_THROW_IF_FAILED(_env, status);
+}
+
+inline void Object::Set(Value key, Value value) {
+  napi_status status = napi_set_property(_env, _value, key, value);
   NAPI_THROW_IF_FAILED(_env, status);
 }
 
