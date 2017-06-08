@@ -18,14 +18,10 @@
   #endif
 #endif
 
-#ifdef NAPI_CPP_EXCEPTIONS
-  #ifdef _NOEXCEPT
-    #define NAPI_NOEXCEPT _NOEXCEPT
-  #else
-    #define NAPI_NOEXCEPT noexcept
-  #endif
+#ifdef _NOEXCEPT
+  #define NAPI_NOEXCEPT _NOEXCEPT
 #else
-  #define NAPI_NOEXCEPT
+  #define NAPI_NOEXCEPT noexcept
 #endif
 
 ////////////////////////////////////////////////////////////////////////////////
