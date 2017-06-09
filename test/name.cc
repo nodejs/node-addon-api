@@ -14,7 +14,8 @@ Value EchoString(const CallbackInfo& info) {
   } else if (encoding.Utf8Value() == "utf16") {
     return String::New(info.Env(), value.Utf16Value().c_str());
   } else {
-    throw Error::New(info.Env(), "Invalid encoding.");
+    Error::New(info.Env(), "Invalid encoding.").ThrowAsJavaScriptException();
+    return Value();
   }
 }
 
@@ -35,7 +36,8 @@ Value CreateString(const CallbackInfo& info) {
       return String::New(info.Env(), testValueUtf16, length.Uint32Value());
     }
   } else {
-    throw Error::New(info.Env(), "Invalid encoding.");
+    Error::New(info.Env(), "Invalid encoding.").ThrowAsJavaScriptException();
+    return Value();
   }
 }
 
@@ -61,7 +63,8 @@ Value CheckString(const CallbackInfo& info) {
     std::u16string stringValue = value;
     return Boolean::New(info.Env(), stringValue == testValue);
   } else {
-    throw Error::New(info.Env(), "Invalid encoding.");
+    Error::New(info.Env(), "Invalid encoding.").ThrowAsJavaScriptException();
+    return Value();
   }
 }
 

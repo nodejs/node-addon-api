@@ -4,10 +4,17 @@ using namespace Napi;
 
 namespace {
 
+void DoNotCatch(const CallbackInfo& info) {
+  Function thrower = info[0].As<Function>();
+  thrower({});
+}
+
 void ThrowApiError(const CallbackInfo& info) {
   // Attempting to call an empty function value will throw an API error.
   Function(info.Env(), nullptr).Call({});
 }
+
+#ifdef NAPI_CPP_EXCEPTIONS
 
 void ThrowJSError(const CallbackInfo& info) {
   std::string message = info[0].As<String>().Utf8Value();
@@ -29,7 +36,7 @@ Value CatchError(const CallbackInfo& info) {
   try {
     thrower({});
   } catch (const Error& e) {
-     return e.Value();
+    return e.Value();
   }
   return info.Env().Null();
 }
@@ -39,15 +46,10 @@ Value CatchErrorMessage(const CallbackInfo& info) {
   try {
     thrower({});
   } catch (const Error& e) {
-     std::string message = e.Message();
-     return String::New(info.Env(), message);
+    std::string message = e.Message();
+    return String::New(info.Env(), message);
   }
   return info.Env().Null();
-}
-
-void DoNotCatch(const CallbackInfo& info) {
-  Function thrower = info[0].As<Function>();
-  thrower({});
 }
 
 void CatchAndRethrowError(const CallbackInfo& info) {
@@ -55,8 +57,8 @@ void CatchAndRethrowError(const CallbackInfo& info) {
   try {
     thrower({});
   } catch (Error& e) {
-     e.Set("caught", Boolean::New(info.Env(), true));
-     throw;
+    e.Set("caught", Boolean::New(info.Env(), true));
+    throw;
   }
 }
 
@@ -76,6 +78,81 @@ void CatchAndRethrowErrorThatEscapesScope(const CallbackInfo& info) {
     throw;
   }
 }
+
+#else // NAPI_CPP_EXCEPTIONS
+
+void ThrowJSError(const CallbackInfo& info) {
+  std::string message = info[0].As<String>().Utf8Value();
+  Error::New(info.Env(), message).ThrowAsJavaScriptException();
+}
+
+void ThrowTypeError(const CallbackInfo& info) {
+  std::string message = info[0].As<String>().Utf8Value();
+  TypeError::New(info.Env(), message).ThrowAsJavaScriptException();
+}
+
+void ThrowRangeError(const CallbackInfo& info) {
+  std::string message = info[0].As<String>().Utf8Value();
+  RangeError::New(info.Env(), message).ThrowAsJavaScriptException();
+}
+
+Value CatchError(const CallbackInfo& info) {
+  Function thrower = info[0].As<Function>();
+  thrower({});
+
+  Env env = info.Env();
+  if (env.IsExceptionPending()) {
+    Error e = env.GetAndClearPendingException();
+    return e.Value();
+  }
+  return info.Env().Null();
+}
+
+Value CatchErrorMessage(const CallbackInfo& info) {
+  Function thrower = info[0].As<Function>();
+  thrower({});
+
+  Env env = info.Env();
+  if (env.IsExceptionPending()) {
+    Error e = env.GetAndClearPendingException();
+    std::string message = e.Message();
+    return String::New(env, message);
+  }
+  return info.Env().Null();
+}
+
+void CatchAndRethrowError(const CallbackInfo& info) {
+  Function thrower = info[0].As<Function>();
+  thrower({});
+
+  Env env = info.Env();
+  if (env.IsExceptionPending()) {
+    Error e = env.GetAndClearPendingException();
+    e.Set("caught", Boolean::New(info.Env(), true));
+    e.ThrowAsJavaScriptException();
+  }
+}
+
+void ThrowErrorThatEscapesScope(const CallbackInfo& info) {
+  HandleScope scope(info.Env());
+
+  std::string message = info[0].As<String>().Utf8Value();
+  Error::New(info.Env(), message).ThrowAsJavaScriptException();
+}
+
+void CatchAndRethrowErrorThatEscapesScope(const CallbackInfo& info) {
+  HandleScope scope(info.Env());
+  ThrowErrorThatEscapesScope(info);
+
+  Env env = info.Env();
+  if (env.IsExceptionPending()) {
+    Error e = env.GetAndClearPendingException();
+    e.Set("caught", Boolean::New(info.Env(), true));
+    e.ThrowAsJavaScriptException();
+  }
+}
+
+#endif // NAPI_CPP_EXCEPTIONS
 
 } // end anonymous namespace
 

@@ -38,8 +38,13 @@ Value CreateTypedArray(const CallbackInfo& info) {
     return buffer.IsUndefined() ? Float64Array::New(info.Env(), length)
       : Float64Array::New(info.Env(), length, buffer, bufferOffset);
   } else {
-    throw Error::New(info.Env(), "Invalid typed-array type.");
+    Error::New(info.Env(), "Invalid typed-array type.").ThrowAsJavaScriptException();
+    return Value();
   }
+}
+
+Value CreateInvalidTypedArray(const CallbackInfo& info) {
+  return Int8Array::New(info.Env(), 1, ArrayBuffer(), 0);
 }
 
 Value GetTypedArrayType(const CallbackInfo& info) {
@@ -90,7 +95,9 @@ Value GetTypedArrayElement(const CallbackInfo& info) {
       return Number::New(info.Env(), array.As<Float32Array>()[index]);
     case napi_float64_array:
       return Number::New(info.Env(), array.As<Float64Array>()[index]);
-    default: throw Error::New(info.Env(), "Invalid typed-array type.");
+    default:
+      Error::New(info.Env(), "Invalid typed-array type.").ThrowAsJavaScriptException();
+      return Value();
   }
 }
 
@@ -127,7 +134,7 @@ void SetTypedArrayElement(const CallbackInfo& info) {
       array.As<Float64Array>()[index] = value.DoubleValue();
       break;
     default:
-      throw Error::New(info.Env(), "Invalid typed-array type.");
+      Error::New(info.Env(), "Invalid typed-array type.").ThrowAsJavaScriptException();
   }
 }
 
@@ -137,6 +144,7 @@ Object InitTypedArray(Env env) {
   Object exports = Object::New(env);
 
   exports["createTypedArray"] = Function::New(env, CreateTypedArray);
+  exports["createInvalidTypedArray"] = Function::New(env, CreateInvalidTypedArray);
   exports["getTypedArrayType"] = Function::New(env, GetTypedArrayType);
   exports["getTypedArrayLength"] = Function::New(env, GetTypedArrayLength);
   exports["getTypedArrayBuffer"] = Function::New(env, GetTypedArrayBuffer);
