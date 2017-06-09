@@ -22,7 +22,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">N-API
-   &#160;<span id="projectnumber">0.1.0</span>
+   &#160;<span id="projectnumber">0.3.3</span>
    </div>
    <div id="projectbrief">C++ wrapper classes for the ABI-stable C APIs for Node.js</div>
   </td>
@@ -114,6 +114,9 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a1e1930afac70f2811a222c363d892a42 inherit pub_methods_class_napi_1_1_value"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_napi_1_1_env.html">Napi::Env</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_napi_1_1_value.html#a1e1930afac70f2811a222c363d892a42">Env</a> () const</td></tr>
 <tr class="memdesc:a1e1930afac70f2811a222c363d892a42 inherit pub_methods_class_napi_1_1_value"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the environment the value is associated with.  <a href="class_napi_1_1_value.html#a1e1930afac70f2811a222c363d892a42">More...</a><br /></td></tr>
 <tr class="separator:a1e1930afac70f2811a222c363d892a42 inherit pub_methods_class_napi_1_1_value"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a988bdb3e9806beb7761b4ea864461005 inherit pub_methods_class_napi_1_1_value"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_napi_1_1_value.html#a988bdb3e9806beb7761b4ea864461005">IsEmpty</a> () const</td></tr>
+<tr class="memdesc:a988bdb3e9806beb7761b4ea864461005 inherit pub_methods_class_napi_1_1_value"><td class="mdescLeft">&#160;</td><td class="mdescRight">Checks if the value is empty (uninitialized).  <a href="class_napi_1_1_value.html#a988bdb3e9806beb7761b4ea864461005">More...</a><br /></td></tr>
+<tr class="separator:a988bdb3e9806beb7761b4ea864461005 inherit pub_methods_class_napi_1_1_value"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5da2e4f1a5a6b237159c4cfbd0866281 inherit pub_methods_class_napi_1_1_value"><td class="memItemLeft" align="right" valign="top">napi_valuetype&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_napi_1_1_value.html#a5da2e4f1a5a6b237159c4cfbd0866281">Type</a> () const</td></tr>
 <tr class="memdesc:a5da2e4f1a5a6b237159c4cfbd0866281 inherit pub_methods_class_napi_1_1_value"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the type of the value.  <a href="class_napi_1_1_value.html#a5da2e4f1a5a6b237159c4cfbd0866281">More...</a><br /></td></tr>
 <tr class="separator:a5da2e4f1a5a6b237159c4cfbd0866281 inherit pub_methods_class_napi_1_1_value"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -155,7 +158,7 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a7ae7ce9bb0c81e08285aa36f810b3257 inherit pub_methods_class_napi_1_1_value"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9c1a9c4eca9617b0aafbe311c946982a inherit pub_methods_class_napi_1_1_value"><td class="memTemplParams" colspan="2">template&lt;typename T &gt; </td></tr>
 <tr class="memitem:a9c1a9c4eca9617b0aafbe311c946982a inherit pub_methods_class_napi_1_1_value"><td class="memTemplItemLeft" align="right" valign="top">T&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="class_napi_1_1_value.html#a9c1a9c4eca9617b0aafbe311c946982a">As</a> () const</td></tr>
-<tr class="memdesc:a9c1a9c4eca9617b0aafbe311c946982a inherit pub_methods_class_napi_1_1_value"><td class="mdescLeft">&#160;</td><td class="mdescRight">Converts to another type of <code><a class="el" href="class_napi_1_1_value.html" title="A JavaScript value of unknown type. ">Napi::Value</a></code>, when the actual type is known or assumed.  <a href="class_napi_1_1_value.html#a9c1a9c4eca9617b0aafbe311c946982a">More...</a><br /></td></tr>
+<tr class="memdesc:a9c1a9c4eca9617b0aafbe311c946982a inherit pub_methods_class_napi_1_1_value"><td class="mdescLeft">&#160;</td><td class="mdescRight">Casts to another type of <code><a class="el" href="class_napi_1_1_value.html" title="A JavaScript value of unknown type. ">Napi::Value</a></code>, when the actual type is known or assumed.  <a href="class_napi_1_1_value.html#a9c1a9c4eca9617b0aafbe311c946982a">More...</a><br /></td></tr>
 <tr class="separator:a9c1a9c4eca9617b0aafbe311c946982a inherit pub_methods_class_napi_1_1_value"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a01f08d60906f8221ad3a4a5311b01019 inherit pub_methods_class_napi_1_1_value"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_napi_1_1_boolean.html">Boolean</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_napi_1_1_value.html#a01f08d60906f8221ad3a4a5311b01019">ToBoolean</a> () const</td></tr>
 <tr class="memdesc:a01f08d60906f8221ad3a4a5311b01019 inherit pub_methods_class_napi_1_1_value"><td class="mdescLeft">&#160;</td><td class="mdescRight">Coerces a value to a JavaScript boolean.  <a href="class_napi_1_1_value.html#a01f08d60906f8221ad3a4a5311b01019">More...</a><br /></td></tr>
@@ -180,13 +183,22 @@ Static Public Member Functions</h2></td></tr>
 <tr class="memitem:a47d941e1d43242f3bfb953f28117b2fd"><td class="memTemplParams" colspan="2">template&lt;typename Finalizer , typename Hint &gt; </td></tr>
 <tr class="memitem:a47d941e1d43242f3bfb953f28117b2fd"><td class="memTemplItemLeft" align="right" valign="top">static <a class="el" href="class_napi_1_1_external.html">External</a>&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="class_napi_1_1_external.html#a47d941e1d43242f3bfb953f28117b2fd">New</a> (napi_env env, T *data, Finalizer finalizeCallback, Hint *finalizeHint)</td></tr>
 <tr class="separator:a47d941e1d43242f3bfb953f28117b2fd"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="inherited"></a>
+Additional Inherited Members</h2></td></tr>
+<tr class="inherit_header pro_attribs_class_napi_1_1_value"><td colspan="2" onclick="javascript:toggleInherit('pro_attribs_class_napi_1_1_value')"><img src="closed.png" alt="-"/>&#160;Protected Attributes inherited from <a class="el" href="class_napi_1_1_value.html">Napi::Value</a></td></tr>
+<tr class="memitem:ad0a0cc895c3134df3ca3267dbf2dfe08 inherit pro_attribs_class_napi_1_1_value"><td class="memItemLeft" align="right" valign="top">napi_env&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_napi_1_1_value.html#ad0a0cc895c3134df3ca3267dbf2dfe08">_env</a></td></tr>
+<tr class="memdesc:ad0a0cc895c3134df3ca3267dbf2dfe08 inherit pro_attribs_class_napi_1_1_value"><td class="mdescLeft">&#160;</td><td class="mdescRight">!cond INTERNAL  <a href="class_napi_1_1_value.html#ad0a0cc895c3134df3ca3267dbf2dfe08">More...</a><br /></td></tr>
+<tr class="separator:ad0a0cc895c3134df3ca3267dbf2dfe08 inherit pro_attribs_class_napi_1_1_value"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae2060cfa039ca4c6abaff238fb00d1f8 inherit pro_attribs_class_napi_1_1_value"><td class="memItemLeft" align="right" valign="top">napi_value&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_napi_1_1_value.html#ae2060cfa039ca4c6abaff238fb00d1f8">_value</a></td></tr>
+<tr class="separator:ae2060cfa039ca4c6abaff238fb00d1f8 inherit pro_attribs_class_napi_1_1_value"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><h3>template&lt;typename T&gt;<br />
 class Napi::External&lt; T &gt;</h3>
 
 
-<p class="definition">Definition at line <a class="el" href="napi_8h_source.html#l00310">310</a> of file <a class="el" href="napi_8h_source.html">napi.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="napi_8h_source.html#l00552">552</a> of file <a class="el" href="napi_8h_source.html">napi.h</a>.</p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="aee71ae401ceba466474912b4e00f4dca"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#aee71ae401ceba466474912b4e00f4dca">&#9670;&nbsp;</a></span>External() <span class="overload">[1/2]</span></h2>

@@ -10,7 +10,7 @@ var searchData=
   ['isarraybuffer',['IsArrayBuffer',['../class_napi_1_1_value.html#a9beba019f6caf6cd8a8fe1f7ef23a1f4',1,'Napi::Value']]],
   ['isboolean',['IsBoolean',['../class_napi_1_1_value.html#ae876a79e6ac45840cb76fbdb5d5f0e71',1,'Napi::Value']]],
   ['isbuffer',['IsBuffer',['../class_napi_1_1_value.html#a7ae7ce9bb0c81e08285aa36f810b3257',1,'Napi::Value']]],
-  ['isempty',['IsEmpty',['../class_napi_1_1_reference.html#add921efd1d432fc4a60ec249f9fa7257',1,'Napi::Reference']]],
+  ['isempty',['IsEmpty',['../class_napi_1_1_value.html#a988bdb3e9806beb7761b4ea864461005',1,'Napi::Value::IsEmpty()'],['../class_napi_1_1_reference.html#add921efd1d432fc4a60ec249f9fa7257',1,'Napi::Reference::IsEmpty()']]],
   ['isexceptionpending',['IsExceptionPending',['../class_napi_1_1_env.html#a0e46584af1798aa5ea458d0044678432',1,'Napi::Env']]],
   ['isfunction',['IsFunction',['../class_napi_1_1_value.html#ae8a76974575d2a58c7aa69e43b6bc70a',1,'Napi::Value']]],
   ['isnull',['IsNull',['../class_napi_1_1_value.html#adc11fc44a7ee5204535387369f1fa787',1,'Napi::Value']]],

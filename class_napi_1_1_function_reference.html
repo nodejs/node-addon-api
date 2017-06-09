@@ -22,7 +22,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">N-API
-   &#160;<span id="projectnumber">0.1.0</span>
+   &#160;<span id="projectnumber">0.3.3</span>
    </div>
    <div id="projectbrief">C++ wrapper classes for the ABI-stable C APIs for Node.js</div>
   </td>
@@ -111,10 +111,6 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:ad48ae34ea312223e1799a2ccf468db41"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a37a956928d5cd846a47924b1769179e8"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_napi_1_1_value.html">Napi::Value</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_napi_1_1_function_reference.html#a37a956928d5cd846a47924b1769179e8">Call</a> (napi_value recv, const std::vector&lt; napi_value &gt; &amp;args) const</td></tr>
 <tr class="separator:a37a956928d5cd846a47924b1769179e8"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a92b4a783dcbf666c15e4bcb87aebea00"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_napi_1_1_value.html">Napi::Value</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_napi_1_1_function_reference.html#a92b4a783dcbf666c15e4bcb87aebea00">MakeCallback</a> (const std::initializer_list&lt; napi_value &gt; &amp;args) const</td></tr>
-<tr class="separator:a92b4a783dcbf666c15e4bcb87aebea00"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:acac0a69bba1a839572aa133fc8b9178b"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_napi_1_1_value.html">Napi::Value</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_napi_1_1_function_reference.html#acac0a69bba1a839572aa133fc8b9178b">MakeCallback</a> (const std::vector&lt; napi_value &gt; &amp;args) const</td></tr>
-<tr class="separator:acac0a69bba1a839572aa133fc8b9178b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a88c44bd5f9c1a1a9a13ffeefc28f63ae"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_napi_1_1_value.html">Napi::Value</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_napi_1_1_function_reference.html#a88c44bd5f9c1a1a9a13ffeefc28f63ae">MakeCallback</a> (napi_value recv, const std::initializer_list&lt; napi_value &gt; &amp;args) const</td></tr>
 <tr class="separator:a88c44bd5f9c1a1a9a13ffeefc28f63ae"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a45ca0d2e44cd82b0dfb8261a1da785fe"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_napi_1_1_value.html">Napi::Value</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_napi_1_1_function_reference.html#a45ca0d2e44cd82b0dfb8261a1da785fe">MakeCallback</a> (napi_value recv, const std::vector&lt; napi_value &gt; &amp;args) const</td></tr>
@@ -168,13 +164,14 @@ Additional Inherited Members</h2></td></tr>
 <tr class="separator:a10bb5a9428f6e894d5fccfccd896fd25 inherit pub_static_methods_class_napi_1_1_reference"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pro_attribs_class_napi_1_1_reference"><td colspan="2" onclick="javascript:toggleInherit('pro_attribs_class_napi_1_1_reference')"><img src="closed.png" alt="-"/>&#160;Protected Attributes inherited from <a class="el" href="class_napi_1_1_reference.html">Napi::Reference&lt; Function &gt;</a></td></tr>
 <tr class="memitem:a5c690557fa39d709a1dbaa14c3ccc5a1 inherit pro_attribs_class_napi_1_1_reference"><td class="memItemLeft" align="right" valign="top">napi_env&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_napi_1_1_reference.html#a5c690557fa39d709a1dbaa14c3ccc5a1">_env</a></td></tr>
+<tr class="memdesc:a5c690557fa39d709a1dbaa14c3ccc5a1 inherit pro_attribs_class_napi_1_1_reference"><td class="mdescLeft">&#160;</td><td class="mdescRight">!cond INTERNAL  <a href="class_napi_1_1_reference.html#a5c690557fa39d709a1dbaa14c3ccc5a1">More...</a><br /></td></tr>
 <tr class="separator:a5c690557fa39d709a1dbaa14c3ccc5a1 inherit pro_attribs_class_napi_1_1_reference"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a238e28b4750cc8659be3a9159f179a90 inherit pro_attribs_class_napi_1_1_reference"><td class="memItemLeft" align="right" valign="top">napi_ref&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_napi_1_1_reference.html#a238e28b4750cc8659be3a9159f179a90">_ref</a></td></tr>
 <tr class="separator:a238e28b4750cc8659be3a9159f179a90 inherit pro_attribs_class_napi_1_1_reference"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock">
-<p class="definition">Definition at line <a class="el" href="napi_8h_source.html#l00677">677</a> of file <a class="el" href="napi_8h_source.html">napi.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="napi_8h_source.html#l00900">900</a> of file <a class="el" href="napi_8h_source.html">napi.h</a>.</p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="ad06612ab0aed497f4fc77f9f883b9626"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ad06612ab0aed497f4fc77f9f883b9626">&#9670;&nbsp;</a></span>FunctionReference() <span class="overload">[1/5]</span></h2>
@@ -376,44 +373,8 @@ Additional Inherited Members</h2></td></tr>
 
 </div>
 </div>
-<a id="a92b4a783dcbf666c15e4bcb87aebea00"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a92b4a783dcbf666c15e4bcb87aebea00">&#9670;&nbsp;</a></span>MakeCallback() <span class="overload">[1/4]</span></h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="class_napi_1_1_value.html">Napi::Value</a> Napi::FunctionReference::MakeCallback </td>
-          <td>(</td>
-          <td class="paramtype">const std::initializer_list&lt; napi_value &gt; &amp;&#160;</td>
-          <td class="paramname"><em>args</em></td><td>)</td>
-          <td> const</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="acac0a69bba1a839572aa133fc8b9178b"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#acac0a69bba1a839572aa133fc8b9178b">&#9670;&nbsp;</a></span>MakeCallback() <span class="overload">[2/4]</span></h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="class_napi_1_1_value.html">Napi::Value</a> Napi::FunctionReference::MakeCallback </td>
-          <td>(</td>
-          <td class="paramtype">const std::vector&lt; napi_value &gt; &amp;&#160;</td>
-          <td class="paramname"><em>args</em></td><td>)</td>
-          <td> const</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
 <a id="a88c44bd5f9c1a1a9a13ffeefc28f63ae"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a88c44bd5f9c1a1a9a13ffeefc28f63ae">&#9670;&nbsp;</a></span>MakeCallback() <span class="overload">[3/4]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a88c44bd5f9c1a1a9a13ffeefc28f63ae">&#9670;&nbsp;</a></span>MakeCallback() <span class="overload">[1/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -441,7 +402,7 @@ Additional Inherited Members</h2></td></tr>
 </div>
 </div>
 <a id="a45ca0d2e44cd82b0dfb8261a1da785fe"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a45ca0d2e44cd82b0dfb8261a1da785fe">&#9670;&nbsp;</a></span>MakeCallback() <span class="overload">[4/4]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a45ca0d2e44cd82b0dfb8261a1da785fe">&#9670;&nbsp;</a></span>MakeCallback() <span class="overload">[2/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">

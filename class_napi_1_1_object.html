@@ -22,7 +22,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">N-API
-   &#160;<span id="projectnumber">0.1.0</span>
+   &#160;<span id="projectnumber">0.3.3</span>
    </div>
    <div id="projectbrief">C++ wrapper classes for the ABI-stable C APIs for Node.js</div>
   </td>
@@ -65,6 +65,7 @@ $(function() {
 </div><!-- top -->
 <div class="header">
   <div class="summary">
+<a href="#nested-classes">Classes</a> &#124;
 <a href="#pub-methods">Public Member Functions</a> &#124;
 <a href="#pub-static-methods">Static Public Member Functions</a> &#124;
 <a href="class_napi_1_1_object-members.html">List of all members</a>  </div>
@@ -73,6 +74,9 @@ $(function() {
 </div><!--header-->
 <div class="contents">
 
+<p>A JavaScript object value.  
+ <a href="class_napi_1_1_object.html#details">More...</a></p>
+
 <p><code>#include &lt;<a class="el" href="napi_8h_source.html">napi.h</a>&gt;</code></p>
 <div class="dynheader">
 Inheritance diagram for Napi::Object:</div>
@@ -80,98 +84,143 @@ Inheritance diagram for Napi::Object:</div>
  <div class="center">
   <img src="class_napi_1_1_object.png" usemap="#Napi::Object_map" alt=""/>
   <map id="Napi::Object_map" name="Napi::Object_map">
-<area href="class_napi_1_1_value.html" title="A JavaScript value of unknown type. " alt="Napi::Value" shape="rect" coords="445,0,613,24"/>
-<area href="class_napi_1_1_array.html" alt="Napi::Array" shape="rect" coords="0,112,168,136"/>
-<area href="class_napi_1_1_array_buffer.html" alt="Napi::ArrayBuffer" shape="rect" coords="178,112,346,136"/>
-<area href="class_napi_1_1_buffer.html" alt="Napi::Buffer&lt; T &gt;" shape="rect" coords="356,112,524,136"/>
-<area href="class_napi_1_1_error.html" title="Wraps a JavaScript error object in a way that enables it to traverse a C++ stack and be thrown and ca..." alt="Napi::Error" shape="rect" coords="534,112,702,136"/>
-<area href="class_napi_1_1_function.html" alt="Napi::Function" shape="rect" coords="712,112,880,136"/>
-<area href="class_napi_1_1_typed_array.html" alt="Napi::TypedArray" shape="rect" coords="890,112,1058,136"/>
-<area href="class_napi_1_1_range_error.html" alt="Napi::RangeError" shape="rect" coords="445,168,613,192"/>
-<area href="class_napi_1_1_type_error.html" alt="Napi::TypeError" shape="rect" coords="623,168,791,192"/>
-<area href="class_napi_1_1_typed_array__.html" alt="Napi::TypedArray_&lt; T, A &gt;" shape="rect" coords="890,168,1058,192"/>
+<area href="class_napi_1_1_value.html" title="A JavaScript value of unknown type. " alt="Napi::Value" shape="rect" coords="334,0,491,24"/>
+<area href="class_napi_1_1_array.html" alt="Napi::Array" shape="rect" coords="0,112,157,136"/>
+<area href="class_napi_1_1_array_buffer.html" title="A JavaScript array buffer value. " alt="Napi::ArrayBuffer" shape="rect" coords="167,112,324,136"/>
+<area href="class_napi_1_1_buffer.html" alt="Napi::Buffer&lt; T &gt;" shape="rect" coords="334,112,491,136"/>
+<area href="class_napi_1_1_function.html" alt="Napi::Function" shape="rect" coords="501,112,658,136"/>
+<area href="class_napi_1_1_typed_array.html" title="A JavaScript typed-array value with unknown array type. " alt="Napi::TypedArray" shape="rect" coords="668,112,825,136"/>
+<area href="class_napi_1_1_typed_array_of.html" title="A JavaScript typed-array value with known array type. " alt="Napi::TypedArrayOf&lt; T &gt;" shape="rect" coords="668,168,825,192"/>
 </map>
  </div></div>
 <table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="nested-classes"></a>
+Classes</h2></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_napi_1_1_object_1_1_property_l_value.html">PropertyLValue</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Enables property and element assignments using indexing syntax.  <a href="class_napi_1_1_object_1_1_property_l_value.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
 <tr class="memitem:af8444323ad4b377c2a688550b74183e7"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_napi_1_1_object.html#af8444323ad4b377c2a688550b74183e7">Object</a> ()</td></tr>
+<tr class="memdesc:af8444323ad4b377c2a688550b74183e7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Creates a new <em>empty</em> <a class="el" href="class_napi_1_1_object.html" title="A JavaScript object value. ">Object</a> instance.  <a href="#af8444323ad4b377c2a688550b74183e7">More...</a><br /></td></tr>
 <tr class="separator:af8444323ad4b377c2a688550b74183e7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ace3f659ef30b9c9190ef27c7a9120f0f"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_napi_1_1_object.html#ace3f659ef30b9c9190ef27c7a9120f0f">Object</a> (napi_env env, napi_value value)</td></tr>
+<tr class="memdesc:ace3f659ef30b9c9190ef27c7a9120f0f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Wraps a N-API value primitive.  <a href="#ace3f659ef30b9c9190ef27c7a9120f0f">More...</a><br /></td></tr>
 <tr class="separator:ace3f659ef30b9c9190ef27c7a9120f0f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5609545c6d55a61b1646c9215165b505"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_napi_1_1_property_l_value.html">PropertyLValue</a>&lt; std::string &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_napi_1_1_object.html#a5609545c6d55a61b1646c9215165b505">operator[]</a> (const char *name)</td></tr>
-<tr class="separator:a5609545c6d55a61b1646c9215165b505"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac5f35d7b2530d7eb74dc2d55822f6f31"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_napi_1_1_property_l_value.html">PropertyLValue</a>&lt; std::string &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_napi_1_1_object.html#ac5f35d7b2530d7eb74dc2d55822f6f31">operator[]</a> (const std::string &amp;name)</td></tr>
-<tr class="separator:ac5f35d7b2530d7eb74dc2d55822f6f31"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a60b930c158ce287ca0d8c8911974904f"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_napi_1_1_property_l_value.html">PropertyLValue</a>&lt; uint32_t &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_napi_1_1_object.html#a60b930c158ce287ca0d8c8911974904f">operator[]</a> (uint32_t index)</td></tr>
+<tr class="memitem:abf80f9e6be79c9b02f87d816fcca534b"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_napi_1_1_object_1_1_property_l_value.html">PropertyLValue</a>&lt; std::string &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_napi_1_1_object.html#abf80f9e6be79c9b02f87d816fcca534b">operator[]</a> (const char *utf8name)</td></tr>
+<tr class="memdesc:abf80f9e6be79c9b02f87d816fcca534b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets or sets a named property.  <a href="#abf80f9e6be79c9b02f87d816fcca534b">More...</a><br /></td></tr>
+<tr class="separator:abf80f9e6be79c9b02f87d816fcca534b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae4e5981dd4567837deeb3214efec0c1c"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_napi_1_1_object_1_1_property_l_value.html">PropertyLValue</a>&lt; std::string &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_napi_1_1_object.html#ae4e5981dd4567837deeb3214efec0c1c">operator[]</a> (const std::string &amp;utf8name)</td></tr>
+<tr class="memdesc:ae4e5981dd4567837deeb3214efec0c1c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets or sets a named property.  <a href="#ae4e5981dd4567837deeb3214efec0c1c">More...</a><br /></td></tr>
+<tr class="separator:ae4e5981dd4567837deeb3214efec0c1c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a60b930c158ce287ca0d8c8911974904f"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_napi_1_1_object_1_1_property_l_value.html">PropertyLValue</a>&lt; uint32_t &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_napi_1_1_object.html#a60b930c158ce287ca0d8c8911974904f">operator[]</a> (uint32_t index)</td></tr>
+<tr class="memdesc:a60b930c158ce287ca0d8c8911974904f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets or sets an indexed property or array element.  <a href="#a60b930c158ce287ca0d8c8911974904f">More...</a><br /></td></tr>
 <tr class="separator:a60b930c158ce287ca0d8c8911974904f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7c51806adf86ea86b5f6fcf509ca224d"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_napi_1_1_value.html">Value</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_napi_1_1_object.html#a7c51806adf86ea86b5f6fcf509ca224d">operator[]</a> (const char *name) const</td></tr>
-<tr class="separator:a7c51806adf86ea86b5f6fcf509ca224d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac8d7c92db99589b8434082cc6e2be6b5"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_napi_1_1_value.html">Value</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_napi_1_1_object.html#ac8d7c92db99589b8434082cc6e2be6b5">operator[]</a> (const std::string &amp;name) const</td></tr>
-<tr class="separator:ac8d7c92db99589b8434082cc6e2be6b5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0f9b6828f95e827c603750bac4a52ea8"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_napi_1_1_value.html">Value</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_napi_1_1_object.html#a0f9b6828f95e827c603750bac4a52ea8">operator[]</a> (const char *utf8name) const</td></tr>
+<tr class="memdesc:a0f9b6828f95e827c603750bac4a52ea8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets a named property.  <a href="#a0f9b6828f95e827c603750bac4a52ea8">More...</a><br /></td></tr>
+<tr class="separator:a0f9b6828f95e827c603750bac4a52ea8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a84f12987c335756c6f315df2552bf80f"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_napi_1_1_value.html">Value</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_napi_1_1_object.html#a84f12987c335756c6f315df2552bf80f">operator[]</a> (const std::string &amp;utf8name) const</td></tr>
+<tr class="memdesc:a84f12987c335756c6f315df2552bf80f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets a named property.  <a href="#a84f12987c335756c6f315df2552bf80f">More...</a><br /></td></tr>
+<tr class="separator:a84f12987c335756c6f315df2552bf80f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3f6c49039c4552d796f9f0cfc5e585b3"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_napi_1_1_value.html">Value</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_napi_1_1_object.html#a3f6c49039c4552d796f9f0cfc5e585b3">operator[]</a> (uint32_t index) const</td></tr>
+<tr class="memdesc:a3f6c49039c4552d796f9f0cfc5e585b3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets an indexed property or array element.  <a href="#a3f6c49039c4552d796f9f0cfc5e585b3">More...</a><br /></td></tr>
 <tr class="separator:a3f6c49039c4552d796f9f0cfc5e585b3"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab368f0a6a76cc442326f51c936e488a8"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_napi_1_1_object.html#ab368f0a6a76cc442326f51c936e488a8">Has</a> (napi_value name) const</td></tr>
-<tr class="separator:ab368f0a6a76cc442326f51c936e488a8"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa3eb01ba9fc8f95a287794d60b1b4c67"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_napi_1_1_object.html#aa3eb01ba9fc8f95a287794d60b1b4c67">Has</a> (<a class="el" href="class_napi_1_1_value.html">Value</a> name) const</td></tr>
-<tr class="separator:aa3eb01ba9fc8f95a287794d60b1b4c67"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab53a062c116a18dfba5875c3c517958c"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_napi_1_1_object.html#ab53a062c116a18dfba5875c3c517958c">Has</a> (napi_value key) const</td></tr>
+<tr class="memdesc:ab53a062c116a18dfba5875c3c517958c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Checks whether a property is present.  <a href="#ab53a062c116a18dfba5875c3c517958c">More...</a><br /></td></tr>
+<tr class="separator:ab53a062c116a18dfba5875c3c517958c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad8ee7e0474b9b8b29b670cd49050f7f0"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_napi_1_1_object.html#ad8ee7e0474b9b8b29b670cd49050f7f0">Has</a> (<a class="el" href="class_napi_1_1_value.html">Value</a> key) const</td></tr>
+<tr class="memdesc:ad8ee7e0474b9b8b29b670cd49050f7f0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Checks whether a property is present.  <a href="#ad8ee7e0474b9b8b29b670cd49050f7f0">More...</a><br /></td></tr>
+<tr class="separator:ad8ee7e0474b9b8b29b670cd49050f7f0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae700bed28a33dc2738750dd1127809af"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_napi_1_1_object.html#ae700bed28a33dc2738750dd1127809af">Has</a> (const char *utf8name) const</td></tr>
+<tr class="memdesc:ae700bed28a33dc2738750dd1127809af"><td class="mdescLeft">&#160;</td><td class="mdescRight">Checks whether a named property is present.  <a href="#ae700bed28a33dc2738750dd1127809af">More...</a><br /></td></tr>
 <tr class="separator:ae700bed28a33dc2738750dd1127809af"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9173968a781889300e5519a3f53b9d4b"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_napi_1_1_object.html#a9173968a781889300e5519a3f53b9d4b">Has</a> (const std::string &amp;utf8name) const</td></tr>
+<tr class="memdesc:a9173968a781889300e5519a3f53b9d4b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Checks whether a named property is present.  <a href="#a9173968a781889300e5519a3f53b9d4b">More...</a><br /></td></tr>
 <tr class="separator:a9173968a781889300e5519a3f53b9d4b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8f74b813a45bd5357d13d6337f4fac83"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_napi_1_1_value.html">Value</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_napi_1_1_object.html#a8f74b813a45bd5357d13d6337f4fac83">Get</a> (napi_value name) const</td></tr>
-<tr class="separator:a8f74b813a45bd5357d13d6337f4fac83"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a33c1616709405283a1802adfe01253a9"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_napi_1_1_value.html">Value</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_napi_1_1_object.html#a33c1616709405283a1802adfe01253a9">Get</a> (<a class="el" href="class_napi_1_1_value.html">Value</a> name) const</td></tr>
-<tr class="separator:a33c1616709405283a1802adfe01253a9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9cd2fc6771b869a8f863d75d0b101eb7"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_napi_1_1_value.html">Value</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_napi_1_1_object.html#a9cd2fc6771b869a8f863d75d0b101eb7">Get</a> (napi_value key) const</td></tr>
+<tr class="memdesc:a9cd2fc6771b869a8f863d75d0b101eb7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets a property.  <a href="#a9cd2fc6771b869a8f863d75d0b101eb7">More...</a><br /></td></tr>
+<tr class="separator:a9cd2fc6771b869a8f863d75d0b101eb7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a70b2e3b22f810a7b4406732d151bfbb5"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_napi_1_1_value.html">Value</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_napi_1_1_object.html#a70b2e3b22f810a7b4406732d151bfbb5">Get</a> (<a class="el" href="class_napi_1_1_value.html">Value</a> key) const</td></tr>
+<tr class="memdesc:a70b2e3b22f810a7b4406732d151bfbb5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets a property.  <a href="#a70b2e3b22f810a7b4406732d151bfbb5">More...</a><br /></td></tr>
+<tr class="separator:a70b2e3b22f810a7b4406732d151bfbb5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a76aeafa45bf4e82449635882d65ed141"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_napi_1_1_value.html">Value</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_napi_1_1_object.html#a76aeafa45bf4e82449635882d65ed141">Get</a> (const char *utf8name) const</td></tr>
+<tr class="memdesc:a76aeafa45bf4e82449635882d65ed141"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets a named property.  <a href="#a76aeafa45bf4e82449635882d65ed141">More...</a><br /></td></tr>
 <tr class="separator:a76aeafa45bf4e82449635882d65ed141"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a583b2647a7e05fc95cf9ebc27cb0a36e"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_napi_1_1_value.html">Value</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_napi_1_1_object.html#a583b2647a7e05fc95cf9ebc27cb0a36e">Get</a> (const std::string &amp;utf8name) const</td></tr>
+<tr class="memdesc:a583b2647a7e05fc95cf9ebc27cb0a36e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets a named property.  <a href="#a583b2647a7e05fc95cf9ebc27cb0a36e">More...</a><br /></td></tr>
 <tr class="separator:a583b2647a7e05fc95cf9ebc27cb0a36e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a74b91b9a5cc507a0e07057957f1e14a1"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_napi_1_1_object.html#a74b91b9a5cc507a0e07057957f1e14a1">Set</a> (napi_value name, napi_value value)</td></tr>
-<tr class="separator:a74b91b9a5cc507a0e07057957f1e14a1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abe1d30fce9e2daa4bc454d38f7b20586"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_napi_1_1_object.html#abe1d30fce9e2daa4bc454d38f7b20586">Set</a> (napi_value key, napi_value value)</td></tr>
+<tr class="memdesc:abe1d30fce9e2daa4bc454d38f7b20586"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets a property.  <a href="#abe1d30fce9e2daa4bc454d38f7b20586">More...</a><br /></td></tr>
+<tr class="separator:abe1d30fce9e2daa4bc454d38f7b20586"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a37c1496314c27d2ac7c151de726a8b5b"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_napi_1_1_object.html#a37c1496314c27d2ac7c151de726a8b5b">Set</a> (<a class="el" href="class_napi_1_1_value.html">Value</a> key, <a class="el" href="class_napi_1_1_value.html">Value</a> value)</td></tr>
+<tr class="memdesc:a37c1496314c27d2ac7c151de726a8b5b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets a property.  <a href="#a37c1496314c27d2ac7c151de726a8b5b">More...</a><br /></td></tr>
+<tr class="separator:a37c1496314c27d2ac7c151de726a8b5b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a95b25a4fc3c765aaf5f63053f08761f2"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_napi_1_1_object.html#a95b25a4fc3c765aaf5f63053f08761f2">Set</a> (const char *utf8name, napi_value value)</td></tr>
+<tr class="memdesc:a95b25a4fc3c765aaf5f63053f08761f2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets a named property.  <a href="#a95b25a4fc3c765aaf5f63053f08761f2">More...</a><br /></td></tr>
 <tr class="separator:a95b25a4fc3c765aaf5f63053f08761f2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a267c4a363cc7d2cd4ff01d56f7c49a5f"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_napi_1_1_object.html#a267c4a363cc7d2cd4ff01d56f7c49a5f">Set</a> (const char *utf8name, <a class="el" href="class_napi_1_1_value.html">Value</a> value)</td></tr>
+<tr class="memdesc:a267c4a363cc7d2cd4ff01d56f7c49a5f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets a named property.  <a href="#a267c4a363cc7d2cd4ff01d56f7c49a5f">More...</a><br /></td></tr>
 <tr class="separator:a267c4a363cc7d2cd4ff01d56f7c49a5f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a45ab24ba60ed8c478e274f674fc19224"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_napi_1_1_object.html#a45ab24ba60ed8c478e274f674fc19224">Set</a> (const char *utf8name, const char *utf8value)</td></tr>
+<tr class="memdesc:a45ab24ba60ed8c478e274f674fc19224"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets a named property to a string value.  <a href="#a45ab24ba60ed8c478e274f674fc19224">More...</a><br /></td></tr>
 <tr class="separator:a45ab24ba60ed8c478e274f674fc19224"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aeaab9a81baedab174f30fd5a40f529b2"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_napi_1_1_object.html#aeaab9a81baedab174f30fd5a40f529b2">Set</a> (const char *utf8name, bool boolValue)</td></tr>
+<tr class="memdesc:aeaab9a81baedab174f30fd5a40f529b2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets a named property to a boolean value.  <a href="#aeaab9a81baedab174f30fd5a40f529b2">More...</a><br /></td></tr>
 <tr class="separator:aeaab9a81baedab174f30fd5a40f529b2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a130ffb5081ae1f30d745262335ef0683"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_napi_1_1_object.html#a130ffb5081ae1f30d745262335ef0683">Set</a> (const char *utf8name, double numberValue)</td></tr>
+<tr class="memdesc:a130ffb5081ae1f30d745262335ef0683"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets a named property to a number value.  <a href="#a130ffb5081ae1f30d745262335ef0683">More...</a><br /></td></tr>
 <tr class="separator:a130ffb5081ae1f30d745262335ef0683"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac585506c22a92b06b4a682d69653e646"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_napi_1_1_object.html#ac585506c22a92b06b4a682d69653e646">Set</a> (const std::string &amp;utf8name, napi_value value)</td></tr>
+<tr class="memdesc:ac585506c22a92b06b4a682d69653e646"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets a named property.  <a href="#ac585506c22a92b06b4a682d69653e646">More...</a><br /></td></tr>
 <tr class="separator:ac585506c22a92b06b4a682d69653e646"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:adbaad21e8ed3e41fa8c2c8ce495fd614"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_napi_1_1_object.html#adbaad21e8ed3e41fa8c2c8ce495fd614">Set</a> (const std::string &amp;utf8name, <a class="el" href="class_napi_1_1_value.html">Value</a> value)</td></tr>
+<tr class="memdesc:adbaad21e8ed3e41fa8c2c8ce495fd614"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets a named property.  <a href="#adbaad21e8ed3e41fa8c2c8ce495fd614">More...</a><br /></td></tr>
 <tr class="separator:adbaad21e8ed3e41fa8c2c8ce495fd614"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a527493b802ea90b161abf77cc0f95aae"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_napi_1_1_object.html#a527493b802ea90b161abf77cc0f95aae">Set</a> (const std::string &amp;utf8name, std::string &amp;utf8value)</td></tr>
+<tr class="memdesc:a527493b802ea90b161abf77cc0f95aae"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets a named property to a string value.  <a href="#a527493b802ea90b161abf77cc0f95aae">More...</a><br /></td></tr>
 <tr class="separator:a527493b802ea90b161abf77cc0f95aae"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a628b70bd26921dc2f1f80f03ab355928"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_napi_1_1_object.html#a628b70bd26921dc2f1f80f03ab355928">Set</a> (const std::string &amp;utf8name, bool boolValue)</td></tr>
+<tr class="memdesc:a628b70bd26921dc2f1f80f03ab355928"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets a named property to a boolean value.  <a href="#a628b70bd26921dc2f1f80f03ab355928">More...</a><br /></td></tr>
 <tr class="separator:a628b70bd26921dc2f1f80f03ab355928"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a726238e04d00e2159d30dd25edaaaf0b"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_napi_1_1_object.html#a726238e04d00e2159d30dd25edaaaf0b">Set</a> (const std::string &amp;utf8name, double numberValue)</td></tr>
+<tr class="memdesc:a726238e04d00e2159d30dd25edaaaf0b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets a named property to a number value.  <a href="#a726238e04d00e2159d30dd25edaaaf0b">More...</a><br /></td></tr>
 <tr class="separator:a726238e04d00e2159d30dd25edaaaf0b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa7cbd88dbd32a2158d97a70d42edf434"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_napi_1_1_object.html#aa7cbd88dbd32a2158d97a70d42edf434">Has</a> (uint32_t index) const</td></tr>
+<tr class="memdesc:aa7cbd88dbd32a2158d97a70d42edf434"><td class="mdescLeft">&#160;</td><td class="mdescRight">Checks whether an indexed property is present.  <a href="#aa7cbd88dbd32a2158d97a70d42edf434">More...</a><br /></td></tr>
 <tr class="separator:aa7cbd88dbd32a2158d97a70d42edf434"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:afc0867d9fdb68b5096f99773efa9e1ed"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_napi_1_1_value.html">Value</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_napi_1_1_object.html#afc0867d9fdb68b5096f99773efa9e1ed">Get</a> (uint32_t index) const</td></tr>
+<tr class="memdesc:afc0867d9fdb68b5096f99773efa9e1ed"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets an indexed property or array element.  <a href="#afc0867d9fdb68b5096f99773efa9e1ed">More...</a><br /></td></tr>
 <tr class="separator:afc0867d9fdb68b5096f99773efa9e1ed"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab05365f5e48184b1a57afed8531c3862"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_napi_1_1_object.html#ab05365f5e48184b1a57afed8531c3862">Set</a> (uint32_t index, napi_value value)</td></tr>
+<tr class="memdesc:ab05365f5e48184b1a57afed8531c3862"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets an indexed property or array element.  <a href="#ab05365f5e48184b1a57afed8531c3862">More...</a><br /></td></tr>
 <tr class="separator:ab05365f5e48184b1a57afed8531c3862"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a381cb9c23e4d14b354588c1cd14a15bc"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_napi_1_1_object.html#a381cb9c23e4d14b354588c1cd14a15bc">Set</a> (uint32_t index, <a class="el" href="class_napi_1_1_value.html">Value</a> value)</td></tr>
+<tr class="memdesc:a381cb9c23e4d14b354588c1cd14a15bc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets an indexed property or array element.  <a href="#a381cb9c23e4d14b354588c1cd14a15bc">More...</a><br /></td></tr>
 <tr class="separator:a381cb9c23e4d14b354588c1cd14a15bc"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab3a5e5e72f3b64fb76d2a27969cbec51"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_napi_1_1_object.html#ab3a5e5e72f3b64fb76d2a27969cbec51">Set</a> (uint32_t index, const char *utf8value)</td></tr>
+<tr class="memdesc:ab3a5e5e72f3b64fb76d2a27969cbec51"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets an indexed property or array element to a string value.  <a href="#ab3a5e5e72f3b64fb76d2a27969cbec51">More...</a><br /></td></tr>
 <tr class="separator:ab3a5e5e72f3b64fb76d2a27969cbec51"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a924965d78c2d775d00b73f7f723e1ff3"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_napi_1_1_object.html#a924965d78c2d775d00b73f7f723e1ff3">Set</a> (uint32_t index, const std::string &amp;utf8value)</td></tr>
+<tr class="memdesc:a924965d78c2d775d00b73f7f723e1ff3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets an indexed property or array element to a string value.  <a href="#a924965d78c2d775d00b73f7f723e1ff3">More...</a><br /></td></tr>
 <tr class="separator:a924965d78c2d775d00b73f7f723e1ff3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a80ea2cc07c77b4d87c78027989e3118e"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_napi_1_1_object.html#a80ea2cc07c77b4d87c78027989e3118e">Set</a> (uint32_t index, bool boolValue)</td></tr>
+<tr class="memdesc:a80ea2cc07c77b4d87c78027989e3118e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets an indexed property or array element to a boolean value.  <a href="#a80ea2cc07c77b4d87c78027989e3118e">More...</a><br /></td></tr>
 <tr class="separator:a80ea2cc07c77b4d87c78027989e3118e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3e214f192ed6dd60d046c25f2848061f"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_napi_1_1_object.html#a3e214f192ed6dd60d046c25f2848061f">Set</a> (uint32_t index, double numberValue)</td></tr>
+<tr class="memdesc:a3e214f192ed6dd60d046c25f2848061f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets an indexed property or array element to a number value.  <a href="#a3e214f192ed6dd60d046c25f2848061f">More...</a><br /></td></tr>
 <tr class="separator:a3e214f192ed6dd60d046c25f2848061f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab4d7357ccd178ea2126f4f2dc91428f7"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_napi_1_1_object.html#ab4d7357ccd178ea2126f4f2dc91428f7">DefineProperty</a> (const <a class="el" href="class_napi_1_1_property_descriptor.html">PropertyDescriptor</a> &amp;property)</td></tr>
+<tr class="memdesc:ab4d7357ccd178ea2126f4f2dc91428f7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Defines a property on the object.  <a href="#ab4d7357ccd178ea2126f4f2dc91428f7">More...</a><br /></td></tr>
 <tr class="separator:ab4d7357ccd178ea2126f4f2dc91428f7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa1166d009326308db792243afbb2c878"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_napi_1_1_object.html#aa1166d009326308db792243afbb2c878">DefineProperties</a> (const std::initializer_list&lt; <a class="el" href="class_napi_1_1_property_descriptor.html">PropertyDescriptor</a> &gt; &amp;properties)</td></tr>
+<tr class="memdesc:aa1166d009326308db792243afbb2c878"><td class="mdescLeft">&#160;</td><td class="mdescRight">Defines properties on the object.  <a href="#aa1166d009326308db792243afbb2c878">More...</a><br /></td></tr>
 <tr class="separator:aa1166d009326308db792243afbb2c878"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:abd206e293b0f6227b02c160cb9b0ef6b"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_napi_1_1_object.html#abd206e293b0f6227b02c160cb9b0ef6b">DefineProperties</a> (const std::vector&lt; <a class="el" href="class_napi_1_1_property_descriptor.html">PropertyDescriptor</a> &gt; &amp;properties)</td></tr>
+<tr class="memdesc:abd206e293b0f6227b02c160cb9b0ef6b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Defines properties on the object.  <a href="#abd206e293b0f6227b02c160cb9b0ef6b">More...</a><br /></td></tr>
 <tr class="separator:abd206e293b0f6227b02c160cb9b0ef6b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a049745463f0cb24bfc35b25187645220"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_napi_1_1_object.html#a049745463f0cb24bfc35b25187645220">InstanceOf</a> (const <a class="el" href="class_napi_1_1_function.html">Function</a> &amp;constructor) const</td></tr>
+<tr class="memdesc:a049745463f0cb24bfc35b25187645220"><td class="mdescLeft">&#160;</td><td class="mdescRight">Checks if an object is an instance created by a constructor function.  <a href="#a049745463f0cb24bfc35b25187645220">More...</a><br /></td></tr>
 <tr class="separator:a049745463f0cb24bfc35b25187645220"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_methods_class_napi_1_1_value"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_class_napi_1_1_value')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="class_napi_1_1_value.html">Napi::Value</a></td></tr>
 <tr class="memitem:a91352891b563fb744683240949e458e4 inherit pub_methods_class_napi_1_1_value"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_napi_1_1_value.html#a91352891b563fb744683240949e458e4">Value</a> ()</td></tr>
@@ -195,6 +244,9 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a1e1930afac70f2811a222c363d892a42 inherit pub_methods_class_napi_1_1_value"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_napi_1_1_env.html">Napi::Env</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_napi_1_1_value.html#a1e1930afac70f2811a222c363d892a42">Env</a> () const</td></tr>
 <tr class="memdesc:a1e1930afac70f2811a222c363d892a42 inherit pub_methods_class_napi_1_1_value"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the environment the value is associated with.  <a href="class_napi_1_1_value.html#a1e1930afac70f2811a222c363d892a42">More...</a><br /></td></tr>
 <tr class="separator:a1e1930afac70f2811a222c363d892a42 inherit pub_methods_class_napi_1_1_value"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a988bdb3e9806beb7761b4ea864461005 inherit pub_methods_class_napi_1_1_value"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_napi_1_1_value.html#a988bdb3e9806beb7761b4ea864461005">IsEmpty</a> () const</td></tr>
+<tr class="memdesc:a988bdb3e9806beb7761b4ea864461005 inherit pub_methods_class_napi_1_1_value"><td class="mdescLeft">&#160;</td><td class="mdescRight">Checks if the value is empty (uninitialized).  <a href="class_napi_1_1_value.html#a988bdb3e9806beb7761b4ea864461005">More...</a><br /></td></tr>
+<tr class="separator:a988bdb3e9806beb7761b4ea864461005 inherit pub_methods_class_napi_1_1_value"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5da2e4f1a5a6b237159c4cfbd0866281 inherit pub_methods_class_napi_1_1_value"><td class="memItemLeft" align="right" valign="top">napi_valuetype&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_napi_1_1_value.html#a5da2e4f1a5a6b237159c4cfbd0866281">Type</a> () const</td></tr>
 <tr class="memdesc:a5da2e4f1a5a6b237159c4cfbd0866281 inherit pub_methods_class_napi_1_1_value"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the type of the value.  <a href="class_napi_1_1_value.html#a5da2e4f1a5a6b237159c4cfbd0866281">More...</a><br /></td></tr>
 <tr class="separator:a5da2e4f1a5a6b237159c4cfbd0866281 inherit pub_methods_class_napi_1_1_value"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -236,7 +288,7 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a7ae7ce9bb0c81e08285aa36f810b3257 inherit pub_methods_class_napi_1_1_value"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9c1a9c4eca9617b0aafbe311c946982a inherit pub_methods_class_napi_1_1_value"><td class="memTemplParams" colspan="2">template&lt;typename T &gt; </td></tr>
 <tr class="memitem:a9c1a9c4eca9617b0aafbe311c946982a inherit pub_methods_class_napi_1_1_value"><td class="memTemplItemLeft" align="right" valign="top">T&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="class_napi_1_1_value.html#a9c1a9c4eca9617b0aafbe311c946982a">As</a> () const</td></tr>
-<tr class="memdesc:a9c1a9c4eca9617b0aafbe311c946982a inherit pub_methods_class_napi_1_1_value"><td class="mdescLeft">&#160;</td><td class="mdescRight">Converts to another type of <code><a class="el" href="class_napi_1_1_value.html" title="A JavaScript value of unknown type. ">Napi::Value</a></code>, when the actual type is known or assumed.  <a href="class_napi_1_1_value.html#a9c1a9c4eca9617b0aafbe311c946982a">More...</a><br /></td></tr>
+<tr class="memdesc:a9c1a9c4eca9617b0aafbe311c946982a inherit pub_methods_class_napi_1_1_value"><td class="mdescLeft">&#160;</td><td class="mdescRight">Casts to another type of <code><a class="el" href="class_napi_1_1_value.html" title="A JavaScript value of unknown type. ">Napi::Value</a></code>, when the actual type is known or assumed.  <a href="class_napi_1_1_value.html#a9c1a9c4eca9617b0aafbe311c946982a">More...</a><br /></td></tr>
 <tr class="separator:a9c1a9c4eca9617b0aafbe311c946982a inherit pub_methods_class_napi_1_1_value"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a01f08d60906f8221ad3a4a5311b01019 inherit pub_methods_class_napi_1_1_value"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_napi_1_1_boolean.html">Boolean</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_napi_1_1_value.html#a01f08d60906f8221ad3a4a5311b01019">ToBoolean</a> () const</td></tr>
 <tr class="memdesc:a01f08d60906f8221ad3a4a5311b01019 inherit pub_methods_class_napi_1_1_value"><td class="mdescLeft">&#160;</td><td class="mdescRight">Coerces a value to a JavaScript boolean.  <a href="class_napi_1_1_value.html#a01f08d60906f8221ad3a4a5311b01019">More...</a><br /></td></tr>
@@ -254,11 +306,22 @@ Public Member Functions</h2></td></tr>
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-methods"></a>
 Static Public Member Functions</h2></td></tr>
 <tr class="memitem:aeacb54cc92a37e065fdecd6e215959e8"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="class_napi_1_1_object.html">Object</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_napi_1_1_object.html#aeacb54cc92a37e065fdecd6e215959e8">New</a> (napi_env env)</td></tr>
+<tr class="memdesc:aeacb54cc92a37e065fdecd6e215959e8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Creates a new <a class="el" href="class_napi_1_1_object.html" title="A JavaScript object value. ">Object</a> value.  <a href="#aeacb54cc92a37e065fdecd6e215959e8">More...</a><br /></td></tr>
 <tr class="separator:aeacb54cc92a37e065fdecd6e215959e8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="inherited"></a>
+Additional Inherited Members</h2></td></tr>
+<tr class="inherit_header pro_attribs_class_napi_1_1_value"><td colspan="2" onclick="javascript:toggleInherit('pro_attribs_class_napi_1_1_value')"><img src="closed.png" alt="-"/>&#160;Protected Attributes inherited from <a class="el" href="class_napi_1_1_value.html">Napi::Value</a></td></tr>
+<tr class="memitem:ad0a0cc895c3134df3ca3267dbf2dfe08 inherit pro_attribs_class_napi_1_1_value"><td class="memItemLeft" align="right" valign="top">napi_env&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_napi_1_1_value.html#ad0a0cc895c3134df3ca3267dbf2dfe08">_env</a></td></tr>
+<tr class="memdesc:ad0a0cc895c3134df3ca3267dbf2dfe08 inherit pro_attribs_class_napi_1_1_value"><td class="mdescLeft">&#160;</td><td class="mdescRight">!cond INTERNAL  <a href="class_napi_1_1_value.html#ad0a0cc895c3134df3ca3267dbf2dfe08">More...</a><br /></td></tr>
+<tr class="separator:ad0a0cc895c3134df3ca3267dbf2dfe08 inherit pro_attribs_class_napi_1_1_value"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae2060cfa039ca4c6abaff238fb00d1f8 inherit pro_attribs_class_napi_1_1_value"><td class="memItemLeft" align="right" valign="top">napi_value&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_napi_1_1_value.html#ae2060cfa039ca4c6abaff238fb00d1f8">_value</a></td></tr>
+<tr class="separator:ae2060cfa039ca4c6abaff238fb00d1f8 inherit pro_attribs_class_napi_1_1_value"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock">
-<p class="definition">Definition at line <a class="el" href="napi_8h_source.html#l00242">242</a> of file <a class="el" href="napi_8h_source.html">napi.h</a>.</p>
+<div class="textblock"><p>A JavaScript object value. </p>
+
+<p class="definition">Definition at line <a class="el" href="napi_8h_source.html#l00299">299</a> of file <a class="el" href="napi_8h_source.html">napi.h</a>.</p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="af8444323ad4b377c2a688550b74183e7"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#af8444323ad4b377c2a688550b74183e7">&#9670;&nbsp;</a></span>Object() <span class="overload">[1/2]</span></h2>
@@ -274,6 +337,8 @@ Static Public Member Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Creates a new <em>empty</em> <a class="el" href="class_napi_1_1_object.html" title="A JavaScript object value. ">Object</a> instance. </p>
 
 </div>
 </div>
@@ -303,6 +368,8 @@ Static Public Member Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>Wraps a N-API value primitive. </p>
+
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
@@ -322,6 +389,14 @@ Static Public Member Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>Defines properties on the object. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">properties</td><td>List of descriptors for the properties to be defined </td></tr>
+  </table>
+  </dd>
+</dl>
+
 </div>
 </div>
 <a id="abd206e293b0f6227b02c160cb9b0ef6b"></a>
@@ -339,6 +414,14 @@ Static Public Member Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Defines properties on the object. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">properties</td><td>Vector of descriptors for the properties to be defined </td></tr>
+  </table>
+  </dd>
+</dl>
 
 </div>
 </div>
@@ -358,10 +441,18 @@ Static Public Member Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>Defines a property on the object. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">property</td><td>Descriptor for the property to be defined </td></tr>
+  </table>
+  </dd>
+</dl>
+
 </div>
 </div>
-<a id="a8f74b813a45bd5357d13d6337f4fac83"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a8f74b813a45bd5357d13d6337f4fac83">&#9670;&nbsp;</a></span>Get() <span class="overload">[1/5]</span></h2>
+<a id="a9cd2fc6771b869a8f863d75d0b101eb7"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9cd2fc6771b869a8f863d75d0b101eb7">&#9670;&nbsp;</a></span>Get() <span class="overload">[1/5]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -370,16 +461,24 @@ Static Public Member Functions</h2></td></tr>
           <td class="memname"><a class="el" href="class_napi_1_1_value.html">Value</a> Napi::Object::Get </td>
           <td>(</td>
           <td class="paramtype">napi_value&#160;</td>
-          <td class="paramname"><em>name</em></td><td>)</td>
+          <td class="paramname"><em>key</em></td><td>)</td>
           <td> const</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
+<p>Gets a property. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">key</td><td>Property key primitive </td></tr>
+  </table>
+  </dd>
+</dl>
+
 </div>
 </div>
-<a id="a33c1616709405283a1802adfe01253a9"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a33c1616709405283a1802adfe01253a9">&#9670;&nbsp;</a></span>Get() <span class="overload">[2/5]</span></h2>
+<a id="a70b2e3b22f810a7b4406732d151bfbb5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a70b2e3b22f810a7b4406732d151bfbb5">&#9670;&nbsp;</a></span>Get() <span class="overload">[2/5]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -388,11 +487,19 @@ Static Public Member Functions</h2></td></tr>
           <td class="memname"><a class="el" href="class_napi_1_1_value.html">Value</a> Napi::Object::Get </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="class_napi_1_1_value.html">Value</a>&#160;</td>
-          <td class="paramname"><em>name</em></td><td>)</td>
+          <td class="paramname"><em>key</em></td><td>)</td>
           <td> const</td>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Gets a property. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">key</td><td>Property key </td></tr>
+  </table>
+  </dd>
+</dl>
 
 </div>
 </div>
@@ -412,6 +519,14 @@ Static Public Member Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>Gets a named property. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">utf8name</td><td>UTF-8 encoded null-terminated property name </td></tr>
+  </table>
+  </dd>
+</dl>
+
 </div>
 </div>
 <a id="a583b2647a7e05fc95cf9ebc27cb0a36e"></a>
@@ -429,6 +544,14 @@ Static Public Member Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Gets a named property. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">utf8name</td><td>UTF-8 encoded property name </td></tr>
+  </table>
+  </dd>
+</dl>
 
 </div>
 </div>
@@ -448,10 +571,18 @@ Static Public Member Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>Gets an indexed property or array element. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">index</td><td>Property / element index </td></tr>
+  </table>
+  </dd>
+</dl>
+
 </div>
 </div>
-<a id="ab368f0a6a76cc442326f51c936e488a8"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ab368f0a6a76cc442326f51c936e488a8">&#9670;&nbsp;</a></span>Has() <span class="overload">[1/5]</span></h2>
+<a id="ab53a062c116a18dfba5875c3c517958c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab53a062c116a18dfba5875c3c517958c">&#9670;&nbsp;</a></span>Has() <span class="overload">[1/5]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -460,16 +591,24 @@ Static Public Member Functions</h2></td></tr>
           <td class="memname">bool Napi::Object::Has </td>
           <td>(</td>
           <td class="paramtype">napi_value&#160;</td>
-          <td class="paramname"><em>name</em></td><td>)</td>
+          <td class="paramname"><em>key</em></td><td>)</td>
           <td> const</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
+<p>Checks whether a property is present. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">key</td><td>Property key primitive </td></tr>
+  </table>
+  </dd>
+</dl>
+
 </div>
 </div>
-<a id="aa3eb01ba9fc8f95a287794d60b1b4c67"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aa3eb01ba9fc8f95a287794d60b1b4c67">&#9670;&nbsp;</a></span>Has() <span class="overload">[2/5]</span></h2>
+<a id="ad8ee7e0474b9b8b29b670cd49050f7f0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad8ee7e0474b9b8b29b670cd49050f7f0">&#9670;&nbsp;</a></span>Has() <span class="overload">[2/5]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -478,11 +617,19 @@ Static Public Member Functions</h2></td></tr>
           <td class="memname">bool Napi::Object::Has </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="class_napi_1_1_value.html">Value</a>&#160;</td>
-          <td class="paramname"><em>name</em></td><td>)</td>
+          <td class="paramname"><em>key</em></td><td>)</td>
           <td> const</td>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Checks whether a property is present. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">key</td><td>Property key </td></tr>
+  </table>
+  </dd>
+</dl>
 
 </div>
 </div>
@@ -502,6 +649,14 @@ Static Public Member Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>Checks whether a named property is present. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">utf8name</td><td>UTF-8 encoded null-terminated property name </td></tr>
+  </table>
+  </dd>
+</dl>
+
 </div>
 </div>
 <a id="a9173968a781889300e5519a3f53b9d4b"></a>
@@ -519,6 +674,14 @@ Static Public Member Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Checks whether a named property is present. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">utf8name</td><td>UTF-8 encoded property name </td></tr>
+  </table>
+  </dd>
+</dl>
 
 </div>
 </div>
@@ -538,6 +701,14 @@ Static Public Member Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>Checks whether an indexed property is present. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">index</td><td>Property / element index </td></tr>
+  </table>
+  </dd>
+</dl>
+
 </div>
 </div>
 <a id="a049745463f0cb24bfc35b25187645220"></a>
@@ -555,6 +726,15 @@ Static Public Member Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Checks if an object is an instance created by a constructor function. </p>
+<p>This is equivalent to the JavaScript <code>instanceof</code> operator. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">constructor</td><td>Constructor function </td></tr>
+  </table>
+  </dd>
+</dl>
 
 </div>
 </div>
@@ -582,41 +762,65 @@ Static Public Member Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
+<p>Creates a new <a class="el" href="class_napi_1_1_object.html" title="A JavaScript object value. ">Object</a> value. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">env</td><td>N-API environment </td></tr>
+  </table>
+  </dd>
+</dl>
+
 </div>
 </div>
-<a id="a5609545c6d55a61b1646c9215165b505"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a5609545c6d55a61b1646c9215165b505">&#9670;&nbsp;</a></span>operator[]() <span class="overload">[1/6]</span></h2>
+<a id="abf80f9e6be79c9b02f87d816fcca534b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#abf80f9e6be79c9b02f87d816fcca534b">&#9670;&nbsp;</a></span>operator[]() <span class="overload">[1/6]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="class_napi_1_1_property_l_value.html">PropertyLValue</a>&lt;std::string&gt; Napi::Object::operator[] </td>
+          <td class="memname"><a class="el" href="class_napi_1_1_object_1_1_property_l_value.html">PropertyLValue</a>&lt;std::string&gt; Napi::Object::operator[] </td>
           <td>(</td>
           <td class="paramtype">const char *&#160;</td>
-          <td class="paramname"><em>name</em></td><td>)</td>
+          <td class="paramname"><em>utf8name</em></td><td>)</td>
           <td></td>
         </tr>
       </table>
 </div><div class="memdoc">
 
+<p>Gets or sets a named property. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">utf8name</td><td>UTF-8 encoded null-terminated property name </td></tr>
+  </table>
+  </dd>
+</dl>
+
 </div>
 </div>
-<a id="ac5f35d7b2530d7eb74dc2d55822f6f31"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ac5f35d7b2530d7eb74dc2d55822f6f31">&#9670;&nbsp;</a></span>operator[]() <span class="overload">[2/6]</span></h2>
+<a id="ae4e5981dd4567837deeb3214efec0c1c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae4e5981dd4567837deeb3214efec0c1c">&#9670;&nbsp;</a></span>operator[]() <span class="overload">[2/6]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="class_napi_1_1_property_l_value.html">PropertyLValue</a>&lt;std::string&gt; Napi::Object::operator[] </td>
+          <td class="memname"><a class="el" href="class_napi_1_1_object_1_1_property_l_value.html">PropertyLValue</a>&lt;std::string&gt; Napi::Object::operator[] </td>
           <td>(</td>
           <td class="paramtype">const std::string &amp;&#160;</td>
-          <td class="paramname"><em>name</em></td><td>)</td>
+          <td class="paramname"><em>utf8name</em></td><td>)</td>
           <td></td>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Gets or sets a named property. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">utf8name</td><td>UTF-8 encoded property name </td></tr>
+  </table>
+  </dd>
+</dl>
 
 </div>
 </div>
@@ -627,7 +831,7 @@ Static Public Member Functions</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="class_napi_1_1_property_l_value.html">PropertyLValue</a>&lt;uint32_t&gt; Napi::Object::operator[] </td>
+          <td class="memname"><a class="el" href="class_napi_1_1_object_1_1_property_l_value.html">PropertyLValue</a>&lt;uint32_t&gt; Napi::Object::operator[] </td>
           <td>(</td>
           <td class="paramtype">uint32_t&#160;</td>
           <td class="paramname"><em>index</em></td><td>)</td>
@@ -636,10 +840,18 @@ Static Public Member Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>Gets or sets an indexed property or array element. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">index</td><td>Property / element index </td></tr>
+  </table>
+  </dd>
+</dl>
+
 </div>
 </div>
-<a id="a7c51806adf86ea86b5f6fcf509ca224d"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a7c51806adf86ea86b5f6fcf509ca224d">&#9670;&nbsp;</a></span>operator[]() <span class="overload">[4/6]</span></h2>
+<a id="a0f9b6828f95e827c603750bac4a52ea8"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0f9b6828f95e827c603750bac4a52ea8">&#9670;&nbsp;</a></span>operator[]() <span class="overload">[4/6]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -648,16 +860,24 @@ Static Public Member Functions</h2></td></tr>
           <td class="memname"><a class="el" href="class_napi_1_1_value.html">Value</a> Napi::Object::operator[] </td>
           <td>(</td>
           <td class="paramtype">const char *&#160;</td>
-          <td class="paramname"><em>name</em></td><td>)</td>
+          <td class="paramname"><em>utf8name</em></td><td>)</td>
           <td> const</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
+<p>Gets a named property. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">utf8name</td><td>UTF-8 encoded null-terminated property name </td></tr>
+  </table>
+  </dd>
+</dl>
+
 </div>
 </div>
-<a id="ac8d7c92db99589b8434082cc6e2be6b5"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ac8d7c92db99589b8434082cc6e2be6b5">&#9670;&nbsp;</a></span>operator[]() <span class="overload">[5/6]</span></h2>
+<a id="a84f12987c335756c6f315df2552bf80f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a84f12987c335756c6f315df2552bf80f">&#9670;&nbsp;</a></span>operator[]() <span class="overload">[5/6]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -666,11 +886,19 @@ Static Public Member Functions</h2></td></tr>
           <td class="memname"><a class="el" href="class_napi_1_1_value.html">Value</a> Napi::Object::operator[] </td>
           <td>(</td>
           <td class="paramtype">const std::string &amp;&#160;</td>
-          <td class="paramname"><em>name</em></td><td>)</td>
+          <td class="paramname"><em>utf8name</em></td><td>)</td>
           <td> const</td>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Gets a named property. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">utf8name</td><td>UTF-8 encoded property name </td></tr>
+  </table>
+  </dd>
+</dl>
 
 </div>
 </div>
@@ -690,10 +918,18 @@ Static Public Member Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>Gets an indexed property or array element. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">index</td><td>Property / element index </td></tr>
+  </table>
+  </dd>
+</dl>
+
 </div>
 </div>
-<a id="a74b91b9a5cc507a0e07057957f1e14a1"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a74b91b9a5cc507a0e07057957f1e14a1">&#9670;&nbsp;</a></span>Set() <span class="overload">[1/17]</span></h2>
+<a id="abe1d30fce9e2daa4bc454d38f7b20586"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#abe1d30fce9e2daa4bc454d38f7b20586">&#9670;&nbsp;</a></span>Set() <span class="overload">[1/18]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -702,7 +938,7 @@ Static Public Member Functions</h2></td></tr>
           <td class="memname">void Napi::Object::Set </td>
           <td>(</td>
           <td class="paramtype">napi_value&#160;</td>
-          <td class="paramname"><em>name</em>, </td>
+          <td class="paramname"><em>key</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -718,10 +954,56 @@ Static Public Member Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>Sets a property. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">key</td><td>Property key primitive </td></tr>
+    <tr><td class="paramname">value</td><td>Property value primitive </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a37c1496314c27d2ac7c151de726a8b5b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a37c1496314c27d2ac7c151de726a8b5b">&#9670;&nbsp;</a></span>Set() <span class="overload">[2/18]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void Napi::Object::Set </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="class_napi_1_1_value.html">Value</a>&#160;</td>
+          <td class="paramname"><em>key</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="class_napi_1_1_value.html">Value</a>&#160;</td>
+          <td class="paramname"><em>value</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Sets a property. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">key</td><td>Property key </td></tr>
+    <tr><td class="paramname">value</td><td>Property value </td></tr>
+  </table>
+  </dd>
+</dl>
+
 </div>
 </div>
 <a id="a95b25a4fc3c765aaf5f63053f08761f2"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a95b25a4fc3c765aaf5f63053f08761f2">&#9670;&nbsp;</a></span>Set() <span class="overload">[2/17]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a95b25a4fc3c765aaf5f63053f08761f2">&#9670;&nbsp;</a></span>Set() <span class="overload">[3/18]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -746,10 +1028,19 @@ Static Public Member Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>Sets a named property. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">utf8name</td><td>UTF-8 encoded null-terminated property name </td></tr>
+    <tr><td class="paramname">value</td><td>Property value primitive </td></tr>
+  </table>
+  </dd>
+</dl>
+
 </div>
 </div>
 <a id="a267c4a363cc7d2cd4ff01d56f7c49a5f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a267c4a363cc7d2cd4ff01d56f7c49a5f">&#9670;&nbsp;</a></span>Set() <span class="overload">[3/17]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a267c4a363cc7d2cd4ff01d56f7c49a5f">&#9670;&nbsp;</a></span>Set() <span class="overload">[4/18]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -774,10 +1065,19 @@ Static Public Member Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>Sets a named property. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">utf8name</td><td>UTF-8 encoded null-terminated property name </td></tr>
+    <tr><td class="paramname">value</td><td>Property value </td></tr>
+  </table>
+  </dd>
+</dl>
+
 </div>
 </div>
 <a id="a45ab24ba60ed8c478e274f674fc19224"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a45ab24ba60ed8c478e274f674fc19224">&#9670;&nbsp;</a></span>Set() <span class="overload">[4/17]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a45ab24ba60ed8c478e274f674fc19224">&#9670;&nbsp;</a></span>Set() <span class="overload">[5/18]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -802,10 +1102,19 @@ Static Public Member Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>Sets a named property to a string value. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">utf8name</td><td>UTF-8 encoded null-terminated property name </td></tr>
+    <tr><td class="paramname">utf8value</td><td>UTF-8 encoded null-terminated property value </td></tr>
+  </table>
+  </dd>
+</dl>
+
 </div>
 </div>
 <a id="aeaab9a81baedab174f30fd5a40f529b2"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aeaab9a81baedab174f30fd5a40f529b2">&#9670;&nbsp;</a></span>Set() <span class="overload">[5/17]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#aeaab9a81baedab174f30fd5a40f529b2">&#9670;&nbsp;</a></span>Set() <span class="overload">[6/18]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -830,10 +1139,19 @@ Static Public Member Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>Sets a named property to a boolean value. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">utf8name</td><td>UTF-8 encoded null-terminated property name </td></tr>
+    <tr><td class="paramname">boolValue</td><td>Property value </td></tr>
+  </table>
+  </dd>
+</dl>
+
 </div>
 </div>
 <a id="a130ffb5081ae1f30d745262335ef0683"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a130ffb5081ae1f30d745262335ef0683">&#9670;&nbsp;</a></span>Set() <span class="overload">[6/17]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a130ffb5081ae1f30d745262335ef0683">&#9670;&nbsp;</a></span>Set() <span class="overload">[7/18]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -858,10 +1176,19 @@ Static Public Member Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>Sets a named property to a number value. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">utf8name</td><td>UTF-8 encoded null-terminated property name </td></tr>
+    <tr><td class="paramname">numberValue</td><td>Property value </td></tr>
+  </table>
+  </dd>
+</dl>
+
 </div>
 </div>
 <a id="ac585506c22a92b06b4a682d69653e646"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ac585506c22a92b06b4a682d69653e646">&#9670;&nbsp;</a></span>Set() <span class="overload">[7/17]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#ac585506c22a92b06b4a682d69653e646">&#9670;&nbsp;</a></span>Set() <span class="overload">[8/18]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -886,10 +1213,19 @@ Static Public Member Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>Sets a named property. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">utf8name</td><td>UTF-8 encoded property name </td></tr>
+    <tr><td class="paramname">value</td><td>Property value primitive </td></tr>
+  </table>
+  </dd>
+</dl>
+
 </div>
 </div>
 <a id="adbaad21e8ed3e41fa8c2c8ce495fd614"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#adbaad21e8ed3e41fa8c2c8ce495fd614">&#9670;&nbsp;</a></span>Set() <span class="overload">[8/17]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#adbaad21e8ed3e41fa8c2c8ce495fd614">&#9670;&nbsp;</a></span>Set() <span class="overload">[9/18]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -914,10 +1250,19 @@ Static Public Member Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>Sets a named property. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">utf8name</td><td>UTF-8 encoded property name </td></tr>
+    <tr><td class="paramname">value</td><td>Property value </td></tr>
+  </table>
+  </dd>
+</dl>
+
 </div>
 </div>
 <a id="a527493b802ea90b161abf77cc0f95aae"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a527493b802ea90b161abf77cc0f95aae">&#9670;&nbsp;</a></span>Set() <span class="overload">[9/17]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a527493b802ea90b161abf77cc0f95aae">&#9670;&nbsp;</a></span>Set() <span class="overload">[10/18]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -942,10 +1287,19 @@ Static Public Member Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>Sets a named property to a string value. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">utf8name</td><td>UTF-8 encoded property name </td></tr>
+    <tr><td class="paramname">utf8value</td><td>UTF-8 encoded property value </td></tr>
+  </table>
+  </dd>
+</dl>
+
 </div>
 </div>
 <a id="a628b70bd26921dc2f1f80f03ab355928"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a628b70bd26921dc2f1f80f03ab355928">&#9670;&nbsp;</a></span>Set() <span class="overload">[10/17]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a628b70bd26921dc2f1f80f03ab355928">&#9670;&nbsp;</a></span>Set() <span class="overload">[11/18]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -970,10 +1324,19 @@ Static Public Member Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>Sets a named property to a boolean value. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">utf8name</td><td>UTF-8 encoded property name </td></tr>
+    <tr><td class="paramname">boolValue</td><td>Property value </td></tr>
+  </table>
+  </dd>
+</dl>
+
 </div>
 </div>
 <a id="a726238e04d00e2159d30dd25edaaaf0b"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a726238e04d00e2159d30dd25edaaaf0b">&#9670;&nbsp;</a></span>Set() <span class="overload">[11/17]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a726238e04d00e2159d30dd25edaaaf0b">&#9670;&nbsp;</a></span>Set() <span class="overload">[12/18]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -998,10 +1361,19 @@ Static Public Member Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>Sets a named property to a number value. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">utf8name</td><td>UTF-8 encoded property name </td></tr>
+    <tr><td class="paramname">numberValue</td><td>Property value </td></tr>
+  </table>
+  </dd>
+</dl>
+
 </div>
 </div>
 <a id="ab05365f5e48184b1a57afed8531c3862"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ab05365f5e48184b1a57afed8531c3862">&#9670;&nbsp;</a></span>Set() <span class="overload">[12/17]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#ab05365f5e48184b1a57afed8531c3862">&#9670;&nbsp;</a></span>Set() <span class="overload">[13/18]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1026,10 +1398,19 @@ Static Public Member Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>Sets an indexed property or array element. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">index</td><td>Property / element index </td></tr>
+    <tr><td class="paramname">value</td><td>Property value primitive </td></tr>
+  </table>
+  </dd>
+</dl>
+
 </div>
 </div>
 <a id="a381cb9c23e4d14b354588c1cd14a15bc"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a381cb9c23e4d14b354588c1cd14a15bc">&#9670;&nbsp;</a></span>Set() <span class="overload">[13/17]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a381cb9c23e4d14b354588c1cd14a15bc">&#9670;&nbsp;</a></span>Set() <span class="overload">[14/18]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1054,10 +1435,19 @@ Static Public Member Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>Sets an indexed property or array element. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">index</td><td>Property / element index </td></tr>
+    <tr><td class="paramname">value</td><td>Property value </td></tr>
+  </table>
+  </dd>
+</dl>
+
 </div>
 </div>
 <a id="ab3a5e5e72f3b64fb76d2a27969cbec51"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ab3a5e5e72f3b64fb76d2a27969cbec51">&#9670;&nbsp;</a></span>Set() <span class="overload">[14/17]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#ab3a5e5e72f3b64fb76d2a27969cbec51">&#9670;&nbsp;</a></span>Set() <span class="overload">[15/18]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1082,10 +1472,19 @@ Static Public Member Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>Sets an indexed property or array element to a string value. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">index</td><td>Property / element index </td></tr>
+    <tr><td class="paramname">utf8value</td><td>UTF-8 encoded null-terminated property value </td></tr>
+  </table>
+  </dd>
+</dl>
+
 </div>
 </div>
 <a id="a924965d78c2d775d00b73f7f723e1ff3"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a924965d78c2d775d00b73f7f723e1ff3">&#9670;&nbsp;</a></span>Set() <span class="overload">[15/17]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a924965d78c2d775d00b73f7f723e1ff3">&#9670;&nbsp;</a></span>Set() <span class="overload">[16/18]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1110,10 +1509,19 @@ Static Public Member Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>Sets an indexed property or array element to a string value. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">index</td><td>Property / element index </td></tr>
+    <tr><td class="paramname">utf8value</td><td>UTF-8 encoded property value </td></tr>
+  </table>
+  </dd>
+</dl>
+
 </div>
 </div>
 <a id="a80ea2cc07c77b4d87c78027989e3118e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a80ea2cc07c77b4d87c78027989e3118e">&#9670;&nbsp;</a></span>Set() <span class="overload">[16/17]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a80ea2cc07c77b4d87c78027989e3118e">&#9670;&nbsp;</a></span>Set() <span class="overload">[17/18]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1138,10 +1546,19 @@ Static Public Member Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>Sets an indexed property or array element to a boolean value. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">index</td><td>Property / element index </td></tr>
+    <tr><td class="paramname">boolValue</td><td>Property value </td></tr>
+  </table>
+  </dd>
+</dl>
+
 </div>
 </div>
 <a id="a3e214f192ed6dd60d046c25f2848061f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a3e214f192ed6dd60d046c25f2848061f">&#9670;&nbsp;</a></span>Set() <span class="overload">[17/17]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a3e214f192ed6dd60d046c25f2848061f">&#9670;&nbsp;</a></span>Set() <span class="overload">[18/18]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1165,6 +1582,15 @@ Static Public Member Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Sets an indexed property or array element to a number value. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">index</td><td>Property / element index </td></tr>
+    <tr><td class="paramname">numberValue</td><td>Property value </td></tr>
+  </table>
+  </dd>
+</dl>
 
 </div>
 </div>

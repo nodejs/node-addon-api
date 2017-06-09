@@ -22,7 +22,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">N-API
-   &#160;<span id="projectnumber">0.1.0</span>
+   &#160;<span id="projectnumber">0.3.3</span>
    </div>
    <div id="projectbrief">C++ wrapper classes for the ABI-stable C APIs for Node.js</div>
   </td>
@@ -73,6 +73,9 @@ $(function() {
 </div><!--header-->
 <div class="contents">
 
+<p>A JavaScript number value.  
+ <a href="class_napi_1_1_number.html#details">More...</a></p>
+
 <p><code>#include &lt;<a class="el" href="napi_8h_source.html">napi.h</a>&gt;</code></p>
 <div class="dynheader">
 Inheritance diagram for Napi::Number:</div>
@@ -87,28 +90,40 @@ Inheritance diagram for Napi::Number:</div>
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
 <tr class="memitem:a19210dd39031d013c07a5a5f554725a8"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_napi_1_1_number.html#a19210dd39031d013c07a5a5f554725a8">Number</a> ()</td></tr>
+<tr class="memdesc:a19210dd39031d013c07a5a5f554725a8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Creates a new <em>empty</em> <a class="el" href="class_napi_1_1_number.html" title="A JavaScript number value. ">Number</a> instance.  <a href="#a19210dd39031d013c07a5a5f554725a8">More...</a><br /></td></tr>
 <tr class="separator:a19210dd39031d013c07a5a5f554725a8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad120f1df8c925004ab1ec14de1a5554f"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_napi_1_1_number.html#ad120f1df8c925004ab1ec14de1a5554f">Number</a> (napi_env env, napi_value value)</td></tr>
+<tr class="memdesc:ad120f1df8c925004ab1ec14de1a5554f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Wraps a N-API value primitive.  <a href="#ad120f1df8c925004ab1ec14de1a5554f">More...</a><br /></td></tr>
 <tr class="separator:ad120f1df8c925004ab1ec14de1a5554f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7cbf4195064a7a40d9c11deac28287a5"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_napi_1_1_number.html#a7cbf4195064a7a40d9c11deac28287a5">operator int32_t</a> () const</td></tr>
+<tr class="memdesc:a7cbf4195064a7a40d9c11deac28287a5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Converts a <a class="el" href="class_napi_1_1_number.html" title="A JavaScript number value. ">Number</a> value to a 32-bit signed integer value.  <a href="#a7cbf4195064a7a40d9c11deac28287a5">More...</a><br /></td></tr>
 <tr class="separator:a7cbf4195064a7a40d9c11deac28287a5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9abff354423b00852b925cf157c49a2e"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_napi_1_1_number.html#a9abff354423b00852b925cf157c49a2e">operator uint32_t</a> () const</td></tr>
+<tr class="memdesc:a9abff354423b00852b925cf157c49a2e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Converts a <a class="el" href="class_napi_1_1_number.html" title="A JavaScript number value. ">Number</a> value to a 32-bit unsigned integer value.  <a href="#a9abff354423b00852b925cf157c49a2e">More...</a><br /></td></tr>
 <tr class="separator:a9abff354423b00852b925cf157c49a2e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3a56f500f1de8d864129b67f03465079"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_napi_1_1_number.html#a3a56f500f1de8d864129b67f03465079">operator int64_t</a> () const</td></tr>
+<tr class="memdesc:a3a56f500f1de8d864129b67f03465079"><td class="mdescLeft">&#160;</td><td class="mdescRight">Converts a <a class="el" href="class_napi_1_1_number.html" title="A JavaScript number value. ">Number</a> value to a 64-bit signed integer value.  <a href="#a3a56f500f1de8d864129b67f03465079">More...</a><br /></td></tr>
 <tr class="separator:a3a56f500f1de8d864129b67f03465079"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4eb3c1abb80411965d99b27791ce04c5"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_napi_1_1_number.html#a4eb3c1abb80411965d99b27791ce04c5">operator float</a> () const</td></tr>
+<tr class="memdesc:a4eb3c1abb80411965d99b27791ce04c5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Converts a <a class="el" href="class_napi_1_1_number.html" title="A JavaScript number value. ">Number</a> value to a 32-bit floating-point value.  <a href="#a4eb3c1abb80411965d99b27791ce04c5">More...</a><br /></td></tr>
 <tr class="separator:a4eb3c1abb80411965d99b27791ce04c5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1cce02a40fb43a80bbdf5ebfd8a5d7df"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_napi_1_1_number.html#a1cce02a40fb43a80bbdf5ebfd8a5d7df">operator double</a> () const</td></tr>
+<tr class="memdesc:a1cce02a40fb43a80bbdf5ebfd8a5d7df"><td class="mdescLeft">&#160;</td><td class="mdescRight">Converts a <a class="el" href="class_napi_1_1_number.html" title="A JavaScript number value. ">Number</a> value to a 64-bit floating-point value.  <a href="#a1cce02a40fb43a80bbdf5ebfd8a5d7df">More...</a><br /></td></tr>
 <tr class="separator:a1cce02a40fb43a80bbdf5ebfd8a5d7df"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:abdf11072936503eb2de3f64eb6cfb2e1"><td class="memItemLeft" align="right" valign="top">int32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_napi_1_1_number.html#abdf11072936503eb2de3f64eb6cfb2e1">Int32Value</a> () const</td></tr>
+<tr class="memdesc:abdf11072936503eb2de3f64eb6cfb2e1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Converts a <a class="el" href="class_napi_1_1_number.html" title="A JavaScript number value. ">Number</a> value to a 32-bit signed integer value.  <a href="#abdf11072936503eb2de3f64eb6cfb2e1">More...</a><br /></td></tr>
 <tr class="separator:abdf11072936503eb2de3f64eb6cfb2e1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa6fcb8fb0aa1529a4d955be56ea9e4e9"><td class="memItemLeft" align="right" valign="top">uint32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_napi_1_1_number.html#aa6fcb8fb0aa1529a4d955be56ea9e4e9">Uint32Value</a> () const</td></tr>
+<tr class="memdesc:aa6fcb8fb0aa1529a4d955be56ea9e4e9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Converts a <a class="el" href="class_napi_1_1_number.html" title="A JavaScript number value. ">Number</a> value to a 32-bit unsigned integer value.  <a href="#aa6fcb8fb0aa1529a4d955be56ea9e4e9">More...</a><br /></td></tr>
 <tr class="separator:aa6fcb8fb0aa1529a4d955be56ea9e4e9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7f6cf7c150d0a081a39dea4e17907ad2"><td class="memItemLeft" align="right" valign="top">int64_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_napi_1_1_number.html#a7f6cf7c150d0a081a39dea4e17907ad2">Int64Value</a> () const</td></tr>
+<tr class="memdesc:a7f6cf7c150d0a081a39dea4e17907ad2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Converts a <a class="el" href="class_napi_1_1_number.html" title="A JavaScript number value. ">Number</a> value to a 64-bit signed integer value.  <a href="#a7f6cf7c150d0a081a39dea4e17907ad2">More...</a><br /></td></tr>
 <tr class="separator:a7f6cf7c150d0a081a39dea4e17907ad2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae99c030f6714c40014dc53d74dd9906f"><td class="memItemLeft" align="right" valign="top">float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_napi_1_1_number.html#ae99c030f6714c40014dc53d74dd9906f">FloatValue</a> () const</td></tr>
+<tr class="memdesc:ae99c030f6714c40014dc53d74dd9906f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Converts a <a class="el" href="class_napi_1_1_number.html" title="A JavaScript number value. ">Number</a> value to a 32-bit floating-point value.  <a href="#ae99c030f6714c40014dc53d74dd9906f">More...</a><br /></td></tr>
 <tr class="separator:ae99c030f6714c40014dc53d74dd9906f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2ba41b7408f886aada8d8f36282dd001"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_napi_1_1_number.html#a2ba41b7408f886aada8d8f36282dd001">DoubleValue</a> () const</td></tr>
+<tr class="memdesc:a2ba41b7408f886aada8d8f36282dd001"><td class="mdescLeft">&#160;</td><td class="mdescRight">Converts a <a class="el" href="class_napi_1_1_number.html" title="A JavaScript number value. ">Number</a> value to a 64-bit floating-point value.  <a href="#a2ba41b7408f886aada8d8f36282dd001">More...</a><br /></td></tr>
 <tr class="separator:a2ba41b7408f886aada8d8f36282dd001"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_methods_class_napi_1_1_value"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_class_napi_1_1_value')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="class_napi_1_1_value.html">Napi::Value</a></td></tr>
 <tr class="memitem:a91352891b563fb744683240949e458e4 inherit pub_methods_class_napi_1_1_value"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_napi_1_1_value.html#a91352891b563fb744683240949e458e4">Value</a> ()</td></tr>
@@ -132,6 +147,9 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a1e1930afac70f2811a222c363d892a42 inherit pub_methods_class_napi_1_1_value"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_napi_1_1_env.html">Napi::Env</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_napi_1_1_value.html#a1e1930afac70f2811a222c363d892a42">Env</a> () const</td></tr>
 <tr class="memdesc:a1e1930afac70f2811a222c363d892a42 inherit pub_methods_class_napi_1_1_value"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the environment the value is associated with.  <a href="class_napi_1_1_value.html#a1e1930afac70f2811a222c363d892a42">More...</a><br /></td></tr>
 <tr class="separator:a1e1930afac70f2811a222c363d892a42 inherit pub_methods_class_napi_1_1_value"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a988bdb3e9806beb7761b4ea864461005 inherit pub_methods_class_napi_1_1_value"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_napi_1_1_value.html#a988bdb3e9806beb7761b4ea864461005">IsEmpty</a> () const</td></tr>
+<tr class="memdesc:a988bdb3e9806beb7761b4ea864461005 inherit pub_methods_class_napi_1_1_value"><td class="mdescLeft">&#160;</td><td class="mdescRight">Checks if the value is empty (uninitialized).  <a href="class_napi_1_1_value.html#a988bdb3e9806beb7761b4ea864461005">More...</a><br /></td></tr>
+<tr class="separator:a988bdb3e9806beb7761b4ea864461005 inherit pub_methods_class_napi_1_1_value"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5da2e4f1a5a6b237159c4cfbd0866281 inherit pub_methods_class_napi_1_1_value"><td class="memItemLeft" align="right" valign="top">napi_valuetype&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_napi_1_1_value.html#a5da2e4f1a5a6b237159c4cfbd0866281">Type</a> () const</td></tr>
 <tr class="memdesc:a5da2e4f1a5a6b237159c4cfbd0866281 inherit pub_methods_class_napi_1_1_value"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the type of the value.  <a href="class_napi_1_1_value.html#a5da2e4f1a5a6b237159c4cfbd0866281">More...</a><br /></td></tr>
 <tr class="separator:a5da2e4f1a5a6b237159c4cfbd0866281 inherit pub_methods_class_napi_1_1_value"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -173,7 +191,7 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a7ae7ce9bb0c81e08285aa36f810b3257 inherit pub_methods_class_napi_1_1_value"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9c1a9c4eca9617b0aafbe311c946982a inherit pub_methods_class_napi_1_1_value"><td class="memTemplParams" colspan="2">template&lt;typename T &gt; </td></tr>
 <tr class="memitem:a9c1a9c4eca9617b0aafbe311c946982a inherit pub_methods_class_napi_1_1_value"><td class="memTemplItemLeft" align="right" valign="top">T&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="class_napi_1_1_value.html#a9c1a9c4eca9617b0aafbe311c946982a">As</a> () const</td></tr>
-<tr class="memdesc:a9c1a9c4eca9617b0aafbe311c946982a inherit pub_methods_class_napi_1_1_value"><td class="mdescLeft">&#160;</td><td class="mdescRight">Converts to another type of <code><a class="el" href="class_napi_1_1_value.html" title="A JavaScript value of unknown type. ">Napi::Value</a></code>, when the actual type is known or assumed.  <a href="class_napi_1_1_value.html#a9c1a9c4eca9617b0aafbe311c946982a">More...</a><br /></td></tr>
+<tr class="memdesc:a9c1a9c4eca9617b0aafbe311c946982a inherit pub_methods_class_napi_1_1_value"><td class="mdescLeft">&#160;</td><td class="mdescRight">Casts to another type of <code><a class="el" href="class_napi_1_1_value.html" title="A JavaScript value of unknown type. ">Napi::Value</a></code>, when the actual type is known or assumed.  <a href="class_napi_1_1_value.html#a9c1a9c4eca9617b0aafbe311c946982a">More...</a><br /></td></tr>
 <tr class="separator:a9c1a9c4eca9617b0aafbe311c946982a inherit pub_methods_class_napi_1_1_value"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a01f08d60906f8221ad3a4a5311b01019 inherit pub_methods_class_napi_1_1_value"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_napi_1_1_boolean.html">Boolean</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_napi_1_1_value.html#a01f08d60906f8221ad3a4a5311b01019">ToBoolean</a> () const</td></tr>
 <tr class="memdesc:a01f08d60906f8221ad3a4a5311b01019 inherit pub_methods_class_napi_1_1_value"><td class="mdescLeft">&#160;</td><td class="mdescRight">Coerces a value to a JavaScript boolean.  <a href="class_napi_1_1_value.html#a01f08d60906f8221ad3a4a5311b01019">More...</a><br /></td></tr>
@@ -190,12 +208,22 @@ Public Member Functions</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-methods"></a>
 Static Public Member Functions</h2></td></tr>
-<tr class="memitem:ac20f0b44814dfdf17295842cd04e44be"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="class_napi_1_1_number.html">Number</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_napi_1_1_number.html#ac20f0b44814dfdf17295842cd04e44be">New</a> (napi_env env, double val)</td></tr>
-<tr class="separator:ac20f0b44814dfdf17295842cd04e44be"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af1e972b9e781d94706cc0ba66696785b"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="class_napi_1_1_number.html">Number</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_napi_1_1_number.html#af1e972b9e781d94706cc0ba66696785b">New</a> (napi_env env, double value)</td></tr>
+<tr class="separator:af1e972b9e781d94706cc0ba66696785b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="inherited"></a>
+Additional Inherited Members</h2></td></tr>
+<tr class="inherit_header pro_attribs_class_napi_1_1_value"><td colspan="2" onclick="javascript:toggleInherit('pro_attribs_class_napi_1_1_value')"><img src="closed.png" alt="-"/>&#160;Protected Attributes inherited from <a class="el" href="class_napi_1_1_value.html">Napi::Value</a></td></tr>
+<tr class="memitem:ad0a0cc895c3134df3ca3267dbf2dfe08 inherit pro_attribs_class_napi_1_1_value"><td class="memItemLeft" align="right" valign="top">napi_env&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_napi_1_1_value.html#ad0a0cc895c3134df3ca3267dbf2dfe08">_env</a></td></tr>
+<tr class="memdesc:ad0a0cc895c3134df3ca3267dbf2dfe08 inherit pro_attribs_class_napi_1_1_value"><td class="mdescLeft">&#160;</td><td class="mdescRight">!cond INTERNAL  <a href="class_napi_1_1_value.html#ad0a0cc895c3134df3ca3267dbf2dfe08">More...</a><br /></td></tr>
+<tr class="separator:ad0a0cc895c3134df3ca3267dbf2dfe08 inherit pro_attribs_class_napi_1_1_value"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae2060cfa039ca4c6abaff238fb00d1f8 inherit pro_attribs_class_napi_1_1_value"><td class="memItemLeft" align="right" valign="top">napi_value&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_napi_1_1_value.html#ae2060cfa039ca4c6abaff238fb00d1f8">_value</a></td></tr>
+<tr class="separator:ae2060cfa039ca4c6abaff238fb00d1f8 inherit pro_attribs_class_napi_1_1_value"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock">
-<p class="definition">Definition at line <a class="el" href="napi_8h_source.html#l00154">154</a> of file <a class="el" href="napi_8h_source.html">napi.h</a>.</p>
+<div class="textblock"><p>A JavaScript number value. </p>
+
+<p class="definition">Definition at line <a class="el" href="napi_8h_source.html#l00186">186</a> of file <a class="el" href="napi_8h_source.html">napi.h</a>.</p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="a19210dd39031d013c07a5a5f554725a8"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a19210dd39031d013c07a5a5f554725a8">&#9670;&nbsp;</a></span>Number() <span class="overload">[1/2]</span></h2>
@@ -211,6 +239,8 @@ Static Public Member Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Creates a new <em>empty</em> <a class="el" href="class_napi_1_1_number.html" title="A JavaScript number value. ">Number</a> instance. </p>
 
 </div>
 </div>
@@ -240,6 +270,8 @@ Static Public Member Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>Wraps a N-API value primitive. </p>
+
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
@@ -258,6 +290,8 @@ Static Public Member Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>Converts a <a class="el" href="class_napi_1_1_number.html" title="A JavaScript number value. ">Number</a> value to a 64-bit floating-point value. </p>
+
 </div>
 </div>
 <a id="ae99c030f6714c40014dc53d74dd9906f"></a>
@@ -274,6 +308,8 @@ Static Public Member Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Converts a <a class="el" href="class_napi_1_1_number.html" title="A JavaScript number value. ">Number</a> value to a 32-bit floating-point value. </p>
 
 </div>
 </div>
@@ -292,6 +328,8 @@ Static Public Member Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>Converts a <a class="el" href="class_napi_1_1_number.html" title="A JavaScript number value. ">Number</a> value to a 32-bit signed integer value. </p>
+
 </div>
 </div>
 <a id="a7f6cf7c150d0a081a39dea4e17907ad2"></a>
@@ -309,10 +347,12 @@ Static Public Member Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>Converts a <a class="el" href="class_napi_1_1_number.html" title="A JavaScript number value. ">Number</a> value to a 64-bit signed integer value. </p>
+
 </div>
 </div>
-<a id="ac20f0b44814dfdf17295842cd04e44be"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ac20f0b44814dfdf17295842cd04e44be">&#9670;&nbsp;</a></span>New()</h2>
+<a id="af1e972b9e781d94706cc0ba66696785b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af1e972b9e781d94706cc0ba66696785b">&#9670;&nbsp;</a></span>New()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -330,7 +370,7 @@ Static Public Member Functions</h2></td></tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">double&#160;</td>
-          <td class="paramname"><em>val</em>&#160;</td>
+          <td class="paramname"><em>value</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -344,6 +384,13 @@ Static Public Member Functions</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">env</td><td>N-API environment </td></tr>
+    <tr><td class="paramname">value</td><td><a class="el" href="class_napi_1_1_number.html" title="A JavaScript number value. ">Number</a> value </td></tr>
+  </table>
+  </dd>
+</dl>
 
 </div>
 </div>
@@ -362,6 +409,8 @@ Static Public Member Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>Converts a <a class="el" href="class_napi_1_1_number.html" title="A JavaScript number value. ">Number</a> value to a 64-bit floating-point value. </p>
+
 </div>
 </div>
 <a id="a4eb3c1abb80411965d99b27791ce04c5"></a>
@@ -378,6 +427,8 @@ Static Public Member Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Converts a <a class="el" href="class_napi_1_1_number.html" title="A JavaScript number value. ">Number</a> value to a 32-bit floating-point value. </p>
 
 </div>
 </div>
@@ -396,6 +447,8 @@ Static Public Member Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>Converts a <a class="el" href="class_napi_1_1_number.html" title="A JavaScript number value. ">Number</a> value to a 32-bit signed integer value. </p>
+
 </div>
 </div>
 <a id="a3a56f500f1de8d864129b67f03465079"></a>
@@ -412,6 +465,8 @@ Static Public Member Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Converts a <a class="el" href="class_napi_1_1_number.html" title="A JavaScript number value. ">Number</a> value to a 64-bit signed integer value. </p>
 
 </div>
 </div>
@@ -430,6 +485,8 @@ Static Public Member Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>Converts a <a class="el" href="class_napi_1_1_number.html" title="A JavaScript number value. ">Number</a> value to a 32-bit unsigned integer value. </p>
+
 </div>
 </div>
 <a id="aa6fcb8fb0aa1529a4d955be56ea9e4e9"></a>
@@ -446,6 +503,8 @@ Static Public Member Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Converts a <a class="el" href="class_napi_1_1_number.html" title="A JavaScript number value. ">Number</a> value to a 32-bit unsigned integer value. </p>
 
 </div>
 </div>

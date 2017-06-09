@@ -22,7 +22,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">N-API
-   &#160;<span id="projectnumber">0.1.0</span>
+   &#160;<span id="projectnumber">0.3.3</span>
    </div>
    <div id="projectbrief">C++ wrapper classes for the ABI-stable C APIs for Node.js</div>
   </td>
@@ -73,6 +73,9 @@ $(function() {
 </div><!--header-->
 <div class="contents">
 
+<p>A JavaScript boolean value.  
+ <a href="class_napi_1_1_boolean.html#details">More...</a></p>
+
 <p><code>#include &lt;<a class="el" href="napi_8h_source.html">napi.h</a>&gt;</code></p>
 <div class="dynheader">
 Inheritance diagram for Napi::Boolean:</div>
@@ -87,12 +90,16 @@ Inheritance diagram for Napi::Boolean:</div>
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
 <tr class="memitem:a2254a76ddca4af43f0cfdff2e1a532bb"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_napi_1_1_boolean.html#a2254a76ddca4af43f0cfdff2e1a532bb">Boolean</a> ()</td></tr>
+<tr class="memdesc:a2254a76ddca4af43f0cfdff2e1a532bb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Creates a new <em>empty</em> <a class="el" href="class_napi_1_1_boolean.html" title="A JavaScript boolean value. ">Boolean</a> instance.  <a href="#a2254a76ddca4af43f0cfdff2e1a532bb">More...</a><br /></td></tr>
 <tr class="separator:a2254a76ddca4af43f0cfdff2e1a532bb"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4b3e5c447188acf16bb9fe8a24c18d60"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_napi_1_1_boolean.html#a4b3e5c447188acf16bb9fe8a24c18d60">Boolean</a> (napi_env env, napi_value value)</td></tr>
+<tr class="memdesc:a4b3e5c447188acf16bb9fe8a24c18d60"><td class="mdescLeft">&#160;</td><td class="mdescRight">Wraps a N-API value primitive.  <a href="#a4b3e5c447188acf16bb9fe8a24c18d60">More...</a><br /></td></tr>
 <tr class="separator:a4b3e5c447188acf16bb9fe8a24c18d60"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a50b1630ebe92e08a0582171e7c720abc"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_napi_1_1_boolean.html#a50b1630ebe92e08a0582171e7c720abc">operator bool</a> () const</td></tr>
+<tr class="memdesc:a50b1630ebe92e08a0582171e7c720abc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Converts a <a class="el" href="class_napi_1_1_boolean.html" title="A JavaScript boolean value. ">Boolean</a> value to a boolean primitive.  <a href="#a50b1630ebe92e08a0582171e7c720abc">More...</a><br /></td></tr>
 <tr class="separator:a50b1630ebe92e08a0582171e7c720abc"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a61590574cb1a8cb148475c970a5a014f"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_napi_1_1_boolean.html#a61590574cb1a8cb148475c970a5a014f">Value</a> () const</td></tr>
+<tr class="memdesc:a61590574cb1a8cb148475c970a5a014f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Converts a <a class="el" href="class_napi_1_1_boolean.html" title="A JavaScript boolean value. ">Boolean</a> value to a boolean primitive.  <a href="#a61590574cb1a8cb148475c970a5a014f">More...</a><br /></td></tr>
 <tr class="separator:a61590574cb1a8cb148475c970a5a014f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_methods_class_napi_1_1_value"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_class_napi_1_1_value')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="class_napi_1_1_value.html">Napi::Value</a></td></tr>
 <tr class="memitem:a91352891b563fb744683240949e458e4 inherit pub_methods_class_napi_1_1_value"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_napi_1_1_value.html#a91352891b563fb744683240949e458e4">Value</a> ()</td></tr>
@@ -116,6 +123,9 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a1e1930afac70f2811a222c363d892a42 inherit pub_methods_class_napi_1_1_value"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_napi_1_1_env.html">Napi::Env</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_napi_1_1_value.html#a1e1930afac70f2811a222c363d892a42">Env</a> () const</td></tr>
 <tr class="memdesc:a1e1930afac70f2811a222c363d892a42 inherit pub_methods_class_napi_1_1_value"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the environment the value is associated with.  <a href="class_napi_1_1_value.html#a1e1930afac70f2811a222c363d892a42">More...</a><br /></td></tr>
 <tr class="separator:a1e1930afac70f2811a222c363d892a42 inherit pub_methods_class_napi_1_1_value"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a988bdb3e9806beb7761b4ea864461005 inherit pub_methods_class_napi_1_1_value"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_napi_1_1_value.html#a988bdb3e9806beb7761b4ea864461005">IsEmpty</a> () const</td></tr>
+<tr class="memdesc:a988bdb3e9806beb7761b4ea864461005 inherit pub_methods_class_napi_1_1_value"><td class="mdescLeft">&#160;</td><td class="mdescRight">Checks if the value is empty (uninitialized).  <a href="class_napi_1_1_value.html#a988bdb3e9806beb7761b4ea864461005">More...</a><br /></td></tr>
+<tr class="separator:a988bdb3e9806beb7761b4ea864461005 inherit pub_methods_class_napi_1_1_value"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5da2e4f1a5a6b237159c4cfbd0866281 inherit pub_methods_class_napi_1_1_value"><td class="memItemLeft" align="right" valign="top">napi_valuetype&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_napi_1_1_value.html#a5da2e4f1a5a6b237159c4cfbd0866281">Type</a> () const</td></tr>
 <tr class="memdesc:a5da2e4f1a5a6b237159c4cfbd0866281 inherit pub_methods_class_napi_1_1_value"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the type of the value.  <a href="class_napi_1_1_value.html#a5da2e4f1a5a6b237159c4cfbd0866281">More...</a><br /></td></tr>
 <tr class="separator:a5da2e4f1a5a6b237159c4cfbd0866281 inherit pub_methods_class_napi_1_1_value"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -157,7 +167,7 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a7ae7ce9bb0c81e08285aa36f810b3257 inherit pub_methods_class_napi_1_1_value"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9c1a9c4eca9617b0aafbe311c946982a inherit pub_methods_class_napi_1_1_value"><td class="memTemplParams" colspan="2">template&lt;typename T &gt; </td></tr>
 <tr class="memitem:a9c1a9c4eca9617b0aafbe311c946982a inherit pub_methods_class_napi_1_1_value"><td class="memTemplItemLeft" align="right" valign="top">T&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="class_napi_1_1_value.html#a9c1a9c4eca9617b0aafbe311c946982a">As</a> () const</td></tr>
-<tr class="memdesc:a9c1a9c4eca9617b0aafbe311c946982a inherit pub_methods_class_napi_1_1_value"><td class="mdescLeft">&#160;</td><td class="mdescRight">Converts to another type of <code><a class="el" href="class_napi_1_1_value.html" title="A JavaScript value of unknown type. ">Napi::Value</a></code>, when the actual type is known or assumed.  <a href="class_napi_1_1_value.html#a9c1a9c4eca9617b0aafbe311c946982a">More...</a><br /></td></tr>
+<tr class="memdesc:a9c1a9c4eca9617b0aafbe311c946982a inherit pub_methods_class_napi_1_1_value"><td class="mdescLeft">&#160;</td><td class="mdescRight">Casts to another type of <code><a class="el" href="class_napi_1_1_value.html" title="A JavaScript value of unknown type. ">Napi::Value</a></code>, when the actual type is known or assumed.  <a href="class_napi_1_1_value.html#a9c1a9c4eca9617b0aafbe311c946982a">More...</a><br /></td></tr>
 <tr class="separator:a9c1a9c4eca9617b0aafbe311c946982a inherit pub_methods_class_napi_1_1_value"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a01f08d60906f8221ad3a4a5311b01019 inherit pub_methods_class_napi_1_1_value"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_napi_1_1_boolean.html">Boolean</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_napi_1_1_value.html#a01f08d60906f8221ad3a4a5311b01019">ToBoolean</a> () const</td></tr>
 <tr class="memdesc:a01f08d60906f8221ad3a4a5311b01019 inherit pub_methods_class_napi_1_1_value"><td class="mdescLeft">&#160;</td><td class="mdescRight">Coerces a value to a JavaScript boolean.  <a href="class_napi_1_1_value.html#a01f08d60906f8221ad3a4a5311b01019">More...</a><br /></td></tr>
@@ -174,12 +184,22 @@ Public Member Functions</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-methods"></a>
 Static Public Member Functions</h2></td></tr>
-<tr class="memitem:a8e0e68b3e05bc69f72fdcb70c8dc2c52"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="class_napi_1_1_boolean.html">Boolean</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_napi_1_1_boolean.html#a8e0e68b3e05bc69f72fdcb70c8dc2c52">New</a> (napi_env env, bool val)</td></tr>
-<tr class="separator:a8e0e68b3e05bc69f72fdcb70c8dc2c52"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a869315fa44af294fcba8f044d27332d0"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="class_napi_1_1_boolean.html">Boolean</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_napi_1_1_boolean.html#a869315fa44af294fcba8f044d27332d0">New</a> (napi_env env, bool value)</td></tr>
+<tr class="separator:a869315fa44af294fcba8f044d27332d0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="inherited"></a>
+Additional Inherited Members</h2></td></tr>
+<tr class="inherit_header pro_attribs_class_napi_1_1_value"><td colspan="2" onclick="javascript:toggleInherit('pro_attribs_class_napi_1_1_value')"><img src="closed.png" alt="-"/>&#160;Protected Attributes inherited from <a class="el" href="class_napi_1_1_value.html">Napi::Value</a></td></tr>
+<tr class="memitem:ad0a0cc895c3134df3ca3267dbf2dfe08 inherit pro_attribs_class_napi_1_1_value"><td class="memItemLeft" align="right" valign="top">napi_env&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_napi_1_1_value.html#ad0a0cc895c3134df3ca3267dbf2dfe08">_env</a></td></tr>
+<tr class="memdesc:ad0a0cc895c3134df3ca3267dbf2dfe08 inherit pro_attribs_class_napi_1_1_value"><td class="mdescLeft">&#160;</td><td class="mdescRight">!cond INTERNAL  <a href="class_napi_1_1_value.html#ad0a0cc895c3134df3ca3267dbf2dfe08">More...</a><br /></td></tr>
+<tr class="separator:ad0a0cc895c3134df3ca3267dbf2dfe08 inherit pro_attribs_class_napi_1_1_value"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae2060cfa039ca4c6abaff238fb00d1f8 inherit pro_attribs_class_napi_1_1_value"><td class="memItemLeft" align="right" valign="top">napi_value&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_napi_1_1_value.html#ae2060cfa039ca4c6abaff238fb00d1f8">_value</a></td></tr>
+<tr class="separator:ae2060cfa039ca4c6abaff238fb00d1f8 inherit pro_attribs_class_napi_1_1_value"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock">
-<p class="definition">Definition at line <a class="el" href="napi_8h_source.html#l00142">142</a> of file <a class="el" href="napi_8h_source.html">napi.h</a>.</p>
+<div class="textblock"><p>A JavaScript boolean value. </p>
+
+<p class="definition">Definition at line <a class="el" href="napi_8h_source.html#l00171">171</a> of file <a class="el" href="napi_8h_source.html">napi.h</a>.</p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="a2254a76ddca4af43f0cfdff2e1a532bb"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a2254a76ddca4af43f0cfdff2e1a532bb">&#9670;&nbsp;</a></span>Boolean() <span class="overload">[1/2]</span></h2>
@@ -195,6 +215,8 @@ Static Public Member Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Creates a new <em>empty</em> <a class="el" href="class_napi_1_1_boolean.html" title="A JavaScript boolean value. ">Boolean</a> instance. </p>
 
 </div>
 </div>
@@ -224,11 +246,13 @@ Static Public Member Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>Wraps a N-API value primitive. </p>
+
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a id="a8e0e68b3e05bc69f72fdcb70c8dc2c52"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a8e0e68b3e05bc69f72fdcb70c8dc2c52">&#9670;&nbsp;</a></span>New()</h2>
+<a id="a869315fa44af294fcba8f044d27332d0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a869315fa44af294fcba8f044d27332d0">&#9670;&nbsp;</a></span>New()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -246,7 +270,7 @@ Static Public Member Functions</h2></td></tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">bool&#160;</td>
-          <td class="paramname"><em>val</em>&#160;</td>
+          <td class="paramname"><em>value</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -260,6 +284,13 @@ Static Public Member Functions</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">env</td><td>N-API environment </td></tr>
+    <tr><td class="paramname">value</td><td><a class="el" href="class_napi_1_1_boolean.html" title="A JavaScript boolean value. ">Boolean</a> value </td></tr>
+  </table>
+  </dd>
+</dl>
 
 </div>
 </div>
@@ -278,6 +309,8 @@ Static Public Member Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>Converts a <a class="el" href="class_napi_1_1_boolean.html" title="A JavaScript boolean value. ">Boolean</a> value to a boolean primitive. </p>
+
 </div>
 </div>
 <a id="a61590574cb1a8cb148475c970a5a014f"></a>
@@ -294,6 +327,8 @@ Static Public Member Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Converts a <a class="el" href="class_napi_1_1_boolean.html" title="A JavaScript boolean value. ">Boolean</a> value to a boolean primitive. </p>
 
 </div>
 </div>

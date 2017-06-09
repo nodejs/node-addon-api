@@ -22,7 +22,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">N-API
-   &#160;<span id="projectnumber">0.1.0</span>
+   &#160;<span id="projectnumber">0.3.3</span>
    </div>
    <div id="projectbrief">C++ wrapper classes for the ABI-stable C APIs for Node.js</div>
   </td>
@@ -126,6 +126,7 @@ Static Public Member Functions</h2></td></tr>
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-attribs"></a>
 Protected Attributes</h2></td></tr>
 <tr class="memitem:a5c690557fa39d709a1dbaa14c3ccc5a1"><td class="memItemLeft" align="right" valign="top">napi_env&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_napi_1_1_reference.html#a5c690557fa39d709a1dbaa14c3ccc5a1">_env</a></td></tr>
+<tr class="memdesc:a5c690557fa39d709a1dbaa14c3ccc5a1"><td class="mdescLeft">&#160;</td><td class="mdescRight">!cond INTERNAL  <a href="#a5c690557fa39d709a1dbaa14c3ccc5a1">More...</a><br /></td></tr>
 <tr class="separator:a5c690557fa39d709a1dbaa14c3ccc5a1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a238e28b4750cc8659be3a9159f179a90"><td class="memItemLeft" align="right" valign="top">napi_ref&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_napi_1_1_reference.html#a238e28b4750cc8659be3a9159f179a90">_ref</a></td></tr>
 <tr class="separator:a238e28b4750cc8659be3a9159f179a90"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -137,7 +138,7 @@ class Napi::Reference&lt; T &gt;</h3>
 <p>Holds a counted reference to a value; initially a weak reference unless otherwise specified, may be changed to/from a strong reference by adjusting the refcount. </p>
 <p>The referenced value is not immediately destroyed when the reference count is zero; it is merely then eligible for garbage-collection if there are no other references to the value. </p>
 
-<p class="definition">Definition at line <a class="el" href="napi_8h_source.html#l00038">38</a> of file <a class="el" href="napi_8h_source.html">napi.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="napi_8h_source.html#l00049">49</a> of file <a class="el" href="napi_8h_source.html">napi.h</a>.</p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="acfb08026d010104194470069df9a363e"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#acfb08026d010104194470069df9a363e">&#9670;&nbsp;</a></span>Reference() <span class="overload">[1/4]</span></h2>
@@ -587,7 +588,9 @@ template&lt;typename T&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="napi_8h_source.html#l00635">635</a> of file <a class="el" href="napi_8h_source.html">napi.h</a>.</p>
+<p>!cond INTERNAL </p>
+
+<p class="definition">Definition at line <a class="el" href="napi_8h_source.html#l00857">857</a> of file <a class="el" href="napi_8h_source.html">napi.h</a>.</p>
 
 </div>
 </div>
@@ -613,7 +616,7 @@ template&lt;typename T&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="napi_8h_source.html#l00636">636</a> of file <a class="el" href="napi_8h_source.html">napi.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="napi_8h_source.html#l00858">858</a> of file <a class="el" href="napi_8h_source.html">napi.h</a>.</p>
 
 </div>
 </div>

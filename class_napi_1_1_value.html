@@ -22,7 +22,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">N-API
-   &#160;<span id="projectnumber">0.1.0</span>
+   &#160;<span id="projectnumber">0.3.3</span>
    </div>
    <div id="projectbrief">C++ wrapper classes for the ABI-stable C APIs for Node.js</div>
   </td>
@@ -66,6 +66,7 @@ $(function() {
 <div class="header">
   <div class="summary">
 <a href="#pub-methods">Public Member Functions</a> &#124;
+<a href="#pro-attribs">Protected Attributes</a> &#124;
 <a href="class_napi_1_1_value-members.html">List of all members</a>  </div>
   <div class="headertitle">
 <div class="title">Napi::Value Class Reference</div>  </div>
@@ -82,19 +83,19 @@ Inheritance diagram for Napi::Value:</div>
  <div class="center">
   <img src="class_napi_1_1_value.png" usemap="#Napi::Value_map" alt=""/>
   <map id="Napi::Value_map" name="Napi::Value_map">
-<area href="class_napi_1_1_boolean.html" alt="Napi::Boolean" shape="rect" coords="0,56,121,80"/>
-<area href="class_napi_1_1_external.html" alt="Napi::External&lt; T &gt;" shape="rect" coords="131,56,252,80"/>
-<area href="class_napi_1_1_name.html" title="A JavaScript string or symbol value (that can be used as a property name). " alt="Napi::Name" shape="rect" coords="262,56,383,80"/>
-<area href="class_napi_1_1_number.html" alt="Napi::Number" shape="rect" coords="393,56,514,80"/>
-<area href="class_napi_1_1_object.html" alt="Napi::Object" shape="rect" coords="524,56,645,80"/>
-<area href="class_napi_1_1_string.html" title="A JavaScript string value. " alt="Napi::String" shape="rect" coords="393,112,514,136"/>
-<area href="class_napi_1_1_symbol.html" alt="Napi::Symbol" shape="rect" coords="393,168,514,192"/>
-<area href="class_napi_1_1_array.html" alt="Napi::Array" shape="rect" coords="655,112,776,136"/>
-<area href="class_napi_1_1_array_buffer.html" alt="Napi::ArrayBuffer" shape="rect" coords="655,168,776,192"/>
-<area href="class_napi_1_1_buffer.html" alt="Napi::Buffer&lt; T &gt;" shape="rect" coords="655,224,776,248"/>
-<area href="class_napi_1_1_error.html" title="Wraps a JavaScript error object in a way that enables it to traverse a C++ stack and be thrown and ca..." alt="Napi::Error" shape="rect" coords="655,280,776,304"/>
-<area href="class_napi_1_1_function.html" alt="Napi::Function" shape="rect" coords="655,336,776,360"/>
-<area href="class_napi_1_1_typed_array.html" alt="Napi::TypedArray" shape="rect" coords="655,392,776,416"/>
+<area href="class_napi_1_1_boolean.html" title="A JavaScript boolean value. " alt="Napi::Boolean" shape="rect" coords="0,56,157,80"/>
+<area href="class_napi_1_1_external.html" alt="Napi::External&lt; T &gt;" shape="rect" coords="167,56,324,80"/>
+<area href="class_napi_1_1_name.html" title="A JavaScript string or symbol value (that can be used as a property name). " alt="Napi::Name" shape="rect" coords="334,56,491,80"/>
+<area href="class_napi_1_1_number.html" title="A JavaScript number value. " alt="Napi::Number" shape="rect" coords="501,56,658,80"/>
+<area href="class_napi_1_1_object.html" title="A JavaScript object value. " alt="Napi::Object" shape="rect" coords="918,56,1075,80"/>
+<area href="class_napi_1_1_string.html" title="A JavaScript string value. " alt="Napi::String" shape="rect" coords="250,112,407,136"/>
+<area href="class_napi_1_1_symbol.html" title="A JavaScript symbol value. " alt="Napi::Symbol" shape="rect" coords="417,112,574,136"/>
+<area href="class_napi_1_1_array.html" alt="Napi::Array" shape="rect" coords="584,112,741,136"/>
+<area href="class_napi_1_1_array_buffer.html" title="A JavaScript array buffer value. " alt="Napi::ArrayBuffer" shape="rect" coords="751,112,908,136"/>
+<area href="class_napi_1_1_buffer.html" alt="Napi::Buffer&lt; T &gt;" shape="rect" coords="918,112,1075,136"/>
+<area href="class_napi_1_1_function.html" alt="Napi::Function" shape="rect" coords="1085,112,1242,136"/>
+<area href="class_napi_1_1_typed_array.html" title="A JavaScript typed-array value with unknown array type. " alt="Napi::TypedArray" shape="rect" coords="1252,112,1409,136"/>
+<area href="class_napi_1_1_typed_array_of.html" title="A JavaScript typed-array value with known array type. " alt="Napi::TypedArrayOf&lt; T &gt;" shape="rect" coords="1252,168,1409,192"/>
 </map>
  </div></div>
 <table class="memberdecls">
@@ -121,6 +122,9 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a1e1930afac70f2811a222c363d892a42"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_napi_1_1_env.html">Napi::Env</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_napi_1_1_value.html#a1e1930afac70f2811a222c363d892a42">Env</a> () const</td></tr>
 <tr class="memdesc:a1e1930afac70f2811a222c363d892a42"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the environment the value is associated with.  <a href="#a1e1930afac70f2811a222c363d892a42">More...</a><br /></td></tr>
 <tr class="separator:a1e1930afac70f2811a222c363d892a42"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a988bdb3e9806beb7761b4ea864461005"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_napi_1_1_value.html#a988bdb3e9806beb7761b4ea864461005">IsEmpty</a> () const</td></tr>
+<tr class="memdesc:a988bdb3e9806beb7761b4ea864461005"><td class="mdescLeft">&#160;</td><td class="mdescRight">Checks if the value is empty (uninitialized).  <a href="#a988bdb3e9806beb7761b4ea864461005">More...</a><br /></td></tr>
+<tr class="separator:a988bdb3e9806beb7761b4ea864461005"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5da2e4f1a5a6b237159c4cfbd0866281"><td class="memItemLeft" align="right" valign="top">napi_valuetype&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_napi_1_1_value.html#a5da2e4f1a5a6b237159c4cfbd0866281">Type</a> () const</td></tr>
 <tr class="memdesc:a5da2e4f1a5a6b237159c4cfbd0866281"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the type of the value.  <a href="#a5da2e4f1a5a6b237159c4cfbd0866281">More...</a><br /></td></tr>
 <tr class="separator:a5da2e4f1a5a6b237159c4cfbd0866281"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -162,7 +166,7 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a7ae7ce9bb0c81e08285aa36f810b3257"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9c1a9c4eca9617b0aafbe311c946982a"><td class="memTemplParams" colspan="2">template&lt;typename T &gt; </td></tr>
 <tr class="memitem:a9c1a9c4eca9617b0aafbe311c946982a"><td class="memTemplItemLeft" align="right" valign="top">T&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="class_napi_1_1_value.html#a9c1a9c4eca9617b0aafbe311c946982a">As</a> () const</td></tr>
-<tr class="memdesc:a9c1a9c4eca9617b0aafbe311c946982a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Converts to another type of <code><a class="el" href="class_napi_1_1_value.html" title="A JavaScript value of unknown type. ">Napi::Value</a></code>, when the actual type is known or assumed.  <a href="#a9c1a9c4eca9617b0aafbe311c946982a">More...</a><br /></td></tr>
+<tr class="memdesc:a9c1a9c4eca9617b0aafbe311c946982a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Casts to another type of <code><a class="el" href="class_napi_1_1_value.html" title="A JavaScript value of unknown type. ">Napi::Value</a></code>, when the actual type is known or assumed.  <a href="#a9c1a9c4eca9617b0aafbe311c946982a">More...</a><br /></td></tr>
 <tr class="separator:a9c1a9c4eca9617b0aafbe311c946982a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a01f08d60906f8221ad3a4a5311b01019"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_napi_1_1_boolean.html">Boolean</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_napi_1_1_value.html#a01f08d60906f8221ad3a4a5311b01019">ToBoolean</a> () const</td></tr>
 <tr class="memdesc:a01f08d60906f8221ad3a4a5311b01019"><td class="mdescLeft">&#160;</td><td class="mdescRight">Coerces a value to a JavaScript boolean.  <a href="#a01f08d60906f8221ad3a4a5311b01019">More...</a><br /></td></tr>
@@ -176,12 +180,24 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:aea8da6e6ace714d1d6937e805c8e03a4"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_napi_1_1_object.html">Object</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_napi_1_1_value.html#aea8da6e6ace714d1d6937e805c8e03a4">ToObject</a> () const</td></tr>
 <tr class="memdesc:aea8da6e6ace714d1d6937e805c8e03a4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Coerces a value to a JavaScript object.  <a href="#aea8da6e6ace714d1d6937e805c8e03a4">More...</a><br /></td></tr>
 <tr class="separator:aea8da6e6ace714d1d6937e805c8e03a4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-attribs"></a>
+Protected Attributes</h2></td></tr>
+<tr class="memitem:ad0a0cc895c3134df3ca3267dbf2dfe08"><td class="memItemLeft" align="right" valign="top">napi_env&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_napi_1_1_value.html#ad0a0cc895c3134df3ca3267dbf2dfe08">_env</a></td></tr>
+<tr class="memdesc:ad0a0cc895c3134df3ca3267dbf2dfe08"><td class="mdescLeft">&#160;</td><td class="mdescRight">!cond INTERNAL  <a href="#ad0a0cc895c3134df3ca3267dbf2dfe08">More...</a><br /></td></tr>
+<tr class="separator:ad0a0cc895c3134df3ca3267dbf2dfe08"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae2060cfa039ca4c6abaff238fb00d1f8"><td class="memItemLeft" align="right" valign="top">napi_value&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_napi_1_1_value.html#ae2060cfa039ca4c6abaff238fb00d1f8">_value</a></td></tr>
+<tr class="separator:ae2060cfa039ca4c6abaff238fb00d1f8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>A JavaScript value of unknown type. </p>
-<p>For type-specific operations, convert to one of the <a class="el" href="class_napi_1_1_value.html" title="A JavaScript value of unknown type. ">Value</a> subclasses using a <code>To*</code> or <code>As*</code> method. The <code>To*</code> methods do type coercion; the <code>As*</code> methods do not. </p>
+<p>For type-specific operations, convert to one of the <a class="el" href="class_napi_1_1_value.html" title="A JavaScript value of unknown type. ">Value</a> subclasses using a <code>To*</code> or <code><a class="el" href="class_napi_1_1_value.html#a9c1a9c4eca9617b0aafbe311c946982a" title="Casts to another type of Napi::Value, when the actual type is known or assumed. ">As()</a></code> method. The <code>To*</code> methods do type coercion; the <code><a class="el" href="class_napi_1_1_value.html#a9c1a9c4eca9617b0aafbe311c946982a" title="Casts to another type of Napi::Value, when the actual type is known or assumed. ">As()</a></code> method does not. </p><pre class="fragment">Napi::Value value = ...
+if (!value.IsString()) throw Napi::TypeError::New(env, "Invalid arg...");
+Napi::String str = value.As&lt;Napi::String&gt;(); // Cast to a string value
 
-<p class="definition">Definition at line <a class="el" href="napi_8h_source.html#l00087">87</a> of file <a class="el" href="napi_8h_source.html">napi.h</a>.</p>
+Napi::Value anotherValue = ...
+bool isTruthy = anotherValue.ToBoolean(); // Coerce to a boolean value  </pre> 
+<p class="definition">Definition at line <a class="el" href="napi_8h_source.html#l00104">104</a> of file <a class="el" href="napi_8h_source.html">napi.h</a>.</p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="a91352891b563fb744683240949e458e4"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a91352891b563fb744683240949e458e4">&#9670;&nbsp;</a></span>Value() <span class="overload">[1/2]</span></h2>
@@ -250,8 +266,8 @@ template&lt;typename T &gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p>Converts to another type of <code><a class="el" href="class_napi_1_1_value.html" title="A JavaScript value of unknown type. ">Napi::Value</a></code>, when the actual type is known or assumed. </p>
-<p>This conversion does NOT coerce the type. Calling any methods inappropriate for the actual value type will throw <code><a class="el" href="class_napi_1_1_error.html" title="Wraps a JavaScript error object in a way that enables it to traverse a C++ stack and be thrown and ca...">Napi::Error</a></code>. </p>
+<p>Casts to another type of <code><a class="el" href="class_napi_1_1_value.html" title="A JavaScript value of unknown type. ">Napi::Value</a></code>, when the actual type is known or assumed. </p>
+<p>This conversion does NOT coerce the type. Calling any methods inappropriate for the actual value type will throw <code><a class="el" href="class_napi_1_1_error.html" title="A persistent reference to a JavaScript error object. ">Napi::Error</a></code>. </p>
 
 </div>
 </div>
@@ -347,6 +363,27 @@ template&lt;typename T &gt; </div>
 </div><div class="memdoc">
 
 <p>Tests if a value is a Node buffer. </p>
+
+</div>
+</div>
+<a id="a988bdb3e9806beb7761b4ea864461005"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a988bdb3e9806beb7761b4ea864461005">&#9670;&nbsp;</a></span>IsEmpty()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool Napi::Value::IsEmpty </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Checks if the value is empty (uninitialized). </p>
+<p>An empty value is invalid, and most attempts to perform an operation on an empty value will result in an exception. Note an empty value is distinct from JavaScript <code>null</code> or <code>undefined</code>, which are valid values.</p>
+<p>When C++ exceptions are disabled at compile time, a method with a <code><a class="el" href="class_napi_1_1_value.html" title="A JavaScript value of unknown type. ">Value</a></code> return type may return an empty value to indicate a pending exception. So when not using C++ exceptions, callers should check whether the value is empty before attempting to use it. </p>
 
 </div>
 </div>
@@ -674,6 +711,57 @@ template&lt;typename T &gt; </div>
 </div><div class="memdoc">
 
 <p>Gets the type of the value. </p>
+
+</div>
+</div>
+<h2 class="groupheader">Member Data Documentation</h2>
+<a id="ad0a0cc895c3134df3ca3267dbf2dfe08"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad0a0cc895c3134df3ca3267dbf2dfe08">&#9670;&nbsp;</a></span>_env</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">napi_env Napi::Value::_env</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>!cond INTERNAL </p>
+
+<p class="definition">Definition at line <a class="el" href="napi_8h_source.html#l00165">165</a> of file <a class="el" href="napi_8h_source.html">napi.h</a>.</p>
+
+</div>
+</div>
+<a id="ae2060cfa039ca4c6abaff238fb00d1f8"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae2060cfa039ca4c6abaff238fb00d1f8">&#9670;&nbsp;</a></span>_value</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">napi_value Napi::Value::_value</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="napi_8h_source.html#l00166">166</a> of file <a class="el" href="napi_8h_source.html">napi.h</a>.</p>
 
 </div>
 </div>

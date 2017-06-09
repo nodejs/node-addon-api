@@ -22,7 +22,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">N-API
-   &#160;<span id="projectnumber">0.1.0</span>
+   &#160;<span id="projectnumber">0.3.3</span>
    </div>
    <div id="projectbrief">C++ wrapper classes for the ABI-stable C APIs for Node.js</div>
   </td>
@@ -86,9 +86,8 @@ Classes</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_napi_1_1_reference.html">Napi::Reference&lt; T &gt;</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Holds a counted reference to a value; initially a weak reference unless otherwise specified, may be changed to/from a strong reference by adjusting the refcount.  <a href="class_napi_1_1_reference.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_napi_1_1_property_l_value.html">Napi::PropertyLValue&lt; Key &gt;</a></td></tr>
-<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_napi_1_1_typed_array__.html">Napi::TypedArray_&lt; T, A &gt;</a></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_napi_1_1_typed_array_of.html">Napi::TypedArrayOf&lt; T &gt;</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">A JavaScript typed-array value with known array type.  <a href="class_napi_1_1_typed_array_of.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_napi_1_1_env.html">Napi::Env</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Environment for N-API values and operations.  <a href="class_napi_1_1_env.html#details">More...</a><br /></td></tr>
@@ -97,8 +96,10 @@ Classes</h2></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">A JavaScript value of unknown type.  <a href="class_napi_1_1_value.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_napi_1_1_boolean.html">Napi::Boolean</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">A JavaScript boolean value.  <a href="class_napi_1_1_boolean.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_napi_1_1_number.html">Napi::Number</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">A JavaScript number value.  <a href="class_napi_1_1_number.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_napi_1_1_name.html">Napi::Name</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">A JavaScript string or symbol value (that can be used as a property name).  <a href="class_napi_1_1_name.html#details">More...</a><br /></td></tr>
@@ -107,31 +108,30 @@ Classes</h2></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">A JavaScript string value.  <a href="class_napi_1_1_string.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_napi_1_1_symbol.html">Napi::Symbol</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">A JavaScript symbol value.  <a href="class_napi_1_1_symbol.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_napi_1_1_object.html">Napi::Object</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">A JavaScript object value.  <a href="class_napi_1_1_object.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_napi_1_1_property_l_value.html">Napi::PropertyLValue&lt; Key &gt;</a></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_napi_1_1_object_1_1_property_l_value.html">Napi::Object::PropertyLValue&lt; Key &gt;</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Enables property and element assignments using indexing syntax.  <a href="class_napi_1_1_object_1_1_property_l_value.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_napi_1_1_external.html">Napi::External&lt; T &gt;</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_napi_1_1_array.html">Napi::Array</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_napi_1_1_array_buffer.html">Napi::ArrayBuffer</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">A JavaScript array buffer value.  <a href="class_napi_1_1_array_buffer.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_napi_1_1_typed_array.html">Napi::TypedArray</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">A JavaScript typed-array value with unknown array type.  <a href="class_napi_1_1_typed_array.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_napi_1_1_typed_array__.html">Napi::TypedArray_&lt; T, A &gt;</a></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_napi_1_1_typed_array_of.html">Napi::TypedArrayOf&lt; T &gt;</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">A JavaScript typed-array value with known array type.  <a href="class_napi_1_1_typed_array_of.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_napi_1_1_function.html">Napi::Function</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_napi_1_1_buffer.html">Napi::Buffer&lt; T &gt;</a></td></tr>
-<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_napi_1_1_error.html">Napi::Error</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Wraps a JavaScript error object in a way that enables it to traverse a C++ stack and be thrown and caught as a C++ exception.  <a href="class_napi_1_1_error.html#details">More...</a><br /></td></tr>
-<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_napi_1_1_type_error.html">Napi::TypeError</a></td></tr>
-<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_napi_1_1_range_error.html">Napi::RangeError</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_napi_1_1_reference.html">Napi::Reference&lt; T &gt;</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Holds a counted reference to a value; initially a weak reference unless otherwise specified, may be changed to/from a strong reference by adjusting the refcount.  <a href="class_napi_1_1_reference.html#details">More...</a><br /></td></tr>
@@ -139,6 +139,13 @@ Classes</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_napi_1_1_object_reference.html">Napi::ObjectReference</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_napi_1_1_function_reference.html">Napi::FunctionReference</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_napi_1_1_error.html">Napi::Error</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">A persistent reference to a JavaScript error object.  <a href="class_napi_1_1_error.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_napi_1_1_type_error.html">Napi::TypeError</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_napi_1_1_range_error.html">Napi::RangeError</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_napi_1_1_callback_info.html">Napi::CallbackInfo</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -170,24 +177,30 @@ Macros</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="typedef-members"></a>
 Typedefs</h2></td></tr>
-<tr class="memitem:a56a2ae08fe3da77ef1072fe15febfd0b"><td class="memItemLeft" align="right" valign="top">typedef TypedArray_&lt; int8_t, napi_int8_array &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_napi.html#a56a2ae08fe3da77ef1072fe15febfd0b">Napi::Int8Array</a></td></tr>
-<tr class="separator:a56a2ae08fe3da77ef1072fe15febfd0b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a98aa6cb2d9cc9aab974f9a007dfc419f"><td class="memItemLeft" align="right" valign="top">typedef TypedArray_&lt; uint8_t, napi_uint8_array &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_napi.html#a98aa6cb2d9cc9aab974f9a007dfc419f">Napi::Uint8Array</a></td></tr>
-<tr class="separator:a98aa6cb2d9cc9aab974f9a007dfc419f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a56c90e4b5311ae7c89b2e8821d96af48"><td class="memItemLeft" align="right" valign="top">typedef TypedArray_&lt; uint8_t, napi_uint8_clamped_array &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_napi.html#a56c90e4b5311ae7c89b2e8821d96af48">Napi::Uint8ClampedArray</a></td></tr>
-<tr class="separator:a56c90e4b5311ae7c89b2e8821d96af48"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a90f1a9d4aa5c6642ef620258362b09a3"><td class="memItemLeft" align="right" valign="top">typedef TypedArray_&lt; int16_t, napi_int16_array &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_napi.html#a90f1a9d4aa5c6642ef620258362b09a3">Napi::Int16Array</a></td></tr>
-<tr class="separator:a90f1a9d4aa5c6642ef620258362b09a3"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad3e221be90843a230a44940a34a2181e"><td class="memItemLeft" align="right" valign="top">typedef TypedArray_&lt; uint16_t, napi_uint16_array &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_napi.html#ad3e221be90843a230a44940a34a2181e">Napi::Uint16Array</a></td></tr>
-<tr class="separator:ad3e221be90843a230a44940a34a2181e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad6e426c07e2e958a49cd19ae3693e7d2"><td class="memItemLeft" align="right" valign="top">typedef TypedArray_&lt; int32_t, napi_int32_array &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_napi.html#ad6e426c07e2e958a49cd19ae3693e7d2">Napi::Int32Array</a></td></tr>
-<tr class="separator:ad6e426c07e2e958a49cd19ae3693e7d2"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab5d69646c45cab38f4ee3acc3b3dee15"><td class="memItemLeft" align="right" valign="top">typedef TypedArray_&lt; uint32_t, napi_uint32_array &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_napi.html#ab5d69646c45cab38f4ee3acc3b3dee15">Napi::Uint32Array</a></td></tr>
-<tr class="separator:ab5d69646c45cab38f4ee3acc3b3dee15"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:abd3d969befe9f60fb8a7d9bac4463800"><td class="memItemLeft" align="right" valign="top">typedef TypedArray_&lt; float, napi_float32_array &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_napi.html#abd3d969befe9f60fb8a7d9bac4463800">Napi::Float32Array</a></td></tr>
-<tr class="separator:abd3d969befe9f60fb8a7d9bac4463800"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a276d3b0e1f3ed60645e8ea487c68c48e"><td class="memItemLeft" align="right" valign="top">typedef TypedArray_&lt; double, napi_float64_array &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_napi.html#a276d3b0e1f3ed60645e8ea487c68c48e">Napi::Float64Array</a></td></tr>
-<tr class="separator:a276d3b0e1f3ed60645e8ea487c68c48e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1c4d0ae55df60578c54c3836a193f08d"><td class="memItemLeft" align="right" valign="top">typedef TypedArrayOf&lt; int8_t &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_napi.html#a1c4d0ae55df60578c54c3836a193f08d">Napi::Int8Array</a></td></tr>
+<tr class="memdesc:a1c4d0ae55df60578c54c3836a193f08d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Typed-array of signed 8-bit integers.  <a href="namespace_napi.html#a1c4d0ae55df60578c54c3836a193f08d">More...</a><br /></td></tr>
+<tr class="separator:a1c4d0ae55df60578c54c3836a193f08d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8d1a335266cab4c07386d8bb819de18e"><td class="memItemLeft" align="right" valign="top">typedef TypedArrayOf&lt; uint8_t &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_napi.html#a8d1a335266cab4c07386d8bb819de18e">Napi::Uint8Array</a></td></tr>
+<tr class="memdesc:a8d1a335266cab4c07386d8bb819de18e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Typed-array of unsigned 8-bit integers.  <a href="namespace_napi.html#a8d1a335266cab4c07386d8bb819de18e">More...</a><br /></td></tr>
+<tr class="separator:a8d1a335266cab4c07386d8bb819de18e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5c482e8090350e4639120fc530c6d38c"><td class="memItemLeft" align="right" valign="top">typedef TypedArrayOf&lt; int16_t &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_napi.html#a5c482e8090350e4639120fc530c6d38c">Napi::Int16Array</a></td></tr>
+<tr class="memdesc:a5c482e8090350e4639120fc530c6d38c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Typed-array of signed 16-bit integers.  <a href="namespace_napi.html#a5c482e8090350e4639120fc530c6d38c">More...</a><br /></td></tr>
+<tr class="separator:a5c482e8090350e4639120fc530c6d38c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2bcd0629fa40dca2d0a16dbd4b5f5670"><td class="memItemLeft" align="right" valign="top">typedef TypedArrayOf&lt; uint16_t &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_napi.html#a2bcd0629fa40dca2d0a16dbd4b5f5670">Napi::Uint16Array</a></td></tr>
+<tr class="memdesc:a2bcd0629fa40dca2d0a16dbd4b5f5670"><td class="mdescLeft">&#160;</td><td class="mdescRight">Typed-array of unsigned 16-bit integers.  <a href="namespace_napi.html#a2bcd0629fa40dca2d0a16dbd4b5f5670">More...</a><br /></td></tr>
+<tr class="separator:a2bcd0629fa40dca2d0a16dbd4b5f5670"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad3df4ffafa0b5bfef0b2ef9d1032328b"><td class="memItemLeft" align="right" valign="top">typedef TypedArrayOf&lt; int32_t &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_napi.html#ad3df4ffafa0b5bfef0b2ef9d1032328b">Napi::Int32Array</a></td></tr>
+<tr class="memdesc:ad3df4ffafa0b5bfef0b2ef9d1032328b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Typed-array of signed 32-bit integers.  <a href="namespace_napi.html#ad3df4ffafa0b5bfef0b2ef9d1032328b">More...</a><br /></td></tr>
+<tr class="separator:ad3df4ffafa0b5bfef0b2ef9d1032328b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a62b0894d8037a158becd81e8dc387864"><td class="memItemLeft" align="right" valign="top">typedef TypedArrayOf&lt; uint32_t &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_napi.html#a62b0894d8037a158becd81e8dc387864">Napi::Uint32Array</a></td></tr>
+<tr class="memdesc:a62b0894d8037a158becd81e8dc387864"><td class="mdescLeft">&#160;</td><td class="mdescRight">Typed-array of unsigned 32-bit integers.  <a href="namespace_napi.html#a62b0894d8037a158becd81e8dc387864">More...</a><br /></td></tr>
+<tr class="separator:a62b0894d8037a158becd81e8dc387864"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aaf9f002975a6733cade583355783bd96"><td class="memItemLeft" align="right" valign="top">typedef TypedArrayOf&lt; float &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_napi.html#aaf9f002975a6733cade583355783bd96">Napi::Float32Array</a></td></tr>
+<tr class="memdesc:aaf9f002975a6733cade583355783bd96"><td class="mdescLeft">&#160;</td><td class="mdescRight">Typed-array of 32-bit floating-point values.  <a href="namespace_napi.html#aaf9f002975a6733cade583355783bd96">More...</a><br /></td></tr>
+<tr class="separator:aaf9f002975a6733cade583355783bd96"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8f508b586ea6d604e425f65151059016"><td class="memItemLeft" align="right" valign="top">typedef TypedArrayOf&lt; double &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_napi.html#a8f508b586ea6d604e425f65151059016">Napi::Float64Array</a></td></tr>
+<tr class="memdesc:a8f508b586ea6d604e425f65151059016"><td class="mdescLeft">&#160;</td><td class="mdescRight">Typed-array of 64-bit floating-point values.  <a href="namespace_napi.html#a8f508b586ea6d604e425f65151059016">More...</a><br /></td></tr>
+<tr class="separator:a8f508b586ea6d604e425f65151059016"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa4d20fdf617edaadba613aa280763cae"><td class="memItemLeft" align="right" valign="top">typedef void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_napi.html#aa4d20fdf617edaadba613aa280763cae">Napi::ModuleRegisterCallback</a>(Env env, Object exports, Object module)</td></tr>
 <tr class="memdesc:aa4d20fdf617edaadba613aa280763cae"><td class="mdescLeft">&#160;</td><td class="mdescRight">Defines the signature of a N-API C++ module's registration callback (init) function.  <a href="namespace_napi.html#aa4d20fdf617edaadba613aa280763cae">More...</a><br /></td></tr>
 <tr class="separator:aa4d20fdf617edaadba613aa280763cae"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -222,7 +235,7 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="napi_8h_source.html#l00013">13</a> of file <a class="el" href="napi_8h_source.html">napi.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="napi_8h_source.html#l00024">24</a> of file <a class="el" href="napi_8h_source.html">napi.h</a>.</p>
 
 </div>
 </div>

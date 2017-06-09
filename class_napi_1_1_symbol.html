@@ -22,7 +22,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">N-API
-   &#160;<span id="projectnumber">0.1.0</span>
+   &#160;<span id="projectnumber">0.3.3</span>
    </div>
    <div id="projectbrief">C++ wrapper classes for the ABI-stable C APIs for Node.js</div>
   </td>
@@ -73,6 +73,9 @@ $(function() {
 </div><!--header-->
 <div class="contents">
 
+<p>A JavaScript symbol value.  
+ <a href="class_napi_1_1_symbol.html#details">More...</a></p>
+
 <p><code>#include &lt;<a class="el" href="napi_8h_source.html">napi.h</a>&gt;</code></p>
 <div class="dynheader">
 Inheritance diagram for Napi::Symbol:</div>
@@ -88,8 +91,10 @@ Inheritance diagram for Napi::Symbol:</div>
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
 <tr class="memitem:a68d49eb654b492757e8d663e9666a206"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_napi_1_1_symbol.html#a68d49eb654b492757e8d663e9666a206">Symbol</a> ()</td></tr>
+<tr class="memdesc:a68d49eb654b492757e8d663e9666a206"><td class="mdescLeft">&#160;</td><td class="mdescRight">Creates a new <em>empty</em> <a class="el" href="class_napi_1_1_symbol.html" title="A JavaScript symbol value. ">Symbol</a> instance.  <a href="#a68d49eb654b492757e8d663e9666a206">More...</a><br /></td></tr>
 <tr class="separator:a68d49eb654b492757e8d663e9666a206"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad702f13e30a3bea023490651ac8c731d"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_napi_1_1_symbol.html#ad702f13e30a3bea023490651ac8c731d">Symbol</a> (napi_env env, napi_value value)</td></tr>
+<tr class="memdesc:ad702f13e30a3bea023490651ac8c731d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Wraps a N-API value primitive.  <a href="#ad702f13e30a3bea023490651ac8c731d">More...</a><br /></td></tr>
 <tr class="separator:ad702f13e30a3bea023490651ac8c731d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_methods_class_napi_1_1_name"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_class_napi_1_1_name')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="class_napi_1_1_name.html">Napi::Name</a></td></tr>
 <tr class="memitem:a92ddf4e689c98797ea27dc797f513a32 inherit pub_methods_class_napi_1_1_name"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_napi_1_1_name.html#a92ddf4e689c98797ea27dc797f513a32">Name</a> ()</td></tr>
@@ -120,6 +125,9 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a1e1930afac70f2811a222c363d892a42 inherit pub_methods_class_napi_1_1_value"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_napi_1_1_env.html">Napi::Env</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_napi_1_1_value.html#a1e1930afac70f2811a222c363d892a42">Env</a> () const</td></tr>
 <tr class="memdesc:a1e1930afac70f2811a222c363d892a42 inherit pub_methods_class_napi_1_1_value"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the environment the value is associated with.  <a href="class_napi_1_1_value.html#a1e1930afac70f2811a222c363d892a42">More...</a><br /></td></tr>
 <tr class="separator:a1e1930afac70f2811a222c363d892a42 inherit pub_methods_class_napi_1_1_value"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a988bdb3e9806beb7761b4ea864461005 inherit pub_methods_class_napi_1_1_value"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_napi_1_1_value.html#a988bdb3e9806beb7761b4ea864461005">IsEmpty</a> () const</td></tr>
+<tr class="memdesc:a988bdb3e9806beb7761b4ea864461005 inherit pub_methods_class_napi_1_1_value"><td class="mdescLeft">&#160;</td><td class="mdescRight">Checks if the value is empty (uninitialized).  <a href="class_napi_1_1_value.html#a988bdb3e9806beb7761b4ea864461005">More...</a><br /></td></tr>
+<tr class="separator:a988bdb3e9806beb7761b4ea864461005 inherit pub_methods_class_napi_1_1_value"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5da2e4f1a5a6b237159c4cfbd0866281 inherit pub_methods_class_napi_1_1_value"><td class="memItemLeft" align="right" valign="top">napi_valuetype&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_napi_1_1_value.html#a5da2e4f1a5a6b237159c4cfbd0866281">Type</a> () const</td></tr>
 <tr class="memdesc:a5da2e4f1a5a6b237159c4cfbd0866281 inherit pub_methods_class_napi_1_1_value"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the type of the value.  <a href="class_napi_1_1_value.html#a5da2e4f1a5a6b237159c4cfbd0866281">More...</a><br /></td></tr>
 <tr class="separator:a5da2e4f1a5a6b237159c4cfbd0866281 inherit pub_methods_class_napi_1_1_value"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -161,7 +169,7 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a7ae7ce9bb0c81e08285aa36f810b3257 inherit pub_methods_class_napi_1_1_value"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9c1a9c4eca9617b0aafbe311c946982a inherit pub_methods_class_napi_1_1_value"><td class="memTemplParams" colspan="2">template&lt;typename T &gt; </td></tr>
 <tr class="memitem:a9c1a9c4eca9617b0aafbe311c946982a inherit pub_methods_class_napi_1_1_value"><td class="memTemplItemLeft" align="right" valign="top">T&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="class_napi_1_1_value.html#a9c1a9c4eca9617b0aafbe311c946982a">As</a> () const</td></tr>
-<tr class="memdesc:a9c1a9c4eca9617b0aafbe311c946982a inherit pub_methods_class_napi_1_1_value"><td class="mdescLeft">&#160;</td><td class="mdescRight">Converts to another type of <code><a class="el" href="class_napi_1_1_value.html" title="A JavaScript value of unknown type. ">Napi::Value</a></code>, when the actual type is known or assumed.  <a href="class_napi_1_1_value.html#a9c1a9c4eca9617b0aafbe311c946982a">More...</a><br /></td></tr>
+<tr class="memdesc:a9c1a9c4eca9617b0aafbe311c946982a inherit pub_methods_class_napi_1_1_value"><td class="mdescLeft">&#160;</td><td class="mdescRight">Casts to another type of <code><a class="el" href="class_napi_1_1_value.html" title="A JavaScript value of unknown type. ">Napi::Value</a></code>, when the actual type is known or assumed.  <a href="class_napi_1_1_value.html#a9c1a9c4eca9617b0aafbe311c946982a">More...</a><br /></td></tr>
 <tr class="separator:a9c1a9c4eca9617b0aafbe311c946982a inherit pub_methods_class_napi_1_1_value"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a01f08d60906f8221ad3a4a5311b01019 inherit pub_methods_class_napi_1_1_value"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_napi_1_1_boolean.html">Boolean</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_napi_1_1_value.html#a01f08d60906f8221ad3a4a5311b01019">ToBoolean</a> () const</td></tr>
 <tr class="memdesc:a01f08d60906f8221ad3a4a5311b01019 inherit pub_methods_class_napi_1_1_value"><td class="mdescLeft">&#160;</td><td class="mdescRight">Coerces a value to a JavaScript boolean.  <a href="class_napi_1_1_value.html#a01f08d60906f8221ad3a4a5311b01019">More...</a><br /></td></tr>
@@ -179,17 +187,31 @@ Public Member Functions</h2></td></tr>
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-methods"></a>
 Static Public Member Functions</h2></td></tr>
 <tr class="memitem:a031b248ba1f45b0b6aae3edd70bd7a92"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="class_napi_1_1_symbol.html">Symbol</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_napi_1_1_symbol.html#a031b248ba1f45b0b6aae3edd70bd7a92">New</a> (napi_env env, const char *description=nullptr)</td></tr>
+<tr class="memdesc:a031b248ba1f45b0b6aae3edd70bd7a92"><td class="mdescLeft">&#160;</td><td class="mdescRight">Creates a new <a class="el" href="class_napi_1_1_symbol.html" title="A JavaScript symbol value. ">Symbol</a> value with an optional description.  <a href="#a031b248ba1f45b0b6aae3edd70bd7a92">More...</a><br /></td></tr>
 <tr class="separator:a031b248ba1f45b0b6aae3edd70bd7a92"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aae5a5c67dfcb945c97f9a5b0e120ff47"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="class_napi_1_1_symbol.html">Symbol</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_napi_1_1_symbol.html#aae5a5c67dfcb945c97f9a5b0e120ff47">New</a> (napi_env env, const std::string &amp;description)</td></tr>
+<tr class="memdesc:aae5a5c67dfcb945c97f9a5b0e120ff47"><td class="mdescLeft">&#160;</td><td class="mdescRight">Creates a new <a class="el" href="class_napi_1_1_symbol.html" title="A JavaScript symbol value. ">Symbol</a> value with a description.  <a href="#aae5a5c67dfcb945c97f9a5b0e120ff47">More...</a><br /></td></tr>
 <tr class="separator:aae5a5c67dfcb945c97f9a5b0e120ff47"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a49a0d5e7a601bbc91ba6a087c3f150b6"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="class_napi_1_1_symbol.html">Symbol</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_napi_1_1_symbol.html#a49a0d5e7a601bbc91ba6a087c3f150b6">New</a> (napi_env env, <a class="el" href="class_napi_1_1_string.html">String</a> description)</td></tr>
+<tr class="memdesc:a49a0d5e7a601bbc91ba6a087c3f150b6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Creates a new <a class="el" href="class_napi_1_1_symbol.html" title="A JavaScript symbol value. ">Symbol</a> value with a description.  <a href="#a49a0d5e7a601bbc91ba6a087c3f150b6">More...</a><br /></td></tr>
 <tr class="separator:a49a0d5e7a601bbc91ba6a087c3f150b6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:abd39d7864e8ebbb39f8adab52424e234"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="class_napi_1_1_symbol.html">Symbol</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_napi_1_1_symbol.html#abd39d7864e8ebbb39f8adab52424e234">New</a> (napi_env env, napi_value description)</td></tr>
+<tr class="memdesc:abd39d7864e8ebbb39f8adab52424e234"><td class="mdescLeft">&#160;</td><td class="mdescRight">Creates a new <a class="el" href="class_napi_1_1_symbol.html" title="A JavaScript symbol value. ">Symbol</a> value with a description.  <a href="#abd39d7864e8ebbb39f8adab52424e234">More...</a><br /></td></tr>
 <tr class="separator:abd39d7864e8ebbb39f8adab52424e234"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="inherited"></a>
+Additional Inherited Members</h2></td></tr>
+<tr class="inherit_header pro_attribs_class_napi_1_1_value"><td colspan="2" onclick="javascript:toggleInherit('pro_attribs_class_napi_1_1_value')"><img src="closed.png" alt="-"/>&#160;Protected Attributes inherited from <a class="el" href="class_napi_1_1_value.html">Napi::Value</a></td></tr>
+<tr class="memitem:ad0a0cc895c3134df3ca3267dbf2dfe08 inherit pro_attribs_class_napi_1_1_value"><td class="memItemLeft" align="right" valign="top">napi_env&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_napi_1_1_value.html#ad0a0cc895c3134df3ca3267dbf2dfe08">_env</a></td></tr>
+<tr class="memdesc:ad0a0cc895c3134df3ca3267dbf2dfe08 inherit pro_attribs_class_napi_1_1_value"><td class="mdescLeft">&#160;</td><td class="mdescRight">!cond INTERNAL  <a href="class_napi_1_1_value.html#ad0a0cc895c3134df3ca3267dbf2dfe08">More...</a><br /></td></tr>
+<tr class="separator:ad0a0cc895c3134df3ca3267dbf2dfe08 inherit pro_attribs_class_napi_1_1_value"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae2060cfa039ca4c6abaff238fb00d1f8 inherit pro_attribs_class_napi_1_1_value"><td class="memItemLeft" align="right" valign="top">napi_value&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_napi_1_1_value.html#ae2060cfa039ca4c6abaff238fb00d1f8">_value</a></td></tr>
+<tr class="separator:ae2060cfa039ca4c6abaff238fb00d1f8 inherit pro_attribs_class_napi_1_1_value"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock">
-<p class="definition">Definition at line <a class="el" href="napi_8h_source.html#l00231">231</a> of file <a class="el" href="napi_8h_source.html">napi.h</a>.</p>
+<div class="textblock"><p>A JavaScript symbol value. </p>
+
+<p class="definition">Definition at line <a class="el" href="napi_8h_source.html#l00267">267</a> of file <a class="el" href="napi_8h_source.html">napi.h</a>.</p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="a68d49eb654b492757e8d663e9666a206"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a68d49eb654b492757e8d663e9666a206">&#9670;&nbsp;</a></span>Symbol() <span class="overload">[1/2]</span></h2>
@@ -205,6 +227,8 @@ Static Public Member Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Creates a new <em>empty</em> <a class="el" href="class_napi_1_1_symbol.html" title="A JavaScript symbol value. ">Symbol</a> instance. </p>
 
 </div>
 </div>
@@ -233,6 +257,8 @@ Static Public Member Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Wraps a N-API value primitive. </p>
 
 </div>
 </div>
@@ -271,6 +297,15 @@ Static Public Member Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
+<p>Creates a new <a class="el" href="class_napi_1_1_symbol.html" title="A JavaScript symbol value. ">Symbol</a> value with an optional description. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">env</td><td>N-API environment </td></tr>
+    <tr><td class="paramname">description</td><td>Optional UTF-8 encoded null-terminated C string describing the symbol </td></tr>
+  </table>
+  </dd>
+</dl>
+
 </div>
 </div>
 <a id="aae5a5c67dfcb945c97f9a5b0e120ff47"></a>
@@ -306,6 +341,15 @@ Static Public Member Functions</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
+
+<p>Creates a new <a class="el" href="class_napi_1_1_symbol.html" title="A JavaScript symbol value. ">Symbol</a> value with a description. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">env</td><td>N-API environment </td></tr>
+    <tr><td class="paramname">description</td><td>UTF-8 encoded C++ string describing the symbol </td></tr>
+  </table>
+  </dd>
+</dl>
 
 </div>
 </div>
@@ -343,6 +387,15 @@ Static Public Member Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
+<p>Creates a new <a class="el" href="class_napi_1_1_symbol.html" title="A JavaScript symbol value. ">Symbol</a> value with a description. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">env</td><td>N-API environment </td></tr>
+    <tr><td class="paramname">description</td><td><a class="el" href="class_napi_1_1_string.html" title="A JavaScript string value. ">String</a> value describing the symbol </td></tr>
+  </table>
+  </dd>
+</dl>
+
 </div>
 </div>
 <a id="abd39d7864e8ebbb39f8adab52424e234"></a>
@@ -378,6 +431,15 @@ Static Public Member Functions</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
+
+<p>Creates a new <a class="el" href="class_napi_1_1_symbol.html" title="A JavaScript symbol value. ">Symbol</a> value with a description. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">env</td><td>N-API environment </td></tr>
+    <tr><td class="paramname">description</td><td><a class="el" href="class_napi_1_1_string.html" title="A JavaScript string value. ">String</a> value describing the symbol </td></tr>
+  </table>
+  </dd>
+</dl>
 
 </div>
 </div>

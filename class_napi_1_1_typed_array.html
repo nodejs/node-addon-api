@@ -22,7 +22,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">N-API
-   &#160;<span id="projectnumber">0.1.0</span>
+   &#160;<span id="projectnumber">0.3.3</span>
    </div>
    <div id="projectbrief">C++ wrapper classes for the ABI-stable C APIs for Node.js</div>
   </td>
@@ -67,12 +67,17 @@ $(function() {
   <div class="summary">
 <a href="#pub-methods">Public Member Functions</a> &#124;
 <a href="#pro-methods">Protected Member Functions</a> &#124;
+<a href="#pro-static-methods">Static Protected Member Functions</a> &#124;
 <a href="#pro-attribs">Protected Attributes</a> &#124;
+<a href="#pro-static-attribs">Static Protected Attributes</a> &#124;
 <a href="class_napi_1_1_typed_array-members.html">List of all members</a>  </div>
   <div class="headertitle">
 <div class="title">Napi::TypedArray Class Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
+
+<p>A JavaScript typed-array value with unknown array type.  
+ <a href="class_napi_1_1_typed_array.html#details">More...</a></p>
 
 <p><code>#include &lt;<a class="el" href="napi_8h_source.html">napi.h</a>&gt;</code></p>
 <div class="dynheader">
@@ -81,126 +86,158 @@ Inheritance diagram for Napi::TypedArray:</div>
  <div class="center">
   <img src="class_napi_1_1_typed_array.png" usemap="#Napi::TypedArray_map" alt=""/>
   <map id="Napi::TypedArray_map" name="Napi::TypedArray_map">
-<area href="class_napi_1_1_object.html" alt="Napi::Object" shape="rect" coords="0,56,168,80"/>
-<area href="class_napi_1_1_value.html" title="A JavaScript value of unknown type. " alt="Napi::Value" shape="rect" coords="0,0,168,24"/>
-<area href="class_napi_1_1_typed_array__.html" alt="Napi::TypedArray_&lt; T, A &gt;" shape="rect" coords="0,168,168,192"/>
+<area href="class_napi_1_1_object.html" title="A JavaScript object value. " alt="Napi::Object" shape="rect" coords="0,56,157,80"/>
+<area href="class_napi_1_1_value.html" title="A JavaScript value of unknown type. " alt="Napi::Value" shape="rect" coords="0,0,157,24"/>
+<area href="class_napi_1_1_typed_array_of.html" title="A JavaScript typed-array value with known array type. " alt="Napi::TypedArrayOf&lt; T &gt;" shape="rect" coords="0,168,157,192"/>
 </map>
  </div></div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
 <tr class="memitem:afa0548d223dce79a1f4d949fe8577761"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_napi_1_1_typed_array.html#afa0548d223dce79a1f4d949fe8577761">TypedArray</a> ()</td></tr>
+<tr class="memdesc:afa0548d223dce79a1f4d949fe8577761"><td class="mdescLeft">&#160;</td><td class="mdescRight">Creates a new <em>empty</em> <a class="el" href="class_napi_1_1_typed_array.html" title="A JavaScript typed-array value with unknown array type. ">TypedArray</a> instance.  <a href="#afa0548d223dce79a1f4d949fe8577761">More...</a><br /></td></tr>
 <tr class="separator:afa0548d223dce79a1f4d949fe8577761"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:abcfcd767669263d93e6931b26ad5ea7c"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_napi_1_1_typed_array.html#abcfcd767669263d93e6931b26ad5ea7c">TypedArray</a> (napi_env env, napi_value value)</td></tr>
+<tr class="memdesc:abcfcd767669263d93e6931b26ad5ea7c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Wraps a N-API value primitive.  <a href="#abcfcd767669263d93e6931b26ad5ea7c">More...</a><br /></td></tr>
 <tr class="separator:abcfcd767669263d93e6931b26ad5ea7c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a785c2c1bfd1f0bfe60c1195630fc3d66"><td class="memItemLeft" align="right" valign="top">napi_typedarray_type&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_napi_1_1_typed_array.html#a785c2c1bfd1f0bfe60c1195630fc3d66">TypedArrayType</a> () const</td></tr>
+<tr class="memdesc:a785c2c1bfd1f0bfe60c1195630fc3d66"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the type of this typed-array.  <a href="#a785c2c1bfd1f0bfe60c1195630fc3d66">More...</a><br /></td></tr>
 <tr class="separator:a785c2c1bfd1f0bfe60c1195630fc3d66"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aff44a55d32ccd49332fc4c11ee38d878"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_napi_1_1_array_buffer.html">Napi::ArrayBuffer</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_napi_1_1_typed_array.html#aff44a55d32ccd49332fc4c11ee38d878">ArrayBuffer</a> () const</td></tr>
+<tr class="memdesc:aff44a55d32ccd49332fc4c11ee38d878"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the backing array buffer.  <a href="#aff44a55d32ccd49332fc4c11ee38d878">More...</a><br /></td></tr>
+<tr class="separator:aff44a55d32ccd49332fc4c11ee38d878"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3ece697e75d1f598f63234f9c40a2a01"><td class="memItemLeft" align="right" valign="top">uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_napi_1_1_typed_array.html#a3ece697e75d1f598f63234f9c40a2a01">ElementSize</a> () const</td></tr>
+<tr class="memdesc:a3ece697e75d1f598f63234f9c40a2a01"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the size in bytes of one element in the array.  <a href="#a3ece697e75d1f598f63234f9c40a2a01">More...</a><br /></td></tr>
 <tr class="separator:a3ece697e75d1f598f63234f9c40a2a01"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a235199bda862bf0f2d2a284bd2cb88b3"><td class="memItemLeft" align="right" valign="top">size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_napi_1_1_typed_array.html#a235199bda862bf0f2d2a284bd2cb88b3">ElementLength</a> () const</td></tr>
+<tr class="memdesc:a235199bda862bf0f2d2a284bd2cb88b3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the number of elements in the array.  <a href="#a235199bda862bf0f2d2a284bd2cb88b3">More...</a><br /></td></tr>
 <tr class="separator:a235199bda862bf0f2d2a284bd2cb88b3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6ac39c0d2117ce9fafe1b29d79f93501"><td class="memItemLeft" align="right" valign="top">size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_napi_1_1_typed_array.html#a6ac39c0d2117ce9fafe1b29d79f93501">ByteOffset</a> () const</td></tr>
+<tr class="memdesc:a6ac39c0d2117ce9fafe1b29d79f93501"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the offset into the buffer where the array starts.  <a href="#a6ac39c0d2117ce9fafe1b29d79f93501">More...</a><br /></td></tr>
 <tr class="separator:a6ac39c0d2117ce9fafe1b29d79f93501"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a67e7d1f7fd0bfbefcfeeb361d5ffac08"><td class="memItemLeft" align="right" valign="top">size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_napi_1_1_typed_array.html#a67e7d1f7fd0bfbefcfeeb361d5ffac08">ByteLength</a> () const</td></tr>
+<tr class="memdesc:a67e7d1f7fd0bfbefcfeeb361d5ffac08"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the length of the array in bytes.  <a href="#a67e7d1f7fd0bfbefcfeeb361d5ffac08">More...</a><br /></td></tr>
 <tr class="separator:a67e7d1f7fd0bfbefcfeeb361d5ffac08"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aff44a55d32ccd49332fc4c11ee38d878"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_napi_1_1_array_buffer.html">Napi::ArrayBuffer</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_napi_1_1_typed_array.html#aff44a55d32ccd49332fc4c11ee38d878">ArrayBuffer</a> () const</td></tr>
-<tr class="separator:aff44a55d32ccd49332fc4c11ee38d878"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a540ceca8f13bace69cdc753dd1fa3058"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespace_napi.html#a56a2ae08fe3da77ef1072fe15febfd0b">Int8Array</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_napi_1_1_typed_array.html#a540ceca8f13bace69cdc753dd1fa3058">AsInt8Array</a> () const</td></tr>
-<tr class="separator:a540ceca8f13bace69cdc753dd1fa3058"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aef133a682a5073dc967bc5fca6e5a10f"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespace_napi.html#a98aa6cb2d9cc9aab974f9a007dfc419f">Uint8Array</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_napi_1_1_typed_array.html#aef133a682a5073dc967bc5fca6e5a10f">AsUint8Array</a> () const</td></tr>
-<tr class="separator:aef133a682a5073dc967bc5fca6e5a10f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a340d0d220459212bd282d5e759444652"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespace_napi.html#a56c90e4b5311ae7c89b2e8821d96af48">Uint8ClampedArray</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_napi_1_1_typed_array.html#a340d0d220459212bd282d5e759444652">AsUint8ClampedArray</a> () const</td></tr>
-<tr class="separator:a340d0d220459212bd282d5e759444652"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a40bcc5e4e4861871261ed3cf903693e5"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespace_napi.html#a90f1a9d4aa5c6642ef620258362b09a3">Int16Array</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_napi_1_1_typed_array.html#a40bcc5e4e4861871261ed3cf903693e5">AsInt16Array</a> () const</td></tr>
-<tr class="separator:a40bcc5e4e4861871261ed3cf903693e5"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a76249b54635b89cb4007a7df8ec5db2a"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespace_napi.html#ad3e221be90843a230a44940a34a2181e">Uint16Array</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_napi_1_1_typed_array.html#a76249b54635b89cb4007a7df8ec5db2a">AsUint16Array</a> () const</td></tr>
-<tr class="separator:a76249b54635b89cb4007a7df8ec5db2a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:adef7ca9cc8fed02d8175b4565cc9b809"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespace_napi.html#ad6e426c07e2e958a49cd19ae3693e7d2">Int32Array</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_napi_1_1_typed_array.html#adef7ca9cc8fed02d8175b4565cc9b809">AsInt32Array</a> () const</td></tr>
-<tr class="separator:adef7ca9cc8fed02d8175b4565cc9b809"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3d9152b4c0341bbe529731537b91432e"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespace_napi.html#ab5d69646c45cab38f4ee3acc3b3dee15">Uint32Array</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_napi_1_1_typed_array.html#a3d9152b4c0341bbe529731537b91432e">AsUint32Array</a> () const</td></tr>
-<tr class="separator:a3d9152b4c0341bbe529731537b91432e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a73aa2a08decef39a026f7cf403e5ab55"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespace_napi.html#abd3d969befe9f60fb8a7d9bac4463800">Float32Array</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_napi_1_1_typed_array.html#a73aa2a08decef39a026f7cf403e5ab55">AsFloat32Array</a> () const</td></tr>
-<tr class="separator:a73aa2a08decef39a026f7cf403e5ab55"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac46ef37415059a95746b620ace2d8d7f"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespace_napi.html#a276d3b0e1f3ed60645e8ea487c68c48e">Float64Array</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_napi_1_1_typed_array.html#ac46ef37415059a95746b620ace2d8d7f">AsFloat64Array</a> () const</td></tr>
-<tr class="separator:ac46ef37415059a95746b620ace2d8d7f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_methods_class_napi_1_1_object"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_class_napi_1_1_object')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="class_napi_1_1_object.html">Napi::Object</a></td></tr>
 <tr class="memitem:af8444323ad4b377c2a688550b74183e7 inherit pub_methods_class_napi_1_1_object"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_napi_1_1_object.html#af8444323ad4b377c2a688550b74183e7">Object</a> ()</td></tr>
+<tr class="memdesc:af8444323ad4b377c2a688550b74183e7 inherit pub_methods_class_napi_1_1_object"><td class="mdescLeft">&#160;</td><td class="mdescRight">Creates a new <em>empty</em> <a class="el" href="class_napi_1_1_object.html" title="A JavaScript object value. ">Object</a> instance.  <a href="class_napi_1_1_object.html#af8444323ad4b377c2a688550b74183e7">More...</a><br /></td></tr>
 <tr class="separator:af8444323ad4b377c2a688550b74183e7 inherit pub_methods_class_napi_1_1_object"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ace3f659ef30b9c9190ef27c7a9120f0f inherit pub_methods_class_napi_1_1_object"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_napi_1_1_object.html#ace3f659ef30b9c9190ef27c7a9120f0f">Object</a> (napi_env env, napi_value value)</td></tr>
+<tr class="memdesc:ace3f659ef30b9c9190ef27c7a9120f0f inherit pub_methods_class_napi_1_1_object"><td class="mdescLeft">&#160;</td><td class="mdescRight">Wraps a N-API value primitive.  <a href="class_napi_1_1_object.html#ace3f659ef30b9c9190ef27c7a9120f0f">More...</a><br /></td></tr>
 <tr class="separator:ace3f659ef30b9c9190ef27c7a9120f0f inherit pub_methods_class_napi_1_1_object"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5609545c6d55a61b1646c9215165b505 inherit pub_methods_class_napi_1_1_object"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_napi_1_1_property_l_value.html">PropertyLValue</a>&lt; std::string &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_napi_1_1_object.html#a5609545c6d55a61b1646c9215165b505">operator[]</a> (const char *name)</td></tr>
-<tr class="separator:a5609545c6d55a61b1646c9215165b505 inherit pub_methods_class_napi_1_1_object"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac5f35d7b2530d7eb74dc2d55822f6f31 inherit pub_methods_class_napi_1_1_object"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_napi_1_1_property_l_value.html">PropertyLValue</a>&lt; std::string &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_napi_1_1_object.html#ac5f35d7b2530d7eb74dc2d55822f6f31">operator[]</a> (const std::string &amp;name)</td></tr>
-<tr class="separator:ac5f35d7b2530d7eb74dc2d55822f6f31 inherit pub_methods_class_napi_1_1_object"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a60b930c158ce287ca0d8c8911974904f inherit pub_methods_class_napi_1_1_object"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_napi_1_1_property_l_value.html">PropertyLValue</a>&lt; uint32_t &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_napi_1_1_object.html#a60b930c158ce287ca0d8c8911974904f">operator[]</a> (uint32_t index)</td></tr>
+<tr class="memitem:abf80f9e6be79c9b02f87d816fcca534b inherit pub_methods_class_napi_1_1_object"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_napi_1_1_object_1_1_property_l_value.html">PropertyLValue</a>&lt; std::string &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_napi_1_1_object.html#abf80f9e6be79c9b02f87d816fcca534b">operator[]</a> (const char *utf8name)</td></tr>
+<tr class="memdesc:abf80f9e6be79c9b02f87d816fcca534b inherit pub_methods_class_napi_1_1_object"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets or sets a named property.  <a href="class_napi_1_1_object.html#abf80f9e6be79c9b02f87d816fcca534b">More...</a><br /></td></tr>
+<tr class="separator:abf80f9e6be79c9b02f87d816fcca534b inherit pub_methods_class_napi_1_1_object"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae4e5981dd4567837deeb3214efec0c1c inherit pub_methods_class_napi_1_1_object"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_napi_1_1_object_1_1_property_l_value.html">PropertyLValue</a>&lt; std::string &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_napi_1_1_object.html#ae4e5981dd4567837deeb3214efec0c1c">operator[]</a> (const std::string &amp;utf8name)</td></tr>
+<tr class="memdesc:ae4e5981dd4567837deeb3214efec0c1c inherit pub_methods_class_napi_1_1_object"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets or sets a named property.  <a href="class_napi_1_1_object.html#ae4e5981dd4567837deeb3214efec0c1c">More...</a><br /></td></tr>
+<tr class="separator:ae4e5981dd4567837deeb3214efec0c1c inherit pub_methods_class_napi_1_1_object"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a60b930c158ce287ca0d8c8911974904f inherit pub_methods_class_napi_1_1_object"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_napi_1_1_object_1_1_property_l_value.html">PropertyLValue</a>&lt; uint32_t &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_napi_1_1_object.html#a60b930c158ce287ca0d8c8911974904f">operator[]</a> (uint32_t index)</td></tr>
+<tr class="memdesc:a60b930c158ce287ca0d8c8911974904f inherit pub_methods_class_napi_1_1_object"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets or sets an indexed property or array element.  <a href="class_napi_1_1_object.html#a60b930c158ce287ca0d8c8911974904f">More...</a><br /></td></tr>
 <tr class="separator:a60b930c158ce287ca0d8c8911974904f inherit pub_methods_class_napi_1_1_object"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7c51806adf86ea86b5f6fcf509ca224d inherit pub_methods_class_napi_1_1_object"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_napi_1_1_value.html">Value</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_napi_1_1_object.html#a7c51806adf86ea86b5f6fcf509ca224d">operator[]</a> (const char *name) const</td></tr>
-<tr class="separator:a7c51806adf86ea86b5f6fcf509ca224d inherit pub_methods_class_napi_1_1_object"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac8d7c92db99589b8434082cc6e2be6b5 inherit pub_methods_class_napi_1_1_object"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_napi_1_1_value.html">Value</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_napi_1_1_object.html#ac8d7c92db99589b8434082cc6e2be6b5">operator[]</a> (const std::string &amp;name) const</td></tr>
-<tr class="separator:ac8d7c92db99589b8434082cc6e2be6b5 inherit pub_methods_class_napi_1_1_object"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0f9b6828f95e827c603750bac4a52ea8 inherit pub_methods_class_napi_1_1_object"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_napi_1_1_value.html">Value</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_napi_1_1_object.html#a0f9b6828f95e827c603750bac4a52ea8">operator[]</a> (const char *utf8name) const</td></tr>
+<tr class="memdesc:a0f9b6828f95e827c603750bac4a52ea8 inherit pub_methods_class_napi_1_1_object"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets a named property.  <a href="class_napi_1_1_object.html#a0f9b6828f95e827c603750bac4a52ea8">More...</a><br /></td></tr>
+<tr class="separator:a0f9b6828f95e827c603750bac4a52ea8 inherit pub_methods_class_napi_1_1_object"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a84f12987c335756c6f315df2552bf80f inherit pub_methods_class_napi_1_1_object"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_napi_1_1_value.html">Value</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_napi_1_1_object.html#a84f12987c335756c6f315df2552bf80f">operator[]</a> (const std::string &amp;utf8name) const</td></tr>
+<tr class="memdesc:a84f12987c335756c6f315df2552bf80f inherit pub_methods_class_napi_1_1_object"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets a named property.  <a href="class_napi_1_1_object.html#a84f12987c335756c6f315df2552bf80f">More...</a><br /></td></tr>
+<tr class="separator:a84f12987c335756c6f315df2552bf80f inherit pub_methods_class_napi_1_1_object"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3f6c49039c4552d796f9f0cfc5e585b3 inherit pub_methods_class_napi_1_1_object"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_napi_1_1_value.html">Value</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_napi_1_1_object.html#a3f6c49039c4552d796f9f0cfc5e585b3">operator[]</a> (uint32_t index) const</td></tr>
+<tr class="memdesc:a3f6c49039c4552d796f9f0cfc5e585b3 inherit pub_methods_class_napi_1_1_object"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets an indexed property or array element.  <a href="class_napi_1_1_object.html#a3f6c49039c4552d796f9f0cfc5e585b3">More...</a><br /></td></tr>
 <tr class="separator:a3f6c49039c4552d796f9f0cfc5e585b3 inherit pub_methods_class_napi_1_1_object"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab368f0a6a76cc442326f51c936e488a8 inherit pub_methods_class_napi_1_1_object"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_napi_1_1_object.html#ab368f0a6a76cc442326f51c936e488a8">Has</a> (napi_value name) const</td></tr>
-<tr class="separator:ab368f0a6a76cc442326f51c936e488a8 inherit pub_methods_class_napi_1_1_object"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa3eb01ba9fc8f95a287794d60b1b4c67 inherit pub_methods_class_napi_1_1_object"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_napi_1_1_object.html#aa3eb01ba9fc8f95a287794d60b1b4c67">Has</a> (<a class="el" href="class_napi_1_1_value.html">Value</a> name) const</td></tr>
-<tr class="separator:aa3eb01ba9fc8f95a287794d60b1b4c67 inherit pub_methods_class_napi_1_1_object"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab53a062c116a18dfba5875c3c517958c inherit pub_methods_class_napi_1_1_object"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_napi_1_1_object.html#ab53a062c116a18dfba5875c3c517958c">Has</a> (napi_value key) const</td></tr>
+<tr class="memdesc:ab53a062c116a18dfba5875c3c517958c inherit pub_methods_class_napi_1_1_object"><td class="mdescLeft">&#160;</td><td class="mdescRight">Checks whether a property is present.  <a href="class_napi_1_1_object.html#ab53a062c116a18dfba5875c3c517958c">More...</a><br /></td></tr>
+<tr class="separator:ab53a062c116a18dfba5875c3c517958c inherit pub_methods_class_napi_1_1_object"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad8ee7e0474b9b8b29b670cd49050f7f0 inherit pub_methods_class_napi_1_1_object"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_napi_1_1_object.html#ad8ee7e0474b9b8b29b670cd49050f7f0">Has</a> (<a class="el" href="class_napi_1_1_value.html">Value</a> key) const</td></tr>
+<tr class="memdesc:ad8ee7e0474b9b8b29b670cd49050f7f0 inherit pub_methods_class_napi_1_1_object"><td class="mdescLeft">&#160;</td><td class="mdescRight">Checks whether a property is present.  <a href="class_napi_1_1_object.html#ad8ee7e0474b9b8b29b670cd49050f7f0">More...</a><br /></td></tr>
+<tr class="separator:ad8ee7e0474b9b8b29b670cd49050f7f0 inherit pub_methods_class_napi_1_1_object"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae700bed28a33dc2738750dd1127809af inherit pub_methods_class_napi_1_1_object"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_napi_1_1_object.html#ae700bed28a33dc2738750dd1127809af">Has</a> (const char *utf8name) const</td></tr>
+<tr class="memdesc:ae700bed28a33dc2738750dd1127809af inherit pub_methods_class_napi_1_1_object"><td class="mdescLeft">&#160;</td><td class="mdescRight">Checks whether a named property is present.  <a href="class_napi_1_1_object.html#ae700bed28a33dc2738750dd1127809af">More...</a><br /></td></tr>
 <tr class="separator:ae700bed28a33dc2738750dd1127809af inherit pub_methods_class_napi_1_1_object"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9173968a781889300e5519a3f53b9d4b inherit pub_methods_class_napi_1_1_object"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_napi_1_1_object.html#a9173968a781889300e5519a3f53b9d4b">Has</a> (const std::string &amp;utf8name) const</td></tr>
+<tr class="memdesc:a9173968a781889300e5519a3f53b9d4b inherit pub_methods_class_napi_1_1_object"><td class="mdescLeft">&#160;</td><td class="mdescRight">Checks whether a named property is present.  <a href="class_napi_1_1_object.html#a9173968a781889300e5519a3f53b9d4b">More...</a><br /></td></tr>
 <tr class="separator:a9173968a781889300e5519a3f53b9d4b inherit pub_methods_class_napi_1_1_object"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8f74b813a45bd5357d13d6337f4fac83 inherit pub_methods_class_napi_1_1_object"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_napi_1_1_value.html">Value</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_napi_1_1_object.html#a8f74b813a45bd5357d13d6337f4fac83">Get</a> (napi_value name) const</td></tr>
-<tr class="separator:a8f74b813a45bd5357d13d6337f4fac83 inherit pub_methods_class_napi_1_1_object"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a33c1616709405283a1802adfe01253a9 inherit pub_methods_class_napi_1_1_object"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_napi_1_1_value.html">Value</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_napi_1_1_object.html#a33c1616709405283a1802adfe01253a9">Get</a> (<a class="el" href="class_napi_1_1_value.html">Value</a> name) const</td></tr>
-<tr class="separator:a33c1616709405283a1802adfe01253a9 inherit pub_methods_class_napi_1_1_object"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9cd2fc6771b869a8f863d75d0b101eb7 inherit pub_methods_class_napi_1_1_object"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_napi_1_1_value.html">Value</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_napi_1_1_object.html#a9cd2fc6771b869a8f863d75d0b101eb7">Get</a> (napi_value key) const</td></tr>
+<tr class="memdesc:a9cd2fc6771b869a8f863d75d0b101eb7 inherit pub_methods_class_napi_1_1_object"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets a property.  <a href="class_napi_1_1_object.html#a9cd2fc6771b869a8f863d75d0b101eb7">More...</a><br /></td></tr>
+<tr class="separator:a9cd2fc6771b869a8f863d75d0b101eb7 inherit pub_methods_class_napi_1_1_object"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a70b2e3b22f810a7b4406732d151bfbb5 inherit pub_methods_class_napi_1_1_object"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_napi_1_1_value.html">Value</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_napi_1_1_object.html#a70b2e3b22f810a7b4406732d151bfbb5">Get</a> (<a class="el" href="class_napi_1_1_value.html">Value</a> key) const</td></tr>
+<tr class="memdesc:a70b2e3b22f810a7b4406732d151bfbb5 inherit pub_methods_class_napi_1_1_object"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets a property.  <a href="class_napi_1_1_object.html#a70b2e3b22f810a7b4406732d151bfbb5">More...</a><br /></td></tr>
+<tr class="separator:a70b2e3b22f810a7b4406732d151bfbb5 inherit pub_methods_class_napi_1_1_object"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a76aeafa45bf4e82449635882d65ed141 inherit pub_methods_class_napi_1_1_object"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_napi_1_1_value.html">Value</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_napi_1_1_object.html#a76aeafa45bf4e82449635882d65ed141">Get</a> (const char *utf8name) const</td></tr>
+<tr class="memdesc:a76aeafa45bf4e82449635882d65ed141 inherit pub_methods_class_napi_1_1_object"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets a named property.  <a href="class_napi_1_1_object.html#a76aeafa45bf4e82449635882d65ed141">More...</a><br /></td></tr>
 <tr class="separator:a76aeafa45bf4e82449635882d65ed141 inherit pub_methods_class_napi_1_1_object"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a583b2647a7e05fc95cf9ebc27cb0a36e inherit pub_methods_class_napi_1_1_object"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_napi_1_1_value.html">Value</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_napi_1_1_object.html#a583b2647a7e05fc95cf9ebc27cb0a36e">Get</a> (const std::string &amp;utf8name) const</td></tr>
+<tr class="memdesc:a583b2647a7e05fc95cf9ebc27cb0a36e inherit pub_methods_class_napi_1_1_object"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets a named property.  <a href="class_napi_1_1_object.html#a583b2647a7e05fc95cf9ebc27cb0a36e">More...</a><br /></td></tr>
 <tr class="separator:a583b2647a7e05fc95cf9ebc27cb0a36e inherit pub_methods_class_napi_1_1_object"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a74b91b9a5cc507a0e07057957f1e14a1 inherit pub_methods_class_napi_1_1_object"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_napi_1_1_object.html#a74b91b9a5cc507a0e07057957f1e14a1">Set</a> (napi_value name, napi_value value)</td></tr>
-<tr class="separator:a74b91b9a5cc507a0e07057957f1e14a1 inherit pub_methods_class_napi_1_1_object"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abe1d30fce9e2daa4bc454d38f7b20586 inherit pub_methods_class_napi_1_1_object"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_napi_1_1_object.html#abe1d30fce9e2daa4bc454d38f7b20586">Set</a> (napi_value key, napi_value value)</td></tr>
+<tr class="memdesc:abe1d30fce9e2daa4bc454d38f7b20586 inherit pub_methods_class_napi_1_1_object"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets a property.  <a href="class_napi_1_1_object.html#abe1d30fce9e2daa4bc454d38f7b20586">More...</a><br /></td></tr>
+<tr class="separator:abe1d30fce9e2daa4bc454d38f7b20586 inherit pub_methods_class_napi_1_1_object"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a37c1496314c27d2ac7c151de726a8b5b inherit pub_methods_class_napi_1_1_object"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_napi_1_1_object.html#a37c1496314c27d2ac7c151de726a8b5b">Set</a> (<a class="el" href="class_napi_1_1_value.html">Value</a> key, <a class="el" href="class_napi_1_1_value.html">Value</a> value)</td></tr>
+<tr class="memdesc:a37c1496314c27d2ac7c151de726a8b5b inherit pub_methods_class_napi_1_1_object"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets a property.  <a href="class_napi_1_1_object.html#a37c1496314c27d2ac7c151de726a8b5b">More...</a><br /></td></tr>
+<tr class="separator:a37c1496314c27d2ac7c151de726a8b5b inherit pub_methods_class_napi_1_1_object"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a95b25a4fc3c765aaf5f63053f08761f2 inherit pub_methods_class_napi_1_1_object"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_napi_1_1_object.html#a95b25a4fc3c765aaf5f63053f08761f2">Set</a> (const char *utf8name, napi_value value)</td></tr>
+<tr class="memdesc:a95b25a4fc3c765aaf5f63053f08761f2 inherit pub_methods_class_napi_1_1_object"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets a named property.  <a href="class_napi_1_1_object.html#a95b25a4fc3c765aaf5f63053f08761f2">More...</a><br /></td></tr>
 <tr class="separator:a95b25a4fc3c765aaf5f63053f08761f2 inherit pub_methods_class_napi_1_1_object"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a267c4a363cc7d2cd4ff01d56f7c49a5f inherit pub_methods_class_napi_1_1_object"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_napi_1_1_object.html#a267c4a363cc7d2cd4ff01d56f7c49a5f">Set</a> (const char *utf8name, <a class="el" href="class_napi_1_1_value.html">Value</a> value)</td></tr>
+<tr class="memdesc:a267c4a363cc7d2cd4ff01d56f7c49a5f inherit pub_methods_class_napi_1_1_object"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets a named property.  <a href="class_napi_1_1_object.html#a267c4a363cc7d2cd4ff01d56f7c49a5f">More...</a><br /></td></tr>
 <tr class="separator:a267c4a363cc7d2cd4ff01d56f7c49a5f inherit pub_methods_class_napi_1_1_object"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a45ab24ba60ed8c478e274f674fc19224 inherit pub_methods_class_napi_1_1_object"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_napi_1_1_object.html#a45ab24ba60ed8c478e274f674fc19224">Set</a> (const char *utf8name, const char *utf8value)</td></tr>
+<tr class="memdesc:a45ab24ba60ed8c478e274f674fc19224 inherit pub_methods_class_napi_1_1_object"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets a named property to a string value.  <a href="class_napi_1_1_object.html#a45ab24ba60ed8c478e274f674fc19224">More...</a><br /></td></tr>
 <tr class="separator:a45ab24ba60ed8c478e274f674fc19224 inherit pub_methods_class_napi_1_1_object"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aeaab9a81baedab174f30fd5a40f529b2 inherit pub_methods_class_napi_1_1_object"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_napi_1_1_object.html#aeaab9a81baedab174f30fd5a40f529b2">Set</a> (const char *utf8name, bool boolValue)</td></tr>
+<tr class="memdesc:aeaab9a81baedab174f30fd5a40f529b2 inherit pub_methods_class_napi_1_1_object"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets a named property to a boolean value.  <a href="class_napi_1_1_object.html#aeaab9a81baedab174f30fd5a40f529b2">More...</a><br /></td></tr>
 <tr class="separator:aeaab9a81baedab174f30fd5a40f529b2 inherit pub_methods_class_napi_1_1_object"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a130ffb5081ae1f30d745262335ef0683 inherit pub_methods_class_napi_1_1_object"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_napi_1_1_object.html#a130ffb5081ae1f30d745262335ef0683">Set</a> (const char *utf8name, double numberValue)</td></tr>
+<tr class="memdesc:a130ffb5081ae1f30d745262335ef0683 inherit pub_methods_class_napi_1_1_object"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets a named property to a number value.  <a href="class_napi_1_1_object.html#a130ffb5081ae1f30d745262335ef0683">More...</a><br /></td></tr>
 <tr class="separator:a130ffb5081ae1f30d745262335ef0683 inherit pub_methods_class_napi_1_1_object"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac585506c22a92b06b4a682d69653e646 inherit pub_methods_class_napi_1_1_object"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_napi_1_1_object.html#ac585506c22a92b06b4a682d69653e646">Set</a> (const std::string &amp;utf8name, napi_value value)</td></tr>
+<tr class="memdesc:ac585506c22a92b06b4a682d69653e646 inherit pub_methods_class_napi_1_1_object"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets a named property.  <a href="class_napi_1_1_object.html#ac585506c22a92b06b4a682d69653e646">More...</a><br /></td></tr>
 <tr class="separator:ac585506c22a92b06b4a682d69653e646 inherit pub_methods_class_napi_1_1_object"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:adbaad21e8ed3e41fa8c2c8ce495fd614 inherit pub_methods_class_napi_1_1_object"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_napi_1_1_object.html#adbaad21e8ed3e41fa8c2c8ce495fd614">Set</a> (const std::string &amp;utf8name, <a class="el" href="class_napi_1_1_value.html">Value</a> value)</td></tr>
+<tr class="memdesc:adbaad21e8ed3e41fa8c2c8ce495fd614 inherit pub_methods_class_napi_1_1_object"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets a named property.  <a href="class_napi_1_1_object.html#adbaad21e8ed3e41fa8c2c8ce495fd614">More...</a><br /></td></tr>
 <tr class="separator:adbaad21e8ed3e41fa8c2c8ce495fd614 inherit pub_methods_class_napi_1_1_object"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a527493b802ea90b161abf77cc0f95aae inherit pub_methods_class_napi_1_1_object"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_napi_1_1_object.html#a527493b802ea90b161abf77cc0f95aae">Set</a> (const std::string &amp;utf8name, std::string &amp;utf8value)</td></tr>
+<tr class="memdesc:a527493b802ea90b161abf77cc0f95aae inherit pub_methods_class_napi_1_1_object"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets a named property to a string value.  <a href="class_napi_1_1_object.html#a527493b802ea90b161abf77cc0f95aae">More...</a><br /></td></tr>
 <tr class="separator:a527493b802ea90b161abf77cc0f95aae inherit pub_methods_class_napi_1_1_object"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a628b70bd26921dc2f1f80f03ab355928 inherit pub_methods_class_napi_1_1_object"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_napi_1_1_object.html#a628b70bd26921dc2f1f80f03ab355928">Set</a> (const std::string &amp;utf8name, bool boolValue)</td></tr>
+<tr class="memdesc:a628b70bd26921dc2f1f80f03ab355928 inherit pub_methods_class_napi_1_1_object"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets a named property to a boolean value.  <a href="class_napi_1_1_object.html#a628b70bd26921dc2f1f80f03ab355928">More...</a><br /></td></tr>
 <tr class="separator:a628b70bd26921dc2f1f80f03ab355928 inherit pub_methods_class_napi_1_1_object"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a726238e04d00e2159d30dd25edaaaf0b inherit pub_methods_class_napi_1_1_object"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_napi_1_1_object.html#a726238e04d00e2159d30dd25edaaaf0b">Set</a> (const std::string &amp;utf8name, double numberValue)</td></tr>
+<tr class="memdesc:a726238e04d00e2159d30dd25edaaaf0b inherit pub_methods_class_napi_1_1_object"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets a named property to a number value.  <a href="class_napi_1_1_object.html#a726238e04d00e2159d30dd25edaaaf0b">More...</a><br /></td></tr>
 <tr class="separator:a726238e04d00e2159d30dd25edaaaf0b inherit pub_methods_class_napi_1_1_object"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa7cbd88dbd32a2158d97a70d42edf434 inherit pub_methods_class_napi_1_1_object"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_napi_1_1_object.html#aa7cbd88dbd32a2158d97a70d42edf434">Has</a> (uint32_t index) const</td></tr>
+<tr class="memdesc:aa7cbd88dbd32a2158d97a70d42edf434 inherit pub_methods_class_napi_1_1_object"><td class="mdescLeft">&#160;</td><td class="mdescRight">Checks whether an indexed property is present.  <a href="class_napi_1_1_object.html#aa7cbd88dbd32a2158d97a70d42edf434">More...</a><br /></td></tr>
 <tr class="separator:aa7cbd88dbd32a2158d97a70d42edf434 inherit pub_methods_class_napi_1_1_object"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:afc0867d9fdb68b5096f99773efa9e1ed inherit pub_methods_class_napi_1_1_object"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_napi_1_1_value.html">Value</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_napi_1_1_object.html#afc0867d9fdb68b5096f99773efa9e1ed">Get</a> (uint32_t index) const</td></tr>
+<tr class="memdesc:afc0867d9fdb68b5096f99773efa9e1ed inherit pub_methods_class_napi_1_1_object"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets an indexed property or array element.  <a href="class_napi_1_1_object.html#afc0867d9fdb68b5096f99773efa9e1ed">More...</a><br /></td></tr>
 <tr class="separator:afc0867d9fdb68b5096f99773efa9e1ed inherit pub_methods_class_napi_1_1_object"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab05365f5e48184b1a57afed8531c3862 inherit pub_methods_class_napi_1_1_object"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_napi_1_1_object.html#ab05365f5e48184b1a57afed8531c3862">Set</a> (uint32_t index, napi_value value)</td></tr>
+<tr class="memdesc:ab05365f5e48184b1a57afed8531c3862 inherit pub_methods_class_napi_1_1_object"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets an indexed property or array element.  <a href="class_napi_1_1_object.html#ab05365f5e48184b1a57afed8531c3862">More...</a><br /></td></tr>
 <tr class="separator:ab05365f5e48184b1a57afed8531c3862 inherit pub_methods_class_napi_1_1_object"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a381cb9c23e4d14b354588c1cd14a15bc inherit pub_methods_class_napi_1_1_object"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_napi_1_1_object.html#a381cb9c23e4d14b354588c1cd14a15bc">Set</a> (uint32_t index, <a class="el" href="class_napi_1_1_value.html">Value</a> value)</td></tr>
+<tr class="memdesc:a381cb9c23e4d14b354588c1cd14a15bc inherit pub_methods_class_napi_1_1_object"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets an indexed property or array element.  <a href="class_napi_1_1_object.html#a381cb9c23e4d14b354588c1cd14a15bc">More...</a><br /></td></tr>
 <tr class="separator:a381cb9c23e4d14b354588c1cd14a15bc inherit pub_methods_class_napi_1_1_object"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab3a5e5e72f3b64fb76d2a27969cbec51 inherit pub_methods_class_napi_1_1_object"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_napi_1_1_object.html#ab3a5e5e72f3b64fb76d2a27969cbec51">Set</a> (uint32_t index, const char *utf8value)</td></tr>
+<tr class="memdesc:ab3a5e5e72f3b64fb76d2a27969cbec51 inherit pub_methods_class_napi_1_1_object"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets an indexed property or array element to a string value.  <a href="class_napi_1_1_object.html#ab3a5e5e72f3b64fb76d2a27969cbec51">More...</a><br /></td></tr>
 <tr class="separator:ab3a5e5e72f3b64fb76d2a27969cbec51 inherit pub_methods_class_napi_1_1_object"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a924965d78c2d775d00b73f7f723e1ff3 inherit pub_methods_class_napi_1_1_object"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_napi_1_1_object.html#a924965d78c2d775d00b73f7f723e1ff3">Set</a> (uint32_t index, const std::string &amp;utf8value)</td></tr>
+<tr class="memdesc:a924965d78c2d775d00b73f7f723e1ff3 inherit pub_methods_class_napi_1_1_object"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets an indexed property or array element to a string value.  <a href="class_napi_1_1_object.html#a924965d78c2d775d00b73f7f723e1ff3">More...</a><br /></td></tr>
 <tr class="separator:a924965d78c2d775d00b73f7f723e1ff3 inherit pub_methods_class_napi_1_1_object"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a80ea2cc07c77b4d87c78027989e3118e inherit pub_methods_class_napi_1_1_object"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_napi_1_1_object.html#a80ea2cc07c77b4d87c78027989e3118e">Set</a> (uint32_t index, bool boolValue)</td></tr>
+<tr class="memdesc:a80ea2cc07c77b4d87c78027989e3118e inherit pub_methods_class_napi_1_1_object"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets an indexed property or array element to a boolean value.  <a href="class_napi_1_1_object.html#a80ea2cc07c77b4d87c78027989e3118e">More...</a><br /></td></tr>
 <tr class="separator:a80ea2cc07c77b4d87c78027989e3118e inherit pub_methods_class_napi_1_1_object"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3e214f192ed6dd60d046c25f2848061f inherit pub_methods_class_napi_1_1_object"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_napi_1_1_object.html#a3e214f192ed6dd60d046c25f2848061f">Set</a> (uint32_t index, double numberValue)</td></tr>
+<tr class="memdesc:a3e214f192ed6dd60d046c25f2848061f inherit pub_methods_class_napi_1_1_object"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets an indexed property or array element to a number value.  <a href="class_napi_1_1_object.html#a3e214f192ed6dd60d046c25f2848061f">More...</a><br /></td></tr>
 <tr class="separator:a3e214f192ed6dd60d046c25f2848061f inherit pub_methods_class_napi_1_1_object"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab4d7357ccd178ea2126f4f2dc91428f7 inherit pub_methods_class_napi_1_1_object"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_napi_1_1_object.html#ab4d7357ccd178ea2126f4f2dc91428f7">DefineProperty</a> (const <a class="el" href="class_napi_1_1_property_descriptor.html">PropertyDescriptor</a> &amp;property)</td></tr>
+<tr class="memdesc:ab4d7357ccd178ea2126f4f2dc91428f7 inherit pub_methods_class_napi_1_1_object"><td class="mdescLeft">&#160;</td><td class="mdescRight">Defines a property on the object.  <a href="class_napi_1_1_object.html#ab4d7357ccd178ea2126f4f2dc91428f7">More...</a><br /></td></tr>
 <tr class="separator:ab4d7357ccd178ea2126f4f2dc91428f7 inherit pub_methods_class_napi_1_1_object"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa1166d009326308db792243afbb2c878 inherit pub_methods_class_napi_1_1_object"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_napi_1_1_object.html#aa1166d009326308db792243afbb2c878">DefineProperties</a> (const std::initializer_list&lt; <a class="el" href="class_napi_1_1_property_descriptor.html">PropertyDescriptor</a> &gt; &amp;properties)</td></tr>
+<tr class="memdesc:aa1166d009326308db792243afbb2c878 inherit pub_methods_class_napi_1_1_object"><td class="mdescLeft">&#160;</td><td class="mdescRight">Defines properties on the object.  <a href="class_napi_1_1_object.html#aa1166d009326308db792243afbb2c878">More...</a><br /></td></tr>
 <tr class="separator:aa1166d009326308db792243afbb2c878 inherit pub_methods_class_napi_1_1_object"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:abd206e293b0f6227b02c160cb9b0ef6b inherit pub_methods_class_napi_1_1_object"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_napi_1_1_object.html#abd206e293b0f6227b02c160cb9b0ef6b">DefineProperties</a> (const std::vector&lt; <a class="el" href="class_napi_1_1_property_descriptor.html">PropertyDescriptor</a> &gt; &amp;properties)</td></tr>
+<tr class="memdesc:abd206e293b0f6227b02c160cb9b0ef6b inherit pub_methods_class_napi_1_1_object"><td class="mdescLeft">&#160;</td><td class="mdescRight">Defines properties on the object.  <a href="class_napi_1_1_object.html#abd206e293b0f6227b02c160cb9b0ef6b">More...</a><br /></td></tr>
 <tr class="separator:abd206e293b0f6227b02c160cb9b0ef6b inherit pub_methods_class_napi_1_1_object"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a049745463f0cb24bfc35b25187645220 inherit pub_methods_class_napi_1_1_object"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_napi_1_1_object.html#a049745463f0cb24bfc35b25187645220">InstanceOf</a> (const <a class="el" href="class_napi_1_1_function.html">Function</a> &amp;constructor) const</td></tr>
+<tr class="memdesc:a049745463f0cb24bfc35b25187645220 inherit pub_methods_class_napi_1_1_object"><td class="mdescLeft">&#160;</td><td class="mdescRight">Checks if an object is an instance created by a constructor function.  <a href="class_napi_1_1_object.html#a049745463f0cb24bfc35b25187645220">More...</a><br /></td></tr>
 <tr class="separator:a049745463f0cb24bfc35b25187645220 inherit pub_methods_class_napi_1_1_object"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_methods_class_napi_1_1_value"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_class_napi_1_1_value')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="class_napi_1_1_value.html">Napi::Value</a></td></tr>
 <tr class="memitem:a91352891b563fb744683240949e458e4 inherit pub_methods_class_napi_1_1_value"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_napi_1_1_value.html#a91352891b563fb744683240949e458e4">Value</a> ()</td></tr>
@@ -224,6 +261,9 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a1e1930afac70f2811a222c363d892a42 inherit pub_methods_class_napi_1_1_value"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_napi_1_1_env.html">Napi::Env</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_napi_1_1_value.html#a1e1930afac70f2811a222c363d892a42">Env</a> () const</td></tr>
 <tr class="memdesc:a1e1930afac70f2811a222c363d892a42 inherit pub_methods_class_napi_1_1_value"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the environment the value is associated with.  <a href="class_napi_1_1_value.html#a1e1930afac70f2811a222c363d892a42">More...</a><br /></td></tr>
 <tr class="separator:a1e1930afac70f2811a222c363d892a42 inherit pub_methods_class_napi_1_1_value"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a988bdb3e9806beb7761b4ea864461005 inherit pub_methods_class_napi_1_1_value"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_napi_1_1_value.html#a988bdb3e9806beb7761b4ea864461005">IsEmpty</a> () const</td></tr>
+<tr class="memdesc:a988bdb3e9806beb7761b4ea864461005 inherit pub_methods_class_napi_1_1_value"><td class="mdescLeft">&#160;</td><td class="mdescRight">Checks if the value is empty (uninitialized).  <a href="class_napi_1_1_value.html#a988bdb3e9806beb7761b4ea864461005">More...</a><br /></td></tr>
+<tr class="separator:a988bdb3e9806beb7761b4ea864461005 inherit pub_methods_class_napi_1_1_value"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5da2e4f1a5a6b237159c4cfbd0866281 inherit pub_methods_class_napi_1_1_value"><td class="memItemLeft" align="right" valign="top">napi_valuetype&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_napi_1_1_value.html#a5da2e4f1a5a6b237159c4cfbd0866281">Type</a> () const</td></tr>
 <tr class="memdesc:a5da2e4f1a5a6b237159c4cfbd0866281 inherit pub_methods_class_napi_1_1_value"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the type of the value.  <a href="class_napi_1_1_value.html#a5da2e4f1a5a6b237159c4cfbd0866281">More...</a><br /></td></tr>
 <tr class="separator:a5da2e4f1a5a6b237159c4cfbd0866281 inherit pub_methods_class_napi_1_1_value"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -265,7 +305,7 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a7ae7ce9bb0c81e08285aa36f810b3257 inherit pub_methods_class_napi_1_1_value"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9c1a9c4eca9617b0aafbe311c946982a inherit pub_methods_class_napi_1_1_value"><td class="memTemplParams" colspan="2">template&lt;typename T &gt; </td></tr>
 <tr class="memitem:a9c1a9c4eca9617b0aafbe311c946982a inherit pub_methods_class_napi_1_1_value"><td class="memTemplItemLeft" align="right" valign="top">T&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="class_napi_1_1_value.html#a9c1a9c4eca9617b0aafbe311c946982a">As</a> () const</td></tr>
-<tr class="memdesc:a9c1a9c4eca9617b0aafbe311c946982a inherit pub_methods_class_napi_1_1_value"><td class="mdescLeft">&#160;</td><td class="mdescRight">Converts to another type of <code><a class="el" href="class_napi_1_1_value.html" title="A JavaScript value of unknown type. ">Napi::Value</a></code>, when the actual type is known or assumed.  <a href="class_napi_1_1_value.html#a9c1a9c4eca9617b0aafbe311c946982a">More...</a><br /></td></tr>
+<tr class="memdesc:a9c1a9c4eca9617b0aafbe311c946982a inherit pub_methods_class_napi_1_1_value"><td class="mdescLeft">&#160;</td><td class="mdescRight">Casts to another type of <code><a class="el" href="class_napi_1_1_value.html" title="A JavaScript value of unknown type. ">Napi::Value</a></code>, when the actual type is known or assumed.  <a href="class_napi_1_1_value.html#a9c1a9c4eca9617b0aafbe311c946982a">More...</a><br /></td></tr>
 <tr class="separator:a9c1a9c4eca9617b0aafbe311c946982a inherit pub_methods_class_napi_1_1_value"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a01f08d60906f8221ad3a4a5311b01019 inherit pub_methods_class_napi_1_1_value"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_napi_1_1_boolean.html">Boolean</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_napi_1_1_value.html#a01f08d60906f8221ad3a4a5311b01019">ToBoolean</a> () const</td></tr>
 <tr class="memdesc:a01f08d60906f8221ad3a4a5311b01019 inherit pub_methods_class_napi_1_1_value"><td class="mdescLeft">&#160;</td><td class="mdescRight">Coerces a value to a JavaScript boolean.  <a href="class_napi_1_1_value.html#a01f08d60906f8221ad3a4a5311b01019">More...</a><br /></td></tr>
@@ -285,22 +325,45 @@ Protected Member Functions</h2></td></tr>
 <tr class="memitem:aae2d66cce7185a7d3a9aba9c6461baa0"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_napi_1_1_typed_array.html#aae2d66cce7185a7d3a9aba9c6461baa0">TypedArray</a> (napi_env env, napi_value value, napi_typedarray_type type, size_t length)</td></tr>
 <tr class="separator:aae2d66cce7185a7d3a9aba9c6461baa0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-static-methods"></a>
+Static Protected Member Functions</h2></td></tr>
+<tr class="memitem:aafb5022ae546b366fcc69ebfe152d47a"><td class="memTemplParams" colspan="2">template&lt;typename T &gt; </td></tr>
+<tr class="memitem:aafb5022ae546b366fcc69ebfe152d47a"><td class="memTemplItemLeft" align="right" valign="top">static constexpr napi_typedarray_type&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="class_napi_1_1_typed_array.html#aafb5022ae546b366fcc69ebfe152d47a">TypedArrayTypeForPrimitiveType</a> ()</td></tr>
+<tr class="separator:aafb5022ae546b366fcc69ebfe152d47a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-attribs"></a>
 Protected Attributes</h2></td></tr>
 <tr class="memitem:a4660479cd500d58f28bd7e477efe1cc4"><td class="memItemLeft" align="right" valign="top">napi_typedarray_type&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_napi_1_1_typed_array.html#a4660479cd500d58f28bd7e477efe1cc4">_type</a></td></tr>
+<tr class="memdesc:a4660479cd500d58f28bd7e477efe1cc4"><td class="mdescLeft">&#160;</td><td class="mdescRight">!cond INTERNAL  <a href="#a4660479cd500d58f28bd7e477efe1cc4">More...</a><br /></td></tr>
 <tr class="separator:a4660479cd500d58f28bd7e477efe1cc4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3aaa096878da00dacb2fe6d0fff94648"><td class="memItemLeft" align="right" valign="top">size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_napi_1_1_typed_array.html#a3aaa096878da00dacb2fe6d0fff94648">_length</a></td></tr>
 <tr class="separator:a3aaa096878da00dacb2fe6d0fff94648"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="inherit_header pro_attribs_class_napi_1_1_value"><td colspan="2" onclick="javascript:toggleInherit('pro_attribs_class_napi_1_1_value')"><img src="closed.png" alt="-"/>&#160;Protected Attributes inherited from <a class="el" href="class_napi_1_1_value.html">Napi::Value</a></td></tr>
+<tr class="memitem:ad0a0cc895c3134df3ca3267dbf2dfe08 inherit pro_attribs_class_napi_1_1_value"><td class="memItemLeft" align="right" valign="top">napi_env&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_napi_1_1_value.html#ad0a0cc895c3134df3ca3267dbf2dfe08">_env</a></td></tr>
+<tr class="memdesc:ad0a0cc895c3134df3ca3267dbf2dfe08 inherit pro_attribs_class_napi_1_1_value"><td class="mdescLeft">&#160;</td><td class="mdescRight">!cond INTERNAL  <a href="class_napi_1_1_value.html#ad0a0cc895c3134df3ca3267dbf2dfe08">More...</a><br /></td></tr>
+<tr class="separator:ad0a0cc895c3134df3ca3267dbf2dfe08 inherit pro_attribs_class_napi_1_1_value"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae2060cfa039ca4c6abaff238fb00d1f8 inherit pro_attribs_class_napi_1_1_value"><td class="memItemLeft" align="right" valign="top">napi_value&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_napi_1_1_value.html#ae2060cfa039ca4c6abaff238fb00d1f8">_value</a></td></tr>
+<tr class="separator:ae2060cfa039ca4c6abaff238fb00d1f8 inherit pro_attribs_class_napi_1_1_value"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-static-attribs"></a>
+Static Protected Attributes</h2></td></tr>
+<tr class="memitem:ac6c54685b1aec8511d4f3a12c54aae90"><td class="memItemLeft" align="right" valign="top">static const napi_typedarray_type&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_napi_1_1_typed_array.html#ac6c54685b1aec8511d4f3a12c54aae90">unknown_array_type</a> = static_cast&lt;napi_typedarray_type&gt;(-1)</td></tr>
+<tr class="separator:ac6c54685b1aec8511d4f3a12c54aae90"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="inherited"></a>
 Additional Inherited Members</h2></td></tr>
 <tr class="inherit_header pub_static_methods_class_napi_1_1_object"><td colspan="2" onclick="javascript:toggleInherit('pub_static_methods_class_napi_1_1_object')"><img src="closed.png" alt="-"/>&#160;Static Public Member Functions inherited from <a class="el" href="class_napi_1_1_object.html">Napi::Object</a></td></tr>
 <tr class="memitem:aeacb54cc92a37e065fdecd6e215959e8 inherit pub_static_methods_class_napi_1_1_object"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="class_napi_1_1_object.html">Object</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_napi_1_1_object.html#aeacb54cc92a37e065fdecd6e215959e8">New</a> (napi_env env)</td></tr>
+<tr class="memdesc:aeacb54cc92a37e065fdecd6e215959e8 inherit pub_static_methods_class_napi_1_1_object"><td class="mdescLeft">&#160;</td><td class="mdescRight">Creates a new <a class="el" href="class_napi_1_1_object.html" title="A JavaScript object value. ">Object</a> value.  <a href="class_napi_1_1_object.html#aeacb54cc92a37e065fdecd6e215959e8">More...</a><br /></td></tr>
 <tr class="separator:aeacb54cc92a37e065fdecd6e215959e8 inherit pub_static_methods_class_napi_1_1_object"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock">
-<p class="definition">Definition at line <a class="el" href="napi_8h_source.html#l00376">376</a> of file <a class="el" href="napi_8h_source.html">napi.h</a>.</p>
+<div class="textblock"><p>A JavaScript typed-array value with unknown array type. </p>
+<p>For type-specific operations, cast to a <code><a class="el" href="class_napi_1_1_typed_array_of.html" title="A JavaScript typed-array value with known array type. ">TypedArrayOf</a>&lt;T&gt;</code> instance using the <code><a class="el" href="class_napi_1_1_value.html#a9c1a9c4eca9617b0aafbe311c946982a" title="Casts to another type of Napi::Value, when the actual type is known or assumed. ">As()</a></code> method: </p><pre class="fragment">Napi::TypedArray array = ...
+if (t.TypedArrayType() == napi_int32_array) {
+    Napi::Int32Array int32Array = t.As&lt;Napi::Int32Array&gt;();
+}  </pre> 
+<p class="definition">Definition at line <a class="el" href="napi_8h_source.html#l00649">649</a> of file <a class="el" href="napi_8h_source.html">napi.h</a>.</p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="afa0548d223dce79a1f4d949fe8577761"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#afa0548d223dce79a1f4d949fe8577761">&#9670;&nbsp;</a></span>TypedArray() <span class="overload">[1/3]</span></h2>
@@ -316,6 +379,8 @@ Additional Inherited Members</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Creates a new <em>empty</em> <a class="el" href="class_napi_1_1_typed_array.html" title="A JavaScript typed-array value with unknown array type. ">TypedArray</a> instance. </p>
 
 </div>
 </div>
@@ -344,6 +409,8 @@ Additional Inherited Members</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Wraps a N-API value primitive. </p>
 
 </div>
 </div>
@@ -411,158 +478,7 @@ Additional Inherited Members</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-</div>
-</div>
-<a id="a73aa2a08decef39a026f7cf403e5ab55"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a73aa2a08decef39a026f7cf403e5ab55">&#9670;&nbsp;</a></span>AsFloat32Array()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="namespace_napi.html#abd3d969befe9f60fb8a7d9bac4463800">Float32Array</a> Napi::TypedArray::AsFloat32Array </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td> const</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="ac46ef37415059a95746b620ace2d8d7f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ac46ef37415059a95746b620ace2d8d7f">&#9670;&nbsp;</a></span>AsFloat64Array()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="namespace_napi.html#a276d3b0e1f3ed60645e8ea487c68c48e">Float64Array</a> Napi::TypedArray::AsFloat64Array </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td> const</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="a40bcc5e4e4861871261ed3cf903693e5"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a40bcc5e4e4861871261ed3cf903693e5">&#9670;&nbsp;</a></span>AsInt16Array()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="namespace_napi.html#a90f1a9d4aa5c6642ef620258362b09a3">Int16Array</a> Napi::TypedArray::AsInt16Array </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td> const</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="adef7ca9cc8fed02d8175b4565cc9b809"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#adef7ca9cc8fed02d8175b4565cc9b809">&#9670;&nbsp;</a></span>AsInt32Array()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="namespace_napi.html#ad6e426c07e2e958a49cd19ae3693e7d2">Int32Array</a> Napi::TypedArray::AsInt32Array </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td> const</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="a540ceca8f13bace69cdc753dd1fa3058"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a540ceca8f13bace69cdc753dd1fa3058">&#9670;&nbsp;</a></span>AsInt8Array()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="namespace_napi.html#a56a2ae08fe3da77ef1072fe15febfd0b">Int8Array</a> Napi::TypedArray::AsInt8Array </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td> const</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="a76249b54635b89cb4007a7df8ec5db2a"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a76249b54635b89cb4007a7df8ec5db2a">&#9670;&nbsp;</a></span>AsUint16Array()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="namespace_napi.html#ad3e221be90843a230a44940a34a2181e">Uint16Array</a> Napi::TypedArray::AsUint16Array </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td> const</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="a3d9152b4c0341bbe529731537b91432e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a3d9152b4c0341bbe529731537b91432e">&#9670;&nbsp;</a></span>AsUint32Array()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="namespace_napi.html#ab5d69646c45cab38f4ee3acc3b3dee15">Uint32Array</a> Napi::TypedArray::AsUint32Array </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td> const</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="aef133a682a5073dc967bc5fca6e5a10f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aef133a682a5073dc967bc5fca6e5a10f">&#9670;&nbsp;</a></span>AsUint8Array()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="namespace_napi.html#a98aa6cb2d9cc9aab974f9a007dfc419f">Uint8Array</a> Napi::TypedArray::AsUint8Array </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td> const</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="a340d0d220459212bd282d5e759444652"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a340d0d220459212bd282d5e759444652">&#9670;&nbsp;</a></span>AsUint8ClampedArray()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="namespace_napi.html#a56c90e4b5311ae7c89b2e8821d96af48">Uint8ClampedArray</a> Napi::TypedArray::AsUint8ClampedArray </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td> const</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
+<p>Gets the backing array buffer. </p>
 
 </div>
 </div>
@@ -581,6 +497,8 @@ Additional Inherited Members</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>Gets the length of the array in bytes. </p>
+
 </div>
 </div>
 <a id="a6ac39c0d2117ce9fafe1b29d79f93501"></a>
@@ -597,6 +515,8 @@ Additional Inherited Members</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Gets the offset into the buffer where the array starts. </p>
 
 </div>
 </div>
@@ -615,6 +535,8 @@ Additional Inherited Members</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>Gets the number of elements in the array. </p>
+
 </div>
 </div>
 <a id="a3ece697e75d1f598f63234f9c40a2a01"></a>
@@ -632,6 +554,8 @@ Additional Inherited Members</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>Gets the size in bytes of one element in the array. </p>
+
 </div>
 </div>
 <a id="a785c2c1bfd1f0bfe60c1195630fc3d66"></a>
@@ -648,6 +572,37 @@ Additional Inherited Members</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Gets the type of this typed-array. </p>
+
+</div>
+</div>
+<a id="aafb5022ae546b366fcc69ebfe152d47a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aafb5022ae546b366fcc69ebfe152d47a">&#9670;&nbsp;</a></span>TypedArrayTypeForPrimitiveType()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename T &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static constexpr napi_typedarray_type Napi::TypedArray::TypedArrayTypeForPrimitiveType </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">static</span><span class="mlabel">protected</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="napi_8h_source.html#l00672">672</a> of file <a class="el" href="napi_8h_source.html">napi.h</a>.</p>
 
 </div>
 </div>
@@ -672,7 +627,7 @@ Additional Inherited Members</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="napi_8h_source.html#l00400">400</a> of file <a class="el" href="napi_8h_source.html">napi.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="napi_8h_source.html#l00665">665</a> of file <a class="el" href="napi_8h_source.html">napi.h</a>.</p>
 
 </div>
 </div>
@@ -696,7 +651,33 @@ Additional Inherited Members</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="napi_8h_source.html#l00399">399</a> of file <a class="el" href="napi_8h_source.html">napi.h</a>.</p>
+<p>!cond INTERNAL </p>
+
+<p class="definition">Definition at line <a class="el" href="napi_8h_source.html#l00664">664</a> of file <a class="el" href="napi_8h_source.html">napi.h</a>.</p>
+
+</div>
+</div>
+<a id="ac6c54685b1aec8511d4f3a12c54aae90"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac6c54685b1aec8511d4f3a12c54aae90">&#9670;&nbsp;</a></span>unknown_array_type</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">const napi_typedarray_type Napi::TypedArray::unknown_array_type = static_cast&lt;napi_typedarray_type&gt;(-1)</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span><span class="mlabel">protected</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="napi_8h_source.html#l00669">669</a> of file <a class="el" href="napi_8h_source.html">napi.h</a>.</p>
 
 </div>
 </div>

@@ -22,7 +22,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">N-API
-   &#160;<span id="projectnumber">0.1.0</span>
+   &#160;<span id="projectnumber">0.3.3</span>
    </div>
    <div id="projectbrief">C++ wrapper classes for the ABI-stable C APIs for Node.js</div>
   </td>
@@ -91,6 +91,8 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a410a8ef1c496cafe1a767f3f09810f9c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0e46584af1798aa5ea458d0044678432"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_napi_1_1_env.html#a0e46584af1798aa5ea458d0044678432">IsExceptionPending</a> () const</td></tr>
 <tr class="separator:a0e46584af1798aa5ea458d0044678432"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a496c78b3c5f4e3ee7e3f680f8ba408f1"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_napi_1_1_error.html">Error</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_napi_1_1_env.html#a496c78b3c5f4e3ee7e3f680f8ba408f1">GetAndClearPendingException</a> ()</td></tr>
+<tr class="separator:a496c78b3c5f4e3ee7e3f680f8ba408f1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Environment for N-API values and operations. </p>
@@ -98,7 +100,7 @@ Public Member Functions</h2></td></tr>
 <p>In the future, multiple environments per process may be supported, although current implementations only support one environment per process.</p>
 <p>In the V8 JavaScript engine, a N-API environment approximately corresponds to an Isolate. </p>
 
-<p class="definition">Definition at line <a class="el" href="napi_8h_source.html#l00067">67</a> of file <a class="el" href="napi_8h_source.html">napi.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="napi_8h_source.html#l00076">76</a> of file <a class="el" href="napi_8h_source.html">napi.h</a>.</p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="a0fe2fdf73ba203a87c0c7b1b27ffce16"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a0fe2fdf73ba203a87c0c7b1b27ffce16">&#9670;&nbsp;</a></span>Env()</h2>
@@ -119,6 +121,23 @@ Public Member Functions</h2></td></tr>
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
+<a id="a496c78b3c5f4e3ee7e3f680f8ba408f1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a496c78b3c5f4e3ee7e3f680f8ba408f1">&#9670;&nbsp;</a></span>GetAndClearPendingException()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="class_napi_1_1_error.html">Error</a> Napi::Env::GetAndClearPendingException </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
 <a id="a06f210136f1381a31046e1118dbc5c90"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a06f210136f1381a31046e1118dbc5c90">&#9670;&nbsp;</a></span>Global()</h2>
 
