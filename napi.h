@@ -47,7 +47,6 @@ namespace Napi {
   class PropertyDescriptor;
   class CallbackInfo;
   template <typename T> class Reference;
-  template <typename Key> class PropertyLValue;
   class TypedArray;
   template <typename T> class TypedArrayOf;
 
@@ -104,7 +103,7 @@ namespace Napi {
   ///     bool isTruthy = anotherValue.ToBoolean(); // Coerce to a boolean value
   class Value {
   public:
-    Value(); ///< Creates a new _empty_ Value instance.
+    Value();                               ///< Creates a new _empty_ Value instance.
     Value(napi_env env, napi_value value); ///< Wraps a N-API value primitive.
 
     /// Converts to a N-API value primitive.
@@ -168,42 +167,49 @@ namespace Napi {
     /// !endcond
   };
 
+  /// A JavaScript boolean value.
   class Boolean : public Value {
   public:
-    static Boolean New(napi_env env, bool val);
+    static Boolean New(
+      napi_env env, ///< N-API environment
+      bool value    ///< Boolean value
+    );
 
-    Boolean();
-    Boolean(napi_env env, napi_value value);
+    Boolean();                               ///< Creates a new _empty_ Boolean instance.
+    Boolean(napi_env env, napi_value value); ///< Wraps a N-API value primitive.
 
-    operator bool() const;
-
-    bool Value() const;
+    operator bool() const; ///< Converts a Boolean value to a boolean primitive.
+    bool Value() const;    ///< Converts a Boolean value to a boolean primitive.
   };
 
+  /// A JavaScript number value.
   class Number : public Value {
   public:
-    static Number New(napi_env env, double val);
+    static Number New(
+      napi_env env, ///< N-API environment
+      double value  ///< Number value
+    );
 
-    Number();
-    Number(napi_env env, napi_value value);
+    Number();                               ///< Creates a new _empty_ Number instance.
+    Number(napi_env env, napi_value value); ///< Wraps a N-API value primitive.
 
-    operator int32_t() const;
-    operator uint32_t() const;
-    operator int64_t() const;
-    operator float() const;
-    operator double() const;
+    operator int32_t() const;  ///< Converts a Number value to a 32-bit signed integer value.
+    operator uint32_t() const; ///< Converts a Number value to a 32-bit unsigned integer value.
+    operator int64_t() const;  ///< Converts a Number value to a 64-bit signed integer value.
+    operator float() const;    ///< Converts a Number value to a 32-bit floating-point value.
+    operator double() const;   ///< Converts a Number value to a 64-bit floating-point value.
 
-    int32_t Int32Value() const;
-    uint32_t Uint32Value() const;
-    int64_t Int64Value() const;
-    float FloatValue() const;
-    double DoubleValue() const;
+    int32_t Int32Value() const;   ///< Converts a Number value to a 32-bit signed integer value.
+    uint32_t Uint32Value() const; ///< Converts a Number value to a 32-bit unsigned integer value.
+    int64_t Int64Value() const;   ///< Converts a Number value to a 64-bit signed integer value.
+    float FloatValue() const;     ///< Converts a Number value to a 32-bit floating-point value.
+    double DoubleValue() const;   ///< Converts a Number value to a 64-bit floating-point value.
   };
 
   /// A JavaScript string or symbol value (that can be used as a property name).
   class Name : public Value {
   public:
-    Name(); ///< Creates a new _empty_ Name instance.
+    Name();                               ///< Creates a new _empty_ Name instance.
     Name(napi_env env, napi_value value); ///< Wraps a N-API value primitive.
   };
 
@@ -248,7 +254,7 @@ namespace Napi {
       size_t length          ///< Length of the string in 2-byte code units
     );
 
-    String(); ///< Creates a new _empty_ String instance.
+    String();                               ///< Creates a new _empty_ String instance.
     String(napi_env env, napi_value value); ///< Wraps a N-API value primitive.
 
     operator std::string() const;      ///< Converts a String value to a UTF-8 encoded C++ string.
@@ -257,82 +263,289 @@ namespace Napi {
     std::u16string Utf16Value() const; ///< Converts a String value to a UTF-16 encoded C++ string.
   };
 
+  /// A JavaScript symbol value.
   class Symbol : public Name {
   public:
-    static Symbol New(napi_env env, const char* description = nullptr);
-    static Symbol New(napi_env env, const std::string& description);
-    static Symbol New(napi_env env, String description);
-    static Symbol New(napi_env env, napi_value description);
+    /// Creates a new Symbol value with an optional description.
+    static Symbol New(
+      napi_env env,                     ///< N-API environment
+      const char* description = nullptr ///< Optional UTF-8 encoded null-terminated C string
+                                        ///  describing the symbol
+    );
 
-    Symbol();
-    Symbol(napi_env env, napi_value value);
+    /// Creates a new Symbol value with a description.
+    static Symbol New(
+      napi_env env,                  ///< N-API environment
+      const std::string& description ///< UTF-8 encoded C++ string describing the symbol
+    );
+
+    /// Creates a new Symbol value with a description.
+    static Symbol New(
+      napi_env env,      ///< N-API environment
+      String description ///< String value describing the symbol
+    );
+
+    /// Creates a new Symbol value with a description.
+    static Symbol New(
+      napi_env env,          ///< N-API environment
+      napi_value description ///< String value describing the symbol
+    );
+
+    Symbol();                               ///< Creates a new _empty_ Symbol instance.
+    Symbol(napi_env env, napi_value value); ///< Wraps a N-API value primitive.
   };
 
+  /// A JavaScript object value.
   class Object : public Value {
   public:
-    static Object New(napi_env env);
+    /// Enables property and element assignments using indexing syntax.
+    ///
+    /// Example:
+    ///
+    ///     Napi::Value propertyValue = object1['A'];
+    ///     object2['A'] = propertyValue;
+    ///     Napi::Value elementValue = array[0];
+    ///     array[1] = elementValue;
+    template <typename Key>
+    class PropertyLValue {
+    public:
+      /// Converts an L-value to a value.
+      operator Value() const;
 
-    Object();
-    Object(napi_env env, napi_value value);
+      /// Assigns a value to the property. The type of value can be
+      /// anything supported by `Object::Set`.
+      template <typename ValueType>
+      PropertyLValue& operator =(ValueType value);
 
-    PropertyLValue<std::string> operator [](const char* name);
-    PropertyLValue<std::string> operator [](const std::string& name);
-    PropertyLValue<uint32_t> operator [](uint32_t index);
+    private:
+      PropertyLValue() = delete;
+      PropertyLValue(Object object, Key key);
+      napi_env _env;
+      napi_value _object;
+      Key _key;
 
-    Value operator [](const char* name) const;
-    Value operator [](const std::string& name) const;
-    Value operator [](uint32_t index) const;
+      friend class Napi::Object;
+    };
 
-    bool Has(napi_value name) const;
-    bool Has(Value name) const;
-    bool Has(const char* utf8name) const;
-    bool Has(const std::string& utf8name) const;
-    Value Get(napi_value name) const;
-    Value Get(Value name) const;
-    Value Get(const char* utf8name) const;
-    Value Get(const std::string& utf8name) const;
-    void Set(napi_value name, napi_value value);
-    void Set(const char* utf8name, napi_value value);
-    void Set(const char* utf8name, Value value);
-    void Set(const char* utf8name, const char* utf8value);
-    void Set(const char* utf8name, bool boolValue);
-    void Set(const char* utf8name, double numberValue);
-    void Set(const std::string& utf8name, napi_value value);
-    void Set(const std::string& utf8name, Value value);
-    void Set(const std::string& utf8name, std::string& utf8value);
-    void Set(const std::string& utf8name, bool boolValue);
-    void Set(const std::string& utf8name, double numberValue);
+    /// Creates a new Object value.
+    static Object New(
+      napi_env env ///< N-API environment
+    );
 
-    bool Has(uint32_t index) const;
-    Value Get(uint32_t index) const;
-    void Set(uint32_t index, napi_value value);
-    void Set(uint32_t index, Value value);
-    void Set(uint32_t index, const char* utf8value);
-    void Set(uint32_t index, const std::string& utf8value);
-    void Set(uint32_t index, bool boolValue);
-    void Set(uint32_t index, double numberValue);
+    Object();                               ///< Creates a new _empty_ Object instance.
+    Object(napi_env env, napi_value value); ///< Wraps a N-API value primitive.
 
-    void DefineProperty(const PropertyDescriptor& property);
-    void DefineProperties(const std::initializer_list<PropertyDescriptor>& properties);
-    void DefineProperties(const std::vector<PropertyDescriptor>& properties);
-    bool InstanceOf(const Function& constructor) const;
-  };
+    /// Gets or sets a named property.
+    PropertyLValue<std::string> operator [](
+      const char* utf8name ///< UTF-8 encoded null-terminated property name
+    );
 
-  template <typename Key>
-  class PropertyLValue {
-  public:
-    operator Value() const;
+    /// Gets or sets a named property.
+    PropertyLValue<std::string> operator [](
+      const std::string& utf8name ///< UTF-8 encoded property name
+    );
 
-    // |ValueType| can be anything supported by Object::Set.
-    template <typename ValueType>
-    PropertyLValue& operator =(ValueType value);
-    PropertyLValue() = delete;
-  private:
-    PropertyLValue(Object object, Key key);
-    Object _object;
-    Key _key;
+    /// Gets or sets an indexed property or array element.
+    PropertyLValue<uint32_t> operator [](
+      uint32_t index /// Property / element index
+    );
 
-    friend class Napi::Object;
+    /// Gets a named property.
+    Value operator [](
+      const char* utf8name ///< UTF-8 encoded null-terminated property name
+    ) const;
+
+    /// Gets a named property.
+    Value operator [](
+      const std::string& utf8name ///< UTF-8 encoded property name
+    ) const;
+
+    /// Gets an indexed property or array element.
+    Value operator [](
+      uint32_t index ///< Property / element index
+    ) const;
+
+    /// Checks whether a property is present.
+    bool Has(
+      napi_value key ///< Property key primitive
+    ) const;
+
+    /// Checks whether a property is present.
+    bool Has(
+      Value key ///< Property key
+    ) const;
+
+    /// Checks whether a named property is present.
+    bool Has(
+      const char* utf8name ///< UTF-8 encoded null-terminated property name
+    ) const;
+
+    /// Checks whether a named property is present.
+    bool Has(
+      const std::string& utf8name ///< UTF-8 encoded property name
+    ) const;
+
+    /// Gets a property.
+    Value Get(
+      napi_value key ///< Property key primitive
+    ) const;
+
+    /// Gets a property.
+    Value Get(
+      Value key ///< Property key
+    ) const;
+
+    /// Gets a named property.
+    Value Get(
+      const char* utf8name ///< UTF-8 encoded null-terminated property name
+    ) const;
+
+    /// Gets a named property.
+    Value Get(
+      const std::string& utf8name ///< UTF-8 encoded property name
+    ) const;
+
+    /// Sets a property.
+    void Set(
+      napi_value key,  ///< Property key primitive
+      napi_value value ///< Property value primitive
+    );
+
+    /// Sets a property.
+    void Set(
+      Value key,  ///< Property key
+      Value value ///< Property value
+    );
+
+    /// Sets a named property.
+    void Set(
+      const char* utf8name, ///< UTF-8 encoded null-terminated property name
+      napi_value value      ///< Property value primitive
+    );
+
+    /// Sets a named property.
+    void Set(
+      const char* utf8name, ///< UTF-8 encoded null-terminated property name
+      Value value           ///< Property value
+    );
+
+    /// Sets a named property to a string value.
+    void Set(
+      const char* utf8name, ///< UTF-8 encoded null-terminated property name
+      const char* utf8value ///< UTF-8 encoded null-terminated property value
+    );
+
+    /// Sets a named property to a boolean value.
+    void Set(
+      const char* utf8name, ///< UTF-8 encoded null-terminated property name
+      bool boolValue        ///< Property value
+    );
+
+    /// Sets a named property to a number value.
+    void Set(
+      const char* utf8name, ///< UTF-8 encoded null-terminated property name
+      double numberValue    ///< Property value
+    );
+
+    /// Sets a named property.
+    void Set(
+      const std::string& utf8name, ///< UTF-8 encoded property name
+      napi_value value             ///< Property value primitive
+    );
+
+    /// Sets a named property.
+    void Set(
+      const std::string& utf8name, ///< UTF-8 encoded property name
+      Value value                  ///< Property value
+    );
+
+    /// Sets a named property to a string value.
+    void Set(
+      const std::string& utf8name, ///< UTF-8 encoded property name
+      std::string& utf8value       ///< UTF-8 encoded property value
+    );
+
+    /// Sets a named property to a boolean value.
+    void Set(
+      const std::string& utf8name, ///< UTF-8 encoded property name
+      bool boolValue               ///< Property value
+    );
+
+    /// Sets a named property to a number value.
+    void Set(
+      const std::string& utf8name, ///< UTF-8 encoded property name
+      double numberValue           ///< Property value
+    );
+
+    /// Checks whether an indexed property is present.
+    bool Has(
+      uint32_t index ///< Property / element index
+    ) const;
+
+    /// Gets an indexed property or array element.
+    Value Get(
+      uint32_t index ///< Property / element index
+    ) const;
+
+    /// Sets an indexed property or array element.
+    void Set(
+      uint32_t index,  ///< Property / element index
+      napi_value value ///< Property value primitive
+    );
+
+    /// Sets an indexed property or array element.
+    void Set(
+      uint32_t index, ///< Property / element index
+      Value value     ///< Property value
+    );
+
+    /// Sets an indexed property or array element to a string value.
+    void Set(
+      uint32_t index,       ///< Property / element index
+      const char* utf8value ///< UTF-8 encoded null-terminated property value
+    );
+
+    /// Sets an indexed property or array element to a string value.
+    void Set(
+      uint32_t index,              ///< Property / element index
+      const std::string& utf8value ///< UTF-8 encoded property value
+    );
+
+    /// Sets an indexed property or array element to a boolean value.
+    void Set(
+      uint32_t index, ///< Property / element index
+      bool boolValue  ///< Property value
+    );
+
+    /// Sets an indexed property or array element to a number value.
+    void Set(
+      uint32_t index,    ///< Property / element index
+      double numberValue ///< Property value
+    );
+
+    /// Defines a property on the object.
+    void DefineProperty(
+      const PropertyDescriptor& property ///< Descriptor for the property to be defined
+    );
+
+    /// Defines properties on the object.
+    void DefineProperties(
+      const std::initializer_list<PropertyDescriptor>& properties
+        ///< List of descriptors for the properties to be defined
+    );
+
+    /// Defines properties on the object.
+    void DefineProperties(
+      const std::vector<PropertyDescriptor>& properties
+        ///< Vector of descriptors for the properties to be defined
+    );
+
+    /// Checks if an object is an instance created by a constructor function.
+    ///
+    /// This is equivalent to the JavaScript `instanceof` operator.
+    bool InstanceOf(
+      const Function& constructor ///< Constructor function
+    ) const;
   };
 
   template <typename T>
@@ -505,7 +718,7 @@ namespace Napi {
         ///< Type of array, if different from the default array type for the template parameter T.
     );
 
-    TypedArrayOf();                               ///< Creates a new _empty_ TypedArray instance.
+    TypedArrayOf();                               ///< Creates a new _empty_ TypedArrayOf instance.
     TypedArrayOf(napi_env env, napi_value value); ///< Wraps a N-API value primitive.
 
     T& operator [](size_t index);             ///< Gets or sets an element in the array.
