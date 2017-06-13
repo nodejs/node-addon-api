@@ -523,7 +523,7 @@ namespace Napi {
       double numberValue ///< Property value
     );
 
-    Napi::Array GetPropertyNames(); ///< Get all property names
+    Array GetPropertyNames(); ///< Get all property names
 
     /// Defines a property on the object.
     void DefineProperty(

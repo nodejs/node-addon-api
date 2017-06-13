@@ -796,11 +796,11 @@ inline void Object::Set(uint32_t index, double numberValue) {
   Set(index, static_cast<napi_value>(Number::New(Env(), numberValue)));
 }
 
-inline Napi::Array Object::GetPropertyNames() {
+inline Array Object::GetPropertyNames() {
   napi_value result;
   napi_status status = napi_get_property_names(_env, _value, &result);
-  NAPI_THROW_IF_FAILED(_env, status);
-  return Napi::Array(_env, result);
+  NAPI_THROW_IF_FAILED(_env, status, Array());
+  return Array(_env, result);
 }
 
 inline void Object::DefineProperty(const PropertyDescriptor& property) {
