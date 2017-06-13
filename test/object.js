@@ -83,13 +83,9 @@ function test(binding) {
   }
 
   {
-    const obj = {"one": 1, "two": 2, "three": 3};
+    const obj = {'one': 1, 'two': 2, 'three': 3};
     var arr = binding.object.GetPropertyNames(obj);
-    var expected = ["one", "two", "three"];
-    assert.equal(arr.length, 3);
-    arr.forEach(function(property, i){
-      assert.equal(property, expected[i]);
-    });
+    assert.deepStrictEqual(arr, ['one', 'two', 'three'])
   }
 
   assert.throws(() => {
