@@ -82,6 +82,12 @@ function test(binding) {
     assert.strictEqual(obj.test, 1);
   }
 
+  {
+    const obj = {'one': 1, 'two': 2, 'three': 3};
+    var arr = binding.object.GetPropertyNames(obj);
+    assert.deepStrictEqual(arr, ['one', 'two', 'three'])
+  }
+
   assert.throws(() => {
     binding.object.getProperty(undefined, 'test');
   }, /object was expected/);

@@ -796,6 +796,13 @@ inline void Object::Set(uint32_t index, double numberValue) {
   Set(index, static_cast<napi_value>(Number::New(Env(), numberValue)));
 }
 
+inline Array Object::GetPropertyNames() {
+  napi_value result;
+  napi_status status = napi_get_property_names(_env, _value, &result);
+  NAPI_THROW_IF_FAILED(_env, status, Array());
+  return Array(_env, result);
+}
+
 inline void Object::DefineProperty(const PropertyDescriptor& property) {
   napi_status status = napi_define_properties(_env, _value, 1,
     reinterpret_cast<const napi_property_descriptor*>(&property));

@@ -523,6 +523,8 @@ namespace Napi {
       double numberValue ///< Property value
     );
 
+    Array GetPropertyNames(); ///< Get all property names
+
     /// Defines a property on the object.
     void DefineProperty(
       const PropertyDescriptor& property ///< Descriptor for the property to be defined

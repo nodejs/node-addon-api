@@ -16,6 +16,12 @@ Value TestFunction(const CallbackInfo& info) {
    return Boolean::New(info.Env(), true);
 }
 
+Array GetPropertyNames(const CallbackInfo& info) {
+  Object obj = info[0].As<Object>();
+  Array arr = obj.GetPropertyNames();
+  return arr;
+}
+
 void DefineProperties(const CallbackInfo& info) {
   Object obj = info[0].As<Object>();
   String nameType = info[1].As<String>();
@@ -87,6 +93,7 @@ void SetProperty(const CallbackInfo& info) {
 Object InitObject(Env env) {
   Object exports = Object::New(env);
 
+  exports["GetPropertyNames"] = Function::New(env, GetPropertyNames);
   exports["defineProperties"] = Function::New(env, DefineProperties);
   exports["defineValueProperty"] = Function::New(env, DefineValueProperty);
   exports["getProperty"] = Function::New(env, GetProperty);
