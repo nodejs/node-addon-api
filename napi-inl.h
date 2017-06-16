@@ -2433,6 +2433,7 @@ inline napi_value ObjectWrap<T>::ConstructorCallbackWrapper(
     CallbackInfo callbackInfo(env, info);
     instance = new T(callbackInfo);
     wrapper = callbackInfo.This();
+    return nullptr;
   });
 
   napi_ref ref;
