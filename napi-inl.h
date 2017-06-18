@@ -1234,52 +1234,57 @@ inline Value Function::Call(const std::vector<napi_value>& args) const {
   return Call(Env().Undefined(), args);
 }
 
+inline Value Function::Call(size_t argc, const napi_value* args) const {
+  return Call(Env().Undefined(), argc, args);
+}
+
 inline Value Function::Call(napi_value recv, const std::initializer_list<napi_value>& args) const {
-  napi_value result;
-  napi_status status = napi_call_function(
-    _env, recv, _value, args.size(), args.begin(), &result);
-  NAPI_THROW_IF_FAILED(_env, status, Value());
-  return Value(_env, result);
+  return Call(recv, args.size(), args.begin());
 }
 
 inline Value Function::Call(napi_value recv, const std::vector<napi_value>& args) const {
+  return Call(recv, args.size(), args.data());
+}
+
+inline Value Function::Call(napi_value recv, size_t argc, const napi_value* args) const {
   napi_value result;
   napi_status status = napi_call_function(
-    _env, recv, _value, args.size(), args.data(), &result);
+    _env, recv, _value, argc, args, &result);
   NAPI_THROW_IF_FAILED(_env, status, Value());
   return Value(_env, result);
 }
 
 inline Value Function::MakeCallback(
     napi_value recv, const std::initializer_list<napi_value>& args) const {
-  napi_value result;
-  napi_status status = napi_make_callback(
-    _env, recv, _value, args.size(), args.begin(), &result);
-  NAPI_THROW_IF_FAILED(_env, status, Value());
-  return Value(_env, result);
+  return MakeCallback(recv, args.size(), args.begin());
 }
 
 inline Value Function::MakeCallback(
     napi_value recv, const std::vector<napi_value>& args) const {
+  return MakeCallback(recv, args.size(), args.data());
+}
+
+inline Value Function::MakeCallback(
+    napi_value recv, size_t argc, const napi_value* args) const {
   napi_value result;
   napi_status status = napi_make_callback(
-    _env, recv, _value, args.size(), args.data(), &result);
+    _env, recv, _value, argc, args, &result);
   NAPI_THROW_IF_FAILED(_env, status, Value());
   return Value(_env, result);
 }
 
 inline Object Function::New(const std::initializer_list<napi_value>& args) const {
-  napi_value result;
-  napi_status status = napi_new_instance(
-    _env, _value, args.size(), args.begin(), &result);
-  NAPI_THROW_IF_FAILED(_env, status, Object());
-  return Object(_env, result);
+  return New(args.size(), args.begin());
 }
 
 inline Object Function::New(const std::vector<napi_value>& args) const {
+  return New(args.size(), args.data());
+}
+
+inline Object Function::New(size_t argc, const napi_value* args) const {
   napi_value result;
   napi_status status = napi_new_instance(
-    _env, _value, args.size(), args.data(), &result);
+    _env, _value, argc, args, &result);
   NAPI_THROW_IF_FAILED(_env, status, Object());
   return Object(_env, result);
 }
