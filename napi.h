@@ -1118,6 +1118,7 @@ namespace Napi {
     ~CallbackInfo();
 
     Napi::Env Env() const;
+    bool IsConstructCall() const;
     size_t Length() const;
     const Value operator [](size_t index) const;
     Value This() const;
@@ -1127,6 +1128,7 @@ namespace Napi {
   private:
     const size_t _staticArgCount = 6;
     napi_env _env;
+    napi_callback_info _info;
     napi_value _this;
     size_t _argc;
     napi_value* _argv;
