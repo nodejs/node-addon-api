@@ -555,13 +555,13 @@ inline std::string String::Utf8Value() const {
 inline std::u16string String::Utf16Value() const {
   size_t length;
   napi_status status = napi_get_value_string_utf16(_env, _value, nullptr, 0, &length);
-  NAPI_THROW_IF_FAILED(_env, status, u"");
+  NAPI_THROW_IF_FAILED(_env, status, NAPI_WIDE_TEXT(""));
 
   std::u16string value;
   value.reserve(length + 1);
   value.resize(length);
   status = napi_get_value_string_utf16(_env, _value, &value[0], value.capacity(), nullptr);
-  NAPI_THROW_IF_FAILED(_env, status, u"");
+  NAPI_THROW_IF_FAILED(_env, status, NAPI_WIDE_TEXT(""));
   return value;
 }
 
@@ -1490,7 +1490,7 @@ inline Error& Error::operator =(Error&& other) {
   return *this;
 }
 
-inline Error::Error(const Error& other) : Error(other.Env(), other.Value()) {
+inline Error::Error(const Error& other) : ObjectReference(other) {
 }
 
 inline Error& Error::operator =(Error& other) {
@@ -1645,6 +1645,22 @@ inline Reference<T>& Reference<T>::operator =(Reference<T>&& other) {
 }
 
 template <typename T>
+inline Reference<T>::Reference(const Reference<T>& other) {
+  _env = other.Env();
+  HandleScope scope(_env);
+
+  napi_value value = other.Value();
+  if (value != nullptr) {
+    // Copying is a limited scenario (currently only used for Error object) and always creates a
+    // strong reference to the given value even if the incoming reference is weak.
+    napi_status status = napi_create_reference(_env, value, 1, &_ref);
+
+    // TODO - Switch to napi_fatal_error() once it exists.
+    assert(status == napi_ok);
+  }
+}
+
+template <typename T>
 inline Reference<T>::operator napi_ref() const {
   return _ref;
 }
@@ -1776,6 +1792,10 @@ inline ObjectReference::ObjectReference(ObjectReference&& other)
 inline ObjectReference& ObjectReference::operator =(ObjectReference&& other) {
   static_cast<Reference<Object>*>(this)->operator=(std::move(other));
   return *this;
+}
+
+inline ObjectReference::ObjectReference(const ObjectReference& other)
+  : Reference<Object>(other) {
 }
 
 inline Napi::Value ObjectReference::Get(const char* utf8name) const {
@@ -2697,11 +2717,11 @@ inline FunctionReference& AsyncWorker::Callback() {
 }
 
 inline void AsyncWorker::OnOK() {
-  _callback.MakeCallback(_receiver.Value(), {});
+  _callback.MakeCallback(_receiver.Value(), std::initializer_list<napi_value>{});
 }
 
 inline void AsyncWorker::OnError(const Error& e) {
-  _callback.MakeCallback(_receiver.Value(), { e.Value() });
+  _callback.MakeCallback(_receiver.Value(), std::initializer_list<napi_value>{ e.Value() });
 }
 
 inline void AsyncWorker::SetError(const std::string& error) {

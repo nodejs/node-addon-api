@@ -62,7 +62,7 @@ Value CallWithVector(const CallbackInfo& info) {
 Value CallWithReceiverAndArgs(const CallbackInfo& info) {
    Function func = info[0].As<Function>();
    Value receiver = info[1];
-   return func.Call(receiver, { info[2], info[3], info[4] });
+   return func.Call(receiver, std::initializer_list<napi_value>{ info[2], info[3], info[4] });
 }
 
 Value CallWithReceiverAndVector(const CallbackInfo& info) {
@@ -78,12 +78,12 @@ Value CallWithReceiverAndVector(const CallbackInfo& info) {
 
 Value CallWithInvalidReceiver(const CallbackInfo& info) {
    Function func = info[0].As<Function>();
-   return func.Call(Value(), {});
+   return func.Call(Value(), std::initializer_list<napi_value>{});
 }
 
 Value CallConstructorWithArgs(const CallbackInfo& info) {
    Function func = info[0].As<Function>();
-   return func.New({ info[1], info[2], info[3] });
+   return func.New(std::initializer_list<napi_value>{ info[1], info[2], info[3] });
 }
 
 Value CallConstructorWithVector(const CallbackInfo& info) {

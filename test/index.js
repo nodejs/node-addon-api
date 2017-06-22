@@ -13,10 +13,15 @@ let testModules = [
 ];
 
 if (typeof global.gc === 'function') {
+  console.log('Starting test suite\n');
+
   // Requiring each module runs tests in the module.
   testModules.forEach(name => {
+    console.log(`Running test '${name}'`);
     require('./' + name);
   });
+
+  console.log('\nAll tests passed!');
 } else {
   // Make it easier to run with the correct (version-dependent) command-line args.
   const args = [ '--expose-gc', __filename ];
