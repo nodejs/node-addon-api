@@ -2274,7 +2274,16 @@ inline PropertyDescriptor::operator const napi_property_descriptor&() const {
 ////////////////////////////////////////////////////////////////////////////////
 
 template <typename T>
-inline ObjectWrap<T>::ObjectWrap() {
+inline ObjectWrap<T>::ObjectWrap(Napi::CallbackInfo callbackInfo) {
+  napi_env env = callbackInfo.Env();
+  napi_value wrapper = callbackInfo.This();
+  napi_status status;
+  napi_ref ref;
+  status = napi_wrap(env, wrapper, this, FinalizeCallback, nullptr, &ref);
+  if (status != napi_ok) return;
+
+  Reference<Object>* instanceRef = this;
+  *instanceRef = Reference<Object>(env, ref);
 }
 
 template<typename T>
@@ -2467,13 +2476,6 @@ inline napi_value ObjectWrap<T>::ConstructorCallbackWrapper(
     wrapper = callbackInfo.This();
     return nullptr;
   });
-
-  napi_ref ref;
-  status = napi_wrap(env, wrapper, instance, FinalizeCallback, nullptr, &ref);
-  if (status != napi_ok) return nullptr;
-
-  Reference<Object>* instanceRef = instance;
-  *instanceRef = Reference<Object>(env, ref);
 
   return wrapper;
 }
