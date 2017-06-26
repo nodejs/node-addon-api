@@ -3,7 +3,7 @@
 using namespace Napi;
 
 const char* testValueUtf8 = "123456789";
-const char16_t* testValueUtf16 = u"123456789";
+const char16_t* testValueUtf16 = NAPI_WIDE_TEXT("123456789");
 
 Value EchoString(const CallbackInfo& info) {
   String value = info[0].As<String>();

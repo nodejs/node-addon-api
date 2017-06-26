@@ -7,6 +7,20 @@
 #include <string>
 #include <vector>
 
+// VS2015 RTM has bugs with constexpr, so require min of VS2015 Update 3 (known good version)
+#if !defined(_MSC_VER) || _MSC_FULL_VER >= 190024210
+#define NAPI_HAS_CONSTEXPR 1
+#endif
+
+// VS2013 does not support char16_t literal strings, so we'll work around it using wchar_t strings
+// and casting them. This is safe as long as the character sizes are the same.
+#if defined(_MSC_VER) && _MSC_VER <= 1800
+static_assert(sizeof(char16_t) == sizeof(wchar_t), "Size mismatch between char16_t and wchar_t");
+#define NAPI_WIDE_TEXT(x) reinterpret_cast<char16_t*>(L ## x)
+#else
+#define NAPI_WIDE_TEXT(x) u ## x
+#endif
+
 // If C++ exceptions are not explicitly enabled or disabled, enable them
 // if exceptions were enabled in the compiler settings.
 #if !defined(NAPI_CPP_EXCEPTIONS) && !defined(NAPI_DISABLE_CPP_EXCEPTIONS)
@@ -60,7 +74,7 @@ namespace Napi {
   typedef TypedArrayOf<double> Float64Array;  ///< Typed-array of 64-bit floating-point values
 
   /// Defines the signature of a N-API C++ module's registration callback (init) function.
-  typedef void ModuleRegisterCallback(Env env, Object exports, Object module);
+  typedef void (*ModuleRegisterCallback)(Env env, Object exports, Object module);
 
   /// Environment for N-API values and operations.
   ///
@@ -671,7 +685,11 @@ namespace Napi {
     static const napi_typedarray_type unknown_array_type = static_cast<napi_typedarray_type>(-1);
 
     template <typename T>
-    static constexpr napi_typedarray_type TypedArrayTypeForPrimitiveType() {
+    static
+#if defined(NAPI_HAS_CONSTEXPR)
+    constexpr
+#endif
+    napi_typedarray_type TypedArrayTypeForPrimitiveType() {
       return std::is_same<T, int8_t>::value ? napi_int8_array
         : std::is_same<T, uint8_t>::value ? napi_uint8_array
         : std::is_same<T, int16_t>::value ? napi_int16_array
@@ -701,7 +719,11 @@ namespace Napi {
     static TypedArrayOf New(
       napi_env env,         ///< N-API environment
       size_t elementLength, ///< Length of the created array, as a number of elements
+#if defined(NAPI_HAS_CONSTEXPR)
       napi_typedarray_type type = TypedArray::TypedArrayTypeForPrimitiveType<T>()
+#else
+      napi_typedarray_type type
+#endif
         ///< Type of array, if different from the default array type for the template parameter T.
     );
 
@@ -716,7 +738,11 @@ namespace Napi {
       size_t elementLength,          ///< Length of the created array, as a number of elements
       Napi::ArrayBuffer arrayBuffer, ///< Backing array buffer instance to use
       size_t bufferOffset,           ///< Offset into the array buffer where the typed-array starts
+#if defined(NAPI_HAS_CONSTEXPR)
       napi_typedarray_type type = TypedArray::TypedArrayTypeForPrimitiveType<T>()
+#else
+      napi_typedarray_type type
+#endif
         ///< Type of array, if different from the default array type for the template parameter T.
     );
 
@@ -830,7 +856,6 @@ namespace Napi {
     // A reference can be moved but cannot be copied.
     Reference(Reference<T>&& other);
     Reference<T>& operator =(Reference<T>&& other);
-    Reference(const Reference<T>&) = delete;
     Reference<T>& operator =(Reference<T>&) = delete;
 
     operator napi_ref() const;
@@ -855,6 +880,8 @@ namespace Napi {
     void SuppressDestruct();
 
   protected:
+    Reference(const Reference<T>&);
+
     /// !cond INTERNAL
     napi_env _env;
     napi_ref _ref;
@@ -874,7 +901,6 @@ namespace Napi {
     ObjectReference& operator =(Reference<Object>&& other);
     ObjectReference(ObjectReference&& other);
     ObjectReference& operator =(ObjectReference&& other);
-    ObjectReference(const ObjectReference&) = delete;
     ObjectReference& operator =(ObjectReference&) = delete;
 
     Napi::Value Get(const char* utf8name) const;
@@ -897,6 +923,9 @@ namespace Napi {
     void Set(uint32_t index, const std::string& utf8value);
     void Set(uint32_t index, bool boolValue);
     void Set(uint32_t index, double numberValue);
+
+  protected:
+    ObjectReference(const ObjectReference&);
   };
 
   class FunctionReference: public Reference<Function> {

@@ -11,7 +11,7 @@ void DoNotCatch(const CallbackInfo& info) {
 
 void ThrowApiError(const CallbackInfo& info) {
   // Attempting to call an empty function value will throw an API error.
-  Function(info.Env(), nullptr).Call({});
+  Function(info.Env(), nullptr).Call(std::initializer_list<napi_value>{});
 }
 
 #ifdef NAPI_CPP_EXCEPTIONS

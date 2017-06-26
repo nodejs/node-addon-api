@@ -39,14 +39,26 @@ void DefineProperties(const CallbackInfo& info) {
       PropertyDescriptor::Function("function", TestFunction),
     });
   } else if (nameType.Utf8Value() == "string") {
+    // VS2013 has lifetime issues when passing temporary objects into the constructor of another
+    // object. It generates code to destruct the object as soon as the constructor call returns.
+    // Since this isn't a common case for using std::string objects, I'm refactoring the test to
+    // work around the issue.
+    std::string str1("readonlyAccessor");
+    std::string str2("readwriteAccessor");
+    std::string str3("readonlyValue");
+    std::string str4("readwriteValue");
+    std::string str5("enumerableValue");
+    std::string str6("configurableValue");
+    std::string str7("function");
+
     obj.DefineProperties({
-      PropertyDescriptor::Accessor(std::string("readonlyAccessor"), TestGetter),
-      PropertyDescriptor::Accessor(std::string("readwriteAccessor"), TestGetter, TestSetter),
-      PropertyDescriptor::Value(std::string("readonlyValue"), trueValue),
-      PropertyDescriptor::Value(std::string("readwriteValue"), trueValue, napi_writable),
-      PropertyDescriptor::Value(std::string("enumerableValue"), trueValue, napi_enumerable),
-      PropertyDescriptor::Value(std::string("configurableValue"), trueValue, napi_configurable),
-      PropertyDescriptor::Function(std::string("function"), TestFunction),
+      PropertyDescriptor::Accessor(str1, TestGetter),
+      PropertyDescriptor::Accessor(str2, TestGetter, TestSetter),
+      PropertyDescriptor::Value(str3, trueValue),
+      PropertyDescriptor::Value(str4, trueValue, napi_writable),
+      PropertyDescriptor::Value(str5, trueValue, napi_enumerable),
+      PropertyDescriptor::Value(str6, trueValue, napi_configurable),
+      PropertyDescriptor::Function(str7, TestFunction),
     });
   } else if (nameType.Utf8Value() == "value") {
     obj.DefineProperties({
