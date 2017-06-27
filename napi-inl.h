@@ -2280,7 +2280,7 @@ inline ObjectWrap<T>::ObjectWrap(Napi::CallbackInfo callbackInfo) {
   napi_status status;
   napi_ref ref;
   status = napi_wrap(env, wrapper, this, FinalizeCallback, nullptr, &ref);
-  if (status != napi_ok) return;
+  NAPI_THROW_IF_FAILED(env, status)
 
   Reference<Object>* instanceRef = this;
   *instanceRef = Reference<Object>(env, ref);
