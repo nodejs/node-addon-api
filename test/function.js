@@ -65,5 +65,11 @@ function test(binding) {
   assert.equal(binding.function.voidCallback.name, 'voidCallback');
   assert.equal(binding.function.valueCallback.name, 'valueCallback');
 
+  let testConstructCall = undefined;
+  binding.function.isConstructCall((result) => { testConstructCall = result; });
+  assert.ok(!testConstructCall);
+  new binding.function.isConstructCall((result) => { testConstructCall = result; });
+  assert.ok(testConstructCall);
+
   // TODO: Function::MakeCallback tests
 }

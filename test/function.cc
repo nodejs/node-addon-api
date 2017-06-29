@@ -96,6 +96,12 @@ Value CallConstructorWithVector(const CallbackInfo& info) {
    return func.New(args);
 }
 
+void IsConstructCall(const CallbackInfo& info) {
+   Function callback = info[0].As<Function>();
+   bool isConstructCall = info.IsConstructCall();
+   callback({Napi::Boolean::New(info.Env(), isConstructCall)});
+}
+
 } // end anonymous namespace
 
 Object InitFunction(Env env) {
@@ -113,5 +119,6 @@ Object InitFunction(Env env) {
   exports["callWithInvalidReceiver"] = Function::New(env, CallWithInvalidReceiver);
   exports["callConstructorWithArgs"] = Function::New(env, CallConstructorWithArgs);
   exports["callConstructorWithVector"] = Function::New(env, CallConstructorWithVector);
+  exports["isConstructCall"] = Function::New(env, IsConstructCall);
   return exports;
 }
