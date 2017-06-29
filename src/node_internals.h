@@ -5,6 +5,7 @@
 // This is a stripped down shim to allow node_api.cc to build outside of the node source tree.
 //
 
+#include "util-inl.h"
 #include <stdio.h>
 
 // Windows 8+ does not like abort() in Release mode
