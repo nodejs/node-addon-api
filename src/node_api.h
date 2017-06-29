@@ -226,6 +226,14 @@ NAPI_EXTERN napi_status napi_get_property(napi_env env,
                                           napi_value object,
                                           napi_value key,
                                           napi_value* result);
+NAPI_EXTERN napi_status napi_delete_property(napi_env env,
+                                             napi_value object,
+                                             napi_value key,
+                                             bool* result);
+NAPI_EXTERN napi_status napi_has_own_property(napi_env env,
+                                              napi_value object,
+                                              napi_value key,
+                                              bool* result);
 NAPI_EXTERN napi_status napi_set_named_property(napi_env env,
                                           napi_value object,
                                           const char* utf8name,
@@ -250,6 +258,10 @@ NAPI_EXTERN napi_status napi_get_element(napi_env env,
                                          napi_value object,
                                          uint32_t index,
                                          napi_value* result);
+NAPI_EXTERN napi_status napi_delete_element(napi_env env,
+                                            napi_value object,
+                                            uint32_t index,
+                                            bool* result);
 NAPI_EXTERN napi_status
 napi_define_properties(napi_env env,
                        napi_value object,
@@ -478,6 +490,10 @@ NAPI_EXTERN napi_status napi_queue_async_work(napi_env env,
 NAPI_EXTERN napi_status napi_cancel_async_work(napi_env env,
                                                napi_async_work work);
 
+
+// version management
+NAPI_EXTERN napi_status napi_get_version(napi_env env, uint32_t* result);
+
 EXTERN_C_END
 
-#endif  // SRC_NODE_API_H__
+#endif  // SRC_NODE_API_H_
