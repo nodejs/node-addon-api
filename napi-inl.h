@@ -1653,8 +1653,7 @@ inline Reference<T>& Reference<T>::operator =(Reference<T>&& other) {
 
 template <typename T>
 inline Reference<T>::Reference(const Reference<T>& other) 
-  : _env(other._env), _ref(nullptr), _suppressDestruct(other._suppressDestruct) {
-  _env = other.Env();
+  : _env(other._env), _ref(nullptr), _suppressDestruct(false) {
   HandleScope scope(_env);
 
   napi_value value = other.Value();
