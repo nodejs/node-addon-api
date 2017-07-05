@@ -1617,7 +1617,7 @@ inline Reference<T>::Reference() : _env(nullptr), _ref(nullptr), _suppressDestru
 
 template <typename T>
 inline Reference<T>::Reference(napi_env env, napi_ref ref)
-  : _env(env), _ref(ref) {
+  : _env(env), _ref(ref), _suppressDestruct(false) {
 }
 
 template <typename T>
@@ -1632,11 +1632,11 @@ inline Reference<T>::~Reference() {
 }
 
 template <typename T>
-inline Reference<T>::Reference(Reference<T>&& other) {
-  _env = other._env;
-  _ref = other._ref;
+inline Reference<T>::Reference(Reference<T>&& other)
+  : _env(other._env), _ref(other._ref), _suppressDestruct(other._suppressDestruct) {
   other._env = nullptr;
   other._ref = nullptr;
+  other._suppressDestruct = false;
 }
 
 template <typename T>
@@ -1644,14 +1644,16 @@ inline Reference<T>& Reference<T>::operator =(Reference<T>&& other) {
   Reset();
   _env = other._env;
   _ref = other._ref;
+  _suppressDestruct = other._suppressDestruct;
   other._env = nullptr;
   other._ref = nullptr;
+  other._suppressDestruct = false;
   return *this;
 }
 
 template <typename T>
-inline Reference<T>::Reference(const Reference<T>& other) {
-  _env = other.Env();
+inline Reference<T>::Reference(const Reference<T>& other) 
+  : _env(other._env), _ref(nullptr), _suppressDestruct(false) {
   HandleScope scope(_env);
 
   napi_value value = other.Value();
