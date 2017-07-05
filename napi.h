@@ -1274,7 +1274,7 @@ namespace Napi {
   template <typename T>
   class ObjectWrap : public Reference<Object> {
   public:
-    ObjectWrap();
+    ObjectWrap(CallbackInfo callbackInfo);
 
     static T* Unwrap(Object wrapper);
 
