@@ -2279,10 +2279,11 @@ inline ObjectWrap<T>::ObjectWrap(Napi::CallbackInfo callbackInfo) {
   napi_value wrapper = callbackInfo.This();
   napi_status status;
   napi_ref ref;
-  status = napi_wrap(env, wrapper, this, FinalizeCallback, nullptr, &ref);
+  T* instance = static_cast<T*>(this);
+  status = napi_wrap(env, wrapper, instance, FinalizeCallback, nullptr, &ref);
   NAPI_THROW_IF_FAILED(env, status)
 
-  Reference<Object>* instanceRef = this;
+  Reference<Object>* instanceRef = instance;
   *instanceRef = Reference<Object>(env, ref);
 }
 
