@@ -20,12 +20,12 @@ var ConfigFileOperations = {
 };
 
 var SourceFileOperations = [
-  [ /v8::Local<v8::FunctionTemplate>\s+(\w+)\s*=\s*Nan::New<FunctionTemplate>\([\w:]+\);(?:\w+->Reset\(\1\))?\s+\1->SetClassName\(Nan::String::New\("(\w+)"\)\);/g, 'Napi::Function $1 = DefineClass(env, "$2", {' ],
-  [ /Local<FunctionTemplate>\s+(\w+)\s*=\s*Nan::New<FunctionTemplate>\([\w:]+\);(?:\w+->Reset\(\1\))?\s+\1->SetClassName\(Nan::String::New\("(\w+)"\)\);/g, 'Napi::Function $1 = DefineClass(env, "$2", {' ],
-  [ /Nan::New<v8::FunctionTemplate>\(([\w:]+)\)->GetFunction\(\)/g, 'Napi::Function::New(env, $1)' ],
-  [ /Nan::New<FunctionTemplate>\(([\w:]+)\)->GetFunction()/g, 'Napi::Function::New(env, $1);' ],
-  [ /Nan::New<v8::FunctionTemplate>\(([\w:]+)\)/g, 'Napi::Function::New(env, $1)' ],
-  [ /Nan::New<FunctionTemplate>\(([\w:]+)\)/g, 'Napi::Function::New(env, $1)' ],
+  [ /v8::Local<v8::FunctionTemplate>\s+(\w+)\s*=\s*Nan::New<FunctionTemplate>\([\w\d:]+\);(?:\w+->Reset\(\1\))?\s+\1->SetClassName\(Nan::String::New\("(\w+)"\)\);/g, 'Napi::Function $1 = DefineClass(env, "$2", {' ],
+  [ /Local<FunctionTemplate>\s+(\w+)\s*=\s*Nan::New<FunctionTemplate>\([\w\d:]+\);(?:\w+->Reset\(\1\))?\s+\1->SetClassName\(Nan::String::New\("(\w+)"\)\);/g, 'Napi::Function $1 = DefineClass(env, "$2", {' ],
+  [ /Nan::New<v8::FunctionTemplate>\(([\w\d:]+)\)->GetFunction\(\)/g, 'Napi::Function::New(env, $1)' ],
+  [ /Nan::New<FunctionTemplate>\(([\w\d:]+)\)->GetFunction()/g, 'Napi::Function::New(env, $1);' ],
+  [ /Nan::New<v8::FunctionTemplate>\(([\w\d:]+)\)/g, 'Napi::Function::New(env, $1)' ],
+  [ /Nan::New<FunctionTemplate>\(([\w\d:]+)\)/g, 'Napi::Function::New(env, $1)' ],
 
   // FunctionTemplate to FunctionReference
   [ /Nan::Persistent<(v8::)FunctionTemplate>/g, 'Napi::FunctionReference' ],
@@ -47,7 +47,7 @@ var SourceFileOperations = [
   [ /static_cast<PropertyAttribute>\(ReadOnly\s*\|\s*DontDelete\)/gm,
     'static_cast<napi_property_attributes>(napi_enumerable | napi_configurable)' ],
 
-  [ /([\w:<>]+?)::Cast\((.+?)\)/g, '$2.As<$1>()' ],
+  [ /([\w\d:<>]+?)::Cast\((.+?)\)/g, '$2.As<$1>()' ],
 
   [ /\*Nan::Utf8String\(([^)]+)\)/g, '$1->As<Napi::String>().Utf8Value().c_str()' ],
   [ /Nan::Utf8String +(\w+)\(([^)]+)\)/g, 'std::string $1 = $2.As<Napi::String>()' ],
@@ -155,16 +155,17 @@ var SourceFileOperations = [
   [ /Nan::ObjectWrap::Unwrap<(\w+)>\((.*)\);/g, '$2.Unwrap<$1>();' ],
 
   [ /Nan::NAN_METHOD_ARGS_TYPE/g, 'const Napi::CallbackInfo&' ],
-  [ /NAN_METHOD\(([\w:]+?)\)/g, 'Napi::Value $1(const Napi::CallbackInfo& info)'],
-  [ /static\s*NAN_GETTER\(([\w:]+?)\)/g, 'Napi::Value $1(const Napi::CallbackInfo& info)' ],
-  [ /NAN_GETTER\(([\w:]+?)\)/g, 'Napi::Value $1(const Napi::CallbackInfo& info)' ],
-  [ /static\s*NAN_SETTER\(([\w:]+?)\)/g, 'void $1(const Napi::CallbackInfo& info, const Napi::Value& value)' ],
-  [ /NAN_SETTER\(([\w:]+?)\)/g, 'void $1(const Napi::CallbackInfo& info, const Napi::Value& value)' ],
+  [ /NAN_METHOD\(([\w\d:]+?)\)/g, 'Napi::Value $1(const Napi::CallbackInfo& info)'],
+  [ /static\s*NAN_GETTER\(([\w\d:]+?)\)/g, 'Napi::Value $1(const Napi::CallbackInfo& info)' ],
+  [ /NAN_GETTER\(([\w\d:]+?)\)/g, 'Napi::Value $1(const Napi::CallbackInfo& info)' ],
+  [ /static\s*NAN_SETTER\(([\w\d:]+?)\)/g, 'void $1(const Napi::CallbackInfo& info, const Napi::Value& value)' ],
+  [ /NAN_SETTER\(([\w\d:]+?)\)/g, 'void $1(const Napi::CallbackInfo& info, const Napi::Value& value)' ],
   [ /void Init\((v8::)*Local<(v8::)*Object> exports\)/g, [
     [ /exports->/g, 'exports.' ],
     [ /void Init\((v8::)*Local<(v8::)*Object> exports\)/g, 'void Init(Napi::Env env, Napi::Object exports, Napi::Object module)' ],
   ]],
-  [ /NAN_MODULE_INIT\(([\w:]+?)\);/g, 'void $1(Napi::Env env, Napi::Object exports, Napi::Object module);' ],
+  [ /NAN_MODULE_INIT\(([\w\d:]+?)\);/g, 'void $1(Napi::Env env, Napi::Object exports, Napi::Object module);' ],
+  [ /NAN_MODULE_INIT\(([\w\d:]+?)\)/g, 'void $1(Napi::Env env, Napi::Object exports, Napi::Object module)' ],
 
   [ /::(Init(?:ialize)?)\(target\)/g, '::$1(env, target, module)' ],
   [ /constructor_template/g, 'constructor' ],
