@@ -20,9 +20,20 @@ var ConfigFileOperations = {
 };
 
 var SourceFileOperations = [
+  [ /v8::Local<v8::FunctionTemplate>\s+(\w+)\s*=\s*Nan::New<FunctionTemplate>\([\w:]+\);(?:\w+->Reset\(\1\))?\s+\1->SetClassName\(Nan::String::New\("(\w+)"\)\);/g, 'Napi::Function $1 = DefineClass(env, "$2", {' ],
   [ /Local<FunctionTemplate>\s+(\w+)\s*=\s*Nan::New<FunctionTemplate>\([\w:]+\);(?:\w+->Reset\(\1\))?\s+\1->SetClassName\(Nan::String::New\("(\w+)"\)\);/g, 'Napi::Function $1 = DefineClass(env, "$2", {' ],
-  [ /Nan::New<FunctionTemplate>\(([\w:]+)\)->GetFunction()/g, 'Napi::Function::New(env, $1);' ],
   [ /Nan::New<v8::FunctionTemplate>\(([\w:]+)\)->GetFunction\(\)/g, 'Napi::Function::New(env, $1)' ],
+  [ /Nan::New<FunctionTemplate>\(([\w:]+)\)->GetFunction()/g, 'Napi::Function::New(env, $1);' ],
+  [ /Nan::New<v8::FunctionTemplate>\(([\w:]+)\)/g, 'Napi::Function::New(env, $1)' ],
+  [ /Nan::New<FunctionTemplate>\(([\w:]+)\)/g, 'Napi::Function::New(env, $1)' ],
+
+  // FunctionTemplate to FunctionReference
+  [ /Nan::Persistent<(v8::)FunctionTemplate>/g, 'Napi::FunctionReference' ],
+  [ /Nan::Persistent<(v8::)Function>/g, 'Napi::FunctionReference' ],
+  [ /v8::Local<v8::FunctionTemplate>/g, 'Napi::FunctionReference' ],
+  [ /v8::FunctionTemplate/g, 'Napi::FunctionReference' ],
+  [ /FunctionTemplate/g, 'Napi::FunctionReference' ],
+
 
   [ /Nan::SetPrototypeMethod\(\w+, "(\w+)", (\w+)\);/g, '  InstanceMethod("$1", &$2),' ],
   [ /(?:\w+\.Reset\(\w+\);\s+)?\(target\)\.Set\("(\w+)",\s*Nan::GetFunction\((\w+)\)\);/gm,
@@ -61,10 +72,14 @@ var SourceFileOperations = [
   [ /\.As<(Value|Boolean|String|Number|Object|Array|Symbol|External|Function)>\(\)/g, '.As<Napi::$1>()' ],
 
   // ex. Nan::New<Number>(info[0]) to Napi::Number::New(info[0])
+  [ /Nan::New<v8::Integer>\((.+?)\)/g, 'Napi::Number::New(env, $1)' ],
   [ /Nan::New<Integer>\((.+?)\)/g, 'Napi::Number::New(env, $1)' ],
   [ /Nan::New\(([0-9\.]+)\)/g, 'Napi::Number::New(env, $1)' ],
+  [ /Nan::New<v8::String>\("(.+?)"\)/g, 'Napi::String::New(env, $1)' ],
   [ /Nan::New\("(.+?)"\)/g, 'Napi::String::New(env, "$1")' ],
+  [ /Nan::New<v8::(.+?)>\(\)/g, 'Napi::$1::New(env)' ],
   [ /Nan::New<(.+?)>\(\)/g, 'Napi::$1::New(env)' ],
+  [ /Nan::New<v8::(.+?)>\(/g, 'Napi::$1::New(env, ' ],
   [ /Nan::New<(.+?)>\(/g, 'Napi::$1::New(env, ' ],
   [ /Nan::NewBuffer\(/g, 'Napi::Buffer<char>::New(env, ' ],
   // TODO: Properly handle this
@@ -114,6 +129,7 @@ var SourceFileOperations = [
   [ /Nan::(Undefined|Null|True|False)\(\)/g, 'env.$1()' ],
 
   // Nan::ThrowError(error) to Napi::Error::New(env, error).ThrowAsJavaScriptException()
+  [ /return Nan::Throw(\w*?)Error\((.+?)\);/g, 'Napi::$1Error::New(env, $2).ThrowAsJavaScriptException();\n  return env.Null();' ],
   [ /Nan::Throw(\w*?)Error\((.+?)\);/g, 'Napi::$1Error::New(env, $2).ThrowAsJavaScriptException();\n  return env.Null();' ],
   // Nan::RangeError(error) to Napi::RangeError::New(env, error)
   [ /Nan::(\w*?)Error\((.+)\)/g, 'Napi::$1Error::New(env, $2)' ],
@@ -131,11 +147,6 @@ var SourceFileOperations = [
 
   [ /Nan::Callback/g, 'Napi::FunctionReference' ],
 
-  // FunctionTemplate to FunctionReference
-  [ /v8::FunctionTemplate/g, 'Napi::FunctionReference' ],
-  [ /Nan::Persistent<(v8::)FunctionTemplate>/g, 'Napi::FunctionReference' ],
-  [ /Nan::Persistent<(v8::)Function>/g, 'Napi::FunctionReference' ],
-  [ /FunctionTemplate/g, 'Napi::FunctionReference' ],
 
   [ /Nan::Persistent<Object>/g, 'Napi::ObjectReference' ],
   [ /Nan::ADDON_REGISTER_FUNCTION_ARGS_TYPE target/g, 'Napi::Env& env, Napi::Object& target' ],
@@ -154,12 +165,6 @@ var SourceFileOperations = [
     [ /void Init\((v8::)*Local<(v8::)*Object> exports\)/g, 'void Init(Napi::Env env, Napi::Object exports, Napi::Object module)' ],
   ]],
   [ /NAN_MODULE_INIT\(([\w:]+?)\);/g, 'void $1(Napi::Env env, Napi::Object exports, Napi::Object module);' ],
-  [ /NAN_MODULE_INIT/g, [
-    [ /target/g, 'exports' ],
-    [ /exports->/g, 'exports.' ],
-    [ /NAN_MODULE_INIT\(([\w:]+?)\)/g, 'void $1(Napi::Env env, Napi::Object exports, Napi::Object module)' ],
-  ]],
-
 
   [ /::(Init(?:ialize)?)\(target\)/g, '::$1(env, target, module)' ],
   [ /constructor_template/g, 'constructor' ],
