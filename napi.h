@@ -1085,7 +1085,7 @@ namespace Napi {
 
   protected:
     /// !cond INTERNAL
-    typedef napi_status (*create_error_fn)(napi_env envb, napi_value msg, napi_value* result);
+    typedef napi_status (*create_error_fn)(napi_env envb, napi_value code, napi_value msg, napi_value* result);
 
     template <typename TError>
     static TError New(napi_env env,

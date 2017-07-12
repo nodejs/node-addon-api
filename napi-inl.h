@@ -1452,10 +1452,10 @@ inline Error Error::New(napi_env env) {
         case napi_string_expected:
         case napi_boolean_expected:
         case napi_number_expected:
-          status = napi_create_type_error(env, message, &error);
+          status = napi_create_type_error(env, nullptr, message, &error);
           break;
         default:
-          status = napi_create_error(env, message, &error);
+          status = napi_create_error(env, nullptr,  message, &error);
           break;
         }
         assert(status == napi_ok);
@@ -1556,7 +1556,7 @@ inline TError Error::New(napi_env env,
   NAPI_THROW_IF_FAILED(env, status, TError());
 
   napi_value error;
-  status = create_error(env, str, &error);
+  status = create_error(env, nullptr, str, &error);
   NAPI_THROW_IF_FAILED(env, status, TError());
 
   return TError(env, error);
@@ -2467,7 +2467,7 @@ inline napi_value ObjectWrap<T>::ConstructorCallbackWrapper(
   if (status != napi_ok) return nullptr;
 
   if (!isConstructCall) {
-    napi_throw_type_error(env, "Class constructors cannot be invoked without 'new'");
+    napi_throw_type_error(env, nullptr, "Class constructors cannot be invoked without 'new'");
     return nullptr;
   }
 
