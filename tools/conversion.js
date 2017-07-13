@@ -21,6 +21,7 @@ var ConfigFileOperations = {
 
 var SourceFileOperations = [
   [ /v8::Local<v8::FunctionTemplate>\s+(\w+)\s*=\s*Nan::New<FunctionTemplate>\([\w\d:]+\);(?:\w+->Reset\(\1\))?\s+\1->SetClassName\(Nan::String::New\("(\w+)"\)\);/g, 'Napi::Function $1 = DefineClass(env, "$2", {' ],
+  [ /Local<FunctionTemplate>\s+(\w+)\s*=\s*Nan::New<FunctionTemplate>\([\w\d:]+\);\s+(\w+)\.Reset\((\1)\);\s+\1->SetClassName\((Nan::String::New|Nan::New<(v8::)String>)\("(.+?)"\)\);/g, 'Napi::Function $1 = DefineClass(env, "$6", {'],
   [ /Local<FunctionTemplate>\s+(\w+)\s*=\s*Nan::New<FunctionTemplate>\([\w\d:]+\);(?:\w+->Reset\(\1\))?\s+\1->SetClassName\(Nan::String::New\("(\w+)"\)\);/g, 'Napi::Function $1 = DefineClass(env, "$2", {' ],
   [ /Nan::New<v8::FunctionTemplate>\(([\w\d:]+)\)->GetFunction\(\)/g, 'Napi::Function::New(env, $1)' ],
   [ /Nan::New<FunctionTemplate>\(([\w\d:]+)\)->GetFunction()/g, 'Napi::Function::New(env, $1);' ],
@@ -89,22 +90,28 @@ var SourceFileOperations = [
   [ /->IsInt32\(\)/g, '.IsNumber()' ],
 
 
+  [ /(.+?)->BooleanValue()/g, '$1.As<Napi::Boolean>().BooleanValue()' ],
+  [ /(.+?)->Int32Value()/g, '$1.As<Napi::Number>().Int32Value()' ],
+  [ /(.+?)->Uint32Value()/g, '$1.As<Napi::Number>().Uint32Value()' ],
+  [ /(.+?)->IntegerValue()/g, '$1.As<Napi::Number>().Int64Value()' ],
+  [ /(.+?)->NumberValue()/g, '$1.As<Napi::Number>().DoubleValue()' ],
+
   // ex. Nan::To<bool>(info[0]) to info[0].Value()
   [ /Nan::To<(Boolean|String|Number|Object|Array|Symbol|Function)>\((.+?)\)/g, '$2.To<Napi::$1>()' ],
   [ /Nan::To<v8::(Boolean|String|Number|Object|Array|Symbol|Function)>\((.+?)\)/g, '$2.To<Napi::$1>()' ],
-  // ex. Nan::To<bool>(info[0]) to info[0].Value()
+  // ex. Nan::To<bool>(info[0]) to info[0].As<Napi::Boolean>().Value()
   [ /Nan::To<bool>\((.+?)\)/g, '$1.As<Napi::Boolean>().Value()' ],
-  // ex. Nan::To<int>(info[0]) to info[0].Int32Value()
+  // ex. Nan::To<int>(info[0]) to info[0].As<Napi::Number>().Int32Value()
   [ /Nan::To<int>\((.+?)\)/g, '$1.As<Napi::Number>().Int32Value()' ],
-  // ex. Nan::To<int32_t>(info[0]) to info[0].Int32Value()
+  // ex. Nan::To<int32_t>(info[0]) to info[0].As<Napi::Number>().Int32Value()
   [ /Nan::To<int32_t>\((.+?)\)/g, '$1.As<Napi::Number>().Int32Value()' ],
-  // ex. Nan::To<uint32_t>(info[0]) to info[0].Uint32Value()
+  // ex. Nan::To<uint32_t>(info[0]) to info[0].As<Napi::Number>().Uint32Value()
   [ /Nan::To<uint32_t>\((.+?)\)/g, '$1.As<Napi::Number>().Uint32Value()' ],
-  // ex. Nan::To<int64_t>(info[0]) to info[0].Int64Value()
+  // ex. Nan::To<int64_t>(info[0]) to info[0].As<Napi::Number>().Int64Value()
   [ /Nan::To<int64_t>\((.+?)\)/g, '$1.As<Napi::Number>().Int64Value()' ],
-  // ex. Nan::To<float>(info[0]) to info[0].FloatValue()
+  // ex. Nan::To<float>(info[0]) to info[0].As<Napi::Number>().FloatValue()
   [ /Nan::To<float>\((.+?)\)/g, '$1.As<Napi::Number>().FloatValue()' ],
-  // ex. Nan::To<double>(info[0]) to info[0].DoubleValue()
+  // ex. Nan::To<double>(info[0]) to info[0].As<Napi::Number>().DoubleValue()
   [ /Nan::To<double>\((.+?)\)/g, '$1.As<Napi::Number>().DoubleValue()' ],
 
   [ /Nan::New\((\w+)\)->HasInstance\((\w+)\)/g, '$2.InstanceOf($1.Value())' ],
@@ -173,9 +180,11 @@ var SourceFileOperations = [
   [ /Nan::FunctionCallbackInfo<v8::Value>\s*&\s*info\)\s*{/g, 'Napi::CallbackInfo& info) {\n  Napi::Env env = info.Env();' ],
 
 
-  [ /info\[(\w+)\]->/g, 'info[$1].' ],
+  [ /info\[(\d+)\]->/g, 'info[$1].' ],
+  [ /info\[([\w\d]+)\]->/g, 'info[$1].' ],
   [ /info\.This\(\)->/g, 'info.This().' ],
   [ /->Is(Object|String|Int32|Number)\(\)/g, '.Is$1()' ],
+  [ /info.GetReturnValue\(\).SetUndefined\(\)/g, 'return env.Undefined()' ],
   [ /info\.GetReturnValue\(\)\.Set\(((\n|.)+?)\);/g, 'return $1;' ],
 
 
