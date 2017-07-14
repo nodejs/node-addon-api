@@ -21,7 +21,7 @@ var ConfigFileOperations = {
 
 var SourceFileOperations = [
   [ /v8::Local<v8::FunctionTemplate>\s+(\w+)\s*=\s*Nan::New<FunctionTemplate>\([\w\d:]+\);(?:\w+->Reset\(\1\))?\s+\1->SetClassName\(Nan::String::New\("(\w+)"\)\);/g, 'Napi::Function $1 = DefineClass(env, "$2", {' ],
-  [ /Local<FunctionTemplate>\s+(\w+)\s*=\s*Nan::New<FunctionTemplate>\([\w\d:]+\);\s+(\w+)\.Reset\((\1)\);\s+\1->SetClassName\((Nan::String::New|Nan::New<(v8::)String>)\("(.+?)"\)\);/g, 'Napi::Function $1 = DefineClass(env, "$6", {'],
+  [ /Local<FunctionTemplate>\s+(\w+)\s*=\s*Nan::New<FunctionTemplate>\([\w\d:]+\);\s+(\w+)\.Reset\((\1)\);\s+\1->SetClassName\((Nan::String::New|Nan::New<(v8::)*String>)\("(.+?)"\)\);/g, 'Napi::Function $1 = DefineClass(env, "$6", {'],
   [ /Local<FunctionTemplate>\s+(\w+)\s*=\s*Nan::New<FunctionTemplate>\([\w\d:]+\);(?:\w+->Reset\(\1\))?\s+\1->SetClassName\(Nan::String::New\("(\w+)"\)\);/g, 'Napi::Function $1 = DefineClass(env, "$2", {' ],
   [ /Nan::New<v8::FunctionTemplate>\(([\w\d:]+)\)->GetFunction\(\)/g, 'Napi::Function::New(env, $1)' ],
   [ /Nan::New<FunctionTemplate>\(([\w\d:]+)\)->GetFunction()/g, 'Napi::Function::New(env, $1);' ],
@@ -29,9 +29,10 @@ var SourceFileOperations = [
   [ /Nan::New<FunctionTemplate>\(([\w\d:]+)\)/g, 'Napi::Function::New(env, $1)' ],
 
   // FunctionTemplate to FunctionReference
-  [ /Nan::Persistent<(v8::)FunctionTemplate>/g, 'Napi::FunctionReference' ],
-  [ /Nan::Persistent<(v8::)Function>/g, 'Napi::FunctionReference' ],
+  [ /Nan::Persistent<(v8::)*FunctionTemplate>/g, 'Napi::FunctionReference' ],
+  [ /Nan::Persistent<(v8::)*Function>/g, 'Napi::FunctionReference' ],
   [ /v8::Local<v8::FunctionTemplate>/g, 'Napi::FunctionReference' ],
+  [ /Local<FunctionTemplate>/g, 'Napi::FunctionReference' ],
   [ /v8::FunctionTemplate/g, 'Napi::FunctionReference' ],
   [ /FunctionTemplate/g, 'Napi::FunctionReference' ],
 
@@ -73,14 +74,13 @@ var SourceFileOperations = [
   [ /\.As<(Value|Boolean|String|Number|Object|Array|Symbol|External|Function)>\(\)/g, '.As<Napi::$1>()' ],
 
   // ex. Nan::New<Number>(info[0]) to Napi::Number::New(info[0])
-  [ /Nan::New<v8::Integer>\((.+?)\)/g, 'Napi::Number::New(env, $1)' ],
-  [ /Nan::New<Integer>\((.+?)\)/g, 'Napi::Number::New(env, $1)' ],
+  [ /Nan::New<(v8::)*Integer>\((.+?)\)/g, 'Napi::Number::New(env, $2)' ],
   [ /Nan::New\(([0-9\.]+)\)/g, 'Napi::Number::New(env, $1)' ],
-  [ /Nan::New<v8::String>\("(.+?)"\)/g, 'Napi::String::New(env, $1)' ],
+  [ /Nan::New<(v8::)*String>\("(.+?)"\)/g, 'Napi::String::New(env, "$2")' ],
   [ /Nan::New\("(.+?)"\)/g, 'Napi::String::New(env, "$1")' ],
-  [ /Nan::New<v8::(.+?)>\(\)/g, 'Napi::$1::New(env)' ],
+  [ /Nan::New<(v8::)*(.+?)>\(\)/g, 'Napi::$2::New(env)' ],
   [ /Nan::New<(.+?)>\(\)/g, 'Napi::$1::New(env)' ],
-  [ /Nan::New<v8::(.+?)>\(/g, 'Napi::$1::New(env, ' ],
+  [ /Nan::New<(v8::)*(.+?)>\(/g, 'Napi::$2::New(env, ' ],
   [ /Nan::New<(.+?)>\(/g, 'Napi::$1::New(env, ' ],
   [ /Nan::NewBuffer\(/g, 'Napi::Buffer<char>::New(env, ' ],
   // TODO: Properly handle this
@@ -90,15 +90,15 @@ var SourceFileOperations = [
   [ /->IsInt32\(\)/g, '.IsNumber()' ],
 
 
-  [ /(.+?)->BooleanValue()/g, '$1.As<Napi::Boolean>().BooleanValue()' ],
-  [ /(.+?)->Int32Value()/g, '$1.As<Napi::Number>().Int32Value()' ],
-  [ /(.+?)->Uint32Value()/g, '$1.As<Napi::Number>().Uint32Value()' ],
-  [ /(.+?)->IntegerValue()/g, '$1.As<Napi::Number>().Int64Value()' ],
-  [ /(.+?)->NumberValue()/g, '$1.As<Napi::Number>().DoubleValue()' ],
+  [ /(.+?)->BooleanValue\(\)/g, '$1.As<Napi::Boolean>().BooleanValue()' ],
+  [ /(.+?)->Int32Value\(\)/g, '$1.As<Napi::Number>().Int32Value()' ],
+  [ /(.+?)->Uint32Value\(\)/g, '$1.As<Napi::Number>().Uint32Value()' ],
+  [ /(.+?)->IntegerValue\(\)/g, '$1.As<Napi::Number>().Int64Value()' ],
+  [ /(.+?)->NumberValue\(\)/g, '$1.As<Napi::Number>().DoubleValue()' ],
 
   // ex. Nan::To<bool>(info[0]) to info[0].Value()
-  [ /Nan::To<(Boolean|String|Number|Object|Array|Symbol|Function)>\((.+?)\)/g, '$2.To<Napi::$1>()' ],
   [ /Nan::To<v8::(Boolean|String|Number|Object|Array|Symbol|Function)>\((.+?)\)/g, '$2.To<Napi::$1>()' ],
+  [ /Nan::To<(Boolean|String|Number|Object|Array|Symbol|Function)>\((.+?)\)/g, '$2.To<Napi::$1>()' ],
   // ex. Nan::To<bool>(info[0]) to info[0].As<Napi::Boolean>().Value()
   [ /Nan::To<bool>\((.+?)\)/g, '$1.As<Napi::Boolean>().Value()' ],
   // ex. Nan::To<int>(info[0]) to info[0].As<Napi::Number>().Int32Value()
@@ -116,11 +116,17 @@ var SourceFileOperations = [
 
   [ /Nan::New\((\w+)\)->HasInstance\((\w+)\)/g, '$2.InstanceOf($1.Value())' ],
 
-  [ /Nan::Get\(([^)]+),\s*/gm, '($1).Get(' ],
+  [ /Nan::Has\(([^,]+),\s*/gm, '($1).Has(' ],
+  [ /\.Has\([\s|\\]*Nan::New<(v8::)*String>\(([^)]+)\)\)/gm, '.Has($1)' ],
+  [ /\.Has\([\s|\\]*Nan::New\(([^)]+)\)\)/gm, '.Has($1)' ],
+
+  [ /Nan::Get\(([^,]+),\s*/gm, '($1).Get(' ],
+  [ /\.Get\([\s|\\]*Nan::New<(v8::)*String>\(([^)]+)\)\)/gm, '.Get($1)' ],
   [ /\.Get\([\s|\\]*Nan::New\(([^)]+)\)\)/gm, '.Get($1)' ],
 
-  [ /Nan::Set\(([^,]+),/gm, '($1).Set(' ],
-  [ /\.Set\([\s|\\]*Nan::New\(([^)]+)\),/gm, '.Set($1,' ],
+  [ /Nan::Set\(([^,]+),\s*/gm, '($1).Set(' ],
+  [ /\.Set\([\s|\\]*Nan::New<(v8::)*String>\(([^)]+)\)\s*,/gm, '.Set($1,' ],
+  [ /\.Set\([\s|\\]*Nan::New\(([^)]+)\)\s*,/gm, '.Set($1,' ],
 
 
   // ex. node::Buffer::HasInstance(info[0]) to info[0].IsBuffer()
@@ -177,7 +183,7 @@ var SourceFileOperations = [
   [ /::(Init(?:ialize)?)\(target\)/g, '::$1(env, target, module)' ],
   [ /constructor_template/g, 'constructor' ],
 
-  [ /Nan::FunctionCallbackInfo<v8::Value>\s*&\s*info\)\s*{/g, 'Napi::CallbackInfo& info) {\n  Napi::Env env = info.Env();' ],
+  [ /Nan::FunctionCallbackInfo<(v8::)*Value>\s*&\s*info\)\s*{/g, 'Napi::CallbackInfo& info) {\n  Napi::Env env = info.Env();' ],
 
 
   [ /info\[(\d+)\]->/g, 'info[$1].' ],
@@ -211,9 +217,9 @@ var SourceFileOperations = [
   // replace using node; and/or using v8; to using Napi;
   [ /using (node|v8);/g, 'using Napi;' ],
   [ /using namespace (node|Nan|v8);/g, 'using namespace Napi;' ],
-  // delete using v8::XXX;
+  // delete using v8::Local;
   [ /using v8::Local;\n/g, '' ],
-  // delete using v8::XXX;
+  // replace using v8::XXX; with using Napi::XXX
   [ /using v8::([A-Za-z]+);/g, 'using Napi::$1;' ],
 
 ];
