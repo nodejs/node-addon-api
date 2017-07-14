@@ -9,7 +9,6 @@
 
 // Note: Do not include this file directly! Include "napi.h" instead.
 
-#include <cassert>
 #include <cstring>
 
 namespace Napi {
@@ -41,6 +40,13 @@ namespace details {
   }
 
 #endif // NAPI_CPP_EXCEPTIONS
+
+#define NAPI_FATAL_IF_FAILED(status, location, message)  \
+  do {                                                   \
+    if ((status) != napi_ok) {                           \
+      Error::Fatal((location), (message));               \
+    }                                                    \
+  } while (0)
 
 // For use in JS to C++ callback wrappers to catch any Napi::Error exceptions
 // and rethrow them as JavaScript exceptions before returning from the callback.
@@ -1418,12 +1424,12 @@ inline Error Error::New(napi_env env) {
 
   const napi_extended_error_info* info;
   status = napi_get_last_error_info(env, &info);
-  assert(status == napi_ok);
+  NAPI_FATAL_IF_FAILED(status, "Error::New", "napi_get_last_error_info");
 
   if (status == napi_ok) {
     if (info->error_code == napi_pending_exception) {
       status = napi_get_and_clear_last_exception(env, &error);
-      assert(status == napi_ok);
+      NAPI_FATAL_IF_FAILED(status, "Error::New", "napi_get_and_clear_last_exception");
     }
     else {
       const char* error_message = info->error_message != nullptr ?
@@ -1431,11 +1437,11 @@ inline Error Error::New(napi_env env) {
 
       bool isExceptionPending;
       status = napi_is_exception_pending(env, &isExceptionPending);
-      assert(status == napi_ok);
+      NAPI_FATAL_IF_FAILED(status, "Error::New", "napi_is_exception_pending");
 
       if (isExceptionPending) {
         status = napi_get_and_clear_last_exception(env, &error);
-        assert(status == napi_ok);
+        NAPI_FATAL_IF_FAILED(status, "Error::New", "napi_get_and_clear_last_exception");
       }
 
       napi_value message;
@@ -1444,7 +1450,7 @@ inline Error Error::New(napi_env env) {
         error_message,
         std::strlen(error_message),
         &message);
-      assert(status == napi_ok);
+      NAPI_FATAL_IF_FAILED(status, "Error::New", "napi_create_string_utf8");
 
       if (status == napi_ok) {
         switch (info->error_code) {
@@ -1458,7 +1464,7 @@ inline Error Error::New(napi_env env) {
           status = napi_create_error(env, nullptr,  message, &error);
           break;
         }
-        assert(status == napi_ok);
+        NAPI_FATAL_IF_FAILED(status, "Error::New", "napi_create_error");
       }
     }
   }
@@ -1474,6 +1480,10 @@ inline Error Error::New(napi_env env, const std::string& message) {
   return Error::New<Error>(env, message.c_str(), message.size(), napi_create_error);
 }
 
+inline NAPI_NO_RETURN void Error::Fatal(const char* location, const char* message) {
+  napi_fatal_error(location, message);
+}
+
 inline Error::Error() : ObjectReference(), _message(nullptr) {
 }
 
@@ -1483,7 +1493,7 @@ inline Error::Error(napi_env env, napi_value value) : ObjectReference(env, nullp
 
     // Avoid infinite recursion in the failure case.
     // Don't try to construct & throw another Error instance.
-    assert(status == napi_ok);
+    NAPI_FATAL_IF_FAILED(status, "Error::Error", "napi_create_reference");
   }
 }
 
@@ -1661,9 +1671,7 @@ inline Reference<T>::Reference(const Reference<T>& other)
     // Copying is a limited scenario (currently only used for Error object) and always creates a
     // strong reference to the given value even if the incoming reference is weak.
     napi_status status = napi_create_reference(_env, value, 1, &_ref);
-
-    // TODO - Switch to napi_fatal_error() once it exists.
-    assert(status == napi_ok);
+    NAPI_FATAL_IF_FAILED(status, "Reference<T>::Reference", "napi_create_reference");
   }
 }
 

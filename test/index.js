@@ -24,11 +24,7 @@ if (typeof global.gc === 'function') {
   console.log('\nAll tests passed!');
 } else {
   // Make it easier to run with the correct (version-dependent) command-line args.
-  const args = [ '--expose-gc', __filename ];
-  if (require('../index').isNodeApiBuiltin) {
-    args.splice(0, 0, '--napi-modules');
-  }
-  const child = require('child_process').spawnSync(process.argv[0], args, {
+  const child = require('./napi_child').spawnSync(process.argv[0], [ '--expose-gc', __filename ], {
     stdio: 'inherit',
   });
   process.exitCode = child.status;

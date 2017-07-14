@@ -1067,6 +1067,8 @@ namespace Napi {
     static Error New(napi_env env, const char* message);
     static Error New(napi_env env, const std::string& message);
 
+    static NAPI_NO_RETURN void Fatal(const char* location, const char* message);
+
     Error();
     Error(napi_env env, napi_value value);
 

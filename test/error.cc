@@ -154,6 +154,10 @@ void CatchAndRethrowErrorThatEscapesScope(const CallbackInfo& info) {
 
 #endif // NAPI_CPP_EXCEPTIONS
 
+void ThrowFatalError(const CallbackInfo& info) {
+  Error::Fatal("Error::ThrowFatalError", "This is a fatal error");
+}
+
 } // end anonymous namespace
 
 Object InitError(Env env) {
@@ -169,5 +173,6 @@ Object InitError(Env env) {
   exports["throwErrorThatEscapesScope"] = Function::New(env, ThrowErrorThatEscapesScope);
   exports["catchAndRethrowErrorThatEscapesScope"] =
     Function::New(env, CatchAndRethrowErrorThatEscapesScope);
+  exports["throwFatalError"] = Function::New(env, ThrowFatalError);
   return exports;
 }
