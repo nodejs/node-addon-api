@@ -173,10 +173,8 @@ var SourceFileOperations = [
   [ /NAN_GETTER\(([\w\d:]+?)\)/g, 'Napi::Value $1(const Napi::CallbackInfo& info)' ],
   [ /static\s*NAN_SETTER\(([\w\d:]+?)\)/g, 'void $1(const Napi::CallbackInfo& info, const Napi::Value& value)' ],
   [ /NAN_SETTER\(([\w\d:]+?)\)/g, 'void $1(const Napi::CallbackInfo& info, const Napi::Value& value)' ],
-  [ /void Init\((v8::)*Local<(v8::)*Object> exports\)/g, [
-    [ /exports->/g, 'exports.' ],
-    [ /void Init\((v8::)*Local<(v8::)*Object> exports\)/g, 'void Init(Napi::Env env, Napi::Object exports, Napi::Object module)' ],
-  ]],
+  [ /void Init\((v8::)*Local<(v8::)*Object> exports\)/g, 'void Init(Napi::Env env, Napi::Object exports, Napi::Object module)' ],
+  ],
   [ /NAN_MODULE_INIT\(([\w\d:]+?)\);/g, 'void $1(Napi::Env env, Napi::Object exports, Napi::Object module);' ],
   [ /NAN_MODULE_INIT\(([\w\d:]+?)\)/g, 'void $1(Napi::Env env, Napi::Object exports, Napi::Object module)' ],
 
