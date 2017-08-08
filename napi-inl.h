@@ -418,7 +418,7 @@ inline bool Boolean::Value() const {
 
 inline Number Number::New(napi_env env, double val) {
   napi_value value;
-  napi_status status = napi_create_number(env, val, &value);
+  napi_status status = napi_create_double(env, val, &value);
   NAPI_THROW_IF_FAILED(env, status, Number());
   return Number(env, value);
 }
