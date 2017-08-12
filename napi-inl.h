@@ -2480,12 +2480,10 @@ inline napi_value ObjectWrap<T>::ConstructorCallbackWrapper(
   }
 
   T* instance;
-  napi_value wrapper;
-  details::WrapCallback([&] {
+  napi_value wrapper = details::WrapCallback([&] {
     CallbackInfo callbackInfo(env, info);
     instance = new T(callbackInfo);
-    wrapper = callbackInfo.This();
-    return nullptr;
+    return callbackInfo.This();
   });
 
   return wrapper;
