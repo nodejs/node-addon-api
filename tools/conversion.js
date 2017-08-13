@@ -1,4 +1,5 @@
 const fs = require('fs');
+const path = require('path');
 
 const args = process.argv.slice(2);
 const dir = args[0];
@@ -222,21 +223,20 @@ var SourceFileOperations = [
 ];
 
 var paths = listFiles(dir);
-paths.forEach(function(path) {
-  var filename = path.split('\\').pop().split('/').pop();
+paths.forEach(function(dirEntry) {
+  var filename = dirEntry.split('\\').pop().split('/').pop();
 
   // Check whether the file is a source file or a config file
   // then execute function accordingly
   var sourcePattern = /.+\.h|.+\.cc|.+\.cpp/;
   if (sourcePattern.test(filename)) {
-    convertFile(path, SourceFileOperations);
+    convertFile(dirEntry, SourceFileOperations);
   } else if (ConfigFileOperations[filename] != null) {
-    convertFile(path, ConfigFileOperations[filename]);
+    convertFile(dirEntry, ConfigFileOperations[filename]);
   }
 });
 
 function listFiles(dir, filelist) {
-  var path = path || require('path');
   files = fs.readdirSync(dir);
   filelist = filelist || [];
   files.forEach(function(file) {
@@ -257,13 +257,13 @@ function convert(content, operations) {
   return content;
 }
 
-function convertFile(path, operations) {
-  fs.readFile(path, "utf-8", function (err, file) {
+function convertFile(fileName, operations) {
+  fs.readFile(fileName, "utf-8", function (err, file) {
     if (err) throw err;
 
     file = convert(file, operations);
 
-    fs.writeFile(path, file, function(err){
+    fs.writeFile(fileName, file, function(err){
       if (err) throw err;
     });
   });
