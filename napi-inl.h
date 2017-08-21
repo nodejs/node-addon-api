@@ -2015,11 +2015,15 @@ inline CallbackInfo::~CallbackInfo() {
   }
 }
 
+inline Value CallbackInfo::NewTarget() const {
+  napi_value newTarget;
+  napi_status status = napi_get_new_target(_env, _info, &newTarget);
+  NAPI_THROW_IF_FAILED(_env, status, Value());
+  return Value(_env, newTarget);
+}
+
 inline bool CallbackInfo::IsConstructCall() const {
-  bool isConstructCall;
-  napi_status status = napi_is_construct_call(_env, _info, &isConstructCall);
-  NAPI_THROW_IF_FAILED(_env, status, false);
-  return isConstructCall;
+  return !NewTarget().IsEmpty();
 }
 
 inline Napi::Env CallbackInfo::Env() const {
@@ -2470,10 +2474,11 @@ template <typename T>
 inline napi_value ObjectWrap<T>::ConstructorCallbackWrapper(
     napi_env env,
     napi_callback_info info) {
-  bool isConstructCall;
-  napi_status status = napi_is_construct_call(env, info, &isConstructCall);
+  napi_value new_target;
+  napi_status status = napi_get_new_target(env, info, &new_target);
   if (status != napi_ok) return nullptr;
 
+  bool isConstructCall = (new_target != nullptr);
   if (!isConstructCall) {
     napi_throw_type_error(env, nullptr, "Class constructors cannot be invoked without 'new'");
     return nullptr;

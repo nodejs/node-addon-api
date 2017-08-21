@@ -1126,6 +1126,7 @@ namespace Napi {
     ~CallbackInfo();
 
     Napi::Env Env() const;
+    Value NewTarget() const;
     bool IsConstructCall() const;
     size_t Length() const;
     const Value operator [](size_t index) const;
