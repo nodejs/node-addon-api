@@ -31,5 +31,5 @@
     "pretest": "node-gyp rebuild -C test",
     "test": "node test"
   },
-  "version": "0.5.2"
+  "version": "0.6.2"
 }
