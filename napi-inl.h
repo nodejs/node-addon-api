@@ -2015,9 +2015,15 @@ inline CallbackInfo::~CallbackInfo() {
   }
 }
 
+inline Value CallbackInfo::NewTarget() const {
+  napi_value newTarget;
+  napi_status status = napi_get_new_target(_env, _info, &newTarget);
+  return Value(_env, newTarget);
+}
+
 inline bool CallbackInfo::IsConstructCall() const {
-  napi_value new_target;
-  napi_status status = napi_get_new_target(_env, _info, &new_target);
+  napi_value newTarget;
+  napi_status status = napi_get_new_target(_env, _info, &newTarget);
   bool isConstructCall = (new_target != nullptr);
   NAPI_THROW_IF_FAILED(_env, status, false);
   return isConstructCall;
