@@ -1,3 +1,7 @@
+#! /usr/bin/env node
+
+'use strict'
+
 const fs = require('fs');
 const path = require('path');
 
@@ -237,9 +241,13 @@ paths.forEach(function(dirEntry) {
 });
 
 function listFiles(dir, filelist) {
-  files = fs.readdirSync(dir);
+  var files = fs.readdirSync(dir);
   filelist = filelist || [];
   files.forEach(function(file) {
+    if (file === 'node_modules') {
+      return
+    }
+
     if (fs.statSync(path.join(dir, file)).isDirectory()) {
       filelist = listFiles(path.join(dir, file), filelist);
     } else {
