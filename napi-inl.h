@@ -2018,15 +2018,15 @@ inline CallbackInfo::~CallbackInfo() {
 inline Value CallbackInfo::NewTarget() const {
   napi_value newTarget;
   napi_status status = napi_get_new_target(_env, _info, &newTarget);
+  NAPI_THROW_IF_FAILED(_env, status, Value());
   return Value(_env, newTarget);
 }
 
 inline bool CallbackInfo::IsConstructCall() const {
   napi_value newTarget;
   napi_status status = napi_get_new_target(_env, _info, &newTarget);
-  bool isConstructCall = (new_target != nullptr);
   NAPI_THROW_IF_FAILED(_env, status, false);
-  return isConstructCall;
+  return (new_target != nullptr);
 }
 
 inline Napi::Env CallbackInfo::Env() const {
