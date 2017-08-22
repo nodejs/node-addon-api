@@ -776,13 +776,15 @@ namespace Napi {
 
   class Function : public Object {
   public:
-    // Callable must implement operator() accepting a const CallbackInfo&
-    // and return either void or Value.
+    /// Callable must implement operator() accepting a const CallbackInfo&
+    /// and return either void or Value.
     template <typename Callable>
     static Function New(napi_env env,
                         Callable cb,
                         const char* utf8name = nullptr,
                         void* data = nullptr);
+    /// Callable must implement operator() accepting a const CallbackInfo&
+    /// and return either void or Value.
     template <typename Callable>
     static Function New(napi_env env,
                         Callable cb,
