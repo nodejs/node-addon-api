@@ -2026,7 +2026,7 @@ inline bool CallbackInfo::IsConstructCall() const {
   napi_value newTarget;
   napi_status status = napi_get_new_target(_env, _info, &newTarget);
   NAPI_THROW_IF_FAILED(_env, status, false);
-  return (new_target != nullptr);
+  return (newTarget != nullptr);
 }
 
 inline Napi::Env CallbackInfo::Env() const {
