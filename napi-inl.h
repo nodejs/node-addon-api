@@ -2023,10 +2023,7 @@ inline Value CallbackInfo::NewTarget() const {
 }
 
 inline bool CallbackInfo::IsConstructCall() const {
-  napi_value newTarget;
-  napi_status status = napi_get_new_target(_env, _info, &newTarget);
-  NAPI_THROW_IF_FAILED(_env, status, false);
-  return (newTarget != nullptr);
+  return !NewTarget().IsEmpty();
 }
 
 inline Napi::Env CallbackInfo::Env() const {
