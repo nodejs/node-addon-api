@@ -29,7 +29,8 @@
   },
   "scripts": {
     "pretest": "node-gyp rebuild -C test",
-    "test": "node test"
+    "test": "node test",
+    "doc": "doxygen doc/Doxyfile"
   },
   "version": "0.6.2"
 }
