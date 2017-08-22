@@ -52,6 +52,10 @@
 #define NO_RETURN
 #endif
 
+#ifndef NODE_RELEASE
+#define NODE_RELEASE "node"
+#endif
+
 namespace node {
 
 // The slightly odd function signature for Assert() is to ease
@@ -66,5 +70,19 @@ constexpr size_t arraysize(const T(&)[N]) { return N; }
 NO_RETURN void FatalError(const char* location, const char* message);
 
 }  // namespace node
+
+#if NODE_MAJOR_VERSION < 6
+namespace v8 {
+  namespace Private {
+    v8::Local<v8::Name> ForApi(v8::Isolate* isolate, v8::Local<v8::String> key);
+  }
+}
+#define GetPrivate(context, key) Get((context), (key))
+#define SetPrivate(context, key, value)                                 \
+  DefineOwnProperty((context), (key), (value),                          \
+                    static_cast<v8::PropertyAttribute>(v8::DontEnum |   \
+                                                       v8::DontDelete | \
+                                                       v8::ReadOnly))
+#endif // NODE_MAJOR_VERSION < 6
 
 #endif  // SRC_NODE_INTERNALS_H_
