@@ -95,3 +95,10 @@ NO_RETURN void FatalError(const char* location, const char* message) {
 }
 
 }  // namespace node
+
+#if NODE_MAJOR_VERSION < 6
+v8::Local<v8::Name> v8::Private::ForApi(v8::Isolate* isolate,
+                                         v8::Local<v8::String> key) {
+  return v8::Symbol::ForApi(isolate, key);
+}
+#endif // NODE_MAJOR_VERSION < 6
