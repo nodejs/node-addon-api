@@ -24,7 +24,7 @@ Here is the list of things that can be fixed easily.
   3. `Napi::New(env, value);` to `Napi::[Type]::New(env, value); 
 
 
-### Major Reconstructiions
+### Major Reconstructions
 If you use Nan::ObjectWrap in your module, you will need to execute the following steps.
 
   1. Convert your [ClassName]::New function to a constructor function. Declare it as
