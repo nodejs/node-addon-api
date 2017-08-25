@@ -15,7 +15,9 @@
   ],
   "dependencies": {},
   "description": "Node.js API (N-API)",
-  "devDependencies": {},
+  "devDependencies": {
+    "safe-buffer": "^5.1.1"
+  },
   "directories": {},
   "homepage": "https://github.com/nodejs/node-addon-api",
   "license": "MIT",

@@ -2,6 +2,7 @@
 const buildType = process.config.target_defaults.default_configuration;
 const assert = require('assert');
 const testUtil = require('./testUtil');
+const safeBuffer = require('safe-buffer');
 
 test(require(`./build/${buildType}/binding.node`));
 test(require(`./build/${buildType}/binding_noexcept.node`));
@@ -14,7 +15,7 @@ function test(binding) {
       binding.buffer.checkBuffer(test);
       assert.ok(test instanceof Buffer);
 
-      const test2 = Buffer.alloc(test.length);
+      const test2 = safeBuffer.Buffer.alloc(test.length);
       test.copy(test2);
       binding.buffer.checkBuffer(test2);
     },

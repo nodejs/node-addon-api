@@ -14,19 +14,19 @@ test(`./build/${buildType}/binding_noexcept.node`);
 function test(bindingPath) {
   const binding = require(bindingPath);
 
-  assert.throws(() => binding.error.throwApiError('test'), err => {
+  assert.throws(() => binding.error.throwApiError('test'), function(err) {
     return err instanceof Error && err.message.includes('Invalid');
   });
 
-  assert.throws(() => binding.error.throwJSError('test'), err => {
+  assert.throws(() => binding.error.throwJSError('test'), function(err) {
     return err instanceof Error && err.message === 'test';
   });
 
-  assert.throws(() => binding.error.throwTypeError('test'), err => {
+  assert.throws(() => binding.error.throwTypeError('test'), function(err) {
     return err instanceof TypeError && err.message === 'test';
   });
 
-  assert.throws(() => binding.error.throwRangeError('test'), err => {
+  assert.throws(() => binding.error.throwRangeError('test'), function(err) {
     return err instanceof RangeError && err.message === 'test';
   });
 
@@ -35,7 +35,7 @@ function test(bindingPath) {
       () => {
         throw new TypeError('test');
       }),
-    err => {
+    function(err) {
       return err instanceof TypeError && err.message === 'test' && !err.caught;
     });
 
@@ -44,7 +44,7 @@ function test(bindingPath) {
       () => {
         throw new TypeError('test');
       }),
-    err => {
+    function(err) {
       return err instanceof TypeError && err.message === 'test' && err.caught;
     });
 
@@ -57,11 +57,11 @@ function test(bindingPath) {
     () => { throw new TypeError('test'); });
   assert.strictEqual(msg, 'test');
 
-  assert.throws(() => binding.error.throwErrorThatEscapesScope('test'), err => {
+  assert.throws(() => binding.error.throwErrorThatEscapesScope('test'), function(err) {
     return err instanceof Error && err.message === 'test';
   });
 
-  assert.throws(() => binding.error.catchAndRethrowErrorThatEscapesScope('test'), err => {
+  assert.throws(() => binding.error.catchAndRethrowErrorThatEscapesScope('test'), function(err) {
     return err instanceof Error && err.message === 'test' && err.caught;
   });
 
