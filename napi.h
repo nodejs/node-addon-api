@@ -120,6 +120,21 @@ namespace Napi {
     Value();                               ///< Creates a new _empty_ Value instance.
     Value(napi_env env, napi_value value); ///< Wraps a N-API value primitive.
 
+    /// Creates a JS value from a C++ primitive.
+    ///
+    /// `value` may be any of:
+    /// - bool
+    /// - Any integer type
+    /// - Any floating point type
+    /// - const char* (encoded using UTF-8, null-terminated)
+    /// - const char16_t* (encoded using UTF-16-LE, null-terminated)
+    /// - std::string (encoded using UTF-8)
+    /// - std::u16string
+    /// - napi::Value
+    /// - napi_value
+    template <typename T>
+    static Value From(napi_env env, const T& value);
+
     /// Converts to a N-API value primitive.
     ///
     /// If the instance is _empty_, this returns `nullptr`.
@@ -267,6 +282,16 @@ namespace Napi {
       const char16_t* value, ///< UTF-16 encoded C string (not necessarily null-terminated)
       size_t length          ///< Length of the string in 2-byte code units
     );
+
+    /// Creates a new String based on the original object's type.
+    ///
+    /// `value` may be any of:
+    /// - const char* (encoded using UTF-8, null-terminated)
+    /// - const char16_t* (encoded using UTF-16-LE, null-terminated)
+    /// - std::string (encoded using UTF-8)
+    /// - std::u16string
+    template <typename T>
+    static String From(napi_env env, const T& value);
 
     String();                               ///< Creates a new _empty_ String instance.
     String(napi_env env, napi_value value); ///< Wraps a N-API value primitive.
@@ -420,75 +445,31 @@ namespace Napi {
     ) const;
 
     /// Sets a property.
+    template <typename ValueType>
     void Set(
       napi_value key,  ///< Property key primitive
-      napi_value value ///< Property value primitive
+      const ValueType& value ///< Property value primitive
     );
 
     /// Sets a property.
+    template <typename ValueType>
     void Set(
       Value key,  ///< Property key
-      Value value ///< Property value
+      const ValueType& value ///< Property value
     );
 
     /// Sets a named property.
+    template <typename ValueType>
     void Set(
       const char* utf8name, ///< UTF-8 encoded null-terminated property name
-      napi_value value      ///< Property value primitive
+      const ValueType& value
     );
 
     /// Sets a named property.
-    void Set(
-      const char* utf8name, ///< UTF-8 encoded null-terminated property name
-      Value value           ///< Property value
-    );
-
-    /// Sets a named property to a string value.
-    void Set(
-      const char* utf8name, ///< UTF-8 encoded null-terminated property name
-      const char* utf8value ///< UTF-8 encoded null-terminated property value
-    );
-
-    /// Sets a named property to a boolean value.
-    void Set(
-      const char* utf8name, ///< UTF-8 encoded null-terminated property name
-      bool boolValue        ///< Property value
-    );
-
-    /// Sets a named property to a number value.
-    void Set(
-      const char* utf8name, ///< UTF-8 encoded null-terminated property name
-      double numberValue    ///< Property value
-    );
-
-    /// Sets a named property.
+    template <typename ValueType>
     void Set(
       const std::string& utf8name, ///< UTF-8 encoded property name
-      napi_value value             ///< Property value primitive
-    );
-
-    /// Sets a named property.
-    void Set(
-      const std::string& utf8name, ///< UTF-8 encoded property name
-      Value value                  ///< Property value
-    );
-
-    /// Sets a named property to a string value.
-    void Set(
-      const std::string& utf8name, ///< UTF-8 encoded property name
-      std::string& utf8value       ///< UTF-8 encoded property value
-    );
-
-    /// Sets a named property to a boolean value.
-    void Set(
-      const std::string& utf8name, ///< UTF-8 encoded property name
-      bool boolValue               ///< Property value
-    );
-
-    /// Sets a named property to a number value.
-    void Set(
-      const std::string& utf8name, ///< UTF-8 encoded property name
-      double numberValue           ///< Property value
+      const ValueType& value             ///< Property value primitive
     );
 
     /// Delete property.
@@ -522,39 +503,10 @@ namespace Napi {
     ) const;
 
     /// Sets an indexed property or array element.
+    template <typename ValueType>
     void Set(
       uint32_t index,  ///< Property / element index
-      napi_value value ///< Property value primitive
-    );
-
-    /// Sets an indexed property or array element.
-    void Set(
-      uint32_t index, ///< Property / element index
-      Value value     ///< Property value
-    );
-
-    /// Sets an indexed property or array element to a string value.
-    void Set(
-      uint32_t index,       ///< Property / element index
-      const char* utf8value ///< UTF-8 encoded null-terminated property value
-    );
-
-    /// Sets an indexed property or array element to a string value.
-    void Set(
-      uint32_t index,              ///< Property / element index
-      const std::string& utf8value ///< UTF-8 encoded property value
-    );
-
-    /// Sets an indexed property or array element to a boolean value.
-    void Set(
-      uint32_t index, ///< Property / element index
-      bool boolValue  ///< Property value
-    );
-
-    /// Sets an indexed property or array element to a number value.
-    void Set(
-      uint32_t index,    ///< Property / element index
-      double numberValue ///< Property value
+      const ValueType& value ///< Property value primitive
     );
 
     /// Deletes an indexed property or array element.

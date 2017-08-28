@@ -10,6 +10,7 @@
 // Note: Do not include this file directly! Include "napi.h" instead.
 
 #include <cstring>
+#include <type_traits>
 
 namespace Napi {
 
@@ -600,6 +601,106 @@ inline Symbol::Symbol(napi_env env, napi_value value) : Name(env, value) {
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+// Automagic value creation
+////////////////////////////////////////////////////////////////////////////////
+
+namespace details {
+template <typename T>
+struct vf_number {
+  static Number From(napi_env env, T value) {
+    return Number::New(env, static_cast<double>(value));
+  }
+};
+
+template<>
+struct vf_number<bool> {
+  static Boolean From(napi_env env, bool value) {
+    return Boolean::New(env, value);
+  }
+};
+
+struct vf_utf8_charp {
+  static String From(napi_env env, const char* value) {
+    return String::New(env, value);
+  }
+};
+
+struct vf_utf16_charp {
+  static String From(napi_env env, const char16_t* value) {
+    return String::New(env, value);
+  }
+};
+struct vf_utf8_string {
+  static String From(napi_env env, const std::string& value) {
+    return String::New(env, value);
+  }
+};
+
+struct vf_utf16_string {
+  static String From(napi_env env, const std::u16string& value) {
+    return String::New(env, value);
+  }
+};
+
+template <typename T>
+struct vf_fallback {
+  static Value From(napi_env env, const T& value) {
+    return Value(env, value);
+  }
+};
+
+template <typename...> struct disjunction : std::false_type {};
+template <typename B> struct disjunction<B> : B {};
+template <typename B, typename... Bs>
+struct disjunction<B, Bs...>
+    : std::conditional<bool(B::value), B, disjunction<Bs...>>::type {};
+
+template <typename T>
+struct can_make_string
+    : disjunction<typename std::is_convertible<T, const char *>::type,
+                  typename std::is_convertible<T, const char16_t *>::type,
+                  typename std::is_convertible<T, std::string>::type,
+                  typename std::is_convertible<T, std::u16string>::type> {};
+}
+
+template <typename T>
+Value Value::From(napi_env env, const T& value) {
+  using Helper = typename std::conditional<
+    std::is_integral<T>::value || std::is_floating_point<T>::value,
+    details::vf_number<T>,
+    typename std::conditional<
+      details::can_make_string<T>::value,
+      String,
+      details::vf_fallback<T>
+    >::type
+  >::type;
+  return Helper::From(env, value);
+}
+
+template <typename T>
+String String::From(napi_env env, const T& value) {
+  struct Dummy {};
+  using Helper = typename std::conditional<
+    std::is_convertible<T, const char*>::value,
+    details::vf_utf8_charp,
+    typename std::conditional<
+      std::is_convertible<T, const char16_t*>::value,
+      details::vf_utf16_charp,
+      typename std::conditional<
+        std::is_convertible<T, std::string>::value,
+        details::vf_utf8_string,
+        typename std::conditional<
+          std::is_convertible<T, std::u16string>::value,
+          details::vf_utf16_string,
+          Dummy
+        >::type
+      >::type
+    >::type
+  >::type;
+  return Helper::From(env, value);
+}
+
+////////////////////////////////////////////////////////////////////////////////
 // Object class
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -705,56 +806,30 @@ inline Value Object::Get(const std::string& utf8name) const {
   return Get(utf8name.c_str());
 }
 
-inline void Object::Set(napi_value key, napi_value value) {
-  napi_status status = napi_set_property(_env, _value, key, value);
+template <typename ValueType>
+inline void Object::Set(napi_value key, const ValueType& value) {
+  napi_status status =
+      napi_set_property(_env, _value, key, Value::From(_env, value));
   NAPI_THROW_IF_FAILED(_env, status);
 }
 
-inline void Object::Set(Value key, Value value) {
-  napi_status status = napi_set_property(_env, _value, key, value);
+template <typename ValueType>
+inline void Object::Set(Value key, const ValueType& value) {
+  napi_status status =
+      napi_set_property(_env, _value, key, Value::From(_env, value));
   NAPI_THROW_IF_FAILED(_env, status);
 }
 
-inline void Object::Set(const char* utf8name, Value value) {
-  napi_status status = napi_set_named_property(_env, _value, utf8name, value);
+template <typename ValueType>
+inline void Object::Set(const char* utf8name, const ValueType& value) {
+  napi_status status =
+      napi_set_named_property(_env, _value, utf8name, Value::From(_env, value));
   NAPI_THROW_IF_FAILED(_env, status);
 }
 
-inline void Object::Set(const char* utf8name, napi_value value) {
-  napi_status status = napi_set_named_property(_env, _value, utf8name, value);
-  NAPI_THROW_IF_FAILED(_env, status);
-}
-
-inline void Object::Set(const char* utf8name, const char* utf8value) {
-  Set(utf8name, String::New(Env(), utf8value));
-}
-
-inline void Object::Set(const char* utf8name, bool boolValue) {
-  Set(utf8name, Boolean::New(Env(), boolValue));
-}
-
-inline void Object::Set(const char* utf8name, double numberValue) {
-  Set(utf8name, Number::New(Env(), numberValue));
-}
-
-inline void Object::Set(const std::string& utf8name, napi_value value) {
+template <typename ValueType>
+inline void Object::Set(const std::string& utf8name, const ValueType& value) {
   Set(utf8name.c_str(), value);
-}
-
-inline void Object::Set(const std::string& utf8name, Value value) {
-  Set(utf8name.c_str(), value);
-}
-
-inline void Object::Set(const std::string& utf8name, std::string& utf8value) {
-  Set(utf8name.c_str(), String::New(Env(), utf8value));
-}
-
-inline void Object::Set(const std::string& utf8name, bool boolValue) {
-  Set(utf8name.c_str(), Boolean::New(Env(), boolValue));
-}
-
-inline void Object::Set(const std::string& utf8name, double numberValue) {
-  Set(utf8name.c_str(), Number::New(Env(), numberValue));
 }
 
 inline bool Object::Delete(napi_value key) {
@@ -793,30 +868,11 @@ inline Value Object::Get(uint32_t index) const {
   return Value(_env, value);
 }
 
-inline void Object::Set(uint32_t index, napi_value value) {
-  napi_status status = napi_set_element(_env, _value, index, value);
+template <typename ValueType>
+inline void Object::Set(uint32_t index, const ValueType& value) {
+  napi_status status =
+      napi_set_element(_env, _value, index, Value::From(_env, value));
   NAPI_THROW_IF_FAILED(_env, status);
-}
-
-inline void Object::Set(uint32_t index, Value value) {
-  napi_status status = napi_set_element(_env, _value, index, value);
-  NAPI_THROW_IF_FAILED(_env, status);
-}
-
-inline void Object::Set(uint32_t index, const char* utf8value) {
-  Set(index, static_cast<napi_value>(String::New(Env(), utf8value)));
-}
-
-inline void Object::Set(uint32_t index, const std::string& utf8value) {
-  Set(index, static_cast<napi_value>(String::New(Env(), utf8value)));
-}
-
-inline void Object::Set(uint32_t index, bool boolValue) {
-  Set(index, static_cast<napi_value>(Boolean::New(Env(), boolValue)));
-}
-
-inline void Object::Set(uint32_t index, double numberValue) {
-  Set(index, static_cast<napi_value>(Number::New(Env(), numberValue)));
 }
 
 inline bool Object::Delete(uint32_t index) {

@@ -108,6 +108,28 @@ Value DeleteProperty(const CallbackInfo& info) {
   return Boolean::New(info.Env(), obj.Delete(name));
 }
 
+Value CreateObjectUsingMagic(const CallbackInfo& info) {
+  Env env = info.Env();
+  Object obj = Object::New(env);
+  obj["cp_false"] = false;
+  obj["cp_true"] = true;
+  obj[std::string("s_true")] = true;
+  obj[std::string("s_false")] = false;
+  obj["0"] = 0;
+  obj[42] = 120;
+  obj["0.0f"] = 0.0f;
+  obj["0.0"] = 0.0;
+  obj["-1"] = -1;
+  obj["foo2"] = u"foo";
+  obj[std::string("foo4")] = NAPI_WIDE_TEXT("foo");
+  obj[std::string("foo5")] = "foo";
+  obj[std::string("foo6")] = std::u16string(NAPI_WIDE_TEXT("foo"));
+  obj[std::string("foo7")] = std::string("foo");
+  obj[std::string("circular")] = obj;
+  obj["circular2"] = obj;
+  return obj;
+}
+
 Object InitObject(Env env) {
   Object exports = Object::New(env);
 
@@ -117,6 +139,7 @@ Object InitObject(Env env) {
   exports["getProperty"] = Function::New(env, GetProperty);
   exports["setProperty"] = Function::New(env, SetProperty);
   exports["deleteProperty"] = Function::New(env, DeleteProperty);
+  exports["createObjectUsingMagic"] = Function::New(env, CreateObjectUsingMagic);
 
   return exports;
 }

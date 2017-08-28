@@ -109,4 +109,26 @@ function test(binding) {
   assert.throws(() => {
     binding.object.deleteProperty(undefined, 'test');
   }, /object was expected/);
+
+  {
+    const magicObject = binding.object.createObjectUsingMagic();
+    assert.deepStrictEqual(magicObject, {
+      0: 0,
+      42: 120,
+      cp_false: false,
+      cp_true: true,
+      s_true: true,
+      s_false: false,
+      '0.0f': 0,
+      '0.0': 0,
+      '-1': -1,
+      foo2: 'foo',
+      foo4: 'foo',
+      foo5: 'foo',
+      foo6: 'foo',
+      foo7: 'foo',
+      circular: magicObject,
+      circular2: magicObject
+    });
+  }
 }
