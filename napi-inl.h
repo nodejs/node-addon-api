@@ -1548,6 +1548,38 @@ inline Napi::ArrayBuffer TypedArray::ArrayBuffer() const {
   return Napi::ArrayBuffer(_env, arrayBuffer);
 }
 
+#define X(TYPE)                                                                \
+  template <> struct TypedArray::type_translator<TYPE##_t> {                   \
+    static const napi_typedarray_type value = napi_##TYPE##_array;             \
+  }
+
+X(int8);
+X(uint8);
+X(int16);
+X(uint16);
+X(int32);
+X(uint32);
+
+#undef X
+
+template <> struct TypedArray::type_translator<float> {
+  static const napi_typedarray_type value = napi_float32_array;
+};
+template <> struct TypedArray::type_translator<double> {
+  static const napi_typedarray_type value = napi_float64_array;
+};
+// currently experimental guard with version of NAPI_VERSION that it is
+// released in once it is no longer experimental
+#if (NAPI_VERSION > 2147483646)
+template <> struct TypedArray::type_translator<int64_t> {
+  static const napi_typedarray_type value = napi_bigint64_array;
+};
+template <> struct TypedArray::type_translator<uint64_t> {
+  static const napi_typedarray_type value = napi_biguint64_array;
+};
+#endif  // NAPI_EXPERIMENTAL
+
+
 ////////////////////////////////////////////////////////////////////////////////
 // TypedArrayOf<T> class
 ////////////////////////////////////////////////////////////////////////////////
@@ -1595,7 +1627,7 @@ inline TypedArrayOf<T>::TypedArrayOf(napi_env env,
                                      size_t length,
                                      T* data)
   : TypedArray(env, value, type, length), _data(data) {
-  if (!(type == TypedArrayTypeForPrimitiveType<T>() ||
+  if (!(type == TypedArray::type_translator<T>::value ||
       (type == napi_uint8_clamped_array && std::is_same<T, uint8_t>::value))) {
     NAPI_THROW(TypeError::New(env, "Array type must match the template parameter. "
       "(Uint8 arrays may optionally have the \"clamped\" array type.)"));

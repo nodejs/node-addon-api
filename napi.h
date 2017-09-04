@@ -748,28 +748,10 @@ namespace Napi {
 
     static const napi_typedarray_type unknown_array_type = static_cast<napi_typedarray_type>(-1);
 
-    template <typename T>
-    static
-#if defined(NAPI_HAS_CONSTEXPR)
-    constexpr
-#endif
-    napi_typedarray_type TypedArrayTypeForPrimitiveType() {
-      return std::is_same<T, int8_t>::value ? napi_int8_array
-        : std::is_same<T, uint8_t>::value ? napi_uint8_array
-        : std::is_same<T, int16_t>::value ? napi_int16_array
-        : std::is_same<T, uint16_t>::value ? napi_uint16_array
-        : std::is_same<T, int32_t>::value ? napi_int32_array
-        : std::is_same<T, uint32_t>::value ? napi_uint32_array
-        : std::is_same<T, float>::value ? napi_float32_array
-        : std::is_same<T, double>::value ? napi_float64_array
-// currently experimental guard with version of NAPI_VERSION that it is
-// released in once it is no longer experimental
-#if (NAPI_VERSION > 2147483646)
-        : std::is_same<T, int64_t>::value ? napi_bigint64_array
-        : std::is_same<T, uint64_t>::value ? napi_biguint64_array
-#endif  // NAPI_EXPERIMENTAL
-        : unknown_array_type;
-    }
+    template <typename>
+    struct type_translator {
+      static const napi_typedarray_type value = unknown_array_type;
+    };
     /// !endcond
   };
 
@@ -789,11 +771,7 @@ namespace Napi {
     static TypedArrayOf New(
       napi_env env,         ///< N-API environment
       size_t elementLength, ///< Length of the created array, as a number of elements
-#if defined(NAPI_HAS_CONSTEXPR)
-      napi_typedarray_type type = TypedArray::TypedArrayTypeForPrimitiveType<T>()
-#else
-      napi_typedarray_type type
-#endif
+      napi_typedarray_type type = TypedArray::type_translator<T>::value
         ///< Type of array, if different from the default array type for the template parameter T.
     );
 
@@ -808,11 +786,7 @@ namespace Napi {
       size_t elementLength,          ///< Length of the created array, as a number of elements
       Napi::ArrayBuffer arrayBuffer, ///< Backing array buffer instance to use
       size_t bufferOffset,           ///< Offset into the array buffer where the typed-array starts
-#if defined(NAPI_HAS_CONSTEXPR)
-      napi_typedarray_type type = TypedArray::TypedArrayTypeForPrimitiveType<T>()
-#else
-      napi_typedarray_type type
-#endif
+      napi_typedarray_type type = TypedArray::type_translator<T>::value
         ///< Type of array, if different from the default array type for the template parameter T.
     );
 
