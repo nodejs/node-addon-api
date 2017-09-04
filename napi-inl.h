@@ -1123,73 +1123,68 @@ inline Napi::ArrayBuffer TypedArray::ArrayBuffer() const {
 // TypedArrayOf<T> class
 ////////////////////////////////////////////////////////////////////////////////
 
-template <typename T>
-inline TypedArrayOf<T> TypedArrayOf<T>::New(napi_env env,
-                                            size_t elementLength,
-                                            napi_typedarray_type type) {
-  Napi::ArrayBuffer arrayBuffer = Napi::ArrayBuffer::New(env, elementLength * sizeof (T));
-  return New(env, elementLength, arrayBuffer, 0, type);
+template <typename U, napi_typedarray_type V>
+inline TypedArrayOf<U, V> TypedArrayOf<U, V>::New(napi_env env,
+                                            size_t elementLength) {
+  Napi::ArrayBuffer arrayBuffer = Napi::ArrayBuffer::New(env, elementLength * sizeof (U));
+  return New(env, elementLength, arrayBuffer, 0);
 }
 
-template <typename T>
-inline TypedArrayOf<T> TypedArrayOf<T>::New(napi_env env,
+template <typename U, napi_typedarray_type V>
+inline TypedArrayOf<U, V> TypedArrayOf<U, V>::New(napi_env env,
                                             size_t elementLength,
                                             Napi::ArrayBuffer arrayBuffer,
-                                            size_t bufferOffset,
-                                            napi_typedarray_type type) {
+                                            size_t bufferOffset) {
   napi_value value;
   napi_status status = napi_create_typedarray(
-    env, type, elementLength, arrayBuffer, bufferOffset, &value);
-  NAPI_THROW_IF_FAILED(env, status, TypedArrayOf<T>());
+    env, V, elementLength, arrayBuffer, bufferOffset, &value);
+  NAPI_THROW_IF_FAILED(env, status, TypedArrayOf<U, V>());
 
-  return TypedArrayOf<T>(
-    env, value, type, elementLength,
-    reinterpret_cast<T*>(reinterpret_cast<uint8_t*>(arrayBuffer.Data()) + bufferOffset));
+  return TypedArrayOf<U, V>(
+    env, value, elementLength,
+    reinterpret_cast<U*>(reinterpret_cast<uint8_t*>(arrayBuffer.Data()) + bufferOffset));
 }
 
-template <typename T>
-inline TypedArrayOf<T>::TypedArrayOf() : TypedArray(), _data(nullptr) {
+template <typename U, napi_typedarray_type V>
+inline TypedArrayOf<U, V>::TypedArrayOf() : TypedArray(), _data(nullptr) {
 }
 
-template <typename T>
-inline TypedArrayOf<T>::TypedArrayOf(napi_env env, napi_value value)
+template <typename U, napi_typedarray_type V>
+inline TypedArrayOf<U, V>::TypedArrayOf(napi_env env, napi_value value)
   : TypedArray(env, value), _data(nullptr) {
   napi_status status = napi_get_typedarray_info(
     _env, _value, &_type, &_length, reinterpret_cast<void**>(&_data), nullptr, nullptr);
   NAPI_THROW_IF_FAILED(_env, status);
 }
 
-template <typename T>
-inline TypedArrayOf<T>::TypedArrayOf(napi_env env,
-                                     napi_value value,
-                                     napi_typedarray_type type,
-                                     size_t length,
-                                     T* data)
-  : TypedArray(env, value, type, length), _data(data) {
-  if (!(type == TypedArrayTypeForPrimitiveType<T>() ||
-      (type == napi_uint8_clamped_array && std::is_same<T, uint8_t>::value))) {
-    NAPI_THROW(TypeError::New(env, "Array type must match the template parameter. "
-      "(Uint8 arrays may optionally have the \"clamped\" array type.)"));
-  }
+template <typename U, napi_typedarray_type V>
+inline TypedArrayOf<U, V>::TypedArrayOf(napi_env env, napi_value value,
+                                        size_t length, U *data)
+    : TypedArray(env, value, V, length), _data(data) {
+  static_assert(
+      V == TypedArrayTypeForPrimitiveType<U>() ||
+          (V == napi_uint8_clamped_array && std::is_same<U, uint8_t>::value),
+      "Array type must match the template parameter. "
+      "(Uint8 arrays may optionally have the \"clamped\" array type.)");
 }
 
-template <typename T>
-inline T& TypedArrayOf<T>::operator [](size_t index) {
+template <typename U, napi_typedarray_type V>
+inline U& TypedArrayOf<U, V>::operator [](size_t index) {
   return _data[index];
 }
 
-template <typename T>
-inline const T& TypedArrayOf<T>::operator [](size_t index) const {
+template <typename U, napi_typedarray_type V>
+inline const U& TypedArrayOf<U, V>::operator [](size_t index) const {
   return _data[index];
 }
 
-template <typename T>
-inline T* TypedArrayOf<T>::Data() {
+template <typename U, napi_typedarray_type V>
+inline U* TypedArrayOf<U, V>::Data() {
   return _data;
 }
 
-template <typename T>
-inline const T* TypedArrayOf<T>::Data() const {
+template <typename U, napi_typedarray_type V>
+inline const U* TypedArrayOf<U, V>::Data() const {
   return _data;
 }
 

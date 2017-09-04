@@ -2,15 +2,9 @@
 
 using namespace Napi;
 
-#if defined(NAPI_HAS_CONSTEXPR)
-#define NAPI_TYPEDARRAY_NEW(className, env, length, type) className::New(env, length)
-#define NAPI_TYPEDARRAY_NEW_BUFFER(className, env, length, buffer, bufferOffset, type) \
+#define NAPI_TYPEDARRAY_NEW(className, env, length) className::New(env, length)
+#define NAPI_TYPEDARRAY_NEW_BUFFER(className, env, length, buffer, bufferOffset) \
   className::New(env, length, buffer, bufferOffset)
-#else
-#define NAPI_TYPEDARRAY_NEW(className, env, length, type) className::New(env, length, type)
-#define NAPI_TYPEDARRAY_NEW_BUFFER(className, env, length, buffer, bufferOffset, type) \
-  className::New(env, length, buffer, bufferOffset, type)
-#endif
 
 namespace {
 
@@ -21,57 +15,59 @@ Value CreateTypedArray(const CallbackInfo& info) {
   size_t bufferOffset = info[3].IsUndefined() ? 0 : info[3].As<Number>().Uint32Value();
 
   if (arrayType == "int8") {
-    return buffer.IsUndefined() ?
-      NAPI_TYPEDARRAY_NEW(Int8Array, info.Env(), length, napi_int8_array) :
-      NAPI_TYPEDARRAY_NEW_BUFFER(Int8Array, info.Env(), length, buffer, bufferOffset,
-                                 napi_int8_array);
+    return buffer.IsUndefined()
+               ? NAPI_TYPEDARRAY_NEW(Int8Array, info.Env(), length)
+               : NAPI_TYPEDARRAY_NEW_BUFFER(Int8Array, info.Env(), length,
+                                            buffer, bufferOffset);
   } else if (arrayType == "uint8") {
-    return buffer.IsUndefined() ?
-      NAPI_TYPEDARRAY_NEW(Uint8Array, info.Env(), length, napi_uint8_array) :
-      NAPI_TYPEDARRAY_NEW_BUFFER(Uint8Array, info.Env(), length, buffer, bufferOffset,
-                                 napi_uint8_array);
+    return buffer.IsUndefined()
+               ? NAPI_TYPEDARRAY_NEW(Uint8Array, info.Env(), length)
+               : NAPI_TYPEDARRAY_NEW_BUFFER(Uint8Array, info.Env(), length,
+                                            buffer, bufferOffset);
   } else if (arrayType == "uint8_clamped") {
-    return buffer.IsUndefined() ?
-      Uint8Array::New(info.Env(), length, napi_uint8_clamped_array) :
-      Uint8Array::New(info.Env(), length, buffer, bufferOffset, napi_uint8_clamped_array);
+    return buffer.IsUndefined()
+               ? NAPI_TYPEDARRAY_NEW(Uint8ClampedArray, info.Env(), length)
+               : NAPI_TYPEDARRAY_NEW_BUFFER(Uint8ClampedArray, info.Env(),
+                                            length, buffer, bufferOffset);
   } else if (arrayType == "int16") {
-    return buffer.IsUndefined() ?
-      NAPI_TYPEDARRAY_NEW(Int16Array, info.Env(), length, napi_int16_array) :
-      NAPI_TYPEDARRAY_NEW_BUFFER(Int16Array, info.Env(), length, buffer, bufferOffset,
-                                 napi_int16_array);
+    return buffer.IsUndefined()
+               ? NAPI_TYPEDARRAY_NEW(Int16Array, info.Env(), length)
+               : NAPI_TYPEDARRAY_NEW_BUFFER(Int16Array, info.Env(), length,
+                                            buffer, bufferOffset);
   } else if (arrayType == "uint16") {
-    return buffer.IsUndefined() ?
-      NAPI_TYPEDARRAY_NEW(Uint16Array, info.Env(), length, napi_uint16_array) :
-      NAPI_TYPEDARRAY_NEW_BUFFER(Uint16Array, info.Env(), length, buffer, bufferOffset,
-                                 napi_uint16_array);
+    return buffer.IsUndefined()
+               ? NAPI_TYPEDARRAY_NEW(Uint16Array, info.Env(), length)
+               : NAPI_TYPEDARRAY_NEW_BUFFER(Uint16Array, info.Env(), length,
+                                            buffer, bufferOffset);
   } else if (arrayType == "int32") {
-    return buffer.IsUndefined() ?
-      NAPI_TYPEDARRAY_NEW(Int32Array, info.Env(), length, napi_int32_array) :
-      NAPI_TYPEDARRAY_NEW_BUFFER(Int32Array, info.Env(), length, buffer, bufferOffset,
-                                 napi_int32_array);
+    return buffer.IsUndefined()
+               ? NAPI_TYPEDARRAY_NEW(Int32Array, info.Env(), length)
+               : NAPI_TYPEDARRAY_NEW_BUFFER(Int32Array, info.Env(), length,
+                                            buffer, bufferOffset);
   } else if (arrayType == "uint32") {
-    return buffer.IsUndefined() ?
-      NAPI_TYPEDARRAY_NEW(Uint32Array, info.Env(), length, napi_uint32_array) :
-      NAPI_TYPEDARRAY_NEW_BUFFER(Uint32Array, info.Env(), length, buffer, bufferOffset,
-                                 napi_uint32_array);
+    return buffer.IsUndefined()
+               ? NAPI_TYPEDARRAY_NEW(Uint32Array, info.Env(), length)
+               : NAPI_TYPEDARRAY_NEW_BUFFER(Uint32Array, info.Env(), length,
+                                            buffer, bufferOffset);
   } else if (arrayType == "float32") {
-    return buffer.IsUndefined() ?
-      NAPI_TYPEDARRAY_NEW(Float32Array, info.Env(), length, napi_float32_array) :
-      NAPI_TYPEDARRAY_NEW_BUFFER(Float32Array, info.Env(), length, buffer, bufferOffset,
-                                 napi_float32_array);
+    return buffer.IsUndefined()
+               ? NAPI_TYPEDARRAY_NEW(Float32Array, info.Env(), length)
+               : NAPI_TYPEDARRAY_NEW_BUFFER(Float32Array, info.Env(), length,
+                                            buffer, bufferOffset);
   } else if (arrayType == "float64") {
-    return buffer.IsUndefined() ?
-      NAPI_TYPEDARRAY_NEW(Float64Array, info.Env(), length, napi_float64_array) :
-      NAPI_TYPEDARRAY_NEW_BUFFER(Float64Array, info.Env(), length, buffer, bufferOffset,
-                                 napi_float64_array);
+    return buffer.IsUndefined()
+               ? NAPI_TYPEDARRAY_NEW(Float64Array, info.Env(), length)
+               : NAPI_TYPEDARRAY_NEW_BUFFER(Float64Array, info.Env(), length,
+                                            buffer, bufferOffset);
   } else {
-    Error::New(info.Env(), "Invalid typed-array type.").ThrowAsJavaScriptException();
+    Error::New(info.Env(), "Invalid typed-array type.")
+        .ThrowAsJavaScriptException();
     return Value();
   }
 }
 
 Value CreateInvalidTypedArray(const CallbackInfo& info) {
-  return NAPI_TYPEDARRAY_NEW_BUFFER(Int8Array, info.Env(), 1, ArrayBuffer(), 0, napi_int8_array);
+  return NAPI_TYPEDARRAY_NEW_BUFFER(Int8Array, info.Env(), 1, ArrayBuffer(), 0);
 }
 
 Value GetTypedArrayType(const CallbackInfo& info) {

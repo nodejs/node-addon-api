@@ -62,16 +62,26 @@ namespace Napi {
   class CallbackInfo;
   template <typename T> class Reference;
   class TypedArray;
-  template <typename T> class TypedArrayOf;
+  template <typename U, napi_typedarray_type V> class TypedArrayOf;
 
-  typedef TypedArrayOf<int8_t> Int8Array;     ///< Typed-array of signed 8-bit integers
-  typedef TypedArrayOf<uint8_t> Uint8Array;   ///< Typed-array of unsigned 8-bit integers
-  typedef TypedArrayOf<int16_t> Int16Array;   ///< Typed-array of signed 16-bit integers
-  typedef TypedArrayOf<uint16_t> Uint16Array; ///< Typed-array of unsigned 16-bit integers
-  typedef TypedArrayOf<int32_t> Int32Array;   ///< Typed-array of signed 32-bit integers
-  typedef TypedArrayOf<uint32_t> Uint32Array; ///< Typed-array of unsigned 32-bit integers
-  typedef TypedArrayOf<float> Float32Array;   ///< Typed-array of 32-bit floating-point values
-  typedef TypedArrayOf<double> Float64Array;  ///< Typed-array of 64-bit floating-point values
+  ///< Typed-array of signed 8-bit integers
+  using Int8Array = TypedArrayOf<int8_t, napi_int8_array>;
+  ///< Typed-array of unsigned 8-bit integers
+  using Uint8Array = TypedArrayOf<uint8_t, napi_uint8_array>;
+  ///< Typed-array of unsigned 8-bit clamped integers
+  using Uint8ClampedArray = TypedArrayOf<uint8_t, napi_uint8_clamped_array>;
+  ///< Typed-array of signed 16-bit integers
+  using Int16Array = TypedArrayOf<int16_t, napi_int16_array>;
+  ///< Typed-array of unsigned 16-bit integers
+  using Uint16Array = TypedArrayOf<uint16_t, napi_uint16_array>;
+  ///< Typed-array of signed 32-bit integers
+  using Int32Array = TypedArrayOf<int32_t, napi_int32_array>;
+  ///< Typed-array of unsigned 32-bit integers
+  using Uint32Array = TypedArrayOf<uint32_t, napi_uint32_array>;
+  ///< Typed-array of 32-bit floating-point values
+  using Float32Array = TypedArrayOf<float, napi_float32_array>;
+  ///< Typed-array of 64-bit floating-point values
+  using Float64Array = TypedArrayOf<double, napi_float64_array>;
 
   /// Defines the signature of a N-API C++ module's registration callback (init) function.
   typedef void (*ModuleRegisterCallback)(Env env, Object exports, Object module);
@@ -707,7 +717,7 @@ namespace Napi {
   ///
   /// Note while it is possible to create and access Uint8 "clamped" arrays using this class,
   /// the _clamping_ behavior is only applied in JavaScript.
-  template <typename T>
+  template <typename U, napi_typedarray_type V>
   class TypedArrayOf : public TypedArray {
   public:
     /// Creates a new TypedArray instance over a new automatically-allocated array buffer.
@@ -718,13 +728,7 @@ namespace Napi {
     ///     Uint8Array::New(env, length, napi_uint8_clamped_array)
     static TypedArrayOf New(
       napi_env env,         ///< N-API environment
-      size_t elementLength, ///< Length of the created array, as a number of elements
-#if defined(NAPI_HAS_CONSTEXPR)
-      napi_typedarray_type type = TypedArray::TypedArrayTypeForPrimitiveType<T>()
-#else
-      napi_typedarray_type type
-#endif
-        ///< Type of array, if different from the default array type for the template parameter T.
+      size_t elementLength  ///< Length of the created array, as a number of elements
     );
 
     /// Creates a new TypedArray instance over a provided array buffer.
@@ -737,41 +741,34 @@ namespace Napi {
       napi_env env,                  ///< N-API environment
       size_t elementLength,          ///< Length of the created array, as a number of elements
       Napi::ArrayBuffer arrayBuffer, ///< Backing array buffer instance to use
-      size_t bufferOffset,           ///< Offset into the array buffer where the typed-array starts
-#if defined(NAPI_HAS_CONSTEXPR)
-      napi_typedarray_type type = TypedArray::TypedArrayTypeForPrimitiveType<T>()
-#else
-      napi_typedarray_type type
-#endif
-        ///< Type of array, if different from the default array type for the template parameter T.
+      size_t bufferOffset            ///< Offset into the array buffer where the typed-array starts
     );
 
     TypedArrayOf();                               ///< Creates a new _empty_ TypedArrayOf instance.
     TypedArrayOf(napi_env env, napi_value value); ///< Wraps a N-API value primitive.
 
-    T& operator [](size_t index);             ///< Gets or sets an element in the array.
-    const T& operator [](size_t index) const; ///< Gets an element in the array.
+    U& operator [](size_t index);             ///< Gets or sets an element in the array.
+    const U& operator [](size_t index) const; ///< Gets an element in the array.
 
     /// Gets a pointer to the array's backing buffer.
     ///
     /// This is not necessarily the same as the `ArrayBuffer::Data()` pointer, because the
     /// typed-array may have a non-zero `ByteOffset()` into the `ArrayBuffer`.
-    T* Data();
+    U* Data();
 
     /// Gets a pointer to the array's backing buffer.
     ///
     /// This is not necessarily the same as the `ArrayBuffer::Data()` pointer, because the
     /// typed-array may have a non-zero `ByteOffset()` into the `ArrayBuffer`.
-    const T* Data() const;
+    const U* Data() const;
 
   private:
-    T* _data;
+    U* _data;
 
     TypedArrayOf(napi_env env,
                  napi_value value,
-                 napi_typedarray_type type,
                  size_t length,
-                 T* data);
+                 U* data);
   };
 
   class Function : public Object {
