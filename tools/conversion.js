@@ -189,7 +189,7 @@ var SourceFileOperations = [
   [ /constructor_template/g, 'constructor' ],
 
   [ /Nan::FunctionCallbackInfo<(v8::)*Value>\s*&\s*info\)\s*{/g, 'Napi::CallbackInfo& info) {\n  Napi::Env env = info.Env();' ],
-
+  [ /Nan::FunctionCallbackInfo<(v8::)*Value>\s*&\s*info\);/g, 'Napi::CallbackInfo& info);' ],
 
   [ /info\[(\d+)\]->/g, 'info[$1].' ],
   [ /info\[([\w\d]+)\]->/g, 'info[$1].' ],
