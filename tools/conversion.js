@@ -163,6 +163,8 @@ var SourceFileOperations = [
   [ /Nan::Equals\(([^,]+),/g, '$1.StrictEquals(' ],
 
 
+  [ /(.+)->Set\(/g, '$1.Set\(' ],
+
 
   [ /Nan::Callback/g, 'Napi::FunctionReference' ],
 
