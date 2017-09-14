@@ -148,7 +148,8 @@ var SourceFileOperations = [
 
   // Nan::ThrowError(error) to Napi::Error::New(env, error).ThrowAsJavaScriptException()
   [ /return Nan::Throw(\w*?)Error\((.+?)\);/g, 'Napi::$1Error::New(env, $2).ThrowAsJavaScriptException();\n  return env.Null();' ],
-  [ /Nan::Throw(\w*?)Error\((.+?)\);/g, 'Napi::$1Error::New(env, $2).ThrowAsJavaScriptException();\n  return env.Null();' ],
+  [ /Nan::Throw(\w*?)Error\((.+?)\);\n(\s*)return;/g, 'Napi::$1Error::New(env, $2).ThrowAsJavaScriptException();\n$3return env.Null();' ],
+  [ /Nan::Throw(\w*?)Error\((.+?)\);/g, 'Napi::$1Error::New(env, $2).ThrowAsJavaScriptException();\n' ],
   // Nan::RangeError(error) to Napi::RangeError::New(env, error)
   [ /Nan::(\w*?)Error\((.+)\)/g, 'Napi::$1Error::New(env, $2)' ],
 
