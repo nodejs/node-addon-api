@@ -1274,7 +1274,7 @@ inline Value Function::MakeCallback(
     napi_value recv, size_t argc, const napi_value* args) const {
   napi_value result;
   napi_status status = napi_make_callback(
-    _env, recv, _value, argc, args, &result);
+    _env, NULL, recv, _value, argc, args, &result);
   NAPI_THROW_IF_FAILED(_env, status, Value());
   return Value(_env, result);
 }
@@ -2686,7 +2686,7 @@ inline AsyncWorker::AsyncWorker(const Object& receiver, const Function& callback
     _receiver(Napi::Persistent(receiver)),
     _callback(Napi::Persistent(callback)) {
   napi_status status = napi_create_async_work(
-    _env, OnExecute, OnWorkComplete, this, &_work);
+    _env, NULL, NULL, OnExecute, OnWorkComplete, this, &_work);
   NAPI_THROW_IF_FAILED(_env, status);
 }
 
