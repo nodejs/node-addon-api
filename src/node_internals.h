@@ -8,6 +8,9 @@
 #include "node_version.h"
 #include "util-inl.h"
 #include <stdio.h>
+#include <stdint.h>
+#include "uv.h"
+#include "node.h"
 
 // Windows 8+ does not like abort() in Release mode
 #ifdef _WIN32

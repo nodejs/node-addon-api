@@ -13,7 +13,7 @@ Object InitObject(Env env);
 Object InitTypedArray(Env env);
 Object InitObjectWrap(Env env);
 
-void Init(Env env, Object exports, Object module) {
+Object Init(Env env, Object exports) {
   exports.Set("arraybuffer", InitArrayBuffer(env));
   exports.Set("asyncworker", InitAsyncWorker(env));
   exports.Set("buffer", InitBuffer(env));
@@ -24,6 +24,7 @@ void Init(Env env, Object exports, Object module) {
   exports.Set("object", InitObject(env));
   exports.Set("typedarray", InitTypedArray(env));
   exports.Set("objectwrap", InitObjectWrap(env));
+  return exports;
 }
 
 NODE_API_MODULE(addon, Init)

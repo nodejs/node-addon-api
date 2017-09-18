@@ -74,7 +74,7 @@ namespace Napi {
   typedef TypedArrayOf<double> Float64Array;  ///< Typed-array of 64-bit floating-point values
 
   /// Defines the signature of a N-API C++ module's registration callback (init) function.
-  typedef void (*ModuleRegisterCallback)(Env env, Object exports, Object module);
+  typedef Object (*ModuleRegisterCallback)(Env env, Object exports);
 
   /// Environment for N-API values and operations.
   ///
