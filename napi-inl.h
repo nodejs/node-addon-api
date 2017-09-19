@@ -155,26 +155,21 @@ struct AccessorCallbackData {
 ////////////////////////////////////////////////////////////////////////////////
 
 #define NODE_API_MODULE(modname, regfunc)                 \
-  void __napi_ ## regfunc(napi_env env,                   \
-                          napi_value exports,             \
-                          napi_value module,              \
-                          void* priv) {                   \
-    Napi::RegisterModule(env, exports, module, regfunc);  \
+  napi_value __napi_ ## regfunc(napi_env env,             \
+                                napi_value exports) {     \
+    return Napi::RegisterModule(env, exports, regfunc);   \
   }                                                       \
   NAPI_MODULE(modname, __napi_ ## regfunc);
 
 // Adapt the NAPI_MODULE registration function:
 //  - Wrap the arguments in NAPI wrappers.
 //  - Catch any NAPI errors and rethrow as JS exceptions.
-inline void RegisterModule(napi_env env,
-                           napi_value exports,
-                           napi_value module,
-                           ModuleRegisterCallback registerCallback) {
-  details::WrapCallback([&] {
-    registerCallback(Napi::Env(env),
-                     Napi::Object(env, exports),
-                     Napi::Object(env, module));
-    return nullptr;
+inline napi_value RegisterModule(napi_env env,
+                                 napi_value exports,
+                                 ModuleRegisterCallback registerCallback) {
+  return details::WrapCallback([&] {
+    return napi_value(registerCallback(Napi::Env(env),
+                      Napi::Object(env, exports)));
   });
 }
 
@@ -1209,7 +1204,7 @@ inline Function Function::New(napi_env env,
 
   napi_value value;
   napi_status status = napi_create_function(
-    env, utf8name, CbData::Wrapper, callbackData, &value);
+    env, utf8name, -1, CbData::Wrapper, callbackData, &value);
   NAPI_THROW_IF_FAILED(env, status, Function());
   return Function(env, value);
 }
@@ -1274,7 +1269,7 @@ inline Value Function::MakeCallback(
     napi_value recv, size_t argc, const napi_value* args) const {
   napi_value result;
   napi_status status = napi_make_callback(
-    _env, NULL, recv, _value, argc, args, &result);
+    _env, nullptr, recv, _value, argc, args, &result);
   NAPI_THROW_IF_FAILED(_env, status, Value());
   return Value(_env, result);
 }
@@ -1481,7 +1476,7 @@ inline Error Error::New(napi_env env, const std::string& message) {
 }
 
 inline NAPI_NO_RETURN void Error::Fatal(const char* location, const char* message) {
-  napi_fatal_error(location, message);
+  napi_fatal_error(location, -1, message, -1);
 }
 
 inline Error::Error() : ObjectReference(), _message(nullptr) {
@@ -2317,7 +2312,7 @@ inline Function ObjectWrap<T>::DefineClass(
     void* data) {
   napi_value value;
   napi_status status = napi_define_class(
-    env, utf8name, T::ConstructorCallbackWrapper, data, properties.size(),
+    env, utf8name, -1, T::ConstructorCallbackWrapper, data, properties.size(),
     reinterpret_cast<const napi_property_descriptor*>(properties.begin()), &value);
   NAPI_THROW_IF_FAILED(env, status, Function());
 
@@ -2332,7 +2327,7 @@ inline Function ObjectWrap<T>::DefineClass(
     void* data) {
   napi_value value;
   napi_status status = napi_define_class(
-    env, utf8name, T::ConstructorCallbackWrapper, data, properties.size(),
+    env, utf8name, -1, T::ConstructorCallbackWrapper, data, properties.size(),
     reinterpret_cast<const napi_property_descriptor*>(properties.data()), &value);
   NAPI_THROW_IF_FAILED(env, status, Function());
 
@@ -2685,8 +2680,14 @@ inline AsyncWorker::AsyncWorker(const Object& receiver, const Function& callback
   : _env(callback.Env()),
     _receiver(Napi::Persistent(receiver)),
     _callback(Napi::Persistent(callback)) {
-  napi_status status = napi_create_async_work(
-    _env, NULL, NULL, OnExecute, OnWorkComplete, this, &_work);
+
+  napi_value resource_id;
+  napi_status status = napi_create_string_latin1(
+    _env, "generic", -1, &resource_id);
+  NAPI_THROW_IF_FAILED(_env, status);
+
+  status = napi_create_async_work(
+    _env, nullptr, resource_id, OnExecute, OnWorkComplete, this, &_work);
   NAPI_THROW_IF_FAILED(_env, status);
 }
 
