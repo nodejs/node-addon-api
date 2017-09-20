@@ -1125,6 +1125,10 @@ namespace Napi {
     CallbackInfo(napi_env env, napi_callback_info info);
     ~CallbackInfo();
 
+    // Disallow copying to prevent multiple free of _dynamicArgs
+    CallbackInfo(CallbackInfo const &) = delete;
+    void operator=(CallbackInfo const &) = delete;
+
     Napi::Env Env() const;
     Value NewTarget() const;
     bool IsConstructCall() const;
@@ -1279,7 +1283,7 @@ namespace Napi {
   template <typename T>
   class ObjectWrap : public Reference<Object> {
   public:
-    ObjectWrap(CallbackInfo callbackInfo);
+    ObjectWrap(const CallbackInfo& callbackInfo);
 
     static T* Unwrap(Object wrapper);
 

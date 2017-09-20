@@ -2288,7 +2288,7 @@ inline PropertyDescriptor::operator const napi_property_descriptor&() const {
 ////////////////////////////////////////////////////////////////////////////////
 
 template <typename T>
-inline ObjectWrap<T>::ObjectWrap(Napi::CallbackInfo callbackInfo) {
+inline ObjectWrap<T>::ObjectWrap(const Napi::CallbackInfo& callbackInfo) {
   napi_env env = callbackInfo.Env();
   napi_value wrapper = callbackInfo.This();
   napi_status status;
