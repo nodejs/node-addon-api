@@ -305,6 +305,9 @@ namespace Napi {
       napi_value description ///< String value describing the symbol
     );
 
+    /// Get a public Symbol (e.g. Symbol.iterator).
+    static Symbol Public(napi_env, const std::string& name);
+
     Symbol();                               ///< Creates a new _empty_ Symbol instance.
     Symbol(napi_env env, napi_value value); ///< Wraps a N-API value primitive.
   };
@@ -1325,6 +1328,14 @@ namespace Napi {
                                              napi_property_attributes attributes = napi_default,
                                              void* data = nullptr);
     static PropertyDescriptor InstanceMethod(const char* utf8name,
+                                             InstanceMethodCallback method,
+                                             napi_property_attributes attributes = napi_default,
+                                             void* data = nullptr);
+    static PropertyDescriptor InstanceMethod(Symbol name,
+                                             InstanceVoidMethodCallback method,
+                                             napi_property_attributes attributes = napi_default,
+                                             void* data = nullptr);
+    static PropertyDescriptor InstanceMethod(Symbol name,
                                              InstanceMethodCallback method,
                                              napi_property_attributes attributes = napi_default,
                                              void* data = nullptr);

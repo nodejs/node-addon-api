@@ -13,8 +13,14 @@ function test(binding) {
     assert.strictEqual(obj.test_get(), 90);
   }
 
+  function testIter(obj) {
+    for (const value of obj) {
+    }
+  }
+
   function testObj(obj) {
     testSetGet(obj);
+    testIter(obj);
   }
 
   testObj(new Test());
