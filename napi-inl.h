@@ -594,6 +594,10 @@ inline Symbol Symbol::New(napi_env env, napi_value description) {
   return Symbol(env, value);
 }
 
+inline Symbol Symbol::WellKnown(napi_env env, const std::string& name) {
+  return Napi::Env(env).Global().Get("Symbol").As<Object>().Get(name).As<Symbol>();
+}
+
 inline Symbol::Symbol() : Name() {
 }
 
@@ -2504,6 +2508,41 @@ inline ClassPropertyDescriptor<T> ObjectWrap<T>::InstanceMethod(
 
   napi_property_descriptor desc = {};
   desc.utf8name = utf8name;
+  desc.method = T::InstanceMethodCallbackWrapper;
+  desc.data = callbackData;
+  desc.attributes = attributes;
+  return desc;
+}
+
+template <typename T>
+inline ClassPropertyDescriptor<T> ObjectWrap<T>::InstanceMethod(
+    Symbol name,
+    InstanceVoidMethodCallback method,
+    napi_property_attributes attributes,
+    void* data) {
+  // TODO: Delete when the class is destroyed
+  InstanceVoidMethodCallbackData* callbackData =
+    new InstanceVoidMethodCallbackData({ method, data});
+
+  napi_property_descriptor desc = {};
+  desc.name = name;
+  desc.method = T::InstanceVoidMethodCallbackWrapper;
+  desc.data = callbackData;
+  desc.attributes = attributes;
+  return desc;
+}
+
+template <typename T>
+inline ClassPropertyDescriptor<T> ObjectWrap<T>::InstanceMethod(
+    Symbol name,
+    InstanceMethodCallback method,
+    napi_property_attributes attributes,
+    void* data) {
+  // TODO: Delete when the class is destroyed
+  InstanceMethodCallbackData* callbackData = new InstanceMethodCallbackData({ method, data });
+
+  napi_property_descriptor desc = {};
+  desc.name = name;
   desc.method = T::InstanceMethodCallbackWrapper;
   desc.data = callbackData;
   desc.attributes = attributes;
