@@ -1204,7 +1204,7 @@ inline Function Function::New(napi_env env,
 
   napi_value value;
   napi_status status = napi_create_function(
-    env, utf8name, -1, CbData::Wrapper, callbackData, &value);
+    env, utf8name, NAPI_AUTO_LENGTH, CbData::Wrapper, callbackData, &value);
   NAPI_THROW_IF_FAILED(env, status, Function());
   return Function(env, value);
 }
@@ -1476,7 +1476,7 @@ inline Error Error::New(napi_env env, const std::string& message) {
 }
 
 inline NAPI_NO_RETURN void Error::Fatal(const char* location, const char* message) {
-  napi_fatal_error(location, -1, message, -1);
+  napi_fatal_error(location, NAPI_AUTO_LENGTH, message, NAPI_AUTO_LENGTH);
 }
 
 inline Error::Error() : ObjectReference(), _message(nullptr) {
@@ -2312,7 +2312,8 @@ inline Function ObjectWrap<T>::DefineClass(
     void* data) {
   napi_value value;
   napi_status status = napi_define_class(
-    env, utf8name, -1, T::ConstructorCallbackWrapper, data, properties.size(),
+    env, utf8name, NAPI_AUTO_LENGTH,
+    T::ConstructorCallbackWrapper, data, properties.size(),
     reinterpret_cast<const napi_property_descriptor*>(properties.begin()), &value);
   NAPI_THROW_IF_FAILED(env, status, Function());
 
@@ -2327,7 +2328,8 @@ inline Function ObjectWrap<T>::DefineClass(
     void* data) {
   napi_value value;
   napi_status status = napi_define_class(
-    env, utf8name, -1, T::ConstructorCallbackWrapper, data, properties.size(),
+    env, utf8name, NAPI_AUTO_LENGTH,
+    T::ConstructorCallbackWrapper, data, properties.size(),
     reinterpret_cast<const napi_property_descriptor*>(properties.data()), &value);
   NAPI_THROW_IF_FAILED(env, status, Function());
 
@@ -2683,7 +2685,7 @@ inline AsyncWorker::AsyncWorker(const Object& receiver, const Function& callback
 
   napi_value resource_id;
   napi_status status = napi_create_string_latin1(
-    _env, "generic", -1, &resource_id);
+    _env, "generic", NAPI_AUTO_LENGTH, &resource_id);
   NAPI_THROW_IF_FAILED(_env, status);
 
   status = napi_create_async_work(
