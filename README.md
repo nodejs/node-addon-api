@@ -16,7 +16,7 @@ To use N-API in a native module:
   1. Add a dependency on this package to `package.json`:
 ```json
   "dependencies": {
-    "node-addon-api": "0.3.3",
+    "node-addon-api": "1.0.0",
   }
 ```
 
