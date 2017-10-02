@@ -83,6 +83,18 @@ function test(binding) {
   }
 
   {
+    const obj = { one: 1, two: 2 };
+    Object.defineProperty(obj, "three", {configurable: false, value: 3});
+    assert.strictEqual(binding.object.deleteProperty(obj, 'one'), true);
+    assert.strictEqual(binding.object.deleteProperty(obj, 'missing'), true);
+
+    /* Returns true for all cases except when the property is an own non-
+       configurable property, in which case, false is returned in non-strict mode. */
+    assert.strictEqual(binding.object.deleteProperty(obj, 'three'), false);
+    assert.deepStrictEqual(obj, { two: 2 });
+  }
+
+  {
     const obj = {'one': 1, 'two': 2, 'three': 3};
     var arr = binding.object.GetPropertyNames(obj);
     assert.deepStrictEqual(arr, ['one', 'two', 'three'])
@@ -93,5 +105,8 @@ function test(binding) {
   }, /object was expected/);
   assert.throws(() => {
     binding.object.setProperty(undefined, 'test', 1);
+  }, /object was expected/);
+  assert.throws(() => {
+    binding.object.deleteProperty(undefined, 'test');
   }, /object was expected/);
 }
