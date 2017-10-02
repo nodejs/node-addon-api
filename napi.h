@@ -557,6 +557,11 @@ namespace Napi {
       double numberValue ///< Property value
     );
 
+    /// Deletes an indexed property or array element.
+    bool Delete(
+      uint32_t index ///< Property / element index
+    );
+
     Array GetPropertyNames(); ///< Get all property names
 
     /// Defines a property on the object.
