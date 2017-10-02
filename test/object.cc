@@ -102,6 +102,12 @@ void SetProperty(const CallbackInfo& info) {
   obj.Set(name, value);
 }
 
+Value DeleteProperty(const CallbackInfo& info) {
+  Object obj = info[0].As<Object>();
+  Name name = info[1].As<Name>();
+  return Boolean::New(info.Env(), obj.Delete(name));
+}
+
 Object InitObject(Env env) {
   Object exports = Object::New(env);
 
@@ -110,6 +116,7 @@ Object InitObject(Env env) {
   exports["defineValueProperty"] = Function::New(env, DefineValueProperty);
   exports["getProperty"] = Function::New(env, GetProperty);
   exports["setProperty"] = Function::New(env, SetProperty);
+  exports["deleteProperty"] = Function::New(env, DeleteProperty);
 
   return exports;
 }

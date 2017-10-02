@@ -491,6 +491,26 @@ namespace Napi {
       double numberValue           ///< Property value
     );
 
+    /// Delete property.
+    bool Delete(
+      napi_value key ///< Property key primitive
+    );
+
+    /// Delete property.
+    bool Delete(
+      Value key ///< Property key
+    );
+
+    /// Delete property.
+    bool Delete(
+      const char* utf8name ///< UTF-8 encoded null-terminated property name
+    );
+
+    /// Delete property.
+    bool Delete(
+      const std::string& utf8name ///< UTF-8 encoded property name
+    );
+
     /// Checks whether an indexed property is present.
     bool Has(
       uint32_t index ///< Property / element index
@@ -535,6 +555,11 @@ namespace Napi {
     void Set(
       uint32_t index,    ///< Property / element index
       double numberValue ///< Property value
+    );
+
+    /// Deletes an indexed property or array element.
+    bool Delete(
+      uint32_t index ///< Property / element index
     );
 
     Array GetPropertyNames(); ///< Get all property names

@@ -757,6 +757,28 @@ inline void Object::Set(const std::string& utf8name, double numberValue) {
   Set(utf8name.c_str(), Number::New(Env(), numberValue));
 }
 
+inline bool Object::Delete(napi_value key) {
+  bool result;
+  napi_status status = napi_delete_property(_env, _value, key, &result);
+  NAPI_THROW_IF_FAILED(_env, status, false);
+  return result;
+}
+
+inline bool Object::Delete(Value key) {
+  bool result;
+  napi_status status = napi_delete_property(_env, _value, key, &result);
+  NAPI_THROW_IF_FAILED(_env, status, false);
+  return result;
+}
+
+inline bool Object::Delete(const char* utf8name) {
+  return Delete(String::New(_env, utf8name));
+}
+
+inline bool Object::Delete(const std::string& utf8name) {
+  return Delete(String::New(_env, utf8name));
+}
+
 inline bool Object::Has(uint32_t index) const {
   bool result;
   napi_status status = napi_has_element(_env, _value, index, &result);
@@ -795,6 +817,13 @@ inline void Object::Set(uint32_t index, bool boolValue) {
 
 inline void Object::Set(uint32_t index, double numberValue) {
   Set(index, static_cast<napi_value>(Number::New(Env(), numberValue)));
+}
+
+inline bool Object::Delete(uint32_t index) {
+  bool result;
+  napi_status status = napi_delete_element(_env, _value, index, &result);
+  NAPI_THROW_IF_FAILED(_env, status, false);
+  return result;
 }
 
 inline Array Object::GetPropertyNames() {
@@ -1657,7 +1686,7 @@ inline Reference<T>& Reference<T>::operator =(Reference<T>&& other) {
 }
 
 template <typename T>
-inline Reference<T>::Reference(const Reference<T>& other) 
+inline Reference<T>::Reference(const Reference<T>& other)
   : _env(other._env), _ref(nullptr), _suppressDestruct(false) {
   HandleScope scope(_env);
 
