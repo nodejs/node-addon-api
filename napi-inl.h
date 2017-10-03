@@ -819,7 +819,7 @@ inline void Object::Set(uint32_t index, double numberValue) {
   Set(index, static_cast<napi_value>(Number::New(Env(), numberValue)));
 }
 
-inline bool Object::Delete(uint32_t index) const {
+inline bool Object::Delete(uint32_t index) {
   bool result;
   napi_status status = napi_delete_element(_env, _value, index, &result);
   NAPI_THROW_IF_FAILED(_env, status, false);
