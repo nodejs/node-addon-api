@@ -17,23 +17,26 @@ var versionArray = process.version
 var isNodeApiBuiltin =
   (versionArray[0] > 8 || (versionArray[0] == 8 && versionArray[1] > 5));
 
-// So far it looks like even version 9 will need the flag. We need to adjust
-// this for the version where the flag is dropped whenever that version lands.
-var needsFlag = (versionArray[0] >= 8);
+// The flag is not needed when the Node version is not 8, nor if the API is
+// built-in, because we removed the flag at the same time as creating the final
+// incarnation of the built-in API.
+var needsFlag = (!isNodeApiBuiltin && versionArray[0] == 8);
 
-var include = path.join(__dirname, 'src');
+var include = [__dirname];
 var gyp = path.join(__dirname, 'src', 'node_api.gyp');
 
 if (isNodeApiBuiltin) {
-   gyp += ':nothing';
+  gyp += ':nothing';
 } else {
-   gyp += ':node-api';
-   include = path.join(__dirname, 'external-napi');
+  gyp += ':node-api';
+  include.unshift(path.join(__dirname, 'external-napi'));
 }
 
 module.exports = {
-   include: [ '"' + include + '"', '"' + __dirname + '"' ].join(' '),
-   gyp: gyp,
-   isNodeApiBuiltin: isNodeApiBuiltin,
-   needsFlag: needsFlag
+  include: include.map(function(item) {
+    return '"' + item + '"';
+  }).join(' '),
+  gyp: gyp,
+  isNodeApiBuiltin: isNodeApiBuiltin,
+  needsFlag: needsFlag
 };
