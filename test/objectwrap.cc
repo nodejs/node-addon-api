@@ -43,7 +43,7 @@ public:
     exports.Set("Test", DefineClass(env, "Test", {
       InstanceMethod("test_set", &Test::Set),
       InstanceMethod("test_get", &Test::Get),
-      InstanceMethod(Napi::Symbol::Public(env, "iterator"), &Test::Iter)
+      InstanceMethod(Napi::Symbol::WellKnown(env, "iterator"), &Test::Iter)
     }));
   }
 

@@ -306,7 +306,7 @@ namespace Napi {
     );
 
     /// Get a public Symbol (e.g. Symbol.iterator).
-    static Symbol Public(napi_env, const std::string& name);
+    static Symbol WellKnown(napi_env, const std::string& name);
 
     Symbol();                               ///< Creates a new _empty_ Symbol instance.
     Symbol(napi_env env, napi_value value); ///< Wraps a N-API value primitive.

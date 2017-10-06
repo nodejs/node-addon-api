@@ -593,7 +593,7 @@ inline Symbol Symbol::New(napi_env env, napi_value description) {
   return Symbol(env, value);
 }
 
-inline Symbol Symbol::Public(napi_env env, const std::string& name) {
+inline Symbol Symbol::WellKnown(napi_env env, const std::string& name) {
   return Napi::Env(env).Global().Get("Symbol").As<Object>().Get(name).As<Symbol>();
 }
 
