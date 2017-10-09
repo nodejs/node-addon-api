@@ -10,7 +10,41 @@
 #include <unistd.h>  // getpid
 #endif
 
+#if NODE_MAJOR_VERSION < 8
+CallbackScope::CallbackScope(void *work) {
+}
+#endif // NODE_MAJOR_VERSION < 8
+
 namespace node {
+
+#if NODE_MAJOR_VERSION < 8
+
+async_context EmitAsyncInit(v8::Isolate* isolate,
+                            v8::Local<v8::Object> resource,
+                            v8::Local<v8::String> name,
+                            async_id trigger_async_id) {
+  return async_context();
+}
+
+void EmitAsyncDestroy(v8::Isolate* isolate,
+                      async_context asyncContext) {
+}
+
+v8::MaybeLocal<v8::Value> MakeCallback(v8::Isolate* isolate,
+                                       v8::Local<v8::Object> recv,
+                                       v8::Local<v8::Function> callback,
+                                       int argc,
+                                       v8::Local<v8::Value>* argv,
+                                       async_context asyncContext) {
+  return node::MakeCallback(isolate, recv, callback, argc, argv);
+}
+
+AsyncResource::AsyncResource(v8::Isolate* isolate,
+                             v8::Local<v8::Object> object,
+                             const char *name) {
+}
+
+#endif // NODE_MAJOR_VERSION < 8
 
 static void PrintErrorString(const char* format, ...) {
   va_list ap;
