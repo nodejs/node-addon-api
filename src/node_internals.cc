@@ -10,7 +10,7 @@
 #include <unistd.h>  // getpid
 #endif
 
-#if NODE_MAJOR_VERSION < 8
+#if NODE_MAJOR_VERSION < 8 || NODE_MAJOR_VERSION == 8 && NODE_MINOR_VERSION < 6
 CallbackScope::CallbackScope(void *work) {
 }
 #endif // NODE_MAJOR_VERSION < 8
@@ -30,6 +30,15 @@ void EmitAsyncDestroy(v8::Isolate* isolate,
                       async_context asyncContext) {
 }
 
+AsyncResource::AsyncResource(v8::Isolate* isolate,
+                             v8::Local<v8::Object> object,
+                             const char *name) {
+}
+
+#endif // NODE_MAJOR_VERSION < 8
+
+#if NODE_MAJOR_VERSION < 8 || NODE_MAJOR_VERSION == 8 && NODE_MINOR_VERSION < 6
+
 v8::MaybeLocal<v8::Value> MakeCallback(v8::Isolate* isolate,
                                        v8::Local<v8::Object> recv,
                                        v8::Local<v8::Function> callback,
@@ -39,12 +48,7 @@ v8::MaybeLocal<v8::Value> MakeCallback(v8::Isolate* isolate,
   return node::MakeCallback(isolate, recv, callback, argc, argv);
 }
 
-AsyncResource::AsyncResource(v8::Isolate* isolate,
-                             v8::Local<v8::Object> object,
-                             const char *name) {
-}
-
-#endif // NODE_MAJOR_VERSION < 8
+#endif // NODE_MAJOR_VERSION < 8 || NODE_MAJOR_VERSION == 8 && NODE_MINOR_VERSION < 6
 
 static void PrintErrorString(const char* format, ...) {
   va_list ap;
