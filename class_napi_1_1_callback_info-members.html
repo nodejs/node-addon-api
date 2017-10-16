@@ -22,7 +22,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">N-API
-   &#160;<span id="projectnumber">0.3.3</span>
+   &#160;<span id="projectnumber">1.0.0</span>
    </div>
    <div id="projectbrief">C++ wrapper classes for the ABI-stable C APIs for Node.js</div>
   </td>
@@ -72,9 +72,13 @@ $(function() {
 <p>This is the complete list of members for <a class="el" href="class_napi_1_1_callback_info.html">Napi::CallbackInfo</a>, including all inherited members.</p>
 <table class="directory">
   <tr class="even"><td class="entry"><a class="el" href="class_napi_1_1_callback_info.html#ad07bc5778f22288e59b166de7e8b4301">CallbackInfo</a>(napi_env env, napi_callback_info info)</td><td class="entry"><a class="el" href="class_napi_1_1_callback_info.html">Napi::CallbackInfo</a></td><td class="entry"></td></tr>
-  <tr><td class="entry"><a class="el" href="class_napi_1_1_callback_info.html#a0d8add44850e4aab4a722a53bb81c2c0">Data</a>() const</td><td class="entry"><a class="el" href="class_napi_1_1_callback_info.html">Napi::CallbackInfo</a></td><td class="entry"></td></tr>
-  <tr class="even"><td class="entry"><a class="el" href="class_napi_1_1_callback_info.html#af5dda76cc6b32aa6816f60437249fa5c">Env</a>() const</td><td class="entry"><a class="el" href="class_napi_1_1_callback_info.html">Napi::CallbackInfo</a></td><td class="entry"></td></tr>
+  <tr><td class="entry"><a class="el" href="class_napi_1_1_callback_info.html#a676569dd657fba62e2a900841b57ba1a">CallbackInfo</a>(CallbackInfo const &amp;)=delete</td><td class="entry"><a class="el" href="class_napi_1_1_callback_info.html">Napi::CallbackInfo</a></td><td class="entry"></td></tr>
+  <tr class="even"><td class="entry"><a class="el" href="class_napi_1_1_callback_info.html#a0d8add44850e4aab4a722a53bb81c2c0">Data</a>() const</td><td class="entry"><a class="el" href="class_napi_1_1_callback_info.html">Napi::CallbackInfo</a></td><td class="entry"></td></tr>
+  <tr><td class="entry"><a class="el" href="class_napi_1_1_callback_info.html#af5dda76cc6b32aa6816f60437249fa5c">Env</a>() const</td><td class="entry"><a class="el" href="class_napi_1_1_callback_info.html">Napi::CallbackInfo</a></td><td class="entry"></td></tr>
+  <tr class="even"><td class="entry"><a class="el" href="class_napi_1_1_callback_info.html#a5d959854b606ac5de2db6b59f9b6bce5">IsConstructCall</a>() const</td><td class="entry"><a class="el" href="class_napi_1_1_callback_info.html">Napi::CallbackInfo</a></td><td class="entry"></td></tr>
   <tr><td class="entry"><a class="el" href="class_napi_1_1_callback_info.html#a2450a932822d15c570762a4a0d321fd8">Length</a>() const</td><td class="entry"><a class="el" href="class_napi_1_1_callback_info.html">Napi::CallbackInfo</a></td><td class="entry"></td></tr>
+  <tr class="even"><td class="entry"><a class="el" href="class_napi_1_1_callback_info.html#ae7db3b843107ad5c5006ee5e35341c92">NewTarget</a>() const</td><td class="entry"><a class="el" href="class_napi_1_1_callback_info.html">Napi::CallbackInfo</a></td><td class="entry"></td></tr>
+  <tr><td class="entry"><a class="el" href="class_napi_1_1_callback_info.html#a528fae0285b01438f26320d31559d2fa">operator=</a>(CallbackInfo const &amp;)=delete</td><td class="entry"><a class="el" href="class_napi_1_1_callback_info.html">Napi::CallbackInfo</a></td><td class="entry"></td></tr>
   <tr class="even"><td class="entry"><a class="el" href="class_napi_1_1_callback_info.html#a4d256a32c92397b7a8216f9303aa6556">operator[]</a>(size_t index) const</td><td class="entry"><a class="el" href="class_napi_1_1_callback_info.html">Napi::CallbackInfo</a></td><td class="entry"></td></tr>
   <tr><td class="entry"><a class="el" href="class_napi_1_1_callback_info.html#aeacf6d785548a41690a5b648af3fbab9">SetData</a>(void *data)</td><td class="entry"><a class="el" href="class_napi_1_1_callback_info.html">Napi::CallbackInfo</a></td><td class="entry"></td></tr>
   <tr class="even"><td class="entry"><a class="el" href="class_napi_1_1_callback_info.html#a216112c90346f2d3701b2d8cc14591c9">This</a>() const</td><td class="entry"><a class="el" href="class_napi_1_1_callback_info.html">Napi::CallbackInfo</a></td><td class="entry"></td></tr>

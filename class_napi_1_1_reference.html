@@ -22,7 +22,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">N-API
-   &#160;<span id="projectnumber">0.3.3</span>
+   &#160;<span id="projectnumber">1.0.0</span>
    </div>
    <div id="projectbrief">C++ wrapper classes for the ABI-stable C APIs for Node.js</div>
   </td>
@@ -67,6 +67,7 @@ $(function() {
   <div class="summary">
 <a href="#pub-methods">Public Member Functions</a> &#124;
 <a href="#pub-static-methods">Static Public Member Functions</a> &#124;
+<a href="#pro-methods">Protected Member Functions</a> &#124;
 <a href="#pro-attribs">Protected Attributes</a> &#124;
 <a href="class_napi_1_1_reference-members.html">List of all members</a>  </div>
   <div class="headertitle">
@@ -91,8 +92,6 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:af4ad22fff396f846cea40e98e946ff95"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa51e04d160a4b9bf07b7e67a35a5da22"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_napi_1_1_reference.html">Reference</a>&lt; T &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_napi_1_1_reference.html#aa51e04d160a4b9bf07b7e67a35a5da22">operator=</a> (<a class="el" href="class_napi_1_1_reference.html">Reference</a>&lt; T &gt; &amp;&amp;other)</td></tr>
 <tr class="separator:aa51e04d160a4b9bf07b7e67a35a5da22"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6ac1f8851a00f8bcd036b63bff72925d"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_napi_1_1_reference.html#a6ac1f8851a00f8bcd036b63bff72925d">Reference</a> (const <a class="el" href="class_napi_1_1_reference.html">Reference</a>&lt; T &gt; &amp;)=delete</td></tr>
-<tr class="separator:a6ac1f8851a00f8bcd036b63bff72925d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a817baccf1335f57ba16fa06766d89f32"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_napi_1_1_reference.html">Reference</a>&lt; T &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_napi_1_1_reference.html#a817baccf1335f57ba16fa06766d89f32">operator=</a> (<a class="el" href="class_napi_1_1_reference.html">Reference</a>&lt; T &gt; &amp;)=delete</td></tr>
 <tr class="separator:a817baccf1335f57ba16fa06766d89f32"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1dde216e32ec70e5e6b8f6b292d4f1f4"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_napi_1_1_reference.html#a1dde216e32ec70e5e6b8f6b292d4f1f4">operator napi_ref</a> () const</td></tr>
@@ -123,6 +122,11 @@ Static Public Member Functions</h2></td></tr>
 <tr class="memitem:a10bb5a9428f6e894d5fccfccd896fd25"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="class_napi_1_1_reference.html">Reference</a>&lt; T &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_napi_1_1_reference.html#a10bb5a9428f6e894d5fccfccd896fd25">New</a> (const T &amp;value, uint32_t initialRefcount=0)</td></tr>
 <tr class="separator:a10bb5a9428f6e894d5fccfccd896fd25"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-methods"></a>
+Protected Member Functions</h2></td></tr>
+<tr class="memitem:a617460d4d55206bfa79c25155cfa1a42"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_napi_1_1_reference.html#a617460d4d55206bfa79c25155cfa1a42">Reference</a> (const <a class="el" href="class_napi_1_1_reference.html">Reference</a>&lt; T &gt; &amp;)</td></tr>
+<tr class="separator:a617460d4d55206bfa79c25155cfa1a42"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-attribs"></a>
 Protected Attributes</h2></td></tr>
 <tr class="memitem:a5c690557fa39d709a1dbaa14c3ccc5a1"><td class="memItemLeft" align="right" valign="top">napi_env&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_napi_1_1_reference.html#a5c690557fa39d709a1dbaa14c3ccc5a1">_env</a></td></tr>
@@ -138,7 +142,7 @@ class Napi::Reference&lt; T &gt;</h3>
 <p>Holds a counted reference to a value; initially a weak reference unless otherwise specified, may be changed to/from a strong reference by adjusting the refcount. </p>
 <p>The referenced value is not immediately destroyed when the reference count is zero; it is merely then eligible for garbage-collection if there are no other references to the value. </p>
 
-<p class="definition">Definition at line <a class="el" href="napi_8h_source.html#l00049">49</a> of file <a class="el" href="napi_8h_source.html">napi.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="napi_8h_source.html#l00063">63</a> of file <a class="el" href="napi_8h_source.html">napi.h</a>.</p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="acfb08026d010104194470069df9a363e"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#acfb08026d010104194470069df9a363e">&#9670;&nbsp;</a></span>Reference() <span class="overload">[1/4]</span></h2>
@@ -228,8 +232,8 @@ template&lt;typename T&gt; </div>
 
 </div>
 </div>
-<a id="a6ac1f8851a00f8bcd036b63bff72925d"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a6ac1f8851a00f8bcd036b63bff72925d">&#9670;&nbsp;</a></span>Reference() <span class="overload">[4/4]</span></h2>
+<a id="a617460d4d55206bfa79c25155cfa1a42"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a617460d4d55206bfa79c25155cfa1a42">&#9670;&nbsp;</a></span>Reference() <span class="overload">[4/4]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -249,7 +253,7 @@ template&lt;typename T&gt; </div>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">delete</span></span>  </td>
+<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
@@ -590,7 +594,7 @@ template&lt;typename T&gt; </div>
 
 <p>!cond INTERNAL </p>
 
-<p class="definition">Definition at line <a class="el" href="napi_8h_source.html#l00857">857</a> of file <a class="el" href="napi_8h_source.html">napi.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="napi_8h_source.html#l00869">869</a> of file <a class="el" href="napi_8h_source.html">napi.h</a>.</p>
 
 </div>
 </div>
@@ -616,7 +620,7 @@ template&lt;typename T&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="napi_8h_source.html#l00858">858</a> of file <a class="el" href="napi_8h_source.html">napi.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="napi_8h_source.html#l00870">870</a> of file <a class="el" href="napi_8h_source.html">napi.h</a>.</p>
 
 </div>
 </div>

@@ -22,7 +22,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">N-API
-   &#160;<span id="projectnumber">0.3.3</span>
+   &#160;<span id="projectnumber">1.0.0</span>
    </div>
    <div id="projectbrief">C++ wrapper classes for the ABI-stable C APIs for Node.js</div>
   </td>
@@ -72,7 +72,7 @@ $(function() {
 </ul>
 <h3>Getting Started</h3>
 <p>To use N-API in a native module:</p><ol type="1">
-<li>Add a dependency on this package to <code>package.json</code>: <div class="fragment"><div class="line">&quot;dependencies&quot;: {</div><div class="line">  &quot;node-addon-api&quot;: &quot;0.3.3&quot;,</div><div class="line">}</div></div><!-- fragment --></li>
+<li>Add a dependency on this package to <code>package.json</code>: <div class="fragment"><div class="line">&quot;dependencies&quot;: {</div><div class="line">  &quot;node-addon-api&quot;: &quot;1.0.0&quot;,</div><div class="line">}</div></div><!-- fragment --></li>
 <li>Reference this package's include directory and gyp file in <code>binding.gyp</code>: <div class="fragment"><div class="line">&#39;include_dirs&#39;: [&quot;&lt;!@(node -p \&quot;require(&#39;node-addon-api&#39;).include\&quot;)&quot;],</div><div class="line">&#39;dependencies&#39;: [&quot;&lt;!(node -p \&quot;require(&#39;node-addon-api&#39;).gyp\&quot;)&quot;],</div></div><!-- fragment --></li>
 <li>Decide whether the package will enable C++ exceptions in the N-API wrapper. The base ABI-stable C APIs do not throw or handle C++ exceptions, but the N-API C++ wrapper classes may <em>optionally</em> <a href="https://nodejs.github.io/node-addon-api/class_napi_1_1_error.html">integrate C++ and JavaScript exception-handling</a>. To enable that capability, C++ exceptions must be enabled in <code>binding.gyp</code>: <div class="fragment"><div class="line">&#39;cflags!&#39;: [ &#39;-fno-exceptions&#39; ],</div><div class="line">&#39;cflags_cc!&#39;: [ &#39;-fno-exceptions&#39; ],</div><div class="line">&#39;xcode_settings&#39;: {</div><div class="line">  &#39;GCC_ENABLE_CPP_EXCEPTIONS&#39;: &#39;YES&#39;,</div><div class="line">  &#39;CLANG_CXX_LIBRARY&#39;: &#39;libc++&#39;,</div><div class="line">  &#39;MACOSX_DEPLOYMENT_TARGET&#39;: &#39;10.7&#39;,</div><div class="line">},</div><div class="line">&#39;msvs_settings&#39;: {</div><div class="line">  &#39;VCCLCompilerTool&#39;: { &#39;ExceptionHandling&#39;: 1 },</div><div class="line">},</div></div><!-- fragment --> Alternatively, disable use of C++ exceptions in N-API: <div class="fragment"><div class="line">&#39;defines&#39;: [ &#39;NAPI_DISABLE_CPP_EXCEPTIONS&#39; ],</div></div><!-- fragment --></li>
 <li>Include <code><a class="el" href="napi_8h.html">napi.h</a></code> in the native module code. To ensure only ABI-stable APIs are used, DO NOT include <code>node.h</code>, <code>nan.h</code>, or <code>v8.h</code>. <div class="fragment"><div class="line">{C++}</div><div class="line">#include &quot;napi.h&quot;</div></div><!-- fragment --></li>

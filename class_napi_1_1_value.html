@@ -22,7 +22,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">N-API
-   &#160;<span id="projectnumber">0.3.3</span>
+   &#160;<span id="projectnumber">1.0.0</span>
    </div>
    <div id="projectbrief">C++ wrapper classes for the ABI-stable C APIs for Node.js</div>
   </td>
@@ -66,6 +66,7 @@ $(function() {
 <div class="header">
   <div class="summary">
 <a href="#pub-methods">Public Member Functions</a> &#124;
+<a href="#pub-static-methods">Static Public Member Functions</a> &#124;
 <a href="#pro-attribs">Protected Attributes</a> &#124;
 <a href="class_napi_1_1_value-members.html">List of all members</a>  </div>
   <div class="headertitle">
@@ -181,6 +182,13 @@ Public Member Functions</h2></td></tr>
 <tr class="memdesc:aea8da6e6ace714d1d6937e805c8e03a4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Coerces a value to a JavaScript object.  <a href="#aea8da6e6ace714d1d6937e805c8e03a4">More...</a><br /></td></tr>
 <tr class="separator:aea8da6e6ace714d1d6937e805c8e03a4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-methods"></a>
+Static Public Member Functions</h2></td></tr>
+<tr class="memitem:a91d2d4abcdc1b366f623259cf075e259"><td class="memTemplParams" colspan="2">template&lt;typename T &gt; </td></tr>
+<tr class="memitem:a91d2d4abcdc1b366f623259cf075e259"><td class="memTemplItemLeft" align="right" valign="top">static <a class="el" href="class_napi_1_1_value.html">Value</a>&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="class_napi_1_1_value.html#a91d2d4abcdc1b366f623259cf075e259">From</a> (napi_env env, const T &amp;value)</td></tr>
+<tr class="memdesc:a91d2d4abcdc1b366f623259cf075e259"><td class="mdescLeft">&#160;</td><td class="mdescRight">Creates a JS value from a C++ primitive.  <a href="#a91d2d4abcdc1b366f623259cf075e259">More...</a><br /></td></tr>
+<tr class="separator:a91d2d4abcdc1b366f623259cf075e259"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-attribs"></a>
 Protected Attributes</h2></td></tr>
 <tr class="memitem:ad0a0cc895c3134df3ca3267dbf2dfe08"><td class="memItemLeft" align="right" valign="top">napi_env&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_napi_1_1_value.html#ad0a0cc895c3134df3ca3267dbf2dfe08">_env</a></td></tr>
@@ -197,7 +205,7 @@ Napi::String str = value.As&lt;Napi::String&gt;(); // Cast to a string value
 
 Napi::Value anotherValue = ...
 bool isTruthy = anotherValue.ToBoolean(); // Coerce to a boolean value  </pre> 
-<p class="definition">Definition at line <a class="el" href="napi_8h_source.html#l00104">104</a> of file <a class="el" href="napi_8h_source.html">napi.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="napi_8h_source.html#l00118">118</a> of file <a class="el" href="napi_8h_source.html">napi.h</a>.</p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="a91352891b563fb744683240949e458e4"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a91352891b563fb744683240949e458e4">&#9670;&nbsp;</a></span>Value() <span class="overload">[1/2]</span></h2>
@@ -287,6 +295,57 @@ template&lt;typename T &gt; </div>
 </div><div class="memdoc">
 
 <p>Gets the environment the value is associated with. </p>
+
+</div>
+</div>
+<a id="a91d2d4abcdc1b366f623259cf075e259"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a91d2d4abcdc1b366f623259cf075e259">&#9670;&nbsp;</a></span>From()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename T &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static <a class="el" href="class_napi_1_1_value.html">Value</a> Napi::Value::From </td>
+          <td>(</td>
+          <td class="paramtype">napi_env&#160;</td>
+          <td class="paramname"><em>env</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const T &amp;&#160;</td>
+          <td class="paramname"><em>value</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Creates a JS value from a C++ primitive. </p>
+<p><code>value</code> may be any of:</p><ul>
+<li>bool</li>
+<li>Any integer type</li>
+<li>Any floating point type</li>
+<li>const char* (encoded using UTF-8, null-terminated)</li>
+<li>const char16_t* (encoded using UTF-16-LE, null-terminated)</li>
+<li>std::string (encoded using UTF-8)</li>
+<li>std::u16string</li>
+<li>napi::Value</li>
+<li>napi_value </li>
+</ul>
 
 </div>
 </div>
@@ -737,7 +796,7 @@ template&lt;typename T &gt; </div>
 
 <p>!cond INTERNAL </p>
 
-<p class="definition">Definition at line <a class="el" href="napi_8h_source.html#l00165">165</a> of file <a class="el" href="napi_8h_source.html">napi.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="napi_8h_source.html#l00194">194</a> of file <a class="el" href="napi_8h_source.html">napi.h</a>.</p>
 
 </div>
 </div>
@@ -761,7 +820,7 @@ template&lt;typename T &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="napi_8h_source.html#l00166">166</a> of file <a class="el" href="napi_8h_source.html">napi.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="napi_8h_source.html#l00195">195</a> of file <a class="el" href="napi_8h_source.html">napi.h</a>.</p>
 
 </div>
 </div>
