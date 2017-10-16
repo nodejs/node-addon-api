@@ -46,7 +46,7 @@ function test(binding) {
 
   assert.throws(() => {
     binding.function.callWithInvalidReceiver();
-  }, /Invalid pointer/);
+  }, /Invalid (pointer passed as )?argument/);
 
   obj = binding.function.callConstructorWithArgs(testConstructor, 5, 6, 7);
   assert(obj instanceof testConstructor);

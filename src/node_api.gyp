@@ -13,6 +13,7 @@
       'defines': [
          'EXTERNAL_NAPI',
       ],
+      'cflags_cc': ['-fvisibility=hidden']
     }
   ]
 }

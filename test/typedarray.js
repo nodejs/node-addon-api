@@ -66,5 +66,5 @@ function test(binding) {
 
   assert.throws(() => {
     binding.typedarray.createInvalidTypedArray();
-  }, /Invalid pointer/);
+  }, /Invalid (pointer passed as )?argument/);
 }
