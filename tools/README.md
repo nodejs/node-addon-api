@@ -25,9 +25,11 @@ Here is the list of things that can be fixed easily.
 
 
 ### Major Reconstructions
-If you use Nan::ObjectWrap in your module, you will need to execute the following steps.
+The implementation of `Napi::ObjectWrap` is significantly different from NAN's. `Napi::ObjectWrap` takes a pointer to the wrapped object and creates a reference to the wrapped object inside ObjectWrap constructor. `Napi::ObjectWrap` also associated wrapped object's instance methods to Javascript module instead of static methods like NAN.
 
-  1. Convert your [ClassName]::New function to a constructor function. Declare it as
+So if you use Nan::ObjectWrap in your module, you will need to execute the following steps.
+
+  1. Convert your [ClassName]::New function to a constructor function that takes a `Napi::CallbackInfo`. Declare it as
 ```
 [ClassName](const Napi::CallbackInfo& info);
 ``` 
@@ -37,8 +39,10 @@ and define it as
   ...
 }
 ```
+This way, the `Napi::ObjectWrap` constructor will be invoked after the object has been instanciated and `Napi::ObjectWrap` can use the `this` pointer to create reference to the wrapped object.
+
   2. Move your original constructor code into the new constructor. Delete your original constructor.
-  3. In your class initialization function, associate native methods in this way:
+  3. In your class initialization function, associate native methods in the following way. The `&` character before methods is required because they are not static methods but instance methods.
 ```
 Napi::FunctionReference constructor;
 
@@ -47,7 +51,7 @@ void [ClassName]::Init(Napi::Env env, Napi::Object exports, Napi::Object module)
   Napi::Function ctor = DefineClass(env, "Canvas", {
     InstanceMethod("Func1", &[ClassName]::Func1),
     InstanceMethod("Func2", &[ClassName]::Func2),
-    InstanceAccessor("Value", &[ClassName]::ValueGetter]),
+    InstanceAccessor("Value", &[ClassName]::ValueGetter),
     StaticMethod("MethodName", &[ClassName]::StaticMethod),
     InstanceValue("Value", Napi::[Type]::New(env, value)),
   });
@@ -57,7 +61,7 @@ void [ClassName]::Init(Napi::Env env, Napi::Object exports, Napi::Object module)
   exports.Set("[ClassName]", ctor);
 }
 ```
-  4. In function where you need to Unwrap the ObjectWrap in NaN like `[ClassName]* native = Nan::ObjectWrap::Unwrap<[ClassName]>(info.This());`, use `this` pointer directly as the unwrapped object.
+  4. In function where you need to Unwrap the ObjectWrap in NAN like `[ClassName]* native = Nan::ObjectWrap::Unwrap<[ClassName]>(info.This());`, use `this` pointer directly as the unwrapped object as each ObjectWrap instance is associated with a unique object instance.
 
 
 If you still find issues after following this guide, please leave us an issue describing your problem and we will try to resolve it.
