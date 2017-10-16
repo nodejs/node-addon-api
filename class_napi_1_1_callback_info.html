@@ -22,7 +22,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">N-API
-   &#160;<span id="projectnumber">0.3.3</span>
+   &#160;<span id="projectnumber">1.0.0</span>
    </div>
    <div id="projectbrief">C++ wrapper classes for the ABI-stable C APIs for Node.js</div>
   </td>
@@ -80,8 +80,16 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:ad07bc5778f22288e59b166de7e8b4301"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad26d6efb44577de5ed98657e3bf2179f"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_napi_1_1_callback_info.html#ad26d6efb44577de5ed98657e3bf2179f">~CallbackInfo</a> ()</td></tr>
 <tr class="separator:ad26d6efb44577de5ed98657e3bf2179f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a676569dd657fba62e2a900841b57ba1a"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_napi_1_1_callback_info.html#a676569dd657fba62e2a900841b57ba1a">CallbackInfo</a> (<a class="el" href="class_napi_1_1_callback_info.html">CallbackInfo</a> const &amp;)=delete</td></tr>
+<tr class="separator:a676569dd657fba62e2a900841b57ba1a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a528fae0285b01438f26320d31559d2fa"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_napi_1_1_callback_info.html#a528fae0285b01438f26320d31559d2fa">operator=</a> (<a class="el" href="class_napi_1_1_callback_info.html">CallbackInfo</a> const &amp;)=delete</td></tr>
+<tr class="separator:a528fae0285b01438f26320d31559d2fa"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af5dda76cc6b32aa6816f60437249fa5c"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_napi_1_1_env.html">Napi::Env</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_napi_1_1_callback_info.html#af5dda76cc6b32aa6816f60437249fa5c">Env</a> () const</td></tr>
 <tr class="separator:af5dda76cc6b32aa6816f60437249fa5c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae7db3b843107ad5c5006ee5e35341c92"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_napi_1_1_value.html">Value</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_napi_1_1_callback_info.html#ae7db3b843107ad5c5006ee5e35341c92">NewTarget</a> () const</td></tr>
+<tr class="separator:ae7db3b843107ad5c5006ee5e35341c92"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5d959854b606ac5de2db6b59f9b6bce5"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_napi_1_1_callback_info.html#a5d959854b606ac5de2db6b59f9b6bce5">IsConstructCall</a> () const</td></tr>
+<tr class="separator:a5d959854b606ac5de2db6b59f9b6bce5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2450a932822d15c570762a4a0d321fd8"><td class="memItemLeft" align="right" valign="top">size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_napi_1_1_callback_info.html#a2450a932822d15c570762a4a0d321fd8">Length</a> () const</td></tr>
 <tr class="separator:a2450a932822d15c570762a4a0d321fd8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4d256a32c92397b7a8216f9303aa6556"><td class="memItemLeft" align="right" valign="top">const <a class="el" href="class_napi_1_1_value.html">Value</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_napi_1_1_callback_info.html#a4d256a32c92397b7a8216f9303aa6556">operator[]</a> (size_t index) const</td></tr>
@@ -95,10 +103,10 @@ Public Member Functions</h2></td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock">
-<p class="definition">Definition at line <a class="el" href="napi_8h_source.html#l01084">1084</a> of file <a class="el" href="napi_8h_source.html">napi.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="napi_8h_source.html#l01100">1100</a> of file <a class="el" href="napi_8h_source.html">napi.h</a>.</p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="ad07bc5778f22288e59b166de7e8b4301"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ad07bc5778f22288e59b166de7e8b4301">&#9670;&nbsp;</a></span>CallbackInfo()</h2>
+<h2 class="memtitle"><span class="permalink"><a href="#ad07bc5778f22288e59b166de7e8b4301">&#9670;&nbsp;</a></span>CallbackInfo() <span class="overload">[1/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -142,6 +150,32 @@ Public Member Functions</h2></td></tr>
 
 </div>
 </div>
+<a id="a676569dd657fba62e2a900841b57ba1a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a676569dd657fba62e2a900841b57ba1a">&#9670;&nbsp;</a></span>CallbackInfo() <span class="overload">[2/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">Napi::CallbackInfo::CallbackInfo </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="class_napi_1_1_callback_info.html">CallbackInfo</a> const &amp;&#160;</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">delete</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
 <h2 class="groupheader">Member Function Documentation</h2>
 <a id="a0d8add44850e4aab4a722a53bb81c2c0"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a0d8add44850e4aab4a722a53bb81c2c0">&#9670;&nbsp;</a></span>Data()</h2>
@@ -177,6 +211,23 @@ Public Member Functions</h2></td></tr>
 
 </div>
 </div>
+<a id="a5d959854b606ac5de2db6b59f9b6bce5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5d959854b606ac5de2db6b59f9b6bce5">&#9670;&nbsp;</a></span>IsConstructCall()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool Napi::CallbackInfo::IsConstructCall </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
 <a id="a2450a932822d15c570762a4a0d321fd8"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a2450a932822d15c570762a4a0d321fd8">&#9670;&nbsp;</a></span>Length()</h2>
 
@@ -190,6 +241,49 @@ Public Member Functions</h2></td></tr>
           <td> const</td>
         </tr>
       </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="ae7db3b843107ad5c5006ee5e35341c92"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae7db3b843107ad5c5006ee5e35341c92">&#9670;&nbsp;</a></span>NewTarget()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="class_napi_1_1_value.html">Value</a> Napi::CallbackInfo::NewTarget </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a528fae0285b01438f26320d31559d2fa"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a528fae0285b01438f26320d31559d2fa">&#9670;&nbsp;</a></span>operator=()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void Napi::CallbackInfo::operator= </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="class_napi_1_1_callback_info.html">CallbackInfo</a> const &amp;&#160;</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">delete</span></span>  </td>
+  </tr>
+</table>
 </div><div class="memdoc">
 
 </div>

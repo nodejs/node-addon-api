@@ -22,7 +22,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">N-API
-   &#160;<span id="projectnumber">0.3.3</span>
+   &#160;<span id="projectnumber">1.0.0</span>
    </div>
    <div id="projectbrief">C++ wrapper classes for the ABI-stable C APIs for Node.js</div>
   </td>
@@ -172,9 +172,9 @@ Typedefs</h2></td></tr>
 <tr class="memitem:a8f508b586ea6d604e425f65151059016"><td class="memItemLeft" align="right" valign="top">typedef <a class="el" href="class_napi_1_1_typed_array_of.html">TypedArrayOf</a>&lt; double &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_napi.html#a8f508b586ea6d604e425f65151059016">Float64Array</a></td></tr>
 <tr class="memdesc:a8f508b586ea6d604e425f65151059016"><td class="mdescLeft">&#160;</td><td class="mdescRight">Typed-array of 64-bit floating-point values.  <a href="#a8f508b586ea6d604e425f65151059016">More...</a><br /></td></tr>
 <tr class="separator:a8f508b586ea6d604e425f65151059016"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa4d20fdf617edaadba613aa280763cae"><td class="memItemLeft" align="right" valign="top">typedef void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_napi.html#aa4d20fdf617edaadba613aa280763cae">ModuleRegisterCallback</a>(<a class="el" href="class_napi_1_1_env.html">Env</a> env, <a class="el" href="class_napi_1_1_object.html">Object</a> exports, <a class="el" href="class_napi_1_1_object.html">Object</a> module)</td></tr>
-<tr class="memdesc:aa4d20fdf617edaadba613aa280763cae"><td class="mdescLeft">&#160;</td><td class="mdescRight">Defines the signature of a N-API C++ module's registration callback (init) function.  <a href="#aa4d20fdf617edaadba613aa280763cae">More...</a><br /></td></tr>
-<tr class="separator:aa4d20fdf617edaadba613aa280763cae"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4c44c33c6b918af0d2aa5bbae925dd3f"><td class="memItemLeft" align="right" valign="top">typedef <a class="el" href="class_napi_1_1_object.html">Object</a>(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_napi.html#a4c44c33c6b918af0d2aa5bbae925dd3f">ModuleRegisterCallback</a>) (<a class="el" href="class_napi_1_1_env.html">Env</a> env, <a class="el" href="class_napi_1_1_object.html">Object</a> exports)</td></tr>
+<tr class="memdesc:a4c44c33c6b918af0d2aa5bbae925dd3f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Defines the signature of a N-API C++ module's registration callback (init) function.  <a href="#a4c44c33c6b918af0d2aa5bbae925dd3f">More...</a><br /></td></tr>
+<tr class="separator:a4c44c33c6b918af0d2aa5bbae925dd3f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
 Functions</h2></td></tr>
@@ -211,7 +211,7 @@ Functions</h2></td></tr>
 
 <p>Typed-array of 32-bit floating-point values. </p>
 
-<p class="definition">Definition at line <a class="el" href="napi_8h_source.html#l00059">59</a> of file <a class="el" href="napi_8h_source.html">napi.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="napi_8h_source.html#l00073">73</a> of file <a class="el" href="napi_8h_source.html">napi.h</a>.</p>
 
 </div>
 </div>
@@ -229,7 +229,7 @@ Functions</h2></td></tr>
 
 <p>Typed-array of 64-bit floating-point values. </p>
 
-<p class="definition">Definition at line <a class="el" href="napi_8h_source.html#l00060">60</a> of file <a class="el" href="napi_8h_source.html">napi.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="napi_8h_source.html#l00074">74</a> of file <a class="el" href="napi_8h_source.html">napi.h</a>.</p>
 
 </div>
 </div>
@@ -247,7 +247,7 @@ Functions</h2></td></tr>
 
 <p>Typed-array of signed 16-bit integers. </p>
 
-<p class="definition">Definition at line <a class="el" href="napi_8h_source.html#l00055">55</a> of file <a class="el" href="napi_8h_source.html">napi.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="napi_8h_source.html#l00069">69</a> of file <a class="el" href="napi_8h_source.html">napi.h</a>.</p>
 
 </div>
 </div>
@@ -265,7 +265,7 @@ Functions</h2></td></tr>
 
 <p>Typed-array of signed 32-bit integers. </p>
 
-<p class="definition">Definition at line <a class="el" href="napi_8h_source.html#l00057">57</a> of file <a class="el" href="napi_8h_source.html">napi.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="napi_8h_source.html#l00071">71</a> of file <a class="el" href="napi_8h_source.html">napi.h</a>.</p>
 
 </div>
 </div>
@@ -283,25 +283,25 @@ Functions</h2></td></tr>
 
 <p>Typed-array of signed 8-bit integers. </p>
 
-<p class="definition">Definition at line <a class="el" href="napi_8h_source.html#l00051">51</a> of file <a class="el" href="napi_8h_source.html">napi.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="napi_8h_source.html#l00065">65</a> of file <a class="el" href="napi_8h_source.html">napi.h</a>.</p>
 
 </div>
 </div>
-<a id="aa4d20fdf617edaadba613aa280763cae"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aa4d20fdf617edaadba613aa280763cae">&#9670;&nbsp;</a></span>ModuleRegisterCallback</h2>
+<a id="a4c44c33c6b918af0d2aa5bbae925dd3f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4c44c33c6b918af0d2aa5bbae925dd3f">&#9670;&nbsp;</a></span>ModuleRegisterCallback</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">typedef void Napi::ModuleRegisterCallback(<a class="el" href="class_napi_1_1_env.html">Env</a> env, <a class="el" href="class_napi_1_1_object.html">Object</a> exports, <a class="el" href="class_napi_1_1_object.html">Object</a> module)</td>
+          <td class="memname">typedef <a class="el" href="class_napi_1_1_object.html">Object</a>(* Napi::ModuleRegisterCallback) (<a class="el" href="class_napi_1_1_env.html">Env</a> env, <a class="el" href="class_napi_1_1_object.html">Object</a> exports)</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
 <p>Defines the signature of a N-API C++ module's registration callback (init) function. </p>
 
-<p class="definition">Definition at line <a class="el" href="napi_8h_source.html#l00063">63</a> of file <a class="el" href="napi_8h_source.html">napi.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="napi_8h_source.html#l00077">77</a> of file <a class="el" href="napi_8h_source.html">napi.h</a>.</p>
 
 </div>
 </div>
@@ -319,7 +319,7 @@ Functions</h2></td></tr>
 
 <p>Typed-array of unsigned 16-bit integers. </p>
 
-<p class="definition">Definition at line <a class="el" href="napi_8h_source.html#l00056">56</a> of file <a class="el" href="napi_8h_source.html">napi.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="napi_8h_source.html#l00070">70</a> of file <a class="el" href="napi_8h_source.html">napi.h</a>.</p>
 
 </div>
 </div>
@@ -337,7 +337,7 @@ Functions</h2></td></tr>
 
 <p>Typed-array of unsigned 32-bit integers. </p>
 
-<p class="definition">Definition at line <a class="el" href="napi_8h_source.html#l00058">58</a> of file <a class="el" href="napi_8h_source.html">napi.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="napi_8h_source.html#l00072">72</a> of file <a class="el" href="napi_8h_source.html">napi.h</a>.</p>
 
 </div>
 </div>
@@ -355,7 +355,7 @@ Functions</h2></td></tr>
 
 <p>Typed-array of unsigned 8-bit integers. </p>
 
-<p class="definition">Definition at line <a class="el" href="napi_8h_source.html#l00054">54</a> of file <a class="el" href="napi_8h_source.html">napi.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="napi_8h_source.html#l00068">68</a> of file <a class="el" href="napi_8h_source.html">napi.h</a>.</p>
 
 </div>
 </div>
