@@ -22,8 +22,8 @@ To use N-API in a native module:
 
   2. Reference this package's include directory and gyp file in `binding.gyp`:
 ```gyp
-  'include_dirs': ["<!@(node -p \"require('node-addon-api').include\")"],
-  'dependencies': ["<!(node -p \"require('node-addon-api').gyp\")"],
+  'include_dirs+': ["<!@(node -p \"require('node-addon-api').include\")"],
+  'dependencies+': ["<!(node -p \"require('node-addon-api').gyp\")"],
 ```
 
   3. Decide whether the package will enable C++ exceptions in the N-API wrapper.
@@ -56,8 +56,18 @@ To use N-API in a native module:
 #include "napi.h"
 ```
 
-At build time, the N-API back-compat library code will be used only when the
-targeted node version *does not* have N-API built-in.
+  5. Load your module:
+```JS
+  var myModule =
+    require('node-addon-api').loadModule('./build/Release/my_module.node');
+```
+
+The N-API back-compat library code will be used only when the node version under
+which the module runs *does not* have N-API built-in.
+
+On non-Windows platforms, after having installed your native module on any
+version of node after and including 4.0.0 you will not have to re-install your
+module when you switch to any other version of node after and including 4.0.0.
 
 ## Conversion Tool
 To make the migration to node-addon-api easier, we have provided a script to help
