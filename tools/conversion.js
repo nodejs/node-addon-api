@@ -16,10 +16,15 @@ const NodeApiVersion = require('../package.json').version;
 
 var ConfigFileOperations = {
   'package.json': [
-    [ /"nan": *"[^"]+"/g, '"node-addon-api": "' + NodeApiVersion + '"' ]
+    [ /"dependencies": {/g, '"dependencies": {\n    "node-addon-api": "' + NodeApiVersion + '",'],
+    [ /[ ]*"nan": *"[^"]+"(,|)[\n\r]/g, '' ]
   ],
   'binding.gyp': [
-    [ /\(node -e \\("|')require\(("|')nan("|')\)\\("|')\)/g, '@(node -p \\$1require(\$2node-addon-api\$3).include\\$4)' ],
+    [ /([ ]*)'include_dirs': \[/g, '$1\'include_dirs\': [\n$1  \'<!@(node -p "require(\\\'node-addon-api\\\').include")\',' ],
+    [ /([ ]*)"include_dirs": \[/g, '$1"include_dirs": [\n$1  "<!@(node -p \'require(\\\"node-addon-api\\\").include\')",' ],
+    [ /([ ]*)'dependencies': \[/g, '$1\'dependencies\': [\n$1  \'<!(node -p "require(\\\'node-addon-api\\\').gyp")\','],
+    [ /([ ]*)"dependencies": \[/g, '$1"dependencies": [\n$1  "<!(node -p \'require(\\\"node-addon-api\\\").gyp\')",'],
+    [ /[ ]*("|')<!\(node -e ("|'|\\"|\\')require\(("|'|\\"|\\')nan("|'|\\"|\\')\)("|'|\\"|\\')\)("|')(,|)[\r\n]/g, '' ],
     [ /("|')target_name("|'): ("|')(.+?)("|'),/g, '$1target_name$2: $3$4$5,\n      $1cflags!$1: [ $1-fno-exceptions$1 ],\n      $1cflags_cc!$1: [ $1-fno-exceptions$1 ],' ],
   ]
 };
