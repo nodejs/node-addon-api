@@ -2562,8 +2562,8 @@ inline ClassPropertyDescriptor<T> ObjectWrap<T>::InstanceAccessor(
 
   napi_property_descriptor desc = {};
   desc.utf8name = utf8name;
-  desc.getter = T::InstanceGetterCallbackWrapper;
-  desc.setter = T::InstanceSetterCallbackWrapper;
+  desc.getter = getter != nullptr ? T::InstanceGetterCallbackWrapper : nullptr;
+  desc.setter = setter != nullptr ? T::InstanceSetterCallbackWrapper : nullptr;
   desc.data = callbackData;
   desc.attributes = attributes;
   return desc;

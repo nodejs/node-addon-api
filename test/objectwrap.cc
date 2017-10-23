@@ -27,11 +27,11 @@ public:
     Napi::ObjectWrap<Test>(info) {
   }
 
-  void Set(const Napi::CallbackInfo& info) {
+  void SetMethod(const Napi::CallbackInfo& info) {
     value = info[0].As<Napi::Number>();
   }
 
-  Napi::Value Get(const Napi::CallbackInfo& info) {
+  Napi::Value GetMethod(const Napi::CallbackInfo& info) {
     return Napi::Number::New(info.Env(), value);
   }
 
@@ -39,11 +39,22 @@ public:
     return TestIter::Constructor.New({});
   }
 
+  void Setter(const Napi::CallbackInfo& info, const Napi::Value& new_value) {
+    value = new_value.As<Napi::Number>();
+  }
+
+  Napi::Value Getter(const Napi::CallbackInfo& info) {
+    return Napi::Number::New(info.Env(), value);
+  }
+
   static void Initialize(Napi::Env env, Napi::Object exports) {
     exports.Set("Test", DefineClass(env, "Test", {
-      InstanceMethod("test_set", &Test::Set),
-      InstanceMethod("test_get", &Test::Get),
-      InstanceMethod(Napi::Symbol::WellKnown(env, "iterator"), &Test::Iter)
+      InstanceMethod("test_set_method", &Test::SetMethod),
+      InstanceMethod("test_get_method", &Test::GetMethod),
+      InstanceMethod(Napi::Symbol::WellKnown(env, "iterator"), &Test::Iter),
+      InstanceAccessor("test_getter_only", &Test::Getter, nullptr),
+      InstanceAccessor("test_setter_only", nullptr, &Test::Setter),
+      InstanceAccessor("test_getter_setter", &Test::Getter, &Test::Setter),
     }));
   }
 
