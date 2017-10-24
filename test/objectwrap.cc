@@ -14,6 +14,8 @@ public:
     Constructor = Napi::Persistent(DefineClass(env, "TestIter", {
       InstanceMethod("next", &TestIter::Next),
     }));
+
+    Constructor.SuppressDestruct();
   }
 
   static Napi::FunctionReference Constructor;
