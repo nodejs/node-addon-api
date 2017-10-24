@@ -1,5 +1,10 @@
 'use strict';
 
+process.config.target_defaults.default_configuration =
+  require('fs')
+    .readdirSync(require('path').join(__dirname, 'build'))
+    .filter((item) => (item === 'Debug' || item === 'Release'))[0];
+
 let testModules = [
   'arraybuffer',
   'asyncworker',
@@ -30,9 +35,10 @@ if (typeof global.gc === 'function') {
   });
 
   if (child.signal) {
-    console.log(`Tests aborted with ${child.signal}`);
+    console.error(`Tests aborted with ${child.signal}`);
     process.exitCode = 1;
   } else {
     process.exitCode = child.status;
   }
+  process.exit(process.exitCode);
 }
