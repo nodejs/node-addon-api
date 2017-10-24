@@ -15,6 +15,7 @@ The wrappers are all header-only so that they do not affect the ABI.
     - [node-gyp](doc/node-gyp.md)
     - [cmake-js](doc/cmake-js.md)
     - [Conversion tool](doc/conversion-tool.md)
+    - [Generator](doc/generator.md)
  - [Basic Types](doc/basic_types.md)
     - [Array](doc/array.md)  
     - [Symbol](doc/symbol.md) 
