@@ -1,4 +1,4 @@
-# Node.js API (N-API) Package
+# **Node.js API (N-API) Package**
 
 This package contains **header-only C++ wrapper classes** for the **ABI-stable
 Node.js API**  also known as **N-API**, providing C++ object model and exception
@@ -21,25 +21,32 @@ APIs exposed by N-API are generally used to create and manipulate JavaScript
 values. Concepts and operations generally map to ideas specified in the 
 **ECMA262 Language Specification**.
 
+- **[More resource and info about native Addons](#---)**
+- **[Intallation](#---)**
+- **[Usage](#---)**
+- **[Examples](#examples)**
+- **[API Documentation](#api)**
+- **[Tests](#tests)**
+- **[Contributors](#---)**
+
 ## **Current version: 1.0.0**
 
 (See [CHANHELOG.md](CHANGELOG.md) for complete Changelog)
 
 [![NPM](https://nodei.co/npm/node-addon-api.png?downloads=true&downloadRank=true)](https://nodei.co/npm/dode-addon-api/) [![NPM](https://nodei.co/npm-dl/node-addon-api.png?months=6&height=1)](https://nodei.co/npm/dode-addon-api/)
 
-## More resource and info about native Addons
+### **More resource and info about native Addons**
   - **[C++ Addons](https://nodejs.org/dist/latest/docs/api/addons.html)**
   - **[N-API](https://nodejs.org/dist/latest/docs/api/n-api.html)**
   - **[N-API - Next Generation Node API for Native Modules](https://youtu.be/-Oniup60Afs)**
 
-
-### API Documentation
-
- - [Setup](doc/setup.md)
-    - [node-gyp](doc/node-gyp.md)
-    - [cmake-js](doc/cmake-js.md)
-    - [Conversion tool](doc/conversion-tool.md)
-    - [Generator](doc/generator.md)
+## Setup
+  - [Installation and usage](doc/setup.md)
+  - [node-gyp](doc/node-gyp.md)
+  - [cmake-js](doc/cmake-js.md)
+  - [Conversion tool](doc/conversion-tool.md)
+  - [Generator](doc/generator.md)
+### **API Documentation**
  - [Basic Types](doc/basic_types.md)
     - [Array](doc/array.md)  
     - [Symbol](doc/symbol.md) 
