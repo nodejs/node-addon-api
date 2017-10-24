@@ -10,23 +10,18 @@ public:
     return object;
   }
 
-  static void Initialize(Napi::Env env, Napi::Object exports) {
-    Constructor = Napi::Persistent(DefineClass(env, "TestIter", {
+  static Napi::FunctionReference Initialize(Napi::Env env) {
+    return Napi::Persistent(DefineClass(env, "TestIter", {
       InstanceMethod("next", &TestIter::Next),
     }));
-
-    Constructor.SuppressDestruct();
   }
-
-  static Napi::FunctionReference Constructor;
 };
-
-Napi::FunctionReference TestIter::Constructor;
 
 class Test : public Napi::ObjectWrap<Test> {
 public:
   Test(const Napi::CallbackInfo& info) :
-    Napi::ObjectWrap<Test>(info) {
+    Napi::ObjectWrap<Test>(info),
+    Constructor(TestIter::Initialize(info.Env())) {
   }
 
   void SetMethod(const Napi::CallbackInfo& info) {
@@ -38,7 +33,7 @@ public:
   }
 
   Napi::Value Iter(const Napi::CallbackInfo& info) {
-    return TestIter::Constructor.New({});
+    return Constructor.New({});
   }
 
   void Setter(const Napi::CallbackInfo& info, const Napi::Value& new_value) {
@@ -62,11 +57,11 @@ public:
 
 private:
   uint32_t value;
+  Napi::FunctionReference Constructor;
 };
 
 Napi::Object InitObjectWrap(Napi::Env env) {
   Napi::Object exports = Napi::Object::New(env);
   Test::Initialize(env, exports);
-  TestIter::Initialize(env, exports);
   return exports;
 }
