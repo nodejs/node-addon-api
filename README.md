@@ -2,23 +2,23 @@
 
 This package contains **header-only C++ wrapper classes** for the **ABI-stable
 Node.js API**  also known as **N-API**, providing C++ object model and exception
-handling semantics with low overhead. It guarantees backward compatibility with 
+handling semantics with low overhead. It guarantees backward compatibility with
 use with older versions of Node.js that do not have N-API built-in.
 
-Node.js API guarentees the **API** and **ABI** compatibility across different 
-version of Node.js (**4** **5** **6** **7** and **8**). So if you switch to a 
-different version of Node.js you must not reinstall and maybe recompile the 
+Node.js API guarentees the **API** and **ABI** compatibility across different
+version of Node.js. So if you switch to a
+different version of Node.js you must not reinstall and maybe recompile the
 Addon.
 
 N-API is an API for building native Addons. It is independent from the underlying
-JavaScript runtime (ex V8) and is maintained as part of Node.js itself. This API 
-will be Application Binary Interface (ABI) stable across versions of Node.js. It 
-is intended to insulate Addons from changes in the underlying JavaScript engine 
-and allow modules compiled for one version to run on later versions of Node.js 
+JavaScript runtime (ex V8) and is maintained as part of Node.js itself. This API
+will be Application Binary Interface (ABI) stable across versions of Node.js. It
+is intended to insulate Addons from changes in the underlying JavaScript engine
+and allow modules compiled for one version to run on later versions of Node.js
 without recompilation.
 
-APIs exposed by N-API are generally used to create and manipulate JavaScript 
-values. Concepts and operations generally map to ideas specified in the 
+APIs exposed by N-API are generally used to create and manipulate JavaScript
+values. Concepts and operations generally map to ideas specified in the
 **ECMA262 Language Specification**.
 
 - **[Setup](#setup)**
@@ -44,24 +44,24 @@ values. Concepts and operations generally map to ideas specified in the
   - [Conversion tool](doc/conversion-tool.md)
   - [Generator](doc/generator.md)
 
-<a name="api"></a> 
+<a name="api"></a>
 
 ### **API Documentation**
  - [Basic Types](doc/basic_types.md)
-    - [Array](doc/array.md)  
-    - [Symbol](doc/symbol.md) 
-    - [String](doc/string.md) 
-    - [Name](doc/name.md) 
-    - [Number](doc/number.md) 
-    - [Boolean](doc/boolean.md) 
-    - [Env](doc/env.md) 
-    - [Value](doc/value.md) 
-    - [CallbackInfo](doc/callbackinfo.md) 
-    - [Reference](doc/reference.md) 
-    - [External](doc/external.md) 
+    - [Array](doc/array.md)
+    - [Symbol](doc/symbol.md)
+    - [String](doc/string.md)
+    - [Name](doc/name.md)
+    - [Number](doc/number.md)
+    - [Boolean](doc/boolean.md)
+    - [Env](doc/env.md)
+    - [Value](doc/value.md)
+    - [CallbackInfo](doc/callbackinfo.md)
+    - [Reference](doc/reference.md)
+    - [External](doc/external.md)
     - [Object](doc/object.md)
         - [ObjectReference](doc/object_reference.md)
-        - [PropertyDescriptor](doc/property_descriptor.md)  
+        - [PropertyDescriptor](doc/property_descriptor.md)
  - [Error Handling](doc/error_handling.md)
     - [Error](doc/error.md)
  - [Object Lifettime Management](doc/object_lifetime_management.md)

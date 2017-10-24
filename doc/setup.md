@@ -46,7 +46,7 @@ To use N-API in a native module:
   4. Include `napi.h` in the native module code.
      To ensure only ABI-stable APIs are used, DO NOT include
      `node.h`, `nan.h`, or `v8.h`.
-     
+
 ```C++
 #include "napi.h"
 ```
