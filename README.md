@@ -5,10 +5,48 @@ Node.js API (N-API), along with library code that enables
 backward-compatibility with use with older versions of Node.js that do
 not have N-API built-in.
 
+These classes wrap the "N-API" ABI-stable C APIs for Node.js, providing a
+C++ object model and C++ exception-handling semantics with low overhead.
+The wrappers are all header-only so that they do not affect the ABI.
+
 ### API Documentation
 
- - [ABI-Stable C APIs in Node.js](https://nodejs.org/api/n-api.html)
- - [C++ APIs in this package](https://nodejs.github.io/node-addon-api/namespace_napi.html)
+ - [Setup](doc/setup.md)
+    - [node-gyp](doc/node-gyp.md)
+    - [cmake-js](doc/cmake-js.md)
+    - [Conversion tool](doc/conversion-tool.md)
+ - [Basic Types](doc/basic_types.md)
+    - [Array](doc/array.md)  
+    - [Symbol](doc/symbol.md) 
+    - [String](doc/string.md) 
+    - [Name](doc/name.md) 
+    - [Number](doc/number.md) 
+    - [Boolean](doc/boolean.md) 
+    - [Env](doc/env.md) 
+    - [Value](doc/value.md) 
+    - [CallbackInfo](doc/callbackinfo.md) 
+    - [Reference](doc/reference.md) 
+    - [External](doc/external.md) 
+    - [Object](doc/object.md)
+        - [ObjectReference](doc/object_reference.md)
+        - [PropertyDescriptor](doc/property_descriptor.md)  
+ - [Error Handling](doc/error_handling.md)
+    - [Error](doc/error.md)
+ - [Object Lifettime Management](doc/object_lifetime_management.md)
+    - [HandleScope](doc/handle_scope.md)
+    - [EscapableHandleScope](doc/escapable_handle_scope.md)
+ - [Working with JavaScript Values](doc/working_with_javascript_values.md)
+    - [Function](doc/function.md)
+        - [FunctionReference](doc/function_reference.md)
+    - [ObjectWrap](doc/object_wrap.md)
+        - [ClassPropertyDescriptor](doc/class_property_descriptor.md)
+    - [Buffer](doc/buffer.md)
+    - [ArrayBuffer](doc/array_buffer.md)
+    - [TypedArray](doc/typed_array.md)
+      - [TypedArrayOf](doc/typed_array_of.md)
+ - [Async Operations](doc/async_operations.md)
+    - [AsyncWorker](async_worker.md)
+ - [Promises](doc/promises.md)
 
 ### Getting Started
 
