@@ -5,8 +5,8 @@ Node.js API**  also known as **N-API**, providing C++ object model and exception
 handling semantics with low overhead. It guarantees backward compatibility with 
 use with older versions of Node.js that do not have N-API built-in.
 
-Node.js API guarentees the API and ABI compatibility between different version of 
-Node.js (**4 5 6 7 and 8**). So if you switch to a different version of Node.js 
+Node.js API guarentees the **API** and **ABI** compatibility across different version of 
+Node.js (**4** **5** **6** **7** and **8**). So if you switch to a different version of Node.js 
 you must not reinstall and maybe recompile the Addon
 
 N-API is an API for building native Addons. It is independent from the underlying
