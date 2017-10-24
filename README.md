@@ -5,9 +5,10 @@ Node.js API**  also known as **N-API**, providing C++ object model and exception
 handling semantics with low overhead. It guarantees backward compatibility with 
 use with older versions of Node.js that do not have N-API built-in.
 
-Node.js API guarentees the **API** and **ABI** compatibility across different version of 
-Node.js (**4** **5** **6** **7** and **8**). So if you switch to a different version of Node.js 
-you must not reinstall and maybe recompile the Addon
+Node.js API guarentees the **API** and **ABI** compatibility across different 
+version of Node.js (**4** **5** **6** **7** and **8**). So if you switch to a 
+different version of Node.js you must not reinstall and maybe recompile the 
+Addon.
 
 N-API is an API for building native Addons. It is independent from the underlying
 JavaScript runtime (ex V8) and is maintained as part of Node.js itself. This API 
@@ -27,6 +28,10 @@ values. Concepts and operations generally map to ideas specified in the
 [![NPM](https://nodei.co/npm/node-addon-api.png?downloads=true&downloadRank=true)](https://nodei.co/npm/dode-addon-api/) [![NPM](https://nodei.co/npm-dl/node-addon-api.png?months=6&height=1)](https://nodei.co/npm/dode-addon-api/)
 
 ## More resource and info about native Addons
+  - **[C++ Addons](https://nodejs.org/dist/latest/docs/api/addons.html)**
+  - **[N-API](https://nodejs.org/dist/latest/docs/api/n-api.html)**
+  - **[N-API - Next Generation Node API for Native Modules](https://youtu.be/-Oniup60Afs)**
+
 
 ### API Documentation
 
