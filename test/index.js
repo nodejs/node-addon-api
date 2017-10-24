@@ -28,5 +28,11 @@ if (typeof global.gc === 'function') {
   const child = require('./napi_child').spawnSync(process.argv[0], [ '--expose-gc', __filename ], {
     stdio: 'inherit',
   });
-  process.exitCode = child.status;
+
+  if (child.signal) {
+    console.log(`Tests aborted with ${child.signal}`);
+    process.exitCode = 1;
+  } else {
+    process.exitCode = child.status;
+  }
 }
