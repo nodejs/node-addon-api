@@ -1,18 +1,32 @@
 # Node.js API (N-API) Package
 
 This package contains **header-only C++ wrapper classes** for the **ABI-stable
-Node.js API**  also known as **N-API**, providing C++ object model and exception-handling 
-semantics with low overhead. It guarantees backward-compatibility with use with older 
-versions of Node.js that do not have N-API built-in.
+Node.js API**  also known as **N-API**, providing C++ object model and exception
+handling semantics with low overhead. It guarantees backward compatibility with 
+use with older versions of Node.js that do not have N-API built-in.
 
- 
+Node.js API guarentees the API and ABI compatibility between different version of 
+Node.js (**4 5 6 7 and 8**). So if you switch to a different version of Node.js 
+you must not reinstall and maybe recompile the Addon
+
+N-API is an API for building native Addons. It is independent from the underlying
+JavaScript runtime (ex V8) and is maintained as part of Node.js itself. This API 
+will be Application Binary Interface (ABI) stable across versions of Node.js. It 
+is intended to insulate Addons from changes in the underlying JavaScript engine 
+and allow modules compiled for one version to run on later versions of Node.js 
+without recompilation.
+
+APIs exposed by N-API are generally used to create and manipulate JavaScript 
+values. Concepts and operations generally map to ideas specified in the 
+**ECMA262 Language Specification**.
+
 ## **Current version: 1.0.0**
 
 (See [CHANHELOG.md](CHANGELOG.md) for complete Changelog)
 
 [![NPM](https://nodei.co/npm/node-addon-api.png?downloads=true&downloadRank=true)](https://nodei.co/npm/dode-addon-api/) [![NPM](https://nodei.co/npm-dl/node-addon-api.png?months=6&height=1)](https://nodei.co/npm/dode-addon-api/)
 
-More resource and info about 
+## More resource and info about native Addons
 
 ### API Documentation
 
