@@ -1,13 +1,18 @@
 # Node.js API (N-API) Package
 
-This package contains header-only C++ wrapper classes for the ABI-stable
-Node.js API (N-API), along with library code that enables
-backward-compatibility with use with older versions of Node.js that do
-not have N-API built-in.
+This package contains **header-only C++ wrapper classes** for the **ABI-stable
+Node.js API**  also known as **N-API**, providing C++ object model and exception-handling 
+semantics with low overhead. It guarantees backward-compatibility with use with older 
+versions of Node.js that do not have N-API built-in.
 
-These classes wrap the "N-API" ABI-stable C APIs for Node.js, providing a
-C++ object model and C++ exception-handling semantics with low overhead.
-The wrappers are all header-only so that they do not affect the ABI.
+ 
+## **Current version: 1.0.0**
+
+(See [CHANHELOG.md](CHANGELOG.md) for complete Changelog)
+
+[![NPM](https://nodei.co/npm/node-addon-api.png?downloads=true&downloadRank=true)](https://nodei.co/npm/dode-addon-api/) [![NPM](https://nodei.co/npm-dl/node-addon-api.png?months=6&height=1)](https://nodei.co/npm/dode-addon-api/)
+
+More resource and info about 
 
 ### API Documentation
 
