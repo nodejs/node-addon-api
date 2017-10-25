@@ -27,6 +27,7 @@ values. Concepts and operations generally map to ideas specified in the
 - **[Tests](#tests)**
 - **[More resource and info about native Addons](#resources)**
 - **[Contributors](#contributors)**
+- **[License](#license)**
 
 ## **Current version: 1.0.0**
 
@@ -83,10 +84,13 @@ values. Concepts and operations generally map to ideas specified in the
 
 ### **Examples**
 
+//TODO  References to examples
 
 <a name="tests"></a>
 
 ### **Tests**
+
+//TODO References to tests
 
 <a name="resources"></a>
 
@@ -109,3 +113,7 @@ values. Concepts and operations generally map to ideas specified in the
 | Michael Dawson      | [mhdawson](https://github.com/mhdawson)               |
 | Sampson Gao         | [sampsongao](https://github.com/sampsongao)           |
 | Taylor Woll         | [boingoing](https://github.com/boingoing)             |
+
+<a name="license"></a>
+
+Licensed under [MIT](./LICENSE)
