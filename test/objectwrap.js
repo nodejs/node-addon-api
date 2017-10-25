@@ -8,9 +8,9 @@ test(require(`./build/${buildType}/binding_noexcept.node`));
 function test(binding) {
   var Test = binding.objectwrap.Test;
 
-  function testSetGet(obj) {
-    obj.test_set(90);
-    assert.strictEqual(obj.test_get(), 90);
+  function testSetGetMethod(obj) {
+    obj.test_set_method(90);
+    assert.strictEqual(obj.test_get_method(), 90);
   }
 
   function testIter(obj) {
@@ -18,9 +18,41 @@ function test(binding) {
     }
   }
 
+  function testGetterOnly(obj) {
+    obj.test_set_method(91);
+    assert.strictEqual(obj.test_getter_only, 91);
+
+    let error;
+    try {
+      // Can not assign to read only property.
+      obj.test_getter_only = 92;
+    } catch(e) {
+      error = e;
+    } finally {
+      assert.strictEqual(error.name, 'TypeError');
+    }
+  }
+
+  function testSetterOnly(obj) {
+    obj.test_setter_only = 93;
+    assert.strictEqual(obj.test_setter_only, undefined);
+    assert.strictEqual(obj.test_getter_only, 93);
+  }
+
+  function testGetterSetter(obj) {
+    obj.test_getter_setter = 94;
+    assert.strictEqual(obj.test_getter_setter, 94);
+
+    obj.test_getter_setter = 95;
+    assert.strictEqual(obj.test_getter_setter, 95);
+  }
+
   function testObj(obj) {
-    testSetGet(obj);
+    testSetGetMethod(obj);
     testIter(obj);
+    testGetterOnly(obj);
+    testSetterOnly(obj);
+    testGetterSetter(obj);
   }
 
   testObj(new Test());
