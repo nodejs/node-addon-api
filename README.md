@@ -116,4 +116,4 @@ values. Concepts and operations generally map to ideas specified in the
 
 <a name="license"></a>
 
-Licensed under [MIT](./LICENSE)
+Licensed under [MIT](./LICENSE.md)
