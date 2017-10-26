@@ -2475,7 +2475,7 @@ inline ClassPropertyDescriptor<T> ObjectWrap<T>::StaticMethod(
   // TODO: Delete when the class is destroyed
   StaticVoidMethodCallbackData* callbackData = new StaticVoidMethodCallbackData({ method, data });
 
-  napi_property_descriptor desc = {};
+  napi_property_descriptor desc = napi_property_descriptor();
   desc.utf8name = utf8name;
   desc.method = T::StaticVoidMethodCallbackWrapper;
   desc.data = callbackData;
@@ -2492,7 +2492,7 @@ inline ClassPropertyDescriptor<T> ObjectWrap<T>::StaticMethod(
   // TODO: Delete when the class is destroyed
   StaticMethodCallbackData* callbackData = new StaticMethodCallbackData({ method, data });
 
-  napi_property_descriptor desc = {};
+  napi_property_descriptor desc = napi_property_descriptor();
   desc.utf8name = utf8name;
   desc.method = T::StaticMethodCallbackWrapper;
   desc.data = callbackData;
@@ -2511,7 +2511,7 @@ inline ClassPropertyDescriptor<T> ObjectWrap<T>::StaticAccessor(
   StaticAccessorCallbackData* callbackData =
     new StaticAccessorCallbackData({ getter, setter, data });
 
-  napi_property_descriptor desc = {};
+  napi_property_descriptor desc = napi_property_descriptor();
   desc.utf8name = utf8name;
   desc.getter = getter != nullptr ? T::StaticGetterCallbackWrapper : nullptr;
   desc.setter = setter != nullptr ? T::StaticSetterCallbackWrapper : nullptr;
@@ -2530,7 +2530,7 @@ inline ClassPropertyDescriptor<T> ObjectWrap<T>::InstanceMethod(
   InstanceVoidMethodCallbackData* callbackData =
     new InstanceVoidMethodCallbackData({ method, data});
 
-  napi_property_descriptor desc = {};
+  napi_property_descriptor desc = napi_property_descriptor();
   desc.utf8name = utf8name;
   desc.method = T::InstanceVoidMethodCallbackWrapper;
   desc.data = callbackData;
@@ -2547,7 +2547,7 @@ inline ClassPropertyDescriptor<T> ObjectWrap<T>::InstanceMethod(
   // TODO: Delete when the class is destroyed
   InstanceMethodCallbackData* callbackData = new InstanceMethodCallbackData({ method, data });
 
-  napi_property_descriptor desc = {};
+  napi_property_descriptor desc = napi_property_descriptor();
   desc.utf8name = utf8name;
   desc.method = T::InstanceMethodCallbackWrapper;
   desc.data = callbackData;
@@ -2565,7 +2565,7 @@ inline ClassPropertyDescriptor<T> ObjectWrap<T>::InstanceMethod(
   InstanceVoidMethodCallbackData* callbackData =
     new InstanceVoidMethodCallbackData({ method, data});
 
-  napi_property_descriptor desc = {};
+  napi_property_descriptor desc = napi_property_descriptor();
   desc.name = name;
   desc.method = T::InstanceVoidMethodCallbackWrapper;
   desc.data = callbackData;
@@ -2582,7 +2582,7 @@ inline ClassPropertyDescriptor<T> ObjectWrap<T>::InstanceMethod(
   // TODO: Delete when the class is destroyed
   InstanceMethodCallbackData* callbackData = new InstanceMethodCallbackData({ method, data });
 
-  napi_property_descriptor desc = {};
+  napi_property_descriptor desc = napi_property_descriptor();
   desc.name = name;
   desc.method = T::InstanceMethodCallbackWrapper;
   desc.data = callbackData;
@@ -2601,7 +2601,7 @@ inline ClassPropertyDescriptor<T> ObjectWrap<T>::InstanceAccessor(
   InstanceAccessorCallbackData* callbackData =
     new InstanceAccessorCallbackData({ getter, setter, data });
 
-  napi_property_descriptor desc = {};
+  napi_property_descriptor desc = napi_property_descriptor();
   desc.utf8name = utf8name;
   desc.getter = getter != nullptr ? T::InstanceGetterCallbackWrapper : nullptr;
   desc.setter = setter != nullptr ? T::InstanceSetterCallbackWrapper : nullptr;
@@ -2613,7 +2613,7 @@ inline ClassPropertyDescriptor<T> ObjectWrap<T>::InstanceAccessor(
 template <typename T>
 inline ClassPropertyDescriptor<T> ObjectWrap<T>::StaticValue(const char* utf8name,
     Napi::Value value, napi_property_attributes attributes) {
-  napi_property_descriptor desc = {};
+  napi_property_descriptor desc = napi_property_descriptor();
   desc.utf8name = utf8name;
   desc.value = value;
   desc.attributes = static_cast<napi_property_attributes>(attributes | napi_static);
@@ -2625,7 +2625,7 @@ inline ClassPropertyDescriptor<T> ObjectWrap<T>::InstanceValue(
     const char* utf8name,
     Napi::Value value,
     napi_property_attributes attributes) {
-  napi_property_descriptor desc = {};
+  napi_property_descriptor desc = napi_property_descriptor();
   desc.utf8name = utf8name;
   desc.value = value;
   desc.attributes = attributes;
