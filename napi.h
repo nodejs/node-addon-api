@@ -176,6 +176,7 @@ namespace Napi {
     bool IsTypedArray() const;  ///< Tests if a value is a JavaScript typed array.
     bool IsObject() const;      ///< Tests if a value is a JavaScript object.
     bool IsFunction() const;    ///< Tests if a value is a JavaScript function.
+    bool IsPromise() const;     ///< Tests if a value is a JavaScript promise.
     bool IsBuffer() const;      ///< Tests if a value is a Node buffer.
 
     /// Casts to another type of `Napi::Value`, when the actual type is known or assumed.
@@ -790,6 +791,27 @@ namespace Napi {
     Object New(const std::initializer_list<napi_value>& args) const;
     Object New(const std::vector<napi_value>& args) const;
     Object New(size_t argc, const napi_value* args) const;
+  };
+
+  class Promise : public Object {
+  public:
+    class Deferred {
+    public:
+      static Deferred New(napi_env env);
+      Deferred(napi_env env);
+
+      Napi::Promise Promise() const;
+
+      void Resolve(napi_value value) const;
+      void Reject(napi_value value) const;
+
+    private:
+      napi_env _env;
+      napi_deferred _deferred;
+      napi_value _promise;
+    };
+
+    Promise(napi_env env, napi_value value);
   };
 
   template <typename T>
