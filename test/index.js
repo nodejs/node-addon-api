@@ -9,6 +9,7 @@ let testModules = [
   'function',
   'name',
   'object',
+  'promise',
   'typedarray',
   'objectwrap'
 ];
