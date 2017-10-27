@@ -13,11 +13,18 @@
     "Sampson Gao (https://github.com/sampsongao)",
     "Taylor Woll (https://github.com/boingoing)"
   ],
-  "dependencies": {},
+  "dependencies": {
+    "tar-stream": "^1.5.4"
+  },
   "description": "Node.js API (N-API)",
   "devDependencies": {
-    "safe-buffer": "^5.1.1"
+    "bindings": "^1.3.0",
+    "lodash.assignin": "^4.2.0",
+    "prebuild": "^6.2.2",
+    "safe-buffer": "^5.1.1",
+    "shelljs": "^0.7.8"
   },
+  "binariesPage": "https://raw.githubusercontent.com/napi-binary-upload/upload/master/",
   "directories": {},
   "homepage": "https://github.com/nodejs/node-addon-api",
   "license": "MIT",
@@ -30,9 +37,12 @@
     "url": "git://github.com/nodejs/node-addon-api.git"
   },
   "scripts": {
-    "pretest": "node-gyp rebuild -C test",
+    "preparetest": "node-gyp rebuild -C test",
     "test": "node test",
-    "doc": "doxygen doc/Doxyfile"
+    "doc": "doxygen doc/Doxyfile",
+    "postinstall": "node scripts/postinstall.js",
+    "binaries": "RUNNING_FROM_PREBUILD=true prebuild -t 4.0.0 -t 6.0.0 -t 8.0.0",
+    "postbinaries": "node scripts/upload-binaries.js"
   },
   "version": "1.0.0"
 }

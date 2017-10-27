@@ -52,6 +52,7 @@ before_install:
   - npm --version
 install:
   - npm install $NPMOPT
+  - npm run-script preparetest $NPMOPT
 script:
   # Travis CI sets NVM_NODEJS_ORG_MIRROR, but it makes node-gyp fail to download headers for nightly builds.
   - unset NVM_NODEJS_ORG_MIRROR
