@@ -10,50 +10,58 @@ public:
     return object;
   }
 
-  static void Initialize(Napi::Env env, Napi::Object exports) {
-    Constructor = Napi::Persistent(DefineClass(env, "TestIter", {
+  static Napi::FunctionReference Initialize(Napi::Env env) {
+    return Napi::Persistent(DefineClass(env, "TestIter", {
       InstanceMethod("next", &TestIter::Next),
     }));
   }
-
-  static Napi::FunctionReference Constructor;
 };
-
-Napi::FunctionReference TestIter::Constructor;
 
 class Test : public Napi::ObjectWrap<Test> {
 public:
   Test(const Napi::CallbackInfo& info) :
-    Napi::ObjectWrap<Test>(info) {
+    Napi::ObjectWrap<Test>(info),
+    Constructor(TestIter::Initialize(info.Env())) {
   }
 
-  void Set(const Napi::CallbackInfo& info) {
+  void SetMethod(const Napi::CallbackInfo& info) {
     value = info[0].As<Napi::Number>();
   }
 
-  Napi::Value Get(const Napi::CallbackInfo& info) {
+  Napi::Value GetMethod(const Napi::CallbackInfo& info) {
     return Napi::Number::New(info.Env(), value);
   }
 
   Napi::Value Iter(const Napi::CallbackInfo& info) {
-    return TestIter::Constructor.New({});
+    return Constructor.New({});
+  }
+
+  void Setter(const Napi::CallbackInfo& info, const Napi::Value& new_value) {
+    value = new_value.As<Napi::Number>();
+  }
+
+  Napi::Value Getter(const Napi::CallbackInfo& info) {
+    return Napi::Number::New(info.Env(), value);
   }
 
   static void Initialize(Napi::Env env, Napi::Object exports) {
     exports.Set("Test", DefineClass(env, "Test", {
-      InstanceMethod("test_set", &Test::Set),
-      InstanceMethod("test_get", &Test::Get),
-      InstanceMethod(Napi::Symbol::WellKnown(env, "iterator"), &Test::Iter)
+      InstanceMethod("test_set_method", &Test::SetMethod),
+      InstanceMethod("test_get_method", &Test::GetMethod),
+      InstanceMethod(Napi::Symbol::WellKnown(env, "iterator"), &Test::Iter),
+      InstanceAccessor("test_getter_only", &Test::Getter, nullptr),
+      InstanceAccessor("test_setter_only", nullptr, &Test::Setter),
+      InstanceAccessor("test_getter_setter", &Test::Getter, &Test::Setter),
     }));
   }
 
 private:
   uint32_t value;
+  Napi::FunctionReference Constructor;
 };
 
 Napi::Object InitObjectWrap(Napi::Env env) {
   Napi::Object exports = Napi::Object::New(env);
   Test::Initialize(env, exports);
-  TestIter::Initialize(env, exports);
   return exports;
 }

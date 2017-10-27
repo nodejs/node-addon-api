@@ -10,6 +10,7 @@
         'function.cc',
         'name.cc',
         'object.cc',
+        'promise.cc',
         'typedarray.cc',
         'objectwrap.cc',
       ],
