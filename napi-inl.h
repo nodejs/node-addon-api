@@ -336,6 +336,17 @@ inline bool Value::IsFunction() const {
   return Type() == napi_function;
 }
 
+inline bool Value::IsPromise() const {
+  if (_value == nullptr) {
+    return false;
+  }
+
+  bool result;
+  napi_status status = napi_is_promise(_env, _value, &result);
+  NAPI_THROW_IF_FAILED(_env, status, false);
+  return result;
+}
+
 inline bool Value::IsBuffer() const {
   if (_value == nullptr) {
     return false;
@@ -1377,6 +1388,36 @@ inline Object Function::New(size_t argc, const napi_value* args) const {
     _env, _value, argc, args, &result);
   NAPI_THROW_IF_FAILED(_env, status, Object());
   return Object(_env, result);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// Promise class
+////////////////////////////////////////////////////////////////////////////////
+
+inline Promise::Deferred Promise::Deferred::New(napi_env env) {
+  return Promise::Deferred(env);
+}
+
+inline Promise::Deferred::Deferred(napi_env env) : _env(env) {
+  napi_status status = napi_create_promise(_env, &_deferred, &_promise);
+  NAPI_THROW_IF_FAILED(_env, status);
+}
+
+inline Promise Promise::Deferred::Promise() const {
+  return Napi::Promise(_env, _promise);
+}
+
+inline void Promise::Deferred::Resolve(napi_value value) const {
+  napi_status status = napi_resolve_deferred(_env, _deferred, value);
+  NAPI_THROW_IF_FAILED(_env, status);
+}
+
+inline void Promise::Deferred::Reject(napi_value value) const {
+  napi_status status = napi_reject_deferred(_env, _deferred, value);
+  NAPI_THROW_IF_FAILED(_env, status);
+}
+
+inline Promise::Promise(napi_env env, napi_value value) : Object(env, value) {
 }
 
 ////////////////////////////////////////////////////////////////////////////////
