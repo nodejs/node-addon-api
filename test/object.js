@@ -95,6 +95,15 @@ function test(binding) {
   }
 
   {
+    const obj = { one: 1 };
+    Object.defineProperty(obj, 'two', { value: 2 });
+    assert.strictEqual(binding.object.hasOwnPropertyFromNative(obj, 'one'), true);
+    assert.strictEqual(binding.object.hasOwnPropertyFromNative(obj, 'two'), true);
+    assert.strictEqual('toString' in obj, true);
+    assert.strictEqual(binding.object.hasOwnPropertyFromNative(obj, 'toString'), false);
+  }
+
+  {
     const obj = {'one': 1, 'two': 2, 'three': 3};
     var arr = binding.object.GetPropertyNames(obj);
     assert.deepStrictEqual(arr, ['one', 'two', 'three'])
@@ -108,6 +117,9 @@ function test(binding) {
   }, /object was expected/);
   assert.throws(() => {
     binding.object.deleteProperty(undefined, 'test');
+  }, /object was expected/);
+  assert.throws(() => {
+    binding.object.hasOwnPropertyFromNative(undefined, 'test');
   }, /object was expected/);
 
   {
