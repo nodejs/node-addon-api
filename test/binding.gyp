@@ -15,7 +15,11 @@
         'objectwrap.cc',
       ],
       'include_dirs': ["<!@(node -p \"require('../').include\")"],
-      'dependencies': ["<!(node -p \"require('../').gyp\")"],
+      'libraries': ["<!@(node -p \"require('../').libraries\")"],
+      'ldflags': ["<!@(node -p \"require('../').ldflags\")"],
+      'xcode_settings': {
+        'OTHER_LDFLAGS': ["<!@(node -p \"require('../').ldflags\")"],
+      }
   },
   'targets': [
     {

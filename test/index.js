@@ -31,7 +31,7 @@ if (typeof global.gc === 'function') {
   console.log('\nAll tests passed!');
 } else {
   // Make it easier to run with the correct (version-dependent) command-line args.
-  const child = require('./napi_child').spawnSync(process.argv[0], [ '--expose-gc', __filename ], {
+  var child = require('./napi_child').spawnSync(process.argv[0], [ '--expose-gc', __filename ], {
     stdio: 'inherit',
   });
 

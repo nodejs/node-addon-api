@@ -16,13 +16,8 @@
 
 #ifdef _WIN32
   #ifdef BUILDING_NODE_EXTENSION
-    #ifdef EXTERNAL_NAPI
-      // Building external N-API, or native module against external N-API
-      #define NAPI_EXTERN /* nothing */
-    #else
-      // Building native module against node with built-in N-API
-      #define NAPI_EXTERN __declspec(dllimport)
-    #endif
+    // Building native module against node with built-in N-API
+    #define NAPI_EXTERN __declspec(dllimport)
   #else
     // Building node with built-in N-API
     #define NAPI_EXTERN __declspec(dllexport)

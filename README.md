@@ -2,7 +2,7 @@
 
 This package contains **header-only C++ wrapper classes** for the **ABI-stable
 Node.js API**  also known as **N-API**, providing C++ object model and exception
-handling semantics with low overhead. It guarantees backward compatibility with
+handling semantics with low overhead. It guarantees backward compatibility for
 use with older versions of Node.js that do not have N-API built-in.
 
 Node.js API guarentees the **API** and **ABI** compatibility across different
