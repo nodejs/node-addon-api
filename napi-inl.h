@@ -796,6 +796,31 @@ inline bool Object::Has(const std::string& utf8name) const {
   return Has(utf8name.c_str());
 }
 
+inline bool Object::HasOwnProperty(napi_value key) const {
+  bool result;
+  napi_status status = napi_has_own_property(_env, _value, key, &result);
+  NAPI_THROW_IF_FAILED(_env, status, false);
+  return result;
+}
+
+inline bool Object::HasOwnProperty(Value key) const {
+  bool result;
+  napi_status status = napi_has_own_property(_env, _value, key, &result);
+  NAPI_THROW_IF_FAILED(_env, status, false);
+  return result;
+}
+
+inline bool Object::HasOwnProperty(const char* utf8name) const {
+  napi_value key;
+  napi_status status = napi_create_string_utf8(_env, utf8name, std::strlen(utf8name), &key);
+  NAPI_THROW_IF_FAILED(_env, status, false);
+  return HasOwnProperty(key);
+}
+
+inline bool Object::HasOwnProperty(const std::string& utf8name) const {
+  return HasOwnProperty(utf8name.c_str());
+}
+
 inline Value Object::Get(napi_value key) const {
   napi_value result;
   napi_status status = napi_get_property(_env, _value, key, &result);
