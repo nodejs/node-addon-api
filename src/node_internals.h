@@ -70,6 +70,12 @@ class CallbackScope {
 
 namespace node {
 
+#if NODE_MAJOR_VERSION >= 8
+
+NODE_EXTERN void EmitAsyncDestroy(v8::Isolate* isolate, double async_uid);
+
+#endif // NODE_MAJOR_VERSION >= 8
+
 #if NODE_MAJOR_VERSION < 8 || NODE_MAJOR_VERSION == 8 && NODE_MINOR_VERSION < 6
 typedef int async_id;
 
@@ -77,11 +83,6 @@ typedef struct async_context {
   node::async_id async_id;
   node::async_id trigger_async_id;
 } async_context;
-
-NODE_EXTERN async_context EmitAsyncInit(v8::Isolate* isolate,
-                                        v8::Local<v8::Object> resource,
-                                        v8::Local<v8::String> name,
-                                        async_id trigger_async_id = -1);
 
 NODE_EXTERN void EmitAsyncDestroy(v8::Isolate* isolate,
                                   async_context asyncContext);
@@ -100,9 +101,22 @@ class AsyncResource {
                   v8::Local<v8::Object> object,
                   const char *name);
 };
+
+NODE_EXTERN double AsyncHooksGetTriggerId(v8::Isolate* isolate);
+
+NODE_EXTERN async_context EmitAsyncInit(v8::Isolate* isolate,
+                                        v8::Local<v8::Object> resource,
+                                        v8::Local<v8::String> name);
 #endif // node version below 8
 
 #endif // node version below 8.6
+
+#if NODE_MAJOR_VERSION == 8 && NODE_MINOR_VERSION < 6
+NODE_EXTERN async_context EmitAsyncInit(v8::Isolate* isolate,
+                                        v8::Local<v8::Object> resource,
+                                        v8::Local<v8::String> name,
+                                        async_id trigger_async_id = -1);
+#endif // node version between 8.0.0 and below 8.6.0
 
 // The slightly odd function signature for Assert() is to ease
 // instruction cache pressure in calls from ASSERT and CHECK.

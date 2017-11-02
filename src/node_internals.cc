@@ -18,6 +18,23 @@ CallbackScope::CallbackScope(void *work) {
 namespace node {
 
 #if NODE_MAJOR_VERSION < 8
+double AsyncHooksGetTriggerId(v8::Isolate* isolate) {
+  return 0.0;
+}
+
+NODE_EXTERN async_context EmitAsyncInit(v8::Isolate* isolate,
+                                        v8::Local<v8::Object> resource,
+                                        v8::Local<v8::String> name) {
+  return async_context();
+}
+#endif
+
+#if NODE_MAJOR_VERSION >= 8
+void EmitAsyncDestroy(v8::Isolate* isolate, double async_uid) {
+}
+#endif // NODE_MAJOR_VERSION >= 8
+
+#if NODE_MAJOR_VERSION < 8 || NODE_MAJOR_VERSION == 8 && NODE_MINOR_VERSION < 6
 
 async_context EmitAsyncInit(v8::Isolate* isolate,
                             v8::Local<v8::Object> resource,
@@ -30,12 +47,16 @@ void EmitAsyncDestroy(v8::Isolate* isolate,
                       async_context asyncContext) {
 }
 
+#if NODE_MAJOR_VERSION < 8
+
 AsyncResource::AsyncResource(v8::Isolate* isolate,
                              v8::Local<v8::Object> object,
                              const char *name) {
 }
 
 #endif // NODE_MAJOR_VERSION < 8
+
+#endif // NODE_MAJOR_VERSION < 8 || NODE_MAJOR_VERSION == 8 && NODE_MINOR_VERSION < 6
 
 #if NODE_MAJOR_VERSION < 8 || NODE_MAJOR_VERSION == 8 && NODE_MINOR_VERSION < 6
 

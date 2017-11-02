@@ -1,18 +1,17 @@
 'use strict';
-const buildType = process.config.target_defaults.default_configuration;
 const assert = require('assert');
 
 if (process.argv[2] === 'fatal') {
-  const binding = require(process.argv[3]);
+  const binding = require('./load-bindings')(process.argv[3] === 'true' ?
+    'binding' : 'binding_noexcept');
   binding.error.throwFatalError();
   return;
 }
 
-test(`./build/${buildType}/binding.node`);
-test(`./build/${buildType}/binding_noexcept.node`);
+test(require('./load-bindings')('binding'), true);
+test(require('./load-bindings')('binding_noexcept'), false);
 
-function test(bindingPath) {
-  const binding = require(bindingPath);
+function test(binding, withExceptions) {
 
   assert.throws(() => binding.error.throwApiError('test'), function(err) {
     return err instanceof Error && err.message.includes('Invalid');
@@ -66,7 +65,7 @@ function test(bindingPath) {
   });
 
   const p = require('./napi_child').spawnSync(
-      process.execPath, [ __filename, 'fatal', bindingPath ]);
+      process.execPath, [ __filename, 'fatal', "" + withExceptions ]);
   assert.ifError(p.error);
   assert.ok(p.stderr.toString().includes(
       'FATAL ERROR: Error::ThrowFatalError This is a fatal error'));
