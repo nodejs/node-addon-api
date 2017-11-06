@@ -2,6 +2,30 @@
 
 using namespace Napi;
 
+// Native wrappers for testing Object::Get()
+Value GetPropertyWithNapiValue(const CallbackInfo& info);
+Value GetPropertyWithNapiWrapperValue(const CallbackInfo& info);
+Value GetPropertyWithCStyleString(const CallbackInfo& info);
+Value GetPropertyWithCppStyleString(const CallbackInfo& info);
+
+// Native wrappers for testing Object::Set()
+void SetPropertyWithNapiValue(const CallbackInfo& info);
+void SetPropertyWithNapiWrapperValue(const CallbackInfo& info);
+void SetPropertyWithCStyleString(const CallbackInfo& info);
+void SetPropertyWithCppStyleString(const CallbackInfo& info);
+
+// Native wrappers for testing Object::Delete()
+Value DeletePropertyWithNapiValue(const CallbackInfo& info);
+Value DeletePropertyWithNapiWrapperValue(const CallbackInfo& info);
+Value DeletePropertyWithCStyleString(const CallbackInfo& info);
+Value DeletePropertyWithCppStyleString(const CallbackInfo& info);
+
+// Native wrappers for testing Object::HasOwnProperty()
+Value HasOwnPropertyWithNapiValue(const CallbackInfo& info);
+Value HasOwnPropertyWithNapiWrapperValue(const CallbackInfo& info);
+Value HasOwnPropertyWithCStyleString(const CallbackInfo& info);
+Value HasOwnPropertyWithCppStyleString(const CallbackInfo& info);
+
 static bool testValue = true;
 
 Value TestGetter(const CallbackInfo& info) {
@@ -88,32 +112,6 @@ void DefineValueProperty(const CallbackInfo& info) {
   obj.DefineProperty(PropertyDescriptor::Value(name, value));
 }
 
-Value GetProperty(const CallbackInfo& info) {
-  Object obj = info[0].As<Object>();
-  Name name = info[1].As<Name>();
-  Value value = obj.Get(name);
-  return value;
-}
-
-void SetProperty(const CallbackInfo& info) {
-  Object obj = info[0].As<Object>();
-  Name name = info[1].As<Name>();
-  Value value = info[2];
-  obj.Set(name, value);
-}
-
-Value DeleteProperty(const CallbackInfo& info) {
-  Object obj = info[0].As<Object>();
-  Name name = info[1].As<Name>();
-  return Boolean::New(info.Env(), obj.Delete(name));
-}
-
-Value HasOwnProperty(const CallbackInfo& info) {
-  Object obj = info[0].As<Object>();
-  Name name = info[1].As<Name>();
-  return Boolean::New(info.Env(), obj.HasOwnProperty(name));
-}
-
 Value CreateObjectUsingMagic(const CallbackInfo& info) {
   Env env = info.Env();
   Object obj = Object::New(env);
@@ -142,10 +140,27 @@ Object InitObject(Env env) {
   exports["GetPropertyNames"] = Function::New(env, GetPropertyNames);
   exports["defineProperties"] = Function::New(env, DefineProperties);
   exports["defineValueProperty"] = Function::New(env, DefineValueProperty);
-  exports["getProperty"] = Function::New(env, GetProperty);
-  exports["setProperty"] = Function::New(env, SetProperty);
-  exports["deleteProperty"] = Function::New(env, DeleteProperty);
-  exports["hasOwnPropertyFromNative"] = Function::New(env, HasOwnProperty);
+
+  exports["getPropertyWithNapiValue"] = Function::New(env, GetPropertyWithNapiValue);
+  exports["getPropertyWithNapiWrapperValue"] = Function::New(env, GetPropertyWithNapiWrapperValue);
+  exports["getPropertyWithCStyleString"] = Function::New(env, GetPropertyWithCStyleString);
+  exports["getPropertyWithCppStyleString"] = Function::New(env, GetPropertyWithCppStyleString);
+
+  exports["setPropertyWithNapiValue"] = Function::New(env, SetPropertyWithNapiValue);
+  exports["setPropertyWithNapiWrapperValue"] = Function::New(env, SetPropertyWithNapiWrapperValue);
+  exports["setPropertyWithCStyleString"] = Function::New(env, SetPropertyWithCStyleString);
+  exports["setPropertyWithCppStyleString"] = Function::New(env, SetPropertyWithCppStyleString);
+
+  exports["deletePropertyWithNapiValue"] = Function::New(env, DeletePropertyWithNapiValue);
+  exports["deletePropertyWithNapiWrapperValue"] = Function::New(env, DeletePropertyWithNapiWrapperValue);
+  exports["deletePropertyWithCStyleString"] = Function::New(env, DeletePropertyWithCStyleString);
+  exports["deletePropertyWithCppStyleString"] = Function::New(env, DeletePropertyWithCppStyleString);
+
+  exports["hasOwnPropertyWithNapiValue"] = Function::New(env, HasOwnPropertyWithNapiValue);
+  exports["hasOwnPropertyWithNapiWrapperValue"] = Function::New(env, HasOwnPropertyWithNapiWrapperValue);
+  exports["hasOwnPropertyWithCStyleString"] = Function::New(env, HasOwnPropertyWithCStyleString);
+  exports["hasOwnPropertyWithCppStyleString"] = Function::New(env, HasOwnPropertyWithCppStyleString);
+
   exports["createObjectUsingMagic"] = Function::New(env, CreateObjectUsingMagic);
 
   return exports;
