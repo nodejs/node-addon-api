@@ -108,6 +108,12 @@ Value DeleteProperty(const CallbackInfo& info) {
   return Boolean::New(info.Env(), obj.Delete(name));
 }
 
+Value HasOwnProperty(const CallbackInfo& info) {
+  Object obj = info[0].As<Object>();
+  Name name = info[1].As<Name>();
+  return Boolean::New(info.Env(), obj.HasOwnProperty(name));
+}
+
 Value CreateObjectUsingMagic(const CallbackInfo& info) {
   Env env = info.Env();
   Object obj = Object::New(env);
@@ -139,6 +145,7 @@ Object InitObject(Env env) {
   exports["getProperty"] = Function::New(env, GetProperty);
   exports["setProperty"] = Function::New(env, SetProperty);
   exports["deleteProperty"] = Function::New(env, DeleteProperty);
+  exports["hasOwnPropertyFromNative"] = Function::New(env, HasOwnProperty);
   exports["createObjectUsingMagic"] = Function::New(env, CreateObjectUsingMagic);
 
   return exports;

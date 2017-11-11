@@ -16,7 +16,7 @@ const NodeApiVersion = require('../package.json').version;
 
 var ConfigFileOperations = {
   'package.json': [
-    [ /"dependencies": {/g, '"dependencies": {\n    "node-addon-api": "' + NodeApiVersion + '",'],
+    [ /([ ]*)"dependencies": {/g, '$1"dependencies": {\n$1  "node-addon-api": "' + NodeApiVersion + '",'],
     [ /[ ]*"nan": *"[^"]+"(,|)[\n\r]/g, '' ]
   ],
   'binding.gyp': [
@@ -25,7 +25,7 @@ var ConfigFileOperations = {
     [ /([ ]*)'dependencies': \[/g, '$1\'dependencies\': [\n$1  \'<!(node -p "require(\\\'node-addon-api\\\').gyp")\','],
     [ /([ ]*)"dependencies": \[/g, '$1"dependencies": [\n$1  "<!(node -p \'require(\\\"node-addon-api\\\").gyp\')",'],
     [ /[ ]*("|')<!\(node -e ("|'|\\"|\\')require\(("|'|\\"|\\')nan("|'|\\"|\\')\)("|'|\\"|\\')\)("|')(,|)[\r\n]/g, '' ],
-    [ /("|')target_name("|'): ("|')(.+?)("|'),/g, '$1target_name$2: $3$4$5,\n      $1cflags!$1: [ $1-fno-exceptions$1 ],\n      $1cflags_cc!$1: [ $1-fno-exceptions$1 ],' ],
+    [ /([ ]*)("|')target_name("|'): ("|')(.+?)("|'),/g, '$2target_name$3: $4$5$6,\n$1  $2cflags!$2: [ $1-fno-exceptions$2 ],\n$1  $1cflags_cc!$2: [ $2-fno-exceptions$2 ],' ],
   ]
 };
 
@@ -47,12 +47,12 @@ var SourceFileOperations = [
   [ /FunctionTemplate/g, 'Napi::FunctionReference' ],
 
 
-  [ /Nan::SetPrototypeMethod\(\w+, "(\w+)", (\w+)\);/g, '  InstanceMethod("$1", &$2),' ],
-  [ /(?:\w+\.Reset\(\w+\);\s+)?\(target\)\.Set\("(\w+)",\s*Nan::GetFunction\((\w+)\)\);/gm,
+  [ /([ ]*)Nan::SetPrototypeMethod\(\w+, "(\w+)", (\w+)\);/g, '$1InstanceMethod("$2", &$3),' ],
+  [ /([ ]*)(?:\w+\.Reset\(\w+\);\s+)?\(target\)\.Set\("(\w+)",\s*Nan::GetFunction\((\w+)\)\);/gm,
     '});\n\n' +
-    '  constructor = Napi::Persistent($2);\n' +
-    '  constructor.SuppressDestruct();\n' +
-    '  target.Set("$1", $2);' ],
+    '$1constructor = Napi::Persistent($3);\n' +
+    '$1constructor.SuppressDestruct();\n' +
+    '$1target.Set("$2", $3);' ],
 
 
   // TODO: Other attribute combinations
@@ -152,7 +152,7 @@ var SourceFileOperations = [
   [ /Nan::(Undefined|Null|True|False)\(\)/g, 'env.$1()' ],
 
   // Nan::ThrowError(error) to Napi::Error::New(env, error).ThrowAsJavaScriptException()
-  [ /return Nan::Throw(\w*?)Error\((.+?)\);/g, 'Napi::$1Error::New(env, $2).ThrowAsJavaScriptException();\n  return env.Null();' ],
+  [ /([ ]*)return Nan::Throw(\w*?)Error\((.+?)\);/g, '$1Napi::$2Error::New(env, $3).ThrowAsJavaScriptException();\n$1return env.Null();' ],
   [ /Nan::Throw(\w*?)Error\((.+?)\);\n(\s*)return;/g, 'Napi::$1Error::New(env, $2).ThrowAsJavaScriptException();\n$3return env.Null();' ],
   [ /Nan::Throw(\w*?)Error\((.+?)\);/g, 'Napi::$1Error::New(env, $2).ThrowAsJavaScriptException();\n' ],
   // Nan::RangeError(error) to Napi::RangeError::New(env, error)
@@ -193,7 +193,7 @@ var SourceFileOperations = [
   [ /::(Init(?:ialize)?)\(target\)/g, '::$1(env, target, module)' ],
   [ /constructor_template/g, 'constructor' ],
 
-  [ /Nan::FunctionCallbackInfo<(v8::)*Value>\s*&\s*info\)\s*{/g, 'Napi::CallbackInfo& info) {\n  Napi::Env env = info.Env();' ],
+  [ /Nan::FunctionCallbackInfo<(v8::)?Value>[ ]*& [ ]*info\)[ ]*{\n*([ ]*)/gm, 'Napi::CallbackInfo& info) {\n$2Napi::Env env = info.Env();\n$2' ],
   [ /Nan::FunctionCallbackInfo<(v8::)*Value>\s*&\s*info\);/g, 'Napi::CallbackInfo& info);' ],
 
   [ /info\[(\d+)\]->/g, 'info[$1].' ],
@@ -209,7 +209,7 @@ var SourceFileOperations = [
   [ /Local<(Value|Boolean|String|Number|Object|Array|Symbol|External|Function)>/g, 'Napi::$1' ],
 
   // Declare an env in helper functions that take a Napi::Value
-  [ /(\w+)\(Napi::Value (\w+)(,\s*[^\()]+)?\)\s*{/g, '$1(Napi::Value $2$3) {\n  Napi::Env env = $2.Env();' ],
+  [ /(\w+)\(Napi::Value (\w+)(,\s*[^\()]+)?\)\s*{\n*([ ]*)/gm, '$1(Napi::Value $2$3) {\n$4Napi::Env env = $2.Env();\n$4' ],
 
   // delete #include <node.h> and/or <v8.h>
   [ /#include +(<|")(?:node|nan).h("|>)/g, "#include $1napi.h$2\n#include $1uv.h$2" ],

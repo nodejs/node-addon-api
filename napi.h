@@ -428,6 +428,26 @@ namespace Napi {
       const std::string& utf8name ///< UTF-8 encoded property name
     ) const;
 
+    /// Checks whether a own property is present.
+    bool HasOwnProperty(
+      napi_value key ///< Property key primitive
+    ) const;
+
+    /// Checks whether a own property is present.
+    bool HasOwnProperty(
+      Value key ///< Property key
+    ) const;
+
+    /// Checks whether a own property is present.
+    bool HasOwnProperty(
+      const char* utf8name ///< UTF-8 encoded null-terminated property name
+    ) const;
+
+    /// Checks whether a own property is present.
+    bool HasOwnProperty(
+      const std::string& utf8name ///< UTF-8 encoded property name
+    ) const;
+
     /// Gets a property.
     Value Get(
       napi_value key ///< Property key primitive

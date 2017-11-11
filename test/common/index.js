@@ -34,12 +34,15 @@ exports.mustCall = function(fn, exact) {
   return _mustCallInner(fn, exact, 'exact');
 };
 
-function _mustCallInner(fn, criteria = 1, field) {
+function _mustCallInner(fn, criteria, field) {
   if (typeof fn === 'number') {
     criteria = fn;
     fn = noop;
   } else if (fn === undefined) {
     fn = noop;
+  }
+  if (criteria === undefined) {
+    criteria = 1;
   }
 
   if (typeof criteria !== 'number')
