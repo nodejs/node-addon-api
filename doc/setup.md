@@ -9,9 +9,9 @@ prerequisites:
 
 * **Node.js native addon build tool** 
 
-  - [node-gyp](node-gyp.md)
+  - **[node-gyp](node-gyp.md)**
 
-  - [cmake-js](cmake-js.md)
+  - **[cmake-js](cmake-js.md)**
 
 ## Installation and usage
 
