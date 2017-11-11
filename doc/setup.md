@@ -15,7 +15,7 @@ prerequisites:
 
 ## Installation and usage
 
-To use N-API in a native module:
+To use **N-API** in a native module:
 
   1. Add a dependency on this package to `package.json`:
 
