@@ -336,6 +336,17 @@ inline bool Value::IsFunction() const {
   return Type() == napi_function;
 }
 
+inline bool Value::IsPromise() const {
+  if (_value == nullptr) {
+    return false;
+  }
+
+  bool result;
+  napi_status status = napi_is_promise(_env, _value, &result);
+  NAPI_THROW_IF_FAILED(_env, status, false);
+  return result;
+}
+
 inline bool Value::IsBuffer() const {
   if (_value == nullptr) {
     return false;
@@ -783,6 +794,31 @@ inline bool Object::Has(const char* utf8name) const {
 
 inline bool Object::Has(const std::string& utf8name) const {
   return Has(utf8name.c_str());
+}
+
+inline bool Object::HasOwnProperty(napi_value key) const {
+  bool result;
+  napi_status status = napi_has_own_property(_env, _value, key, &result);
+  NAPI_THROW_IF_FAILED(_env, status, false);
+  return result;
+}
+
+inline bool Object::HasOwnProperty(Value key) const {
+  bool result;
+  napi_status status = napi_has_own_property(_env, _value, key, &result);
+  NAPI_THROW_IF_FAILED(_env, status, false);
+  return result;
+}
+
+inline bool Object::HasOwnProperty(const char* utf8name) const {
+  napi_value key;
+  napi_status status = napi_create_string_utf8(_env, utf8name, std::strlen(utf8name), &key);
+  NAPI_THROW_IF_FAILED(_env, status, false);
+  return HasOwnProperty(key);
+}
+
+inline bool Object::HasOwnProperty(const std::string& utf8name) const {
+  return HasOwnProperty(utf8name.c_str());
 }
 
 inline Value Object::Get(napi_value key) const {
@@ -1377,6 +1413,36 @@ inline Object Function::New(size_t argc, const napi_value* args) const {
     _env, _value, argc, args, &result);
   NAPI_THROW_IF_FAILED(_env, status, Object());
   return Object(_env, result);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// Promise class
+////////////////////////////////////////////////////////////////////////////////
+
+inline Promise::Deferred Promise::Deferred::New(napi_env env) {
+  return Promise::Deferred(env);
+}
+
+inline Promise::Deferred::Deferred(napi_env env) : _env(env) {
+  napi_status status = napi_create_promise(_env, &_deferred, &_promise);
+  NAPI_THROW_IF_FAILED(_env, status);
+}
+
+inline Promise Promise::Deferred::Promise() const {
+  return Napi::Promise(_env, _promise);
+}
+
+inline void Promise::Deferred::Resolve(napi_value value) const {
+  napi_status status = napi_resolve_deferred(_env, _deferred, value);
+  NAPI_THROW_IF_FAILED(_env, status);
+}
+
+inline void Promise::Deferred::Reject(napi_value value) const {
+  napi_status status = napi_reject_deferred(_env, _deferred, value);
+  NAPI_THROW_IF_FAILED(_env, status);
+}
+
+inline Promise::Promise(napi_env env, napi_value value) : Object(env, value) {
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -2434,7 +2500,7 @@ inline ClassPropertyDescriptor<T> ObjectWrap<T>::StaticMethod(
   // TODO: Delete when the class is destroyed
   StaticVoidMethodCallbackData* callbackData = new StaticVoidMethodCallbackData({ method, data });
 
-  napi_property_descriptor desc = {};
+  napi_property_descriptor desc = napi_property_descriptor();
   desc.utf8name = utf8name;
   desc.method = T::StaticVoidMethodCallbackWrapper;
   desc.data = callbackData;
@@ -2451,7 +2517,7 @@ inline ClassPropertyDescriptor<T> ObjectWrap<T>::StaticMethod(
   // TODO: Delete when the class is destroyed
   StaticMethodCallbackData* callbackData = new StaticMethodCallbackData({ method, data });
 
-  napi_property_descriptor desc = {};
+  napi_property_descriptor desc = napi_property_descriptor();
   desc.utf8name = utf8name;
   desc.method = T::StaticMethodCallbackWrapper;
   desc.data = callbackData;
@@ -2470,7 +2536,7 @@ inline ClassPropertyDescriptor<T> ObjectWrap<T>::StaticAccessor(
   StaticAccessorCallbackData* callbackData =
     new StaticAccessorCallbackData({ getter, setter, data });
 
-  napi_property_descriptor desc = {};
+  napi_property_descriptor desc = napi_property_descriptor();
   desc.utf8name = utf8name;
   desc.getter = getter != nullptr ? T::StaticGetterCallbackWrapper : nullptr;
   desc.setter = setter != nullptr ? T::StaticSetterCallbackWrapper : nullptr;
@@ -2489,7 +2555,7 @@ inline ClassPropertyDescriptor<T> ObjectWrap<T>::InstanceMethod(
   InstanceVoidMethodCallbackData* callbackData =
     new InstanceVoidMethodCallbackData({ method, data});
 
-  napi_property_descriptor desc = {};
+  napi_property_descriptor desc = napi_property_descriptor();
   desc.utf8name = utf8name;
   desc.method = T::InstanceVoidMethodCallbackWrapper;
   desc.data = callbackData;
@@ -2506,7 +2572,7 @@ inline ClassPropertyDescriptor<T> ObjectWrap<T>::InstanceMethod(
   // TODO: Delete when the class is destroyed
   InstanceMethodCallbackData* callbackData = new InstanceMethodCallbackData({ method, data });
 
-  napi_property_descriptor desc = {};
+  napi_property_descriptor desc = napi_property_descriptor();
   desc.utf8name = utf8name;
   desc.method = T::InstanceMethodCallbackWrapper;
   desc.data = callbackData;
@@ -2524,7 +2590,7 @@ inline ClassPropertyDescriptor<T> ObjectWrap<T>::InstanceMethod(
   InstanceVoidMethodCallbackData* callbackData =
     new InstanceVoidMethodCallbackData({ method, data});
 
-  napi_property_descriptor desc = {};
+  napi_property_descriptor desc = napi_property_descriptor();
   desc.name = name;
   desc.method = T::InstanceVoidMethodCallbackWrapper;
   desc.data = callbackData;
@@ -2541,7 +2607,7 @@ inline ClassPropertyDescriptor<T> ObjectWrap<T>::InstanceMethod(
   // TODO: Delete when the class is destroyed
   InstanceMethodCallbackData* callbackData = new InstanceMethodCallbackData({ method, data });
 
-  napi_property_descriptor desc = {};
+  napi_property_descriptor desc = napi_property_descriptor();
   desc.name = name;
   desc.method = T::InstanceMethodCallbackWrapper;
   desc.data = callbackData;
@@ -2560,7 +2626,7 @@ inline ClassPropertyDescriptor<T> ObjectWrap<T>::InstanceAccessor(
   InstanceAccessorCallbackData* callbackData =
     new InstanceAccessorCallbackData({ getter, setter, data });
 
-  napi_property_descriptor desc = {};
+  napi_property_descriptor desc = napi_property_descriptor();
   desc.utf8name = utf8name;
   desc.getter = getter != nullptr ? T::InstanceGetterCallbackWrapper : nullptr;
   desc.setter = setter != nullptr ? T::InstanceSetterCallbackWrapper : nullptr;
@@ -2572,7 +2638,7 @@ inline ClassPropertyDescriptor<T> ObjectWrap<T>::InstanceAccessor(
 template <typename T>
 inline ClassPropertyDescriptor<T> ObjectWrap<T>::StaticValue(const char* utf8name,
     Napi::Value value, napi_property_attributes attributes) {
-  napi_property_descriptor desc = {};
+  napi_property_descriptor desc = napi_property_descriptor();
   desc.utf8name = utf8name;
   desc.value = value;
   desc.attributes = static_cast<napi_property_attributes>(attributes | napi_static);
@@ -2584,7 +2650,7 @@ inline ClassPropertyDescriptor<T> ObjectWrap<T>::InstanceValue(
     const char* utf8name,
     Napi::Value value,
     napi_property_attributes attributes) {
-  napi_property_descriptor desc = {};
+  napi_property_descriptor desc = napi_property_descriptor();
   desc.utf8name = utf8name;
   desc.value = value;
   desc.attributes = attributes;
