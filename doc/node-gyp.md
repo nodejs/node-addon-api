@@ -11,7 +11,7 @@ Until now **node-gyp** is the **de-fafto** standard build tool for writing
 Node.js addons. It's based on Google's **gyp** build tool, which abstract away 
 many of the tedious issues related to cross platform building.
 
-**node-gyp** use a file called ```binding.gyp``` that is located on the root of
+**node-gyp** uses a file called ```binding.gyp``` that is located on the root of
 your addon project. 
 
 ```binding.gyp``` file, contains all building configurations organized with a 
