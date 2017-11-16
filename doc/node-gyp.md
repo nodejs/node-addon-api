@@ -43,7 +43,7 @@ examples reported below:
 /**
 * This code is our entry-point. We receive two arguments here, the first is the
 * environment that represent an independent instance of the JavaScript runtime, 
-* the sencond is exports, the same as module.exports in a .js file.
+* the second is exports, the same as module.exports in a .js file.
 * Normally you would attach properties to exports but you can use the 
 * module argument to replace its exports property so you are exporting a single 
 * thing, the equivalent of: module.exports = function () { ... }.
