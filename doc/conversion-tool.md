@@ -1,7 +1,9 @@
-## Conversion Tool
+# Conversion Tool
 
-To make the migration to node-addon-api easier, we have provided a script to help
-complete the steps listed above. To use the conversion script:
+To make the migration to **node-addon-api** easier, we have provided a script to 
+help complete some tasks. 
+
+## To use the conversion script:
 
   1. Go to your module directory
 
