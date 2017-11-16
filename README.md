@@ -120,7 +120,7 @@ Take a look and get inspired by our **[test suite](https://github.com/nodejs/nod
 
 ### Code of Conduct
 The Node.js Code of Conduct, which applies to this project, can be found at
-[Node.js Code of Conduct](ttps://github.com/nodejs/TSC/blob/master/CODE_OF_CONDUCT.md).
+[Node.js Code of Conduct](https://github.com/nodejs/TSC/blob/master/CODE_OF_CONDUCT.md).
 
 <a name="contributors"></a>
 
