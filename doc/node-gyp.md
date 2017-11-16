@@ -67,21 +67,15 @@ NODE_API_MODULE(myModule, Init)
 ## **node-gyp** reference
 
   - [Installation](https://www.npmjs.com/package/node-gyp#installation)
-
   - [How to use](https://www.npmjs.com/package/node-gyp#how-to-use)
-
   - [The binding.gyp file](https://www.npmjs.com/package/node-gyp#the-bindinggyp-file)
-
   - [Commands](https://www.npmjs.com/package/node-gyp#commands)
-
   - [Command options](https://www.npmjs.com/package/node-gyp#command-options)
-
   - [Configuration](https://www.npmjs.com/package/node-gyp#configuration)
 
 Sometimes finding the right settings for ```binding.gyp``` is not easy so to 
 accomplish at most complicated task please refer to:
 
 - [GYP documentation](https://gyp.gsrc.io/index.md)
-
 - [node-gyp wiki](https://github.com/nodejs/node-gyp/wiki)
 
