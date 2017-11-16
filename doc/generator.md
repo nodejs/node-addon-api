@@ -1,5 +1,15 @@
 # Generator
 
-You are reading a draft of the next documentation and it's in continuos update so
-if you don't find what you need please refer to: 
-[C++ wrapper classes for the ABI-stable C APIs for Node.js](https://nodejs.github.io/node-addon-api/)
+## What is generator
+
+**generator-napi-module** is a module to quickly generate a skeleton module using
+**N-API**, the new API for Native addons. This module automatically sets up your
+**gyp file** to use **node-addon-api**, the C++ wrappers for N-API and generates 
+a wrapper JS module. Optionally, it can even configure the generated project to 
+use TypeScript instead.
+
+## **generator-napi-module** reference
+
+  - [Installation and usage](https://www.npmjs.com/package/generator-napi-module#installation)
+ 
+
