@@ -26,7 +26,7 @@ values. Concepts and operations generally map to ideas specified in the
 - **[Examples](#examples)**
 - **[Tests](#tests)**
 - **[More resource and info about native Addons](#resources)**
-- **[Code of Conduct](#code-of-conduct)
+- **[Code of Conduct](#code-of-conduct)**
 - **[Contributors](#contributors)**
 - **[License](#license)**
 
