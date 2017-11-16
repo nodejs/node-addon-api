@@ -1,5 +1,18 @@
 # CMake.js
 
-You are reading a draft of the next documentation and it's in continuos update so
-if you don't find what you need please refer to: 
-[C++ wrapper classes for the ABI-stable C APIs for Node.js](https://nodejs.github.io/node-addon-api/)
+**CMake.js** is a build tool that allow native addon developer to compile their 
+C++ code into executable form. It works like **[node-gyp](node-gyp.md)** but
+instead of Google's **gyp** format it is base on **CMake** build system.
+
+## **CMake** reference
+
+  - [Installation](https://www.npmjs.com/package/cmake-js#installation)
+  - [How to use](https://www.npmjs.com/package/cmake-js#usage)
+  - [Tutorials](https://www.npmjs.com/package/cmake-js#tutorials)
+  - [Use case in the works - ArrayFire.js](https://www.npmjs.com/package/cmake-js#use-case-in-the-works---arrayfirejs)
+
+Sometimes finding the right settings is not easy so to accomplish at most 
+complicated task please refer to:
+
+- [CMake documentation](https://cmake.org/)
+- [CMake.js wiki](https://github.com/cmake-js/cmake-js/wiki)
