@@ -44,9 +44,9 @@ examples reported below:
 * This code is our entry-point. We receive two arguments here, the first is the
 * environment that represent an independent instance of the JavaScript runtime, 
 * the second is exports, the same as module.exports in a .js file.
-* Normally you would attach properties to exports but you can use the 
-* module argument to replace its exports property so you are exporting a single 
-* thing, the equivalent of: module.exports = function () { ... }.
+* You can either add properties to the exports object passed in or create your 
+* own exports object. In either case you must return the object to be used as 
+* the exports for the module when you return from the Init function.
 */
 Napi::Object Init(Napi::Env env, Napi::Object exports) {
   
