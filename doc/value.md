@@ -6,6 +6,22 @@ Value is the C++ manifestation of a JavaScript value.
 
 Value is a the base class upon which other JavaScipt values such as Number, Boolean, String, and Object are based.
 
+The following classes inherit, either directly or indirectly, from Value:
+
+- [Array](array.md)
+- [ArrayBuffer](array_buffer.md)
+- [Boolean](boolean.md)
+- [Buffer](buffer.md)
+- [External](external.md)
+- [Function](function.md)
+- [Name](name.md)
+- [Number](number.md)
+- [Object](object.md)
+- [String](string.md)
+- [Symbol](symbol.md)
+- [TypedArray](typed_array.md)
+- [TypedArrayOf](typed_array_of.md)
+
 ## Methods
 
 ### Empty Constructor

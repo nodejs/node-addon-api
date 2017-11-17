@@ -1,14 +1,14 @@
 **WORK IN PROGRESS, NOT YET COMPLETE**
 
-# Callbackinfo
+# CallbackInfo
 
 The object representing the components of the JavaScript request being made.
 
-The Callbackinfo object is usually created and passed by the calling system.
+The CallbackInfo object is usually created and passed by the Node.js runtime or node-addon-api infrastructure.
 
-The Callbackinfo object contains the arguments passed by the caller. The number of arguments is returned by the `Length` method. Each individual argument can be accessed using the `operator[]` method.
+The CallbackInfo object contains the arguments passed by the caller. The number of arguments is returned by the `Length` method. Each individual argument can be accessed using the `operator[]` method.
 
-The `SetData` and `Data` methods are used to set and retrieve the data pointer contained in the Callbackinfo object.
+The `SetData` and `Data` methods are used to set and retrieve the data pointer contained in the CallbackInfo object.
 
 ## Methods
 
@@ -35,7 +35,7 @@ Returns the `Env` object in which the request is being made.
 Value NewTarget() const;
 ```
 
-Returns the `new.target` value of the constructor call. If the CallbackInfo is not a constructor call, a call to `IsEmpty()` on the returned value returns true.
+Returns the `new.target` value of the constructor call. If the function that was invoked (and for which the CallbackInfo was passed) is not a constructor call, a call to `IsEmpty()` on the returned value returns true.
 
 ### IsConstructCall
 
@@ -43,7 +43,8 @@ Returns the `new.target` value of the constructor call. If the CallbackInfo is n
 bool IsConstructCall() const;
 ```
 
-Returns a `bool` indicating if the CallbackInfo is a constructor call.
+Returns a `bool` indicating if the function that was invoked (and for which the CallbackInfo was passed) is a constructor call.
+
 
 ### Length
 
@@ -85,7 +86,7 @@ Returns the data pointer for the callback.
 void SetData(void* data);
 ```
 
-- `[in] data`: The new data pointer to associate with this Callbackinfo object.
+- `[in] data`: The new data pointer to associate with this CallbackInfo object.
 
 Returns `void`.
 

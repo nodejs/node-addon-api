@@ -4,7 +4,7 @@
 
 The opaque data structure containing the environment in which the request is being run.
 
-The Env object is usually created and passed by the calling system.
+The Env object is usually created and passed by the Node.js runtime or node-addon-api infrastructure.
 
 ## Methods
 
