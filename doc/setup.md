@@ -11,8 +11,6 @@ prerequisites:
 
   - **[node-gyp](node-gyp.md)**
 
-  - **[cmake-js](cmake-js.md)**
-
 ## Installation and usage
 
 To use **N-API** in a native module:
