@@ -59,10 +59,3 @@ T* Data() const;
 ```
 
 Returns a pointer to the arbitrary C++ data held by the External object.
-
-### Not documented here
-
-```cpp
-External();
-External(napi_env env, napi_value value);
-```
