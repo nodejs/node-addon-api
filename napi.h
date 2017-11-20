@@ -835,7 +835,7 @@ namespace Napi {
   };
 
   template <typename T>
-  class Buffer : public Object {
+  class Buffer : public Uint8Array {
   public:
     static Buffer<T> New(napi_env env, size_t length);
     static Buffer<T> New(napi_env env, T* data, size_t length);

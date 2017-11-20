@@ -1524,17 +1524,17 @@ inline Buffer<T> Buffer<T>::Copy(napi_env env, const T* data, size_t length) {
 }
 
 template <typename T>
-inline Buffer<T>::Buffer() : Object(), _length(0), _data(nullptr) {
+inline Buffer<T>::Buffer() : Uint8Array(), _length(0), _data(nullptr) {
 }
 
 template <typename T>
 inline Buffer<T>::Buffer(napi_env env, napi_value value)
-  : Object(env, value), _length(0), _data(nullptr) {
+  : Uint8Array(env, value), _length(0), _data(nullptr) {
 }
 
 template <typename T>
 inline Buffer<T>::Buffer(napi_env env, napi_value value, size_t length, T* data)
-  : Object(env, value), _length(length), _data(data) {
+  : Uint8Array(env, value), _length(length), _data(data) {
 }
 
 template <typename T>
