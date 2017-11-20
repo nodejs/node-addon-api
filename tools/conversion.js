@@ -14,20 +14,38 @@ if (!dir) {
 
 const NodeApiVersion = require('../package.json').version;
 
-var ConfigFileOperations = {
-  'package.json': [
-    [ /([ ]*)"dependencies": {/g, '$1"dependencies": {\n$1  "node-addon-api": "' + NodeApiVersion + '",'],
-    [ /[ ]*"nan": *"[^"]+"(,|)[\n\r]/g, '' ]
-  ],
-  'binding.gyp': [
-    [ /([ ]*)'include_dirs': \[/g, '$1\'include_dirs\': [\n$1  \'<!@(node -p "require(\\\'node-addon-api\\\').include")\',' ],
-    [ /([ ]*)"include_dirs": \[/g, '$1"include_dirs": [\n$1  "<!@(node -p \'require(\\\"node-addon-api\\\").include\')",' ],
-    [ /([ ]*)'dependencies': \[/g, '$1\'dependencies\': [\n$1  \'<!(node -p "require(\\\'node-addon-api\\\').gyp")\','],
-    [ /([ ]*)"dependencies": \[/g, '$1"dependencies": [\n$1  "<!(node -p \'require(\\\"node-addon-api\\\").gyp\')",'],
-    [ /[ ]*("|')<!\(node -e ("|'|\\"|\\')require\(("|'|\\"|\\')nan("|'|\\"|\\')\)("|'|\\"|\\')\)("|')(,|)[\r\n]/g, '' ],
-    [ /([ ]*)("|')target_name("|'): ("|')(.+?)("|'),/g, '$2target_name$3: $4$5$6,\n$1  $2cflags!$2: [ $1-fno-exceptions$2 ],\n$1  $1cflags_cc!$2: [ $2-fno-exceptions$2 ],' ],
-  ]
-};
+const disable = args[1];
+if (disable != "--disable" && dir != "--disable") { 
+  var ConfigFileOperations = {
+    'package.json': [
+       [ /([ ]*)"dependencies": {/g, '$1"dependencies": {\n$1  "node-addon-api": "' + NodeApiVersion + '",'],
+       [ /[ ]*"nan": *"[^"]+"(,|)[\n\r]/g, '' ]
+    ],
+    'binding.gyp': [
+       [ /([ ]*)'include_dirs': \[/g, '$1\'include_dirs\': [\n$1  \'<!@(node -p "require(\\\'node-addon-api\\\').include")\',' ],
+       [ /([ ]*)"include_dirs": \[/g, '$1"include_dirs": [\n$1  "<!@(node -p \'require(\\\"node-addon-api\\\").include\')",' ],
+       [ /([ ]*)'dependencies': \[/g, '$1\'dependencies\': [\n$1  \'<!(node -p "require(\\\'node-addon-api\\\').gyp")\','],
+       [ /([ ]*)"dependencies": \[/g, '$1"dependencies": [\n$1  "<!(node -p \'require(\\\"node-addon-api\\\").gyp\')",'],
+       [ /[ ]*("|')<!\(node -e ("|'|\\"|\\')require\(("|'|\\"|\\')nan("|'|\\"|\\')\)("|'|\\"|\\')\)("|')(,|)[\r\n]/g, '' ],
+       [ /([ ]*)("|')target_name("|'): ("|')(.+?)("|'),/g, '$1$2target_name$2: $4$5$6,\n      $2cflags!$2: [ $2-fno-exceptions$2 ],\n      $2cflags_cc!$2: [ $2-fno-exceptions$2 ],\n      $2xcode_settings$2: { $2GCC_ENABLE_CPP_EXCEPTIONS$2: $2YES$2,\n        $2CLANG_CXX_LIBRARY$2: $2libc++$2,\n        $2MACOSX_DEPLOYMENT_TARGET$2: $210.7$2,\n      },\n      $2msvs_settings$2: {\n        $2VCCLCompilerTool$2: { $2ExceptionHandling$2: 1 },\n      },' ],
+    ]
+  };
+} else {
+  var ConfigFileOperations = {
+    'package.json': [
+      [ /([ ]*)"dependencies": {/g, '$1"dependencies": {\n$1  "node-addon-api": "' + NodeApiVersion + '",'],
+      [ /[ ]*"nan": *"[^"]+"(,|)[\n\r]/g, '' ]
+    ],
+    'binding.gyp': [
+      [ /([ ]*)'include_dirs': \[/g, '$1\'include_dirs\': [\n$1  \'<!@(node -p "require(\\\'node-addon-api\\\').include")\',' ],
+      [ /([ ]*)"include_dirs": \[/g, '$1"include_dirs": [\n$1  "<!@(node -p \'require(\\\"node-addon-api\\\").include\')",' ],
+      [ /([ ]*)'dependencies': \[/g, '$1\'dependencies\': [\n$1  \'<!(node -p "require(\\\'node-addon-api\\\').gyp")\','],
+      [ /([ ]*)"dependencies": \[/g, '$1"dependencies": [\n$1  "<!(node -p \'require(\\\"node-addon-api\\\").gyp\')",'],
+      [ /[ ]*("|')<!\(node -e ("|'|\\"|\\')require\(("|'|\\"|\\')nan("|'|\\"|\\')\)("|'|\\"|\\')\)("|')(,|)[\r\n]/g, '' ],
+      [ /([ ]*)("|')target_name("|'): ("|')(.+?)("|'),/g, '$1$2target_name$2: $4$5$6,\n      $2cflags!$2: [ $2-fno-exceptions$2 ],\n      $2cflags_cc!$2: [ $2-fno-exceptions$2 ],\n      $2defines$2: [ $2NAPI_DISABLE_CPP_EXCEPTIONS$2 ],\n      $2conditions$2: [\n        [\'OS==\"win\"\', { $2defines$2: [ $2_HAS_EXCEPTIONS=1$2 ] }]\n      ]' ],
+    ]
+  };
+}
 
 var SourceFileOperations = [
   [ /v8::Local<v8::FunctionTemplate>\s+(\w+)\s*=\s*Nan::New<FunctionTemplate>\([\w\d:]+\);(?:\w+->Reset\(\1\))?\s+\1->SetClassName\(Nan::String::New\("(\w+)"\)\);/g, 'Napi::Function $1 = DefineClass(env, "$2", {' ],
