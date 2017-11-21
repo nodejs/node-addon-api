@@ -1,5 +1,33 @@
 # Number
 
-You are reading a draft of the next documentation and it's in continuos update so
-if you don't find what you need please refer to: 
-[C++ wrapper classes for the ABI-stable C APIs for Node.js](https://nodejs.github.io/node-addon-api/)
+A Javascript number value.
+## Methods
+
+
+### Constructor
+
+```cpp
+Napi::Number::New(Napi::Env env, double value);
+```
+ - `[in] env`: The `napi_env` Environment
+ - `[in] value`: The value the Javascript Number will contain
+
+```cpp
+Napi::Number();
+```
+returns a new empty Javascript Number
+
+You can easily cast a Javascript number to one of:
+ - int32_t
+ - uint32_t
+ - int64_t
+ - float
+ - double
+
+The following shows an example of casting a number to an uint32_t value.
+
+```cpp
+uint32_t operatorVal = Number::New(Env(), 10.0); // Number to unsigned 32 bit integer
+// or
+auto instanceVal = info[0].As<Number>().Uint32Value();
+```

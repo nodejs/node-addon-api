@@ -3,13 +3,22 @@
     "url": "https://github.com/nodejs/node-addon-api/issues"
   },
   "contributors": [
+    "Andrew Petersen (https://github.com/kirbysayshi)",
+    "Anisha Rohra (https://github.com/anisha-rohra)",
     "Anna Henningsen (https://github.com/addaleax)",
     "Arunesh Chandra (https://github.com/aruneshchandra)",
     "Benjamin Byholm (https://github.com/kkoopa)",
+    "David Halls (https://github.com/davedoesdev)",
     "Gabriel Schulhof (https://github.com/gabrielschulhof)",
     "Hitesh Kanwathirtha (https://github.com/digitalinfinity)",
     "Jason Ginchereau (https://github.com/jasongin)",
+    "Jinho Bang (https://github.com/romandev)",
+    "Konstantin Tarkus (https://github.com/koistya)",
+    "Kyle Farnung (https://github.com/kfarnung)",
+    "Matteo Collina (https://github.com/mcollina)",
     "Michael Dawson (https://github.com/mhdawson)",
+    "Nicola Del Gobbo (https://github.com/NickNaso)",
+    "Rolf Timmermans (https://github.com/rolftimmermans)",
     "Sampson Gao (https://github.com/sampsongao)",
     "Taylor Woll (https://github.com/boingoing)"
   ],
@@ -34,5 +43,5 @@
     "test": "node test",
     "doc": "doxygen doc/Doxyfile"
   },
-  "version": "1.0.0"
+  "version": "1.1.0"
 }
