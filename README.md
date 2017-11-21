@@ -1,21 +1,20 @@
 # **Node.js API (N-API) Package**
 
-This package contains **header-only C++ wrapper classes** for the **ABI-stable
-Node.js API**  also known as **N-API**, providing C++ object model and exception
-handling semantics with low overhead. It guarantees backward compatibility with
-use with older versions of Node.js that do not have N-API built-in.
+This package contains **header-only C++ wrapper classes** for the 
+**ABI-stable Node.js API** also known as **N-API**, providing C++ object 
+model and exception handling semantics with low overhead. It guarantees 
+backward compatibility when used with older versions of Node.js that do 
+not have N-API built-in.
 
-Node.js API guarentees the **API** and **ABI** compatibility across different
-version of Node.js. So if you switch to a
-different version of Node.js you must not reinstall and maybe recompile the
-Addon.
-
-N-API is an API for building native Addons. It is independent from the underlying
-JavaScript runtime (ex V8) and is maintained as part of Node.js itself. This API
-will be Application Binary Interface (ABI) stable across versions of Node.js. It
-is intended to insulate Addons from changes in the underlying JavaScript engine
-and allow modules compiled for one version to run on later versions of Node.js
-without recompilation.
+N-API is an API for building native addons. It is independent from the 
+underlying JavaScript runtime (e.g. V8 or ChakraCore) and is maintained as 
+part of Node.js itself. This API will be Application Binary Interface (ABI) 
+stable across versions and flavors of Node.js. It is intended to insulate 
+native addons from changes in the underlying JavaScript engine and allow 
+modules compiled for one version to run on later versions of Node.js without 
+recompilation. N-API guarantees the **API** and **ABI** compatibility across 
+different versions of Node.js. So if you switched to a different version of 
+Node.js, you would not need to reinstall or recompile the native addon.
 
 APIs exposed by N-API are generally used to create and manipulate JavaScript
 values. Concepts and operations generally map to ideas specified in the
@@ -29,11 +28,11 @@ values. Concepts and operations generally map to ideas specified in the
 - **[Contributors](#contributors)**
 - **[License](#license)**
 
-## **Current version: 1.0.0**
+## **Current version: 1.1.0**
 
-(See [CHANHELOG.md](CHANGELOG.md) for complete Changelog)
+(See [CHANGELOG.md](CHANGELOG.md) for complete Changelog)
 
-[![NPM](https://nodei.co/npm/node-addon-api.png?downloads=true&downloadRank=true)](https://nodei.co/npm/dode-addon-api/) [![NPM](https://nodei.co/npm-dl/node-addon-api.png?months=6&height=1)](https://nodei.co/npm/dode-addon-api/)
+[![NPM](https://nodei.co/npm/node-addon-api.png?downloads=true&downloadRank=true)](https://nodei.co/npm/node-addon-api/) [![NPM](https://nodei.co/npm-dl/node-addon-api.png?months=6&height=1)](https://nodei.co/npm/node-addon-api/)
 
 <a name="setup"></a>
 
