@@ -26,7 +26,7 @@ values. Concepts and operations generally map to ideas specified in the
 - **[Examples](#examples)**
 - **[Tests](#tests)**
 - **[More resource and info about native Addons](#resources)**
-- **[Code of Conduct](#code-of-conduct)**
+- **[Code of Conduct](CODE_OF_CONDUCT.md)**
 - **[Contributors](#contributors)**
 - **[License](#license)**
 
@@ -115,12 +115,6 @@ Take a look and get inspired by our **[test suite](https://github.com/nodejs/nod
 - **[C++ Addons](https://nodejs.org/dist/latest/docs/api/addons.html)**
 - **[N-API](https://nodejs.org/dist/latest/docs/api/n-api.html)**
 - **[N-API - Next Generation Node API for Native Modules](https://youtu.be/-Oniup60Afs)**
-
-<a name="code-of-conduct"></a>
-
-### Code of Conduct
-The Node.js Code of Conduct, which applies to this project, can be found at
-**[Node.js Code of Conduct](CODE_OF_CONDUCT.md)**.
 
 <a name="contributors"></a>
 
