@@ -26,10 +26,11 @@ values. Concepts and operations generally map to ideas specified in the
 - **[Examples](#examples)**
 - **[Tests](#tests)**
 - **[More resource and info about native Addons](#resources)**
+- **[Code of Conduct](CODE_OF_CONDUCT.md)**
 - **[Contributors](#contributors)**
 - **[License](#license)**
 
-## **Current version: 1.0.0**
+## **Current version: 1.1.0**
 
 (See [CHANHELOG.md](CHANGELOG.md) for complete Changelog)
 
@@ -84,13 +85,29 @@ values. Concepts and operations generally map to ideas specified in the
 
 ### **Examples**
 
-//TODO  References to examples
+Are you new to **N-API**? Take a look at our **[examples](https://github.com/nodejs/abi-stable-node-addon-examples)**
+
+- **[Hello World](https://github.com/nodejs/abi-stable-node-addon-examples/tree/master/1_hello_world/node-addon-api)**
+- **[Pass arguments to a function](https://github.com/nodejs/abi-stable-node-addon-examples/tree/master/2_function_arguments/node-addon-api)**
+- **[Callbacks](https://github.com/nodejs/abi-stable-node-addon-examples/tree/master/3_callbacks/node-addon-api)**
+- **[Object factory](https://github.com/nodejs/abi-stable-node-addon-examples/tree/master/4_object_factory/node-addon-api)**
+- **[Function factory](https://github.com/nodejs/abi-stable-node-addon-examples/tree/master/4_object_factory/node-addon-api)**
+- **[Wrapping C++ Object](https://github.com/nodejs/abi-stable-node-addon-examples/tree/master/6_object_wrap/node-addon-api)**
+- **[Factory of wrapped object](https://github.com/nodejs/abi-stable-node-addon-examples/tree/master/7_factory_wrap/node-addon-api)**
+- **[Passing wrapped object around](https://github.com/nodejs/abi-stable-node-addon-examples/tree/master/8_passing_wrapped/node-addon-api)**
 
 <a name="tests"></a>
 
 ### **Tests**
 
-//TODO References to tests
+To run the **N-API** tests do:
+
+```
+npm install
+npm test
+```
+
+Take a look and get inspired by our **[test suite](https://github.com/nodejs/node-addon-api/tree/master/test)**
 
 <a name="resources"></a>
 

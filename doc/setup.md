@@ -1,6 +1,19 @@
-## Setup
+# Setup
 
-To use N-API in a native module:
+## Prerequisites
+
+Before starting to use **N-API** you need to assure you have the following
+prerequisites:
+
+* **Node.JS** see: [Installing Node.js](https://nodejs.org/)
+
+* **Node.js native addon build tool**
+
+  - **[node-gyp](node-gyp.md)**
+
+## Installation and usage
+
+To use **N-API** in a native module:
 
   1. Add a dependency on this package to `package.json`:
 
