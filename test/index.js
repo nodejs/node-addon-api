@@ -20,6 +20,7 @@ let testModules = [
   'object/delete_property',
   'object/get_property',
   'object/has_own_property',
+  'object/has_property',
   'object/object',
   'object/set_property',
   'promise',

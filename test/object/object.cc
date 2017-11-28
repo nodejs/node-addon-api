@@ -26,6 +26,12 @@ Value HasOwnPropertyWithNapiWrapperValue(const CallbackInfo& info);
 Value HasOwnPropertyWithCStyleString(const CallbackInfo& info);
 Value HasOwnPropertyWithCppStyleString(const CallbackInfo& info);
 
+// Native wrappers for testing Object::Has()
+Value HasPropertyWithNapiValue(const CallbackInfo& info);
+Value HasPropertyWithNapiWrapperValue(const CallbackInfo& info);
+Value HasPropertyWithCStyleString(const CallbackInfo& info);
+Value HasPropertyWithCppStyleString(const CallbackInfo& info);
+
 static bool testValue = true;
 
 Value TestGetter(const CallbackInfo& info) {
@@ -160,6 +166,11 @@ Object InitObject(Env env) {
   exports["hasOwnPropertyWithNapiWrapperValue"] = Function::New(env, HasOwnPropertyWithNapiWrapperValue);
   exports["hasOwnPropertyWithCStyleString"] = Function::New(env, HasOwnPropertyWithCStyleString);
   exports["hasOwnPropertyWithCppStyleString"] = Function::New(env, HasOwnPropertyWithCppStyleString);
+
+  exports["hasPropertyWithNapiValue"] = Function::New(env, HasPropertyWithNapiValue);
+  exports["hasPropertyWithNapiWrapperValue"] = Function::New(env, HasPropertyWithNapiWrapperValue);
+  exports["hasPropertyWithCStyleString"] = Function::New(env, HasPropertyWithCStyleString);
+  exports["hasPropertyWithCppStyleString"] = Function::New(env, HasPropertyWithCppStyleString);
 
   exports["createObjectUsingMagic"] = Function::New(env, CreateObjectUsingMagic);
 
