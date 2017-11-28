@@ -12,6 +12,7 @@
         'object/delete_property.cc',
         'object/get_property.cc',
         'object/has_own_property.cc',
+        'object/has_property.cc',
         'object/object.cc',
         'object/set_property.cc',
         'promise.cc',
