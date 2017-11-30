@@ -4,6 +4,7 @@
         'arraybuffer.cc',
         'asyncworker.cc',
         'basic_types/number.cc',
+        'basic_types/value.cc',
         'binding.cc',
         'buffer.cc',
         'error.cc',

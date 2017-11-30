@@ -11,6 +11,7 @@ let testModules = [
   'arraybuffer',
   'asyncworker',
   'basic_types/number',
+  'basic_types/value',
   'buffer',
   'error',
   'external',
