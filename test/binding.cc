@@ -4,6 +4,7 @@ using namespace Napi;
 
 Object InitArrayBuffer(Env env);
 Object InitAsyncWorker(Env env);
+Object InitBasicTypesValue(Env env);
 Object InitBuffer(Env env);
 Object InitError(Env env);
 Object InitExternal(Env env);
@@ -17,6 +18,7 @@ Object InitObjectWrap(Env env);
 Object Init(Env env, Object exports) {
   exports.Set("arraybuffer", InitArrayBuffer(env));
   exports.Set("asyncworker", InitAsyncWorker(env));
+  exports.Set("basic_types_value", InitBasicTypesValue(env));
   exports.Set("buffer", InitBuffer(env));
   exports.Set("error", InitError(env));
   exports.Set("external", InitExternal(env));
