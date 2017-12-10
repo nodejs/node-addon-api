@@ -23,7 +23,7 @@ if (disable != "--disable" && dir != "--disable") {
     ],
     'binding.gyp': [
        [ /([ ]*)'include_dirs': \[/g, '$1\'include_dirs\': [\n$1  \'<!@(node -p "require(\\\'node-addon-api\\\').include")\',' ],
-       [ /([ ]*)"include_dirs": \[/g, '$1"include_dirs": [\n$1  "<!@(node -p \'require(\\\"node-addon-api\\\").include\')",' ],
+       [ /([ ]*)"include_dirs": \[/g, '$1"include_dirs": [\n$1  "<!@(node -p \\"require(\'node-addon-api\').include\\")",' ],
        [ /([ ]*)'dependencies': \[/g, '$1\'dependencies\': [\n$1  \'<!(node -p "require(\\\'node-addon-api\\\').gyp")\','],
        [ /([ ]*)"dependencies": \[/g, '$1"dependencies": [\n$1  "<!(node -p \'require(\\\"node-addon-api\\\").gyp\')",'],
        [ /[ ]*("|')<!\(node -e ("|'|\\"|\\')require\(("|'|\\"|\\')nan("|'|\\"|\\')\)("|'|\\"|\\')\)("|')(,|)[\r\n]/g, '' ],
@@ -48,6 +48,8 @@ if (disable != "--disable" && dir != "--disable") {
 }
 
 var SourceFileOperations = [
+  [ /Nan::SetMethod\(target,[\s]*\"(.*)\"[\s]*,[\s]*([^)]+)\)/g, 'exports.Set(Napi::String::New(env, \"$1\"), Napi::Function::New(env, $2))' ],
+
   [ /v8::Local<v8::FunctionTemplate>\s+(\w+)\s*=\s*Nan::New<FunctionTemplate>\([\w\d:]+\);(?:\w+->Reset\(\1\))?\s+\1->SetClassName\(Nan::String::New\("(\w+)"\)\);/g, 'Napi::Function $1 = DefineClass(env, "$2", {' ],
   [ /Local<FunctionTemplate>\s+(\w+)\s*=\s*Nan::New<FunctionTemplate>\([\w\d:]+\);\s+(\w+)\.Reset\((\1)\);\s+\1->SetClassName\((Nan::String::New|Nan::New<(v8::)*String>)\("(.+?)"\)\);/g, 'Napi::Function $1 = DefineClass(env, "$6", {'],
   [ /Local<FunctionTemplate>\s+(\w+)\s*=\s*Nan::New<FunctionTemplate>\([\w\d:]+\);(?:\w+->Reset\(\1\))?\s+\1->SetClassName\(Nan::String::New\("(\w+)"\)\);/g, 'Napi::Function $1 = DefineClass(env, "$2", {' ],
@@ -118,7 +120,7 @@ var SourceFileOperations = [
   [ /->IsInt32\(\)/g, '.IsNumber()' ],
 
 
-  [ /(.+?)->BooleanValue\(\)/g, '$1.As<Napi::Boolean>().BooleanValue()' ],
+  [ /(.+?)->BooleanValue\(\)/g, '$1.As<Napi::Boolean>().Value()' ],
   [ /(.+?)->Int32Value\(\)/g, '$1.As<Napi::Number>().Int32Value()' ],
   [ /(.+?)->Uint32Value\(\)/g, '$1.As<Napi::Number>().Uint32Value()' ],
   [ /(.+?)->IntegerValue\(\)/g, '$1.As<Napi::Number>().Int64Value()' ],
@@ -198,21 +200,28 @@ var SourceFileOperations = [
   [ /(\w+)\*\s+(\w+)\s*=\s*Nan::ObjectWrap::Unwrap<\w+>\(info\.This\(\)\);/g, '$1* $2 = this;' ],
   [ /Nan::ObjectWrap::Unwrap<(\w+)>\((.*)\);/g, '$2.Unwrap<$1>();' ],
 
+  [ /Nan::NAN_METHOD_RETURN_TYPE/g, 'void' ],
+  [ /NAN_INLINE/g, 'inline' ],
+
   [ /Nan::NAN_METHOD_ARGS_TYPE/g, 'const Napi::CallbackInfo&' ],
   [ /NAN_METHOD\(([\w\d:]+?)\)/g, 'Napi::Value $1(const Napi::CallbackInfo& info)'],
   [ /static\s*NAN_GETTER\(([\w\d:]+?)\)/g, 'Napi::Value $1(const Napi::CallbackInfo& info)' ],
   [ /NAN_GETTER\(([\w\d:]+?)\)/g, 'Napi::Value $1(const Napi::CallbackInfo& info)' ],
   [ /static\s*NAN_SETTER\(([\w\d:]+?)\)/g, 'void $1(const Napi::CallbackInfo& info, const Napi::Value& value)' ],
   [ /NAN_SETTER\(([\w\d:]+?)\)/g, 'void $1(const Napi::CallbackInfo& info, const Napi::Value& value)' ],
-  [ /void Init\((v8::)*Local<(v8::)*Object> exports\)/g, 'void Init(Napi::Env env, Napi::Object exports, Napi::Object module)' ],
-  [ /NAN_MODULE_INIT\(([\w\d:]+?)\);/g, 'void $1(Napi::Env env, Napi::Object exports, Napi::Object module);' ],
-  [ /NAN_MODULE_INIT\(([\w\d:]+?)\)/g, 'void $1(Napi::Env env, Napi::Object exports, Napi::Object module)' ],
+  [ /void Init\((v8::)*Local<(v8::)*Object> exports\)/g, 'Napi::Object Init(Napi::Env env, Napi::Object exports)' ],
+  [ /NAN_MODULE_INIT\(([\w\d:]+?)\);/g, 'Napi::Object $1(Napi::Env env, Napi::Object exports);' ],
+  [ /NAN_MODULE_INIT\(([\w\d:]+?)\)/g, 'Napi::Object $1(Napi::Env env, Napi::Object exports)' ],
+
 
   [ /::(Init(?:ialize)?)\(target\)/g, '::$1(env, target, module)' ],
   [ /constructor_template/g, 'constructor' ],
 
   [ /Nan::FunctionCallbackInfo<(v8::)?Value>[ ]*& [ ]*info\)[ ]*{\n*([ ]*)/gm, 'Napi::CallbackInfo& info) {\n$2Napi::Env env = info.Env();\n$2' ],
   [ /Nan::FunctionCallbackInfo<(v8::)*Value>\s*&\s*info\);/g, 'Napi::CallbackInfo& info);' ],
+  [ /Nan::FunctionCallbackInfo<(v8::)*Value>\s*&/g, 'Napi::CallbackInfo&' ],
+
+  [ /Buffer::HasInstance\(([^)]+)\)/g, '$1.IsBuffer()' ],
 
   [ /info\[(\d+)\]->/g, 'info[$1].' ],
   [ /info\[([\w\d]+)\]->/g, 'info[$1].' ],
