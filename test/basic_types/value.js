@@ -24,8 +24,13 @@ function test(binding) {
     if (value instanceof ArrayBuffer)
       return 'arraybuffer';
 
-    if (ArrayBuffer.isView(value))
-      return 'typedarray';
+    if (ArrayBuffer.isView(value)) {
+      if (value instanceof DataView) {
+        return 'dataview';
+      } else {
+        return 'typedarray';
+      }
+    }
 
     if (value instanceof Promise)
       return 'promise';
@@ -46,7 +51,8 @@ function test(binding) {
       new Int32Array(new ArrayBuffer(12)),
       {},
       function() {},
-      new Promise((resolve, reject) => {})
+      new Promise((resolve, reject) => {}),
+      new DataView(new ArrayBuffer(12))
     ];
 
     testValueList.forEach((testValue) => {
@@ -99,6 +105,7 @@ function test(binding) {
   typeCheckerTest(value.isObject, 'object');
   typeCheckerTest(value.isFunction, 'function');
   typeCheckerTest(value.isPromise, 'promise');
+  typeCheckerTest(value.isDataView, 'dataview');
 
   typeConverterTest(value.toBoolean, Boolean);
   assert.strictEqual(value.toBoolean(undefined), false);

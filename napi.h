@@ -177,6 +177,9 @@ namespace Napi {
     bool IsObject() const;      ///< Tests if a value is a JavaScript object.
     bool IsFunction() const;    ///< Tests if a value is a JavaScript function.
     bool IsPromise() const;     ///< Tests if a value is a JavaScript promise.
+#if NAPI_DATA_VIEW_FEATURE
+    bool IsDataView() const;    ///< Tests if a value is a JavaScript data view.
+#endif
     bool IsBuffer() const;      ///< Tests if a value is a Node buffer.
 
     /// Casts to another type of `Napi::Value`, when the actual type is known or assumed.

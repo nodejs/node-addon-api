@@ -347,6 +347,19 @@ inline bool Value::IsPromise() const {
   return result;
 }
 
+#if NAPI_DATA_VIEW_FEATURE
+inline bool Value::IsDataView() const {
+  if (_value == nullptr) {
+    return false;
+  }
+
+  bool result;
+  napi_status status = napi_is_dataview(_env, _value, &result);
+  NAPI_THROW_IF_FAILED(_env, status, false);
+  return result;
+}
+#endif
+
 inline bool Value::IsBuffer() const {
   if (_value == nullptr) {
     return false;
