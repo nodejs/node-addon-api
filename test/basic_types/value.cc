@@ -55,6 +55,10 @@ static Value IsPromise(const CallbackInfo& info) {
   return Boolean::New(info.Env(), info[0].IsPromise());
 }
 
+static Value IsDataView(const CallbackInfo& info) {
+  return Boolean::New(info.Env(), info[0].IsDataView());
+}
+
 static Value ToBoolean(const CallbackInfo& info) {
   return info[0].ToBoolean();
 }
@@ -87,6 +91,7 @@ Object InitBasicTypesValue(Env env) {
   exports["isObject"] = Function::New(env, IsObject);
   exports["isFunction"] = Function::New(env, IsFunction);
   exports["isPromise"] = Function::New(env, IsPromise);
+  exports["isDataView"] = Function::New(env, IsDataView);
   exports["toBoolean"] = Function::New(env, ToBoolean);
   exports["toNumber"] = Function::New(env, ToNumber);
   exports["toString"] = Function::New(env, ToString);
