@@ -8,6 +8,7 @@ instead of Google's **gyp** format it is base on **CMake** build system.
 
   - [Installation](https://www.npmjs.com/package/cmake-js#installation)
   - [How to use](https://www.npmjs.com/package/cmake-js#usage)
+  - [Using N-API and node-addon-api](https://github.com/cmake-js/cmake-js#n-api-and-node-addon-api)
   - [Tutorials](https://www.npmjs.com/package/cmake-js#tutorials)
   - [Use case in the works - ArrayFire.js](https://www.npmjs.com/package/cmake-js#use-case-in-the-works---arrayfirejs)
 
