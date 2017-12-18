@@ -1171,6 +1171,88 @@ inline void ArrayBuffer::EnsureInfo() const {
   }
 }
 
+#if NAPI_DATA_VIEW_FEATURE
+////////////////////////////////////////////////////////////////////////////////
+// DataView class
+////////////////////////////////////////////////////////////////////////////////
+inline DataView DataView::New(napi_env env,
+                              Napi::ArrayBuffer arrayBuffer) {
+  return New(env, arrayBuffer, 0, arrayBuffer.ByteLength());
+}
+
+inline DataView DataView::New(napi_env env,
+                              Napi::ArrayBuffer arrayBuffer,
+                              size_t byteOffset) {
+  if (byteOffset > arrayBuffer.ByteLength()) {
+    NAPI_THROW(RangeError::New(env,
+        "Start offset is outside the bounds of the buffer"));
+    return DataView();
+  }
+  return New(env, arrayBuffer, byteOffset,
+      arrayBuffer.ByteLength() - byteOffset);
+}
+
+inline DataView DataView::New(napi_env env,
+                              Napi::ArrayBuffer arrayBuffer,
+                              size_t byteOffset,
+                              size_t byteLength) {
+  if (byteOffset + byteLength > arrayBuffer.ByteLength()) {
+    NAPI_THROW(RangeError::New(env, "Invalid DataView length"));
+    return DataView();
+  }
+  napi_value value;
+  napi_status status = napi_create_dataview(
+    env, byteLength, arrayBuffer, byteOffset, &value);
+  NAPI_THROW_IF_FAILED(env, status, DataView());
+  return DataView(env, value);
+}
+
+inline DataView::DataView() : Object() {
+}
+
+inline DataView::DataView(napi_env env, napi_value value) : Object(env, value) {
+}
+
+inline Napi::ArrayBuffer DataView::ArrayBuffer() const {
+  napi_value arrayBuffer;
+  napi_status status = napi_get_dataview_info(
+    _env,
+    _value       /* dataView */,
+    nullptr      /* byteLength */,
+    nullptr      /* data */,
+    &arrayBuffer /* arrayBuffer */,
+    nullptr      /* byteOffset */);
+  NAPI_THROW_IF_FAILED(_env, status, Napi::ArrayBuffer());
+  return Napi::ArrayBuffer(_env, arrayBuffer);
+}
+
+inline size_t DataView::ByteOffset() const {
+  size_t byteOffset;
+  napi_status status = napi_get_dataview_info(
+    _env,
+    _value      /* dataView */,
+    nullptr     /* byteLength */,
+    nullptr     /* data */,
+    nullptr     /* arrayBuffer */,
+    &byteOffset /* byteOffset */);
+  NAPI_THROW_IF_FAILED(_env, status, 0);
+  return byteOffset;
+}
+
+inline size_t DataView::ByteLength() const {
+  size_t byteLength;
+  napi_status status = napi_get_dataview_info(
+    _env,
+    _value      /* dataView */,
+    &byteLength /* byteLength */,
+    nullptr     /* data */,
+    nullptr     /* arrayBuffer */,
+    nullptr     /* byteOffset */);
+  NAPI_THROW_IF_FAILED(_env, status, 0);
+  return byteLength;
+}
+#endif
+
 ////////////////////////////////////////////////////////////////////////////////
 // TypedArray class
 ////////////////////////////////////////////////////////////////////////////////
