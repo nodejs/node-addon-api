@@ -7,6 +7,7 @@ Object InitAsyncWorker(Env env);
 Object InitBasicTypesNumber(Env env);
 Object InitBasicTypesValue(Env env);
 Object InitBuffer(Env env);
+Object InitDataView(Env env);
 Object InitError(Env env);
 Object InitExternal(Env env);
 Object InitFunction(Env env);
@@ -22,6 +23,7 @@ Object Init(Env env, Object exports) {
   exports.Set("basic_types_number", InitBasicTypesNumber(env));
   exports.Set("basic_types_value", InitBasicTypesValue(env));
   exports.Set("buffer", InitBuffer(env));
+  exports.Set("dataview", InitDataView(env));
   exports.Set("error", InitError(env));
   exports.Set("external", InitExternal(env));
   exports.Set("function", InitFunction(env));

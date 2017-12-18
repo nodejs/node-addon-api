@@ -7,6 +7,7 @@
         'basic_types/value.cc',
         'binding.cc',
         'buffer.cc',
+        'dataview/dataview.cc',
         'error.cc',
         'external.cc',
         'function.cc',

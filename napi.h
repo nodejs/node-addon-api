@@ -778,6 +778,36 @@ namespace Napi {
                  T* data);
   };
 
+#if NAPI_DATA_VIEW_FEATURE
+  /// The DataView provides a low-level interface for reading/writing multiple
+  /// number types in an ArrayBuffer irrespective of the platform's endianness.
+  class DataView : public Object {
+  public:
+    static DataView New(napi_env env,
+                        Napi::ArrayBuffer arrayBuffer);
+    static DataView New(napi_env env,
+                        Napi::ArrayBuffer arrayBuffer,
+                        size_t byteOffset);
+    static DataView New(napi_env env,
+                        Napi::ArrayBuffer arrayBuffer,
+                        size_t byteOffset,
+                        size_t byteLength);
+
+    DataView();                               ///< Creates a new _empty_ DataView instance.
+    DataView(napi_env env, napi_value value); ///< Wraps a N-API value primitive.
+
+    Napi::ArrayBuffer ArrayBuffer() const;    ///< Gets the backing array buffer.
+    size_t ByteOffset() const;    ///< Gets the offset into the buffer where the array starts.
+    size_t ByteLength() const;    ///< Gets the length of the array in bytes.
+
+    // TODO: This class isn't a complete implementation yet, and will
+    // incrementally add additional methods to read/write data into buffer.
+    // Currently, this class is wrapped by the NAPI_DATA_VIEW_FEATURE macro flag
+    // and this should be enabled only in the tests until the implementation is
+    // completed.
+  };
+#endif
+
   class Function : public Object {
   public:
     /// Callable must implement operator() accepting a const CallbackInfo&

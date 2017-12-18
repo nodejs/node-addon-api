@@ -13,6 +13,7 @@ let testModules = [
   'basic_types/number',
   'basic_types/value',
   'buffer',
+  'dataview/dataview',
   'error',
   'external',
   'function',
