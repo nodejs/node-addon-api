@@ -70,14 +70,16 @@ class CallbackScope {
 
 namespace node {
 
-#if NODE_MAJOR_VERSION < 8 || NODE_MAJOR_VERSION == 8 && NODE_MINOR_VERSION < 6
+#if NODE_MAJOR_VERSION < 8 || NODE_MAJOR_VERSION == 8 && NODE_MINOR_VERSION < 2
 typedef int async_id;
 
 typedef struct async_context {
   node::async_id async_id;
   node::async_id trigger_async_id;
 } async_context;
+#endif // NODE_MAJOR_VERSION < 8.2
 
+#if NODE_MAJOR_VERSION < 8 || NODE_MAJOR_VERSION == 8 && NODE_MINOR_VERSION < 6
 NODE_EXTERN async_context EmitAsyncInit(v8::Isolate* isolate,
                                         v8::Local<v8::Object> resource,
                                         v8::Local<v8::String> name,
