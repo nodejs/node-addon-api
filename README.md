@@ -29,7 +29,7 @@ values. Concepts and operations generally map to ideas specified in the
 - **[Contributors](#contributors)**
 - **[License](#license)**
 
-## **Current version: 1.1.0**
+## **Current version: 1.2.0**
 
 (See [CHANGELOG.md](CHANGELOG.md) for complete Changelog)
 

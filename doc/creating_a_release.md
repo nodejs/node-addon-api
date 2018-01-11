@@ -21,6 +21,8 @@ These are the steps to follow to create a new release:
 
 * Update the version in package.json appropriately.
 
+* Update the README.md to show the new version as the latest.
+
 * Add any new contributors to the "contributors" section in
   the package.json
 
