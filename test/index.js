@@ -25,7 +25,8 @@ let testModules = [
   'object/set_property',
   'promise',
   'typedarray',
-  'objectwrap'
+  'objectwrap',
+  'objectreference',
 ];
 
 if (typeof global.gc === 'function') {

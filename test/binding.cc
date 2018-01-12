@@ -15,6 +15,7 @@ Object InitObject(Env env);
 Object InitPromise(Env env);
 Object InitTypedArray(Env env);
 Object InitObjectWrap(Env env);
+Object InitObjectReference(Env env);
 
 Object Init(Env env, Object exports) {
   exports.Set("arraybuffer", InitArrayBuffer(env));
@@ -30,6 +31,7 @@ Object Init(Env env, Object exports) {
   exports.Set("promise", InitPromise(env));
   exports.Set("typedarray", InitTypedArray(env));
   exports.Set("objectwrap", InitObjectWrap(env));
+  exports.Set("objectreference", InitObjectReference(env));
   return exports;
 }
 
