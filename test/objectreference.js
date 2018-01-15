@@ -62,130 +62,130 @@ function test(binding) {
       testCastedEqual(test2);
     },
 
-    'Weak Dummy',
+    'Weak',
     () => {
-      binding.objectreference.setDummyObjects("hello", "world");
-      const test = binding.objectreference.getDummyFromValue("weak");
-      const test2 = binding.objectreference.getDummyFromGetter("weak", "hello");
+      binding.objectreference.setObjects("hello", "world");
+      const test = binding.objectreference.getFromValue("weak");
+      const test2 = binding.objectreference.getFromGetter("weak", "hello");
 
       assert.deepEqual({ hello: "world"}, test);
       assert.equal("world", test2);
       assert.equal(test["hello"], test2);
     },
     () => {
-      binding.objectreference.setDummyObjects(1, "hello world");
-      const test = binding.objectreference.getDummyFromValue("weak");
-      const test2 = binding.objectreference.getDummyFromGetter("weak", 1);
+      binding.objectreference.setObjects(1, "hello world");
+      const test = binding.objectreference.getFromValue("weak");
+      const test2 = binding.objectreference.getFromGetter("weak", 1);
 
       assert.deepEqual({ 1: "hello world"}, test);
       assert.equal("hello world", test2);
       assert.equal(test[1], test2);
     },
     () => {
-      binding.objectreference.setDummyObjects(0, "hello");
-      binding.objectreference.setDummyObjects(1, "world");
-      const test = binding.objectreference.getDummyFromValue("weak");
-      const test2 = binding.objectreference.getDummyFromGetter("weak", 0);
-      const test3 = binding.objectreference.getDummyFromGetter("weak", 1);
+      binding.objectreference.setObjects(0, "hello");
+      binding.objectreference.setObjects(1, "world");
+      const test = binding.objectreference.getFromValue("weak");
+      const test2 = binding.objectreference.getFromGetter("weak", 0);
+      const test3 = binding.objectreference.getFromGetter("weak", 1);
 
       assert.deepEqual({ 1: "world"}, test);
       assert.equal(undefined, test2);
       assert.equal("world", test3);
     },
 
-    'Persistent Dummy',
+    'Persistent',
     () => {
-      binding.objectreference.setDummyObjects("hello", "world");
-      const test = binding.objectreference.getDummyFromValue("persistent");
-      const test2 = binding.objectreference.getDummyFromGetter("persistent", "hello");
+      binding.objectreference.setObjects("hello", "world");
+      const test = binding.objectreference.getFromValue("persistent");
+      const test2 = binding.objectreference.getFromGetter("persistent", "hello");
 
       assert.deepEqual({ hello: "world"}, test);
       assert.equal("world", test2);
       assert.equal(test["hello"], test2);
     },
     () => {
-      binding.objectreference.setDummyObjects(1, "hello world");
-      const test = binding.objectreference.getDummyFromValue("persistent");
-      const test2 = binding.objectreference.getDummyFromGetter("persistent", 1);
+      binding.objectreference.setObjects(1, "hello world");
+      const test = binding.objectreference.getFromValue("persistent");
+      const test2 = binding.objectreference.getFromGetter("persistent", 1);
 
       assert.deepEqual({ 1: "hello world"}, test);
       assert.equal("hello world", test2);
       assert.equal(test[1], test2);
     },
     () => {
-      binding.objectreference.setDummyObjects(0, "hello");
-      binding.objectreference.setDummyObjects(1, "world");
-      const test = binding.objectreference.getDummyFromValue("persistent");
-      const test2 = binding.objectreference.getDummyFromGetter("persistent", 0);
-      const test3 = binding.objectreference.getDummyFromGetter("persistent", 1);
+      binding.objectreference.setObjects(0, "hello");
+      binding.objectreference.setObjects(1, "world");
+      const test = binding.objectreference.getFromValue("persistent");
+      const test2 = binding.objectreference.getFromGetter("persistent", 0);
+      const test3 = binding.objectreference.getFromGetter("persistent", 1);
 
       assert.deepEqual({ 1: "world"}, test);
       assert.equal(undefined, test2);
       assert.equal("world", test3);
     },
     () => {
-      binding.objectreference.setDummyObjects("hello", "world");
+      binding.objectreference.setObjects("hello", "world");
       assert.doesNotThrow(
         () => {
-          binding.objectreference.unrefObjects("dummy persistent");
+          binding.objectreference.unrefObjects("persistent");
         },
         Error
       );
       assert.throws(
         () => {
-          binding.objectreference.unrefObjects("dummy persistent");
+          binding.objectreference.unrefObjects("persistent");
         },
         Error
       );
     },
 
-    'References Dummy',
+    'References',
     () => {
-      binding.objectreference.setDummyObjects("hello", "world");
-      const test = binding.objectreference.getDummyFromValue();
-      const test2 = binding.objectreference.getDummyFromGetter("hello");
+      binding.objectreference.setObjects("hello", "world");
+      const test = binding.objectreference.getFromValue();
+      const test2 = binding.objectreference.getFromGetter("hello");
 
       assert.deepEqual({ hello: "world"}, test);
       assert.equal("world", test2);
       assert.equal(test["hello"], test2);
     },
     () => {
-      binding.objectreference.setDummyObjects(1, "hello world");
-      const test = binding.objectreference.getDummyFromValue();
-      const test2 = binding.objectreference.getDummyFromGetter(1);
+      binding.objectreference.setObjects(1, "hello world");
+      const test = binding.objectreference.getFromValue();
+      const test2 = binding.objectreference.getFromGetter(1);
 
       assert.deepEqual({ 1: "hello world"}, test);
       assert.equal("hello world", test2);
       assert.equal(test[1], test2);
     },
     () => {
-      binding.objectreference.setDummyObjects(0, "hello");
-      binding.objectreference.setDummyObjects(1, "world");
-      const test = binding.objectreference.getDummyFromValue();
-      const test2 = binding.objectreference.getDummyFromGetter(0);
-      const test3 = binding.objectreference.getDummyFromGetter(1);
+      binding.objectreference.setObjects(0, "hello");
+      binding.objectreference.setObjects(1, "world");
+      const test = binding.objectreference.getFromValue();
+      const test2 = binding.objectreference.getFromGetter(0);
+      const test3 = binding.objectreference.getFromGetter(1);
 
       assert.deepEqual({ 1: "world"}, test);
       assert.equal(undefined, test2);
       assert.equal("world", test3);
     },
     () => {
-      binding.objectreference.setDummyObjects("hello", "world");
+      binding.objectreference.setObjects("hello", "world");
       assert.doesNotThrow(
         () => {
-          binding.objectreference.unrefObjects("dummy reference");
+          binding.objectreference.unrefObjects("references");
         },
         Error
       );
       assert.doesNotThrow(
         () => {
-          binding.objectreference.unrefObjects("dummy reference");
+          binding.objectreference.unrefObjects("references");
         },
         Error
       );
       assert.throws(
         () => {
-          binding.objectreference.unrefObjects("dummy reference");
+          binding.objectreference.unrefObjects("references");
         },
         Error
       );
