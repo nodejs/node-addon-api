@@ -133,18 +133,46 @@ Value GetCastedFromGetter(const CallbackInfo& info) {
   }
 }
 
-void UnrefObjects(const CallbackInfo& info) {
+Number UnrefObjects(const CallbackInfo& info) {
   Env env = info.Env();
+  uint32_t num;
 
-  if (info[0].As<String>() == String::New(env, "persistent")) {
-    persistent.Unref();
+  if (info[0].As<String>() == String::New(env, "weak")) {
+    num = weak.Unref();
+  } else if (info[0].As<String>() == String::New(env, "persistent")) {
+    num = persistent.Unref();
   } else if (info[0].As<String>() == String::New(env, "references")) {
-    reference.Unref();
+    num = reference.Unref();
+  } else if (info[0].As<String>() == String::New(env, "casted weak")) {
+    num = casted_weak.Unref();
   } else if (info[0].As<String>() == String::New(env, "casted persistent")) {
-    casted_persistent.Unref();
-  } else if (info[0].As<String>() == String::New(env, "casted reference")) {
-    casted_reference.Unref();
+    num = casted_persistent.Unref();
+  } else {
+    num = casted_reference.Unref();
   }
+
+  return Number::New(env, num);
+}
+
+Number RefObjects(const CallbackInfo& info) {
+  Env env = info.Env();
+  uint32_t num;
+
+  if (info[0].As<String>() == String::New(env, "weak")) {
+    num = weak.Ref();
+  } else if (info[0].As<String>() == String::New(env, "persistent")) {
+    num = persistent.Ref();
+  } else if (info[0].As<String>() == String::New(env, "references")) {
+    num = reference.Ref();
+  } else if (info[0].As<String>() == String::New(env, "casted weak")) {
+    num = casted_weak.Ref();
+  } else if (info[0].As<String>() == String::New(env, "casted persistent")) {
+    num = casted_persistent.Ref();
+  } else {
+    num = casted_reference.Ref();
+  }
+
+  return Number::New(env, num);
 }
 
 Object InitObjectReference(Env env) {
@@ -157,6 +185,7 @@ Object InitObjectReference(Env env) {
   exports["getCastedFromGetter"] = Function::New(env, GetCastedFromGetter);
   exports["getFromValue"] = Function::New(env, GetFromValue);
   exports["unrefObjects"] = Function::New(env, UnrefObjects);
+  exports["refObjects"] = Function::New(env, RefObjects);
 
   return exports;
 }

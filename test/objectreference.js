@@ -92,6 +92,19 @@ function test(binding) {
       assert.equal(undefined, test2);
       assert.equal("world", test3);
     },
+    () => {
+      binding.objectreference.setObjects("hello", "world");
+      assert.throws(
+        () => {
+          var rcount = binding.objectreference.refObjects("weak");
+          assert.equal(rcount, 1);
+          rcount = binding.objectreference.unrefObjects("weak");
+          assert.equal(rcount, 0);
+          binding.objectreference.unrefObjects("weak");
+        },
+        Error
+      );
+    },
 
     'Persistent',
     () => {
@@ -127,7 +140,16 @@ function test(binding) {
       binding.objectreference.setObjects("hello", "world");
       assert.doesNotThrow(
         () => {
-          binding.objectreference.unrefObjects("persistent");
+          var rcount = binding.objectreference.unrefObjects("persistent");
+          assert.equal(rcount, 0);
+          rcount = binding.objectreference.refObjects("persistent");
+          assert.equal(rcount, 1);
+          rcount = binding.objectreference.unrefObjects("persistent");
+          assert.equal(rcount, 0);
+          rcount = binding.objectreference.refObjects("persistent");
+          assert.equal(rcount, 1);
+          rcount = binding.objectreference.unrefObjects("persistent");
+          assert.equal(rcount, 0);
         },
         Error
       );
@@ -173,13 +195,14 @@ function test(binding) {
       binding.objectreference.setObjects("hello", "world");
       assert.doesNotThrow(
         () => {
-          binding.objectreference.unrefObjects("references");
-        },
-        Error
-      );
-      assert.doesNotThrow(
-        () => {
-          binding.objectreference.unrefObjects("references");
+          var rcount = binding.objectreference.unrefObjects("references");
+          assert.equal(rcount, 1);
+          rcount = binding.objectreference.refObjects("references");
+          assert.equal(rcount, 2);
+          rcount = binding.objectreference.unrefObjects("references");
+          assert.equal(rcount, 1);
+          rcount = binding.objectreference.unrefObjects("references");
+          assert.equal(rcount, 0);
         },
         Error
       );
