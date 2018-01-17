@@ -73,11 +73,20 @@ function test(binding) {
       assert.equal(test["hello"], test2);
     },
     () => {
+      binding.objectreference.setObjects("hello", "world", "javascript");
+      const test = binding.objectreference.getFromValue("weak");
+      const test2 = binding.objectreference.getFromValue("weak", "hello");
+
+      assert.deepEqual({ hello: "world" }, test);
+      assert.deepEqual({ hello: "world" }, test2);
+      assert.equal(test, test2);  
+    },
+    () => {
       binding.objectreference.setObjects(1, "hello world");
       const test = binding.objectreference.getFromValue("weak");
       const test2 = binding.objectreference.getFromGetter("weak", 1);
 
-      assert.deepEqual({ 1: "hello world"}, test);
+      assert.deepEqual({ 1: "hello world" }, test);
       assert.equal("hello world", test2);
       assert.equal(test[1], test2);
     },
@@ -88,7 +97,7 @@ function test(binding) {
       const test2 = binding.objectreference.getFromGetter("weak", 0);
       const test3 = binding.objectreference.getFromGetter("weak", 1);
 
-      assert.deepEqual({ 1: "world"}, test);
+      assert.deepEqual({ 1: "world" }, test);
       assert.equal(undefined, test2);
       assert.equal("world", test3);
     },
@@ -112,9 +121,18 @@ function test(binding) {
       const test = binding.objectreference.getFromValue("persistent");
       const test2 = binding.objectreference.getFromGetter("persistent", "hello");
 
-      assert.deepEqual({ hello: "world"}, test);
+      assert.deepEqual({ hello: "world" }, test);
       assert.equal("world", test2);
       assert.equal(test["hello"], test2);
+    },
+    () => {
+      binding.objectreference.setObjects("hello", "world", "javascript");
+      const test = binding.objectreference.getFromValue("persistent");
+      const test2 = binding.objectreference.getFromValue("persistent", "hello");
+    
+      assert.deepEqual({ hello: "world" }, test);
+      assert.deepEqual({ hello: "world" }, test2);      
+      assert.deepEqual(test, test2);
     },
     () => {
       binding.objectreference.setObjects(1, "hello world");
@@ -167,9 +185,18 @@ function test(binding) {
       const test = binding.objectreference.getFromValue();
       const test2 = binding.objectreference.getFromGetter("hello");
 
-      assert.deepEqual({ hello: "world"}, test);
+      assert.deepEqual({ hello: "world" }, test);
       assert.equal("world", test2);
       assert.equal(test["hello"], test2);
+    },
+    () => {
+      binding.objectreference.setObjects("hello", "world", "javascript");
+      const test = binding.objectreference.getFromValue();
+      const test2 = binding.objectreference.getFromValue("hello");
+    
+      assert.deepEqual({ hello: "world" }, test);
+      assert.deepEqual({ hello: "world" }, test2);      
+      assert.deepEqual(test, test2);
     },
     () => {
       binding.objectreference.setObjects(1, "hello world");
