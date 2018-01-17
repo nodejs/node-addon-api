@@ -15,6 +15,10 @@ ObjectReference casted_weak;
 ObjectReference casted_persistent;
 ObjectReference casted_reference;
 
+// info[0] is the key, which can be either a string or a number.
+// info[1] is the value.
+// info[2] is a flag that differentiates whether the key is a 
+// C string or a JavaScript string.
 void SetObjects(const CallbackInfo& info) {
   Env env = info.Env();
   HandleScope scope(env);
@@ -54,7 +58,8 @@ void SetCastedObjects(const CallbackInfo& info) {
   casted_reference = Reference<Object>::New(ex.As<Object>(), 2);
 }
 
-
+// info[0] is a flag to determine if the weak, persistent, or 
+// multiple reference ObjectReference is being requested.
 Value GetFromValue(const CallbackInfo& info) {
   Env env = info.Env();
 
@@ -71,6 +76,9 @@ Value GetFromValue(const CallbackInfo& info) {
   }
 }
 
+// info[0] is a flag to determine if the weak, persistent, or 
+// multiple reference ObjectReference is being requested.
+// info[1] is the key, and it be either a String or a Number.
 Value GetFromGetter(const CallbackInfo& info) {
   Env env = info.Env();
 
@@ -101,6 +109,8 @@ Value GetFromGetter(const CallbackInfo& info) {
   return String::New(env, "Error: Reached end of getter");
 }
 
+// info[0] is a flag to determine if the weak, persistent, or 
+// multiple reference ObjectReference is being requested.
 Value GetCastedFromValue(const CallbackInfo& info) {
   Env env = info.Env();
 
@@ -117,6 +127,9 @@ Value GetCastedFromValue(const CallbackInfo& info) {
   }
 }
 
+// info[0] is a flag to determine if the weak, persistent, or 
+// multiple reference ObjectReference is being requested.
+// info[1] is the key and it must be a Number.
 Value GetCastedFromGetter(const CallbackInfo& info) {
   Env env = info.Env();
 
@@ -133,6 +146,8 @@ Value GetCastedFromGetter(const CallbackInfo& info) {
   }
 }
 
+// info[0] is a flag to determine if the weak, persistent, or 
+// multiple reference ObjectReference is being requested.
 Number UnrefObjects(const CallbackInfo& info) {
   Env env = info.Env();
   uint32_t num;
@@ -154,6 +169,8 @@ Number UnrefObjects(const CallbackInfo& info) {
   return Number::New(env, num);
 }
 
+// info[0] is a flag to determine if the weak, persistent, or 
+// multiple reference ObjectReference is being requested.
 Number RefObjects(const CallbackInfo& info) {
   Env env = info.Env();
   uint32_t num;

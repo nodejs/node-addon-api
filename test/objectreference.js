@@ -1,3 +1,14 @@
+/* 
+ * First tests are for setting and getting the ObjectReference on the 
+ * casted Array as Object. Then the tests are for the ObjectReference
+ * to an empty Object. They test setting the ObjectReference with a C 
+ * string, a JavaScript string, and a JavaScript Number as the keys. 
+ * Then getting the value of those keys through the Reference function 
+ * Value() and through the ObjectReference getters. Finally, they test 
+ * Unref() and Ref() to determine if the reference count is as 
+ * expected and errors are thrown when expected. 
+ */
+
 'use strict';
 const buildType = process.config.target_defaults.default_configuration;
 const assert = require('assert');
