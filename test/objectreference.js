@@ -114,12 +114,17 @@ function test(binding) {
     },
     () => {
       binding.objectreference.setObjects("hello", "world");
-      assert.throws(
+      assert.doesNotThrow(
         () => {
           var rcount = binding.objectreference.refObjects("weak");
           assert.equal(rcount, 1);
           rcount = binding.objectreference.unrefObjects("weak");
           assert.equal(rcount, 0);
+        },
+        Error
+      );
+      assert.throws(
+        () => {
           binding.objectreference.unrefObjects("weak");
         },
         Error
