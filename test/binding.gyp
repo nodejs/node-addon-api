@@ -8,6 +8,7 @@
         'binding.cc',
         'buffer.cc',
         'dataview/dataview.cc',
+        'dataview/dataview_read_write.cc',
         'error.cc',
         'external.cc',
         'function.cc',

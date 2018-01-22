@@ -800,11 +800,35 @@ namespace Napi {
     size_t ByteOffset() const;    ///< Gets the offset into the buffer where the array starts.
     size_t ByteLength() const;    ///< Gets the length of the array in bytes.
 
-    // TODO: This class isn't a complete implementation yet, and will
-    // incrementally add additional methods to read/write data into buffer.
-    // Currently, this class is wrapped by the NAPI_DATA_VIEW_FEATURE macro flag
-    // and this should be enabled only in the tests until the implementation is
-    // completed.
+    void* Data() const;
+
+    float GetFloat32(size_t byteOffset) const;
+    double GetFloat64(size_t byteOffset) const;
+    int8_t GetInt8(size_t byteOffset) const;
+    int16_t GetInt16(size_t byteOffset) const;
+    int32_t GetInt32(size_t byteOffset) const;
+    uint8_t GetUint8(size_t byteOffset) const;
+    uint16_t GetUint16(size_t byteOffset) const;
+    uint32_t GetUint32(size_t byteOffset) const;
+
+    void SetFloat32(size_t byteOffset, float value) const;
+    void SetFloat64(size_t byteOffset, double value) const;
+    void SetInt8(size_t byteOffset, int8_t value) const;
+    void SetInt16(size_t byteOffset, int16_t value) const;
+    void SetInt32(size_t byteOffset, int32_t value) const;
+    void SetUint8(size_t byteOffset, uint8_t value) const;
+    void SetUint16(size_t byteOffset, uint16_t value) const;
+    void SetUint32(size_t byteOffset, uint32_t value) const;
+
+  private:
+    template <typename T>
+    T ReadData(size_t byteOffset) const;
+
+    template <typename T>
+    void WriteData(size_t byteOffset, T value) const;
+
+    void* _data;
+    size_t _length;
   };
 #endif
 

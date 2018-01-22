@@ -14,6 +14,7 @@ let testModules = [
   'basic_types/value',
   'buffer',
   'dataview/dataview',
+  'dataview/dataview_read_write',
   'error',
   'external',
   'function',

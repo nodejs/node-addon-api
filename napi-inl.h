@@ -1211,6 +1211,14 @@ inline DataView::DataView() : Object() {
 }
 
 inline DataView::DataView(napi_env env, napi_value value) : Object(env, value) {
+  napi_status status = napi_get_dataview_info(
+    _env,
+    _value   /* dataView */,
+    &_length /* byteLength */,
+    &_data   /* data */,
+    nullptr  /* arrayBuffer */,
+    nullptr  /* byteOffset */);
+  NAPI_THROW_IF_FAILED(_env, status);
 }
 
 inline Napi::ArrayBuffer DataView::ArrayBuffer() const {
@@ -1240,16 +1248,99 @@ inline size_t DataView::ByteOffset() const {
 }
 
 inline size_t DataView::ByteLength() const {
-  size_t byteLength;
-  napi_status status = napi_get_dataview_info(
-    _env,
-    _value      /* dataView */,
-    &byteLength /* byteLength */,
-    nullptr     /* data */,
-    nullptr     /* arrayBuffer */,
-    nullptr     /* byteOffset */);
-  NAPI_THROW_IF_FAILED(_env, status, 0);
-  return byteLength;
+  return _length;
+}
+
+inline void* DataView::Data() const {
+  return _data;
+}
+
+inline float DataView::GetFloat32(size_t byteOffset) const {
+  return ReadData<float>(byteOffset);
+}
+
+inline double DataView::GetFloat64(size_t byteOffset) const {
+  return ReadData<double>(byteOffset);
+}
+
+inline int8_t DataView::GetInt8(size_t byteOffset) const {
+  return ReadData<int8_t>(byteOffset);
+}
+
+inline int16_t DataView::GetInt16(size_t byteOffset) const {
+  return ReadData<int16_t>(byteOffset);
+}
+
+inline int32_t DataView::GetInt32(size_t byteOffset) const {
+  return ReadData<int32_t>(byteOffset);
+}
+
+inline uint8_t DataView::GetUint8(size_t byteOffset) const {
+  return ReadData<uint8_t>(byteOffset);
+}
+
+inline uint16_t DataView::GetUint16(size_t byteOffset) const {
+  return ReadData<uint16_t>(byteOffset);
+}
+
+inline uint32_t DataView::GetUint32(size_t byteOffset) const {
+  return ReadData<uint32_t>(byteOffset);
+}
+
+inline void DataView::SetFloat32(size_t byteOffset, float value) const {
+  WriteData<float>(byteOffset, value);
+}
+
+inline void DataView::SetFloat64(size_t byteOffset, double value) const {
+  WriteData<double>(byteOffset, value);
+}
+
+inline void DataView::SetInt8(size_t byteOffset, int8_t value) const {
+  WriteData<int8_t>(byteOffset, value);
+}
+
+inline void DataView::SetInt16(size_t byteOffset, int16_t value) const {
+  WriteData<int16_t>(byteOffset, value);
+}
+
+inline void DataView::SetInt32(size_t byteOffset, int32_t value) const {
+  WriteData<int32_t>(byteOffset, value);
+}
+
+inline void DataView::SetUint8(size_t byteOffset, uint8_t value) const {
+  WriteData<uint8_t>(byteOffset, value);
+}
+
+inline void DataView::SetUint16(size_t byteOffset, uint16_t value) const {
+  WriteData<uint16_t>(byteOffset, value);
+}
+
+inline void DataView::SetUint32(size_t byteOffset, uint32_t value) const {
+  WriteData<uint32_t>(byteOffset, value);
+}
+
+template <typename T>
+inline T DataView::ReadData(size_t byteOffset) const {
+  if (byteOffset + sizeof(T) > _length ||
+      byteOffset + sizeof(T) < byteOffset) {  // overflow
+    NAPI_THROW(RangeError::New(_env,
+        "Offset is outside the bounds of the DataView"));
+    return 0;
+  }
+
+  return *reinterpret_cast<T*>(static_cast<uint8_t*>(_data) + byteOffset);
+}
+
+template <typename T>
+inline void DataView::WriteData(size_t byteOffset, T value) const {
+  if (byteOffset + sizeof(T) > _length ||
+      byteOffset + sizeof(T) < byteOffset) {  // overflow
+    NAPI_THROW(RangeError::New(_env,
+        "Offset is outside the bounds of the DataView"));
+    return;
+  }
+
+  *reinterpret_cast<T*>(static_cast<uint8_t*>(_data) + byteOffset) = value;
 }
 #endif
 
