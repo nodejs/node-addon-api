@@ -329,7 +329,7 @@ inline bool Value::IsTypedArray() const {
 }
 
 inline bool Value::IsObject() const {
-  return Type() == napi_object;
+  return Type() == napi_object || IsFunction();
 }
 
 inline bool Value::IsFunction() const {
