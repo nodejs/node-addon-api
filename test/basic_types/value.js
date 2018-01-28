@@ -7,6 +7,10 @@ test(require(`../build/${buildType}/binding.node`));
 test(require(`../build/${buildType}/binding_noexcept.node`));
 
 function test(binding) {
+  function isObject(value) {
+    return typeof value === 'object' || typeof value === 'function';
+  }
+
   function detailedTypeOf(value) {
     const type = typeof value;
     if (type !== 'object')
@@ -57,7 +61,7 @@ function test(binding) {
 
     testValueList.forEach((testValue) => {
       if (testValue !== null && expectedType === 'object') {
-        assert.strictEqual(typeChecker(testValue), typeof testValue === expectedType);
+        assert.strictEqual(typeChecker(testValue), isObject(testValue));
       } else {
         assert.strictEqual(typeChecker(testValue), detailedTypeOf(testValue) === expectedType);
       }
