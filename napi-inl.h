@@ -1820,7 +1820,7 @@ inline NAPI_NO_RETURN void Error::Fatal(const char* location, const char* messag
   napi_fatal_error(location, NAPI_AUTO_LENGTH, message, NAPI_AUTO_LENGTH);
 }
 
-inline Error::Error() : ObjectReference(), _message(nullptr) {
+inline Error::Error() : ObjectReference() {
 }
 
 inline Error::Error(napi_env env, napi_value value) : ObjectReference(env, nullptr) {
