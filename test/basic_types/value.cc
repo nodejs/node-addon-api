@@ -2,6 +2,17 @@
 
 using namespace Napi;
 
+namespace {
+
+int testData = 1;
+
+// Helpers for testing non-Javascript values.
+Value CreateExternal(const CallbackInfo& info) {
+  return External<int>::New(info.Env(), &testData);
+}
+
+} // end anonymous namespace
+
 static Value IsEmpty(const CallbackInfo& info) {
   Value value;
   return Boolean::New(info.Env(), value.IsEmpty());
@@ -59,6 +70,10 @@ static Value IsDataView(const CallbackInfo& info) {
   return Boolean::New(info.Env(), info[0].IsDataView());
 }
 
+static Value IsExternal(const CallbackInfo& info) {
+  return Boolean::New(info.Env(), info[0].IsExternal());
+}
+
 static Value ToBoolean(const CallbackInfo& info) {
   return info[0].ToBoolean();
 }
@@ -92,10 +107,13 @@ Object InitBasicTypesValue(Env env) {
   exports["isFunction"] = Function::New(env, IsFunction);
   exports["isPromise"] = Function::New(env, IsPromise);
   exports["isDataView"] = Function::New(env, IsDataView);
+  exports["isExternal"] = Function::New(env, IsExternal);
   exports["toBoolean"] = Function::New(env, ToBoolean);
   exports["toNumber"] = Function::New(env, ToNumber);
   exports["toString"] = Function::New(env, ToString);
   exports["toObject"] = Function::New(env, ToObject);
+
+  exports["createExternal"] = Function::New(env, CreateExternal);
 
   return exports;
 }

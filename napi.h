@@ -181,6 +181,7 @@ namespace Napi {
     bool IsDataView() const;    ///< Tests if a value is a JavaScript data view.
 #endif
     bool IsBuffer() const;      ///< Tests if a value is a Node buffer.
+    bool IsExternal() const;    ///< Tests if a value is a pointer to external data.
 
     /// Casts to another type of `Napi::Value`, when the actual type is known or assumed.
     ///

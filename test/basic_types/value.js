@@ -7,8 +7,11 @@ test(require(`../build/${buildType}/binding.node`));
 test(require(`../build/${buildType}/binding_noexcept.node`));
 
 function test(binding) {
+  const externalValue = binding.basic_types_value.createExternal();
+
   function isObject(value) {
-    return typeof value === 'object' || typeof value === 'function';
+    return (typeof value === 'object' && value !== externalValue) || 
+           (typeof value === 'function');
   }
 
   function detailedTypeOf(value) {
@@ -21,6 +24,9 @@ function test(binding) {
 
     if (Array.isArray(value))
       return 'array';
+
+    if (value === externalValue) 
+      return 'external';
 
     if (!value.constructor)
       return type;
@@ -56,7 +62,8 @@ function test(binding) {
       {},
       function() {},
       new Promise((resolve, reject) => {}),
-      new DataView(new ArrayBuffer(12))
+      new DataView(new ArrayBuffer(12)),
+      externalValue
     ];
 
     testValueList.forEach((testValue) => {
@@ -110,6 +117,7 @@ function test(binding) {
   typeCheckerTest(value.isFunction, 'function');
   typeCheckerTest(value.isPromise, 'promise');
   typeCheckerTest(value.isDataView, 'dataview');
+  typeCheckerTest(value.isExternal, 'external');
 
   typeConverterTest(value.toBoolean, Boolean);
   assert.strictEqual(value.toBoolean(undefined), false);
