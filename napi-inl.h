@@ -372,7 +372,7 @@ inline bool Value::IsBuffer() const {
 }
 
 inline bool Value::IsExternal() const {
-  return (Type() == napi_external);
+  return Type() == napi_external;
 }
 
 template <typename T>
