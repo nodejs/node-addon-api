@@ -33,7 +33,10 @@
       'cflags!': [ '-fno-exceptions' ],
       'cflags_cc!': [ '-fno-exceptions' ],
       'msvs_settings': {
-        'VCCLCompilerTool': { 'ExceptionHandling': 1 },
+        'VCCLCompilerTool': { 
+          'ExceptionHandling': 1,
+          'EnablePREfast': 'true',
+        },
       },
       'xcode_settings': {
         'CLANG_CXX_LIBRARY': 'libc++',
@@ -47,7 +50,10 @@
       'cflags': [ '-fno-exceptions' ],
       'cflags_cc': [ '-fno-exceptions' ],
       'msvs_settings': {
-        'VCCLCompilerTool': { 'ExceptionHandling': 0 },
+        'VCCLCompilerTool': { 
+          'ExceptionHandling': 0,
+          'EnablePREfast': 'true',
+        },
       },
       'xcode_settings': {
         'CLANG_CXX_LIBRARY': 'libc++',
