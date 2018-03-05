@@ -19,12 +19,18 @@ function test(binding) {
     eval(`binding.dataview_read_write.set${type}(dataview, offset, value)`);
   }
 
+  function isLittleEndian() {
+    const buffer = new ArrayBuffer(2);
+    new DataView(buffer).setInt16(0, 256, true /* littleEndian */);
+    return new Int16Array(buffer)[0] === 256;
+  }
+
   function jsReadDataView(dataview, type, offset, value) {
-    return eval(`dataview.get${type}(offset, true)`);
+    return eval(`dataview.get${type}(offset, isLittleEndian())`);
   }
 
   function jsWriteDataView(dataview, type, offset, value) {
-    eval(`dataview.set${type}(offset, value, true)`);
+    eval(`dataview.set${type}(offset, value, isLittleEndian())`);
   }
 
   function testReadData(dataview, type, offset, value) {
