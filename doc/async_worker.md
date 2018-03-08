@@ -1,5 +1,306 @@
-# Async worker
+# AsyncWorker
 
-You are reading a draft of the next documentation and it's in continuous update so
-if you don't find what you need please refer to:
-[C++ wrapper classes for the ABI-stable C APIs for Node.js](https://nodejs.github.io/node-addon-api/)
+`AsyncWorker` is an abstract class that you can subclass to remove many of the
+tedious tasks of moving data between the event loop and worker threads. This
+class internally handles all the details of creating and executing an asynchronous
+operation.
+
+Once created, execution is requested by calling `Queue`. When a thread is
+available for execution the `Execute` method will be invoked.  Once `Execute`
+complets either `OnOK` or `OnError` will be invoked.  Once the `OnOK` or 
+`OnError` methods are complete the AsyncWorker instance is destructed.
+
+For the most basic use, only the `Execute` method must be implemented in a
+subclass.
+
+## Methods
+
+### Env
+
+Requests the environment in which the async worker has been initially created.
+
+```cpp
+Env Env() const;
+```
+
+Returns the environment in which the async worker has been created.
+
+### Queue
+
+Requests that the work be queued for execution.
+
+```cpp
+void Queue();
+```
+
+### Cancel
+
+Cancels queued work if it has not yet been started. If it has already started
+executing, it cannot be cancelled.  If cancelled successfully neither
+`OnOK` nor `OnError` will be called.
+
+```cpp
+void Cancel();
+```
+
+### Receiver
+
+```cpp
+ObjectReference& Receiver();
+```
+
+Returns the persistent object reference of the receiver object set when the async
+worker was created.
+
+### Callback
+
+```cpp
+FunctionReference& Callback();
+```
+
+Returns the persistent function reference of the callback set when the async
+worker was created. The returned function reference will receive the results of
+the computation that happened in the `Execute` method, unless the default
+implementation of `OnOK` or `OnError` is overridden.
+
+### SetError
+
+Sets the error message for the error that happened during the execution. Setting
+an error message will cause the `OnError` method to be invoked instead of `OnOK`
+once the `Execute` method completes.
+
+```cpp
+void SetError(const std::string& error);
+```
+
+- `[in] error`: The reference to the string that represent the message of the error.
+
+### Execute
+
+This method is used to execute some tasks out of the **event loop** on a libuv
+worker thread. Subclasses must implement this method and the method is run on
+a thread other than that running the main event loop.  As the method is not
+running on the main event loop, it must avoid calling any methods from node-addon-api
+or running any code that might invoke JavaScript.  Instead once this method is
+complete any interaction through node-addon-api with JavaScript should be implemented
+in the `OnOK` method which runs on the main thread and is invoked when the `Execute`
+method completes.
+
+```cpp
+virtual void Execute() = 0;
+```
+
+### OnOK
+
+This method is invoked when the computation in the `Excecute` method ends.
+The default implementation runs the Callback provided when the AsyncWorker class
+was created.
+
+```cpp
+virtual void OnOK();
+```
+
+### OnError
+
+This method is invoked afer Execute() completes if an error occurs
+while `Execute` is running and C++ exceptions are enabled or if an
+error was set through a call to `SetError`.  The default implementation
+calls the callback provided when the AsyncWorker class was created, passing
+in the error as the first parameter.
+
+```cpp
+virtual void OnError(const Error& e);
+```
+
+### Constructor
+
+Creates a new `AsyncWorker`.
+
+```cpp
+explicit AsyncWorker(const Function& callback);
+```
+
+- `[in] callback`: The function which will be called when an asynchronous
+operations ends. The given function is called from the main event loop thread.
+
+Returns an AsyncWork instance which can later be queued for execution by calling
+`Queue`.
+
+### Constructor
+
+Creates a new `AsyncWorker`.
+
+```cpp
+explicit AsyncWorker(const Function& callback, const char* resource_name);
+```
+
+- `[in] callback`: The function which will be called when an asynchronous
+operations ends. The given function is called from the main event loop thread.
+- `[in] resource_name`: Null-terminated strings that represents the
+identifier for the kind of resource that is being provided for diagnostic
+information exposed by the async_hooks API.
+
+Returns an AsyncWork instance which can later be queued for execution by calling
+`Queue`.
+
+
+### Constructor
+
+Creates a new `AsyncWorker`.
+
+```cpp
+explicit AsyncWorker(const Function& callback, const char* resource_name, const Object& resource);
+```
+
+- `[in] callback`: The function which will be called when an asynchronous
+operations ends. The given function is called from the main event loop thread.
+- `[in] resource_name`:  Null-terminated strings that represents the
+identifier for the kind of resource that is being provided for diagnostic
+information exposed by the async_hooks API.
+- `[in] resource`: Object associated with the asynchronous operation that
+will be passed to possible async_hooks.
+
+Returns an AsyncWork instance which can later be queued for execution by calling
+`Queue`.
+
+### Constructor
+
+Creates a new `AsyncWorker`.
+
+```cpp
+explicit AsyncWorker(const Object& receiver, const Function& callback);
+```
+
+- `[in] receiver`: The `this` object passed to the called function.
+- `[in] callback`: The function which will be called when an asynchronous
+operations ends. The given function is called from the main event loop thread.
+
+Returns an AsyncWork instance which can later be queued for execution by calling
+`Queue`.
+
+
+### Constructor
+
+Creates a new `AsyncWorker`.
+
+```cpp
+explicit AsyncWorker(const Object& receiver, const Function& callback,const char* resource_name);
+```
+
+- `[in] receiver`: The `this` object passed to the called function.
+- `[in] callback`: The function which will be called when an asynchronous
+operations ends. The given function is called from the main event loop thread.
+- `[in] resource_name`:  Null-terminated strings that represents the
+identifier for the kind of resource that is being provided for diagnostic
+information exposed by the async_hooks API.
+
+Returns an AsyncWork instance which can later be queued for execution by calling
+`Queue`.
+
+
+### Constructor
+
+Creates a new `AsyncWorker`.
+
+```cpp
+explicit AsyncWorker(const Object& receiver, const Function& callback, const char* resource_name, const Object& resource);
+```
+
+- `[in] receiver`: The `this` object passed to the called function.
+- `[in] callback`: The function which will be called when an asynchronous
+operations ends. The given function is called from the main event loop thread.
+- `[in] resource_name`:  Null-terminated strings that represents the
+identifier for the kind of resource that is being provided for diagnostic
+information exposed by the async_hooks API.
+- `[in] resource`: Object associated with the asynchronous operation that
+will be passed to possible async_hooks.
+
+Returns an AsyncWork instance which can later be queued for execution by calling
+`Queue`.
+
+### Destructor
+
+Deletes the created work object that is used to execute logic asynchronously.
+
+```cpp
+virtual ~AsyncWorker();
+```
+
+## Operator
+
+```cpp
+operator napi_async_work() const;
+```
+
+Returns the N-API napi_async_work wrapped by the AsyncWorker object. This can be
+used to mix usage of the C N-API and node-addon-api.
+
+## Example
+
+The first step to use the `AsyncWorker` class is to create a new class that inherit
+from it and implement the `Execute` abstract method. Typically input to your
+worker will be saved within class' fields generally passed in through its
+constructor.
+
+When the `Execute` method completes without errors the `OnOK` function callback
+will be invoked. In this function the results of the computation will be
+reassembled and returned back to the initial JavaScript context.
+
+`AsyncWorker` ensures that all the code in the `Execute` function runs in the
+background out of the **event loop** thread and at the end the `OnOK` or `OnError`
+function will be called and are executed as part of the event loop.
+
+The code below show a basic example of `AsyncWorker` the implementation:
+
+```cpp
+#include<napi.h>
+
+#include <chrono>
+#include <thread>
+
+use namespace Napi;
+
+class EchoWorker : public AsyncWorker {
+    public:
+        EchoWorker(Function& callback, std::string& echo)
+        : AsyncWorker(callback), echo(echo) {}
+
+        ~EchoWorker() {}
+    // This code will be executed on the worker thread
+    void Execute() {
+        // Need to simulate cpu heavy task
+        std::this_thread::sleep_for(std::chrono::seconds(1));
+    }
+
+    void OnOK() {
+        HandleScope scope(Env());
+        Callback().Call({Env().Null(), String::New(Env(), echo)});
+    }
+
+    private:
+        std::string echo;
+};
+```
+
+The `EchoWorker`'s contructor calls the base class' constructor to pass in the
+callback that the `AsyncWorker` base class will store persistently. When the work
+on the `Execute` method is done the `OnOk` method is called and the results return
+back to JavaScript invoking the stored callback with its associated environment.
+
+The following code shows an example on how to create and and use an `AsyncWorker`
+
+```cpp
+Value Echo(const CallbackInfo& info) {
+    // You need to check the input data here
+    Function cb = info[1].As<Function>();
+    std::string in = info[0].As<String>();
+    EchoWorker* wk = new EchoWorker(cb, in);
+    wk->Queue();
+    return info.Env().Undefined();
+```
+
+Using the implementation of an `AsyncWorker` is straight forward. You need only create
+a new instance and pass to its constructor the callback you want to execute when
+your asynchronous task ends and other data you need for your computation. Once created the
+only other action you have to do is to call the `Queue` method that will that will
+queue the created worker for execution.
