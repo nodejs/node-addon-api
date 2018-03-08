@@ -19,7 +19,7 @@ To use **N-API** in a native module:
 
 ```json
   "dependencies": {
-    "node-addon-api": "1.1.0",
+    "node-addon-api": "1.2.0",
   }
 ```
 
