@@ -2285,36 +2285,60 @@ inline Napi::Value FunctionReference::operator ()(
 
 inline Napi::Value FunctionReference::Call(const std::initializer_list<napi_value>& args) const {
   EscapableHandleScope scope(_env);
-  return scope.Escape(Value().Call(args));
+  Napi::Value result = Value().Call(args);
+  if (scope.Env().IsExceptionPending()) {
+    return Value();
+  }
+  return scope.Escape(result);
 }
 
 inline Napi::Value FunctionReference::Call(const std::vector<napi_value>& args) const {
   EscapableHandleScope scope(_env);
-  return scope.Escape(Value().Call(args));
+  Napi::Value result = Value().Call(args);
+  if (scope.Env().IsExceptionPending()) {
+    return Value();
+  }
+  return scope.Escape(result);
 }
 
 inline Napi::Value FunctionReference::Call(
     napi_value recv, const std::initializer_list<napi_value>& args) const {
   EscapableHandleScope scope(_env);
-  return scope.Escape(Value().Call(recv, args));
+  Napi::Value result = Value().Call(recv, args);
+  if (scope.Env().IsExceptionPending()) {
+    return Value();
+  }
+  return scope.Escape(result);
 }
 
 inline Napi::Value FunctionReference::Call(
     napi_value recv, const std::vector<napi_value>& args) const {
   EscapableHandleScope scope(_env);
-  return scope.Escape(Value().Call(recv, args));
+  Napi::Value result = Value().Call(recv, args);
+  if (scope.Env().IsExceptionPending()) {
+    return Value();
+  }
+  return scope.Escape(result);
 }
 
 inline Napi::Value FunctionReference::MakeCallback(
     napi_value recv, const std::initializer_list<napi_value>& args) const {
   EscapableHandleScope scope(_env);
-  return scope.Escape(Value().MakeCallback(recv, args));
+  Napi::Value result = Value().MakeCallback(recv, args);
+  if (scope.Env().IsExceptionPending()) {
+    return Value();
+  }
+  return scope.Escape(result);
 }
 
 inline Napi::Value FunctionReference::MakeCallback(
     napi_value recv, const std::vector<napi_value>& args) const {
   EscapableHandleScope scope(_env);
-  return scope.Escape(Value().MakeCallback(recv, args));
+  Napi::Value result = Value().MakeCallback(recv, args);
+  if (scope.Env().IsExceptionPending()) {
+    return Value();
+  }
+  return scope.Escape(result);
 }
 
 inline Object FunctionReference::New(const std::initializer_list<napi_value>& args) const {
