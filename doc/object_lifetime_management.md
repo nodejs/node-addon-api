@@ -1,4 +1,4 @@
-# Array
+# Object lifetime management
 
 You are reading a draft of the next documentation and it's in continuous update so
 if you don't find what you need please refer to:
