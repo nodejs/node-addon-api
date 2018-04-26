@@ -64,7 +64,7 @@ values. Concepts and operations generally map to ideas specified in the
         - [PropertyDescriptor](doc/property_descriptor.md)
  - [Error Handling](doc/error_handling.md)
     - [Error](doc/error.md)
- - [Object Lifettime Management](doc/object_lifetime_management.md)
+ - [Object Lifetime Management](doc/object_lifetime_management.md)
     - [HandleScope](doc/handle_scope.md)
     - [EscapableHandleScope](doc/escapable_handle_scope.md)
  - [Working with JavaScript Values](doc/working_with_javascript_values.md)
