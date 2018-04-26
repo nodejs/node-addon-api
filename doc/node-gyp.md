@@ -4,8 +4,8 @@ C++ code needs to be compiled into executable form whether it be as an object
 file to linked with others, a shared library, or a standalone executable.
 
 The main reason for this is that we need to link to the Node.js dependencies and
-headers correcrtly, another reason is that we need a cross platform way to build
-C++ soucre into binary for the target platform,
+headers correctly, another reason is that we need a cross platform way to build
+C++ source into binary for the target platform.
 
 Until now **node-gyp** is the **de-facto** standard build tool for writing
 Node.js addons. It's based on Google's **gyp** build tool, which abstract away
