@@ -12,6 +12,7 @@ Object InitDataViewReadWrite(Env env);
 Object InitError(Env env);
 Object InitExternal(Env env);
 Object InitFunction(Env env);
+Object InitHandleScope(Env env);
 Object InitName(Env env);
 Object InitObject(Env env);
 Object InitPromise(Env env);
@@ -31,6 +32,7 @@ Object Init(Env env, Object exports) {
   exports.Set("external", InitExternal(env));
   exports.Set("function", InitFunction(env));
   exports.Set("name", InitName(env));
+  exports.Set("handlescope", InitHandleScope(env));
   exports.Set("object", InitObject(env));
   exports.Set("promise", InitPromise(env));
   exports.Set("typedarray", InitTypedArray(env));
