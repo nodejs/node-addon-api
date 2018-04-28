@@ -1515,7 +1515,20 @@ namespace Napi {
 
   protected:
     explicit AsyncWorker(const Function& callback);
-    explicit AsyncWorker(const Object& receiver, const Function& callback);
+    explicit AsyncWorker(const Function& callback,
+                         const char* resource_name);
+    explicit AsyncWorker(const Function& callback,
+                         const char* resource_name,
+                         const Object& resource);
+    explicit AsyncWorker(const Object& receiver,
+                         const Function& callback);
+    explicit AsyncWorker(const Object& receiver,
+                         const Function& callback,
+                         const char* resource_name);
+    explicit AsyncWorker(const Object& receiver,
+                         const Function& callback,
+                         const char* resource_name,
+                         const Object& resource);
 
     virtual void Execute() = 0;
     virtual void OnOK();

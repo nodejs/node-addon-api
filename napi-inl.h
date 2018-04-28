@@ -3079,21 +3079,51 @@ inline Value EscapableHandleScope::Escape(napi_value escapee) {
 ////////////////////////////////////////////////////////////////////////////////
 
 inline AsyncWorker::AsyncWorker(const Function& callback)
-  : AsyncWorker(Object::New(callback.Env()), callback) {
+  : AsyncWorker(callback, "generic") {
 }
 
-inline AsyncWorker::AsyncWorker(const Object& receiver, const Function& callback)
+inline AsyncWorker::AsyncWorker(const Function& callback,
+                                const char* resource_name)
+  : AsyncWorker(callback, resource_name, Object::New(callback.Env())) {
+}
+
+inline AsyncWorker::AsyncWorker(const Function& callback,
+                                const char* resource_name,
+                                const Object& resource)
+  : AsyncWorker(Object::New(callback.Env()),
+                callback,
+                resource_name,
+                resource) {
+}
+
+inline AsyncWorker::AsyncWorker(const Object& receiver,
+                                const Function& callback)
+  : AsyncWorker(receiver, callback, "generic") {
+}
+
+inline AsyncWorker::AsyncWorker(const Object& receiver,
+                                const Function& callback,
+                                const char* resource_name)
+  : AsyncWorker(receiver,
+                callback,
+                resource_name,
+                Object::New(callback.Env())) {
+}
+
+inline AsyncWorker::AsyncWorker(const Object& receiver,
+                                const Function& callback,
+                                const char* resource_name,
+                                const Object& resource)
   : _env(callback.Env()),
     _receiver(Napi::Persistent(receiver)),
     _callback(Napi::Persistent(callback)) {
-
   napi_value resource_id;
   napi_status status = napi_create_string_latin1(
-    _env, "generic", NAPI_AUTO_LENGTH, &resource_id);
+      _env, resource_name, NAPI_AUTO_LENGTH, &resource_id);
   NAPI_THROW_IF_FAILED(_env, status);
 
-  status = napi_create_async_work(
-    _env, nullptr, resource_id, OnExecute, OnWorkComplete, this, &_work);
+  status = napi_create_async_work(_env, resource, resource_id, OnExecute,
+                                  OnWorkComplete, this, &_work);
   NAPI_THROW_IF_FAILED(_env, status);
 }
 

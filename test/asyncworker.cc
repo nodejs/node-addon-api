@@ -6,10 +6,11 @@ class TestWorker : public AsyncWorker {
 public:
   static void DoWork(const CallbackInfo& info) {
     bool succeed = info[0].As<Boolean>();
-    Function cb = info[1].As<Function>();
-    Value data = info[2];
+    Object resource = info[1].As<Object>();
+    Function cb = info[2].As<Function>();
+    Value data = info[3];
 
-    TestWorker* worker = new TestWorker(cb);
+    TestWorker* worker = new TestWorker(cb, "TestResource", resource);
     worker->Receiver().Set("data", data);
     worker->_succeed = succeed;
     worker->Queue();
@@ -23,7 +24,8 @@ protected:
   }
 
 private:
-  TestWorker(Function cb) : AsyncWorker(cb) {}
+  TestWorker(Function cb, const char* resource_name, const Object& resource)
+      : AsyncWorker(cb, resource_name, resource) {}
   bool _succeed;
 };
 
