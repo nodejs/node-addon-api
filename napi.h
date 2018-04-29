@@ -925,9 +925,16 @@ namespace Napi {
     Value Call(napi_value recv, const std::vector<napi_value>& args) const;
     Value Call(napi_value recv, size_t argc, const napi_value* args) const;
 
-    Value MakeCallback(napi_value recv, const std::initializer_list<napi_value>& args) const;
-    Value MakeCallback(napi_value recv, const std::vector<napi_value>& args) const;
-    Value MakeCallback(napi_value recv, size_t argc, const napi_value* args) const;
+    Value MakeCallback(napi_value recv,
+                       const std::initializer_list<napi_value>& args,
+                       napi_async_context context = nullptr) const;
+    Value MakeCallback(napi_value recv,
+                       const std::vector<napi_value>& args,
+                       napi_async_context context = nullptr) const;
+    Value MakeCallback(napi_value recv,
+                       size_t argc,
+                       const napi_value* args,
+                       napi_async_context context = nullptr) const;
 
     Object New(const std::initializer_list<napi_value>& args) const;
     Object New(const std::vector<napi_value>& args) const;
@@ -1099,9 +1106,16 @@ namespace Napi {
     Napi::Value Call(napi_value recv, const std::vector<napi_value>& args) const;
     Napi::Value Call(napi_value recv, size_t argc, const napi_value* args) const;
 
-    Napi::Value MakeCallback(napi_value recv, const std::initializer_list<napi_value>& args) const;
-    Napi::Value MakeCallback(napi_value recv, const std::vector<napi_value>& args) const;
-    Napi::Value MakeCallback(napi_value recv, size_t argc, const napi_value* args) const;
+    Napi::Value MakeCallback(napi_value recv,
+                             const std::initializer_list<napi_value>& args,
+                             napi_async_context context = nullptr) const;
+    Napi::Value MakeCallback(napi_value recv,
+                             const std::vector<napi_value>& args,
+                             napi_async_context context = nullptr) const;
+    Napi::Value MakeCallback(napi_value recv,
+                             size_t argc,
+                             const napi_value* args,
+                             napi_async_context context = nullptr) const;
 
     Object New(const std::initializer_list<napi_value>& args) const;
     Object New(const std::vector<napi_value>& args) const;
@@ -1581,6 +1595,24 @@ namespace Napi {
   private:
     napi_env _env;
     napi_escapable_handle_scope _scope;
+  };
+
+  class AsyncContext {
+  public:
+    explicit AsyncContext(napi_env env, const char* resource_name);
+    explicit AsyncContext(napi_env env, const char* resource_name, const Object& resource);
+    virtual ~AsyncContext();
+
+    AsyncContext(AsyncContext&& other);
+    AsyncContext& operator =(AsyncContext&& other);
+    AsyncContext(const AsyncContext&) = delete;
+    AsyncContext& operator =(AsyncContext&) = delete;
+
+    operator napi_async_context() const;
+
+  private:
+    napi_env _env;
+    napi_async_context _context;
   };
 
   class AsyncWorker {
