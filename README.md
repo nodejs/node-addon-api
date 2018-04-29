@@ -103,6 +103,7 @@ The following is the documentation for node-addon-api.
  - [Memory Management](doc/memory_management.md)
  - [Async Operations](doc/async_operations.md)
     - [AsyncWorker](doc/async_worker.md)
+    - [AsyncContext](doc/async_context.md)
  - [Promises](doc/promises.md)
  - [Version management](doc/version_management.md)
 
