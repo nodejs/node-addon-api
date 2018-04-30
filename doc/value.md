@@ -4,7 +4,7 @@
 
 Value is the C++ manifestation of a JavaScript value.
 
-Value is a the base class upon which other JavaScipt values such as Number, Boolean, String, and Object are based.
+Value is a the base class upon which other JavaScript values such as Number, Boolean, String, and Object are based.
 
 The following classes inherit, either directly or indirectly, from Value:
 

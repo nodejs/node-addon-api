@@ -16,8 +16,8 @@ These are the steps to follow to create a new release:
 
 * Use https://ci.nodejs.org/view/x%20-%20Abi%20stable%20module%20API/job/node-test-node-addon-api/
   to validate tests pass for latest 9, 8, 6, 4 releases
-  (note there are still some issues on smartos and
-   windows in the testing).
+  (note there are still some issues on SmartOS and
+   Windows in the testing).
 
 * Update the version in package.json appropriately.
 
@@ -30,7 +30,7 @@ These are the steps to follow to create a new release:
 
 * Login and then run `npm publish`.
 
-* Create a release in github (look at existing releases for an example).
+* Create a release in Github (look at existing releases for an example).
 
 * Validate that you can run `npm install node-addon-api` successfully
   and that the correct version is installed.

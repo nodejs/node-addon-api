@@ -52,7 +52,7 @@ Returns a `bool` indicating if the function that was invoked (and for which the 
 size_t Length() const;
 ```
 
-Returns the number of arguments passed in the Callabckinfo object.
+Returns the number of arguments passed in the CallbackInfo object.
 
 ### operator []
 
