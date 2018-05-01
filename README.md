@@ -90,7 +90,7 @@ Are you new to **N-API**? Take a look at our **[examples](https://github.com/nod
 - **[Pass arguments to a function](https://github.com/nodejs/abi-stable-node-addon-examples/tree/master/2_function_arguments/node-addon-api)**
 - **[Callbacks](https://github.com/nodejs/abi-stable-node-addon-examples/tree/master/3_callbacks/node-addon-api)**
 - **[Object factory](https://github.com/nodejs/abi-stable-node-addon-examples/tree/master/4_object_factory/node-addon-api)**
-- **[Function factory](https://github.com/nodejs/abi-stable-node-addon-examples/tree/master/4_object_factory/node-addon-api)**
+- **[Function factory](https://github.com/nodejs/abi-stable-node-addon-examples/tree/master/5_function_factory/node-addon-api)**
 - **[Wrapping C++ Object](https://github.com/nodejs/abi-stable-node-addon-examples/tree/master/6_object_wrap/node-addon-api)**
 - **[Factory of wrapped object](https://github.com/nodejs/abi-stable-node-addon-examples/tree/master/7_factory_wrap/node-addon-api)**
 - **[Passing wrapped object around](https://github.com/nodejs/abi-stable-node-addon-examples/tree/master/8_passing_wrapped/node-addon-api)**
