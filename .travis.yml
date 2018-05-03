@@ -10,11 +10,15 @@ os:
 env:
   global:
     # https://github.com/jasongin/nvs/blob/master/doc/CI.md
-    - NVS_VERSION=1.2.0
+    - NVS_VERSION=1.4.2
   matrix:
     - NODEJS_VERSION=node/4
     - NODEJS_VERSION=node/6
     - NODEJS_VERSION=node/8
+    - NODEJS_VERSION=node/9
+    - NODEJS_VERSION=node/10
+    - NODEJS_VERSION=chakracore/8
+    - NODEJS_VERSION=chakracore/10
     - NODEJS_VERSION=nightly
     - NODEJS_VERSION=chakracore-nightly
 matrix:
