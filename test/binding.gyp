@@ -12,6 +12,7 @@
         'error.cc',
         'external.cc',
         'function.cc',
+        'handlescope.cc',
         'name.cc',
         'object/delete_property.cc',
         'object/get_property.cc',
