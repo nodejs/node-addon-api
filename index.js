@@ -14,8 +14,10 @@ var versionArray = process.version
 // We know which version of Node.js first shipped the incarnation of the API
 // available in *this* package. So, if we find that the Node.js version is below
 // that, we indicate that the API is missing from Node.js.
-var isNodeApiBuiltin =
-  (versionArray[0] > 8 || (versionArray[0] == 8 && versionArray[1] > 5));
+var isNodeApiBuiltin = (
+  versionArray[0] > 8 ||
+  (versionArray[0] == 8 && versionArray[1] >= 6) ||
+  (versionArray[0] == 6 && versionArray[1] >= 14 && versionArray[2] >= 2));
 
 // The flag is not needed when the Node version is not 8, nor if the API is
 // built-in, because we removed the flag at the same time as creating the final
