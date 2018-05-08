@@ -1,5 +1,7 @@
 #include "napi.h"
 #include "string.h"
+#include <stdio.h>
+#include <stdlib.h>
 
 using namespace Napi;
 
@@ -25,7 +27,9 @@ Value stressEscapeFromScope(const CallbackInfo& info) {
   Value result;
   for (int i = 0; i < LOOP_MAX; i++) {
     EscapableHandleScope scope(info.Env());
-    std::string name = std::string("inner-scope") + std::to_string(i);
+    char buffer[128];
+    snprintf(buffer, 128, "%d", i);
+    std::string name = std::string("inner-scope") + std::string(buffer);
     Value newValue = String::New(info.Env(), name.c_str());
     if (i == (LOOP_MAX -1)) {
       result = scope.Escape(newValue);
