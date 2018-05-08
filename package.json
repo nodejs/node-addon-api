@@ -8,15 +8,19 @@
     "Anna Henningsen (https://github.com/addaleax)",
     "Arunesh Chandra (https://github.com/aruneshchandra)",
     "Benjamin Byholm (https://github.com/kkoopa)",
+    "Cory Mickelson (https://github.com/corymickelson)", 
     "David Halls (https://github.com/davedoesdev)",
+    "Eric Bickle (https://github.com/ebickle)",
     "Gabriel Schulhof (https://github.com/gabrielschulhof)",
     "Hitesh Kanwathirtha (https://github.com/digitalinfinity)",
     "Jason Ginchereau (https://github.com/jasongin)",
+    "Jim Schlight (https://github.com/jschlight)",
     "Jinho Bang (https://github.com/romandev)",
     "Konstantin Tarkus (https://github.com/koistya)",
     "Kyle Farnung (https://github.com/kfarnung)",
     "Matteo Collina (https://github.com/mcollina)",
     "Michael Dawson (https://github.com/mhdawson)",
+    "Michele Campus (https://github.com/kYroL01)",
     "Nicola Del Gobbo (https://github.com/NickNaso)",
     "Rolf Timmermans (https://github.com/rolftimmermans)",
     "Sampson Gao (https://github.com/sampsongao)",
@@ -43,5 +47,5 @@
     "test": "node test",
     "doc": "doxygen doc/Doxyfile"
   },
-  "version": "1.2.0"
+  "version": "1.3.0"
 }
