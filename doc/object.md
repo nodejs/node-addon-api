@@ -1,8 +1,42 @@
 # Object
 
-Object is a Javascript object value. A common usecase is to assign many values to a single object. 
+The Object class corresponds to a JavaScript object. It is extended by the following node-addon-api classes that you may use when working with more specific types:
 
-Object is extended by [Value](value.md) and extends [Array](array.md), [ArrayBuffer](array_buffer.md), [Buffer<T>](buffer.md), [Function](function.md), and [TypedArray](typed_array.md). 
+- [Value](value.md) and extends [Array](array.md)
+- [ArrayBuffer](array_buffer.md)
+- [Buffer<T>](buffer.md)
+- [Function](function.md)
+- [TypedArray](typed_array.md). 
+
+This class provides a number of convenience methods, most of which are used to set or set properties on a JavaScript object. For example, Set() and Get().
+
+## Example
+```cpp
+#include <napi.h>
+
+using namescape Napi;
+
+Void Init(Env env) {
+
+  // Create a new instance
+  Object obj = Object::New(env);
+
+  // Assign values to properties
+  obj.Set("hello", "world");
+  obj.Set(42, "The Answer to Life, the Universe, and Everything");
+  obj.Set("Douglas Adams", true);
+
+  // Get properties
+  Value val1 = obj.Get("hello");
+  Value val2 = obj.Get(42);
+  Value val3 = obj.Get("Douglas Adams");
+
+  // Test if objects have properties.
+  bool obj1 = obj.Has("hello"); // true
+  bool obj2 = obj.Has("world"); // false
+
+}
+```
 
 ## Methods
 
@@ -47,16 +81,14 @@ Creates a new Object value.
 ```cpp
 void Napi::Object::Set (____ key, ____ value);
 ```
-- `[in] key`: The property that is being assigned a value.
-- `[in] value`: The property that is being assigned to a key.
+- `[in] key`: The name for the property being assigned.
+- `[in] value`: The value being assigned to the property.
 
-Assigns the value to the key . 
+Add a property with the specified key with the specified value to the object.
 
-The key-value pair types can be one of the following:
-- `napi_value` key, `napi_value` value
-- [Value](value.md) key, [Value](value.md) value
-
-Alternatively, the key can be any of the following types:
+The key can be any of the following types:
+- `napi_value`
+- [Value][value.md]
 - `const char*`
 - `const std::string&`
 - `uint32_t`
@@ -74,9 +106,10 @@ While the value must be any of the following types:
 ```cpp
 Value Napi::Object::Get(____ key);
 ```
-- `[in] key`: The property whose assigned value is being returned.
+- `[in] key`: The name of the property to return the value for.
 
-Returns the [Value](value.md) associated with the key property.
+Returns the [Value](value.md) associated with the key property. Returns NULL if no such key exists.
+
 The `key` can be any of the following types:
 - `napi_value`
 - [Value](value.md)
@@ -89,9 +122,9 @@ The `key` can be any of the following types:
 ```cpp
 bool Napi::Object::Has (____ key) const;
 ```
-- `[in] key`: The property that is being checked for having an assigned value.
+- `[in] key`: The name of the property to check.
 
-Returns a `bool` that is *true* if the `key` has a value property associated with it and *false* otherwise.
+Returns a `bool` that is *true* if the object has a property named `key` and *false* otherwise.
 
 ### InstanceOf()
 
@@ -167,31 +200,3 @@ Value Napi::Object::operator[] (uint32_t index) const;
 - `[in] index`: Element index.
 
 Returns an indexed property or array element as a [Value](value.md).
-
-### Example
-```cpp
-#include <napi.h>
-
-using namescape Napi;
-
-Void Init(Env env) {
-
-  // Create a new instance
-  Object obj = Object::New(env);
-
-  // Assign values to properties
-  obj.Set("hello", "world");
-  obj.Set(42, "The Answer to Life, the Universe, and Everything");
-  obj.Set("Douglas Adams", true); 
-
-  // Get properties
-  Value val1 = obj.Get("hello");
-  Value val2 = obj.Get(42);
-  Value val3 = obj.Get("Douglas Adams");
-
-  // Test if objects have properties.
-  bool obj1 = obj.Has("hello"); // true
-  bool obj2 = obj.Has("world"); // false
-
-}
-```
