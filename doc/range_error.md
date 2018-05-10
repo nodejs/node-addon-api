@@ -13,33 +13,33 @@ For more details about error handling refer to the section titled [Error handlin
 
 ### New
 
-Creates a new instance of ```RangeError``` object
+Creates a new instance of `RangeError` object
 
 ```cpp
 RangeError::New(Napi:Env env, const char* message);
 ```
 
-- ```[in] Env```: The environment in which to construct the RangeError object.
-- ```[in] message```: Null-terminated strings to be used as the message for the RangeError.
+- `[in] Env`: The environment in which to construct the `RangeError` object.
+- `[in] message`: Null-terminated strings to be used as the message for the `RangeError`.
 
-Returns an instance of ```RangeError``` object.
+Returns an instance of `RangeError` object.
 
 ### New
 
-Creates a new instance of ```RangeError``` object
+Creates a new instance of `RangeError` object
 
 ```cpp
 RangeError::New(Napi:Env env, const std::string& message);
 ```
 
-- `[in] Env`: The environment in which to construct the RangeError object.
-- `[in] message`: Reference string to be used as the message for the RangeError.
+- `[in] Env`: The environment in which to construct the `RangeError` object.
+- `[in] message`: Reference string to be used as the message for the `RangeError`.
 
-Returns an instance of ```RangeError``` object.
+Returns an instance of `RangeError` object.
 
 ### Constructor
 
-Creates a new empty instance of ```RangeError```
+Creates a new empty instance of `RangeError`
 
 ```cpp
 RangeError();
@@ -47,13 +47,13 @@ RangeError();
 
 ### Constructor
 
-Initializes a ```RangeError``` instance from an existing ```Error``` object.
+Initializes a `RangeError` instance from an existing Javascript error object.
 
 ```cpp
 RangeError(napi_env env, napi_value value);
 ```
 
-- ```[in] Env```: The environment in which to construct the RangeError object.
-- ```[in] value```: The ```Error``` reference to wrap.
+- `[in] Env`: The environment in which to construct the `RangeError` object.
+- `[in] value`: The `Error` reference to wrap.
 
-Returns an instance of ```RangeError``` object.
+Returns an instance of `RangeError` object.

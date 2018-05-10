@@ -13,33 +13,33 @@ For more details about error handling refer to the section titled [Error handlin
 
 ### New
 
-Creates a new instance of ```TypeError``` object
+Creates a new instance of `TypeError` object
 
 ```cpp
 TypeError::New(Napi:Env env, const char* message);
 ```
 
-- ```[in] Env```: The environment in which to construct the TypeError object.
-- ```[in] message```: Null-terminated strings to be used as the message for the TypeError.
+- `[in] Env`: The environment in which to construct the `TypeError` object.
+- `[in] message`: Null-terminated strings to be used as the message for the `TypeError`.
 
-Returns an instance of ```TypeError``` object.
+Returns an instance of `TypeError` object.
 
 ### New
 
-Creates a new instance of ```TypeError``` object
+Creates a new instance of `TypeError` object
 
 ```cpp
 TypeError::New(Napi:Env env, const std::string& message);
 ```
 
-- `[in] Env`: The environment in which to construct the TypeError object.
-- `[in] message`: Reference string to be used as the message for the TypeError.
+- `[in] Env`: The environment in which to construct the `TypeError` object.
+- `[in] message`: Reference string to be used as the message for the `TypeError`.
 
-Returns an instance of ```TypeError``` object.
+Returns an instance of `TypeError` object.
 
 ### Constructor
 
-Creates a new empty instance of ```TypeError```
+Creates a new empty instance of `TypeError`
 
 ```cpp
 TypeError();
@@ -47,13 +47,13 @@ TypeError();
 
 ### Constructor
 
-Initializes a ```TypeError``` instance from an existing ```Error``` object.
+Initializes a ```TypeError``` instance from an existing JavaScript error object.
 
 ```cpp
 TypeError(napi_env env, napi_value value);
 ```
 
-- ```[in] Env```: The environment in which to construct the TypeError object.
-- ```[in] value```: The ```Error``` reference to wrap.
+- `[in] Env`: The environment in which to construct the `TypeError` object.
+- `[in] value`: The `Error` reference to wrap.
 
-Returns an instance of ```TypeError``` object.
+Returns an instance of `TypeError` object.
