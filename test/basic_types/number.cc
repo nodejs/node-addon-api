@@ -13,7 +13,8 @@ Value ToUint32(const CallbackInfo& info) {
 }
 
 Value ToInt64(const CallbackInfo& info) {
-  return Number::New(info.Env(), info[0].As<Number>().Int64Value());
+  return Number::New(info.Env(),
+                     static_cast<double>(info[0].As<Number>().Int64Value()));
 }
 
 Value ToFloat(const CallbackInfo& info) {

@@ -25,11 +25,13 @@ static Value GetArrayBuffer(const CallbackInfo& info) {
 }
 
 static Value GetByteOffset(const CallbackInfo& info) {
-  return Number::New(info.Env(), info[0].As<DataView>().ByteOffset());
+  return Number::New(info.Env(),
+                     static_cast<double>(info[0].As<DataView>().ByteOffset()));
 }
 
 static Value GetByteLength(const CallbackInfo& info) {
-  return Number::New(info.Env(), info[0].As<DataView>().ByteLength());
+  return Number::New(info.Env(),
+                     static_cast<double>(info[0].As<DataView>().ByteLength()));
 }
 
 Object InitDataView(Env env) {

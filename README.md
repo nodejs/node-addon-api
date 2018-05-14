@@ -29,7 +29,7 @@ values. Concepts and operations generally map to ideas specified in the
 - **[Contributors](#contributors)**
 - **[License](#license)**
 
-## **Current version: 1.2.0**
+## **Current version: 1.3**
 
 (See [CHANGELOG.md](CHANGELOG.md) for complete Changelog)
 
@@ -64,9 +64,7 @@ values. Concepts and operations generally map to ideas specified in the
         - [PropertyDescriptor](doc/property_descriptor.md)
  - [Error Handling](doc/error_handling.md)
     - [Error](doc/error.md)
-    - [TypeError](doc/type_error.md)
-    - [RangeError](doc/range_error.md)
- - [Object Lifettime Management](doc/object_lifetime_management.md)
+ - [Object Lifetime Management](doc/object_lifetime_management.md)
     - [HandleScope](doc/handle_scope.md)
     - [EscapableHandleScope](doc/escapable_handle_scope.md)
  - [Working with JavaScript Values](doc/working_with_javascript_values.md)
@@ -129,6 +127,7 @@ Take a look and get inspired by our **[test suite](https://github.com/nodejs/nod
 | Hitesh Kanwathirtha | [digitalinfinity](https://github.com/digitalinfinity) |
 | Jason Ginchereau    | [jasongin](https://github.com/jasongin)               |
 | Michael Dawson      | [mhdawson](https://github.com/mhdawson)               |
+| Nicola Del Gobbo    | [NickNaso](https://github.com/NickNaso)               |
 | Sampson Gao         | [sampsongao](https://github.com/sampsongao)           |
 | Taylor Woll         | [boingoing](https://github.com/boingoing)             |
 
