@@ -1536,6 +1536,9 @@ namespace Napi {
     std::string _error;
   };
 
+  /// Memory management.
+  int64_t AdjustExternalMemory(napi_env env, int64_t change_in_bytes);
+
 } // namespace Napi
 
 // Inline implementations of all the above class methods are included here.
