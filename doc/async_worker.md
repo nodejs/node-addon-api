@@ -40,25 +40,43 @@ void Cancel();
 ObjectReference& Receiver();
 ```
 
+Returns the persistent object reference of the receiver objet set when the async
+worker is created.
+
 ### Callback
 
 ```cpp
 FunctionReference& Callback();
 ```
 
+Returns the persistent function reference of the callback set when the async
+worker is created. The returned function reference will be called passing it the
+results of the computation happened on the `Execute` method.
+
 ### SetError
+
+Sets the error message for the error happened during the execution.
 
 ```cpp
 void SetError(const std::string& error);
 ```
 
+- `[in] error`: The reference to string that represent the message of the error.
+
+
 ### Execute
+
+This method is used to execute some tasks out of the **event loop** on a libuv 
+worker thread. 
 
 ```cpp
 virtual void Execute() = 0;
 ```
 
 ### OnOK
+
+This method represents a callback that is invoked when the computation on the
+`Excecute` method end.
 
 ```cpp
 virtual void OnOK();
@@ -69,6 +87,39 @@ virtual void OnOK();
 ```cpp
 virtual void OnError(const Error& e);
 ```
+
+### Constructor
+
+Creates new async worker
+
+```cpp
+explicit AsyncWorker(const Function& callback);
+```
+
+### Constructor
+
+Creates new async worker
+
+```cpp
+explicit AsyncWorker(const Object& receiver, const Function& callback);
+```
+
+### Destructor
+
+Deletes the created work object that is used to execute logic asynchronously
+
+```cpp
+virtual ~AsyncWorker();
+```
+
+## Operator
+
+```cpp
+operator napi_async_work() const;
+```
+
+Returns the N-API napi_async_work wrapped by the AsyncWorker object. This can be
+used to mix usage of the C N-API and node-addon-api.
 
 ## Example
 
