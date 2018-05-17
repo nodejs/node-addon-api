@@ -1,7 +1,7 @@
 # AsyncWorker
 
 `AsyncWorker` is an abstract class that you can subclass to remove much of the
-tedious tasks on moving data between the event loop and worker threads. This 
+tedious tasks on moving data between the event loop and worker threads. This
 class internally handles all the details of creating and executing asynchronous
 operation.
 
@@ -69,3 +69,73 @@ virtual void OnOK();
 ```cpp
 virtual void OnError(const Error& e);
 ```
+
+## Example
+
+The first step to use `AsyncWorker` class is to create a new class that inherit
+from it and implement the `Execute` abstract method. Typically input to your
+worker will be saved within your fields' class generally passed in through its
+constructor.
+
+When the `Execute` method complete without errors the `OnOK` function callback
+will be invoked. In this function the results of the computation will be
+reassembled and returned back to initial JavaScript context.
+
+`AsyncWorker` ensure that all the code inside in the `Execute` function runs in
+background out of the **event loop** thread and at the end `OnOK` or `OnError` 
+function will be called and are executed as part of the event loop.
+
+The code below show a basic example of `AsyncWorker` implementation:
+
+```cpp
+#include<napi.h>
+
+#include <chrono>
+#include <thread>
+
+use namespace Napi;
+
+class EchoWorker : public AsyncWorker {
+    public:
+        EchoWorker(Function& callback, std::string& echo)
+        : AsyncWorker(callback), echo(echo) {}
+
+        ~EchoWorker() {}
+    // This code will be executed on the worker thread
+    void Execute() {
+        // Need to simulate cpu heavy task
+        std::this_thread::sleep_for(std::chrono::seconds(1));
+    }
+
+    void OnOK() {
+        HandleScope scope(Env());
+        Callback().Call({Env().Null(), String::New(Env(), echo)});
+    }
+
+    private:
+        std::string echo;
+};
+```
+
+The `EchoWorker`'s contructor call the base class's constructor to pass in the
+callback that the `AsyncWorker` base class will store persistently. When the work
+on the `Execute` method is done the `OnOk` method is called and the results return
+back to JavaScript invoking the stored callback with its associated environment.
+
+The following code show an example on how to create and and use an `AsyncWorker`
+
+```cpp
+Value Echo(const CallbackInfo& info) {
+    // You need to check the input data here
+    Function cb = info[1].As<Function>();
+    std::string in = info[0].As<String>();
+    EchoWorker* wk = new EchoWorker(cb, in);
+    wk->Queue();
+    return info.Env().Undefined();
+```
+
+Use the implementation of an `AsyncWorker` is very simple you need only to
+create a new instance and pass to its constructor the callback you want exectute
+when your asynchronous task end and other data you need for your computation. The
+only action you have to do is to call the `Queue` method that will place the
+crearted worker on the queue of the execution.

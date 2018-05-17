@@ -18,8 +18,8 @@ Node Addon API provides an ABI-stable interface to support functions which cover
 the most common asynchronous use cases. You have two abstract class to implement
 asynchronous operation:
 
-- [AsyncWorker](async_worker.md)
-- [Async Context](async_context.md)
+- **[AsyncWorker](async_worker.md)**
+- **[Async Context](async_context.md)**
 
 These two classes help you to manage asynchronous operations through an abstraction
 of the concept of moving data between the **event loop** and **worker threads**.
