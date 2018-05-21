@@ -76,6 +76,7 @@ values. Concepts and operations generally map to ideas specified in the
     - [ArrayBuffer](doc/array_buffer.md)
     - [TypedArray](doc/typed_array.md)
       - [TypedArrayOf](doc/typed_array_of.md)
+ - [Memory Management](doc/memory_management.md)     
  - [Async Operations](doc/async_operations.md)
     - [AsyncWorker](async_worker.md)
  - [Promises](doc/promises.md)
