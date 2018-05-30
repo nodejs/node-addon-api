@@ -8,7 +8,7 @@ The Object class corresponds to a JavaScript object. It is extended by the follo
 - [Function](function.md)
 - [TypedArray](typed_array.md). 
 
-This class provides a number of convenience methods, most of which are used to set or set properties on a JavaScript object. For example, Set() and Get().
+This class provides a number of convenience methods, most of which are used to set or get properties on a JavaScript object. For example, Set() and Get().
 
 ## Example
 ```cpp
