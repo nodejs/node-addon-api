@@ -14,7 +14,7 @@ This class provides a number of convenience methods, most of which are used to s
 ```cpp
 #include <napi.h>
 
-using namescape Napi;
+using namespace Napi;
 
 Void Init(Env env) {
 
