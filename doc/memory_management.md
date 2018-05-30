@@ -1,16 +1,16 @@
 # Memory Management
 
 The function `AdjustExternalMemory` adjusts the amount of registered external
-memory. Used to give JavaScript engine an indication of the amount of externally
+memory. Used to give the JavaScript engine an indication of the amount of externally
 allocated memory that is kept alive by JavaScript objects.
-JavaScript engine uses this to decide when to perform global garbage collections.
+The JavaScript engine uses this to decide when to perform global garbage collections.
 Registering externally allocated memory will trigger global garbage collections
 more often than it would otherwise in an attempt to garbage collect the JavaScript
 objects that keep the externally allocated memory alive.
 
 ## AdjustExternalMemory
 
-This function gives to JavaScript engine an indication of the amount of externally
+This function gives the JavaScript engine an indication of the amount of externally
 allocated memory that is kept alive by JavaScript objects.
 
 ```cpp
