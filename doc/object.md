@@ -88,7 +88,7 @@ Add a property with the specified key with the specified value to the object.
 
 The key can be any of the following types:
 - `napi_value`
-- [Value][value.md]
+- [Value](value.md)
 - `const char*`
 - `const std::string&`
 - `uint32_t`
