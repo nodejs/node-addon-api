@@ -1537,7 +1537,7 @@ namespace Napi {
   };
 
   /// Memory management.
-  int64_t AdjustExternalMemory(napi_env env, int64_t change_in_bytes);
+  int64_t AdjustExternalMemory(Env env, int64_t change_in_bytes);
 
 } // namespace Napi
 

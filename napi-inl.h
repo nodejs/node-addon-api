@@ -3078,7 +3078,7 @@ inline Value EscapableHandleScope::Escape(napi_value escapee) {
 // Memory Management
 ////////////////////////////////////////////////////////////////////////////////
 
-inline int64_t AdjustExternalMemory(napi_env env, int64_t change_in_bytes) {
+inline int64_t AdjustExternalMemory(Env env, int64_t change_in_bytes) {
   int64_t result;
   napi_status status = napi_adjust_external_memory(env, change_in_bytes, &result);
   NAPI_THROW_IF_FAILED(env, status, 0);
