@@ -14,7 +14,7 @@ This function gives to JavaScript engine an indication of the amount of external
 allocated memory that is kept alive by JavaScript objects.
 
 ```cpp
-int64_t AdjustExternalMemory(napi_env env, int64_t change_in_bytes);
+int64_t AdjustExternalMemory(Env env, int64_t change_in_bytes);
 ```
 
 - `[in] env`: The environment in which the API is inoked under.
