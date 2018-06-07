@@ -9,8 +9,8 @@ interop with their C++ counterparts.
 Value is the base class of Node Addon API's fundamental object type hierarchy.
 It represents a JavaScript value of an unknown type. It is a thin wrapper around
 the N-API datatype `napi_value`. Methods on this class can be used to check
-the JavaScript type of the underlying `napi_value` and also convert to C++ 
-types.
+the JavaScript type of the underlying N-API `napi_value` and also to convert to
+C++ types.
 
 ### Constructor
 
@@ -24,10 +24,12 @@ Used to create a Node Addon API `Value` that represents an **empty** value.
 Value(napi_env env, napi_value value); 
 ```
 
-- `[in] env` - The `napi_env` environment in which to construct the Value object.
-- `[in] value` - The underlying JavaScript value that the `Value` instance represents
+- `[in] env` - The `napi_env` environment in which to construct the Value
+object.
+- `[in] value` - The underlying JavaScript value that the `Value` instance
+represents.
 
-Used to create a Node addon API `Value` that represents the `napi_value` passed
+Returns a Node Addon API `Value` that represents the `napi_value` passed
 in.
 
 ### Operators
@@ -38,8 +40,8 @@ in.
 operator napi_value() const;
 ```
 
-Returns the underlying N-API value primitive. If the instance is _empty_,
-this returns  `nullptr`.
+Returns the underlying N-API `napi_value`. If the instance is _empty_, this
+returns `nullptr`.
 
 #### operator ==
 
@@ -47,7 +49,7 @@ this returns  `nullptr`.
 bool operator ==(const Value& other) const;
 ```
 
-Returns `true` if this value strictly equals another value, or `false` otherwise
+Returns `true` if this value strictly equals another value, or `false` otherwise.
 
 #### operator !=
 
@@ -55,7 +57,7 @@ Returns `true` if this value strictly equals another value, or `false` otherwise
 bool operator !=(const Value& other) const;
 ```
 
-Returns `false` if this value strictly equals another value, or `true` otherwise
+Returns `false` if this value strictly equals another value, or `true` otherwise.
 
 ### Methods
 
@@ -68,25 +70,30 @@ static Value From(napi_env env, const T& value);
 - `[in] env` - The `napi_env` environment in which to construct the Value object.
 - `[in] value` - The C++ type to represent in JavaScript.
 
+Returns a `Napi::Value` representing the input C++ type in JavaScript.
+
 This method is used to convert from a C++ type to a JavaScript value.
 Here, `value` may be any of:
-- `bool` - returns a `Napi::Boolean`
-- Any integer type - returns a `Napi::Number`
-- Any floating point type - returns a `Napi::Number`
-- `const char*` (encoded using UTF-8, null-terminated) - returns a `Napi::String`
-- `const char16_t*` (encoded using UTF-16-LE, null-terminated) - returns a `Napi::String`
-- `std::string` (encoded using UTF-8) - returns a `Napi::String`
-- `std::u16string` - returns a `Napi::String`
-- `napi::Value` - returns a `Napi::Value`
-- `napi_value` - returns a `Napi::Value`
+- `bool` - returns a `Napi::Boolean`.
+- Any integer type - returns a `Napi::Number`.
+- Any floating point type - returns a `Napi::Number`.
+- `const char*` (encoded using UTF-8, null-terminated) - returns a `Napi::String`.
+- `const char16_t*` (encoded using UTF-16-LE, null-terminated) - returns a `Napi::String`.
+- `std::string` (encoded using UTF-8) - returns a `Napi::String`.
+- `std::u16string` - returns a `Napi::String`.
+- `napi::Value` - returns a `Napi::Value`.
+- `napi_value` - returns a `Napi::Value`.
 
 #### As
 ```cpp
 template <typename T> T As() const;
 ```
 
-Casts to another type of `Napi::Value`, when the actual type is known or assumed.
+Returns the `Napi::Value` cast to a desired C++ type.
 
+Use this when the actual type is known or assumed.
+
+Note: 
 This conversion does NOT coerce the type. Calling any methods inappropriate for 
 the actual value type will throw `Napi::Error`.
 
@@ -95,40 +102,40 @@ the actual value type will throw `Napi::Error`.
 bool StrictEquals(const Value& other) const;
 ```
 
-- `[in] other` - The value to compare against
+- `[in] other` - The value to compare against.
 
-Tests if this value strictly equals another value.
+Returns true if the other `Napi::Value` is strictly equal to this one.
 
 #### Env
 ```cpp
 Napi::Env Env() const;
 ```
 
-Gets the environment the value is associated with. See `napi_env` for more 
-details about environments.
+Returns the environment that the value is associated with. See
+[`Napi::Env`](env.md) for more details about environments.
 
 #### IsEmpty
 ```cpp
 bool IsEmpty() const;
 ```
 
-Checks if the value is uninitialized.
+Returns `true` if the value is uninitialized.
 
 An empty value is invalid, and most attempts to perform an operation on an 
 empty value will result in an exception. Note an empty value is distinct from
 JavaScript `null` or `undefined`, which are valid values.
 
 When C++ exceptions are disabled at compile time, a method with a `Value` 
-return type may return an empty value to indicate a pending exception. So when 
-not using C++ exceptions, callers should check whether the value is empty 
-before attempting to use it.
+return type may return an empty value to indicate a pending exception. If C++
+exceptions are not being used, callers should check the result of 
+`Env::IsExceptionPending` before attempting to use the value.
 
 #### Type
 ```cpp
 napi_valuetype Type() const;
 ```
 
-Gets the underlying `napi_valuetype` of the value.
+Returns the underlying N-API `napi_valuetype` of the value.
 
 #### IsUndefined
 ```cpp
@@ -152,7 +159,7 @@ bool IsBoolean() const;
 ```
 
 Returns `true` if the underlying value is a JavaScript `true` or JavaScript 
-`false` or `false` if the value is not a Boolean value in JavaScript.
+`false`, or `false` if the value is not a Boolean value in JavaScript.
 
 #### IsNumber
 ```cpp
@@ -255,19 +262,27 @@ otherwise.
 Boolean ToBoolean() const;
 ```
 
-Converts a `Napi::Value` to a JavaScript boolean value. This is a wrapper 
-around `napi_coerce_to_boolean`. This will throw a JavaScript exception if the 
-coercion fails.
+Returns a `Napi::Boolean` representing the `Napi::Value`.
+
+This is a wrapper around `napi_coerce_to_boolean`. This will throw a JavaScript
+exception if the coercion fails. If C++ exceptions are not being used, callers
+should check the result of `Env::IsExceptionPending` before attempting to use
+the returned value.
+
 
 #### ToNumber
 ```cpp
 Number ToNumber() const;
 ```
 
-Converts a `Napi::Value` to a JavaScript Number value. Note that this can cause
-script code to be executed according to JavaScript semantics. This is a wrapper 
-around `napi_coerce_to_number`. This will throw a JavaScript exception if the 
-coercion fails.
+Returns a `Napi::Number` representing the `Napi::Value`.
+
+Note:
+This can cause script code to be executed according to JavaScript semantics. 
+This is a wrapper around `napi_coerce_to_number`. This will throw a JavaScript
+exception if the coercion fails. If C++ exceptions are not being used, callers
+should check the result of `Env::IsExceptionPending` before attempting to use
+the returned value.
 
 
 #### ToString
@@ -275,37 +290,53 @@ coercion fails.
 String ToString() const;
 ```
 
-Converts a `Napi::Value` to a JavaScript String value. Note that this can cause
-script code to be executed according to JavaScript semantics. This is a wrapper 
-around `napi_coerce_to_string`. This will throw a JavaScript exception if the 
-coercion fails.
+Returns a `Napi::String` representing the `Napi::Value`.
+
+Note that this can cause script code to be executed according to JavaScript
+semantics. This is a wrapper around `napi_coerce_to_string`. This will throw a
+JavaScript exception if the coercion fails. If C++ exceptions are not being
+used, callers should check the result of `Env::IsExceptionPending` before
+attempting to use the returned value.
+
 
 #### ToObject
 ```cpp
 Object ToObject() const;
 ```
 
-Converts a `Napi::Value` to a JavasScript Object. This is a wrapper around
-`napi_coerce_to_object`. This will throw a JavaScript exception if the 
-coercion fails.
+Returns a `Napi::Object` representing the `Napi::Value`.
+
+This is a wrapper around `napi_coerce_to_object`. This will throw a JavaScript
+exception if the coercion fails. If C++ exceptions are not being used, callers
+should check the result of `Env::IsExceptionPending` before attempting to use
+the returned value.
+
 
 ## Name
 
 Names are JavaScript values that can be used as a property name. There are two
-specialized types of names supported in Node Addon API- `String` and `Symbol`.
+specialized types of names supported in Node Addon API- [`String`](String.md)
+and [`Symbol`](Symbol.md).
 
 ### Methods
 
 #### Constructor
 ```cpp
-Name();                               
-Name(napi_env env, napi_value value);
+Name();
 ```
 
-If the default constructor is invoked with no parameters, then an empty Name is
-created. If the constructor is invoked passing in an N-API value, then a Name is
-created from the JavaScript primitive. Note that the value is not coerced to a
-string.
+Returns an empty `Name`.
+
+```cpp
+Name(napi_env env, napi_value value);
+```
+- `[in] env` - The environment in which to create the array.
+- `[in] value` - The primitive to wrap.
+
+Returns a Name created from the JavaScript primitive.
+
+Note:
+The value is not coerced to a string.
 
 ## Array
 
@@ -317,16 +348,24 @@ around `napi_value` representing a JavaScript Array.
 Array();
 ```
 
-Returns an empy array. If an error occurs, a `Napi::Error` will get thrown.
+Returns an empty array.
+
+If an error occurs, a `Napi::Error` will get thrown. If C++ exceptions are not
+being used, callers should check the result of `Env::IsExceptionPending` before
+attempting to use the returned value.
+
 
 ```cpp
 Array(napi_env env, napi_value value);
 ```
 - `[in] env` - The environment in which to create the array.
-- `[in] value` - The primitive to wrap
+- `[in] value` - The primitive to wrap.
 
-Wraps a `napi_value` as a `Napi::Array`. If an error occurs, a `Napi::Error` 
-will get thrown.
+Returns a `Napi::Array` wrapping a `napi_value`.
+
+If an error occurs, a `Napi::Error` will get thrown. If C++ exceptions are not
+being used, callers should check the result of `Env::IsExceptionPending` before
+attempting to use the returned value.
 
 ### Methods
 
@@ -336,8 +375,11 @@ static Array New(napi_env env);
 ```
 - `[in] env` - The environment in which to create the array.
 
-This method returns a native representation of a JavaScript array. If an error
-occurs, a `Napi::Error` will get thrown.
+Returns a new `Napi::Array`.
+
+If an error occurs, a `Napi::Error` will get thrown. If C++ exceptions are not
+being used, callers should check the result of `Env::IsExceptionPending` before
+attempting to use the returned value.
 
 #### New
 
@@ -345,16 +387,23 @@ occurs, a `Napi::Error` will get thrown.
 static Array New(napi_env env, size_t length);
 ```
 - `[in] env` - The environment in which to create the array.
-- `[in] length` - The lengthgn of the array
+- `[in] length` - The length of the array.
 
-This method returns a native representation of a JavaScript array. If an error
-occurs, a `Napi::Error` will get thrown.
+Returns a new `Napi::Array` with the given length.
+
+If an error occurs, a `Napi::Error` will get thrown. If C++ exceptions are not
+being used, callers should check the result of `Env::IsExceptionPending` before
+attempting to use the returned value.
 
 #### New
 ```cpp
 uint32_t Length() const;
 ```
 
-Returns the length of the array. Note that this can execute JavaScript code 
-implicitly according to JavaScript semantics. If an error occurs, a `Napi::Error` 
-will get thrown.
+Returns the length of the array.
+
+Note:
+This can execute JavaScript code implicitly according to JavaScript semantics.
+If an error occurs, a `Napi::Error` will get thrown. If C++ exceptions are not
+being used, callers should check the result of `Env::IsExceptionPending` before
+attempting to use the returned value.
