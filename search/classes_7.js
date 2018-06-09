@@ -1,6 +1,5 @@
 var searchData=
 [
-  ['object',['Object',['../class_napi_1_1_object.html',1,'Napi']]],
-  ['objectreference',['ObjectReference',['../class_napi_1_1_object_reference.html',1,'Napi']]],
-  ['objectwrap',['ObjectWrap',['../class_napi_1_1_object_wrap.html',1,'Napi']]]
+  ['name',['Name',['../class_napi_1_1_name.html',1,'Napi']]],
+  ['number',['Number',['../class_napi_1_1_number.html',1,'Napi']]]
 ];

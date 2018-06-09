@@ -1,7 +1,6 @@
 var searchData=
 [
-  ['rangeerror',['RangeError',['../class_napi_1_1_range_error.html',1,'Napi']]],
-  ['reference',['Reference',['../class_napi_1_1_reference.html',1,'Napi']]],
-  ['reference_3c_20function_20_3e',['Reference&lt; Function &gt;',['../class_napi_1_1_reference.html',1,'Napi']]],
-  ['reference_3c_20object_20_3e',['Reference&lt; Object &gt;',['../class_napi_1_1_reference.html',1,'Napi']]]
+  ['promise',['Promise',['../class_napi_1_1_promise.html',1,'Napi']]],
+  ['propertydescriptor',['PropertyDescriptor',['../class_napi_1_1_property_descriptor.html',1,'Napi']]],
+  ['propertylvalue',['PropertyLValue',['../class_napi_1_1_object_1_1_property_l_value.html',1,'Napi::Object']]]
 ];

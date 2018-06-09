@@ -1,5 +1,6 @@
 var searchData=
 [
-  ['propertydescriptor',['PropertyDescriptor',['../class_napi_1_1_property_descriptor.html',1,'Napi']]],
-  ['propertylvalue',['PropertyLValue',['../class_napi_1_1_object_1_1_property_l_value.html',1,'Napi::Object']]]
+  ['object',['Object',['../class_napi_1_1_object.html',1,'Napi']]],
+  ['objectreference',['ObjectReference',['../class_napi_1_1_object_reference.html',1,'Napi']]],
+  ['objectwrap',['ObjectWrap',['../class_napi_1_1_object_wrap.html',1,'Napi']]]
 ];
