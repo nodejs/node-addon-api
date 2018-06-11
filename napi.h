@@ -1453,7 +1453,20 @@ namespace Napi {
                                            StaticMethodCallback method,
                                            napi_property_attributes attributes = napi_default,
                                            void* data = nullptr);
+    static PropertyDescriptor StaticMethod(Symbol name,
+                                           StaticVoidMethodCallback method,
+                                           napi_property_attributes attributes = napi_default,
+                                           void* data = nullptr);
+    static PropertyDescriptor StaticMethod(Symbol name,
+                                           StaticMethodCallback method,
+                                           napi_property_attributes attributes = napi_default,
+                                           void* data = nullptr);
     static PropertyDescriptor StaticAccessor(const char* utf8name,
+                                             StaticGetterCallback getter,
+                                             StaticSetterCallback setter,
+                                             napi_property_attributes attributes = napi_default,
+                                             void* data = nullptr);
+    static PropertyDescriptor StaticAccessor(Symbol name,
                                              StaticGetterCallback getter,
                                              StaticSetterCallback setter,
                                              napi_property_attributes attributes = napi_default,
@@ -1479,10 +1492,21 @@ namespace Napi {
                                                InstanceSetterCallback setter,
                                                napi_property_attributes attributes = napi_default,
                                                void* data = nullptr);
+    static PropertyDescriptor InstanceAccessor(Symbol name,
+                                               InstanceGetterCallback getter,
+                                               InstanceSetterCallback setter,
+                                               napi_property_attributes attributes = napi_default,
+                                               void* data = nullptr);
     static PropertyDescriptor StaticValue(const char* utf8name,
                                           Napi::Value value,
                                           napi_property_attributes attributes = napi_default);
+    static PropertyDescriptor StaticValue(Symbol name,
+                                          Napi::Value value,
+                                          napi_property_attributes attributes = napi_default);
     static PropertyDescriptor InstanceValue(const char* utf8name,
+                                            Napi::Value value,
+                                            napi_property_attributes attributes = napi_default);
+    static PropertyDescriptor InstanceValue(Symbol name,
                                             Napi::Value value,
                                             napi_property_attributes attributes = napi_default);
 

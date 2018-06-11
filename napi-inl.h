@@ -2824,6 +2824,40 @@ inline ClassPropertyDescriptor<T> ObjectWrap<T>::StaticMethod(
 }
 
 template <typename T>
+inline ClassPropertyDescriptor<T> ObjectWrap<T>::StaticMethod(
+    Symbol name,
+    StaticVoidMethodCallback method,
+    napi_property_attributes attributes,
+    void* data) {
+  // TODO: Delete when the class is destroyed
+  StaticVoidMethodCallbackData* callbackData = new StaticVoidMethodCallbackData({ method, data });
+
+  napi_property_descriptor desc = napi_property_descriptor();
+  desc.name = name;
+  desc.method = T::StaticVoidMethodCallbackWrapper;
+  desc.data = callbackData;
+  desc.attributes = static_cast<napi_property_attributes>(attributes | napi_static);
+  return desc;
+}
+
+template <typename T>
+inline ClassPropertyDescriptor<T> ObjectWrap<T>::StaticMethod(
+    Symbol name,
+    StaticMethodCallback method,
+    napi_property_attributes attributes,
+    void* data) {
+  // TODO: Delete when the class is destroyed
+  StaticMethodCallbackData* callbackData = new StaticMethodCallbackData({ method, data });
+
+  napi_property_descriptor desc = napi_property_descriptor();
+  desc.name = name;
+  desc.method = T::StaticMethodCallbackWrapper;
+  desc.data = callbackData;
+  desc.attributes = static_cast<napi_property_attributes>(attributes | napi_static);
+  return desc;
+}
+
+template <typename T>
 inline ClassPropertyDescriptor<T> ObjectWrap<T>::StaticAccessor(
     const char* utf8name,
     StaticGetterCallback getter,
@@ -2836,6 +2870,26 @@ inline ClassPropertyDescriptor<T> ObjectWrap<T>::StaticAccessor(
 
   napi_property_descriptor desc = napi_property_descriptor();
   desc.utf8name = utf8name;
+  desc.getter = getter != nullptr ? T::StaticGetterCallbackWrapper : nullptr;
+  desc.setter = setter != nullptr ? T::StaticSetterCallbackWrapper : nullptr;
+  desc.data = callbackData;
+  desc.attributes = static_cast<napi_property_attributes>(attributes | napi_static);
+  return desc;
+}
+
+template <typename T>
+inline ClassPropertyDescriptor<T> ObjectWrap<T>::StaticAccessor(
+    Symbol name,
+    StaticGetterCallback getter,
+    StaticSetterCallback setter,
+    napi_property_attributes attributes,
+    void* data) {
+  // TODO: Delete when the class is destroyed
+  StaticAccessorCallbackData* callbackData =
+    new StaticAccessorCallbackData({ getter, setter, data });
+
+  napi_property_descriptor desc = napi_property_descriptor();
+  desc.name = name;
   desc.getter = getter != nullptr ? T::StaticGetterCallbackWrapper : nullptr;
   desc.setter = setter != nullptr ? T::StaticSetterCallbackWrapper : nullptr;
   desc.data = callbackData;
@@ -2934,10 +2988,40 @@ inline ClassPropertyDescriptor<T> ObjectWrap<T>::InstanceAccessor(
 }
 
 template <typename T>
+inline ClassPropertyDescriptor<T> ObjectWrap<T>::InstanceAccessor(
+    Symbol name,
+    InstanceGetterCallback getter,
+    InstanceSetterCallback setter,
+    napi_property_attributes attributes,
+    void* data) {
+  // TODO: Delete when the class is destroyed
+  InstanceAccessorCallbackData* callbackData =
+    new InstanceAccessorCallbackData({ getter, setter, data });
+
+  napi_property_descriptor desc = napi_property_descriptor();
+  desc.name = name;
+  desc.getter = getter != nullptr ? T::InstanceGetterCallbackWrapper : nullptr;
+  desc.setter = setter != nullptr ? T::InstanceSetterCallbackWrapper : nullptr;
+  desc.data = callbackData;
+  desc.attributes = attributes;
+  return desc;
+}
+
+template <typename T>
 inline ClassPropertyDescriptor<T> ObjectWrap<T>::StaticValue(const char* utf8name,
     Napi::Value value, napi_property_attributes attributes) {
   napi_property_descriptor desc = napi_property_descriptor();
   desc.utf8name = utf8name;
+  desc.value = value;
+  desc.attributes = static_cast<napi_property_attributes>(attributes | napi_static);
+  return desc;
+}
+
+template <typename T>
+inline ClassPropertyDescriptor<T> ObjectWrap<T>::StaticValue(Symbol name,
+    Napi::Value value, napi_property_attributes attributes) {
+  napi_property_descriptor desc = napi_property_descriptor();
+  desc.name = name;
   desc.value = value;
   desc.attributes = static_cast<napi_property_attributes>(attributes | napi_static);
   return desc;
@@ -2950,6 +3034,18 @@ inline ClassPropertyDescriptor<T> ObjectWrap<T>::InstanceValue(
     napi_property_attributes attributes) {
   napi_property_descriptor desc = napi_property_descriptor();
   desc.utf8name = utf8name;
+  desc.value = value;
+  desc.attributes = attributes;
+  return desc;
+}
+
+template <typename T>
+inline ClassPropertyDescriptor<T> ObjectWrap<T>::InstanceValue(
+    Symbol name,
+    Napi::Value value,
+    napi_property_attributes attributes) {
+  napi_property_descriptor desc = napi_property_descriptor();
+  desc.name = name;
   desc.value = value;
   desc.attributes = attributes;
   return desc;
