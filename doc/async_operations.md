@@ -3,10 +3,10 @@
 Node.js native add-ons often need to execute long running tasks and to avoid
 blocking the **event loop** they have to run them asynchronously from the
 **event loop**.
-In the Node.js model of execution there are **two threads**, the first is the
-**event loop** thread, that represents the thread where JavaScript code is
-executing. The node.js guidance is to avoid blocking other work queued on the
-event loop thread. Therefore, we need to do this work on another thread.
+In the Node.js model of execution the event loop thread represents the thread
+where JavaScript code is executing. The node.js guidance is to avoid blocking
+other work queued on the event loop thread. Therefore, we need to do this work on
+another thread.
 
 All this means that native add-ons need to leverage async helpers from libuv as
 part of their implementation. This allows them to schedule work to be executed
