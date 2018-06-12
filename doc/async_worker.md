@@ -89,7 +89,7 @@ virtual void OnError(const Error& e);
 
 ### Constructor
 
-Creates new async worker.
+Creates a new `AsyncWorker`.
 
 ```cpp
 explicit AsyncWorker(const Function& callback);
@@ -100,7 +100,7 @@ operations ends. The given function is called from the main event loop thread.
 
 ### Constructor
 
-Creates new async worker.
+Creates a new `AsyncWorker`.
 
 ```cpp
 explicit AsyncWorker(const Function& callback, const char* resource_name);
@@ -114,7 +114,7 @@ information exposed by the async_hooks API.
 
 ### Constructor
 
-Creates new async worker.
+Creates a new `AsyncWorker`.
 
 ```cpp
 explicit AsyncWorker(const Function& callback, const char* resource_name, const Object& resource);
@@ -130,7 +130,7 @@ will be passed to possible async_hooks.
 
 ### Constructor
 
-Creates new async worker.
+Creates a new `AsyncWorker`.
 
 ```cpp
 explicit AsyncWorker(const Object& receiver, const Function& callback);
@@ -142,7 +142,7 @@ operations ends. The given function is called from the main event loop thread.
 
 ### Constructor
 
-Creates new async worker.
+Creates a new `AsyncWorker`.
 
 ```cpp
 explicit AsyncWorker(const Object& receiver, const Function& callback,const char* resource_name);
@@ -157,7 +157,7 @@ information exposed by the async_hooks API.
 
 ### Constructor
 
-Creates new async worker.
+Creates a new `AsyncWorker`.
 
 ```cpp
 explicit AsyncWorker(const Object& receiver, const Function& callback, const char* resource_name, const Object& resource);
