@@ -48,8 +48,8 @@ Creates instance of an `Error` object
 Error::New(Napi:Env env, const std::string& message);
 ```
 
-- `[in] Env`: The environment in which to construct the Error object.
-- `[in] message`: Reference string to be used as the message for the Error.
+- `[in] Env`: The environment in which to construct the `Error` object.
+- `[in] message`: Reference string to be used as the message for the `Error`.
 
 Returns instance of an `Error` object.
 
@@ -71,6 +71,8 @@ Creates empty instance of an `Error`.
 ```cpp
 Error();
 ```
+
+Returns an instance of `Error` object.
 
 ### Constructor
 
