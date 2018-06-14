@@ -95,7 +95,7 @@ Creates a new `AsyncWorker`.
 explicit AsyncWorker(const Function& callback);
 ```
 
-- ```[in] callback```: The function which will be called when an asynchronous
+- `[in] callback`: The function which will be called when an asynchronous
 operations ends. The given function is called from the main event loop thread.
 
 ### Constructor
@@ -106,9 +106,9 @@ Creates a new `AsyncWorker`.
 explicit AsyncWorker(const Function& callback, const char* resource_name);
 ```
 
-- ```[in] callback```: The function which will be called when an asynchronous
+- `[in] callback`: The function which will be called when an asynchronous
 operations ends. The given function is called from the main event loop thread.
-- ```[in] resource_name```: Null-terminated strings that represents the
+- `[in] resource_name`: Null-terminated strings that represents the
 identifier for the kind of resource that is being provided for diagnostic
 information exposed by the async_hooks API.
 
@@ -120,12 +120,12 @@ Creates a new `AsyncWorker`.
 explicit AsyncWorker(const Function& callback, const char* resource_name, const Object& resource);
 ```
 
-- ```[in] callback```: The function which will be called when an asynchronous
+- `[in] callback`: The function which will be called when an asynchronous
 operations ends. The given function is called from the main event loop thread.
-- ```[in] resource_name```:  Null-terminated strings that represents the
+- `[in] resource_name`:  Null-terminated strings that represents the
 identifier for the kind of resource that is being provided for diagnostic
 information exposed by the async_hooks API.
-- ```[in] resource```: Object associated with the asynchronous operation that
+- `[in] resource`: Object associated with the asynchronous operation that
 will be passed to possible async_hooks.
 
 ### Constructor
@@ -136,8 +136,8 @@ Creates a new `AsyncWorker`.
 explicit AsyncWorker(const Object& receiver, const Function& callback);
 ```
 
-- ```[in] receiver```: The `this` object passed to the called function.
-- ```[in] callback```: The function which will be called when an asynchronous
+- `[in] receiver`: The `this` object passed to the called function.
+- `[in] callback`: The function which will be called when an asynchronous
 operations ends. The given function is called from the main event loop thread.
 
 ### Constructor
@@ -148,10 +148,10 @@ Creates a new `AsyncWorker`.
 explicit AsyncWorker(const Object& receiver, const Function& callback,const char* resource_name);
 ```
 
-- ```[in] receiver```: The `this` object passed to the called function.
-- ```[in] callback```: The function which will be called when an asynchronous
+- `[in] receiver`: The `this` object passed to the called function.
+- `[in] callback`: The function which will be called when an asynchronous
 operations ends. The given function is called from the main event loop thread.
-- ```[in] resource_name```:  Null-terminated strings that represents the
+- `[in] resource_name`:  Null-terminated strings that represents the
 identifier for the kind of resource that is being provided for diagnostic
 information exposed by the async_hooks API.
 
@@ -163,13 +163,13 @@ Creates a new `AsyncWorker`.
 explicit AsyncWorker(const Object& receiver, const Function& callback, const char* resource_name, const Object& resource);
 ```
 
-- ```[in] receiver```: The `this` object passed to the called function.
-- ```[in] callback```: The function which will be called when an asynchronous
+- `[in] receiver`: The `this` object passed to the called function.
+- `[in] callback`: The function which will be called when an asynchronous
 operations ends. The given function is called from the main event loop thread.
-- ```[in] resource_name```:  Null-terminated strings that represents the
+- `[in] resource_name`:  Null-terminated strings that represents the
 identifier for the kind of resource that is being provided for diagnostic
 information exposed by the async_hooks API.
-- ```[in] resource```: Object associated with the asynchronous operation that
+- `[in] resource`: Object associated with the asynchronous operation that
 will be passed to possible async_hooks.
 
 ### Destructor
