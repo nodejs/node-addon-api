@@ -82,7 +82,7 @@ worker thread. Subclasses must implement this method and the method is run on
 a thread other than that running the main event loop.  As the method is not
 running on the main event loop, it must avoid calling any methods from node-addon-api
 or running any code that might invoke JavaScript.  Instead once this method is
-complete any interactive through node-addon-api with JavaScript should be implemented
+complete any interaction through node-addon-api with JavaScript should be implemented
 in the `OnOK` method which runs on the main thread and is invoked when the `Execute`
 method completes.
 
