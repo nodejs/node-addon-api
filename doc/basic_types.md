@@ -2,7 +2,7 @@
 
 Node Addon API consists of a few fundamental data types. These allow a user of 
 the API to create, convert and introspect fundamental JavaScript types, and
-interop with their C++ counterparts.
+interoperate with their C++ counterparts.
 
 ## Value
 
@@ -29,7 +29,7 @@ object.
 - `[in] value` - The underlying JavaScript value that the `Value` instance
 represents.
 
-Returns a Node Addon API `Value` that represents the `napi_value` passed
+Returns a Node.js Addon API `Value` that represents the `napi_value` passed
 in.
 
 ### Operators
@@ -122,7 +122,7 @@ bool IsEmpty() const;
 Returns `true` if the value is uninitialized.
 
 An empty value is invalid, and most attempts to perform an operation on an 
-empty value will result in an exception. Note an empty value is distinct from
+empty value will result in an exception. An empty value is distinct from
 JavaScript `null` or `undefined`, which are valid values.
 
 When C++ exceptions are disabled at compile time, a method with a `Value` 
@@ -246,7 +246,7 @@ otherwise.
 bool IsBuffer() const;
 ```
 
-Returns `true` if the underlying value is a Node `Buffer` or `false`
+Returns `true` if the underlying value is a Node.js `Buffer` or `false`
 otherwise.
 
 #### IsExternal
@@ -315,7 +315,7 @@ the returned value.
 ## Name
 
 Names are JavaScript values that can be used as a property name. There are two
-specialized types of names supported in Node Addon API- [`String`](String.md)
+specialized types of names supported in Node.js Addon API- [`String`](String.md)
 and [`Symbol`](Symbol.md).
 
 ### Methods
@@ -340,7 +340,7 @@ The value is not coerced to a string.
 
 ## Array
 
-Arrays are native representations of JavaScript Arrays. `Napi::Array` is sugar
+Arrays are native representations of JavaScript Arrays. `Napi::Array` is a wrapper
 around `napi_value` representing a JavaScript Array.
 
 ### Constructor
@@ -350,7 +350,7 @@ Array();
 
 Returns an empty array.
 
-If an error occurs, a `Napi::Error` will get thrown. If C++ exceptions are not
+If an error occurs, a `Napi::Error` will be thrown. If C++ exceptions are not
 being used, callers should check the result of `Env::IsExceptionPending` before
 attempting to use the returned value.
 
