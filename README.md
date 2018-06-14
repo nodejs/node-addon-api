@@ -79,7 +79,7 @@ values. Concepts and operations generally map to ideas specified in the
     - [TypedArray](doc/typed_array.md)
       - [TypedArrayOf](doc/typed_array_of.md)
  - [Async Operations](doc/async_operations.md)
-    - [AsyncWorker](async_worker.md)
+    - [AsyncWorker](doc/async_worker.md)
  - [Promises](doc/promises.md)
 
 <a name="examples"></a>
