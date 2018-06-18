@@ -90,6 +90,7 @@ still a work in progress as its not yet complete).
     - [ArrayBuffer](doc/array_buffer.md)
     - [TypedArray](doc/typed_array.md)
       - [TypedArrayOf](doc/typed_array_of.md)
+ - [Memory Management](doc/memory_management.md)
  - [Async Operations](doc/async_operations.md)
     - [AsyncWorker](doc/async_worker.md)
  - [Promises](doc/promises.md)
