@@ -35,7 +35,7 @@ with each of the values, one at a time:
 for (int i = 0; i < LOOP_MAX; i++) {
   std::string name = std::string("inner-scope") + std::to_string(i);
   Value newValue = String::New(info.Env(), name.c_str());
-  // do something with neValue
+  // do something with newValue
 };
 ```
 
