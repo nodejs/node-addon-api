@@ -12,27 +12,27 @@ the section titled (Object lifetime management)[object_lifetime_management].
 
 ### Constructor
 
-Creates a new handle scope.
+Creates a new handle scope on the stack.
 
 ```cpp
-HandleScope HandleScope::New(Napi:Env env);
+HandleScope(Napi:Env env);
 ```
 
-- `[in] Env`: The environment in which to construct the HandleScope object.
+- `[in] env`: The environment in which to construct the HandleScope object.
 
 Returns a new HandleScope
 
 
 ### Constructor
 
-Creates a new handle scope.
+Creates a new handle scope on the stack.
 
 ```cpp
-HandleScope HandleScope::New(napi_env env, napi_handle_scope scope);
+HandleScope(Napi::Env env, Napi::HandleScope scope);
 ```
 
-- `[in] env`: napi_env in which the scope passed in was created.
-- `[in] scope`: pre-existing napi_handle_scope.
+- `[in] env`: Napi::Env in which the scope passed in was created.
+- `[in] scope`: pre-existing Napi::HandleScope.
 
 Returns a new HandleScope instance which wraps the napi_handle_scope
 handle passed in.  This can be used to mix usage of the C N-API
@@ -41,7 +41,7 @@ and node-addon-api.
 operator HandleScope::napi_handle_scope
 
 ```cpp
-operator HandleScope::napi_handle_scope() const
+operator napi_handle_scope() const
 ```
 
 Returns the N-API napi_handle_scope wrapped by the EscapableHandleScope object.
