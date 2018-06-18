@@ -76,6 +76,8 @@ namespace Napi {
   /// Defines the signature of a N-API C++ module's registration callback (init) function.
   typedef Object (*ModuleRegisterCallback)(Env env, Object exports);
 
+  class MemoryManagement;
+
   /// Environment for N-API values and operations.
   ///
   /// All N-API values and operations must be associated with an environment. An environment
@@ -1547,6 +1549,12 @@ namespace Napi {
     ObjectReference _receiver;
     FunctionReference _callback;
     std::string _error;
+  };
+
+  // Memory management. 
+  class MemoryManagement {
+    public: 
+      static int64_t AdjustExternalMemory(Env env, int64_t change_in_bytes);
   };
 
 } // namespace Napi
