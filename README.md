@@ -1,24 +1,32 @@
-# **Node.js API (N-API) Package**
+# **node-addon-api module** 
+This module contains **header-only C++ wrapper classes** which simplify
+the use of the C based [N-API](https://nodejs.org/dist/latest/docs/api/n-api.html)
+provided by Node.js when using C++. It provides a C++ object model
+and exception handling semantics with low overhead.
 
-This package contains **header-only C++ wrapper classes** for the 
-**ABI-stable Node.js API** also known as **N-API**, providing C++ object 
-model and exception handling semantics with low overhead. It guarantees 
-backward compatibility when used with older versions of Node.js that do 
-not have N-API built-in.
-
-N-API is an API for building native addons. It is independent from the 
-underlying JavaScript runtime (e.g. V8 or ChakraCore) and is maintained as 
-part of Node.js itself. This API will be Application Binary Interface (ABI) 
-stable across versions and flavors of Node.js. It is intended to insulate 
+N-API is an ABI stable C interface provided by Node.js for building native 
+addons. It is independent from the underlying JavaScript runtime (e.g. V8 or ChakraCore)
+and is maintained as part of Node.js itself. It is intended to insulate 
 native addons from changes in the underlying JavaScript engine and allow 
 modules compiled for one version to run on later versions of Node.js without 
-recompilation. N-API guarantees the **API** and **ABI** compatibility across 
-different versions of Node.js. So if you switched to a different version of 
-Node.js, you would not need to reinstall or recompile the native addon.
+recompilation.
 
-APIs exposed by N-API are generally used to create and manipulate JavaScript
-values. Concepts and operations generally map to ideas specified in the
-**ECMA262 Language Specification**.
+The `node-addon-api` module, which is not part of Node.js, preserves the benefits
+of the N-API as it consists only of inline code that depends only on the stable API
+provided by N-API. As such, modules built against one version of Node.js 
+using node-addon-api should run without having to be rebuilt with newer versions
+of Node.js.
+
+As new APIs are added to N-API, node-addon-api must be updated to provide
+wrappers for those new APIs. For this reason node-addon-api provides
+methods that allow callers to obtain the underlying N-API handles so
+direct calls to N-API and the use of the objects/methods provided by
+node-addon-api can be used together. For example, in order to be able
+to use an API for which the node-add-api does not yet provide a wrapper.
+
+APIs exposed by node-addon-api are generally used to create and
+manipulate JavaScript values. Concepts and operations generally map
+to ideas specified in the **ECMA262 Language Specification**.
 
 - **[Setup](#setup)**
 - **[API Documentation](#api)**
@@ -47,6 +55,10 @@ values. Concepts and operations generally map to ideas specified in the
 <a name="api"></a>
 
 ### **API Documentation**
+
+The following is the documentation for node-addon-api (NOTE:
+still a work in progress as its not yet complete).
+
  - [Basic Types](doc/basic_types.md)
     - [Array](doc/array.md)
     - [Symbol](doc/symbol.md)
@@ -86,7 +98,7 @@ values. Concepts and operations generally map to ideas specified in the
 
 ### **Examples**
 
-Are you new to **N-API**? Take a look at our **[examples](https://github.com/nodejs/abi-stable-node-addon-examples)**
+Are you new to **node-addon-api**? Take a look at our **[examples](https://github.com/nodejs/abi-stable-node-addon-examples)**
 
 - **[Hello World](https://github.com/nodejs/abi-stable-node-addon-examples/tree/master/1_hello_world/node-addon-api)**
 - **[Pass arguments to a function](https://github.com/nodejs/abi-stable-node-addon-examples/tree/master/2_function_arguments/node-addon-api)**
@@ -101,7 +113,7 @@ Are you new to **N-API**? Take a look at our **[examples](https://github.com/nod
 
 ### **Tests**
 
-To run the **N-API** tests do:
+To run the **node-addon-api** tests do:
 
 ```
 npm install
