@@ -4,17 +4,19 @@ the use of the C based [N-API](https://nodejs.org/dist/latest/docs/api/n-api.htm
 provided by Node.js when using C++. It provides a C++ object model
 and exception handling semantics with low overhead.
 
-N-API is an ABI stale API for building native addons in C++. It is
-independent from the underlying JavaScript runtime (e.g. V8 or ChakraCore)
+N-API is an ABI stable C interface provided by Node.js for building native 
+addons. It is independent from the underlying JavaScript runtime (e.g. V8 or ChakraCore)
 and is maintained as part of Node.js itself. It is intended to insulate 
 native addons from changes in the underlying JavaScript engine and allow 
 modules compiled for one version to run on later versions of Node.js without 
 recompilation.
 
-The node-addon-api module preserves the benefits of the N-API as it consists
-only of inline code that depends only on the stable API provided by N-API.
-As such, modules built against one version of Node.js using node-addon-api
-should run without having to be rebuilt with newer versions of Node.js.
+The `node-addon-api` module, which is not part of Node.js, preserves the benefits
+of the N-API as it consists only of inline code that depends only on the stable API
+provided by N-API. As such, modules built against one version of Node.js 
+using node-addon-api should run without having to be rebuilt with newer versions
+of Node.js.
+
 As new APIs are added to N-API, node-addon-api must be updated to provide
 wrappers for those new APIs. For this reason node-addon-api provides
 methods that allow callers to obtain the underlying N-API handles so
