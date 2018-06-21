@@ -48,10 +48,10 @@ values. Concepts and operations generally map to ideas specified in the
 
 ### **API Documentation**
  - [Basic Types](doc/basic_types.md)
-    - [Array](doc/array.md)
+    - [Array](doc/basic_types.md#array)
     - [Symbol](doc/symbol.md)
     - [String](doc/string.md)
-    - [Name](doc/name.md)
+    - [Name](doc/basic_types.md#name)
     - [Number](doc/number.md)
     - [Boolean](doc/boolean.md)
     - [Env](doc/env.md)
