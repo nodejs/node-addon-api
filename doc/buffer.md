@@ -41,7 +41,7 @@ Returns a new `Buffer` object.
 
 Wraps the provided external data into a new `Buffer` object.
 
-The Bu`Buffer`ffer object does not assume ownership for the data and expects it
+The `Buffer` object does not assume ownership for the data and expects it
 to be valid for the lifetime of the object. The data can only be freed once the
 `finalizeCallback` is invoked to indicate that the `Buffer` has been released.
 
@@ -93,10 +93,6 @@ Returns a new `Buffer` object.
 ### Copy
 
 Allocates a new `Buffer` object and copies the provided external data into it.
-
-The `Buffer` object does not assume ownership for the data and expects it to be
-valid for the duration of the `Copy` call. Once the call returns the data can be
-freed.
 
 ```cpp
 static Buffer<T> Copy(napi_env env, const T* data, size_t length);
