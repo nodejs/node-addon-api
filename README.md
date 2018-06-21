@@ -60,10 +60,10 @@ The following is the documentation for node-addon-api (NOTE:
 still a work in progress as its not yet complete).
 
  - [Basic Types](doc/basic_types.md)
-    - [Array](doc/array.md)
+    - [Array](doc/basic_types.md#array)
     - [Symbol](doc/symbol.md)
     - [String](doc/string.md)
-    - [Name](doc/name.md)
+    - [Name](doc/basic_types.md#name)
     - [Number](doc/number.md)
     - [Boolean](doc/boolean.md)
     - [Env](doc/env.md)
