@@ -52,6 +52,9 @@ namespace Napi {
   class Value;
   class Boolean;
   class Number;
+#ifdef NAPI_EXPERIMENTAL
+  class BigInt;
+#endif  // NAPI_EXPERIMENTAL
   class String;
   class Object;
   class Array;
@@ -72,6 +75,10 @@ namespace Napi {
   typedef TypedArrayOf<uint32_t> Uint32Array; ///< Typed-array of unsigned 32-bit integers
   typedef TypedArrayOf<float> Float32Array;   ///< Typed-array of 32-bit floating-point values
   typedef TypedArrayOf<double> Float64Array;  ///< Typed-array of 64-bit floating-point values
+#ifdef NAPI_EXPERIMENTAL
+  typedef TypedArrayOf<int64_t> BigInt64Array;   ///< Typed array of signed 64-bit integers
+  typedef TypedArrayOf<uint64_t> BigUint64Array; ///< Typed array of unsigned 64-bit integers
+#endif  // NAPI_EXPERIMENTAL
 
   /// Defines the signature of a N-API C++ module's registration callback (init) function.
   typedef Object (*ModuleRegisterCallback)(Env env, Object exports);
@@ -171,6 +178,9 @@ namespace Napi {
     bool IsNull() const;        ///< Tests if a value is a null JavaScript value.
     bool IsBoolean() const;     ///< Tests if a value is a JavaScript boolean.
     bool IsNumber() const;      ///< Tests if a value is a JavaScript number.
+#ifdef NAPI_EXPERIMENTAL
+    bool IsBigInt() const;      ///< Tests if a value is a JavaScript bigint.
+#endif  // NAPI_EXPERIMENTAL
     bool IsString() const;      ///< Tests if a value is a JavaScript string.
     bool IsSymbol() const;      ///< Tests if a value is a JavaScript symbol.
     bool IsArray() const;       ///< Tests if a value is a JavaScript array.
@@ -241,6 +251,47 @@ namespace Napi {
     float FloatValue() const;     ///< Converts a Number value to a 32-bit floating-point value.
     double DoubleValue() const;   ///< Converts a Number value to a 64-bit floating-point value.
   };
+
+#ifdef NAPI_EXPERIMENTAL
+  /// A JavaScript bigint value.
+  class BigInt : public Value {
+  public:
+    static BigInt New(
+      napi_env env, ///< N-API environment
+      int64_t value ///< Number value
+    );
+    static BigInt New(
+      napi_env env,  ///< N-API environment
+      uint64_t value ///< Number value
+    );
+
+    /// Creates a new BigInt object using a specified sign bit and a
+    /// specified list of digits/words.
+    /// The resulting number is calculated as:
+    /// (-1)^sign_bit * (words[0] * (2^64)^0 + words[1] * (2^64)^1 + ...)
+    static BigInt New(
+      napi_env env,          ///< N-API environment
+      int sign_bit,          ///< Sign bit. 1 if negative.
+      size_t word_count,     ///< Number of words in array
+      const uint64_t* words  ///< Array of words
+    );
+
+    BigInt();                               ///< Creates a new _empty_ BigInt instance.
+    BigInt(napi_env env, napi_value value); ///< Wraps a N-API value primitive.
+
+    int64_t Int64Value(bool* lossless) const;   ///< Converts a BigInt value to a 64-bit signed integer value.
+    uint64_t Uint64Value(bool* lossless) const; ///< Converts a BigInt value to a 64-bit unsigned integer value.
+
+    size_t WordCount() const; ///< The number of 64-bit words needed to store the result of ToWords().
+
+    /// Writes the contents of this BigInt to a specified memory location.
+    /// `sign_bit` must be provided and will be set to 1 if this BigInt is negative.
+    /// `*word_count` has to be initialized to the length of the `words` array.
+    /// Upon return, it will be set to the actual number of words that would
+    /// be needed to store this BigInt (i.e. the return value of `WordCount()`).
+    void ToWords(int* sign_bit, size_t* word_count, uint64_t* words);
+  };
+#endif  // NAPI_EXPERIMENTAL
 
   /// A JavaScript string or symbol value (that can be used as a property name).
   class Name : public Value {
@@ -705,6 +756,10 @@ namespace Napi {
         : std::is_same<T, uint32_t>::value ? napi_uint32_array
         : std::is_same<T, float>::value ? napi_float32_array
         : std::is_same<T, double>::value ? napi_float64_array
+#ifdef NAPI_EXPERIMENTAL
+        : std::is_same<T, int64_t>::value ? napi_bigint64_array
+        : std::is_same<T, uint64_t>::value ? napi_biguint64_array
+#endif  // NAPI_EXPERIMENTAL
         : unknown_array_type;
     }
     /// !endcond
@@ -1551,9 +1606,9 @@ namespace Napi {
     std::string _error;
   };
 
-  // Memory management. 
+  // Memory management.
   class MemoryManagement {
-    public: 
+    public:
       static int64_t AdjustExternalMemory(Env env, int64_t change_in_bytes);
   };
 

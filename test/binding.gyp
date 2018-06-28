@@ -5,6 +5,7 @@
         'asyncworker.cc',
         'basic_types/number.cc',
         'basic_types/value.cc',
+        'bigint.cc',
         'binding.cc',
         'buffer.cc',
         'dataview/dataview.cc',

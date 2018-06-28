@@ -12,6 +12,7 @@ let testModules = [
   'asyncworker',
   'basic_types/number',
   'basic_types/value',
+  'bigint',
   'buffer',
   'dataview/dataview',
   'dataview/dataview_read_write',

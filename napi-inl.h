@@ -287,6 +287,12 @@ inline bool Value::IsNumber() const {
   return Type() == napi_number;
 }
 
+#ifdef NAPI_EXPERIMENTAL
+inline bool Value::IsBigInt() const {
+  return Type() == napi_bigint;
+}
+#endif  // NAPI_EXPERIMENTAL
+
 inline bool Value::IsString() const {
   return Type() == napi_string;
 }
@@ -504,6 +510,69 @@ inline double Number::DoubleValue() const {
   NAPI_THROW_IF_FAILED(_env, status, 0);
   return result;
 }
+
+#ifdef NAPI_EXPERIMENTAL
+////////////////////////////////////////////////////////////////////////////////
+// BigInt Class
+////////////////////////////////////////////////////////////////////////////////
+
+inline BigInt BigInt::New(napi_env env, int64_t val) {
+  napi_value value;
+  napi_status status = napi_create_bigint_int64(env, val, &value);
+  NAPI_THROW_IF_FAILED(env, status, BigInt());
+  return BigInt(env, value);
+}
+
+inline BigInt BigInt::New(napi_env env, uint64_t val) {
+  napi_value value;
+  napi_status status = napi_create_bigint_uint64(env, val, &value);
+  NAPI_THROW_IF_FAILED(env, status, BigInt());
+  return BigInt(env, value);
+}
+
+inline BigInt BigInt::New(napi_env env, int sign_bit, size_t word_count, const uint64_t* words) {
+  napi_value value;
+  napi_status status = napi_create_bigint_words(env, sign_bit, word_count, words, &value);
+  NAPI_THROW_IF_FAILED(env, status, BigInt());
+  return BigInt(env, value);
+}
+
+inline BigInt::BigInt() : Value() {
+}
+
+inline BigInt::BigInt(napi_env env, napi_value value) : Value(env, value) {
+}
+
+inline int64_t BigInt::Int64Value(bool* lossless) const {
+  int64_t result;
+  napi_status status = napi_get_value_bigint_int64(
+      _env, _value, &result, lossless);
+  NAPI_THROW_IF_FAILED(_env, status, 0);
+  return result;
+}
+
+inline uint64_t BigInt::Uint64Value(bool* lossless) const {
+  uint64_t result;
+  napi_status status = napi_get_value_bigint_uint64(
+      _env, _value, &result, lossless);
+  NAPI_THROW_IF_FAILED(_env, status, 0);
+  return result;
+}
+
+inline size_t BigInt::WordCount() const {
+  size_t word_count;
+  napi_status status = napi_get_value_bigint_words(
+      _env, _value, nullptr, &word_count, nullptr);
+  NAPI_THROW_IF_FAILED(_env, status, 0);
+  return word_count;
+}
+
+inline void BigInt::ToWords(int* sign_bit, size_t* word_count, uint64_t* words) {
+  napi_status status = napi_get_value_bigint_words(
+      _env, _value, sign_bit, word_count, words);
+  NAPI_THROW_IF_FAILED(_env, status);
+}
+#endif  // NAPI_EXPERIMENTAL
 
 ////////////////////////////////////////////////////////////////////////////////
 // Name class
