@@ -12,10 +12,10 @@ the section titled (Object lifetime management)[object_lifetime_management].
 
 ### Constructor
 
-Creates a new handle scope.
+Creates a new handle scope on the stack.
 
 ```cpp
-HandleScope::HandleScope(Napi:Env env);
+HandleScope(Napi:Env env);
 ```
 
 - `[in] env`: The environment in which to construct the HandleScope object.
@@ -25,10 +25,10 @@ Returns a new HandleScope
 
 ### Constructor
 
-Creates a new handle scope.
+Creates a new handle scope on the stack.
 
 ```cpp
-HandleScope::HandleScope(Napi::Env env, Napi::HandleScope scope);
+HandleScope(Napi::Env env, Napi::HandleScope scope);
 ```
 
 - `[in] env`: Napi::Env in which the scope passed in was created.
