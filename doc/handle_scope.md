@@ -41,7 +41,7 @@ and node-addon-api.
 operator HandleScope::napi_handle_scope
 
 ```cpp
-operator HandleScope::napi_handle_scope() const
+operator napi_handle_scope() const
 ```
 
 Returns the N-API napi_handle_scope wrapped by the EscapableHandleScope object.
