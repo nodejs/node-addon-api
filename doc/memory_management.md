@@ -1,7 +1,7 @@
 # MemoryManagement
 
 The `MemoryManagement` class contains functions that give the JavaScript engine
-an indication of the amount of externally allocated memory that is kept alive by 
+an indication of the amount of externally allocated memory that is kept alive by
 JavaScript objects.
 
 ## Methods
@@ -9,7 +9,7 @@ JavaScript objects.
 ### AdjustExternalMemory
 
 The function `AdjustExternalMemory` adjusts the amount of registered external
-memory. Used to give the JavaScript engine an indication of the amount of externally
+memory used to give the JavaScript engine an indication of the amount of externally
 allocated memory that is kept alive by JavaScript objects.
 The JavaScript engine uses this to decide when to perform global garbage collections.
 Registering externally allocated memory will trigger global garbage collections
@@ -20,7 +20,7 @@ objects that keep the externally allocated memory alive.
 static int64_t MemoryManagement::AdjustExternalMemory(Env env, int64_t change_in_bytes);
 ```
 
-- `[in] env`: The environment in which the API is inoked under.
+- `[in] env`: The environment in which the API is invoked under.
 - `[in] change_in_bytes`: The change in externally allocated memory that is kept
 alive by JavaScript objects expressed in bytes.
 
