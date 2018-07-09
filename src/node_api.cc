@@ -466,15 +466,6 @@ class TryCatch : public v8::TryCatch {
 
 //=== Function napi_callback wrapper =================================
 
-// TODO(somebody): these constants can be removed with relevant changes
-// in CallbackWrapperBase<> and CallbackBundle.
-// Leave them for now just to keep the change set and cognitive load minimal.
-static const int kFunctionIndex = 0;  // Used in CallbackBundle::cb[]
-static const int kGetterIndex = 0;    // Used in CallbackBundle::cb[]
-static const int kSetterIndex = 1;    // Used in CallbackBundle::cb[]
-static const int kCallbackCount = 2;  // Used in CallbackBundle::cb[]
-                                      // Max is "getter + setter" case
-
 // Use this data structure to associate callback data with each N-API function
 // exposed to JavaScript. The structure is stored in a v8::External which gets
 // passed into our callback wrapper. This reduces the performance impact of
@@ -497,7 +488,8 @@ class CallbackBundle {
 
   napi_env       env;      // Necessary to invoke C++ NAPI callback
   void*          cb_data;  // The user provided callback data
-  napi_callback  cb[kCallbackCount];   // Max capacity is 2 (getter + setter)
+  napi_callback  function_or_getter;
+  napi_callback  setter;
   v8::Persistent<v8::Value> handle;  // Die with this JavaScript object
  private:
   static void WeakCallback(v8::WeakCallbackInfo<CallbackBundle> const& info) {
@@ -534,7 +526,7 @@ class CallbackWrapper {
   void* _data;
 };
 
-template <typename Info, int kInternalFieldIndex>
+template <typename Info, napi_callback CallbackBundle::*FunctionField>
 class CallbackWrapperBase : public CallbackWrapper {
  public:
   CallbackWrapperBase(const Info& cbinfo, const size_t args_length)
@@ -557,7 +549,7 @@ class CallbackWrapperBase : public CallbackWrapper {
 
     // All other pointers we need are stored in `_bundle`
     napi_env env = _bundle->env;
-    napi_callback cb = _bundle->cb[kInternalFieldIndex];
+    napi_callback cb = _bundle->*FunctionField;
 
     // Make sure any errors encountered last time we were in N-API are gone.
     napi_clear_last_error(env);
@@ -585,7 +577,7 @@ class CallbackWrapperBase : public CallbackWrapper {
 
 class FunctionCallbackWrapper
     : public CallbackWrapperBase<v8::FunctionCallbackInfo<v8::Value>,
-                                 kFunctionIndex> {
+                                 &CallbackBundle::function_or_getter> {
  public:
   static void Invoke(const v8::FunctionCallbackInfo<v8::Value>& info) {
     FunctionCallbackWrapper cbwrapper(info);
@@ -631,7 +623,7 @@ class FunctionCallbackWrapper
 
 class GetterCallbackWrapper
     : public CallbackWrapperBase<v8::PropertyCallbackInfo<v8::Value>,
-                                 kGetterIndex> {
+                                 &CallbackBundle::function_or_getter> {
  public:
   static void Invoke(v8::Local<v8::Name> property,
                      const v8::PropertyCallbackInfo<v8::Value>& info) {
@@ -662,7 +654,8 @@ class GetterCallbackWrapper
 };
 
 class SetterCallbackWrapper
-    : public CallbackWrapperBase<v8::PropertyCallbackInfo<void>, kSetterIndex> {
+    : public CallbackWrapperBase<v8::PropertyCallbackInfo<void>,
+                                 &CallbackBundle::setter> {
  public:
   static void Invoke(v8::Local<v8::Name> property,
                      v8::Local<v8::Value> value,
@@ -706,7 +699,7 @@ v8::Local<v8::Value> CreateFunctionCallbackData(napi_env env,
                                                 napi_callback cb,
                                                 void* data) {
   CallbackBundle* bundle = new CallbackBundle();
-  bundle->cb[kFunctionIndex] = cb;
+  bundle->function_or_getter = cb;
   bundle->cb_data = data;
   bundle->env = env;
   v8::Local<v8::Value> cbdata = v8::External::New(env->isolate, bundle);
@@ -724,8 +717,8 @@ v8::Local<v8::Value> CreateAccessorCallbackData(napi_env env,
                                                 napi_callback setter,
                                                 void* data) {
   CallbackBundle* bundle = new CallbackBundle();
-  bundle->cb[kGetterIndex] = getter;
-  bundle->cb[kSetterIndex] = setter;
+  bundle->function_or_getter = getter;
+  bundle->setter = setter;
   bundle->cb_data = data;
   bundle->env = env;
   v8::Local<v8::Value> cbdata = v8::External::New(env->isolate, bundle);
