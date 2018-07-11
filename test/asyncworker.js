@@ -1,7 +1,13 @@
 'use strict';
 const buildType = process.config.target_defaults.default_configuration;
 const assert = require('assert');
-const async_hooks = require('async_hooks');
+let async_hooks;
+try {
+  async_hooks = require('async_hooks');
+} catch (anError) {
+  console.error('\'async_hooks\' not found - skipping test');
+  return;
+}
 const common = require('./common');
 
 test(require(`./build/${buildType}/binding.node`));
