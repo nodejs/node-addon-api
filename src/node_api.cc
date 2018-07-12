@@ -498,13 +498,7 @@ class TryCatch : public v8::TryCatch {
 // calling through N-API.
 // Ref: benchmark/misc/function_call
 // Discussion (incl. perf. data): https://github.com/nodejs/node/pull/21072
-class CallbackBundle {
- public:
-
-  ~CallbackBundle() {
-    handle.ClearWeak();
-    handle.Reset();
-  }
+struct CallbackBundle {
   // Bind the lifecycle of `this` C++ object to a JavaScript object.
   // We never delete a CallbackBundle C++ object directly.
   void BindLifecycleTo(v8::Isolate* isolate, v8::Local<v8::Value> target) {
@@ -516,7 +510,8 @@ class CallbackBundle {
   void*          cb_data;  // The user provided callback data
   napi_callback  function_or_getter;
   napi_callback  setter;
-  v8::Persistent<v8::Value> handle;  // Die with this JavaScript object
+  node::Persistent<v8::Value> handle;  // Die with this JavaScript object
+
  private:
   static void WeakCallback(v8::WeakCallbackInfo<CallbackBundle> const& info) {
     // Use the "WeakCallback mechanism" to delete the C++ `bundle` object.
