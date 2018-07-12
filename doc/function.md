@@ -1,187 +1,248 @@
 # Function
 
-N-API provides a set of APIs that allow JavaScript code to call back into native code. N-API APIs that support calling back into native code take in a callback functions represented by the napi_callback type. When the JavaScript VM calls back to native code, the napi_callback function provided is invoked. The APIs documented in this section allow the callback function to do the following:
+The **Function** class is a representation of the JavaScript function. A function
+is a JavaScript procedure, a set of statements that performs a task or calculates
+a value. This class provides some methods to create and exectue a function.
 
-This API returns an N-API value corresponding to a JavaScript Function object. It's used to wrap native functions so that they can be invoked from JavaScript.
-
-JavaScript Functions are described in Section 19.2 of the ECMAScript Language Specification.
-
-In JavaScript, functions are first-class objects, because they can have properties and methods just like any other object. What distinguishes them from other objects is that functions can be called. In brief, they are Function objects.
-
-Node Addon API consists of a few fundamental data types. These allow a user of the API to create, convert and introspect fundamental JavaScript types, and interop with their C++ counterparts.
-
-Value
-Value is the base class of Node Addon API's fundamental object type hierarchy. It represents a JavaScript value of an unknown type. It is a thin wrapper around the N-API datatype napi_value. Methods on this class can be used to check the JavaScript type of the underlying napi_value and also convert to C++ types.
+The `Function` class inherits its behavior from the `Object` class (for more info
+see: [Object](object.md)).
 
 ## Methods
 
 ### Constructor
 
-Creates a new
+Creates a new empty instance of `Function`.
 
 ```cpp
 Function();
 ```
 
-- `[in] Env`: The environment in which to construct the
-
-Returns a new
-
 ### Constructor
 
-Creates a new
+Creates a new instance of `Function` object.
 
 ```cpp
 Function(napi_env env, napi_value value);
 ```
 
-- `[in] Env`: The environment in which to construct the
+- `[in] env`: The `napi_env` environment in which to construct the Value object.
+- `[in] value`: The C++ primitive from which to instantiate the Value. `value`
+may be any of:
 
-Returns a new
+  - bool
+  - Any integer type
+  - Any floating point type
+  - const char* (encoded using UTF-8, null-terminated)
+  - const char16_t* (encoded using UTF-16-LE, null-terminated)
+  - std::string (encoded using UTF-8)
+  - std::u16string
+  - napi::Value
+  - napi_value
+
+Returns a non-empty `Function` instance.
+
+### New
+
+Creates instance of a `Function` object.
+
+```cpp
+template <typename Callable>
+static Function New(napi_env env, Callable cb, const char* utf8name = nullptr, void* data = nullptr);
+```
+
+- `[in] env`: The `napi_env` environment in which to construct the Function object.
+- `[in] cb`: Object that implement the operator **()** accepting a `const CallbackInfo&`
+and returns either void or Value.
+- `[in] utf8name`: Null-terminated string to be used as the name of the function.
+- `[in] data`: User-provided data context. This will be passed back into the
+function when invoked later.
+
+Returns instance of a `Function` object.
+
+### New
+
+```cpp
+template <typename Callable>
+static Function New(napi_env env, Callable cb, const std::string& utf8name, void* data = nullptr);
+```
+
+- `[in] env`: The `napi_env` environment in which to construct the Function object.
+- `[in] cb`: Object that implement the operator **()** accepting a `const CallbackInfo&`
+and returns either void or Value.
+- `[in] utf8name`: String to be used as the name of the function.
+- `[in] data`: User-provided data context. This will be passed back into the
+function when invoked later.
+
+Returns instance of a `Function` object.
 
 ### Call
 
-Creates a new
+Calls a Javascript function from a native add-on.
 
 ```cpp
 Value Call(const std::initializer_list<napi_value>& args) const;
 ```
 
-- `[in] Env`: The environment in which to construct the
+- `[in] args`: Initializer list of JavaScript values as `napi_value` representing
+the arguments of the function.
 
-Returns a new
+Returns a Value representing the JavaScript object returned by the function.
 
 ### Call
 
-Creates a new
+Calls a Javascript function from a native add-on.
 
 ```cpp
 Value Call(const std::vector<napi_value>& args) const;
 ```
 
-- `[in] Env`: The environment in which to construct the
+- `[in] args`: List of JavaScript values as `napi_value` representing the
+arguments of the function.
 
-Returns a new
+Returns a Value representing the JavaScript object returned by the function.
 
 ### Call
 
-Creates a new
+Calls a Javascript function from a native add-on.
 
 ```cpp
 Value Call(size_t argc, const napi_value* args) const;
 ```
 
-- `[in] Env`: The environment in which to construct the
+- `[in] argc`: The number of the arguments passed to the function.
+- `[in] args`: Array of JavaScript values as `napi_value` representing the
+arguments of the function.
 
-Returns a new
+Returns a Value representing the JavaScript object returned by the function.
 
 ### Call
 
-Creates a new
+Calls a Javascript function from a native add-on.
 
 ```cpp
 Value Call(napi_value recv, const std::initializer_list<napi_value>& args) const;
 ```
 
-- `[in] Env`: The environment in which to construct the
+- `[in] recv`: The `this` object passed to the called function.
+- `[in] args`: Initializer list of JavaScript values as `napi_value` representing
+the arguments of the function.
 
-Returns a new
+Returns a Value representing the JavaScript object returned by the function.
 
 ### Call
 
-Creates a new
+Calls a Javascript function from a native add-on.
 
 ```cpp
 Value Call(napi_value recv, const std::vector<napi_value>& args) const;
 ```
 
-- `[in] Env`: The environment in which to construct the
+- `[in] recv`: The `this` object passed to the called function.
+- `[in] args`: List of JavaScript values as `napi_value` representing the
+arguments of the function.
 
-Returns a new
+Returns a Value representing the JavaScript object returned by the function.
 
 ### Call
 
-Creates a new
+Calls a Javascript function from a native add-on.
 
 ```cpp
 Value Call(napi_value recv, size_t argc, const napi_value* args) const;
 ```
 
-- `[in] Env`: The environment in which to construct the
+- `[in] recv`: The `this` object passed to the called function.
+- `[in] argc`: The number of the arguments passed to the function.
+- `[in] args`: Array of JavaScript values as `napi_value` representing the
+arguments of the function.
 
-Returns a new
+Returns a Value representing the JavaScript object returned by the function.
 
 ### MakeCallback
 
-Creates a new
+Calls a Javascript function from a native add-on after an asynchronous operation.
 
 ```cpp
 Value MakeCallback(napi_value recv, const std::initializer_list<napi_value>& args) const;
 ```
 
-- `[in] Env`: The environment in which to construct the
+- `[in] recv`: The `this` object passed to the called function.
+- `[in] args`: Initializer list of JavaScript values as `napi_value` representing
+the arguments of the function.
 
-Returns a new
+Returns a Value representing the JavaScript object returned by the function.
 
 ### MakeCallback
 
-Creates a new
+Calls a Javascript function from a native add-on after an asynchronous operation.
 
 ```cpp
 Value MakeCallback(napi_value recv, const std::vector<napi_value>& args) const;
 ```
 
-- `[in] Env`: The environment in which to construct the
+- `[in] recv`: The `this` object passed to the called function.
+- `[in] args`: List of JavaScript values as `napi_value` representing the
+arguments of the function.
 
-Returns a new
+Returns a Value representing the JavaScript object returned by the function.
 
 ### MakeCallback
 
-Creates a new
+Calls a Javascript function from a native add-on after an asynchronous operation.
 
 ```cpp
-Value MakeCallback(napi_value recv, const std::vector<napi_value>& args) const;
+Value MakeCallback(napi_value recv, size_t argc, const napi_value* args) const;
 ```
 
-- `[in] Env`: The environment in which to construct the
+- `[in] recv`: The `this` object passed to the called function.
+- `[in] argc`: The number of the arguments passed to the function.
+- `[in] args`: Array of JavaScript values as `napi_value` representing the
+arguments of the function.
 
-Returns a new
+Returns a Value representing the JavaScript object returned by the function.
 
 ### New
 
-Creates a new
+Creates a new JavaScript value from one that represents the constructor for the
+object.
 
 ```cpp
 Object New(const std::initializer_list<napi_value>& args) const;
 ```
 
-- `[in] Env`: The environment in which to construct the
+- `[in] args`: Initializer list of JavaScript values as `napi_value` representing
+the arguments of the contructor function.
 
-Returns a new
+Returns a new JavaScript object.
 
 ### New
 
-Creates a new
+Creates a new JavaScript value from one that represents the constructor for the
+object.
 
 ```cpp
 Object New(const std::vector<napi_value>& args) const;
 ```
 
-- `[in] Env`: The environment in which to construct the
+- `[in] args`: List of JavaScript values as `napi_value` representing the
+arguments of the constructor function.
 
-Returns a new
+Returns a new JavaScript object.
 
 ### New
 
-Creates a new
+Creates a new JavaScript value from one that represents the constructor for the
+object.
 
 ```cpp
 Object New(size_t argc, const napi_value* args) const;
 ```
 
-- `[in] Env`: The environment in which to construct the
+- `[in] argc`: The number of the arguments passed to the contructor function.
+- `[in] args`: Array of JavaScript values as `napi_value` representing the
+arguments of the constructor function.
 
-Returns a new
+Returns a new JavaScript object.
 
 ## Operator
 
@@ -189,6 +250,6 @@ Returns a new
 Value operator ()(const std::initializer_list<napi_value>& args) const;
 ```
 
-- `[in] Env`: The environment in which to construct the
+- `[in] args`: Initializer list of JavaScript values as `napi_value`.
 
-Returns a new
+Returns a Value representing the JavaScript object returned by the function.
