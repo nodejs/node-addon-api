@@ -1,28 +1,30 @@
 # ArrayBuffer
 
-The `ArrayBuffer` class corresponds to the JavaScript `ArrayBuffer` class.
+The `ArrayBuffer` class corresponds to the
+[JavaScript `ArrayBuffer`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/ArrayBuffer)
+class.
 
 ## Methods
 
 ### New
 
-Allocates a new `ArrayBuffer` object with a given length.
+Allocates a new `ArrayBuffer` instance with a given length.
 
 ```cpp
 static ArrayBuffer New(napi_env env, size_t byteLength);
 ```
 
-- `[in] env`: The environment in which to create the ArrayBuffer object.
+- `[in] env`: The environment in which to create the `ArrayBuffer` instance.
 - `[in] byteLength`: The length to be allocated, in bytes.
 
-Returns a new `ArrayBuffer` object.
+Returns a new `ArrayBuffer` instance.
 
 ### New
 
-Wraps the provided external data into a new `ArrayBuffer` object.
+Wraps the provided external data into a new `ArrayBuffer` instance.
 
-The `ArrayBuffer` object does not assume ownership for the data and expects it
-to be valid for the lifetime of the object. Since the `ArrayBuffer` is subject
+The `ArrayBuffer` instance does not assume ownership for the data and expects it
+to be valid for the lifetime of the instance. Since the `ArrayBuffer` is subject
 to garbage collection this overload is only suitable for data which is static
 and never needs to be freed.
 
@@ -30,19 +32,19 @@ and never needs to be freed.
 static ArrayBuffer New(napi_env env, void* externalData, size_t byteLength);
 ```
 
-- `[in] env`: The environment in which to create the `ArrayBuffer` object.
+- `[in] env`: The environment in which to create the `ArrayBuffer` instance.
 - `[in] externalData`: The pointer to the external data to wrap.
 - `[in] byteLength`: The length of the `externalData`, in bytes.
 
-Returns a new `ArrayBuffer` object.
+Returns a new `ArrayBuffer` instance.
 
 ### New
 
-Wraps the provided external data into a new `ArrayBuffer` object.
+Wraps the provided external data into a new `ArrayBuffer` instance.
 
-The `ArrayBuffer` object does not assume ownership for the data and expects it
-to be valid for the lifetime of the object. The data can only be freed once the
-`finalizeCallback` is invoked to indicate that the `ArrayBuffer` has been
+The `ArrayBuffer` instance does not assume ownership for the data and expects it
+to be valid for the lifetime of the instance. The data can only be freed once
+the `finalizeCallback` is invoked to indicate that the `ArrayBuffer` has been
 released.
 
 ```cpp
@@ -53,22 +55,22 @@ static ArrayBuffer New(napi_env env,
                        Finalizer finalizeCallback);
 ```
 
-- `[in] env`: The environment in which to create the `ArrayBuffer` object.
+- `[in] env`: The environment in which to create the `ArrayBuffer` instance.
 - `[in] externalData`: The pointer to the external data to wrap.
 - `[in] byteLength`: The length of the `externalData`, in bytes.
 - `[in] finalizeCallback`: A function to be called when the `ArrayBuffer` is
   destroyed. It must implement `operator()`, accept a `void*` (which is the
   `externalData` pointer), and return `void`.
 
-Returns a new `ArrayBuffer` object.
+Returns a new `ArrayBuffer` instance.
 
 ### New
 
-Wraps the provided external data into a new `ArrayBuffer` object.
+Wraps the provided external data into a new `ArrayBuffer` instance.
 
-The `ArrayBuffer` object does not assume ownership for the data and expects it
-to be valid for the lifetime of the object. The data can only be freed once the
-`finalizeCallback` is invoked to indicate that the `ArrayBuffer` has been
+The `ArrayBuffer` instance does not assume ownership for the data and expects it
+to be valid for the lifetime of the instance. The data can only be freed once
+the `finalizeCallback` is invoked to indicate that the `ArrayBuffer` has been
 released.
 
 ```cpp
@@ -80,7 +82,7 @@ static ArrayBuffer New(napi_env env,
                        Hint* finalizeHint);
 ```
 
-- `[in] env`: The environment in which to create the `ArrayBuffer` object.
+- `[in] env`: The environment in which to create the `ArrayBuffer` instance.
 - `[in] externalData`: The pointer to the external data to wrap.
 - `[in] byteLength`: The length of the `externalData`, in bytes.
 - `[in] finalizeCallback`: The function to be called when the `ArrayBuffer` is
@@ -89,7 +91,7 @@ static ArrayBuffer New(napi_env env,
 - `[in] finalizeHint`: The hint to be passed as the second parameter of the
   finalize callback.
 
-Returns a new `ArrayBuffer` object.
+Returns a new `ArrayBuffer` instance.
 
 ### Constructor
 
@@ -107,7 +109,7 @@ Initializes a wrapper instance of an existing `ArrayBuffer` object.
 ArrayBuffer(napi_env env, napi_value value);
 ```
 
-- `[in] env`: The environment in which to create the `ArrayBuffer` object.
+- `[in] env`: The environment in which to create the `ArrayBuffer` instance.
 - `[in] value`: The `ArrayBuffer` reference to wrap.
 
 ### ByteLength
