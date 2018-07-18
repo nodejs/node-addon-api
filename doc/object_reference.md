@@ -15,7 +15,7 @@ void Init(Env env) {
     // Create an empty ObjectReference that has an initial reference count of 2.
     ObjectReference obj_ref = Reference<Object>::New(Object::New(env), 2);
 
-    // Set a couple of different properties to the reference.
+    // Set a couple of different properties on the reference.
     obj_ref.Set("hello", String::New(env, "world"));
     obj_ref.Set(42, "The Answer to Life, the Universe, and Everything");
 
