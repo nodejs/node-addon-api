@@ -37,6 +37,8 @@ static ObjectReference New(const Object& value, uint32_t initialRefcount = 0);
 
 * `[in] initialRefcount`: The initial reference count.
 
+Returns the newly created reference.
+
 ```cpp
 static ObjectReference Weak(const Object& value);
 ```
@@ -44,6 +46,8 @@ static ObjectReference Weak(const Object& value);
 Creates a "weak" reference to the value, in that the initial count of number of references is set to 0.
 
 * `[in] value`: The value which is to be referenced.
+
+Returns the newly created reference.
 
 ```cpp
 static ObjectReference Persistent(const Object& value);
@@ -53,13 +57,15 @@ Creates a "persistent" reference to the value, in that the initial count of numb
 
 * `[in] value`: The value which is to be referenced.
 
+Returns the newly created reference.
+
 ### Empty Constructor
 
 ```cpp
 ObjectReference();
 ```
 
-Creates a new _empty_ ObjectReference instance.
+Returns a new _empty_ ObjectReference instance.
 
 ### Constructor
 
@@ -70,6 +76,8 @@ ObjectReference(napi_env env, napi_value value);
 * `[in] env`: The `napi_env` environment in which to construct the ObjectReference object.
 
 * `[in] value`: The N-API primitive value to be held by the ObjectReference.
+
+Returns the newly created reference.
 
 ### Set
 ```cpp
