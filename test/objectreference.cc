@@ -24,8 +24,13 @@ void SetObjects(const CallbackInfo& info) {
   HandleScope scope(env);
 
   weak = Weak(Object::New(env));
+  weak.SuppressDestruct();
+
   persistent = Persistent(Object::New(env));
+  persistent.SuppressDestruct();
+
   reference = Reference<Object>::New(Object::New(env), 2);
+  reference.SuppressDestruct();
 
   if (info[0].IsString()) {
     if (info[2].As<String>() == String::New(env, "javascript")) {
@@ -54,8 +59,13 @@ void SetCastedObjects(const CallbackInfo& info) {
   ex.Set(2, String::New(env, "!"));
 
   casted_weak = Weak(ex.As<Object>());
+  casted_weak.SuppressDestruct();
+
   casted_persistent = Persistent(ex.As<Object>());
+  casted_persistent.SuppressDestruct();
+
   casted_reference = Reference<Object>::New(ex.As<Object>(), 2);
+  casted_reference.SuppressDestruct();
 }
 
 // info[0] is a flag to determine if the weak, persistent, or 
