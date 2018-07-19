@@ -5,7 +5,38 @@ An [Object](object.md) can be assigned properites via its [DefineProperty](objec
 ## Example
 
 ```cpp
+#include <napi.h>
 
+using namespace Napi;
+
+Value TestGetter(const CallbackInfo& info) {
+   return Boolean::New(info.Env(), testValue);
+}
+
+void TestSetter(const CallbackInfo& info) {
+   testValue = info[0].As<Boolean>();
+}
+
+Value TestFunction(const CallbackInfo& info) {
+   return Boolean::New(info.Env(), true);
+}
+
+Void Init(Env env) {
+   // Accessor
+   PropertyDescriptor pd1 = PropertyDescriptor::Accessor("pd1", TestGetter);
+   PropertyDescriptor pd2 = PropertyDescriptor::Accessor("pd2", TestGetter, TestSetter);
+   
+   // Function
+   PropertyDescriptor pd3 = PropertyDescriptor::Function("function", TestFunction);
+
+   // Value
+   Boolean true_bool = Boolean::New(env, true);
+   PropertyDescriptor pd4 = PropertyDescriptor::Value("boolean value", TestFunction, napi_writable);
+
+  // Assign to an Object
+  Object obj = Object::New(env);
+  obj.DefineProperties({pd1, pd2, pd3, pd4});
+}
 ```
 
 ## Methods
