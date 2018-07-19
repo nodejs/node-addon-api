@@ -37,7 +37,7 @@ to ideas specified in the **ECMA262 Language Specification**.
 - **[Contributors](#contributors)**
 - **[License](#license)**
 
-## **Current version: 1.3**
+## **Current version: 1.4**
 
 (See [CHANGELOG.md](CHANGELOG.md) for complete Changelog)
 
