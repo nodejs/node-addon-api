@@ -24,6 +24,7 @@
         'promise.cc',
         'typedarray.cc',
         'objectwrap.cc',
+        'objectreference.cc',
       ],
       'include_dirs': ["<!@(node -p \"require('../').include\")"],
       'dependencies': ["<!(node -p \"require('../').gyp\")"],
