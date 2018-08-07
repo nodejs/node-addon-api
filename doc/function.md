@@ -45,7 +45,7 @@ The API of these two methods are very similar, but they are used in different co
 returning from an [asynchronous operation](async_operations.md) and in general in
 situations which don't have an existing JavaScript function on the stack.
 `Call` method is used when there is already a JavaScript function on the stack
-(for example when running a natice method called from JavaScript).
+(for example when running a native method called from JavaScript).
 
 ## Methods
 
