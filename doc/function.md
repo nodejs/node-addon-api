@@ -1,9 +1,12 @@
 # Function
 
 The **Function** class provides a set of methods to create a function object in
-native code and consequently calling it back from JavaScript.
-The created function is not automatically visible from script, instead it needs to
-be part of the add-on's module exports.
+native code that can later be called from JavaScript. The created function is not
+automatically visible from JavaScript, instead it needs to be part of the add-on's
+module exports or be returned by one of the modules exported functions.
+
+In addition the `Function` class also provides methods that can be used to call
+functions that were created in JavaScript and passed to the native.
 
 The `Function` class inherits its behavior from the `Object` class (for more info
 see: [Object](object.md)).
@@ -40,7 +43,7 @@ add-on with two different methods: `Call` and `MackeCallback`.
 The API of these two methods are very similar, but they are used in different context.
 `MakeCallback` method is used to call from native code back into JavaScript after
 returning from an [asynchronous operation](async_operations.md) and in general in
-all sistuations which don't have an existing JavaScript function on the stack.
+situations which don't have an existing JavaScript function on the stack.
 `Call` method is used when there is already a JavaScript function on the stack
 (for example when running a natice method called from JavaScript).
 
