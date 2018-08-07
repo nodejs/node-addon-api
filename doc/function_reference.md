@@ -1,126 +1,183 @@
 # FunctionReference
 
+FunctionReference is a subclass of [Reference](reference.md), and is equivalent to
+an instance of `Reference<Function>`. This means that a FunctionReference holds a 
+[Function](function.md), and a count of the number of references to that Function. 
+When the count is greater than 0, a FunctionReference is not eligible for garbage 
+collection. This ensures that the Function will remain accessible, even if the 
+original reference to it is no longer available.
+FunctionReference allows to call the referenced JavaScript function object from 
+a native add-on with two different methods: `Call` and `MackeCallback`.
+
+The `FunctionReference` class inherits its behavior from the `Reference` class 
+(for more info see: [Reference](reference.md)).
+
 ## Methods
+
+### Weak
+
+Creates a "weak" reference to the value, in that the initial count of number of 
+references is set to 0.
+
+```cpp
+static FunctionReference Weak(const Function& value);
+```
+
+- `[in] value`: The value which is to be referenced.
+
+Returns the newly created reference.
+
+### Persistent
+
+Creates a "persistent" reference to the value, in that the initial count of 
+number of references is set to 1.
+
+```cpp
+static FunctionReference Persistent(const Function& value);
+```
+
+- `[in] value`: The value which is to be referenced.
+
+Returns the newly created reference.
 
 ### Constructor
 
-Creates a new
+Creates a new empty instance of `FunctionReference`.
 
 ```cpp
 FunctionReference();
 ```
 
-- `[in] Env`: The environment in which to construct the
-
-Returns a new
-
 ### Constructor
 
-Creates a new
+Creates a new instance of the `FunctionReference`.
 
 ```cpp
 FunctionReference(napi_env env, napi_ref ref);
 ```
 
-- `[in] Env`: The environment in which to construct the
+- `[in] env`: The environment in which to construct the FunctionReference object.
+- `[in] ref`: The N-API reference to be held by the FunctionReference.
 
-Returns a new
-
-### Call
-
-Creates a new
-
-```cpp
-Napi::Value Call(const std::initializer_list<napi_value>& args) const;
-```
-
-- `[in] Env`: The environment in which to construct the
-
-Returns a new
-
-### Call
-
-Creates a new
-
-```cpp
-Napi::Value Call(const std::vector<napi_value>& args) const;
-```
-
-- `[in] Env`: The environment in which to construct the
-
-Returns a new
-
-### Call
-
-Creates a new
-
-```cpp
-Napi::Value Call(napi_value recv, const std::initializer_list<napi_value>& args) const;
-```
-
-- `[in] Env`: The environment in which to construct the
-
-Returns a new
-
-### Call
-
-Creates a new
-
-```cpp
-Napi::Value Call(napi_value recv, const std::vector<napi_value>& args) const;
-```
-
-- `[in] Env`: The environment in which to construct the
-
-Returns a new
-
-### MakeCallback
-
-Creates a new
-
-```cpp
-Napi::Value MakeCallback(napi_value recv, const std::initializer_list<napi_value>& args) const;
-```
-
-- `[in] Env`: The environment in which to construct the
-
-Returns a new
-
-### MakeCallback
-
-Creates a new
-
-```cpp
-Napi::Value MakeCallback(napi_value recv, const std::vector<napi_value>& args) const;
-```
-
-- `[in] Env`: The environment in which to construct the
-
-Returns a new
+Returns a newly created `FunctionReference` object.
 
 ### New
 
-Creates a new
+Creates a new JavaScript value from one that represents the constructor for the 
+object. 
 
 ```cpp
 Object New(const std::initializer_list<napi_value>& args) const;
 ```
 
-- `[in] Env`: The environment in which to construct the
+- `[in] args`: Initializer list of JavaScript values as napi_value representing 
+the arguments of the contructor function.
 
-Returns a new
+Returns a new JavaScript object.
 
 ### New
 
-Creates a new
+Creates a new JavaScript value from one that represents the constructor for the
+object.
 
 ```cpp
 Object New(const std::vector<napi_value>& args) const;
 ```
 
-- `[in] Env`: The environment in which to construct the
+- `[in] args`: Vector of JavaScript values as napi_value representing the 
+arguments of the constructor function.
 
-Returns a new
+Returns a new JavaScript object.
+
+### Call
+
+Calls a referenced Javascript function from a native add-on.
+
+```cpp
+Napi::Value Call(const std::initializer_list<napi_value>& args) const;
+```
+
+- `[in] args`: Initializer list of JavaScript values as `napi_value` representing
+the arguments of the referenced function.
+
+Returns a Value representing the JavaScript object returned by the referenced
+function.
+
+### Call
+
+Calls a referenced Javascript function from a native add-on.
+
+```cpp
+Napi::Value Call(const std::vector<napi_value>& args) const;
+```
+
+- `[in] args`: Vector of JavaScript values as `napi_value` representing the
+arguments of the referenced function.
+
+Returns a Value representing the JavaScript object returned by the referenced
+function.
+
+### Call
+
+Calls a referenced Javascript function from a native add-on.
+
+```cpp
+Napi::Value Call(napi_value recv, const std::initializer_list<napi_value>& args) const;
+```
+
+- `[in] recv`: The `this` object passed to the referenced function when it's called.
+- `[in] args`: Initializer list of JavaScript values as `napi_value` representing
+the arguments of the referenced function.
+
+Returns a Value representing the JavaScript object returned by the referenced
+function.
+
+### Call
+
+Calls a referenced Javascript function from a native add-on.
+
+```cpp
+Napi::Value Call(napi_value recv, const std::vector<napi_value>& args) const;
+```
+
+- `[in] recv`: The `this` object passed to the referenced function when it's called.
+- `[in] args`: Vector of JavaScript values as `napi_value` representing the
+arguments of the referenced function.
+
+Returns a Value representing the JavaScript object returned by the referenced
+function.
+
+### MakeCallback
+
+Calls a referenced Javascript function from a native add-on after an asynchronous
+operation.
+
+```cpp
+Napi::Value MakeCallback(napi_value recv, const std::initializer_list<napi_value>& args) const;
+```
+
+- `[in] recv`: The `this` object passed to the referenced function when it's called.
+- `[in] args`: Initializer list of JavaScript values as `napi_value` representing
+the arguments of the referenced function.
+
+Returns a Value representing the JavaScript object returned by the referenced
+function.
+
+### MakeCallback
+
+Calls a referenced Javascript function from a native add-on after an asynchronous
+operation.
+
+```cpp
+Napi::Value MakeCallback(napi_value recv, const std::vector<napi_value>& args) const;
+```
+
+- `[in] recv`: The `this` object passed to the referenced function when it's called.
+- `[in] args`: Vector of JavaScript values as `napi_value` representing the
+arguments of the referenced function.
+
+Returns a Value representing the JavaScript object returned by the referenced
+function.
 
 ## Operator
 
@@ -128,6 +185,7 @@ Returns a new
 Napi::Value operator ()(const std::initializer_list<napi_value>& args) const;
 ```
 
-- `[in] Env`: The environment in which to construct the
+- `[in] args`: Initializer list of reference to JavaScript values as `napi_value`
 
-Returns a new
+Returns a `Value` representing the JavaScript value returned by the referenced 
+function.
