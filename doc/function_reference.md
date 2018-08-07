@@ -6,8 +6,10 @@ an instance of `Reference<Function>`. This means that a FunctionReference holds 
 When the count is greater than 0, a FunctionReference is not eligible for garbage 
 collection. This ensures that the Function will remain accessible, even if the 
 original reference to it is no longer available.
-FunctionReference allows to call the referenced JavaScript function object from 
-a native add-on with two different methods: `Call` and `MackeCallback`.
+FunctionReference allows the referenced JavaScript function object  to be called
+from a native add-on with two different methods: `Call` and `MakeCallback`. See
+the documentation for [Function](function.md) for when `Call` should be used
+instead of `MakeCallback` and vice-versa.
 
 The `FunctionReference` class inherits its behavior from the `Reference` class 
 (for more info see: [Reference](reference.md)).
