@@ -1,24 +1,24 @@
 # FunctionReference
 
-FunctionReference is a subclass of [Reference](reference.md), and is equivalent to
-an instance of `Reference<Function>`. This means that a FunctionReference holds a 
-[Function](function.md), and a count of the number of references to that Function. 
-When the count is greater than 0, a FunctionReference is not eligible for garbage 
-collection. This ensures that the Function will remain accessible, even if the 
+`FunctionReference` is a subclass of [Reference](reference.md), and is equivalent to
+an instance of `Reference<Function>`. This means that a FunctionReference holds a
+[`Function`](function.md), and a count of the number of references to that `Function`.
+When the count is greater than 0, a FunctionReference is not eligible for garbage
+collection. This ensures that the `Function` will remain accessible, even if the
 original reference to it is no longer available.
-FunctionReference allows the referenced JavaScript function object  to be called
+`FunctionReference` allows the referenced JavaScript function object  to be called
 from a native add-on with two different methods: `Call` and `MakeCallback`. See
-the documentation for [Function](function.md) for when `Call` should be used
+the documentation for [`Function`](function.md) for when `Call` should be used
 instead of `MakeCallback` and vice-versa.
 
-The `FunctionReference` class inherits its behavior from the `Reference` class 
+The `FunctionReference` class inherits its behavior from the `Reference` class
 (for more info see: [Reference](reference.md)).
 
 ## Methods
 
 ### Weak
 
-Creates a "weak" reference to the value, in that the initial count of number of 
+Creates a "weak" reference to the value, in that the initial count of number of
 references is set to 0.
 
 ```cpp
@@ -31,7 +31,7 @@ Returns the newly created reference.
 
 ### Persistent
 
-Creates a "persistent" reference to the value, in that the initial count of 
+Creates a "persistent" reference to the value, in that the initial count of
 number of references is set to 1.
 
 ```cpp
@@ -65,28 +65,26 @@ Returns a newly created `FunctionReference` object.
 
 ### New
 
-Creates a new JavaScript value from one that represents the constructor for the 
-object. 
+Constructs a new instance by calling the constructor held by this reference.
 
 ```cpp
-Object New(const std::initializer_list<napi_value>& args) const;
+Napi::Object New(const std::initializer_list<napi_value>& args) const;
 ```
 
-- `[in] args`: Initializer list of JavaScript values as napi_value representing 
+- `[in] args`: Initializer list of JavaScript values as napi_value representing
 the arguments of the contructor function.
 
 Returns a new JavaScript object.
 
 ### New
 
-Creates a new JavaScript value from one that represents the constructor for the
-object.
+Constructs a new instance by calling the constructor held by this reference.
 
 ```cpp
-Object New(const std::vector<napi_value>& args) const;
+Napi::Object New(const std::vector<napi_value>& args) const;
 ```
 
-- `[in] args`: Vector of JavaScript values as napi_value representing the 
+- `[in] args`: Vector of JavaScript values as napi_value representing the
 arguments of the constructor function.
 
 Returns a new JavaScript object.
@@ -102,7 +100,7 @@ Napi::Value Call(const std::initializer_list<napi_value>& args) const;
 - `[in] args`: Initializer list of JavaScript values as `napi_value` representing
 the arguments of the referenced function.
 
-Returns a Value representing the JavaScript object returned by the referenced
+Returns a `Napi::Value` representing the JavaScript object returned by the referenced
 function.
 
 ### Call
@@ -116,7 +114,7 @@ Napi::Value Call(const std::vector<napi_value>& args) const;
 - `[in] args`: Vector of JavaScript values as `napi_value` representing the
 arguments of the referenced function.
 
-Returns a Value representing the JavaScript object returned by the referenced
+Returns a `Napi::Value` representing the JavaScript object returned by the referenced
 function.
 
 ### Call
@@ -131,7 +129,7 @@ Napi::Value Call(napi_value recv, const std::initializer_list<napi_value>& args)
 - `[in] args`: Initializer list of JavaScript values as `napi_value` representing
 the arguments of the referenced function.
 
-Returns a Value representing the JavaScript object returned by the referenced
+Returns a `Napi::Value` representing the JavaScript object returned by the referenced
 function.
 
 ### Call
@@ -146,7 +144,7 @@ Napi::Value Call(napi_value recv, const std::vector<napi_value>& args) const;
 - `[in] args`: Vector of JavaScript values as `napi_value` representing the
 arguments of the referenced function.
 
-Returns a Value representing the JavaScript object returned by the referenced
+Returns a `Napi::Value` representing the JavaScript object returned by the referenced
 function.
 
 ### MakeCallback
@@ -162,7 +160,7 @@ Napi::Value MakeCallback(napi_value recv, const std::initializer_list<napi_value
 - `[in] args`: Initializer list of JavaScript values as `napi_value` representing
 the arguments of the referenced function.
 
-Returns a Value representing the JavaScript object returned by the referenced
+Returns a `Napi::Value` representing the JavaScript object returned by the referenced
 function.
 
 ### MakeCallback
@@ -178,7 +176,7 @@ Napi::Value MakeCallback(napi_value recv, const std::vector<napi_value>& args) c
 - `[in] args`: Vector of JavaScript values as `napi_value` representing the
 arguments of the referenced function.
 
-Returns a Value representing the JavaScript object returned by the referenced
+Returns a `Napi::Value` representing the JavaScript object returned by the referenced
 function.
 
 ## Operator
@@ -189,5 +187,5 @@ Napi::Value operator ()(const std::initializer_list<napi_value>& args) const;
 
 - `[in] args`: Initializer list of reference to JavaScript values as `napi_value`
 
-Returns a `Value` representing the JavaScript value returned by the referenced 
+Returns a `Napi::Value` representing the JavaScript value returned by the referenced
 function.
