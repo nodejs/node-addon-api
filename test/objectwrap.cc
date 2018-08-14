@@ -32,11 +32,11 @@ public:
     return Napi::Number::New(info.Env(), value);
   }
 
-  Napi::Value Iter(const Napi::CallbackInfo& info) {
+  Napi::Value Iter(const Napi::CallbackInfo& /*info*/) {
     return Constructor.New({});
   }
 
-  void Setter(const Napi::CallbackInfo& info, const Napi::Value& new_value) {
+  void Setter(const Napi::CallbackInfo& /*info*/, const Napi::Value& new_value) {
     value = new_value.As<Napi::Number>();
   }
 

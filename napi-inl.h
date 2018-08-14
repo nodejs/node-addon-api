@@ -2437,7 +2437,7 @@ inline PropertyDescriptor
 PropertyDescriptor::Accessor(const char* utf8name,
                              Getter getter,
                              napi_property_attributes attributes,
-                             void* data) {
+                             void* /*data*/) {
   typedef details::CallbackData<Getter, Napi::Value> CbData;
   // TODO: Delete when the function is destroyed
   auto callbackData = new CbData({ getter, nullptr });
@@ -2466,7 +2466,7 @@ template <typename Getter>
 inline PropertyDescriptor PropertyDescriptor::Accessor(napi_value name,
                                                        Getter getter,
                                                        napi_property_attributes attributes,
-                                                       void* data) {
+                                                       void* /*data*/) {
   typedef details::CallbackData<Getter, Napi::Value> CbData;
   // TODO: Delete when the function is destroyed
   auto callbackData = new CbData({ getter, nullptr });
@@ -2497,7 +2497,7 @@ inline PropertyDescriptor PropertyDescriptor::Accessor(const char* utf8name,
                                                        Getter getter,
                                                        Setter setter,
                                                        napi_property_attributes attributes,
-                                                       void* data) {
+                                                       void* /*data*/) {
   typedef details::AccessorCallbackData<Getter, Setter> CbData;
   // TODO: Delete when the function is destroyed
   auto callbackData = new CbData({ getter, setter });
@@ -2528,7 +2528,7 @@ inline PropertyDescriptor PropertyDescriptor::Accessor(napi_value name,
                                                        Getter getter,
                                                        Setter setter,
                                                        napi_property_attributes attributes,
-                                                       void* data) {
+                                                       void* /*data*/) {
   typedef details::AccessorCallbackData<Getter, Setter> CbData;
   // TODO: Delete when the function is destroyed
   auto callbackData = new CbData({ getter, setter });
@@ -2559,7 +2559,7 @@ template <typename Callable>
 inline PropertyDescriptor PropertyDescriptor::Function(const char* utf8name,
                                                        Callable cb,
                                                        napi_property_attributes attributes,
-                                                       void* data) {
+                                                       void* /*data*/) {
   typedef decltype(cb(CallbackInfo(nullptr, nullptr))) ReturnType;
   typedef details::CallbackData<Callable, ReturnType> CbData;
   // TODO: Delete when the function is destroyed
@@ -2589,7 +2589,7 @@ template <typename Callable>
 inline PropertyDescriptor PropertyDescriptor::Function(napi_value name,
                                                        Callable cb,
                                                        napi_property_attributes attributes,
-                                                       void* data) {
+                                                       void* /*data*/) {
   typedef decltype(cb(CallbackInfo(nullptr, nullptr))) ReturnType;
   typedef details::CallbackData<Callable, ReturnType> CbData;
   // TODO: Delete when the function is destroyed
@@ -3204,7 +3204,7 @@ inline void AsyncWorker::SetError(const std::string& error) {
   _error = error;
 }
 
-inline void AsyncWorker::OnExecute(napi_env env, void* this_pointer) {
+inline void AsyncWorker::OnExecute(napi_env /*env*/, void* this_pointer) {
   AsyncWorker* self = static_cast<AsyncWorker*>(this_pointer);
 #ifdef NAPI_CPP_EXCEPTIONS
   try {
@@ -3218,7 +3218,7 @@ inline void AsyncWorker::OnExecute(napi_env env, void* this_pointer) {
 }
 
 inline void AsyncWorker::OnWorkComplete(
-    napi_env env, napi_status status, void* this_pointer) {
+    napi_env /*env*/, napi_status status, void* this_pointer) {
   AsyncWorker* self = static_cast<AsyncWorker*>(this_pointer);
   if (status != napi_cancelled) {
     HandleScope scope(self->_env);
