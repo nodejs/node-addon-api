@@ -68,7 +68,7 @@ Value CreateExternalBufferWithFinalize(const CallbackInfo& info) {
     info.Env(),
     data,
     testLength,
-    [](Env env, uint16_t* finalizeData) {
+    [](Env /*env*/, uint16_t* finalizeData) {
       delete[] finalizeData;
       finalizeCount++;
     });
@@ -97,7 +97,7 @@ Value CreateExternalBufferWithFinalizeHint(const CallbackInfo& info) {
     info.Env(),
     data,
     testLength,
-    [](Env env, uint16_t* finalizeData, char* finalizeHint) {
+    [](Env /*env*/, uint16_t* finalizeData, char* /*finalizeHint*/) {
       delete[] finalizeData;
       finalizeCount++;
     },

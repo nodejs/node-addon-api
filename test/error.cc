@@ -154,7 +154,7 @@ void CatchAndRethrowErrorThatEscapesScope(const CallbackInfo& info) {
 
 #endif // NAPI_CPP_EXCEPTIONS
 
-void ThrowFatalError(const CallbackInfo& info) {
+void ThrowFatalError(const CallbackInfo& /*info*/) {
   Error::Fatal("Error::ThrowFatalError", "This is a fatal error");
 }
 

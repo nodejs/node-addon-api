@@ -15,7 +15,7 @@ Value CreateExternal(const CallbackInfo& info) {
 Value CreateExternalWithFinalize(const CallbackInfo& info) {
   finalizeCount = 0;
   return External<int>::New(info.Env(), new int(1),
-    [](Env env, int* data) {
+    [](Env /*env*/, int* data) {
       delete data;
       finalizeCount++;
     });
@@ -25,7 +25,7 @@ Value CreateExternalWithFinalizeHint(const CallbackInfo& info) {
   finalizeCount = 0;
   char* hint = nullptr;
   return External<int>::New(info.Env(), new int(1),
-    [](Env env, int* data, char* hint) {
+    [](Env /*env*/, int* data, char* /*hint*/) {
       delete data;
       finalizeCount++;
     },
