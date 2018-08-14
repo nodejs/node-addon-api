@@ -27,6 +27,9 @@ namespace details {
 #define NAPI_THROW_IF_FAILED(env, status, ...)           \
   if ((status) != napi_ok) throw Error::New(env);
 
+#define NAPI_THROW_IF_FAILED_VOID(env, status)           \
+  if ((status) != napi_ok) throw Error::New(env);
+
 #else // NAPI_CPP_EXCEPTIONS
 
 #define NAPI_THROW(e)  (e).ThrowAsJavaScriptException();
@@ -38,6 +41,14 @@ namespace details {
   if ((status) != napi_ok) {                             \
     Error::New(env).ThrowAsJavaScriptException();        \
     return __VA_ARGS__;                                  \
+  }
+
+// Usually ony could use NAPI_THROW_IF_FAILED(env, status, void()),
+// but it is forbidden to return value from cons, and forbidden to leave "..." argument empty
+#define NAPI_THROW_IF_FAILED_VOID(env, status)           \
+  if ((status) != napi_ok) {                             \
+    Error::New(env).ThrowAsJavaScriptException();        \
+    return;                                              \
   }
 
 #endif // NAPI_CPP_EXCEPTIONS
@@ -867,21 +878,21 @@ template <typename ValueType>
 inline void Object::Set(napi_value key, const ValueType& value) {
   napi_status status =
       napi_set_property(_env, _value, key, Value::From(_env, value));
-  NAPI_THROW_IF_FAILED(_env, status);
+  NAPI_THROW_IF_FAILED_VOID(_env, status);
 }
 
 template <typename ValueType>
 inline void Object::Set(Value key, const ValueType& value) {
   napi_status status =
       napi_set_property(_env, _value, key, Value::From(_env, value));
-  NAPI_THROW_IF_FAILED(_env, status);
+  NAPI_THROW_IF_FAILED_VOID(_env, status);
 }
 
 template <typename ValueType>
 inline void Object::Set(const char* utf8name, const ValueType& value) {
   napi_status status =
       napi_set_named_property(_env, _value, utf8name, Value::From(_env, value));
-  NAPI_THROW_IF_FAILED(_env, status);
+  NAPI_THROW_IF_FAILED_VOID(_env, status);
 }
 
 template <typename ValueType>
@@ -929,7 +940,7 @@ template <typename ValueType>
 inline void Object::Set(uint32_t index, const ValueType& value) {
   napi_status status =
       napi_set_element(_env, _value, index, Value::From(_env, value));
-  NAPI_THROW_IF_FAILED(_env, status);
+  NAPI_THROW_IF_FAILED_VOID(_env, status);
 }
 
 inline bool Object::Delete(uint32_t index) {
@@ -949,19 +960,19 @@ inline Array Object::GetPropertyNames() {
 inline void Object::DefineProperty(const PropertyDescriptor& property) {
   napi_status status = napi_define_properties(_env, _value, 1,
     reinterpret_cast<const napi_property_descriptor*>(&property));
-  NAPI_THROW_IF_FAILED(_env, status);
+  NAPI_THROW_IF_FAILED_VOID(_env, status);
 }
 
 inline void Object::DefineProperties(const std::initializer_list<PropertyDescriptor>& properties) {
   napi_status status = napi_define_properties(_env, _value, properties.size(),
     reinterpret_cast<const napi_property_descriptor*>(properties.begin()));
-  NAPI_THROW_IF_FAILED(_env, status);
+  NAPI_THROW_IF_FAILED_VOID(_env, status);
 }
 
 inline void Object::DefineProperties(const std::vector<PropertyDescriptor>& properties) {
   napi_status status = napi_define_properties(_env, _value, properties.size(),
     reinterpret_cast<const napi_property_descriptor*>(properties.data()));
-  NAPI_THROW_IF_FAILED(_env, status);
+  NAPI_THROW_IF_FAILED_VOID(_env, status);
 }
 
 inline bool Object::InstanceOf(const Function& constructor) const {
@@ -1171,7 +1182,7 @@ inline void ArrayBuffer::EnsureInfo() const {
   // since they can never change during the lifetime of the ArrayBuffer.
   if (_data == nullptr) {
     napi_status status = napi_get_arraybuffer_info(_env, _value, &_data, &_length);
-    NAPI_THROW_IF_FAILED(_env, status);
+    NAPI_THROW_IF_FAILED_VOID(_env, status);
   }
 }
 
@@ -1222,7 +1233,7 @@ inline DataView::DataView(napi_env env, napi_value value) : Object(env, value) {
     &_data   /* data */,
     nullptr  /* arrayBuffer */,
     nullptr  /* byteOffset */);
-  NAPI_THROW_IF_FAILED(_env, status);
+  NAPI_THROW_IF_FAILED_VOID(_env, status);
 }
 
 inline Napi::ArrayBuffer DataView::ArrayBuffer() const {
@@ -1466,7 +1477,7 @@ inline TypedArrayOf<T>::TypedArrayOf(napi_env env, napi_value value)
   : TypedArray(env, value), _data(nullptr) {
   napi_status status = napi_get_typedarray_info(
     _env, _value, &_type, &_length, reinterpret_cast<void**>(&_data), nullptr, nullptr);
-  NAPI_THROW_IF_FAILED(_env, status);
+  NAPI_THROW_IF_FAILED_VOID(_env, status);
 }
 
 template <typename T>
@@ -1615,7 +1626,7 @@ inline Promise::Deferred Promise::Deferred::New(napi_env env) {
 
 inline Promise::Deferred::Deferred(napi_env env) : _env(env) {
   napi_status status = napi_create_promise(_env, &_deferred, &_promise);
-  NAPI_THROW_IF_FAILED(_env, status);
+  NAPI_THROW_IF_FAILED_VOID(_env, status);
 }
 
 inline Promise Promise::Deferred::Promise() const {
@@ -1624,12 +1635,12 @@ inline Promise Promise::Deferred::Promise() const {
 
 inline void Promise::Deferred::Resolve(napi_value value) const {
   napi_status status = napi_resolve_deferred(_env, _deferred, value);
-  NAPI_THROW_IF_FAILED(_env, status);
+  NAPI_THROW_IF_FAILED_VOID(_env, status);
 }
 
 inline void Promise::Deferred::Reject(napi_value value) const {
   napi_status status = napi_reject_deferred(_env, _deferred, value);
-  NAPI_THROW_IF_FAILED(_env, status);
+  NAPI_THROW_IF_FAILED_VOID(_env, status);
 }
 
 inline Promise::Promise(napi_env env, napi_value value) : Object(env, value) {
@@ -1748,7 +1759,7 @@ inline void Buffer<T>::EnsureInfo() const {
     size_t byteLength;
     void* voidData;
     napi_status status = napi_get_buffer_info(_env, _value, &voidData, &byteLength);
-    NAPI_THROW_IF_FAILED(_env, status);
+    NAPI_THROW_IF_FAILED_VOID(_env, status);
     _length = byteLength / sizeof (T);
     _data = static_cast<T*>(voidData);
   }
@@ -1884,7 +1895,7 @@ inline void Error::ThrowAsJavaScriptException() const {
   HandleScope scope(_env);
   if (!IsEmpty()) {
     napi_status status = napi_throw(_env, Value());
-    NAPI_THROW_IF_FAILED(_env, status);
+    NAPI_THROW_IF_FAILED_VOID(_env, status);
   }
 }
 
@@ -2073,7 +2084,7 @@ template <typename T>
 inline void Reference<T>::Reset() {
   if (_ref != nullptr) {
     napi_status status = napi_delete_reference(_env, _ref);
-    NAPI_THROW_IF_FAILED(_env, status);
+    NAPI_THROW_IF_FAILED_VOID(_env, status);
     _ref = nullptr;
   }
 }
@@ -2086,7 +2097,7 @@ inline void Reference<T>::Reset(const T& value, uint32_t refcount) {
   napi_value val = value;
   if (val != nullptr) {
     napi_status status = napi_create_reference(_env, value, refcount, &_ref);
-    NAPI_THROW_IF_FAILED(_env, status);
+    NAPI_THROW_IF_FAILED_VOID(_env, status);
   }
 }
 
@@ -2360,7 +2371,7 @@ inline CallbackInfo::CallbackInfo(napi_env env, napi_callback_info info)
   _argc = _staticArgCount;
   _argv = _staticArgs;
   napi_status status = napi_get_cb_info(env, info, &_argc, _argv, &_this, &_data);
-  NAPI_THROW_IF_FAILED(_env, status);
+  NAPI_THROW_IF_FAILED_VOID(_env, status);
 
   if (_argc > _staticArgCount) {
     // Use either a fixed-size array (on the stack) or a dynamically-allocated
@@ -2369,7 +2380,7 @@ inline CallbackInfo::CallbackInfo(napi_env env, napi_callback_info info)
     _argv = _dynamicArgs;
 
     status = napi_get_cb_info(env, info, &_argc, _argv, nullptr, nullptr);
-    NAPI_THROW_IF_FAILED(_env, status);
+    NAPI_THROW_IF_FAILED_VOID(_env, status);
   }
 }
 
@@ -2659,7 +2670,7 @@ inline ObjectWrap<T>::ObjectWrap(const Napi::CallbackInfo& callbackInfo) {
   napi_ref ref;
   T* instance = static_cast<T*>(this);
   status = napi_wrap(env, wrapper, instance, FinalizeCallback, nullptr, &ref);
-  NAPI_THROW_IF_FAILED(env, status)
+  NAPI_THROW_IF_FAILED_VOID(env, status);
 
   Reference<Object>* instanceRef = instance;
   *instanceRef = Reference<Object>(env, ref);
@@ -3027,7 +3038,7 @@ inline HandleScope::HandleScope(napi_env env, napi_handle_scope scope)
 
 inline HandleScope::HandleScope(Napi::Env env) : _env(env) {
   napi_status status = napi_open_handle_scope(_env, &_scope);
-  NAPI_THROW_IF_FAILED(_env, status);
+  NAPI_THROW_IF_FAILED_VOID(_env, status);
 }
 
 inline HandleScope::~HandleScope() {
@@ -3052,7 +3063,7 @@ inline EscapableHandleScope::EscapableHandleScope(
 
 inline EscapableHandleScope::EscapableHandleScope(Napi::Env env) : _env(env) {
   napi_status status = napi_open_escapable_handle_scope(_env, &_scope);
-  NAPI_THROW_IF_FAILED(_env, status);
+  NAPI_THROW_IF_FAILED_VOID(_env, status);
 }
 
 inline EscapableHandleScope::~EscapableHandleScope() {
@@ -3120,11 +3131,11 @@ inline AsyncWorker::AsyncWorker(const Object& receiver,
   napi_value resource_id;
   napi_status status = napi_create_string_latin1(
       _env, resource_name, NAPI_AUTO_LENGTH, &resource_id);
-  NAPI_THROW_IF_FAILED(_env, status);
+  NAPI_THROW_IF_FAILED_VOID(_env, status);
 
   status = napi_create_async_work(_env, resource, resource_id, OnExecute,
                                   OnWorkComplete, this, &_work);
-  NAPI_THROW_IF_FAILED(_env, status);
+  NAPI_THROW_IF_FAILED_VOID(_env, status);
 }
 
 inline AsyncWorker::~AsyncWorker() {
@@ -3165,12 +3176,12 @@ inline Napi::Env AsyncWorker::Env() const {
 
 inline void AsyncWorker::Queue() {
   napi_status status = napi_queue_async_work(_env, _work);
-  NAPI_THROW_IF_FAILED(_env, status);
+  NAPI_THROW_IF_FAILED_VOID(_env, status);
 }
 
 inline void AsyncWorker::Cancel() {
   napi_status status = napi_cancel_async_work(_env, _work);
-  NAPI_THROW_IF_FAILED(_env, status);
+  NAPI_THROW_IF_FAILED_VOID(_env, status);
 }
 
 inline ObjectReference& AsyncWorker::Receiver() {
