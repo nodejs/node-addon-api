@@ -171,7 +171,7 @@ struct AccessorCallbackData {
                                 napi_value exports) {     \
     return Napi::RegisterModule(env, exports, regfunc);   \
   }                                                       \
-  NAPI_MODULE(modname, __napi_ ## regfunc);
+  NAPI_MODULE(modname, __napi_ ## regfunc)
 
 // Adapt the NAPI_MODULE registration function:
 //  - Wrap the arguments in NAPI wrappers.
