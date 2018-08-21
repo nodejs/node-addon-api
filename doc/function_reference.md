@@ -1,12 +1,12 @@
 # FunctionReference
 
 `FunctionReference` is a subclass of [Reference](reference.md), and is equivalent to
-an instance of `Reference<Function>`. This means that a FunctionReference holds a
+an instance of `Reference<Function>`. This means that a `FunctionReference` holds a
 [`Function`](function.md), and a count of the number of references to that `Function`.
-When the count is greater than 0, a FunctionReference is not eligible for garbage
+When the count is greater than 0, a `FunctionReference` is not eligible for garbage
 collection. This ensures that the `Function` will remain accessible, even if the
 original reference to it is no longer available.
-`FunctionReference` allows the referenced JavaScript function object  to be called
+`FunctionReference` allows the referenced JavaScript function object to be called
 from a native add-on with two different methods: `Call` and `MakeCallback`. See
 the documentation for [`Function`](function.md) for when `Call` should be used
 instead of `MakeCallback` and vice-versa.
@@ -18,8 +18,8 @@ The `FunctionReference` class inherits its behavior from the `Reference` class
 
 ### Weak
 
-Creates a "weak" reference to the value, in that the initial count of number of
-references is set to 0.
+Creates a "weak" reference to the value, in that the initial reference count is 
+set to 0.
 
 ```cpp
 static FunctionReference Weak(const Function& value);
@@ -71,7 +71,7 @@ Constructs a new instance by calling the constructor held by this reference.
 Napi::Object New(const std::initializer_list<napi_value>& args) const;
 ```
 
-- `[in] args`: Initializer list of JavaScript values as napi_value representing
+- `[in] args`: Initializer list of JavaScript values as `napi_value` representing
 the arguments of the contructor function.
 
 Returns a new JavaScript object.
@@ -84,7 +84,7 @@ Constructs a new instance by calling the constructor held by this reference.
 Napi::Object New(const std::vector<napi_value>& args) const;
 ```
 
-- `[in] args`: Vector of JavaScript values as napi_value representing the
+- `[in] args`: Vector of JavaScript values as `napi_value` representing the
 arguments of the constructor function.
 
 Returns a new JavaScript object.

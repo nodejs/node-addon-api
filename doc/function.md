@@ -6,7 +6,7 @@ automatically visible from JavaScript. Instead it needs to be part of the add-on
 module exports or be returned by one of the module's exported functions.
 
 In addition the `Function` class also provides methods that can be used to call
-functions that were created in JavaScript and passed to the native  add-on.
+functions that were created in JavaScript and passed to the native add-on.
 
 The `Function` class inherits its behavior from the `Object` class (for more info
 see: [Object](object.md)).
@@ -41,7 +41,7 @@ addon.fn();
 With the `Function` class it is possible to call a JavaScript function object
 from a native add-on with two different methods: `Call` and `MakeCallback`.
 The API of these two methods is very similar, but they are used in different
-context. The `MakeCallback` method is used to call from native code back into
+contexts. The `MakeCallback` method is used to call from native code back into
 JavaScript after returning from an [asynchronous operation](async_operations.md)
 and in general in situations which don't have an existing JavaScript function on
 the stack. The `Call` method is used when there is already a JavaScript function
@@ -66,7 +66,7 @@ Function(napi_env env, napi_value value);
 ```
 
 - `[in] env`: The `napi_env` environment in which to construct the Value object.
-- `[in] value`: The `napi_value` which is handle for a JavaScript function.
+- `[in] value`: The `napi_value` which is a handle for a JavaScript function.
 
 Returns a non-empty `Function` instance.
 
@@ -79,7 +79,7 @@ template <typename Callable>
 static Function New(napi_env env, Callable cb, const char* utf8name = nullptr, void* data = nullptr);
 ```
 
-- `[in] env`: The `napi_env` environment in which to construct the Function object.
+- `[in] env`: The `napi_env` environment in which to construct the `Function` object.
 - `[in] cb`: Object that implements `Callable`.
 - `[in] utf8name`: Null-terminated string to be used as the name of the function.
 - `[in] data`: User-provided data context. This will be passed back into the
