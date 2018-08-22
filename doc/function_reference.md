@@ -31,8 +31,8 @@ Returns the newly created reference.
 
 ### Persistent
 
-Creates a "persistent" reference to the value, in that the initial count of
-number of references is set to 1.
+Creates a "persistent" reference to the value, in that the initial reference 
+count is set to 1.
 
 ```cpp
 static FunctionReference Persistent(const Function& value);
