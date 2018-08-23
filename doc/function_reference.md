@@ -12,7 +12,7 @@ the documentation for [`Function`](function.md) for when `Call` should be used
 instead of `MakeCallback` and vice-versa.
 
 The `FunctionReference` class inherits its behavior from the `Reference` class
-(for more info see: [Reference](reference.md)).
+(for more info see: [`Reference`](reference.md)).
 
 ## Methods
 
@@ -58,8 +58,8 @@ Creates a new instance of the `FunctionReference`.
 FunctionReference(napi_env env, napi_ref ref);
 ```
 
-- `[in] env`: The environment in which to construct the FunctionReference object.
-- `[in] ref`: The N-API reference to be held by the FunctionReference.
+- `[in] env`: The environment in which to construct the `FunctionReference` object.
+- `[in] ref`: The N-API reference to be held by the `FunctionReference`.
 
 Returns a newly created `FunctionReference` object.
 

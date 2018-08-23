@@ -65,7 +65,7 @@ Creates a new instance of the `Function` object.
 Function(napi_env env, napi_value value);
 ```
 
-- `[in] env`: The `napi_env` environment in which to construct the Value object.
+- `[in] env`: The `napi_env` environment in which to construct the `Function` object.
 - `[in] value`: The `napi_value` which is a handle for a JavaScript function.
 
 Returns a non-empty `Function` instance.
@@ -94,7 +94,7 @@ template <typename Callable>
 static Function New(napi_env env, Callable cb, const std::string& utf8name, void* data = nullptr);
 ```
 
-- `[in] env`: The `napi_env` environment in which to construct the Function object.
+- `[in] env`: The `napi_env` environment in which to construct the `Function` object.
 - `[in] cb`: Object that implements `Callable`.
 - `[in] utf8name`: String to be used as the name of the function.
 - `[in] data`: User-provided data context. This will be passed back into the
