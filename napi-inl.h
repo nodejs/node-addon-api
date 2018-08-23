@@ -1622,6 +1622,10 @@ inline Promise Promise::Deferred::Promise() const {
   return Napi::Promise(_env, _promise);
 }
 
+inline Napi::Env Promise::Deferred::Env() const {
+  return Napi::Env(_env);
+}
+
 inline void Promise::Deferred::Resolve(napi_value value) const {
   napi_status status = napi_resolve_deferred(_env, _deferred, value);
   NAPI_THROW_IF_FAILED(_env, status);
