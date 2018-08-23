@@ -881,6 +881,7 @@ namespace Napi {
       Deferred(napi_env env);
 
       Napi::Promise Promise() const;
+      Napi::Env Env() const;
 
       void Resolve(napi_value value) const;
       void Reject(napi_value value) const;
