@@ -9,7 +9,7 @@ In addition the `Function` class also provides methods that can be used to call
 functions that were created in JavaScript and passed to the native add-on.
 
 The `Function` class inherits its behavior from the `Object` class (for more info
-see: [Object](object.md)).
+see: [`Object`](object.md)).
 
 ## Example
 

@@ -1,6 +1,6 @@
 # FunctionReference
 
-`FunctionReference` is a subclass of [Reference](reference.md), and is equivalent to
+`FunctionReference` is a subclass of [`Reference`](reference.md), and is equivalent to
 an instance of `Reference<Function>`. This means that a `FunctionReference` holds a
 [`Function`](function.md), and a count of the number of references to that `Function`.
 When the count is greater than 0, a `FunctionReference` is not eligible for garbage
