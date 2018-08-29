@@ -315,8 +315,8 @@ the returned value.
 ## Name
 
 Names are JavaScript values that can be used as a property name. There are two
-specialized types of names supported in Node.js Addon API- [`String`](String.md)
-and [`Symbol`](Symbol.md).
+specialized types of names supported in Node.js Addon API- [`String`](string.md)
+and [`Symbol`](symbol.md).
 
 ### Methods
 
