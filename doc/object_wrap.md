@@ -1,14 +1,14 @@
 # Object Wrap
 
-The `ObjectWrap` class is used to expose C++ code to JavaScript. Every C++
+The `Napi::ObjectWrap` class is used to expose C++ code to JavaScript. Every C++
 class instance will be "wrapped" by a JavaScript object that is managed by the
-`ObjectWrap` class. To create a wrapper it's necessary to extend the `ObjectWrap`
-class that contains all the plumbing to connect JavaScript code with a C++ object.
-Classes extending `ObjectWrap` can be instantiated from JavaScript using the
-**new** operator, and their methods can be directly invoked from JavaScript.
-The **wrap** word refers to a way of grouping methods and state of the class
-because it will be necessary write custom code to bridge each of your C++ class
-methods.
+`Napi::ObjectWrap` class. To create a wrapper it's necessary to extend the 
+`Napi::ObjectWrap`class that contains all the plumbing to connect JavaScript code
+with a C++ object. Classes extending `Napi::ObjectWrap` can be instantiated from 
+JavaScript using the **new** operator, and their methods can be directly invoked 
+from JavaScript. The **wrap** word refers to a way of grouping methods and state 
+of the class because it will be necessary write custom code to bridge each of 
+your C++ class methods.
 
 ## Example
 

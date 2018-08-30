@@ -10,7 +10,7 @@ This prevents using descriptors from a different class when defining a new class
 
 ### Contructor
 
-Creates new instance of `ClassPropertyDescriptor` descriptor object.
+Creates new instance of `Napi::ClassPropertyDescriptor` descriptor object.
 
 ```cpp
 ClassPropertyDescriptor(napi_property_descriptor desc) : _desc(desc) {}
@@ -27,10 +27,10 @@ inside the `Napi::ObjectWrap<T>` class.
 operator napi_property_descriptor&() { return _desc; }
 ```
 
-Returns the original N-API `napi_property_descriptor` wrapped inside the `ClassPropertyDescriptor`
+Returns the original N-API `napi_property_descriptor` wrapped inside the `Napi::ClassPropertyDescriptor`
 
 ```cpp
 operator const napi_property_descriptor&() const { return _desc; }
 ```
 
-Returns the original N-API `napi_property_descriptor` wrapped inside the `ClassPropertyDescriptor`
+Returns the original N-API `napi_property_descriptor` wrapped inside the `Napi::ClassPropertyDescriptor`
