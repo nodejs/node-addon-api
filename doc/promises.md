@@ -41,6 +41,14 @@ Promise::Deferred(napi_env env);
 
 * `[in] env`: The `napi_env` environment in which to construct the Deferred object.
 
+### Env
+
+```cpp
+Napi::Env Env() const;
+```
+
+Returns the Env environment this Promise::Deferred object is associated with.
+
 ### Promise
 
 ```cpp
