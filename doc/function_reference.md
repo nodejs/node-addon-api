@@ -1,18 +1,19 @@
 # FunctionReference
 
-`FunctionReference` is a subclass of [`Reference`](reference.md), and is equivalent to
-an instance of `Reference<Function>`. This means that a `FunctionReference` holds a
-[`Function`](function.md), and a count of the number of references to that `Function`.
-When the count is greater than 0, a `FunctionReference` is not eligible for garbage
-collection. This ensures that the `Function` will remain accessible, even if the
-original reference to it is no longer available.
-`FunctionReference` allows the referenced JavaScript function object to be called
-from a native add-on with two different methods: `Call` and `MakeCallback`. See
-the documentation for [`Function`](function.md) for when `Call` should be used
-instead of `MakeCallback` and vice-versa.
+`Napi::FunctionReference` is a subclass of [`Napi::Reference`](reference.md), and
+is equivalent to an instance of `Napi::Reference<Napi::Function>`. This means 
+that a `Napi::FunctionReference` holds a [`Napi::Function`](function.md), and a 
+count of the number of references to that `Napi::Function`. When the count is 
+greater than 0, a `Napi::FunctionReference` is not eligible for garbage collection. 
+This ensures that the `Function` will remain accessible, even if the original 
+reference to it is no longer available.
+`Napi::FunctionReference` allows the referenced JavaScript function object to be 
+called from a native add-on with two different methods: `Call` and `MakeCallback`. 
+See the documentation for [`Napi::Function`](function.md) for when `Call` should 
+be used instead of `MakeCallback` and vice-versa.
 
-The `FunctionReference` class inherits its behavior from the `Reference` class
-(for more info see: [`Reference`](reference.md)).
+The `Napi::FunctionReference` class inherits its behavior from the `Napi::Reference` 
+class (for more info see: [`Napi::Reference`](reference.md)).
 
 ## Methods
 
@@ -44,7 +45,7 @@ Returns the newly created reference.
 
 ### Constructor
 
-Creates a new empty instance of `FunctionReference`.
+Creates a new empty instance of `Napi::FunctionReference`.
 
 ```cpp
 FunctionReference();
@@ -52,16 +53,16 @@ FunctionReference();
 
 ### Constructor
 
-Creates a new instance of the `FunctionReference`.
+Creates a new instance of the `Napi::FunctionReference`.
 
 ```cpp
 FunctionReference(napi_env env, napi_ref ref);
 ```
 
-- `[in] env`: The environment in which to construct the `FunctionReference` object.
-- `[in] ref`: The N-API reference to be held by the `FunctionReference`.
+- `[in] env`: The environment in which to construct the `Napi::FunctionReference` object.
+- `[in] ref`: The N-API reference to be held by the `Napi::FunctionReference`.
 
-Returns a newly created `FunctionReference` object.
+Returns a newly created `Napi::FunctionReference` object.
 
 ### New
 

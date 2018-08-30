@@ -1,6 +1,6 @@
 # Function
 
-The **Function** class provides a set of methods for creating a function object in
+The `Napi::Function` class provides a set of methods for creating a function object in
 native code that can later be called from JavaScript. The created function is not
 automatically visible from JavaScript. Instead it needs to be part of the add-on's
 module exports or be returned by one of the module's exported functions.
@@ -8,8 +8,8 @@ module exports or be returned by one of the module's exported functions.
 In addition the `Function` class also provides methods that can be used to call
 functions that were created in JavaScript and passed to the native add-on.
 
-The `Function` class inherits its behavior from the `Object` class (for more info
-see: [`Object`](object.md)).
+The `Napi::Function` class inherits its behavior from the `Napi::Object` class (for more info
+see: [`Napi::Object`](object.md)).
 
 ## Example
 
@@ -38,7 +38,7 @@ const addon = require('./addon');
 addon.fn();
 ```
 
-With the `Function` class it is possible to call a JavaScript function object
+With the `Napi::Function` class it is possible to call a JavaScript function object
 from a native add-on with two different methods: `Call` and `MakeCallback`.
 The API of these two methods is very similar, but they are used in different
 contexts. The `MakeCallback` method is used to call from native code back into
@@ -51,7 +51,7 @@ on the stack (for example when running a native method called from JavaScript).
 
 ### Constructor
 
-Creates a new empty instance of `Function`.
+Creates a new empty instance of `Napi::Function`.
 
 ```cpp
 Function();
@@ -59,33 +59,33 @@ Function();
 
 ### Constructor
 
-Creates a new instance of the `Function` object.
+Creates a new instance of the `Napi::Function` object.
 
 ```cpp
 Function(napi_env env, napi_value value);
 ```
 
-- `[in] env`: The `napi_env` environment in which to construct the `Function` object.
+- `[in] env`: The `napi_env` environment in which to construct the `Napi::Function` object.
 - `[in] value`: The `napi_value` which is a handle for a JavaScript function.
 
-Returns a non-empty `Function` instance.
+Returns a non-empty `Napi::Function` instance.
 
 ### New
 
-Creates an instance of a `Function` object.
+Creates an instance of a `Napi::Function` object.
 
 ```cpp
 template <typename Callable>
 static Function New(napi_env env, Callable cb, const char* utf8name = nullptr, void* data = nullptr);
 ```
 
-- `[in] env`: The `napi_env` environment in which to construct the `Function` object.
+- `[in] env`: The `napi_env` environment in which to construct the `Napi::Function` object.
 - `[in] cb`: Object that implements `Callable`.
 - `[in] utf8name`: Null-terminated string to be used as the name of the function.
 - `[in] data`: User-provided data context. This will be passed back into the
 function when invoked later.
 
-Returns an instance of a `Function` object.
+Returns an instance of a `Napi::Function` object.
 
 ### New
 
@@ -94,13 +94,13 @@ template <typename Callable>
 static Function New(napi_env env, Callable cb, const std::string& utf8name, void* data = nullptr);
 ```
 
-- `[in] env`: The `napi_env` environment in which to construct the `Function` object.
+- `[in] env`: The `napi_env` environment in which to construct the `Napi::Function` object.
 - `[in] cb`: Object that implements `Callable`.
 - `[in] utf8name`: String to be used as the name of the function.
 - `[in] data`: User-provided data context. This will be passed back into the
 function when invoked later.
 
-Returns an instance of a `Function` object.
+Returns an instance of a `Napi::Function` object.
 
 ### New
 
