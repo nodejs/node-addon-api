@@ -1557,6 +1557,13 @@ namespace Napi {
       static int64_t AdjustExternalMemory(Env env, int64_t change_in_bytes);
   };
 
+  // Version management
+  class VersionManagement {
+    public:
+      static uint32_t GetNapiVersion(Env env);
+      static const napi_node_version* GetNodeVersion(Env env);
+  };
+
 } // namespace Napi
 
 // Inline implementations of all the above class methods are included here.
