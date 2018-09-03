@@ -94,6 +94,7 @@ still a work in progress as its not yet complete).
  - [Async Operations](doc/async_operations.md)
     - [AsyncWorker](doc/async_worker.md)
  - [Promises](doc/promises.md)
+ - [Version management](doc/version_management.md)
 
 <a name="examples"></a>
 

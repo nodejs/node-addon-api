@@ -31,6 +31,7 @@ let testModules = [
   'typedarray',
   'objectwrap',
   'objectreference',
+  'version_management'
 ];
 
 if (typeof global.gc === 'function') {
