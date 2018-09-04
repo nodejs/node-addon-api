@@ -17,6 +17,13 @@ provided by N-API. As such, modules built against one version of Node.js
 using node-addon-api should run without having to be rebuilt with newer versions
 of Node.js.
 
+It is important to remember that *other* Node.js interfaces such as
+`libuv` (included in a project via `#include <uv.h>`) are not ABI-stable across
+Node.js major versions. Thus, and addon must use N-API and/or `node-addon-api`
+exclusively and build against a version of Node.js that includes an
+implementation of N-API (meaning a version of Node.js newer than 6.14.2) in
+order to benefit from ABI stability across Node.js major versions.
+
 As new APIs are added to N-API, node-addon-api must be updated to provide
 wrappers for those new APIs. For this reason node-addon-api provides
 methods that allow callers to obtain the underlying N-API handles so
