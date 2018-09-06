@@ -12,7 +12,7 @@ If an error occurs, a `Napi::Error` will get thrown. If C++ exceptions are not
 being used, callers should check the result of `Env::IsExceptionPending` before
 attempting to use the returned value.
 
-```
+```cpp
 String(napi_env env, napi_value value); ///< Wraps a N-API value primitive.
 ```
 - `[in] env` - The environment in which to create the string.
