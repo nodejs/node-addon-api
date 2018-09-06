@@ -179,9 +179,7 @@ namespace Napi {
     bool IsObject() const;      ///< Tests if a value is a JavaScript object.
     bool IsFunction() const;    ///< Tests if a value is a JavaScript function.
     bool IsPromise() const;     ///< Tests if a value is a JavaScript promise.
-#if NAPI_DATA_VIEW_FEATURE
     bool IsDataView() const;    ///< Tests if a value is a JavaScript data view.
-#endif
     bool IsBuffer() const;      ///< Tests if a value is a Node buffer.
     bool IsExternal() const;    ///< Tests if a value is a pointer to external data.
 
@@ -781,7 +779,6 @@ namespace Napi {
                  T* data);
   };
 
-#if NAPI_DATA_VIEW_FEATURE
   /// The DataView provides a low-level interface for reading/writing multiple
   /// number types in an ArrayBuffer irrespective of the platform's endianness.
   class DataView : public Object {
@@ -833,7 +830,6 @@ namespace Napi {
     void* _data;
     size_t _length;
   };
-#endif
 
   class Function : public Object {
   public:
