@@ -1,8 +1,8 @@
 # VersionManagement
 
-The `Napi::VersionManagement` class contains methods that allow to retrieve 
-informations about the version of N-API and Node.js. It is important take 
-decisions based on different versions of the system.
+The `Napi::VersionManagement` class contains methods that allow information
+to be retrieved about the version of N-API and Node.js. In some cases it is
+important to make decisions based on different versions of the system.
 
 ## Methods
 
@@ -21,8 +21,8 @@ Returns the highest N-API version supported by Node.js runtime.
 ### GetNodeVersion
 
 Retrives information about Node.js version present on the system. All the 
-informations are store in the `napi_node_version` structrue that is defined as 
-repoted below:
+information is stored in the `napi_node_version` structrue that is defined as 
+shown below:
 
 ```cpp
 typedef struct {
