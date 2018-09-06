@@ -37,7 +37,7 @@
   'targets': [
     {
       'target_name': 'binding',
-      'defines': [ 'NAPI_CPP_EXCEPTIONS', 'NAPI_DATA_VIEW_FEATURE' ],
+      'defines': [ 'NAPI_CPP_EXCEPTIONS' ],
       'cflags!': [ '-fno-exceptions' ],
       'cflags_cc!': [ '-fno-exceptions' ],
       'msvs_settings': {
@@ -54,7 +54,7 @@
     },
     {
       'target_name': 'binding_noexcept',
-      'defines': [ 'NAPI_DISABLE_CPP_EXCEPTIONS', 'NAPI_DATA_VIEW_FEATURE' ],
+      'defines': [ 'NAPI_DISABLE_CPP_EXCEPTIONS' ],
       'cflags': [ '-fno-exceptions' ],
       'cflags_cc': [ '-fno-exceptions' ],
       'msvs_settings': {

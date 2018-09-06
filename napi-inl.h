@@ -364,7 +364,6 @@ inline bool Value::IsPromise() const {
   return result;
 }
 
-#if NAPI_DATA_VIEW_FEATURE
 inline bool Value::IsDataView() const {
   if (_value == nullptr) {
     return false;
@@ -375,7 +374,6 @@ inline bool Value::IsDataView() const {
   NAPI_THROW_IF_FAILED(_env, status, false);
   return result;
 }
-#endif
 
 inline bool Value::IsBuffer() const {
   if (_value == nullptr) {
@@ -1255,7 +1253,6 @@ inline void ArrayBuffer::EnsureInfo() const {
   }
 }
 
-#if NAPI_DATA_VIEW_FEATURE
 ////////////////////////////////////////////////////////////////////////////////
 // DataView class
 ////////////////////////////////////////////////////////////////////////////////
@@ -1426,7 +1423,6 @@ inline void DataView::WriteData(size_t byteOffset, T value) const {
 
   *reinterpret_cast<T*>(static_cast<uint8_t*>(_data) + byteOffset) = value;
 }
-#endif
 
 ////////////////////////////////////////////////////////////////////////////////
 // TypedArray class
