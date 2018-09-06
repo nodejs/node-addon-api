@@ -6,7 +6,6 @@ test(require(`../build/${buildType}/binding.node`));
 test(require(`../build/${buildType}/binding_noexcept.node`));
 
 function test(binding) {
-
   const bool1 = binding.basic_types_boolean.createBoolean(true);
   assert.strictEqual(bool1, true);
 
