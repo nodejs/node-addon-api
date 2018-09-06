@@ -8,6 +8,7 @@ Object InitAsyncContext(Env env);
 Object InitAsyncWorker(Env env);
 Object InitBasicTypesBoolean(Env env);
 Object InitBasicTypesNumber(Env env);
+Object InitBasicTypesString(Env env);
 Object InitBasicTypesValue(Env env);
 // currently experimental guard with version of NAPI_VERSION that it is
 // released in once it is no longer experimental
@@ -36,6 +37,7 @@ Object Init(Env env, Object exports) {
   exports.Set("asyncworker", InitAsyncWorker(env));
   exports.Set("basic_types_boolean", InitBasicTypesBoolean(env));
   exports.Set("basic_types_number", InitBasicTypesNumber(env));
+  exports.Set("basic_types_string", InitBasicTypesString(env));
   exports.Set("basic_types_value", InitBasicTypesValue(env));
 // currently experimental guard with version of NAPI_VERSION that it is
 // released in once it is no longer experimental

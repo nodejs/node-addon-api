@@ -9,6 +9,7 @@
         'asyncworker.cc',
         'basic_types/boolean.cc',
         'basic_types/number.cc',
+        'basic_types/string.cc',
         'basic_types/value.cc',
         'bigint.cc',
         'binding.cc',

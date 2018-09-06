@@ -13,6 +13,7 @@ let testModules = [
   'asyncworker',
   'basic_types/boolean',
   'basic_types/number',
+  'basic_types/string',
   'basic_types/value',
   'bigint',
   'buffer',
