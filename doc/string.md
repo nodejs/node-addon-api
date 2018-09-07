@@ -6,7 +6,7 @@
 String();
 ```
 
-Returns a new **empty** String instance.
+Returns a new **empty** `Napi::String` instance.
 
 If an error occurs, a `Napi::Error` will get thrown. If C++ exceptions are not
 being used, callers should check the result of `Env::IsExceptionPending` before
@@ -48,7 +48,7 @@ Returns a UTF-16 encoded C++ string.
 String::New();
 ```
 
-Returns a new empty String
+Returns a new empty `Napi::String`.
 
 ### New
 ```cpp
@@ -58,8 +58,8 @@ String::New(napi_env env, const char* value);
 String::New(napi_env env, const char16_t* value);
 ```
 
-- `[in] env`: The `napi_env` environment in which to construct the Value object.
-- `[in] value`: The C++ primitive from which to instantiate the Value. `value` may be any of:
+- `[in] env`: The `napi_env` environment in which to construct the `Napi::Value` object.
+- `[in] value`: The C++ primitive from which to instantiate the `Napi::Value`. `value` may be any of:
   - `std::string&` - represents an ANSI string.
   - `std::u16string&` - represents a UTF16-LE string.
   - `const char*` - represents a UTF8 string.

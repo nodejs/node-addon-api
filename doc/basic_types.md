@@ -6,7 +6,7 @@ interoperate with their C++ counterparts.
 
 ## Value
 
-Value is the base class of Node Addon API's fundamental object type hierarchy.
+`Napi::Value` is the base class of Node Addon API's fundamental object type hierarchy.
 It represents a JavaScript value of an unknown type. It is a thin wrapper around
 the N-API datatype `napi_value`. Methods on this class can be used to check
 the JavaScript type of the underlying N-API `napi_value` and also to convert to
@@ -18,18 +18,18 @@ C++ types.
 Value();
 ```
 
-Used to create a Node Addon API `Value` that represents an **empty** value.
+Used to create a Node Addon API `Napi::Value` that represents an **empty** value.
 
 ```cpp
 Value(napi_env env, napi_value value);
 ```
 
-- `[in] env` - The `napi_env` environment in which to construct the Value
+- `[in] env` - The `napi_env` environment in which to construct the `Napi::Value`
 object.
-- `[in] value` - The underlying JavaScript value that the `Value` instance
+- `[in] value` - The underlying JavaScript value that the `Napi::Value` instance
 represents.
 
-Returns a Node.js Addon API `Value` that represents the `napi_value` passed
+Returns a Node.js Addon API `Napi::Value` that represents the `napi_value` passed
 in.
 
 ### Operators
@@ -64,10 +64,10 @@ Returns `false` if this value strictly equals another value, or `true` otherwise
 #### From
 ```cpp
 template <typename T>
-static Value From(napi_env env, const T& value);
+static Napi::Value From(napi_env env, const T& value);
 ```
 
-- `[in] env` - The `napi_env` environment in which to construct the Value object.
+- `[in] env` - The `napi_env` environment in which to construct the `Napi::Value` object.
 - `[in] value` - The C++ type to represent in JavaScript.
 
 Returns a `Napi::Value` representing the input C++ type in JavaScript.
@@ -125,7 +125,7 @@ An empty value is invalid, and most attempts to perform an operation on an
 empty value will result in an exception. An empty value is distinct from
 JavaScript `null` or `undefined`, which are valid values.
 
-When C++ exceptions are disabled at compile time, a method with a `Value`
+When C++ exceptions are disabled at compile time, a method with a `Napi::Value`
 return type may return an empty value to indicate a pending exception. If C++
 exceptions are not being used, callers should check the result of
 `Env::IsExceptionPending` before attempting to use the value.
@@ -159,14 +159,14 @@ bool IsBoolean() const;
 ```
 
 Returns `true` if the underlying value is a JavaScript `true` or JavaScript
-`false`, or `false` if the value is not a Boolean value in JavaScript.
+`false`, or `false` if the value is not a `Napi::Boolean` value in JavaScript.
 
 #### IsNumber
 ```cpp
 bool IsNumber() const;
 ```
 
-Returns `true` if the underlying value is a JavaScript `Number` or `false`
+Returns `true` if the underlying value is a JavaScript `Napi::Number` or `false`
 otherwise.
 
 #### IsString
@@ -174,7 +174,7 @@ otherwise.
 bool IsString() const;
 ```
 
-Returns `true` if the underlying value is a JavaScript `String` or `false`
+Returns `true` if the underlying value is a JavaScript `Napi::String` or `false`
 otherwise.
 
 #### IsSymbol
@@ -182,7 +182,7 @@ otherwise.
 bool IsSymbol() const;
 ```
 
-Returns `true` if the underlying value is a JavaScript `Symbol` or `false`
+Returns `true` if the underlying value is a JavaScript `Napi::Symbol` or `false`
 otherwise.
 
 #### IsArray
@@ -190,7 +190,7 @@ otherwise.
 bool IsArray() const;
 ```
 
-Returns `true` if the underlying value is a JavaScript `Array` or `false`
+Returns `true` if the underlying value is a JavaScript `Napi::Array` or `false`
 otherwise.
 
 #### IsArrayBuffer
@@ -198,7 +198,7 @@ otherwise.
 bool IsArrayBuffer() const;
 ```
 
-Returns `true` if the underlying value is a JavaScript `ArrayBuffer` or `false`
+Returns `true` if the underlying value is a JavaScript `Napi::ArrayBuffer` or `false`
 otherwise.
 
 #### IsTypedArray
@@ -206,7 +206,7 @@ otherwise.
 bool IsTypedArray() const;
 ```
 
-Returns `true` if the underlying value is a JavaScript `TypedArray` or `false`
+Returns `true` if the underlying value is a JavaScript `Napi::TypedArray` or `false`
 otherwise.
 
 #### IsObject
@@ -214,7 +214,7 @@ otherwise.
 bool IsObject() const;
 ```
 
-Returns `true` if the underlying value is a JavaScript `Object` or `false`
+Returns `true` if the underlying value is a JavaScript `Napi::Object` or `false`
 otherwise.
 
 #### IsFunction
@@ -222,7 +222,7 @@ otherwise.
 bool IsFunction() const;
 ```
 
-Returns `true` if the underlying value is a JavaScript `Function` or `false`
+Returns `true` if the underlying value is a JavaScript `Napi::Function` or `false`
 otherwise.
 
 #### IsPromise
@@ -230,7 +230,7 @@ otherwise.
 bool IsPromise() const;
 ```
 
-Returns `true` if the underlying value is a JavaScript `Promise` or `false`
+Returns `true` if the underlying value is a JavaScript `Napi::Promise` or `false`
 otherwise.
 
 #### IsDataView
@@ -238,7 +238,7 @@ otherwise.
 bool IsDataView() const;
 ```
 
-Returns `true` if the underlying value is a JavaScript `DataView` or `false`
+Returns `true` if the underlying value is a JavaScript `Napi::DataView` or `false`
 otherwise.
 
 #### IsBuffer
@@ -246,7 +246,7 @@ otherwise.
 bool IsBuffer() const;
 ```
 
-Returns `true` if the underlying value is a Node.js `Buffer` or `false`
+Returns `true` if the underlying value is a Node.js `Napi::Buffer` or `false`
 otherwise.
 
 #### IsExternal
@@ -269,10 +269,9 @@ exception if the coercion fails. If C++ exceptions are not being used, callers
 should check the result of `Env::IsExceptionPending` before attempting to use
 the returned value.
 
-
 #### ToNumber
 ```cpp
-Number ToNumber() const;
+Napi::Number ToNumber() const;
 ```
 
 Returns a `Napi::Number` representing the `Napi::Value`.
@@ -284,10 +283,9 @@ exception if the coercion fails. If C++ exceptions are not being used, callers
 should check the result of `Env::IsExceptionPending` before attempting to use
 the returned value.
 
-
 #### ToString
 ```cpp
-String ToString() const;
+Napi::String ToString() const;
 ```
 
 Returns a `Napi::String` representing the `Napi::Value`.
@@ -298,10 +296,9 @@ JavaScript exception if the coercion fails. If C++ exceptions are not being
 used, callers should check the result of `Env::IsExceptionPending` before
 attempting to use the returned value.
 
-
 #### ToObject
 ```cpp
-Object ToObject() const;
+Napi::Object ToObject() const;
 ```
 
 Returns a `Napi::Object` representing the `Napi::Value`.
@@ -311,12 +308,11 @@ exception if the coercion fails. If C++ exceptions are not being used, callers
 should check the result of `Env::IsExceptionPending` before attempting to use
 the returned value.
 
-
 ## Name
 
 Names are JavaScript values that can be used as a property name. There are two
-specialized types of names supported in Node.js Addon API- [`String`](string.md)
-and [`Symbol`](symbol.md).
+specialized types of names supported in Node.js Addon API [`Napi::String`](string.md)
+and [`Napi::Symbol`](symbol.md).
 
 ### Methods
 
@@ -325,7 +321,7 @@ and [`Symbol`](symbol.md).
 Name();
 ```
 
-Returns an empty `Name`.
+Returns an empty `Napi::Name`.
 
 ```cpp
 Name(napi_env env, napi_value value);
@@ -333,7 +329,7 @@ Name(napi_env env, napi_value value);
 - `[in] env` - The environment in which to create the array.
 - `[in] value` - The primitive to wrap.
 
-Returns a Name created from the JavaScript primitive.
+Returns a `Napi::Name` created from the JavaScript primitive.
 
 Note:
 The value is not coerced to a string.
@@ -354,7 +350,6 @@ If an error occurs, a `Napi::Error` will be thrown. If C++ exceptions are not
 being used, callers should check the result of `Env::IsExceptionPending` before
 attempting to use the returned value.
 
-
 ```cpp
 Array(napi_env env, napi_value value);
 ```
@@ -371,7 +366,7 @@ attempting to use the returned value.
 
 #### New
 ```cpp
-static Array New(napi_env env);
+static Napi::Array New(napi_env env);
 ```
 - `[in] env` - The environment in which to create the array.
 
@@ -384,7 +379,7 @@ attempting to use the returned value.
 #### New
 
 ```cpp
-static Array New(napi_env env, size_t length);
+static Napi::Array New(napi_env env, size_t length);
 ```
 - `[in] env` - The environment in which to create the array.
 - `[in] length` - The length of the array.

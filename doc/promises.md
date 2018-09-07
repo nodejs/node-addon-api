@@ -1,23 +1,19 @@
-You are reading a draft of the next documentation and it's in continuous update so
-if you don't find what you need please refer to:
-[C++ wrapper classes for the ABI-stable C APIs for Node.js](https://nodejs.github.io/node-addon-api/)
-
 # Promise
 
-The Promise class, along with its Promise::Deferred class, implement the ability to create, resolve, and reject Promise objects.
+The `Napi::Promise` class, along with its `Napi::Promise::Deferred` class, implement the ability to create, resolve, and reject `Promise` objects.
 
-The basic approach is to create a Promise::Deferred object and return to your caller the value returned by the Promise::Deferred::Promise method. For example:
+The basic approach is to create a `Napi::Promise::Deferred` object and return to your caller the value returned by the `Napi::Promise::Deferred::Promise` method. For example:
 
 ```cpp
-Value YourFunction(const CallbackInfo& info) {
+Napi::Value YourFunction(const Napi::CallbackInfo& info) {
   // your code goes here...
-  Promise::Deferred deferred = Promise::Deferred::New(info.Env());
+  Napi::Promise::Deferred deferred = Napi::Promise::Deferred::New(info.Env());
   // deferred needs to survive this call...
   return deferred.Promise();
 }
 ```
 
-Later, when the asynchronous process completes, call either the `Resolve` or `Reject` method on the Promise::Deferred object created earlier:
+Later, when the asynchronous process completes, call either the `Resolve` or `Reject` method on the `Napi::Promise::Deferred` object created earlier:
 
 ```cpp
   deferred.Resolve(String::New(info.Env(), "OK"));
@@ -28,10 +24,10 @@ Later, when the asynchronous process completes, call either the `Resolve` or `Re
 ### Factory Method
 
 ```cpp
-static Promise::Deferred Promise::Deferred::New(napi_env env);
+static Napi::Promise::Deferred Promise::Deferred::New(napi_env env);
 ```
 
-* `[in] env`: The `napi_env` environment in which to create the Deferred object.
+* `[in] env`: The `napi_env` environment in which to create the `Napi::Promise::Deferred` object.
 
 ### Constructor
 
@@ -39,7 +35,7 @@ static Promise::Deferred Promise::Deferred::New(napi_env env);
 Promise::Deferred(napi_env env);
 ```
 
-* `[in] env`: The `napi_env` environment in which to construct the Deferred object.
+* `[in] env`: The `napi_env` environment in which to construct the `Napi::Promise::Deferred` object.
 
 ### Env
 
@@ -47,15 +43,15 @@ Promise::Deferred(napi_env env);
 Napi::Env Env() const;
 ```
 
-Returns the Env environment this Promise::Deferred object is associated with.
+Returns the Env environment this `Napi::Promise::Deferred` object is associated with.
 
 ### Promise
 
 ```cpp
-Promise Promise::Deferred::Promise() const;
+Napi::Promise Promise::Deferred::Promise() const;
 ```
 
-Returns the Promise object held by the Promise::Deferred object.
+Returns the `Napi::Promise` object held by the `Napi::Promise::Deferred` object.
 
 ### Resolve
 
@@ -63,9 +59,9 @@ Returns the Promise object held by the Promise::Deferred object.
 void Promise::Deferred::Resolve(napi_value value) const;
 ```
 
-Resolves the Promise object held by the Promise::Deferred object.
+Resolves the `Napi::Promise` object held by the `Napi::Promise::Deferred` object.
 
-* `[in] value`: The N-API primitive value with which to resolve the Promise.
+* `[in] value`: The N-API primitive value with which to resolve the `Napi::Promise`.
 
 ### Reject
 
@@ -73,6 +69,6 @@ Resolves the Promise object held by the Promise::Deferred object.
 void Promise::Deferred::Reject(napi_value value) const;
 ```
 
-Rejects the Promise object held by the Promise::Deferred object.
+Rejects the Promise object held by the `Napi::Promise::Deferred` object.
 
-* `[in] value`: The N-API primitive value with which to reject the Promise.
+* `[in] value`: The N-API primitive value with which to reject the `Napi::Promise`.

@@ -4,13 +4,13 @@
 
 ### Constructor
 
-Instantiates a new `Symbol` value
+Instantiates a new `Napi::Symbol` value.
 
 ```cpp
 Symbol();
 ```
 
-Returns a new empty Symbol.
+Returns a new empty `Napi::Symbol`.
 
 ### New
 ```cpp
@@ -20,8 +20,8 @@ Symbol::New(napi_env env, String description);
 Symbol::New(napi_env env, napi_value description);
 ```
 
-- `[in] env`: The `napi_env` environment in which to construct the Symbol object.
-- `[in] value`: The C++ primitive which represents the description hint for the Symbol.
+- `[in] env`: The `napi_env` environment in which to construct the `Napi::Symbol` object.
+- `[in] value`: The C++ primitive which represents the description hint for the `Napi::Symbol`.
   `description` may be any of:
   - `std::string&` - ANSI string description.
   - `const char*` - represents a UTF8 string description.
@@ -34,11 +34,11 @@ attempting to use the returned value.
 
 ### Utf8Value
 ```cpp
-static Symbol WellKnown(napi_env env, const std::string& name);
+static Napi::Symbol WellKnown(napi_env env, const std::string& name);
 ```
 
 - `[in] env`: The `napi_env` environment in which to construct the Symbol object.
-- `[in] name`: The C++ string representing the `Symbol` to retrieve.
+- `[in] name`: The C++ string representing the `Napi::Symbol` to retrieve.
 
-Returns a `Napi::Symbol` representing a well-known Symbol from the
-Symbol registry.
+Returns a `Napi::Symbol` representing a well-known `Symbol` from the
+`Symbol` registry.

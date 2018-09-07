@@ -17,7 +17,7 @@ Node Addon API provides an interface to support functions that cover
 the most common asynchronous use cases. There is an abstract classes to implement
 asynchronous operations:
 
-- **[AsyncWorker](async_worker.md)**
+- **[`Napi::AsyncWorker`](async_worker.md)**
 
 These class helps manage asynchronous operations through an abstraction
 of the concept of moving data between the **event loop** and **worker threads**.

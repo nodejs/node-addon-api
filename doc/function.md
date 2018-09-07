@@ -5,7 +5,7 @@ native code that can later be called from JavaScript. The created function is no
 automatically visible from JavaScript. Instead it needs to be part of the add-on's
 module exports or be returned by one of the module's exported functions.
 
-In addition the `Function` class also provides methods that can be used to call
+In addition the `Napi::Function` class also provides methods that can be used to call
 functions that were created in JavaScript and passed to the native add-on.
 
 The `Napi::Function` class inherits its behavior from the `Napi::Object` class (for more info
@@ -76,7 +76,7 @@ Creates an instance of a `Napi::Function` object.
 
 ```cpp
 template <typename Callable>
-static Function New(napi_env env, Callable cb, const char* utf8name = nullptr, void* data = nullptr);
+static Napi::Function New(napi_env env, Callable cb, const char* utf8name = nullptr, void* data = nullptr);
 ```
 
 - `[in] env`: The `napi_env` environment in which to construct the `Napi::Function` object.
@@ -91,7 +91,7 @@ Returns an instance of a `Napi::Function` object.
 
 ```cpp
 template <typename Callable>
-static Function New(napi_env env, Callable cb, const std::string& utf8name, void* data = nullptr);
+static Napi::Function New(napi_env env, Callable cb, const std::string& utf8name, void* data = nullptr);
 ```
 
 - `[in] env`: The `napi_env` environment in which to construct the `Napi::Function` object.

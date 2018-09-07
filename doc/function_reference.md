@@ -23,7 +23,7 @@ Creates a "weak" reference to the value, in that the initial reference count is
 set to 0.
 
 ```cpp
-static FunctionReference Weak(const Function& value);
+static Napi::FunctionReference Weak(const Function& value);
 ```
 
 - `[in] value`: The value which is to be referenced.
@@ -36,7 +36,7 @@ Creates a "persistent" reference to the value, in that the initial reference
 count is set to 1.
 
 ```cpp
-static FunctionReference Persistent(const Function& value);
+static Napi::FunctionReference Persistent(const Function& value);
 ```
 
 - `[in] value`: The value which is to be referenced.

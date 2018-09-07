@@ -1,5 +1,3 @@
-**WORK IN PROGRESS, NOT YET COMPLETE**
-
 # Env
 
 The opaque data structure containing the environment in which the request is being run.
@@ -14,7 +12,7 @@ The Env object is usually created and passed by the Node.js runtime or node-addo
 Env(napi_env env);
 ```
 
-- `[in] env`: The `napi_env` environment from which to construct the `Env` object.
+- `[in] env`: The `napi_env` environment from which to construct the `Napi::Env` object.
 
 ### napi_env
 
@@ -27,26 +25,26 @@ Returns the `napi_env` opaque data structure representing the environment.
 ### Global
 
 ```cpp
-Object Global() const;
+Napi::Object Global() const;
 ```
 
-Returns the `Object` representing the environment's JavaScript Global Object.
+Returns the `Napi::Object` representing the environment's JavaScript Global Object.
 
 ### Undefined
 
 ```cpp
-Value Undefined() const;
+Napi::Value Undefined() const;
 ```
 
-Returns the `Value` representing the environment's JavaScript Undefined Object.
+Returns the `Napi::Value` representing the environment's JavaScript Undefined Object.
 
 ### Null
 
 ```cpp
-Value Null() const;
+Napi::Value Null() const;
 ```
 
-Returns the `Value` representing the environment's JavaScript Null Object.
+Returns the `Napi::Value` representing the environment's JavaScript Null Object.
 
 ### IsExceptionPending
 
@@ -62,4 +60,4 @@ Returns a `bool` indicating if an exception is pending in the environment.
 Error GetAndClearPendingException();
 ```
 
-Returns an `Error` object representing the environment's pending exception, if any.
+Returns an `Napi::Error` object representing the environment's pending exception, if any.

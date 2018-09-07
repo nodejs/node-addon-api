@@ -1,6 +1,6 @@
 # TypedArray
 
-The `TypedArray` class corresponds to the
+The `Napi::TypedArray` class corresponds to the
 [JavaScript `TypedArray`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/TypedArray)
 class.
 
@@ -8,7 +8,7 @@ class.
 
 ### Constructor
 
-Initializes an empty instance of the `TypedArray` class.
+Initializes an empty instance of the `Napi::TypedArray` class.
 
 ```cpp
 TypedArray();
@@ -16,14 +16,14 @@ TypedArray();
 
 ### Constructor
 
-Initializes a wrapper instance of an existing `TypedArray` instance.
+Initializes a wrapper instance of an existing `Napi::TypedArray` instance.
 
 ```cpp
 TypedArray(napi_env env, napi_value value);
 ```
 
-- `[in] env`: The environment in which to create the `TypedArray` instance.
-- `[in] value`: The `TypedArray` reference to wrap.
+- `[in] env`: The environment in which to create the `Napi::TypedArray` instance.
+- `[in] value`: The `Napi::TypedArray` reference to wrap.
 
 ### TypedArrayType
 
@@ -63,7 +63,7 @@ Returns the number of elements.
 size_t ByteOffset() const;
 ```
 
-Returns the offset into the `ArrayBuffer` where the array starts, in bytes.
+Returns the offset into the `Napi::ArrayBuffer` where the array starts, in bytes.
 
 ### ByteLength
 

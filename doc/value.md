@@ -6,21 +6,21 @@ Value is the C++ manifestation of a JavaScript value.
 
 Value is a the base class upon which other JavaScript values such as Number, Boolean, String, and Object are based.
 
-The following classes inherit, either directly or indirectly, from Value:
+The following classes inherit, either directly or indirectly, from `Napi::Value`:
 
-- [Array](array.md)
-- [ArrayBuffer](array_buffer.md)
-- [Boolean](boolean.md)
-- [Buffer](buffer.md)
-- [External](external.md)
-- [Function](function.md)
-- [Name](name.md)
-- [Number](number.md)
-- [Object](object.md)
-- [String](string.md)
-- [Symbol](symbol.md)
-- [TypedArray](typed_array.md)
-- [TypedArrayOf](typed_array_of.md)
+- [`Napi::Array`](array.md)
+- [`Napi::ArrayBuffer`](array_buffer.md)
+- [`Napi::Boolean`](boolean.md)
+- [`Napi::Buffer`](buffer.md)
+- [`Napi::External`](external.md)
+- [`Napi::Function`](function.md)
+- [`Napi::Name`](name.md)
+- [`Napi::Number`](number.md)
+- [`Napi::Object`](object.md)
+- [`Napi::String`](string.md)
+- [`Napi::Symbol`](symbol.md)
+- [`Napi::TypedArray`](typed_array.md)
+- [`Napi::TypedArrayOf`](typed_array_of.md)
 
 ## Methods
 
@@ -30,7 +30,7 @@ The following classes inherit, either directly or indirectly, from Value:
 Value();
 ```
 
-Creates a new *empty* Value instance.
+Creates a new *empty* `Napi::Value` instance.
 
 ### Constructor
 
@@ -38,9 +38,9 @@ Creates a new *empty* Value instance.
 Value(napi_env env, napi_value value);
 ```
 
-- `[in] env`: The `napi_env` environment in which to construct the Value object.
+- `[in] env`: The `napi_env` environment in which to construct the `Napi::Value` object.
 
-- `[in] value`: The C++ primitive from which to instantiate the Value. `value` may be any of:
+- `[in] value`: The C++ primitive from which to instantiate the `Napi::Value`. `value` may be any of:
   - bool
   - Any integer type
   - Any floating point type
@@ -48,18 +48,18 @@ Value(napi_env env, napi_value value);
   - const char16_t* (encoded using UTF-16-LE, null-terminated)
   - std::string (encoded using UTF-8)
   - std::u16string
-  - napi::Value
+  - Napi::Value
   - napi_value
 
 ### From
 
 ```cpp
-template <typename T> static Value From(napi_env env, const T& value);
+template <typename T> static Napi::Value From(napi_env env, const T& value);
 ```
 
-- `[in] env`: The `napi_env` environment in which to create the Value object.
+- `[in] env`: The `napi_env` environment in which to create the `Napi::Value` object.
 
-- `[in] value`: The N-API primitive value from which to create the Value object.
+- `[in] value`: The N-API primitive value from which to create the `Napi::Value` object.
 
 Returns a Value object from an N-API primitive value.
 
@@ -71,7 +71,7 @@ operator napi_value() const;
 
 Returns this Value's N-API value primitive.
 
-Returns `nullptr` if this Value is *empty*.
+Returns `nullptr` if this `Napi::Value` is *empty*.
 
 ### operator ==
 
@@ -79,9 +79,9 @@ Returns `nullptr` if this Value is *empty*.
 bool operator ==(const Value& other) const;
 ```
 
-- `[in] other`: The Value object to be compared.
+- `[in] other`: The `Napi::Value` object to be compared.
 
-Returns a `bool` indicating if this Value strictly equals another Value.
+Returns a `bool` indicating if this `Napi::Value` strictly equals another `Napi::Value`.
 
 ### operator !=
 
@@ -91,16 +91,16 @@ bool operator !=(const Value& other) const;
 
 - `[in] other`: The Value object to be compared.
 
-Returns a `bool` indicating if this Value does not strictly equal another Value.
+Returns a `bool` indicating if this `Napi::Value` does not strictly equal another `Napi::Value`.
 
 ### StrictEquals
 
 ```cpp
 bool StrictEquals(const Value& other) const;
 ```
-- `[in] other`: The Value object to be compared.
+- `[in] other`: The `Napi::Value` object to be compared.
 
-Returns a `bool` indicating if this Value strictly equals another Value.
+Returns a `bool` indicating if this `Napi::Value` strictly equals another `Napi::Value`.
 
 ### Env
 
@@ -108,7 +108,7 @@ Returns a `bool` indicating if this Value strictly equals another Value.
 Napi::Env Env() const;
 ```
 
-Returns the `Env` environment this value is associated with.
+Returns the `Napi::Env` environment this value is associated with.
 
 ### IsEmpty
 
@@ -116,11 +116,12 @@ Returns the `Env` environment this value is associated with.
 bool IsEmpty() const;
 ```
 
-Returns a `bool` indicating if this Value is *empty* (uninitialized).
+Returns a `bool` indicating if this `Napi::Value` is *empty* (uninitialized).
 
-An empty Value is invalid, and most attempts to perform an operation on an empty Value will result in an exception. Note an empty Value is distinct from JavaScript `null` or `undefined`, which are valid values.
+An empty `Napi::Value` is invalid, and most attempts to perform an operation on an empty Value will result in an exception.
+Note an empty `Napi::Value` is distinct from JavaScript `null` or `undefined`, which are valid values.
 
-When C++ exceptions are disabled at compile time, a method with a `Value` return type may return an empty Value to indicate a pending exception. So when not using C++ exceptions, callers should check whether this Value is empty before attempting to use it.
+When C++ exceptions are disabled at compile time, a method with a `Napi::Value` return type may return an empty Value to indicate a pending exception. So when not using C++ exceptions, callers should check whether this `Napi::Value` is empty before attempting to use it.
 
 ### Type
 
@@ -128,7 +129,7 @@ When C++ exceptions are disabled at compile time, a method with a `Value` return
 napi_valuetype Type() const;
 ```
 
-Returns the `napi_valuetype` type of the Value.
+Returns the `napi_valuetype` type of the `Napi::Value`.
 
 ### IsUndefined
 
@@ -136,7 +137,7 @@ Returns the `napi_valuetype` type of the Value.
 bool IsUndefined() const;
 ```
 
-Returns a `bool` indicating if this Value is an undefined JavaScript value.
+Returns a `bool` indicating if this `Napi::Value` is an undefined JavaScript value.
 
 ### IsNull
 
@@ -144,7 +145,7 @@ Returns a `bool` indicating if this Value is an undefined JavaScript value.
 bool IsNull() const;
 ```
 
-Returns a `bool` indicating if this Value is a null JavaScript value.
+Returns a `bool` indicating if this `Napi::Value` is a null JavaScript value.
 
 ### IsBoolean
 
@@ -152,7 +153,7 @@ Returns a `bool` indicating if this Value is a null JavaScript value.
 bool IsBoolean() const;
 ```
 
-Returns a `bool` indicating if this Value is a JavaScript boolean.
+Returns a `bool` indicating if this `Napi::Value` is a JavaScript boolean.
 
 ### IsNumber
 
@@ -160,7 +161,7 @@ Returns a `bool` indicating if this Value is a JavaScript boolean.
 bool IsNumber() const;
 ```
 
-Returns a `bool` indicating if this Value is a JavaScript number.
+Returns a `bool` indicating if this `Napi::Value` is a JavaScript number.
 
 ### IsString
 
@@ -168,7 +169,7 @@ Returns a `bool` indicating if this Value is a JavaScript number.
 bool IsString() const;
 ```
 
-Returns a `bool` indicating if this Value is a JavaScript string.
+Returns a `bool` indicating if this `Napi::Value` is a JavaScript string.
 
 ### IsSymbol
 
@@ -176,7 +177,7 @@ Returns a `bool` indicating if this Value is a JavaScript string.
 bool IsSymbol() const;
 ```
 
-Returns a `bool` indicating if this Value is a JavaScript symbol.
+Returns a `bool` indicating if this `Napi::Value` is a JavaScript symbol.
 
 ### IsArray
 
@@ -184,7 +185,7 @@ Returns a `bool` indicating if this Value is a JavaScript symbol.
 bool IsArray() const;
 ```
 
-Returns a `bool` indicating if this Value is a JavaScript array.
+Returns a `bool` indicating if this `Napi::Value` is a JavaScript array.
 
 ### IsArrayBuffer
 
@@ -192,7 +193,7 @@ Returns a `bool` indicating if this Value is a JavaScript array.
 bool IsArrayBuffer() const;
 ```
 
-Returns a `bool` indicating if this Value is a JavaScript array buffer.
+Returns a `bool` indicating if this `Napi::Value` is a JavaScript array buffer.
 
 ### IsTypedArray
 
@@ -200,7 +201,7 @@ Returns a `bool` indicating if this Value is a JavaScript array buffer.
 bool IsTypedArray() const;
 ```
 
-Returns a `bool` indicating if this Value is a JavaScript typed array.
+Returns a `bool` indicating if this `Napi::Value` is a JavaScript typed array.
 
 ### IsObject
 
@@ -208,7 +209,7 @@ Returns a `bool` indicating if this Value is a JavaScript typed array.
 bool IsObject() const;
 ```
 
-Returns a `bool` indicating if this Value is JavaScript object.
+Returns a `bool` indicating if this `Napi::Value` is JavaScript object.
 
 ### IsFunction
 
@@ -216,7 +217,7 @@ Returns a `bool` indicating if this Value is JavaScript object.
 bool IsFunction() const;
 ```
 
-Returns a `bool` indicating if this Value is a JavaScript function.
+Returns a `bool` indicating if this `Napi::Value` is a JavaScript function.
 
 ### IsBuffer
 
@@ -224,7 +225,7 @@ Returns a `bool` indicating if this Value is a JavaScript function.
 bool IsBuffer() const;
 ```
 
-Returns a `bool` indicating if this Value is a Node buffer.
+Returns a `bool` indicating if this `Napi::Value` is a Node buffer.
 
 ### As
 
@@ -242,7 +243,7 @@ This conversion does not coerce the type. Calling any methods inappropriate for 
 Boolean ToBoolean() const;
 ```
 
-Returns the Value coerced to a JavaScript boolean.
+Returns the `Napi::Value` coerced to a JavaScript boolean.
 
 ### ToNumber
 
@@ -250,7 +251,7 @@ Returns the Value coerced to a JavaScript boolean.
 Number ToNumber() const;
 ```
 
-Returns the Value coerced to a JavaScript number.
+Returns the `Napi::Value` coerced to a JavaScript number.
 
 ### ToString
 
@@ -258,7 +259,7 @@ Returns the Value coerced to a JavaScript number.
 String ToString() const;
 ```
 
-Returns the Value coerced to a JavaScript string.
+Returns the `Napi::Value` coerced to a JavaScript string.
 
 ### ToObject
 
@@ -266,4 +267,4 @@ Returns the Value coerced to a JavaScript string.
 Object ToObject() const;
 ```
 
-Returns the Value coerced to a JavaScript object.
+Returns the `Napi::Value` coerced to a JavaScript object.
