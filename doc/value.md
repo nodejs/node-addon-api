@@ -1,67 +1,65 @@
-**WORK IN PROGRESS, NOT YET COMPLETE**
-
 # Value
 
-Value is the C++ manifestation of a JavaScript value.
+`Napi::Value` is the C++ manifestation of a JavaScript value.
 
 Value is a the base class upon which other JavaScript values such as Number, Boolean, String, and Object are based.
 
-The following classes inherit, either directly or indirectly, from Value:
+The following classes inherit, either directly or indirectly, from `Napi::Value`:
 
-- [Array](array.md)
-- [ArrayBuffer](array_buffer.md)
-- [Boolean](boolean.md)
-- [Buffer](buffer.md)
-- [External](external.md)
-- [Function](function.md)
-- [Name](name.md)
-- [Number](number.md)
-- [Object](object.md)
-- [String](string.md)
-- [Symbol](symbol.md)
-- [TypedArray](typed_array.md)
-- [TypedArrayOf](typed_array_of.md)
+- [`Napi::Array`](array.md)
+- [`Napi::ArrayBuffer`](array_buffer.md)
+- [`Napi::Boolean`](boolean.md)
+- [`Napi::Buffer`](buffer.md)
+- [`Napi::External`](external.md)
+- [`Napi::Function`](function.md)
+- [`Napi::Name`](name.md)
+- [`Napi::Number`](number.md)
+- [`Napi::Object`](object.md)
+- [`Napi::String`](string.md)
+- [`Napi::Symbol`](symbol.md)
+- [`Napi::TypedArray`](typed_array.md)
+- [`Napi::TypedArrayOf`](typed_array_of.md)
 
 ## Methods
 
 ### Empty Constructor
 
 ```cpp
-Value();
+Napi::Value::Value();
 ```
 
-Creates a new *empty* Value instance.
+Creates a new *empty* `Napi::Value` instance.
 
 ### Constructor
 
 ```cpp
-Value(napi_env env, napi_value value);
+Napi::Value::Value(napi_env env, napi_value value);
 ```
 
-- `[in] env`: The `napi_env` environment in which to construct the Value object.
+- `[in] env`: The `napi_env` environment in which to construct the `Napi::Value` object.
 
-- `[in] value`: The C++ primitive from which to instantiate the Value. `value` may be any of:
-  - bool
+- `[in] value`: The C++ primitive from which to instantiate the `Napi::Value`. `value` may be any of:
+  - `bool`
   - Any integer type
   - Any floating point type
-  - const char* (encoded using UTF-8, null-terminated)
-  - const char16_t* (encoded using UTF-16-LE, null-terminated)
-  - std::string (encoded using UTF-8)
-  - std::u16string
-  - napi::Value
-  - napi_value
+  - `const char*` (encoded using UTF-8, null-terminated)
+  - `const char16_t*` (encoded using UTF-16-LE, null-terminated)
+  - `std::string` (encoded using UTF-8)
+  - `std::u16string`
+  - `Napi::Value`
+  - `napi_value`
 
 ### From
 
 ```cpp
-template <typename T> static Value From(napi_env env, const T& value);
+template <typename T> static Napi::Value Napi::Value::From(napi_env env, const T& value);
 ```
 
-- `[in] env`: The `napi_env` environment in which to create the Value object.
+- `[in] env`: The `napi_env` environment in which to create the `Napi::Value` object.
 
-- `[in] value`: The N-API primitive value from which to create the Value object.
+- `[in] value`: The N-API primitive value from which to create the `Napi::Value` object.
 
-Returns a Value object from an N-API primitive value.
+Returns a `Napi::Value` object from an N-API primitive value.
 
 ### operator napi_value
 
@@ -71,165 +69,167 @@ operator napi_value() const;
 
 Returns this Value's N-API value primitive.
 
-Returns `nullptr` if this Value is *empty*.
+Returns `nullptr` if this `Napi::Value` is *empty*.
 
 ### operator ==
 
 ```cpp
-bool operator ==(const Value& other) const;
+
+bool Napi::Value::operator ==(const Napi::Value& other) const;
 ```
 
-- `[in] other`: The Value object to be compared.
+- `[in] other`: The `Napi::Value` object to be compared.
 
-Returns a `bool` indicating if this Value strictly equals another Value.
+Returns a `bool` indicating if this `Napi::Value` strictly equals another `Napi::Value`.
 
 ### operator !=
 
 ```cpp
-bool operator !=(const Value& other) const;
+bool Napi::Value::operator !=(const Napi::Value& other) const;
 ```
 
-- `[in] other`: The Value object to be compared.
+- `[in] other`: The `Napi::Value` object to be compared.
 
-Returns a `bool` indicating if this Value does not strictly equal another Value.
+Returns a `bool` indicating if this `Napi::Value` does not strictly equal another `Napi::Value`.
 
 ### StrictEquals
 
 ```cpp
-bool StrictEquals(const Value& other) const;
+bool Napi::Value::StrictEquals(const Napi::Value& other) const;
 ```
-- `[in] other`: The Value object to be compared.
+- `[in] other`: The `Napi::Value` object to be compared.
 
-Returns a `bool` indicating if this Value strictly equals another Value.
+Returns a `bool` indicating if this `Napi::Value` strictly equals another `Napi::Value`.
 
 ### Env
 
 ```cpp
-Napi::Env Env() const;
+Napi::Env Napi::Value::Env() const;
 ```
 
-Returns the `Env` environment this value is associated with.
+Returns the `Napi::Env` environment this value is associated with.
 
 ### IsEmpty
 
 ```cpp
-bool IsEmpty() const;
+bool Napi::Value::IsEmpty() const;
 ```
 
-Returns a `bool` indicating if this Value is *empty* (uninitialized).
+Returns a `bool` indicating if this `Napi::Value` is *empty* (uninitialized).
 
-An empty Value is invalid, and most attempts to perform an operation on an empty Value will result in an exception. Note an empty Value is distinct from JavaScript `null` or `undefined`, which are valid values.
+An empty `Napi::Value` is invalid, and most attempts to perform an operation on an empty Value will result in an exception.
+Note an empty `Napi::Value` is distinct from JavaScript `null` or `undefined`, which are valid values.
 
-When C++ exceptions are disabled at compile time, a method with a `Value` return type may return an empty Value to indicate a pending exception. So when not using C++ exceptions, callers should check whether this Value is empty before attempting to use it.
+When C++ exceptions are disabled at compile time, a method with a `Napi::Value` return type may return an empty Value to indicate a pending exception. So when not using C++ exceptions, callers should check whether this `Napi::Value` is empty before attempting to use it.
 
 ### Type
 
 ```cpp
-napi_valuetype Type() const;
+napi_valuetype Napi::Value::Type() const;
 ```
 
-Returns the `napi_valuetype` type of the Value.
+Returns the `napi_valuetype` type of the `Napi::Value`.
 
 ### IsUndefined
 
 ```cpp
-bool IsUndefined() const;
+bool Napi::Value::IsUndefined() const;
 ```
 
-Returns a `bool` indicating if this Value is an undefined JavaScript value.
+Returns a `bool` indicating if this `Napi::Value` is an undefined JavaScript value.
 
 ### IsNull
 
 ```cpp
-bool IsNull() const;
+bool Napi::Value::IsNull() const;
 ```
 
-Returns a `bool` indicating if this Value is a null JavaScript value.
+Returns a `bool` indicating if this `Napi::Value` is a null JavaScript value.
 
 ### IsBoolean
 
 ```cpp
-bool IsBoolean() const;
+bool Napi::Value::IsBoolean() const;
 ```
 
-Returns a `bool` indicating if this Value is a JavaScript boolean.
+Returns a `bool` indicating if this `Napi::Value` is a JavaScript boolean.
 
 ### IsNumber
 
 ```cpp
-bool IsNumber() const;
+bool Napi::Value::IsNumber() const;
 ```
 
-Returns a `bool` indicating if this Value is a JavaScript number.
+Returns a `bool` indicating if this `Napi::Value` is a JavaScript number.
 
 ### IsString
 
 ```cpp
-bool IsString() const;
+bool Napi::Value::IsString() const;
 ```
 
-Returns a `bool` indicating if this Value is a JavaScript string.
+Returns a `bool` indicating if this `Napi::Value` is a JavaScript string.
 
 ### IsSymbol
 
 ```cpp
-bool IsSymbol() const;
+bool Napi::Value::IsSymbol() const;
 ```
 
-Returns a `bool` indicating if this Value is a JavaScript symbol.
+Returns a `bool` indicating if this `Napi::Value` is a JavaScript symbol.
 
 ### IsArray
 
 ```cpp
-bool IsArray() const;
+bool Napi::Value::IsArray() const;
 ```
 
-Returns a `bool` indicating if this Value is a JavaScript array.
+Returns a `bool` indicating if this `Napi::Value` is a JavaScript array.
 
 ### IsArrayBuffer
 
 ```cpp
-bool IsArrayBuffer() const;
+bool Napi::Value::IsArrayBuffer() const;
 ```
 
-Returns a `bool` indicating if this Value is a JavaScript array buffer.
+Returns a `bool` indicating if this `Napi::Value` is a JavaScript array buffer.
 
 ### IsTypedArray
 
 ```cpp
-bool IsTypedArray() const;
+bool Napi::Value::IsTypedArray() const;
 ```
 
-Returns a `bool` indicating if this Value is a JavaScript typed array.
+Returns a `bool` indicating if this `Napi::Value` is a JavaScript typed array.
 
 ### IsObject
 
 ```cpp
-bool IsObject() const;
+bool Napi::Value::IsObject() const;
 ```
 
-Returns a `bool` indicating if this Value is JavaScript object.
+Returns a `bool` indicating if this `Napi::Value` is JavaScript object.
 
 ### IsFunction
 
 ```cpp
-bool IsFunction() const;
+bool Napi::Value::IsFunction() const;
 ```
 
-Returns a `bool` indicating if this Value is a JavaScript function.
+Returns a `bool` indicating if this `Napi::Value` is a JavaScript function.
 
 ### IsBuffer
 
 ```cpp
-bool IsBuffer() const;
+bool Napi::Value::IsBuffer() const;
 ```
 
-Returns a `bool` indicating if this Value is a Node buffer.
+Returns a `bool` indicating if this `Napi::Value` is a Node buffer.
 
 ### As
 
 ```cpp
-template <typename T> T As() const;
+template <typename T> T Napi::Value::As() const;
 ```
 
 Casts to another type of `Napi::Value`, when the actual type is known or assumed.
@@ -239,31 +239,31 @@ This conversion does not coerce the type. Calling any methods inappropriate for 
 ### ToBoolean
 
 ```cpp
-Boolean ToBoolean() const;
+Napi::Boolean Napi::Value::ToBoolean() const;
 ```
 
-Returns the Value coerced to a JavaScript boolean.
+Returns the `Napi::Value` coerced to a JavaScript boolean.
 
 ### ToNumber
 
 ```cpp
-Number ToNumber() const;
+Napi::Number Napi::Value::ToNumber() const;
 ```
 
-Returns the Value coerced to a JavaScript number.
+Returns the `Napi::Value` coerced to a JavaScript number.
 
 ### ToString
 
 ```cpp
-String ToString() const;
+Napi::String Napi::Value::ToString() const;
 ```
 
-Returns the Value coerced to a JavaScript string.
+Returns the `Napi::Value` coerced to a JavaScript string.
 
 ### ToObject
 
 ```cpp
-Object ToObject() const;
+Napi::Object Napi::Value::ToObject() const;
 ```
 
-Returns the Value coerced to a JavaScript object.
+Returns the `Napi::Value` coerced to a JavaScript object.

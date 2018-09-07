@@ -1,17 +1,19 @@
 # AsyncWorker
 
-`AsyncWorker` is an abstract class that you can subclass to remove many of the
-tedious tasks of moving data between the event loop and worker threads. This
+`Napi::AsyncWorker` is an abstract class that you can subclass to remove many of
+the tedious tasks of moving data between the event loop and worker threads. This
 class internally handles all the details of creating and executing an asynchronous
 operation.
 
-Once created, execution is requested by calling `Queue`. When a thread is
-available for execution the `Execute` method will be invoked.  Once `Execute`
-complets either `OnOK` or `OnError` will be invoked.  Once the `OnOK` or 
-`OnError` methods are complete the AsyncWorker instance is destructed.
+Once created, execution is requested by calling `Napi::AsyncWorker::Queue`. When
+a thread is available for execution the `Napi::AsyncWorker::Execute` method will
+be invoked.  Once `Napi::AsyncWorker::Execute` completes either
+`Napi::AsyncWorker::OnOK` or `Napi::AsyncWorker::OnError` will be invoked.  Once
+the `Napi::AsyncWorker::OnOK` or `Napi::AsyncWorker::OnError` methods are
+complete the `Napi::AsyncWorker` instance is destructed.
 
-For the most basic use, only the `Execute` method must be implemented in a
-subclass.
+For the most basic use, only the `Napi::AsyncWorker::Execute` method must be
+implemented in a subclass.
 
 ## Methods
 
@@ -20,7 +22,7 @@ subclass.
 Requests the environment in which the async worker has been initially created.
 
 ```cpp
-Env Env() const;
+Napi::Env Napi::AsyncWorker::Env() const;
 ```
 
 Returns the environment in which the async worker has been created.
@@ -30,7 +32,7 @@ Returns the environment in which the async worker has been created.
 Requests that the work be queued for execution.
 
 ```cpp
-void Queue();
+void Napi::AsyncWorker::Queue();
 ```
 
 ### Cancel
@@ -40,13 +42,13 @@ executing, it cannot be cancelled.  If cancelled successfully neither
 `OnOK` nor `OnError` will be called.
 
 ```cpp
-void Cancel();
+void Napi::AsyncWorker::Cancel();
 ```
 
 ### Receiver
 
 ```cpp
-ObjectReference& Receiver();
+Napi::ObjectReference& Napi::AsyncWorker::Receiver();
 ```
 
 Returns the persistent object reference of the receiver object set when the async
@@ -55,22 +57,24 @@ worker was created.
 ### Callback
 
 ```cpp
-FunctionReference& Callback();
+Napi::FunctionReference& Napi::AsyncWorker::Callback();
 ```
 
 Returns the persistent function reference of the callback set when the async
 worker was created. The returned function reference will receive the results of
-the computation that happened in the `Execute` method, unless the default
-implementation of `OnOK` or `OnError` is overridden.
+the computation that happened in the `Napi::AsyncWorker::Execute` method, unless
+the default implementation of `Napi::AsyncWorker::OnOK` or
+`Napi::AsyncWorker::OnError` is overridden.
 
 ### SetError
 
 Sets the error message for the error that happened during the execution. Setting
-an error message will cause the `OnError` method to be invoked instead of `OnOK`
-once the `Execute` method completes.
+an error message will cause the `Napi::AsyncWorker::OnError` method to be
+invoked instead of `Napi::AsyncWorker::OnOKOnOK` once the
+`Napi::AsyncWorker::Execute` method completes.
 
 ```cpp
-void SetError(const std::string& error);
+void Napi::AsyncWorker::SetError(const std::string& error);
 ```
 
 - `[in] error`: The reference to the string that represent the message of the error.
@@ -81,13 +85,13 @@ This method is used to execute some tasks out of the **event loop** on a libuv
 worker thread. Subclasses must implement this method and the method is run on
 a thread other than that running the main event loop.  As the method is not
 running on the main event loop, it must avoid calling any methods from node-addon-api
-or running any code that might invoke JavaScript.  Instead once this method is
+or running any code that might invoke JavaScript. Instead, once this method is
 complete any interaction through node-addon-api with JavaScript should be implemented
-in the `OnOK` method which runs on the main thread and is invoked when the `Execute`
-method completes.
+in the `Napi::AsyncWorker::OnOK` method which runs on the main thread and is
+invoked when the `Napi::AsyncWorker::Execute` method completes.
 
 ```cpp
-virtual void Execute() = 0;
+virtual void Napi::AsyncWorker::Execute() = 0;
 ```
 
 ### OnOK
@@ -97,41 +101,41 @@ The default implementation runs the Callback provided when the AsyncWorker class
 was created.
 
 ```cpp
-virtual void OnOK();
+virtual void Napi::AsyncWorker::OnOK();
 ```
 
 ### OnError
 
-This method is invoked afer Execute() completes if an error occurs
-while `Execute` is running and C++ exceptions are enabled or if an
-error was set through a call to `SetError`.  The default implementation
-calls the callback provided when the AsyncWorker class was created, passing
-in the error as the first parameter.
+This method is invoked afer `Napi::AsyncWorker::Execute` completes if an error
+occurs while `Napi::AsyncWorker::Execute` is running and C++ exceptions are
+enabled or if an error was set through a call to `Napi::AsyncWorker::SetError`.
+The default implementation calls the callback provided when the `Napi::AsyncWorker`
+class was created, passing in the error as the first parameter.
 
 ```cpp
-virtual void OnError(const Error& e);
+virtual void Napi::AsyncWorker::OnError(const Napi::Error& e);
 ```
 
 ### Constructor
 
-Creates a new `AsyncWorker`.
+Creates a new `Napi::AsyncWorker`.
 
 ```cpp
-explicit AsyncWorker(const Function& callback);
+explicit Napi::AsyncWorker(const Napi::Function& callback);
 ```
 
 - `[in] callback`: The function which will be called when an asynchronous
 operations ends. The given function is called from the main event loop thread.
 
-Returns an AsyncWork instance which can later be queued for execution by calling
+Returns a`Napi::AsyncWork` instance which can later be queued for execution by calling
 `Queue`.
 
 ### Constructor
 
-Creates a new `AsyncWorker`.
+Creates a new `Napi::AsyncWorker`.
 
 ```cpp
-explicit AsyncWorker(const Function& callback, const char* resource_name);
+explicit Napi::AsyncWorker(const Napi::Function& callback, const char* resource_name);
 ```
 
 - `[in] callback`: The function which will be called when an asynchronous
@@ -140,16 +144,15 @@ operations ends. The given function is called from the main event loop thread.
 identifier for the kind of resource that is being provided for diagnostic
 information exposed by the async_hooks API.
 
-Returns an AsyncWork instance which can later be queued for execution by calling
-`Queue`.
-
+Returns a `Napi::AsyncWork` instance which can later be queued for execution by
+calling `Napi::AsyncWork::Queue`.
 
 ### Constructor
 
-Creates a new `AsyncWorker`.
+Creates a new `Napi::AsyncWorker`.
 
 ```cpp
-explicit AsyncWorker(const Function& callback, const char* resource_name, const Object& resource);
+explicit Napi::AsyncWorker(const Napi::Function& callback, const char* resource_name, const Napi::Object& resource);
 ```
 
 - `[in] callback`: The function which will be called when an asynchronous
@@ -160,31 +163,30 @@ information exposed by the async_hooks API.
 - `[in] resource`: Object associated with the asynchronous operation that
 will be passed to possible async_hooks.
 
-Returns an AsyncWork instance which can later be queued for execution by calling
-`Queue`.
+Returns a `Napi::AsyncWork` instance which can later be queued for execution by
+calling `Napi::AsyncWork::Queue`.
 
 ### Constructor
 
-Creates a new `AsyncWorker`.
+Creates a new `Napi::AsyncWorker`.
 
 ```cpp
-explicit AsyncWorker(const Object& receiver, const Function& callback);
+explicit Napi::AsyncWorker(const Napi::Object& receiver, const Napi::Function& callback);
 ```
 
 - `[in] receiver`: The `this` object passed to the called function.
 - `[in] callback`: The function which will be called when an asynchronous
 operations ends. The given function is called from the main event loop thread.
 
-Returns an AsyncWork instance which can later be queued for execution by calling
-`Queue`.
-
+Returns a `Napi::AsyncWork` instance which can later be queued for execution by
+calling `Napi::AsyncWork::Queue`.
 
 ### Constructor
 
-Creates a new `AsyncWorker`.
+Creates a new `Napi::AsyncWorker`.
 
 ```cpp
-explicit AsyncWorker(const Object& receiver, const Function& callback,const char* resource_name);
+explicit Napi::AsyncWorker(const Napi::Object& receiver, const Napi::Function& callback,const char* resource_name);
 ```
 
 - `[in] receiver`: The `this` object passed to the called function.
@@ -194,16 +196,15 @@ operations ends. The given function is called from the main event loop thread.
 identifier for the kind of resource that is being provided for diagnostic
 information exposed by the async_hooks API.
 
-Returns an AsyncWork instance which can later be queued for execution by calling
-`Queue`.
-
+Returns a `Napi::AsyncWork` instance which can later be queued for execution by
+calling `Napi::AsyncWork::Queue`.
 
 ### Constructor
 
-Creates a new `AsyncWorker`.
+Creates a new `Napi::AsyncWorker`.
 
 ```cpp
-explicit AsyncWorker(const Object& receiver, const Function& callback, const char* resource_name, const Object& resource);
+explicit Napi::AsyncWorker(const Napi::Object& receiver, const Napi::Function& callback, const char* resource_name, const Napi::Object& resource);
 ```
 
 - `[in] receiver`: The `this` object passed to the called function.
@@ -215,42 +216,44 @@ information exposed by the async_hooks API.
 - `[in] resource`: Object associated with the asynchronous operation that
 will be passed to possible async_hooks.
 
-Returns an AsyncWork instance which can later be queued for execution by calling
-`Queue`.
+Returns a `Napi::AsyncWork` instance which can later be queued for execution by
+calling `Napi::AsyncWork::Queue`.
 
 ### Destructor
 
 Deletes the created work object that is used to execute logic asynchronously.
 
 ```cpp
-virtual ~AsyncWorker();
+virtual Napi::AsyncWorker::~AsyncWorker();
 ```
 
 ## Operator
 
 ```cpp
-operator napi_async_work() const;
+Napi::AsyncWorker::operator napi_async_work() const;
 ```
 
-Returns the N-API napi_async_work wrapped by the AsyncWorker object. This can be
-used to mix usage of the C N-API and node-addon-api.
+Returns the N-API napi_async_work wrapped by the `Napi::AsyncWorker` object. This
+can be used to mix usage of the C N-API and node-addon-api.
 
 ## Example
 
-The first step to use the `AsyncWorker` class is to create a new class that inherit
-from it and implement the `Execute` abstract method. Typically input to your
-worker will be saved within class' fields generally passed in through its
-constructor.
+The first step to use the `Napi::AsyncWorker` class is to create a new class that
+inherits from it and implement the `Napi::AsyncWorker::Execute` abstract method.
+Typically input to your worker will be saved within class' fields generally
+passed in through its constructor.
 
-When the `Execute` method completes without errors the `OnOK` function callback
-will be invoked. In this function the results of the computation will be
-reassembled and returned back to the initial JavaScript context.
+When the `Napi::AsyncWorker::Execute` method completes without errors the
+`Napi::AsyncWorker::OnOK` function callback will be invoked. In this function the
+results of the computation will be reassembled and returned back to the initial
+JavaScript context.
 
-`AsyncWorker` ensures that all the code in the `Execute` function runs in the
-background out of the **event loop** thread and at the end the `OnOK` or `OnError`
-function will be called and are executed as part of the event loop.
+`Napi::AsyncWorker` ensures that all the code in the `Napi::AsyncWorker::Execute`
+function runs in the background out of the **event loop** thread and at the end
+the `Napi::AsyncWorker::OnOK` or `Napi::AsyncWorker::OnError` function will be
+called and are executed as part of the event loop.
 
-The code below show a basic example of `AsyncWorker` the implementation:
+The code below show a basic example of `Napi::AsyncWorker` the implementation:
 
 ```cpp
 #include<napi.h>
@@ -283,13 +286,21 @@ class EchoWorker : public AsyncWorker {
 ```
 
 The `EchoWorker`'s contructor calls the base class' constructor to pass in the
-callback that the `AsyncWorker` base class will store persistently. When the work
-on the `Execute` method is done the `OnOk` method is called and the results return
-back to JavaScript invoking the stored callback with its associated environment.
+callback that the `Napi::AsyncWorker` base class will store persistently. When
+the work on the `Napi::AsyncWorker::Execute` method is done the
+`Napi::AsyncWorker::OnOk` method is called and the results return back to
+JavaScript invoking the stored callback with its associated environment.
 
-The following code shows an example on how to create and and use an `AsyncWorker`
+The following code shows an example on how to create and and use an `Napi::AsyncWorker`
 
 ```cpp
+#include<napi.h>
+
+// Include EchoWorker class
+// ..
+
+use namespace Napi;
+
 Value Echo(const CallbackInfo& info) {
     // You need to check the input data here
     Function cb = info[1].As<Function>();
@@ -299,8 +310,8 @@ Value Echo(const CallbackInfo& info) {
     return info.Env().Undefined();
 ```
 
-Using the implementation of an `AsyncWorker` is straight forward. You need only create
-a new instance and pass to its constructor the callback you want to execute when
-your asynchronous task ends and other data you need for your computation. Once created the
-only other action you have to do is to call the `Queue` method that will that will
-queue the created worker for execution.
+Using the implementation of a `Napi::AsyncWorker` is straight forward. You only
+need to create a new instance and pass to its constructor the callback you want to
+execute when your asynchronous task ends and other data you need for your
+computation. Once created the only other action you have to do is to call the
+`Napi::AsyncWorker::Queue` method that will queue the created worker for execution.

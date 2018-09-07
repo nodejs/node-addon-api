@@ -34,7 +34,7 @@ with each of the values, one at a time:
 ```C++
 for (int i = 0; i < LOOP_MAX; i++) {
   std::string name = std::string("inner-scope") + std::to_string(i);
-  Value newValue = String::New(info.Env(), name.c_str());
+  Napi::Value newValue = Napi::String::New(info.Env(), name.c_str());
   // do something with newValue
 };
 ```
@@ -47,8 +47,8 @@ values would also be kept alive since they all share the same scope.
 To handle this case, node-addon-api provides the ability to establish
 a new 'scope' to which newly created handles will be associated. Once those
 handles are no longer required, the scope can be deleted and any handles
-associated with the scope are invalidated. The `HandleScope`
-and `EscapableHandleScope` classes are provided by node-addon-api for
+associated with the scope are invalidated. The `Napi::HandleScope`
+and `Napi::EscapableHandleScope` classes are provided by node-addon-api for
 creating additional scopes.
 
 node-addon-api only supports a single nested hierarchy of scopes. There is
@@ -56,28 +56,28 @@ only one active scope at any time, and all new handles will be associated
 with that scope while it is active. Scopes must be deleted in the reverse
 order from which they are opened. In addition, all scopes created within
 a native method must be deleted before returning from that method. Since
-HandleScopes are typically stack allocated the compiler will take care of
+`Napi::HandleScopes` are typically stack allocated the compiler will take care of
 deletion, however, care must be taken to create the scope in the right
 place such that you achieve the desired lifetime.
 
-Taking the earlier example, creating a HandleScope in the innner loop
+Taking the earlier example, creating a `Napi::HandleScope` in the innner loop
 would ensure that at most a single new value is held alive throughout the
 execution of the loop:
 
 ```C
 for (int i = 0; i < LOOP_MAX; i++) {
-  HandleScope scope(info.Env());
+  Napi::HandleScope scope(info.Env());
   std::string name = std::string("inner-scope") + std::to_string(i);
-  Value newValue = String::New(info.Env(), name.c_str());
+  Napi::Value newValue = Napi::String::New(info.Env(), name.c_str());
   // do something with neValue
 };
 ```
 
 When nesting scopes, there are cases where a handle from an
 inner scope needs to live beyond the lifespan of that scope. node-addon-api
-provides the `EscapableHandleScope` with the Escape method
+provides the `Napi::EscapableHandleScope` with the `Escape` method
 in order to support this case. An escapable scope
 allows one object to be 'promoted' so that it 'escapes' the
 current scope and the lifespan of the handle changes from the current
-scope to that of the outer scope. The Escape method can only be called
-once for a given EscapableHandleScope.
+scope to that of the outer scope. The `Escape` method can only be called
+once for a given `Napi::EscapableHandleScope`.

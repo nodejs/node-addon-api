@@ -1,5 +1,13 @@
 # Working with JavaScript Values
 
-You are reading a draft of the next documentation and it's in continuous update so
-if you don't find what you need please refer to:
-[C++ wrapper classes for the ABI-stable C APIs for Node.js](https://nodejs.github.io/node-addon-api/)
+`node-addon-api` provides a set of classes that allow to create and manage
+JavaScript object:
+
+- [Function](doc/function.md)
+    - [FunctionReference](doc/function_reference.md)
+- [ObjectWrap](doc/object_wrap.md)
+    - [ClassPropertyDescriptor](doc/class_property_descriptor.md)
+- [Buffer](doc/buffer.md)
+- [ArrayBuffer](doc/array_buffer.md)
+- [TypedArray](doc/typed_array.md)
+    - [TypedArrayOf](doc/typed_array_of.md)

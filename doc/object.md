@@ -1,12 +1,12 @@
 # Object
 
-The Object class corresponds to a JavaScript object. It is extended by the following node-addon-api classes that you may use when working with more specific types:
+The `Napi::Object` class corresponds to a JavaScript object. It is extended by the following node-addon-api classes that you may use when working with more specific types:
 
-- [Value](value.md) and extends [Array](array.md)
-- [ArrayBuffer](array_buffer.md)
-- [Buffer<T>](buffer.md)
-- [Function](function.md)
-- [TypedArray](typed_array.md).
+- [`Napi::Value`](value.md) and extends [`Napi::Array`](array.md)
+- [`Napi::ArrayBuffer`](array_buffer.md)
+- [`Napi::Buffer<T>`](buffer.md)
+- [`Napi::Function`](function.md)
+- [`Napi::TypedArray`](typed_array.md).
 
 This class provides a number of convenience methods, most of which are used to set or get properties on a JavaScript object. For example, Set() and Get().
 
@@ -62,19 +62,19 @@ Napi::Object::Object(napi_env env, napi_value value);
   - const char16_t* (encoded using UTF-16-LE, null-terminated)
   - std::string (encoded using UTF-8)
   - std::u16string
-  - napi::Value
+  - Napi::Value
   - napi_value
 
-Creates a non-empty Object instance.
+Creates a non-empty `Napi::Object` instance.
 
 ### New()
 
 ```cpp
-Object Napi::Object::New(napi_env env);
+Napi::Object Napi::Object::New(napi_env env);
 ```
-- `[in] env`: The `napi_env` environment in which to construct the Value object.
+- `[in] env`: The `napi_env` environment in which to construct the `Napi::Value` object.
 
-Creates a new Object value.
+Creates a new `Napi::Object` value.
 
 ### Set()
 
@@ -88,14 +88,14 @@ Add a property with the specified key with the specified value to the object.
 
 The key can be any of the following types:
 - `napi_value`
-- [Value](value.md)
+- [`Napi::Value`](value.md)
 - `const char*`
 - `const std::string&`
 - `uint32_t`
 
 While the value must be any of the following types:
 - `napi_value`
-- [Value](value.md)
+- [`Napi::Value`](value.md)
 - `const char*`
 - `std::string&`
 - `bool`
@@ -104,15 +104,15 @@ While the value must be any of the following types:
 ### Get()
 
 ```cpp
-Value Napi::Object::Get(____ key);
+Napi::Value Napi::Object::Get(____ key);
 ```
 - `[in] key`: The name of the property to return the value for.
 
-Returns the [Value](value.md) associated with the key property. Returns NULL if no such key exists.
+Returns the [`Napi::Value`](value.md) associated with the key property. Returns NULL if no such key exists.
 
 The `key` can be any of the following types:
 - `napi_value`
-- [Value](value.md)
+- [`Napi::Value`](value.md)
 - `const char *`
 - `const std::string &`
 - `uint32_t`
@@ -131,18 +131,18 @@ Returns a `bool` that is *true* if the object has a property named `key` and *fa
 ```cpp
 bool Napi::Object::InstanceOf (const Function& constructor) const
 ```
-- `[in] constructor`: The constructor [Function](function.md) of the value that is being compared with the object.
+- `[in] constructor`: The constructor [`Napi::Function`](function.md) of the value that is being compared with the object.
 
-Returns a `bool` that is true if the Object is an instance created by the `constructor` and false otherwise.
+Returns a `bool` that is true if the `Napi::Object` is an instance created by the `constructor` and false otherwise.
 
 Note: This is equivalent to the JavaScript instanceof operator.
 
 ### DefineProperty()
 
 ```cpp
-void Napi::Object::DefineProperty (const PropertyDescriptor& property);
+void Napi::Object::DefineProperty (const Napi::PropertyDescriptor& property);
 ```
-- `[in] property`: A [PropertyDescriptor](propertydescriptor.md).
+- `[in] property`: A [`Napi::PropertyDescriptor`](propertydescriptor.md).
 
 Define a property on the object.
 
@@ -151,52 +151,52 @@ Define a property on the object.
 ```cpp
 void Napi::Object::DefineProperties (____ properties)
 ```
-- `[in] properties`: A list of [PropertyDescriptor](propertydescriptor.md). Can be one of the following types:
-	- const std::initializer_list<PropertyDescriptor>&
-	- const std::vector<PropertyDescriptor>&
+- `[in] properties`: A list of [`Napi::PropertyDescriptor`](propertydescriptor.md). Can be one of the following types:
+	- const std::initializer_list<Napi::PropertyDescriptor>&
+	- const std::vector<Napi::PropertyDescriptor>&
 
 Defines properties on the object.
 
 ### Operator[]()
 
 ```cpp
-PropertyLValue<std::string> Napi::Object::operator[] (const char* utf8name);
+Napi::PropertyLValue<std::string> Napi::Object::operator[] (const char* utf8name);
 ```
 - `[in] utf8name`: UTF-8 encoded null-terminated property name.
 
-Returns a [PropertyLValue](propertylvalue.md) as the named property or sets the named property.
+Returns a [`Napi::PropertyLValue`](propertylvalue.md) as the named property or sets the named property.
 
 ```cpp
-PropertyLValue<std::string> Napi::Object::operator[] (const std::string& utf8name);
+Napi::PropertyLValue<std::string> Napi::Object::operator[] (const std::string& utf8name);
 ```
 - `[in] utf8name`: UTF-8 encoded property name.
 
-Returns a [PropertyLValue](propertylvalue.md) as the named property or sets the named property.
+Returns a [`Napi::PropertyLValue`](propertylvalue.md) as the named property or sets the named property.
 
 ```cpp
-PropertyLValue<uint32_t> Napi::Object::operator[] (uint32_t index);
+Napi::PropertyLValue<uint32_t> Napi::Object::operator[] (uint32_t index);
 ```
 - `[in] index`: Element index.
 
-Returns a [PropertyLValue](propertylvalue.md) or sets an indexed property or array element.
+Returns a [`Napi::PropertyLValue`](propertylvalue.md) or sets an indexed property or array element.
 
 ```cpp
-Value Napi::Object::operator[] (const char* utf8name) const;
+Napi::Value Napi::Object::operator[] (const char* utf8name) const;
 ```
 - `[in] utf8name`: UTF-8 encoded null-terminated property name.
 
-Returns the named property as a [Value](value.md).
+Returns the named property as a [`Napi::Value`](value.md).
 
 ```cpp
-Value Napi::Object::operator[] (const std::string& utf8name) const;
+Napi::Value Napi::Object::operator[] (const std::string& utf8name) const;
 ```
 - `[in] utf8name`: UTF-8 encoded property name.
 
-Returns the named property as a [Value](value.md).
+Returns the named property as a [`Napi::Value`](value.md).
 
 ```cpp
-Value Napi::Object::operator[] (uint32_t index) const;
+Napi::Value Napi::Object::operator[] (uint32_t index) const;
 ```
 - `[in] index`: Element index.
 
-Returns an indexed property or array element as a [Value](value.md).
+Returns an indexed property or array element as a [`Napi::Value`](value.md).

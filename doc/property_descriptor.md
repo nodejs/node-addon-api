@@ -1,6 +1,6 @@
 # Property Descriptor
 
-An [Object](object.md) can be assigned properites via its [DefineProperty](object.md#defineproperty) and [DefineProperties](object.md#defineproperties) function, which take PropertyDescrptor(s) as their parameters. The PropertyDescriptor can contain either values or functions, which are then assigned to the Object. Note that a single instance of a PropertyDescriptor class can only contain either one value, or at most two functions. PropertyDescriptors can only be created through the class methods [Accessor](#accessor), [Function](#function), or [Value](#value), each of which return a new static instance of a PropertyDescriptor.
+A [`Napi::Object`](object.md) can be assigned properites via its [`DefineProperty`](object.md#defineproperty) and [`DefineProperties`](object.md#defineproperties) functions, which take PropertyDescrptor(s) as their parameters. The `Napi::PropertyDescriptor` can contain either values or functions, which are then assigned to the `Napi::Object`. Note that a single instance of a `Napi::PropertyDescriptor` class can only contain either one value, or at most two functions. PropertyDescriptors can only be created through the class methods [`Accessor`](#accessor), [`Function`](#function), or [`Value`](#value), each of which return a new static instance of a `Napi::PropertyDescriptor`.
 
 ## Example
 
@@ -52,7 +52,7 @@ Napi::PropertyDescriptor::PropertyDescriptor (napi_property_descriptor desc);
 ### Accessor
 
 ```cpp
-static PropertyDescriptor Napi::PropertyDescriptor::Accessor (___ name,
+static Napi::PropertyDescriptor Napi::PropertyDescriptor::Accessor (___ name,
                 Getter getter,
                 napi_property_attributes attributes = napi_default,
                 void *data = nullptr);
@@ -69,10 +69,10 @@ The name of the property can be any of the following types:
 - `const char*`
 - `const std::string &`
 - `napi_value value`
-- `Name`
+- `Napi::Name`
 
 ```cpp
-static PropertyDescriptor Napi::PropertyDescriptor::Accessor (___ name,
+static Napi::PropertyDescriptor Napi::PropertyDescriptor::Accessor (___ name,
                 Getter getter,
                 Setter setter,
                 napi_property_attributes attributes = napi_default,
@@ -85,18 +85,18 @@ static PropertyDescriptor Napi::PropertyDescriptor::Accessor (___ name,
 * `[in] attributes`: Potential attributes for the getter function.
 * `[in] data`: A pointer to data of any type, default is a null pointer.
 
-Returns a PropertyDescriptor that contains a Getter and Setter function.
+Returns a `Napi::PropertyDescriptor` that contains a `Getter` and `Setter` function.
 
 The name of the property can be any of the following types:
 - `const char*`
 - `const std::string &`
 - `napi_value value`
-- `Name`
+- `Napi::Name`
 
 ### Function
 
 ```cpp
-static PropertyDescriptor Napi::PropertyDescriptor::Function (___ name,
+static Napi::PropertyDescriptor Napi::PropertyDescriptor::Function (___ name,
                 Callable cb,
                 napi_property_attributes attributes = napi_default,
 		            void *data = nullptr);
@@ -107,18 +107,18 @@ static PropertyDescriptor Napi::PropertyDescriptor::Function (___ name,
 * `[in] attributes`: Potential attributes for the getter function.
 * `[in] data`: A pointer to data of any type, default is a null pointer.
 
-Returns a PropertyDescriptor that contains a callable Function.
+Returns a `Napi::PropertyDescriptor` that contains a callable `Napi::Function`.
 
 The name of the property can be any of the following types:
 - `const char*`
 - `const std::string &`
 - `napi_value value`
-- `Name`
+- `Napi::Name`
 
 ### Value
 
 ```cpp
-static PropertyDescriptor Napi::PropertyDescriptor::Value (___ name,
+static Napi::PropertyDescriptor Napi::PropertyDescriptor::Value (___ name,
                 napi_value value,
                 napi_property_attributes attributes = napi_default);
 ```
@@ -127,7 +127,7 @@ The name of the property can be any of the following types:
 - `const char*`
 - `const std::string &`
 - `napi_value value`
-- `Name`
+- `Napi::Name`
 
 ## Related Information
 
