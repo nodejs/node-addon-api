@@ -1,8 +1,6 @@
-**WORK IN PROGRESS, NOT YET COMPLETE**
-
 # Value
 
-Value is the C++ manifestation of a JavaScript value.
+`Napi::Value` is the C++ manifestation of a JavaScript value.
 
 Value is a the base class upon which other JavaScript values such as Number, Boolean, String, and Object are based.
 
