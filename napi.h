@@ -1352,8 +1352,8 @@ namespace Napi {
   ///       public:
   ///         static void Initialize(Napi::Env& env, Napi::Object& target) {
   ///           Napi::Function constructor = DefineClass(env, "Example", {
-  ///             InstanceAccessor("value", &GetSomething, &SetSomething),
-  ///             InstanceMethod("doSomething", &DoSomething),
+  ///             InstanceAccessor("value", &Example::GetSomething, &Example::SetSomething),
+  ///             InstanceMethod("doSomething", &Example::DoSomething),
   ///           });
   ///           target.Set("Example", constructor);
   ///         }
