@@ -126,7 +126,7 @@ Value CreateObjectUsingMagic(const CallbackInfo& info) {
   obj[std::string("s_true")] = true;
   obj[std::string("s_false")] = false;
   obj["0"] = 0;
-  obj[42] = 120;
+  obj[(uint32_t)42] = 120;
   obj["0.0f"] = 0.0f;
   obj["0.0"] = 0.0;
   obj["-1"] = -1;
