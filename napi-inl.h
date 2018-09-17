@@ -2336,6 +2336,16 @@ inline Napi::Value FunctionReference::Call(
   return scope.Escape(result);
 }
 
+inline Napi::Value FunctionReference::Call(
+    napi_value recv, size_t argc, const napi_value* args) const {
+  EscapableHandleScope scope(_env);
+  Napi::Value result = Value().Call(recv, argc, args);
+  if (scope.Env().IsExceptionPending()) {
+    return Value();
+  }
+  return scope.Escape(result);
+}
+
 inline Napi::Value FunctionReference::MakeCallback(
     napi_value recv, const std::initializer_list<napi_value>& args) const {
   EscapableHandleScope scope(_env);
@@ -2350,6 +2360,16 @@ inline Napi::Value FunctionReference::MakeCallback(
     napi_value recv, const std::vector<napi_value>& args) const {
   EscapableHandleScope scope(_env);
   Napi::Value result = Value().MakeCallback(recv, args);
+  if (scope.Env().IsExceptionPending()) {
+    return Value();
+  }
+  return scope.Escape(result);
+}
+
+inline Napi::Value FunctionReference::MakeCallback(
+    napi_value recv, size_t argc, const napi_value* args) const {
+  EscapableHandleScope scope(_env);
+  Napi::Value result = Value().MakeCallback(recv, argc, args);
   if (scope.Env().IsExceptionPending()) {
     return Value();
   }
