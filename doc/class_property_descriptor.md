@@ -13,7 +13,7 @@ This prevents using descriptors from a different class when defining a new class
 Creates new instance of `Napi::ClassPropertyDescriptor` descriptor object.
 
 ```cpp
-ClassPropertyDescriptor(napi_property_descriptor desc) : _desc(desc) {}
+Napi::ClassPropertyDescriptor(napi_property_descriptor desc) : _desc(desc) {}
 ```
 
 - `[in] desc`: The `napi_property_descriptor` 

@@ -28,14 +28,19 @@ class Example : public Napi::ObjectWrap<Example> {
 };
 
 Napi::Object Example::Init(Napi::Env env, Napi::Object exports) {
-    Napi::HandleScope scope(env);
     // This method is used to hook the accessor and method callbacks
     Napi::Function func = DefineClass(env, "Example", {
         InstanceMethod("GetValue", &Example::GetValue),
         InstanceMethod("SetValue", &Example::SetValue)
     });
-
+   
+    // Create a peristent reference to the class constructor. This will allow to
+    // distinguish between a function called on a class prototype and a function
+    // called on instance of a class.
     constructor = Napi::Persistent(func);
+    // Call the SuppressDestruct() method on the static data prevent the calling
+    // to this destructor to reset the reference when the environment is no longer
+    // available.
     constructor.SuppressDestruct();
     exports.Set("Example", func);
     return exports;
@@ -98,7 +103,7 @@ corresponding C++ callback function will be executed.
 
 For wrapped object it could be difficult to distinguish between a function called
 on a class prototype and a function called on instance of a class so a good practice
-is to save a persistent to the class constructor.
+is to save a persistent reference to the class constructor.
 
 ## Methods
 
@@ -107,7 +112,7 @@ is to save a persistent to the class constructor.
 Creates a new instance of a JavaScript object that wraps native instance.
 
 ```cpp
-ObjectWrap(const CallbackInfo& callbackInfo);
+Napi::ObjectWrap(const Napi::CallbackInfo& callbackInfo);
 ```
 
 - `[in] callbackInfo`: The object representing the components of the JavaScript 
@@ -118,7 +123,7 @@ request being made.
 Retrieves a native instance wrapped in a JavaScript object.
 
 ```cpp
-static T* Unwrap(Object wrapper);
+static T* Napi::ObjectWrap::Unwrap(Napi::Object wrapper);
 ```
 
 * `[in] wrapper`: The JavaScript object that wraps the native instance.
@@ -127,11 +132,11 @@ Returns a native instace wrapped in a JavaScript object.
 
 ### DefineClass
 
-Defnines a JavaScript class with constructor, static and instance properties and 
+Defnines is a JavaScript class with constructor, static and instance properties and 
 methods.
 
 ```cpp
-static Function DefineClass(Napi::Env env,
+static Napi::Function Napi::ObjectWrap::DefineClass(Napi::Env env,
                                 const char* utf8name,
                                 const std::initializer_list<PropertyDescriptor>& properties,
                                 void* data = nullptr);
@@ -153,7 +158,7 @@ Defnines a JavaScript class with constructor, static and instance properties and
 methods.
 
 ```cpp
-static Function DefineClass(Napi::Env env,
+static Napi::Function Napi::ObjectWrap::DefineClass(Napi::Env env,
                             const char* utf8name,
                             const std::vector<PropertyDescriptor>& properties,
                             void* data = nullptr);
@@ -174,7 +179,7 @@ Returns a `Napi::Function` representing the constructor function for the class.
 Creates property descriptor that represents a static method of a JavaScript class.
 
 ```cpp
-static PropertyDescriptor StaticMethod(const char* utf8name,
+static Napi::PropertyDescriptor Napi::ObjectWrap::StaticMethod(const char* utf8name,
                                        StaticVoidMethodCallback method,
                                        napi_property_attributes attributes = napi_default,
                                        void* data = nullptr);
@@ -195,7 +200,7 @@ JavaScript class.
 Creates property descriptor that represents a static method of a JavaScript class.
 
 ```cpp
-static PropertyDescriptor StaticMethod(const char* utf8name,
+static Napi::PropertyDescriptor Napi::ObjectWrap::StaticMethod(const char* utf8name,
                                        StaticMethodCallback method,
                                        napi_property_attributes attributes = napi_default,
                                        void* data = nullptr);
@@ -217,7 +222,7 @@ Creates property descriptor that represents a static accessor property of a
 JavaScript class.
 
 ```cpp
-static PropertyDescriptor StaticAccessor(const char* utf8name,
+static Napi::PropertyDescriptor Napi::ObjectWrap::StaticAccessor(const char* utf8name,
                                          StaticGetterCallback getter,
                                          StaticSetterCallback setter,
                                          napi_property_attributes attributes = napi_default,
@@ -241,7 +246,7 @@ property of a JavaScript class.
 Creates property descriptor that represents an instance method of a JavaScript class.
 
 ```cpp
-static PropertyDescriptor InstanceMethod(const char* utf8name,
+static Napi::PropertyDescriptor Napi::ObjectWrap::InstanceMethod(const char* utf8name,
                                          InstanceVoidMethodCallback method,
                                          napi_property_attributes attributes = napi_default,
                                          void* data = nullptr);
@@ -262,7 +267,7 @@ JavaScript class.
 Creates property descriptor that represents an instance method of a JavaScript class.
 
 ```cpp
-static PropertyDescriptor InstanceMethod(const char* utf8name,
+static Napi::PropertyDescriptor Napi::ObjectWrap::InstanceMethod(const char* utf8name,
                                          InstanceMethodCallback method,
                                          napi_property_attributes attributes = napi_default,
                                          void* data = nullptr);
@@ -283,7 +288,7 @@ JavaScript class.
 Creates property descriptor that represents an instance method of a JavaScript class.
 
 ```cpp
-static PropertyDescriptor InstanceMethod(Symbol name,
+static Napi::PropertyDescriptor Napi::ObjectWrap::InstanceMethod(Napi::Symbol name,
                                          InstanceVoidMethodCallback method,
                                          napi_property_attributes attributes = napi_default,
                                          void* data = nullptr);
@@ -304,7 +309,7 @@ JavaScript class.
 Creates property descriptor that represents an instance method of a JavaScript class.
 
 ```cpp
-static PropertyDescriptor InstanceMethod(Symbol name,
+static Napi::PropertyDescriptor Napi::ObjectWrap::InstanceMethod(Napi::Symbol name,
                                          InstanceMethodCallback method,
                                          napi_property_attributes attributes = napi_default,
                                          void* data = nullptr);
@@ -326,7 +331,7 @@ Creates property descriptor that represents an instance accessor property of a
 JavaScript class.
 
 ```cpp
-static PropertyDescriptor InstanceAccessor(const char* utf8name,
+static Napi::PropertyDescriptor Napi::ObjectWrap::InstanceAccessor(const char* utf8name,
                                            InstanceGetterCallback getter,
                                            InstanceSetterCallback setter,
                                            napi_property_attributes attributes = napi_default,
@@ -350,7 +355,7 @@ property of a JavaScript class.
 Creates property descriptor that represents an instance accessor property of a 
 JavaScript class.
 ```cpp
-static PropertyDescriptor StaticValue(const char* utf8name,
+static Napi::PropertyDescriptor Napi::ObjectWrap::StaticValue(const char* utf8name,
                                       Napi::Value value,
                                       napi_property_attributes attributes = napi_default);
 ```
@@ -369,7 +374,7 @@ property of a JavaScript class
 Creates property descriptor that represents an instance accessor property of a 
 JavaScript class.
 ```cpp
-static PropertyDescriptor InstanceValue(const char* utf8name,
+static Napi::PropertyDescriptor Napi::ObjectWrap::InstanceValue(const char* utf8name,
                                         Napi::Value value,
                                         napi_property_attributes attributes = napi_default);
 ```
