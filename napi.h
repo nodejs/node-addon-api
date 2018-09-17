@@ -1097,9 +1097,11 @@ namespace Napi {
     Napi::Value Call(const std::vector<napi_value>& args) const;
     Napi::Value Call(napi_value recv, const std::initializer_list<napi_value>& args) const;
     Napi::Value Call(napi_value recv, const std::vector<napi_value>& args) const;
+    Napi::Value Call(napi_value recv, size_t argc, const napi_value* args) const;
 
     Napi::Value MakeCallback(napi_value recv, const std::initializer_list<napi_value>& args) const;
     Napi::Value MakeCallback(napi_value recv, const std::vector<napi_value>& args) const;
+    Napi::Value MakeCallback(napi_value recv, size_t argc, const napi_value* args) const;
 
     Object New(const std::initializer_list<napi_value>& args) const;
     Object New(const std::vector<napi_value>& args) const;

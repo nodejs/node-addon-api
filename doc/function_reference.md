@@ -148,6 +148,23 @@ arguments of the referenced function.
 Returns a `Napi::Value` representing the JavaScript object returned by the referenced
 function.
 
+### Call
+
+Calls a referenced JavaScript function from a native add-on.
+
+```cpp
+Napi::Value Napi::FunctionReference::Call(napi_value recv, size_t argc, const napi_value* args) const;
+```
+
+- `[in] recv`: The `this` object passed to the referenced function when it's called.
+- `[in] argc`: The number of arguments passed to the referenced function.
+- `[in] args`: Array of JavaScript values as `napi_value` representing the
+arguments of the referenced function.
+
+Returns a `Napi::Value` representing the JavaScript object returned by the referenced
+function.
+
+
 ### MakeCallback
 
 Calls a referenced Javascript function from a native add-on after an asynchronous
@@ -175,6 +192,23 @@ Napi::Value MakeCallback(napi_value recv, const std::vector<napi_value>& args) c
 
 - `[in] recv`: The `this` object passed to the referenced function when it's called.
 - `[in] args`: Vector of JavaScript values as `napi_value` representing the
+arguments of the referenced function.
+
+Returns a `Napi::Value` representing the JavaScript object returned by the referenced
+function.
+
+### MakeCallback
+
+Calls a referenced JavaScript function from a native add-on after an asynchronous
+operation.
+
+```cpp
+Napi::Value Napi::FunctionReference::MakeCallback(napi_value recv, size_t argc, const napi_value* args) const;
+```
+
+- `[in] recv`: The `this` object passed to the referenced function when it's called.
+- `[in] argc`: The number of arguments passed to the referenced function.
+- `[in] args`: Array of JavaScript values as `napi_value` representing the
 arguments of the referenced function.
 
 Returns a `Napi::Value` representing the JavaScript object returned by the referenced
