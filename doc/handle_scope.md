@@ -15,7 +15,7 @@ the section titled [Object lifetime management](object_lifetime_management.md).
 Creates a new handle scope on the stack.
 
 ```cpp
-HandleScope(Napi:Env env);
+Napi::HandleScope::HandleScope(Napi:Env env);
 ```
 
 - `[in] env`: The environment in which to construct the `Napi::HandleScope` object.
@@ -27,7 +27,7 @@ Returns a new `Napi::HandleScope`
 Creates a new handle scope on the stack.
 
 ```cpp
-HandleScope(Napi::Env env, Napi::HandleScope scope);
+Napi::HandleScope::HandleScope(Napi::Env env, Napi::HandleScope scope);
 ```
 
 - `[in] env`: `Napi::Env` in which the scope passed in was created.
@@ -40,7 +40,7 @@ and node-addon-api.
 operator HandleScope::napi_handle_scope
 
 ```cpp
-operator napi_handle_scope() const
+operator Napi::HandleScope::napi_handle_scope() const
 ```
 
 Returns the N-API napi_handle_scope wrapped by the `Napi::EscapableHandleScope` object.
@@ -49,7 +49,7 @@ the class to be used be converted to a napi_handle_scope.
 
 ### Destructor
 ```cpp
-~HandleScope();
+Napi::HandleScope::~HandleScope();
 ```
 
 Deletes the `Napi::HandleScope` instance and allows any objects/handles created
@@ -59,7 +59,7 @@ guarantee as to when the gargbage collector will do this.
 ### Env
 
 ```cpp
-Napi::Env Env() const;
+Napi::Env Napi::HandleScope::Env() const;
 ```
 
 Returns the `Napi:Env` associated with the `Napi::HandleScope`.

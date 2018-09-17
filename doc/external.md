@@ -10,7 +10,7 @@ The `Napi::External` template class implements the ability to create a `Napi::Va
 
 ```cpp
 template <typename T>
-static Napi::External New(napi_env env, T* data);
+static Napi::External Napi::External::New(napi_env env, T* data);
 ```
 
 - `[in] env`: The `napi_env` environment in which to construct the `Napi::External` object.
@@ -22,7 +22,7 @@ Returns the created `Napi::External<T>` object.
 
 ```cpp
 template <typename T>
-static Napi::External New(napi_env env,
+static Napi::External Napi::External::New(napi_env env,
                     T* data,
                     Finalizer finalizeCallback);
 ```
@@ -37,7 +37,7 @@ Returns the created `Napi::External<T>` object.
 
 ```cpp
 template <typename T>
-static Napi::External New(napi_env env,
+static Napi::External Napi::External::New(napi_env env,
                     T* data,
                     Finalizer finalizeCallback,
                     Hint* finalizeHint);
@@ -53,7 +53,7 @@ Returns the created `Napi::External<T>` object.
 ### Data
 
 ```cpp
-T* Data() const;
+T* Napi::External::Data() const;
 ```
 
 Returns a pointer to the arbitrary C++ data held by the `Napi::External` object.

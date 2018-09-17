@@ -30,7 +30,7 @@ void Init(Env env) {
 ### Initialization
 
 ```cpp
-static Napi::ObjectReference New(const Object& value, uint32_t initialRefcount = 0);
+static Napi::ObjectReference Napi::ObjectReference::New(const Object& value, uint32_t initialRefcount = 0);
 ```
 
 * `[in] value`: The `Napi::Object` which is to be referenced.
@@ -40,7 +40,7 @@ static Napi::ObjectReference New(const Object& value, uint32_t initialRefcount =
 Returns the newly created reference.
 
 ```cpp
-static Napi::ObjectReference Weak(const Object& value);
+static Napi::ObjectReference Napi::ObjectReference::Weak(const Object& value);
 ```
 
 Creates a "weak" reference to the value, in that the initial count of number of references is set to 0.
@@ -50,7 +50,7 @@ Creates a "weak" reference to the value, in that the initial count of number of 
 Returns the newly created reference.
 
 ```cpp
-static Napi::ObjectReference Persistent(const Object& value);
+static Napi::ObjectReference Napi::ObjectReference::Persistent(const Object& value);
 ```
 
 Creates a "persistent" reference to the value, in that the initial count of number of references is set to 1.
@@ -62,7 +62,7 @@ Returns the newly created reference.
 ### Empty Constructor
 
 ```cpp
-ObjectReference();
+Napi::ObjectReference::ObjectReference();
 ```
 
 Returns a new _empty_ `Napi::ObjectReference` instance.
@@ -70,7 +70,7 @@ Returns a new _empty_ `Napi::ObjectReference` instance.
 ### Constructor
 
 ```cpp
-ObjectReference(napi_env env, napi_value value);
+Napi::ObjectReference::ObjectReference(napi_env env, napi_value value);
 ```
 
 * `[in] env`: The `napi_env` environment in which to construct the `Napi::ObjectReference` object.
@@ -81,7 +81,7 @@ Returns the newly created reference.
 
 ### Set
 ```cpp
-void Set(___ key, ___ value);
+void Napi::ObjectReference::Set(___ key, ___ value);
 ```
 
 * `[in] key`: The name for the property being assigned.
@@ -103,7 +103,7 @@ The `value` can be any of the following types:
 ### Get
 
 ```cpp
-Napi::Value Get(___ key);
+Napi::Value Napi::ObjectReference::Get(___ key);
 ```
 
 * `[in] key`: The name of the property to return the value for.

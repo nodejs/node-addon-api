@@ -40,7 +40,7 @@ The array type parameter can normally be omitted (because it is inferred from
 the template parameter T), except when creating a "clamped" array.
 
 ```cpp
-static Napi::TypedArrayOf New(napi_env env,
+static Napi::TypedArrayOf Napi::TypedArrayOf::New(napi_env env,
                         size_t elementLength,
                         napi_typedarray_type type);
 ```
@@ -59,7 +59,7 @@ The array `type` parameter can normally be omitted (because it is inferred from
 the template parameter `T`), except when creating a "clamped" array.
 
 ```cpp
-static Napi::TypedArrayOf New(napi_env env,
+static Napi::TypedArrayOf Napi::TypedArrayOf::New(napi_env env,
                         size_t elementLength,
                         Napi::ArrayBuffer arrayBuffer,
                         size_t bufferOffset,
@@ -80,7 +80,7 @@ Returns a new `Napi::TypedArrayOf` instance.
 Initializes an empty instance of the `Napi::TypedArrayOf` class.
 
 ```cpp
-TypedArrayOf();
+Napi::TypedArrayOf::TypedArrayOf();
 ```
 
 ### Constructor
@@ -88,7 +88,7 @@ TypedArrayOf();
 Initializes a wrapper instance of an existing `Napi::TypedArrayOf` object.
 
 ```cpp
-TypedArrayOf(napi_env env, napi_value value);
+Napi::TypedArrayOf::TypedArrayOf(napi_env env, napi_value value);
 ```
 
 - `[in] env`: The environment in which to create the `Napi::TypedArrayOf` object.
@@ -117,7 +117,7 @@ Returns the element found at the given index.
 ### Data
 
 ```cpp
-T* Data() const;
+T* Napi::TypedArrayOf::Data() const;
 ```
 
 Returns a pointer into the backing `Napi::ArrayBuffer` which is offset to point to the
@@ -126,7 +126,7 @@ start of the array.
 ### Data
 
 ```cpp
-const T* Data() const
+const T* Napi::TypedArrayOf::Data() const
 ```
 
 Returns a pointer into the backing `Napi::ArrayBuffer` which is offset to point to the

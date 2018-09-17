@@ -11,7 +11,7 @@ Napi::Boolean::New(Napi::Env env, bool value);
  - `[in] value`: The Javascript boolean value
 
 ```cpp
-Napi::Boolean();
+Napi::Boolean::Boolean();
 ```
 returns a new empty Javascript Boolean value type.
 
@@ -25,5 +25,5 @@ operator bool() const;
 Converts a `Napi::Boolean` value to a boolean primitive.
 
 ```cpp
-bool Value() const;
+bool Napi::Boolean::Value() const;
 ```

@@ -54,7 +54,7 @@ on the stack (for example when running a native method called from JavaScript).
 Creates a new empty instance of `Napi::Function`.
 
 ```cpp
-Function();
+Napi::Function::Function();
 ```
 
 ### Constructor
@@ -62,7 +62,7 @@ Function();
 Creates a new instance of the `Napi::Function` object.
 
 ```cpp
-Function(napi_env env, napi_value value);
+Napi::Function::Function(napi_env env, napi_value value);
 ```
 
 - `[in] env`: The `napi_env` environment in which to construct the `Napi::Function` object.
@@ -76,7 +76,7 @@ Creates an instance of a `Napi::Function` object.
 
 ```cpp
 template <typename Callable>
-static Napi::Function New(napi_env env, Callable cb, const char* utf8name = nullptr, void* data = nullptr);
+static Napi::Function Napi::Function::New(napi_env env, Callable cb, const char* utf8name = nullptr, void* data = nullptr);
 ```
 
 - `[in] env`: The `napi_env` environment in which to construct the `Napi::Function` object.
@@ -91,7 +91,7 @@ Returns an instance of a `Napi::Function` object.
 
 ```cpp
 template <typename Callable>
-static Napi::Function New(napi_env env, Callable cb, const std::string& utf8name, void* data = nullptr);
+static Napi::Function Napi::Function::New(napi_env env, Callable cb, const std::string& utf8name, void* data = nullptr);
 ```
 
 - `[in] env`: The `napi_env` environment in which to construct the `Napi::Function` object.
@@ -108,7 +108,7 @@ Creates a new JavaScript value from one that represents the constructor for the
 object.
 
 ```cpp
-Napi::Object New(const std::initializer_list<napi_value>& args) const;
+Napi::Object Napi::Function::New(const std::initializer_list<napi_value>& args) const;
 ```
 
 - `[in] args`: Initializer list of JavaScript values as `napi_value` representing
@@ -122,7 +122,7 @@ Creates a new JavaScript value from one that represents the constructor for the
 object.
 
 ```cpp
-Napi::Object New(const std::vector<napi_value>& args) const;
+Napi::Object Napi::Function::New(const std::vector<napi_value>& args) const;
 ```
 
 - `[in] args`: Vector of JavaScript values as `napi_value` representing the
@@ -136,7 +136,7 @@ Creates a new JavaScript value from one that represents the constructor for the
 object.
 
 ```cpp
-Napi::Object New(size_t argc, const napi_value* args) const;
+Napi::Object Napi::Function::New(size_t argc, const napi_value* args) const;
 ```
 
 - `[in] argc`: The number of the arguments passed to the contructor function.
@@ -150,7 +150,7 @@ Returns a new JavaScript object.
 Calls a Javascript function from a native add-on.
 
 ```cpp
-Napi::Value Call(const std::initializer_list<napi_value>& args) const;
+Napi::Value Napi::Function::Call(const std::initializer_list<napi_value>& args) const;
 ```
 
 - `[in] args`: Initializer list of JavaScript values as `napi_value` representing
@@ -163,7 +163,7 @@ Returns a `Napi::Value` representing the JavaScript value returned by the functi
 Calls a JavaScript function from a native add-on.
 
 ```cpp
-Napi::Value Call(const std::vector<napi_value>& args) const;
+Napi::Value Napi::Function::Call(const std::vector<napi_value>& args) const;
 ```
 
 - `[in] args`: Vector of JavaScript values as `napi_value` representing the
@@ -176,7 +176,7 @@ Returns a `Napi::Value` representing the JavaScript value returned by the functi
 Calls a Javascript function from a native add-on.
 
 ```cpp
-Napi::Value Call(size_t argc, const napi_value* args) const;
+Napi::Value Napi::Function::Call(size_t argc, const napi_value* args) const;
 ```
 
 - `[in] argc`: The number of the arguments passed to the function.
@@ -190,7 +190,7 @@ Returns a `Napi::Value` representing the JavaScript value returned by the functi
 Calls a Javascript function from a native add-on.
 
 ```cpp
-Napi::Value Call(napi_value recv, const std::initializer_list<napi_value>& args) const;
+Napi::Value Napi::Function::Call(napi_value recv, const std::initializer_list<napi_value>& args) const;
 ```
 
 - `[in] recv`: The `this` object passed to the called function.
@@ -204,7 +204,7 @@ Returns a `Napi::Value` representing the JavaScript value returned by the functi
 Calls a Javascript function from a native add-on.
 
 ```cpp
-Napi::Value Call(napi_value recv, const std::vector<napi_value>& args) const;
+Napi::Value Napi::Function::Call(napi_value recv, const std::vector<napi_value>& args) const;
 ```
 
 - `[in] recv`: The `this` object passed to the called function.
@@ -218,7 +218,7 @@ Returns a `Napi::Value` representing the JavaScript value returned by the functi
 Calls a Javascript function from a native add-on.
 
 ```cpp
-Napi::Value Call(napi_value recv, size_t argc, const napi_value* args) const;
+Napi::Value Napi::Function::Call(napi_value recv, size_t argc, const napi_value* args) const;
 ```
 
 - `[in] recv`: The `this` object passed to the called function.
@@ -233,7 +233,7 @@ Returns a `Napi::Value` representing the JavaScript value returned by the functi
 Calls a Javascript function from a native add-on after an asynchronous operation.
 
 ```cpp
-Napi::Value MakeCallback(napi_value recv, const std::initializer_list<napi_value>& args) const;
+Napi::Value Napi::Function::MakeCallback(napi_value recv, const std::initializer_list<napi_value>& args) const;
 ```
 
 - `[in] recv`: The `this` object passed to the called function.
@@ -247,7 +247,7 @@ Returns a `Napi::Value` representing the JavaScript value returned by the functi
 Calls a Javascript function from a native add-on after an asynchronous operation.
 
 ```cpp
-Napi::Value MakeCallback(napi_value recv, const std::vector<napi_value>& args) const;
+Napi::Value Napi::Function::MakeCallback(napi_value recv, const std::vector<napi_value>& args) const;
 ```
 
 - `[in] recv`: The `this` object passed to the called function.
@@ -261,7 +261,7 @@ Returns a `Napi::Value` representing the JavaScript value returned by the functi
 Calls a Javascript function from a native add-on after an asynchronous operation.
 
 ```cpp
-Napi::Value MakeCallback(napi_value recv, size_t argc, const napi_value* args) const;
+Napi::Value Napi::Function::MakeCallback(napi_value recv, size_t argc, const napi_value* args) const;
 ```
 
 - `[in] recv`: The `this` object passed to the called function.

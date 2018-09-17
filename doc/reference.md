@@ -17,7 +17,7 @@ The following classes inherit, either directly or indirectly, from `Napi::Refere
 ### Factory Method
 
 ```cpp
-static Napi::Reference<T> New(const T& value, uint32_t initialRefcount = 0);
+static Napi::Reference<T> Napi::Reference::New(const T& value, uint32_t initialRefcount = 0);
 ```
 
 * `[in] value`: The value which is to be referenced.
@@ -27,7 +27,7 @@ static Napi::Reference<T> New(const T& value, uint32_t initialRefcount = 0);
 ### Empty Constructor
 
 ```cpp
-Reference();
+Napi::Reference::Reference();
 ```
 
 Creates a new _empty_ `Napi::Reference` instance.
@@ -35,7 +35,7 @@ Creates a new _empty_ `Napi::Reference` instance.
 ### Constructor
 
 ```cpp
-Reference(napi_env env, napi_value value);
+Napi::Reference::Reference(napi_env env, napi_value value);
 ```
 
 * `[in] env`: The `napi_env` environment in which to construct the `Napi::Reference` object.
@@ -45,7 +45,7 @@ Reference(napi_env env, napi_value value);
 ### Env
 
 ```cpp
-Napi::Env Env() const;
+Napi::Env Napi::Reference::Env() const;
 ```
 
 Returns the `Napi::Env` value in which the `Napi::Reference` was instantiated.
@@ -53,7 +53,7 @@ Returns the `Napi::Env` value in which the `Napi::Reference` was instantiated.
 ### IsEmpty
 
 ```cpp
-bool IsEmpty() const;
+bool Napi::Reference::IsEmpty() const;
 ```
 
 Determines whether the value held by the `Napi::Reference` is empty.
@@ -61,7 +61,7 @@ Determines whether the value held by the `Napi::Reference` is empty.
 ### Value
 
 ```cpp
-T Value() const;
+T Napi::Reference::Value() const;
 ```
 
 Returns the value held by the `Napi::Reference`.
@@ -69,7 +69,7 @@ Returns the value held by the `Napi::Reference`.
 ### Ref
 
 ```cpp
-uint32_t Ref();
+uint32_t Napi::Reference::Ref();
 ```
 
 Increments the reference count for the `Napi::Reference` and returns the resulting reference count. Throws an error if the increment fails.
@@ -77,7 +77,7 @@ Increments the reference count for the `Napi::Reference` and returns the resulti
 ### Unref
 
 ```cpp
-uint32_t Unref();
+uint32_t Napi::Reference::Unref();
 ```
 
 Decrements the reference count for the `Napi::Reference` and returns the resulting reference count. Throws an error if the decrement fails.
@@ -85,7 +85,7 @@ Decrements the reference count for the `Napi::Reference` and returns the resulti
 ### Reset (Empty)
 
 ```cpp
-void Reset();
+void Napi::Reference::Reset();
 ```
 
 Sets the value held by the `Napi::Reference` to be empty.
@@ -93,7 +93,7 @@ Sets the value held by the `Napi::Reference` to be empty.
 ### Reset
 
 ```cpp
-void Reset(const T& value, uint32_t refcount = 0);
+void Napi::Reference::Reset(const T& value, uint32_t refcount = 0);
 ```
 
 * `[in] value`: The value which is to be referenced.
@@ -105,7 +105,7 @@ Sets the value held by the `Napi::Reference`.
 ### SuppressDestruct
 
 ```cpp
-void SuppressDestruct();
+void Napi::Reference::SuppressDestruct();
 ```
 
 Call this method on a `Napi::Reference` that is declared as static data to prevent its destructor, running at program shutdown time, from attempting to reset the reference when the environment is no longer valid.

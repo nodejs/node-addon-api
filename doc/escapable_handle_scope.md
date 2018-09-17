@@ -20,7 +20,7 @@ For more details refer to the section titled
 Creates a new escapable handle scope.
 
 ```cpp
-Napi::EscapableHandleScope EscapableHandleScope::New(Napi:Env env);
+Napi::EscapableHandleScope Napi::EscapableHandleScope::New(Napi:Env env);
 ```
 
 - `[in] Env`: The environment in which to construct the `Napi::EscapableHandleScope` object.
@@ -32,7 +32,7 @@ Returns a new `Napi::EscapableHandleScope`
 Creates a new escapable handle scope.
 
 ```cpp
-Napi::EscapableHandleScope EscapableHandleScope::New(napi_env env, napi_handle_scope scope);
+Napi::EscapableHandleScope Napi::EscapableHandleScope::New(napi_env env, napi_handle_scope scope);
 ```
 
 - `[in] env`: napi_env in which the scope passed in was created.
@@ -45,7 +45,7 @@ to mix usage of the C N-API and node-addon-api.
 operator EscapableHandleScope::napi_escapable_handle_scope
 
 ```cpp
-operator EscapableHandleScope::napi_escapable_handle_scope() const
+operator Napi::EscapableHandleScope::napi_escapable_handle_scope() const
 ```
 
 Returns the N-API napi_escapable_handle_scope wrapped by the `Napi::EscapableHandleScope` object.
@@ -54,7 +54,7 @@ the class to be used be converted to a napi_escapable_handle_scope.
 
 ### Destructor
 ```cpp
-~EscapableHandleScope();
+Napi::EscapableHandleScope::~EscapableHandleScope();
 ```
 
 Deletes the `Napi::EscapableHandleScope` instance and allows any objects/handles created
@@ -64,7 +64,7 @@ guarantee as to when the gargbage collector will do this.
 ### Escape
 
 ```cpp
-napi::Value EscapableHandleScope::Escape(napi_value escapee);
+napi::Value Napi::EscapableHandleScope::Escape(napi_value escapee);
 ```
 
 - `[in] escapee`: Napi::Value or napi_env to promote to the outer scope
@@ -76,7 +76,7 @@ more than once an exception will be thrown.
 ### Env
 
 ```cpp
-Napi::Env Env() const;
+Napi::Env Napi::EscapableHandleScope::Env() const;
 ```
 
 Returns the `Napi:Env` associated with the `Napi::EscapableHandleScope`.

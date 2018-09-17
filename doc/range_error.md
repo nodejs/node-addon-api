@@ -16,7 +16,7 @@ For more details about error handling refer to the section titled [Error handlin
 Creates a new instance of a `Napi::RangeError` object.
 
 ```cpp
-RangeError::New(Napi:Env env, const char* message);
+Napi::RangeError::New(Napi:Env env, const char* message);
 ```
 
 - `[in] Env`: The environment in which to construct the `Napi::RangeError` object.
@@ -29,7 +29,7 @@ Returns an instance of a `Napi::RangeError` object.
 Creates a new instance of a `Napi::RangeError` object.
 
 ```cpp
-RangeError::New(Napi:Env env, const std::string& message);
+Napi::RangeError::New(Napi:Env env, const std::string& message);
 ```
 
 - `[in] Env`: The environment in which to construct the `Napi::RangeError` object.
@@ -42,7 +42,7 @@ Returns an instance of a `Napi::RangeError` object.
 Creates a new empty instance of a `Napi::RangeError`.
 
 ```cpp
-RangeError();
+Napi::RangeError::RangeError();
 ```
 
 ### Constructor
@@ -50,7 +50,7 @@ RangeError();
 Initializes a `Napi::RangeError` instance from an existing Javascript error object.
 
 ```cpp
-RangeError(napi_env env, napi_value value);
+Napi::RangeError::RangeError(napi_env env, napi_value value);
 ```
 
 - `[in] Env`: The environment in which to construct the `Napi::RangeError` object.

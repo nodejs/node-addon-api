@@ -11,7 +11,7 @@ class.
 Allocates a new `Napi::ArrayBuffer` instance with a given length.
 
 ```cpp
-static Napi::ArrayBuffer New(napi_env env, size_t byteLength);
+static Napi::ArrayBuffer Napi::ArrayBuffer::New(napi_env env, size_t byteLength);
 ```
 
 - `[in] env`: The environment in which to create the `Napi::ArrayBuffer` instance.
@@ -29,7 +29,7 @@ expects it to be valid for the lifetime of the instance. Since the
 suitable for data which is static and never needs to be freed.
 
 ```cpp
-static Napi::ArrayBuffer New(napi_env env, void* externalData, size_t byteLength);
+static Napi::ArrayBuffer Napi::ArrayBuffer::New(napi_env env, void* externalData, size_t byteLength);
 ```
 
 - `[in] env`: The environment in which to create the `Napi::ArrayBuffer` instance.
@@ -49,7 +49,7 @@ freed once the `finalizeCallback` is invoked to indicate that the
 
 ```cpp
 template <typename Finalizer>
-static Napi::ArrayBuffer New(napi_env env,
+static Napi::ArrayBuffer Napi::ArrayBuffer::New(napi_env env,
                        void* externalData,
                        size_t byteLength,
                        Finalizer finalizeCallback);
@@ -75,7 +75,7 @@ released.
 
 ```cpp
 template <typename Finalizer, typename Hint>
-static Napi::ArrayBuffer New(napi_env env,
+static Napi::ArrayBuffer Napi::ArrayBuffer::New(napi_env env,
                        void* externalData,
                        size_t byteLength,
                        Finalizer finalizeCallback,
@@ -98,7 +98,7 @@ Returns a new `Napi::ArrayBuffer` instance.
 Initializes an empty instance of the `Napi::ArrayBuffer` class.
 
 ```cpp
-ArrayBuffer();
+Napi::ArrayBuffer::ArrayBuffer();
 ```
 
 ### Constructor
@@ -106,7 +106,7 @@ ArrayBuffer();
 Initializes a wrapper instance of an existing `Napi::ArrayBuffer` object.
 
 ```cpp
-ArrayBuffer(napi_env env, napi_value value);
+Napi::ArrayBuffer::ArrayBuffer(napi_env env, napi_value value);
 ```
 
 - `[in] env`: The environment in which to create the `Napi::ArrayBuffer` instance.
@@ -115,7 +115,7 @@ ArrayBuffer(napi_env env, napi_value value);
 ### ByteLength
 
 ```cpp
-size_t ByteLength() const;
+size_t Napi::ArrayBuffer::ByteLength() const;
 ```
 
 Returns the length of the wrapped data, in bytes.
@@ -123,7 +123,7 @@ Returns the length of the wrapped data, in bytes.
 ### Data
 
 ```cpp
-T* Data() const;
+T* Napi::ArrayBuffer::Data() const;
 ```
 
 Returns a pointer the wrapped data.

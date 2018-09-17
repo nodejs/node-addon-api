@@ -20,7 +20,7 @@ subclass.
 Requests the environment in which the async worker has been initially created.
 
 ```cpp
-Napi::Env Env() const;
+Napi::Env Napi::AsyncWorker::Env() const;
 ```
 
 Returns the environment in which the async worker has been created.
@@ -30,7 +30,7 @@ Returns the environment in which the async worker has been created.
 Requests that the work be queued for execution.
 
 ```cpp
-void Queue();
+void Napi::AsyncWorker::Queue();
 ```
 
 ### Cancel
@@ -40,13 +40,13 @@ executing, it cannot be cancelled.  If cancelled successfully neither
 `OnOK` nor `OnError` will be called.
 
 ```cpp
-void Cancel();
+void Napi::AsyncWorker::Cancel();
 ```
 
 ### Receiver
 
 ```cpp
-Napi::ObjectReference& Receiver();
+Napi::ObjectReference& Napi::AsyncWorker::Receiver();
 ```
 
 Returns the persistent object reference of the receiver object set when the async
@@ -55,7 +55,7 @@ worker was created.
 ### Callback
 
 ```cpp
-Napi::FunctionReference& Callback();
+Napi::FunctionReference& Napi::AsyncWorker::Callback();
 ```
 
 Returns the persistent function reference of the callback set when the async
@@ -70,7 +70,7 @@ an error message will cause the `OnError` method to be invoked instead of `OnOK`
 once the `Execute` method completes.
 
 ```cpp
-void SetError(const std::string& error);
+void Napi::AsyncWorker::SetError(const std::string& error);
 ```
 
 - `[in] error`: The reference to the string that represent the message of the error.
@@ -87,7 +87,7 @@ in the `OnOK` method which runs on the main thread and is invoked when the `Exec
 method completes.
 
 ```cpp
-virtual void Execute() = 0;
+virtual void Napi::AsyncWorker::Execute() = 0;
 ```
 
 ### OnOK
@@ -97,7 +97,7 @@ The default implementation runs the Callback provided when the AsyncWorker class
 was created.
 
 ```cpp
-virtual void OnOK();
+virtual void Napi::AsyncWorker::OnOK();
 ```
 
 ### OnError
@@ -109,7 +109,7 @@ calls the callback provided when the AsyncWorker class was created, passing
 in the error as the first parameter.
 
 ```cpp
-virtual void OnError(const Error& e);
+virtual void Napi::AsyncWorker::OnError(const Error& e);
 ```
 
 ### Constructor
@@ -117,7 +117,7 @@ virtual void OnError(const Error& e);
 Creates a new `Napi::AsyncWorker`.
 
 ```cpp
-explicit AsyncWorker(const Function& callback);
+explicit Napi::AsyncWorker(const Function& callback);
 ```
 
 - `[in] callback`: The function which will be called when an asynchronous
@@ -131,7 +131,7 @@ Returns a`Napi::AsyncWork` instance which can later be queued for execution by c
 Creates a new `Napi::AsyncWorker`.
 
 ```cpp
-explicit AsyncWorker(const Function& callback, const char* resource_name);
+explicit Napi::AsyncWorker(const Function& callback, const char* resource_name);
 ```
 
 - `[in] callback`: The function which will be called when an asynchronous
@@ -148,7 +148,7 @@ Returns a `Napi::AsyncWork` instance which can later be queued for execution by 
 Creates a new `Napi::AsyncWorker`.
 
 ```cpp
-explicit AsyncWorker(const Function& callback, const char* resource_name, const Object& resource);
+explicit Napi::AsyncWorker(const Function& callback, const char* resource_name, const Object& resource);
 ```
 
 - `[in] callback`: The function which will be called when an asynchronous
@@ -167,7 +167,7 @@ Returns a `Napi::AsyncWork` instance which can later be queued for execution by 
 Creates a new `Napi::AsyncWorker`.
 
 ```cpp
-explicit AsyncWorker(const Object& receiver, const Function& callback);
+explicit Napi::AsyncWorker(const Object& receiver, const Function& callback);
 ```
 
 - `[in] receiver`: The `this` object passed to the called function.
@@ -182,7 +182,7 @@ Returns a `Napi::AsyncWork` instance which can later be queued for execution by 
 Creates a new `Napi::AsyncWorker`.
 
 ```cpp
-explicit AsyncWorker(const Object& receiver, const Function& callback,const char* resource_name);
+explicit Napi::AsyncWorker(const Object& receiver, const Function& callback,const char* resource_name);
 ```
 
 - `[in] receiver`: The `this` object passed to the called function.
@@ -200,7 +200,7 @@ Returns a `Napi::AsyncWork` instance which can later be queued for execution by 
 Creates a new `Napi::AsyncWorker`.
 
 ```cpp
-explicit AsyncWorker(const Object& receiver, const Function& callback, const char* resource_name, const Object& resource);
+explicit Napi::AsyncWorker(const Object& receiver, const Function& callback, const char* resource_name, const Object& resource);
 ```
 
 - `[in] receiver`: The `this` object passed to the called function.
@@ -220,7 +220,7 @@ Returns a `Napi::AsyncWork` instance which can later be queued for execution by 
 Deletes the created work object that is used to execute logic asynchronously.
 
 ```cpp
-virtual ~AsyncWorker();
+virtual Napi::~AsyncWorker();
 ```
 
 ## Operator

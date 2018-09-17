@@ -7,17 +7,17 @@
 Instantiates a new `Napi::Symbol` value.
 
 ```cpp
-Symbol();
+Napi::Symbol::Symbol();
 ```
 
 Returns a new empty `Napi::Symbol`.
 
 ### New
 ```cpp
-Symbol::New(napi_env env, const std::string& description);
-Symbol::New(napi_env env, const char* description);
-Symbol::New(napi_env env, String description);
-Symbol::New(napi_env env, napi_value description);
+Napi::Symbol::New(napi_env env, const std::string& description);
+Napi::Symbol::New(napi_env env, const char* description);
+Napi::Symbol::New(napi_env env, String description);
+Napi::Symbol::New(napi_env env, napi_value description);
 ```
 
 - `[in] env`: The `napi_env` environment in which to construct the `Napi::Symbol` object.
@@ -34,10 +34,10 @@ attempting to use the returned value.
 
 ### Utf8Value
 ```cpp
-static Napi::Symbol WellKnown(napi_env env, const std::string& name);
+static Napi::Symbol Napi::Symbol::WellKnown(napi_env env, const std::string& name);
 ```
 
-- `[in] env`: The `napi_env` environment in which to construct the Symbol object.
+- `[in] env`: The `napi_env` environment in which to construct the `Napi::Symbol` object.
 - `[in] name`: The C++ string representing the `Napi::Symbol` to retrieve.
 
 Returns a `Napi::Symbol` representing a well-known `Symbol` from the

@@ -3,7 +3,7 @@
 ## Constructor
 
 ```cpp
-String();
+Napi::String::String();
 ```
 
 Returns a new **empty** `Napi::String` instance.
@@ -13,7 +13,7 @@ being used, callers should check the result of `Env::IsExceptionPending` before
 attempting to use the returned value.
 
 ```cpp
-String(napi_env env, napi_value value); ///< Wraps a N-API value primitive.
+Napi::String::String(napi_env env, napi_value value); ///< Wraps a N-API value primitive.
 ```
 - `[in] env` - The environment in which to create the string.
 - `[in] value` - The primitive to wrap.
@@ -45,17 +45,17 @@ Returns a UTF-16 encoded C++ string.
 
 ### New
 ```cpp
-String::New();
+Napi::String::New();
 ```
 
 Returns a new empty `Napi::String`.
 
 ### New
 ```cpp
-String::New(napi_env env, const std::string& value);
-String::New(napi_env env, const std::u16string& value);
-String::New(napi_env env, const char* value);
-String::New(napi_env env, const char16_t* value);
+Napi::String::New(napi_env env, const std::Napi::string& value);
+Napi::String::New(napi_env env, const std::u16Napi::string& value);
+Napi::String::New(napi_env env, const char* value);
+Napi::String::New(napi_env env, const char16_t* value);
 ```
 
 - `[in] env`: The `napi_env` environment in which to construct the `Napi::Value` object.
@@ -73,14 +73,14 @@ attempting to use the returned value.
 
 ### Utf8Value
 ```cpp
-std::string Utf8Value() const;
+std::string Napi::String::Utf8Value() const;
 ```
 
 Returns a UTF-8 encoded C++ string.
 
 ### Utf16Value
 ```cpp
-std::u16string Utf16Value() const;
+std::u16string Napi::String::Utf16Value() const;
 ```
 
 Returns a UTF-16 encoded C++ string.

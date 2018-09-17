@@ -24,7 +24,7 @@ Later, when the asynchronous process completes, call either the `Resolve` or `Re
 ### Factory Method
 
 ```cpp
-static Napi::Promise::Deferred Promise::Deferred::New(napi_env env);
+static Napi::Promise::Deferred Napi::Promise::Deferred::New(napi_env env);
 ```
 
 * `[in] env`: The `napi_env` environment in which to create the `Napi::Promise::Deferred` object.
@@ -32,7 +32,7 @@ static Napi::Promise::Deferred Promise::Deferred::New(napi_env env);
 ### Constructor
 
 ```cpp
-Promise::Deferred(napi_env env);
+Napi::Promise::Deferred(napi_env env);
 ```
 
 * `[in] env`: The `napi_env` environment in which to construct the `Napi::Promise::Deferred` object.
@@ -40,7 +40,7 @@ Promise::Deferred(napi_env env);
 ### Env
 
 ```cpp
-Napi::Env Env() const;
+Napi::Env Napi::Promise::Deferred::Env() const;
 ```
 
 Returns the Env environment this `Napi::Promise::Deferred` object is associated with.
@@ -48,7 +48,7 @@ Returns the Env environment this `Napi::Promise::Deferred` object is associated 
 ### Promise
 
 ```cpp
-Napi::Promise Promise::Deferred::Promise() const;
+Napi::Promise Napi::Promise::Deferred::Promise() const;
 ```
 
 Returns the `Napi::Promise` object held by the `Napi::Promise::Deferred` object.
@@ -56,7 +56,7 @@ Returns the `Napi::Promise` object held by the `Napi::Promise::Deferred` object.
 ### Resolve
 
 ```cpp
-void Promise::Deferred::Resolve(napi_value value) const;
+void Napi::Promise::Deferred::Resolve(napi_value value) const;
 ```
 
 Resolves the `Napi::Promise` object held by the `Napi::Promise::Deferred` object.
@@ -66,7 +66,7 @@ Resolves the `Napi::Promise` object held by the `Napi::Promise::Deferred` object
 ### Reject
 
 ```cpp
-void Promise::Deferred::Reject(napi_value value) const;
+void Napi::Promise::Deferred::Reject(napi_value value) const;
 ```
 
 Rejects the Promise object held by the `Napi::Promise::Deferred` object.

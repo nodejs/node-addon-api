@@ -15,13 +15,13 @@ C++ types.
 ### Constructor
 
 ```cpp
-Value();
+Napi::Value::Value();
 ```
 
 Used to create a Node Addon API `Napi::Value` that represents an **empty** value.
 
 ```cpp
-Value(napi_env env, napi_value value);
+Napi::Value::Value(napi_env env, napi_value value);
 ```
 
 - `[in] env` - The `napi_env` environment in which to construct the `Napi::Value`
@@ -64,7 +64,7 @@ Returns `false` if this value strictly equals another value, or `true` otherwise
 #### From
 ```cpp
 template <typename T>
-static Napi::Value From(napi_env env, const T& value);
+static Napi::Value Napi::Value::From(napi_env env, const T& value);
 ```
 
 - `[in] env` - The `napi_env` environment in which to construct the `Napi::Value` object.
@@ -86,7 +86,7 @@ Here, `value` may be any of:
 
 #### As
 ```cpp
-template <typename T> T As() const;
+template <typename T> T Napi::Value::As() const;
 ```
 
 Returns the `Napi::Value` cast to a desired C++ type.
@@ -99,7 +99,7 @@ the actual value type will throw `Napi::Error`.
 
 #### StrictEquals
 ```cpp
-bool StrictEquals(const Value& other) const;
+bool Napi::Value::StrictEquals(const Value& other) const;
 ```
 
 - `[in] other` - The value to compare against.
@@ -108,7 +108,7 @@ Returns true if the other `Napi::Value` is strictly equal to this one.
 
 #### Env
 ```cpp
-Napi::Env Env() const;
+Napi::Env Napi::Value::Env() const;
 ```
 
 Returns the environment that the value is associated with. See
@@ -116,7 +116,7 @@ Returns the environment that the value is associated with. See
 
 #### IsEmpty
 ```cpp
-bool IsEmpty() const;
+bool Napi::Value::IsEmpty() const;
 ```
 
 Returns `true` if the value is uninitialized.
@@ -132,14 +132,14 @@ exceptions are not being used, callers should check the result of
 
 #### Type
 ```cpp
-napi_valuetype Type() const;
+napi_valuetype Napi::Value::Type() const;
 ```
 
 Returns the underlying N-API `napi_valuetype` of the value.
 
 #### IsUndefined
 ```cpp
-bool IsUndefined() const;
+bool Napi::Value::IsUndefined() const;
 ```
 
 Returns `true` if the underlying value is a JavaScript `undefined` or `false`
@@ -147,7 +147,7 @@ otherwise.
 
 #### IsNull
 ```cpp
-bool IsNull() const;
+bool Napi::Value::IsNull() const;
 ```
 
 Returns `true` if the underlying value is a JavaScript `null` or `false`
@@ -155,7 +155,7 @@ otherwise.
 
 #### IsBoolean
 ```cpp
-bool IsBoolean() const;
+bool Napi::Value::IsBoolean() const;
 ```
 
 Returns `true` if the underlying value is a JavaScript `true` or JavaScript
@@ -163,7 +163,7 @@ Returns `true` if the underlying value is a JavaScript `true` or JavaScript
 
 #### IsNumber
 ```cpp
-bool IsNumber() const;
+bool Napi::Value::IsNumber() const;
 ```
 
 Returns `true` if the underlying value is a JavaScript `Napi::Number` or `false`
@@ -171,7 +171,7 @@ otherwise.
 
 #### IsString
 ```cpp
-bool IsString() const;
+bool Napi::Value::IsString() const;
 ```
 
 Returns `true` if the underlying value is a JavaScript `Napi::String` or `false`
@@ -179,7 +179,7 @@ otherwise.
 
 #### IsSymbol
 ```cpp
-bool IsSymbol() const;
+bool Napi::Value::IsSymbol() const;
 ```
 
 Returns `true` if the underlying value is a JavaScript `Napi::Symbol` or `false`
@@ -187,7 +187,7 @@ otherwise.
 
 #### IsArray
 ```cpp
-bool IsArray() const;
+bool Napi::Value::IsArray() const;
 ```
 
 Returns `true` if the underlying value is a JavaScript `Napi::Array` or `false`
@@ -195,7 +195,7 @@ otherwise.
 
 #### IsArrayBuffer
 ```cpp
-bool IsArrayBuffer() const;
+bool Napi::Value::IsArrayBuffer() const;
 ```
 
 Returns `true` if the underlying value is a JavaScript `Napi::ArrayBuffer` or `false`
@@ -203,7 +203,7 @@ otherwise.
 
 #### IsTypedArray
 ```cpp
-bool IsTypedArray() const;
+bool Napi::Value::IsTypedArray() const;
 ```
 
 Returns `true` if the underlying value is a JavaScript `Napi::TypedArray` or `false`
@@ -211,7 +211,7 @@ otherwise.
 
 #### IsObject
 ```cpp
-bool IsObject() const;
+bool Napi::Value::IsObject() const;
 ```
 
 Returns `true` if the underlying value is a JavaScript `Napi::Object` or `false`
@@ -219,7 +219,7 @@ otherwise.
 
 #### IsFunction
 ```cpp
-bool IsFunction() const;
+bool Napi::Value::IsFunction() const;
 ```
 
 Returns `true` if the underlying value is a JavaScript `Napi::Function` or `false`
@@ -227,7 +227,7 @@ otherwise.
 
 #### IsPromise
 ```cpp
-bool IsPromise() const;
+bool Napi::Value::IsPromise() const;
 ```
 
 Returns `true` if the underlying value is a JavaScript `Napi::Promise` or `false`
@@ -235,7 +235,7 @@ otherwise.
 
 #### IsDataView
 ```cpp
-bool IsDataView() const;
+bool Napi::Value::IsDataView() const;
 ```
 
 Returns `true` if the underlying value is a JavaScript `Napi::DataView` or `false`
@@ -243,7 +243,7 @@ otherwise.
 
 #### IsBuffer
 ```cpp
-bool IsBuffer() const;
+bool Napi::Value::IsBuffer() const;
 ```
 
 Returns `true` if the underlying value is a Node.js `Napi::Buffer` or `false`
@@ -251,7 +251,7 @@ otherwise.
 
 #### IsExternal
 ```cpp
-bool IsExternal() const;
+bool Napi::Value::IsExternal() const;
 ```
 
 Returns `true` if the underlying value is a N-API external object or `false`
@@ -259,7 +259,7 @@ otherwise.
 
 #### ToBoolean
 ```cpp
-Boolean ToBoolean() const;
+Boolean Napi::Value::ToBoolean() const;
 ```
 
 Returns a `Napi::Boolean` representing the `Napi::Value`.
@@ -271,7 +271,7 @@ the returned value.
 
 #### ToNumber
 ```cpp
-Napi::Number ToNumber() const;
+Napi::Number Napi::Value::ToNumber() const;
 ```
 
 Returns a `Napi::Number` representing the `Napi::Value`.
@@ -285,7 +285,7 @@ the returned value.
 
 #### ToString
 ```cpp
-Napi::String ToString() const;
+Napi::String Napi::Value::ToString() const;
 ```
 
 Returns a `Napi::String` representing the `Napi::Value`.
@@ -298,7 +298,7 @@ attempting to use the returned value.
 
 #### ToObject
 ```cpp
-Napi::Object ToObject() const;
+Napi::Object Napi::Value::ToObject() const;
 ```
 
 Returns a `Napi::Object` representing the `Napi::Value`.
@@ -318,13 +318,13 @@ and [`Napi::Symbol`](symbol.md).
 
 #### Constructor
 ```cpp
-Name();
+Napi::Name::Name();
 ```
 
 Returns an empty `Napi::Name`.
 
 ```cpp
-Name(napi_env env, napi_value value);
+Napi::Name::Name(napi_env env, napi_value value);
 ```
 - `[in] env` - The environment in which to create the array.
 - `[in] value` - The primitive to wrap.
@@ -341,7 +341,7 @@ around `napi_value` representing a JavaScript Array.
 
 ### Constructor
 ```cpp
-Array();
+Napi::Array::Array();
 ```
 
 Returns an empty array.
@@ -351,7 +351,7 @@ being used, callers should check the result of `Env::IsExceptionPending` before
 attempting to use the returned value.
 
 ```cpp
-Array(napi_env env, napi_value value);
+Napi::Array::Array(napi_env env, napi_value value);
 ```
 - `[in] env` - The environment in which to create the array.
 - `[in] value` - The primitive to wrap.
@@ -366,7 +366,7 @@ attempting to use the returned value.
 
 #### New
 ```cpp
-static Napi::Array New(napi_env env);
+static Napi::Array Napi::Array::New(napi_env env);
 ```
 - `[in] env` - The environment in which to create the array.
 
@@ -379,7 +379,7 @@ attempting to use the returned value.
 #### New
 
 ```cpp
-static Napi::Array New(napi_env env, size_t length);
+static Napi::Array Napi::Array::New(napi_env env, size_t length);
 ```
 - `[in] env` - The environment in which to create the array.
 - `[in] length` - The length of the array.
@@ -390,9 +390,9 @@ If an error occurs, a `Napi::Error` will get thrown. If C++ exceptions are not
 being used, callers should check the result of `Env::IsExceptionPending` before
 attempting to use the returned value.
 
-#### New
+#### Length
 ```cpp
-uint32_t Length() const;
+uint32_t Napi::Array::Length() const;
 ```
 
 Returns the length of the array.

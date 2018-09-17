@@ -13,7 +13,7 @@ The `SetData` and `Data` methods are used to set and retrieve the data pointer c
 ### Constructor
 
 ```cpp
-CallbackInfo(napi_env env, napi_callback_info info);
+Napi::CallbackInfo::CallbackInfo(napi_env env, napi_callback_info info);
 ```
 
 - `[in] env`: The `napi_env` environment in which to construct the `Napi::CallbackInfo` object.
@@ -22,7 +22,7 @@ CallbackInfo(napi_env env, napi_callback_info info);
 ### Env
 
 ```cpp
-Napi::Env Env() const;
+Napi::Env Napi::CallbackInfo::Env() const;
 ```
 
 Returns the `Env` object in which the request is being made.
@@ -30,7 +30,7 @@ Returns the `Env` object in which the request is being made.
 ### NewTarget
 
 ```cpp
-Napi::Value NewTarget() const;
+Napi::Value Napi::CallbackInfo::NewTarget() const;
 ```
 
 Returns the `new.target` value of the constructor call. If the function that was invoked (and for which the `Napi::NCallbackInfo` was passed) is not a constructor call, a call to `IsEmpty()` on the returned value returns true.
@@ -38,7 +38,7 @@ Returns the `new.target` value of the constructor call. If the function that was
 ### IsConstructCall
 
 ```cpp
-bool IsConstructCall() const;
+bool Napi::CallbackInfo::IsConstructCall() const;
 ```
 
 Returns a `bool` indicating if the function that was invoked (and for which the `Napi::CallbackInfo` was passed) is a constructor call.
@@ -46,7 +46,7 @@ Returns a `bool` indicating if the function that was invoked (and for which the 
 ### Length
 
 ```cpp
-size_t Length() const;
+size_t Napi::CallbackInfo::Length() const;
 ```
 
 Returns the number of arguments passed in the `Napi::CallbackInfo` object.
@@ -64,7 +64,7 @@ Returns a `Napi::Value` object containing the requested argument.
 ### This
 
 ```cpp
-Napi::Value This() const;
+Napi::Value Napi::CallbackInfo::This() const;
 ```
 
 Returns the JavaScript `this` value for the call
@@ -72,7 +72,7 @@ Returns the JavaScript `this` value for the call
 ### Data
 
 ```cpp
-void* Data() const;
+void* Napi::CallbackInfo::Data() const;
 ```
 
 Returns the data pointer for the callback.
@@ -80,7 +80,7 @@ Returns the data pointer for the callback.
 ### SetData
 
 ```cpp
-void SetData(void* data);
+void Napi::CallbackInfo::SetData(void* data);
 ```
 
 - `[in] data`: The new data pointer to associate with this `Napi::CallbackInfo` object.
@@ -90,7 +90,7 @@ Returns `void`.
 ### Not documented here
 
 ```cpp
-~CallbackInfo();
+Napi::CallbackInfo::~CallbackInfo();
 // Disallow copying to prevent multiple free of _dynamicArgs
 CallbackInfo(CallbackInfo const &) = delete;
 void operator=(CallbackInfo const &) = delete;
