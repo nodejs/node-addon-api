@@ -1,7 +1,8 @@
 {
   'targets': [
     {
-      'target_name': 'nothing'
+      'target_name': 'nothing',
+      'type': 'static_library'
     },
     {
       'target_name': 'node-api',
