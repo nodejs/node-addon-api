@@ -206,6 +206,7 @@ method for the class.
 - `[in] method`: The native function that represents a static method of a 
 JavaScript class. 
 - `[in] attributes`: The attributes associated with a particular property.
+One or more of `napi_property_attributes`.
 - `[in] data`: User-provided data passed into method when it is invoked.
 
 Returns `Napi::PropertyDescriptor` object that represents the static method of a 
@@ -227,6 +228,7 @@ method for the class.
 - `[in] method`: The native function that represents a static method of a 
 JavaScript class. 
 - `[in] attributes`: The attributes associated with a particular property.
+One or more of `napi_property_attributes`.
 - `[in] data`: User-provided data passed into method when it is invoked.
 
 Returns `Napi::PropertyDescriptor` object that represents a static method of a 
@@ -252,6 +254,7 @@ a JavaScript class is performed.
 - `[in] setter`: The native function to call when a set access to the property of 
 a JavaScript class is performed.
 - `[in] attributes`: The attributes associated with a particular property.
+One or more of `napi_property_attributes`.
 - `[in] data`: User-provided data passed into getter or setter when 
 is invoked.
 
@@ -274,6 +277,7 @@ method for the class.
 - `[in] method`: The native function that represents an instance method of a 
 JavaScript class. 
 - `[in] attributes`: The attributes associated with a particular property.
+One or more of `napi_property_attributes`.
 - `[in] data`: User-provided data passed into method when it is invoked.
 
 Returns `Napi::PropertyDescriptor` object that represents an instance method of a 
@@ -295,6 +299,7 @@ method for the class.
 - `[in] method`: The native function that represents an instance method of a 
 JavaScript class. 
 - `[in] attributes`: The attributes associated with a particular property.
+One or more of `napi_property_attributes`.
 - `[in] data`: User-provided data passed into method when it is invoked.
 
 Returns `Napi::PropertyDescriptor` object that represents an instance method of a 
@@ -316,6 +321,7 @@ instance method for the class.
 - `[in] method`: The native function that represents an instance method of a 
 JavaScript class. 
 - `[in] attributes`: The attributes associated with a particular property.
+One or more of `napi_property_attributes`.
 - `[in] data`: User-provided data passed into method when it is invoked.
 
 Returns `Napi::PropertyDescriptor` object that represents an instance method of a 
@@ -337,6 +343,7 @@ instance method for the class.
 - `[in] method`: The native function that represents an instance method of a 
 JavaScript class. 
 - `[in] attributes`: The attributes associated with a particular property.
+One or more of `napi_property_attributes`.
 - `[in] data`: User-provided data passed into method when it is invoked.
 
 Returns `Napi::PropertyDescriptor` object that represents an instance method of a 
@@ -362,6 +369,7 @@ a JavaScript class is performed.
 - `[in] setter`: The native function to call when a set access to the property of 
 a JavaScript class is performed.
 - `[in] attributes`: The attributes associated with the particular property.
+One or more of `napi_property_attributes`.
 - `[in] data`: User-provided data passed into getter or setter when this is invoked.
 
 Returns `Napi::PropertyDescriptor` object that represents an instance accessor 
@@ -369,7 +377,7 @@ property of a JavaScript class.
 
 ### StaticValue
 
-Creates property descriptor that represents an instance accessor property of a 
+Creates property descriptor that represents an static value property of a 
 JavaScript class.
 ```cpp
 static Napi::PropertyDescriptor Napi::ObjectWrap::StaticValue(const char* utf8name,
@@ -377,18 +385,18 @@ static Napi::PropertyDescriptor Napi::ObjectWrap::StaticValue(const char* utf8na
                                       napi_property_attributes attributes = napi_default);
 ```
 
-- `[in] utf8name`: Null-terminated string that represents the name of an instance 
-accessor property for the class.
-- `[in] value`: The value that's retrieved by a get access of the property if the
-property is a data property. 
-- `[in] attributes`: User-provided data passed into getter or setter when this is invoked.
+- `[in] utf8name`: Null-terminated string that represents the name of the static
+property.
+- `[in] value`: The value that's retrieved by a get access of the property.
+- `[in] attributes`: The attributes to be associated with the property in addition
+to the napi_static attribute.  One or more of `napi_property_attributes`.
 
-Returns `Napi::PropertyDescriptor` object that represents an instance accessor 
+Returns `Napi::PropertyDescriptor` object that represents an Static Value 
 property of a JavaScript class
 
 ### InstanceValue
 
-Creates property descriptor that represents an instance accessor property of a 
+Creates property descriptor that represents an instance value property of a 
 JavaScript class.
 ```cpp
 static Napi::PropertyDescriptor Napi::ObjectWrap::InstanceValue(const char* utf8name,
@@ -396,11 +404,10 @@ static Napi::PropertyDescriptor Napi::ObjectWrap::InstanceValue(const char* utf8
                                         napi_property_attributes attributes = napi_default);
 ```
 
-- `[in] utf8name`: Null-terminated string that represents the name of an instance 
-accessor property for the class.
-- `[in] value`: The value that's retrieved by a get access of the property if the 
-property is a data property. 
-- `[in] attributes`: User-provided data passed into getter or setter when this is invoked.
+- `[in] utf8name`: Null-terminated string that represents the name of the property.
+- `[in] value`: The value that's retrieved by a get access of the property.
+- `[in] attributes`: The attributes to be associated with the property.
+One or more of `napi_property_attributes`.
 
-Returns `Napi::PropertyDescriptor` object that represents an instance accessor 
+Returns `Napi::PropertyDescriptor` object that represents an Instance value 
 property of a JavaScript class.
