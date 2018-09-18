@@ -1,9 +1,13 @@
 # Object Wrap
 
-The `Napi::ObjectWrap` class is used to expose C++ code to JavaScript. Every C++
-class instance will be "wrapped" by a JavaScript object that is managed by the
-`Napi::ObjectWrap` class. To create a wrapper it's necessary to extend the 
-`Napi::ObjectWrap`class that contains all the plumbing to connect JavaScript code
+The `Napi::ObjectWrap` class is used to bind the lifetime of C++ code to a
+JavaScript object. Once bound, each time an instance of the JavaScript object
+is created, an instance of the C++ class will also be created. When a method
+is called on the JavaScript object which is defined as an InstanceMethod, the
+corresponding C++ methond on the wrapped C++ class will be invoked.
+
+In order to create a wrapper it's necessary to extend the 
+`Napi::ObjectWrap`class which contains all the plumbing to connect JavaScript code
 with a C++ object. Classes extending `Napi::ObjectWrap` can be instantiated from 
 JavaScript using the **new** operator, and their methods can be directly invoked 
 from JavaScript. The **wrap** word refers to a way of grouping methods and state 
@@ -34,9 +38,9 @@ Napi::Object Example::Init(Napi::Env env, Napi::Object exports) {
         InstanceMethod("SetValue", &Example::SetValue)
     });
    
-    // Create a peristent reference to the class constructor. This will allow to
-    // distinguish between a function called on a class prototype and a function
-    // called on instance of a class.
+    // Create a peristent reference to the class constructor. This will allow 
+    // a function called on a class prototype and a function
+    // called on instance of a class to be identified.
     constructor = Napi::Persistent(func);
     // Call the SuppressDestruct() method on the static data prevent the calling
     // to this destructor to reset the reference when the environment is no longer
@@ -45,18 +49,21 @@ Napi::Object Example::Init(Napi::Env env, Napi::Object exports) {
     exports.Set("Example", func);
     return exports;
 }
+
 Example::Example(const Napi::CallbackInfo &info) : Napi::ObjectWrap<Example>(info) {
     Napi::Env env = info.Env();
     // ...
     Napi::Number value = info[0].As<Napi::Number>();
-    this->_value = value.DoubleValue();
+    this->_value = value.DoubleValue();   
 }
+
 Napi::FunctionReference Example::constructor;
 
 Napi::Value Example::GetValue(const Napi::CallbackInfo &info){
     Napi::Env env = info.Env();
     return Napi::Number::New(env, this->_value);
 }
+
 Napi::Value Example::SetValue(const Napi::CallbackInfo &info){
     Napi::Env env = info.Env();
     // ...
