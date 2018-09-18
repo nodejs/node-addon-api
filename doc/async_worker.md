@@ -235,7 +235,7 @@ can be used to mix usage of the C N-API and node-addon-api.
 ## Example
 
 The first step to use the `Napi::AsyncWorker` class is to create a new class that
-inherit from it and implement the `Execute` abstract method. Typically input to your
+inherits from it and implement the `Execute` abstract method. Typically input to your
 worker will be saved within class' fields generally passed in through its
 constructor.
 
