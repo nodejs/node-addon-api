@@ -18,7 +18,7 @@ returns a new empty Javascript Boolean value type.
 ### operator bool
 Converts a `Napi::Boolean` value to a boolean primitive.
 ```cpp
-operator bool() const;
+Napi::Boolean::operator bool() const;
 ```
 
 ### Value

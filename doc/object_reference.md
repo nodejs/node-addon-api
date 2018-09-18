@@ -30,7 +30,7 @@ void Init(Env env) {
 ### Initialization
 
 ```cpp
-static Napi::ObjectReference Napi::ObjectReference::New(const Object& value, uint32_t initialRefcount = 0);
+static Napi::ObjectReference Napi::ObjectReference::New(const Napi::Object& value, uint32_t initialRefcount = 0);
 ```
 
 * `[in] value`: The `Napi::Object` which is to be referenced.
@@ -40,7 +40,7 @@ static Napi::ObjectReference Napi::ObjectReference::New(const Object& value, uin
 Returns the newly created reference.
 
 ```cpp
-static Napi::ObjectReference Napi::ObjectReference::Weak(const Object& value);
+static Napi::ObjectReference Napi::ObjectReference::Weak(const Napi::Object& value);
 ```
 
 Creates a "weak" reference to the value, in that the initial count of number of references is set to 0.
@@ -50,7 +50,7 @@ Creates a "weak" reference to the value, in that the initial count of number of 
 Returns the newly created reference.
 
 ```cpp
-static Napi::ObjectReference Napi::ObjectReference::Persistent(const Object& value);
+static Napi::ObjectReference Napi::ObjectReference::Persistent(const Napi::Object& value);
 ```
 
 Creates a "persistent" reference to the value, in that the initial count of number of references is set to 1.

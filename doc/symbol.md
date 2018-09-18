@@ -16,7 +16,7 @@ Returns a new empty `Napi::Symbol`.
 ```cpp
 Napi::Symbol::New(napi_env env, const std::string& description);
 Napi::Symbol::New(napi_env env, const char* description);
-Napi::Symbol::New(napi_env env, String description);
+Napi::Symbol::New(napi_env env, Napi::String description);
 Napi::Symbol::New(napi_env env, napi_value description);
 ```
 
@@ -29,7 +29,7 @@ Napi::Symbol::New(napi_env env, napi_value description);
   - `napi_value` - N-API `napi_value` description.
 
 If an error occurs, a `Napi::Error` will get thrown. If C++ exceptions are not
-being used, callers should check the result of `Env::IsExceptionPending` before
+being used, callers should check the result of `Napi::Env::IsExceptionPending` before
 attempting to use the returned value.
 
 ### Utf8Value

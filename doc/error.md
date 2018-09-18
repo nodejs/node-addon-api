@@ -20,7 +20,7 @@ For more details about error handling refer to the section titled [Error handlin
 Creates empty instance of an `Napi::Error` object for the specified environment.
 
 ```cpp
-Napi::Error::New(Napi:Env env);
+Napi::Error::New(Napi::Env env);
 ```
 
 - `[in] env`: The environment in which to construct the `Napi::Error` object.
@@ -32,7 +32,7 @@ Returns an instance of `Napi::Error` object.
 Creates instance of an `Napi::Error` object.
 
 ```cpp
-Napi::Error::New(Napi:Env env, const char* message);
+Napi::Error::New(Napi::Env env, const char* message);
 ```
 
 - `[in] env`: The environment in which to construct the `Napi::Error` object.
@@ -45,7 +45,7 @@ Returns instance of an `Napi::Error` object.
 Creates instance of an `Napi::Error` object
 
 ```cpp
-Napi::Error::New(Napi:Env env, const std::string& message);
+Napi::Error::New(Napi::Env env, const std::string& message);
 ```
 
 - `[in] env`: The environment in which to construct the `Napi::Error` object.

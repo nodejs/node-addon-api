@@ -92,6 +92,6 @@ Returns `void`.
 ```cpp
 Napi::CallbackInfo::~CallbackInfo();
 // Disallow copying to prevent multiple free of _dynamicArgs
-CallbackInfo(CallbackInfo const &) = delete;
-void operator=(CallbackInfo const &) = delete;
+Napi::CallbackInfo::CallbackInfo(CallbackInfo const &) = delete;
+void Napi::CallbackInfo::operator=(CallbackInfo const &) = delete;
 ```

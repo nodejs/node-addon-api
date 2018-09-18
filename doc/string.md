@@ -29,14 +29,14 @@ attempting to use the returned value.
 ### operator std::string
 
 ```cpp
-operator std::string() const;
+Napi::String::operator std::string() const;
 ```
 
 Returns a UTF-8 encoded C++ string.
 
 ### operator std::u16string
 ```cpp
-operator std::u16string() const;
+Napi::String::operator std::u16string() const;
 ```
 
 Returns a UTF-16 encoded C++ string.
@@ -52,8 +52,8 @@ Returns a new empty `Napi::String`.
 
 ### New
 ```cpp
-Napi::String::New(napi_env env, const std::Napi::string& value);
-Napi::String::New(napi_env env, const std::u16Napi::string& value);
+Napi::String::New(napi_env env, const std::string& value);
+Napi::String::New(napi_env env, const std::u16::string& value);
 Napi::String::New(napi_env env, const char* value);
 Napi::String::New(napi_env env, const char16_t* value);
 ```

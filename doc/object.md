@@ -140,7 +140,7 @@ Note: This is equivalent to the JavaScript instanceof operator.
 ### DefineProperty()
 
 ```cpp
-void Napi::Object::DefineProperty (const PropertyDescriptor& property);
+void Napi::Object::DefineProperty (const Napi::PropertyDescriptor& property);
 ```
 - `[in] property`: A [`Napi::PropertyDescriptor`](propertydescriptor.md).
 

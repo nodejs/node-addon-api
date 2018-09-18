@@ -97,7 +97,7 @@ Napi::TypedArrayOf::TypedArrayOf(napi_env env, napi_value value);
 ### operator []
 
 ```cpp
-T& operator [](size_t index);
+T& Napi::TypedArrayOf::operator [](size_t index);
 ```
 
 - `[in] index: The element index into the array.
@@ -107,7 +107,7 @@ Returns the element found at the given index.
 ### operator []
 
 ```cpp
-const T& operator [](size_t index) const;
+const T& Napi::TypedArrayOf::operator [](size_t index) const;
 ```
 
 - `[in] index: The element index into the array.

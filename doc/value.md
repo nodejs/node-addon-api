@@ -59,7 +59,7 @@ template <typename T> static Napi::Value Napi::Value::From(napi_env env, const T
 
 - `[in] value`: The N-API primitive value from which to create the `Napi::Value` object.
 
-Returns a Value object from an N-API primitive value.
+Returns a `Napi::Value` object from an N-API primitive value.
 
 ### operator napi_value
 
@@ -74,7 +74,8 @@ Returns `nullptr` if this `Napi::Value` is *empty*.
 ### operator ==
 
 ```cpp
-bool operator ==(const Value& other) const;
+
+bool Napi::Value::operator ==(const Napi::Value& other) const;
 ```
 
 - `[in] other`: The `Napi::Value` object to be compared.
@@ -84,17 +85,17 @@ Returns a `bool` indicating if this `Napi::Value` strictly equals another `Napi:
 ### operator !=
 
 ```cpp
-bool operator !=(const Value& other) const;
+bool Napi::Value::operator !=(const Napi::Value& other) const;
 ```
 
-- `[in] other`: The Value object to be compared.
+- `[in] other`: The `Napi::Value` object to be compared.
 
 Returns a `bool` indicating if this `Napi::Value` does not strictly equal another `Napi::Value`.
 
 ### StrictEquals
 
 ```cpp
-bool Napi::Value::StrictEquals(const Value& other) const;
+bool Napi::Value::StrictEquals(const Napi::Value& other) const;
 ```
 - `[in] other`: The `Napi::Value` object to be compared.
 

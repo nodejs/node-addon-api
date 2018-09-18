@@ -37,7 +37,7 @@ in.
 #### operator napi_value
 
 ```cpp
-operator napi_value() const;
+Napi::Value::operator napi_value() const;
 ```
 
 Returns the underlying N-API `napi_value`. If the instance is _empty_, this
@@ -46,7 +46,7 @@ returns `nullptr`.
 #### operator ==
 
 ```cpp
-bool operator ==(const Value& other) const;
+bool Napi::Value::operator ==(const Value& other) const;
 ```
 
 Returns `true` if this value strictly equals another value, or `false` otherwise.
@@ -54,7 +54,7 @@ Returns `true` if this value strictly equals another value, or `false` otherwise
 #### operator !=
 
 ```cpp
-bool operator !=(const Value& other) const;
+bool Napi::Value::operator !=(const Value& other) const;
 ```
 
 Returns `false` if this value strictly equals another value, or `true` otherwise.
@@ -259,7 +259,7 @@ otherwise.
 
 #### ToBoolean
 ```cpp
-Boolean Napi::Value::ToBoolean() const;
+Napi::Boolean Napi::Value::ToBoolean() const;
 ```
 
 Returns a `Napi::Boolean` representing the `Napi::Value`.

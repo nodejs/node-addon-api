@@ -274,7 +274,7 @@ Returns a `Napi::Value` representing the JavaScript value returned by the functi
 ## Operator
 
 ```cpp
-Napi::Value operator ()(const std::initializer_list<napi_value>& args) const;
+Napi::Value Napi::Function::operator ()(const std::initializer_list<napi_value>& args) const;
 ```
 
 - `[in] args`: Initializer list of JavaScript values as `napi_value`.

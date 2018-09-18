@@ -79,4 +79,4 @@ more than once an exception will be thrown.
 Napi::Env Napi::EscapableHandleScope::Env() const;
 ```
 
-Returns the `Napi:Env` associated with the `Napi::EscapableHandleScope`.
+Returns the `Napi::Env` associated with the `Napi::EscapableHandleScope`.
