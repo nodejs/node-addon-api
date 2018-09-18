@@ -3249,7 +3249,7 @@ inline uint32_t VersionManagement::GetNapiVersion(Env env) {
 inline const napi_node_version* VersionManagement::GetNodeVersion(Env env) {
   const napi_node_version* result;
   napi_status status = napi_get_node_version(env, &result);
-  NAPI_THROW_IF_FAILED_VOID(env, status, 0);
+  NAPI_THROW_IF_FAILED(env, status, 0);
   return result;
 }
 
