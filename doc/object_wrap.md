@@ -391,7 +391,7 @@ property.
 - `[in] attributes`: The attributes to be associated with the property in addition
 to the napi_static attribute.  One or more of `napi_property_attributes`.
 
-Returns `Napi::PropertyDescriptor` object that represents an Static Value 
+Returns `Napi::PropertyDescriptor` object that represents an static value 
 property of a JavaScript class
 
 ### InstanceValue
@@ -409,5 +409,5 @@ static Napi::PropertyDescriptor Napi::ObjectWrap::InstanceValue(const char* utf8
 - `[in] attributes`: The attributes to be associated with the property.
 One or more of `napi_property_attributes`.
 
-Returns `Napi::PropertyDescriptor` object that represents an Instance value 
+Returns `Napi::PropertyDescriptor` object that represents an instance value 
 property of a JavaScript class.
