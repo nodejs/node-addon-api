@@ -3242,14 +3242,14 @@ inline int64_t MemoryManagement::AdjustExternalMemory(Env env, int64_t change_in
 inline uint32_t VersionManagement::GetNapiVersion(Env env) {
   uint32_t result;
   napi_status status = napi_get_version(env, &result);
-  NAPI_THROW_IF_FAILED(env, status, 0);
+  NAPI_THROW_IF_FAILED_VOID(env, status);
   return result;
 }
 
 inline const napi_node_version* VersionManagement::GetNodeVersion(Env env) {
   const napi_node_version* result;
   napi_status status = napi_get_node_version(env, &result);
-  NAPI_THROW_IF_FAILED(env, status, 0);
+  NAPI_THROW_IF_FAILED_VOID(env, status);
   return result;
 }
 
