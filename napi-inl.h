@@ -581,7 +581,7 @@ inline size_t BigInt::WordCount() const {
 inline void BigInt::ToWords(int* sign_bit, size_t* word_count, uint64_t* words) {
   napi_status status = napi_get_value_bigint_words(
       _env, _value, sign_bit, word_count, words);
-  NAPI_THROW_IF_FAILED(_env, status);
+  NAPI_THROW_IF_FAILED_VOID(_env, status);
 }
 #endif  // NAPI_EXPERIMENTAL
 
