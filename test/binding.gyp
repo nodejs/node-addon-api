@@ -3,6 +3,7 @@
     'sources': [
         'arraybuffer.cc',
         'asyncworker.cc',
+        'basic_types/boolean.cc',
         'basic_types/number.cc',
         'basic_types/value.cc',
         'bigint.cc',
