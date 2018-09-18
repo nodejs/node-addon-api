@@ -6,6 +6,7 @@ Object InitArrayBuffer(Env env);
 Object InitAsyncWorker(Env env);
 Object InitBasicTypesNumber(Env env);
 Object InitBasicTypesValue(Env env);
+Object InitBigInt(Env env);
 Object InitBuffer(Env env);
 Object InitDataView(Env env);
 Object InitDataViewReadWrite(Env env);
@@ -26,6 +27,7 @@ Object Init(Env env, Object exports) {
   exports.Set("asyncworker", InitAsyncWorker(env));
   exports.Set("basic_types_number", InitBasicTypesNumber(env));
   exports.Set("basic_types_value", InitBasicTypesValue(env));
+  exports.Set("bigint", InitBigInt(env));
   exports.Set("buffer", InitBuffer(env));
   exports.Set("dataview", InitDataView(env));
   exports.Set("dataview_read_write", InitDataView(env));
