@@ -4,7 +4,7 @@ The `Napi::ObjectWrap` class is used to bind the lifetime of C++ code to a
 JavaScript object. Once bound, each time an instance of the JavaScript object
 is created, an instance of the C++ class will also be created. When a method
 is called on the JavaScript object which is defined as an InstanceMethod, the
-corresponding C++ methon on the wrapped C++ class will be invoked.
+corresponding C++ method on the wrapped C++ class will be invoked.
 
 In order to create a wrapper it's necessary to extend the 
 `Napi::ObjectWrap`class which contains all the plumbing to connect JavaScript code
