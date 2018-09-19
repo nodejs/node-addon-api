@@ -15,7 +15,7 @@ the section titled [Object lifetime management](object_lifetime_management.md).
 Creates a new handle scope on the stack.
 
 ```cpp
-Napi::HandleScope::HandleScope(Napi:Env env);
+Napi::HandleScope::HandleScope(Napi::Env env);
 ```
 
 - `[in] env`: The environment in which to construct the `Napi::HandleScope` object.
@@ -62,4 +62,4 @@ guarantee as to when the gargbage collector will do this.
 Napi::Env Napi::HandleScope::Env() const;
 ```
 
-Returns the `Napi:Env` associated with the `Napi::HandleScope`.
+Returns the `Napi::Env` associated with the `Napi::HandleScope`.

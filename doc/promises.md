@@ -1,6 +1,6 @@
 # Promise
 
-The `Napi::Promise` class, along with its `Napi::Promise::Deferred` class, implement the ability to create, resolve, and reject `Promise` objects.
+The `Napi::Promise` class, along with its `Napi::Promise::Deferred` class, implement the ability to create, resolve, and reject Promise objects.
 
 The basic approach is to create a `Napi::Promise::Deferred` object and return to your caller the value returned by the `Napi::Promise::Deferred::Promise` method. For example:
 

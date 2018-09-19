@@ -1,6 +1,6 @@
 # Property Descriptor
 
-A [`Napi::Object`](object.md) can be assigned properites via its [`DefineProperty`](object.md#defineproperty) and [`DefineProperties`](object.md#defineproperties) function, which take PropertyDescrptor(s) as their parameters. The `Napi::PropertyDescriptor` can contain either values or functions, which are then assigned to the `Napi::Object`. Note that a single instance of a `Napi::PropertyDescriptor` class can only contain either one value, or at most two functions. PropertyDescriptors can only be created through the class methods [`Accessor`](#accessor), [`Function`](#function), or [`Value`](#value), each of which return a new static instance of a `Napi::PropertyDescriptor`.
+A [`Napi::Object`](object.md) can be assigned properites via its [`DefineProperty`](object.md#defineproperty) and [`DefineProperties`](object.md#defineproperties) functions, which take PropertyDescrptor(s) as their parameters. The `Napi::PropertyDescriptor` can contain either values or functions, which are then assigned to the `Napi::Object`. Note that a single instance of a `Napi::PropertyDescriptor` class can only contain either one value, or at most two functions. PropertyDescriptors can only be created through the class methods [`Accessor`](#accessor), [`Function`](#function), or [`Value`](#value), each of which return a new static instance of a `Napi::PropertyDescriptor`.
 
 ## Example
 

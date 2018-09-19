@@ -7,7 +7,7 @@ operation.
 
 Once created, execution is requested by calling `Napi::AsyncWorker::Queue`. When 
 a thread is available for execution the `Napi::AsyncWorker::Execute` method will 
-be invoked.  Once `Napi::AsyncWorker::Execute` complets either 
+be invoked.  Once `Napi::AsyncWorker::Execute` completes either 
 `Napi::AsyncWorker::OnOK` or `Napi::AsyncWorker::OnError` will be invoked.  Once 
 the `Napi::AsyncWorker::OnOK` or `Napi::AsyncWorker::OnError` methods are 
 complete the `Napi::AsyncWorker` instance is destructed.
@@ -70,8 +70,8 @@ the default implementation of `Napi::AsyncWorker::OnOK` or
 
 Sets the error message for the error that happened during the execution. Setting
 an error message will cause the `Napi::AsyncWorker::OnError` method to be 
-invoked instead of `OnOK` once the `Napi::AsyncWorker::OnError::Execute` method 
-completes.
+invoked instead of `Napi::AsyncWorker::OnOKOnOK` once the 
+`Napi::AsyncWorker::Execute` method completes.
 
 ```cpp
 void Napi::AsyncWorker::SetError(const std::string& error);
@@ -287,9 +287,9 @@ class EchoWorker : public AsyncWorker {
 
 The `EchoWorker`'s contructor calls the base class' constructor to pass in the
 callback that the `Napi::AsyncWorker` base class will store persistently. When
-the work on the `Execute` method is done the `OnOk` method is called and the
-results return back to JavaScript invoking the stored callback with its
-associated environment.
+the work on the `Napi::AsyncWorker::Execute` method is done the 
+`Napi::AsyncWorker::OnOk` method is called and the results return back to 
+JavaScript invoking the stored callback with its associated environment.
 
 The following code shows an example on how to create and and use an `Napi::AsyncWorker`
 
@@ -310,9 +310,8 @@ Value Echo(const CallbackInfo& info) {
     return info.Env().Undefined();
 ```
 
-Using the implementation of a `Napi::AsyncWorker` is straight forward. You need 
-only create a new instance and pass to its constructor the callback you want to 
+Using the implementation of a `Napi::AsyncWorker` is straight forward. You only 
+need to create a new instance and pass to its constructor the callback you want to 
 execute when your asynchronous task ends and other data you need for your 
 computation. Once created the only other action you have to do is to call the 
-`Napi::AsyncWorker::Queue` method that will that will queue the created worker 
-for execution.
+`Napi::AsyncWorker::Queue` method that will queue the created worker for execution.
