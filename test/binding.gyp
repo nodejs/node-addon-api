@@ -1,4 +1,7 @@
 {
+  'variables': {
+    'NAPI_VERSION%': ""
+  },
   'target_defaults': {
     'sources': [
         'arraybuffer.cc',
@@ -28,6 +31,9 @@
         'objectwrap.cc',
         'objectreference.cc',
         'version_management.cc'
+      ],
+      'conditions': [
+        ['NAPI_VERSION!=""', { 'defines': ['NAPI_VERSION=<@(NAPI_VERSION)'] } ]
       ],
       'include_dirs': ["<!@(node -p \"require('../').include\")"],
       'dependencies': ["<!(node -p \"require('../').gyp\")"],

@@ -30,7 +30,11 @@ Object Init(Env env, Object exports) {
   exports.Set("basic_types_boolean", InitBasicTypesBoolean(env));
   exports.Set("basic_types_number", InitBasicTypesNumber(env));
   exports.Set("basic_types_value", InitBasicTypesValue(env));
+// currently experimental guard with version of NAPI_VERSION that it is 
+// released in once it is no longer experimental
+#if (NAPI_VERSION > 2147483646) 
   exports.Set("bigint", InitBigInt(env));
+#endif
   exports.Set("buffer", InitBuffer(env));
   exports.Set("dataview", InitDataView(env));
   exports.Set("dataview_read_write", InitDataView(env));

@@ -64,6 +64,9 @@ function test(binding) {
     }
   });
 
+// currently experimental, guard qurg NAPI_VERSION it
+// is related in once no longer experimntal
+if(process.env.NAPI_VERSION > 2147483646 ){
   [
     ['bigint64', BigInt64Array],
     ['biguint64', BigUint64Array],
@@ -110,6 +113,7 @@ function test(binding) {
       throw e;
     }
   });
+}
 
   assert.throws(() => {
     binding.typedarray.createInvalidTypedArray();
