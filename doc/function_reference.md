@@ -150,14 +150,14 @@ function.
 
 ### Call
 
-Calls a referenced Javascript function from a native add-on.
+Calls a referenced JavaScript function from a native add-on.
 
 ```cpp
 Napi::Value Napi::FunctionReference::Call(napi_value recv, size_t argc, const napi_value* args) const;
 ```
 
 - `[in] recv`: The `this` object passed to the referenced function when it's called.
-- `[in] argc`: The number of the arguments passed to the referenced function.
+- `[in] argc`: The number of arguments passed to the referenced function.
 - `[in] args`: Array of JavaScript values as `napi_value` representing the
 arguments of the referenced function.
 
@@ -199,7 +199,7 @@ function.
 
 ### MakeCallback
 
-Calls a referenced Javascript function from a native add-on after an asynchronous
+Calls a referenced JavaScript function from a native add-on after an asynchronous
 operation.
 
 ```cpp
@@ -207,7 +207,7 @@ Napi::Value Napi::FunctionReference::MakeCallback(napi_value recv, size_t argc, 
 ```
 
 - `[in] recv`: The `this` object passed to the referenced function when it's called.
-- `[in] argc`: The number of the arguments passed to the referenced function.
+- `[in] argc`: The number of arguments passed to the referenced function.
 - `[in] args`: Array of JavaScript values as `napi_value` representing the
 arguments of the referenced function.
 
