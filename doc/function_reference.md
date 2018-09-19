@@ -106,7 +106,7 @@ function.
 
 ### Call
 
-Calls a referenced Javascript function from a native add-on.
+Calls a referenced JavaScript function from a native add-on.
 
 ```cpp
 Napi::Value Napi::FunctionReference::Call(const std::vector<napi_value>& args) const;
@@ -120,7 +120,7 @@ function.
 
 ### Call
 
-Calls a referenced Javascript function from a native add-on.
+Calls a referenced JavaScript function from a native add-on.
 
 ```cpp
 Napi::Value Napi::FunctionReference::Call(napi_value recv, const std::initializer_list<napi_value>& args) const;
@@ -135,7 +135,7 @@ function.
 
 ### Call
 
-Calls a referenced Javascript function from a native add-on.
+Calls a referenced JavaScript function from a native add-on.
 
 ```cpp
 Napi::Value Napi::FunctionReference::Call(napi_value recv, const std::vector<napi_value>& args) const;
@@ -150,7 +150,7 @@ function.
 
 ### MakeCallback
 
-Calls a referenced Javascript function from a native add-on after an asynchronous
+Calls a referenced JavaScript function from a native add-on after an asynchronous
 operation.
 
 ```cpp
@@ -166,7 +166,7 @@ function.
 
 ### MakeCallback
 
-Calls a referenced Javascript function from a native add-on after an asynchronous
+Calls a referenced JavaScript function from a native add-on after an asynchronous
 operation.
 
 ```cpp
