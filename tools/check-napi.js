@@ -15,14 +15,15 @@ function checkFile(file, command, arguments, reducer) {
   let isNapi = undefined;
   child.stdout.on('data', (chunk) => {
     if (isNapi === undefined) {
-      chunk = leftover + chunk.toString();
-      const haveLeftover = !!chunk.match(/[\r\n]+$/);
-      chunk = chunk.split(/[\r\n]+/);
+      chunk = (leftover + chunk.toString()).split(/[\r\n]+/);
       leftover = chunk.pop();
       isNapi = chunk.reduce(reducer, isNapi);
+      if (isNapi !== undefined) {
+        child.kill();
+      }
     }
   });
-  child.on('exit', (code, signal) => {
+  child.on('close', (code, signal) => {
     if ((code === null && signal !== null) || (code !== 0)) {
       console.log(
         command + ' exited with code: '  + code + ' and signal: ' + signal);
@@ -40,9 +41,8 @@ function checkFileUNIX(file) {
   checkFile(file, 'nm', ['-a', file], (soFar, line) => {
       if (soFar === undefined) {
         line = line.match(/([0-9a-f]*)? ([a-zA-Z]) (.*$)/);
-        line.shift();
-        if (line[1] === 'U') {
-          if (line[2].match(/^napi/)) {
+        if (line[2] === 'U') {
+          if (/^napi/.test(line[3])) {
             soFar = true;
           }
         }
@@ -56,7 +56,7 @@ function checkFileWin32(file) {
   checkFile(file, 'dumpbin', ['/imports', file], (soFar, line) => {
       if (soFar === undefined) {
         line = line.match(/([0-9a-f]*)? +([a-zA-Z0-9]) (.*$)/);
-        if (line && line[line.length - 1].match(/^napi/)) {
+        if (line && /^napi/.test(line[line.length - 1])) {
           soFar = true;
         }
       }
@@ -74,7 +74,7 @@ function recurse(top) {
         if (!error) {
           if (stats.isDirectory()) {
             recurse(item);
-          } else if (item.match(/[.]node$/) &&
+          } else if (/[.]node$/.test(item) &&
               // Explicitly ignore files called 'nothing.node' because they are
               // artefacts of node-addon-api having identified a version of
               // Node.js that ships with a correct implementation of N-API.
