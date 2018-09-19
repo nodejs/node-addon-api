@@ -39,7 +39,7 @@ let testModules = [
 if(process.env.NAPI_VERSION < 2147483647 ){
   // currently experimental only test if NAPI_VERSION
   // is set to experimental
-  // once bigint is in a release this should be guarged
+  // once bigint is in a release this should be guarded
   // on the napi version  supported by the current
   // node being tested
   testModules.splice(testModules.indexOf('bigint'), 1);
