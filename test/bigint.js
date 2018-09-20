@@ -15,7 +15,7 @@ function test(binding) {
     TestTooBigBigInt,
   } = binding.bigint;
 
-  [
+  eval(`[
     0n,
     -0n,
     1n,
@@ -27,15 +27,15 @@ function test(binding) {
     -976675n,
     98765432213456789876546896323445679887645323232436587988766545658n,
     -4350987086545760976737453646576078997096876957864353245245769809n,
-  ].forEach((num) => {
-    if (num > -(2n ** 63n) && num < 2n ** 63n) {
+  ]`).forEach((num) => {
+    if (num > eval(`-(2n ** 63n)`) && num < eval(`2n ** 63n`)) {
       assert.strictEqual(TestInt64(num), num);
       assert.strictEqual(IsLossless(num, true), true);
     } else {
       assert.strictEqual(IsLossless(num, true), false);
     }
 
-    if (num >= 0 && num < 2n ** 64n) {
+    if (num >= 0 && num < eval(`2n ** 64n`)) {
       assert.strictEqual(TestUint64(num), num);
       assert.strictEqual(IsLossless(num, false), true);
     } else {
