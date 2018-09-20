@@ -1,8 +1,8 @@
 # Object Reference
 
-ObjectReference is a subclass of [Reference](reference.md), and is equivalent to an instance of `Reference<Object>`. This means that an ObjectReference holds an [Object](object.md), and a count of the number of references to that Object. When the count is greater than 0, an ObjectReference is not eligible for garbage collection. This ensures that the Object being held as a value of the ObjectReference will remain accessible, even if the original Object no longer is. However, ObjectReference is unique from a Reference since properties can be set and get to the Object itself that can be accessed through the ObjectReference.
+`Napi::ObjectReference` is a subclass of [`Napi::Reference`](reference.md), and is equivalent to an instance of `Napi::Reference<Object>`. This means that a `Napi::ObjectReference` holds a [`Napi::Object`](object.md), and a count of the number of references to that Object. When the count is greater than 0, an ObjectReference is not eligible for garbage collection. This ensures that the Object being held as a value of the ObjectReference will remain accessible, even if the original Object no longer is. However, ObjectReference is unique from a Reference since properties can be set and get to the Object itself that can be accessed through the ObjectReference.
 
-For more general information on references, please consult [Reference](referenc.md).
+For more general information on references, please consult [`Napi::Reference`](referenc.md).
 
 ## Example
 ```cpp
@@ -30,17 +30,17 @@ void Init(Env env) {
 ### Initialization
 
 ```cpp
-static ObjectReference New(const Object& value, uint32_t initialRefcount = 0);
+static Napi::ObjectReference Napi::ObjectReference::New(const Napi::Object& value, uint32_t initialRefcount = 0);
 ```
 
-* `[in] value`: The Object which is to be referenced.
+* `[in] value`: The `Napi::Object` which is to be referenced.
 
 * `[in] initialRefcount`: The initial reference count.
 
 Returns the newly created reference.
 
 ```cpp
-static ObjectReference Weak(const Object& value);
+static Napi::ObjectReference Napi::ObjectReference::Weak(const Napi::Object& value);
 ```
 
 Creates a "weak" reference to the value, in that the initial count of number of references is set to 0.
@@ -50,7 +50,7 @@ Creates a "weak" reference to the value, in that the initial count of number of 
 Returns the newly created reference.
 
 ```cpp
-static ObjectReference Persistent(const Object& value);
+static Napi::ObjectReference Napi::ObjectReference::Persistent(const Napi::Object& value);
 ```
 
 Creates a "persistent" reference to the value, in that the initial count of number of references is set to 1.
@@ -62,26 +62,26 @@ Returns the newly created reference.
 ### Empty Constructor
 
 ```cpp
-ObjectReference();
+Napi::ObjectReference::ObjectReference();
 ```
 
-Returns a new _empty_ ObjectReference instance.
+Returns a new _empty_ `Napi::ObjectReference` instance.
 
 ### Constructor
 
 ```cpp
-ObjectReference(napi_env env, napi_value value);
+Napi::ObjectReference::ObjectReference(napi_env env, napi_value value);
 ```
 
-* `[in] env`: The `napi_env` environment in which to construct the ObjectReference object.
+* `[in] env`: The `napi_env` environment in which to construct the `Napi::ObjectReference` object.
 
-* `[in] value`: The N-API primitive value to be held by the ObjectReference.
+* `[in] value`: The N-API primitive value to be held by the `Napi::ObjectReference`.
 
 Returns the newly created reference.
 
 ### Set
 ```cpp
-void Set(___ key, ___ value);
+void Napi::ObjectReference::Set(___ key, ___ value);
 ```
 
 * `[in] key`: The name for the property being assigned.
@@ -103,12 +103,12 @@ The `value` can be any of the following types:
 ### Get
 
 ```cpp
-Value Get(___ key);
+Napi::Value Napi::ObjectReference::Get(___ key);
 ```
 
 * `[in] key`: The name of the property to return the value for.
 
-Returns the [Value](value.md) associated with the key property. Returns NULL if no such key exists.
+Returns the [`Napi::Value`](value.md) associated with the key property. Returns NULL if no such key exists.
 
 The `key` can be any of the following types:
 - `const char*`

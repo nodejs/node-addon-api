@@ -23,7 +23,7 @@ Creates a "weak" reference to the value, in that the initial reference count is
 set to 0.
 
 ```cpp
-static FunctionReference Weak(const Function& value);
+static Napi::FunctionReference Napi::FunctionReference::Weak(const Napi::Function& value);
 ```
 
 - `[in] value`: The value which is to be referenced.
@@ -36,7 +36,7 @@ Creates a "persistent" reference to the value, in that the initial reference
 count is set to 1.
 
 ```cpp
-static FunctionReference Persistent(const Function& value);
+static Napi::FunctionReference Napi::FunctionReference::Persistent(const Napi::Function& value);
 ```
 
 - `[in] value`: The value which is to be referenced.
@@ -48,7 +48,7 @@ Returns the newly created reference.
 Creates a new empty instance of `Napi::FunctionReference`.
 
 ```cpp
-FunctionReference();
+Napi::FunctionReference::FunctionReference();
 ```
 
 ### Constructor
@@ -56,7 +56,7 @@ FunctionReference();
 Creates a new instance of the `Napi::FunctionReference`.
 
 ```cpp
-FunctionReference(napi_env env, napi_ref ref);
+Napi::FunctionReference::FunctionReference(napi_env env, napi_ref ref);
 ```
 
 - `[in] env`: The environment in which to construct the `Napi::FunctionReference` object.
@@ -69,7 +69,7 @@ Returns a newly created `Napi::FunctionReference` object.
 Constructs a new instance by calling the constructor held by this reference.
 
 ```cpp
-Napi::Object New(const std::initializer_list<napi_value>& args) const;
+Napi::Object Napi::FunctionReference::New(const std::initializer_list<napi_value>& args) const;
 ```
 
 - `[in] args`: Initializer list of JavaScript values as `napi_value` representing
@@ -82,7 +82,7 @@ Returns a new JavaScript object.
 Constructs a new instance by calling the constructor held by this reference.
 
 ```cpp
-Napi::Object New(const std::vector<napi_value>& args) const;
+Napi::Object Napi::FunctionReference::New(const std::vector<napi_value>& args) const;
 ```
 
 - `[in] args`: Vector of JavaScript values as `napi_value` representing the
@@ -95,7 +95,7 @@ Returns a new JavaScript object.
 Calls a referenced Javascript function from a native add-on.
 
 ```cpp
-Napi::Value Call(const std::initializer_list<napi_value>& args) const;
+Napi::Value Napi::FunctionReference::Call(const std::initializer_list<napi_value>& args) const;
 ```
 
 - `[in] args`: Initializer list of JavaScript values as `napi_value` representing
@@ -106,10 +106,10 @@ function.
 
 ### Call
 
-Calls a referenced Javascript function from a native add-on.
+Calls a referenced JavaScript function from a native add-on.
 
 ```cpp
-Napi::Value Call(const std::vector<napi_value>& args) const;
+Napi::Value Napi::FunctionReference::Call(const std::vector<napi_value>& args) const;
 ```
 
 - `[in] args`: Vector of JavaScript values as `napi_value` representing the
@@ -120,10 +120,10 @@ function.
 
 ### Call
 
-Calls a referenced Javascript function from a native add-on.
+Calls a referenced JavaScript function from a native add-on.
 
 ```cpp
-Napi::Value Call(napi_value recv, const std::initializer_list<napi_value>& args) const;
+Napi::Value Napi::FunctionReference::Call(napi_value recv, const std::initializer_list<napi_value>& args) const;
 ```
 
 - `[in] recv`: The `this` object passed to the referenced function when it's called.
@@ -135,10 +135,10 @@ function.
 
 ### Call
 
-Calls a referenced Javascript function from a native add-on.
+Calls a referenced JavaScript function from a native add-on.
 
 ```cpp
-Napi::Value Call(napi_value recv, const std::vector<napi_value>& args) const;
+Napi::Value Napi::FunctionReference::Call(napi_value recv, const std::vector<napi_value>& args) const;
 ```
 
 - `[in] recv`: The `this` object passed to the referenced function when it's called.
@@ -167,11 +167,11 @@ function.
 
 ### MakeCallback
 
-Calls a referenced Javascript function from a native add-on after an asynchronous
+Calls a referenced JavaScript function from a native add-on after an asynchronous
 operation.
 
 ```cpp
-Napi::Value MakeCallback(napi_value recv, const std::initializer_list<napi_value>& args) const;
+Napi::Value Napi::FunctionReference::MakeCallback(napi_value recv, const std::initializer_list<napi_value>& args) const;
 ```
 
 - `[in] recv`: The `this` object passed to the referenced function when it's called.
@@ -183,11 +183,11 @@ function.
 
 ### MakeCallback
 
-Calls a referenced Javascript function from a native add-on after an asynchronous
+Calls a referenced JavaScript function from a native add-on after an asynchronous
 operation.
 
 ```cpp
-Napi::Value MakeCallback(napi_value recv, const std::vector<napi_value>& args) const;
+Napi::Value Napi::FunctionReference::MakeCallback(napi_value recv, const std::vector<napi_value>& args) const;
 ```
 
 - `[in] recv`: The `this` object passed to the referenced function when it's called.

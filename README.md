@@ -1,19 +1,19 @@
-# **node-addon-api module** 
+# **node-addon-api module**
 This module contains **header-only C++ wrapper classes** which simplify
 the use of the C based [N-API](https://nodejs.org/dist/latest/docs/api/n-api.html)
 provided by Node.js when using C++. It provides a C++ object model
 and exception handling semantics with low overhead.
 
-N-API is an ABI stable C interface provided by Node.js for building native 
+N-API is an ABI stable C interface provided by Node.js for building native
 addons. It is independent from the underlying JavaScript runtime (e.g. V8 or ChakraCore)
-and is maintained as part of Node.js itself. It is intended to insulate 
-native addons from changes in the underlying JavaScript engine and allow 
-modules compiled for one version to run on later versions of Node.js without 
+and is maintained as part of Node.js itself. It is intended to insulate
+native addons from changes in the underlying JavaScript engine and allow
+modules compiled for one version to run on later versions of Node.js without
 recompilation.
 
 The `node-addon-api` module, which is not part of Node.js, preserves the benefits
 of the N-API as it consists only of inline code that depends only on the stable API
-provided by N-API. As such, modules built against one version of Node.js 
+provided by N-API. As such, modules built against one version of Node.js
 using node-addon-api should run without having to be rebuilt with newer versions
 of Node.js.
 
@@ -63,8 +63,7 @@ to ideas specified in the **ECMA262 Language Specification**.
 
 ### **API Documentation**
 
-The following is the documentation for node-addon-api (NOTE:
-still a work in progress as its not yet complete).
+The following is the documentation for node-addon-api.
 
  - [Basic Types](doc/basic_types.md)
     - [Array](doc/basic_types.md#array)

@@ -1,14 +1,14 @@
 # Error
 
-The **Error** class is a representation of the JavaScript Error object that is thrown
+The `Napi::Error` class is a representation of the JavaScript `Error` object that is thrown
 when runtime errors occur. The Error object can also be used as a base object for
 user-defined exceptions.
 
-The **Error** class is a persistent reference to a JavaScript error object thus
-inherits its behavior from the `ObjectReference` class (for more info see: [ObjectReference](object_reference.md)).
+The `Napi::Error` class is a persistent reference to a JavaScript error object thus
+inherits its behavior from the `Napi::ObjectReference` class (for more info see: [`Napi::ObjectReference`](object_reference.md)).
 
 If C++ exceptions are enabled (for more info see: [Setup](setup.md)), then the
-**Error** class extends `std::exception` and enables integrated
+`Napi::Error` class extends `std::exception` and enables integrated
 error-handling for C++ exceptions and JavaScript exceptions.
 
 For more details about error handling refer to the section titled [Error handling](error_handling.md).
@@ -17,41 +17,41 @@ For more details about error handling refer to the section titled [Error handlin
 
 ### New
 
-Creates empty instance of an `Error` object for the specified environment.
+Creates empty instance of an `Napi::Error` object for the specified environment.
 
 ```cpp
-Error::New(Napi:Env env);
+Napi::Error::New(Napi::Env env);
 ```
 
-- `[in] Env`: The environment in which to construct the Error object.
+- `[in] env`: The environment in which to construct the `Napi::Error` object.
 
-Returns an instance of `Error` object.
+Returns an instance of `Napi::Error` object.
 
 ### New
 
-Creates instance of an `Error` object.
+Creates instance of an `Napi::Error` object.
 
 ```cpp
-Error::New(Napi:Env env, const char* message);
+Napi::Error::New(Napi::Env env, const char* message);
 ```
 
-- `[in] Env`: The environment in which to construct the Error object.
-- `[in] message`: Null-terminated string to be used as the message for the Error.
+- `[in] env`: The environment in which to construct the `Napi::Error` object.
+- `[in] message`: Null-terminated string to be used as the message for the `Napi::Error`.
 
-Returns instance of an `Error` object.
+Returns instance of an `Napi::Error` object.
 
 ### New
 
-Creates instance of an `Error` object
+Creates instance of an `Napi::Error` object
 
 ```cpp
-Error::New(Napi:Env env, const std::string& message);
+Napi::Error::New(Napi::Env env, const std::string& message);
 ```
 
-- `[in] Env`: The environment in which to construct the `Error` object.
-- `[in] message`: Reference string to be used as the message for the `Error`.
+- `[in] env`: The environment in which to construct the `Napi::Error` object.
+- `[in] message`: Reference string to be used as the message for the `Napi::Error`.
 
-Returns instance of an `Error` object.
+Returns instance of an `Napi::Error` object.
 
 ### Fatal
 
@@ -59,38 +59,38 @@ In case of an unrecoverable error in a native module, a fatal error can be throw
 to immediately terminate the process.
 
 ```cpp
-static NAPI_NO_RETURN void Fatal(const char* location, const char* message);
+static NAPI_NO_RETURN void Napi::Error::Fatal(const char* location, const char* message);
 ```
 
 The function call does not return, the process will be terminated.
 
 ### Constructor
 
-Creates empty instance of an `Error`.
+Creates empty instance of an `Napi::Error`.
 
 ```cpp
-Error();
+Napi::Error::Error();
 ```
 
-Returns an instance of `Error` object.
+Returns an instance of `Napi::Error` object.
 
 ### Constructor
 
-Initializes an `Error` instance from an existing JavaScript error object.
+Initializes an `Napi::Error` instance from an existing JavaScript error object.
 
 ```cpp
-Error(napi_env env, napi_value value);
+Napi::Error::Error(napi_env env, napi_value value);
 ```
 
-- `[in] Env`: The environment in which to construct the Error object.
-- `[in] value`: The `Error` reference to wrap.
+- `[in] env`: The environment in which to construct the error object.
+- `[in] value`: The `Napi::Error` reference to wrap.
 
-Returns instance of an `Error` object.
+Returns instance of an `Napi::Error` object.
 
 ### Message
 
 ```cpp
-std::string& Message() const NAPI_NOEXCEPT;
+std::string& Napi::Error::Message() const NAPI_NOEXCEPT;
 ```
 
 Returns the reference to the string that represent the message of the error.
@@ -100,7 +100,7 @@ Returns the reference to the string that represent the message of the error.
 Throw the error as JavaScript exception.
 
 ```cpp
-void ThrowAsJavaScriptException() const;
+void Napi::Error::ThrowAsJavaScriptException() const;
 ```
 
 Throws the error as a JavaScript exception.
@@ -108,7 +108,7 @@ Throws the error as a JavaScript exception.
 ### what
 
 ```cpp
-const char* what() const NAPI_NOEXCEPT override;
+const char* Napi::Error::what() const NAPI_NOEXCEPT override;
 ```
 
 Returns a pointer to a null-terminated string that is used to identify the

@@ -6,12 +6,12 @@ have to handle and dispatch it correctly. **node-addon-api** uses return values 
 JavaScript exceptions for error handling. You can choose return values or
 exception handling based on the mechanism that works best for your add-on.
 
-The **Error** is a persistent reference (for more info see: [Object reference](object_reference.md))
+The `Napi::Error` is a persistent reference (for more info see: [`Napi::ObjectReference`](object_reference.md))
 to a JavaScript error object. Use of this class depends on whether C++
 exceptions are enabled at compile time.
 
 If C++ exceptions are enabled (for more info see: [Setup](setup.md)), then the
-**Error** class extends `std::exception` and enables integrated
+`Napi::Error` class extends `std::exception` and enables integrated
 error-handling for C++ exceptions and JavaScript exceptions.
 
 The following sections explain the approach for each case:
@@ -34,14 +34,14 @@ returning from a native method.
 
 If a node-addon-api call fails without executing any JavaScript code (for example due to
 an invalid argument), then node-addon-api automatically converts and throws
-the error as a C++ exception of type **Error**.
+the error as a C++ exception of type `Napi::Error`.
 
 If a JavaScript function called by C++ code via node-addon-api throws a JavaScript
 exception, then node-addon-api automatically converts and throws it as a C++
-exception of type **Error** on return from the JavaScript code to the native 
+exception of type `Napi:Error` on return from the JavaScript code to the native
 method.
 
-If a C++ exception of type **Error** escapes from a N-API C++ callback, then
+If a C++ exception of type `Napi::Error` escapes from a N-API C++ callback, then
 the N-API wrapper automatically converts and throws it as a JavaScript exception.
 
 On return from a native method, node-addon-api will automatically convert a pending C++
@@ -57,35 +57,35 @@ returning from a native method.
 
 ```cpp
 Env env = ...
-throw Error::New(env, "Example exception");
+throw Napi::Error::New(env, "Example exception");
 // other C++ statements
 // ...
 ```
 
 The statements following the throw statement will not be executed. The exception
-will bubble up as a C++ exception of type **Error**, until it is either caught
+will bubble up as a C++ exception of type `Napi::Error`, until it is either caught
 while still in C++, or else automatically propagated as a JavaScript exception
 when returning to JavaScript.
 
 ### Propagating a N-API C++ exception
 
 ```cpp
-Function jsFunctionThatThrows = someObj.As<Function>();
-Value result = jsFunctionThatThrows({ arg1, arg2 });
+Napi::Function jsFunctionThatThrows = someObj.As<Napi::Function>();
+Napi::Value result = jsFunctionThatThrows({ arg1, arg2 });
 // other C++ statements
 // ...
 ```
 
 The C++ statements following the call to the JavaScript function will not be
-executed. The exception will bubble up as a C++ exception of type **Error**,
+executed. The exception will bubble up as a C++ exception of type `Napi::Error`,
 until it is either caught while still in C++, or else automatically propagated as
 a JavaScript exception when returning to JavaScript.
 
 ### Handling a N-API C++ exception
 
 ```cpp
-Function jsFunctionThatThrows = someObj.As<Function>();
-Value result;
+Napi::Function jsFunctionThatThrows = someObj.As<Napi::Function>();
+Napi::Value result;
 try {
     result = jsFunctionThatThrows({ arg1, arg2 });
 } catch (const Error& e) {
@@ -101,22 +101,22 @@ exception.
 ## Handling Errors Without C++ Exceptions
 
 If C++ exceptions are disabled (for more info see: [Setup](setup.md)), then the
-**Error** class does not extend `std::exception`. This means that any calls to
+`Napi::Error` class does not extend `std::exception`. This means that any calls to
 node-addon-api function do not throw a C++ exceptions. Instead, it raises
-_pending_ JavaScript exceptions and returns an _empty_ **Value**.
+_pending_ JavaScript exceptions and returns an _empty_ `Napi::Value`.
 The calling code should check `env.IsExceptionPending()` before attempting to use a
-returned value, and may use methods on the **Env** class
+returned value, and may use methods on the `Napi::Env` class
 to check for, get, and clear a pending JavaScript exception (for more info see: [Env](env.md)).
 If the pending exception is not cleared, it will be thrown when the native code
-returns to JavaScript. 
+returns to JavaScript.
 
 ## Examples with C++ exceptions disabled
 
 ### Throwing a JS exception
 
 ```cpp
-Env env = ...
-Error::New(env, "Example exception").ThrowAsJavaScriptException();
+Napi::Env env = ...
+Napi::Error::New(env, "Example exception").ThrowAsJavaScriptException();
 return;
 ```
 
@@ -126,28 +126,27 @@ immediately from the native callback, after performing any necessary cleanup.
 ### Propagating a N-API JS exception
 
 ```cpp
-Env env = ...
-Function jsFunctionThatThrows = someObj.As<Function>();
-Value result = jsFunctionThatThrows({ arg1, arg2 });
+Napi::Env env = ...
+Napi::Function jsFunctionThatThrows = someObj.As<Napi::Function>();
+Napi::Value result = jsFunctionThatThrows({ arg1, arg2 });
 if (env.IsExceptionPending()) {
     Error e = env.GetAndClearPendingException();
     return e.Value();
 }
 ```
 
-If env.IsExceptionPending() is returns true a 
-JavaScript exception is pending. To let the exception propagate, the code should
-generally return immediately from the native callback, after performing any
-necessary cleanup.
+If env.IsExceptionPending() returns true a JavaScript exception is pending. To
+let the exception propagate, the code should generally return immediately from
+the native callback, after performing any necessary cleanup.
 
 ### Handling a N-API JS exception
 
 ```cpp
-Env env = ...
-Function jsFunctionThatThrows = someObj.As<Function>();
-Value result = jsFunctionThatThrows({ arg1, arg2 });
+Napi::Env env = ...
+Napi::Function jsFunctionThatThrows = someObj.As<Napi::Function>();
+Napi::Value result = jsFunctionThatThrows({ arg1, arg2 });
 if (env.IsExceptionPending()) {
-    Error e = env.GetAndClearPendingException();
+    Napi::Error e = env.GetAndClearPendingException();
     cerr << "Caught JavaScript exception: " + e.Message();
 }
 ```
