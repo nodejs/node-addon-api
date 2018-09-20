@@ -47,7 +47,7 @@
   },
   "scripts": {
     "pretest": "node-gyp rebuild -C test",
-    "test": "NAPI_VERSION=$NODE_VERSION node test",
+    "test": "node test",
     "doc": "doxygen doc/Doxyfile"
   },
   "version": "1.4.0"
