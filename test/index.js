@@ -36,12 +36,14 @@ let testModules = [
   'version_management'
 ];
 
-if(process.env.NAPI_VERSION < 2147483647 ){
+if((process.env.npm_config_NAPI_VERSION !== undefined) &&
+   (process.env.npm_config_NAPI_VERSION < 50000)) {
   // currently experimental only test if NAPI_VERSION
-  // is set to experimental
-  // once bigint is in a release this should be guarded
-  // on the napi version supported by the current
-  // node being tested
+  // is set to experimental. We can't use C max int 
+  // as that is not supported as a number on earlier
+  // Node.js versions.  Oonce bigint is in a release
+  // this should be guarded on the napi version
+  // in which bigint was added.
   testModules.splice(testModules.indexOf('bigint'), 1);
 }
 
