@@ -1,3 +1,4 @@
+#define NAPI_EXPERIMENTAL
 #include "napi.h"
 
 using namespace Napi;
@@ -7,7 +8,11 @@ Object InitAsyncWorker(Env env);
 Object InitBasicTypesBoolean(Env env);
 Object InitBasicTypesNumber(Env env);
 Object InitBasicTypesValue(Env env);
+// currently experimental guard with version of NAPI_VERSION that it is 
+// released in once it is no longer experimental
+#if (NAPI_VERSION > 2147483646) 
 Object InitBigInt(Env env);
+#endif
 Object InitBuffer(Env env);
 Object InitDataView(Env env);
 Object InitDataViewReadWrite(Env env);
