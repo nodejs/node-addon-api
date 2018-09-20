@@ -3,6 +3,9 @@
 
 using namespace Napi;
 
+// currently experimental guard with version of NAPI_VERSION that it is 
+// released in once it is no longer experimental
+#if (NAPI_VERSION > 2147483646) 
 namespace {
 
 Value IsLossless(const CallbackInfo& info) {
@@ -74,3 +77,5 @@ Object InitBigInt(Env env) {
 
   return exports;
 }
+
+#endif

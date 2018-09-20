@@ -52,7 +52,9 @@ namespace Napi {
   class Value;
   class Boolean;
   class Number;
-#ifdef NAPI_EXPERIMENTAL
+// currently experimental guard with version of NAPI_VERSION that it is 
+// released in once it is no longer experimental
+#if (NAPI_VERSION > 2147483646) 
   class BigInt;
 #endif  // NAPI_EXPERIMENTAL
   class String;
@@ -75,7 +77,9 @@ namespace Napi {
   typedef TypedArrayOf<uint32_t> Uint32Array; ///< Typed-array of unsigned 32-bit integers
   typedef TypedArrayOf<float> Float32Array;   ///< Typed-array of 32-bit floating-point values
   typedef TypedArrayOf<double> Float64Array;  ///< Typed-array of 64-bit floating-point values
-#ifdef NAPI_EXPERIMENTAL
+// currently experimental guard with version of NAPI_VERSION that it is 
+// released in once it is no longer experimental
+#if (NAPI_VERSION > 2147483646) 
   typedef TypedArrayOf<int64_t> BigInt64Array;   ///< Typed array of signed 64-bit integers
   typedef TypedArrayOf<uint64_t> BigUint64Array; ///< Typed array of unsigned 64-bit integers
 #endif  // NAPI_EXPERIMENTAL
@@ -178,7 +182,9 @@ namespace Napi {
     bool IsNull() const;        ///< Tests if a value is a null JavaScript value.
     bool IsBoolean() const;     ///< Tests if a value is a JavaScript boolean.
     bool IsNumber() const;      ///< Tests if a value is a JavaScript number.
-#ifdef NAPI_EXPERIMENTAL
+// currently experimental guard with version of NAPI_VERSION that it is 
+// released in once it is no longer experimental
+#if (NAPI_VERSION > 2147483646) 
     bool IsBigInt() const;      ///< Tests if a value is a JavaScript bigint.
 #endif  // NAPI_EXPERIMENTAL
     bool IsString() const;      ///< Tests if a value is a JavaScript string.
@@ -250,7 +256,9 @@ namespace Napi {
     double DoubleValue() const;   ///< Converts a Number value to a 64-bit floating-point value.
   };
 
-#ifdef NAPI_EXPERIMENTAL
+// currently experimental guard with version of NAPI_VERSION that it is 
+// released in once it is no longer experimental
+#if (NAPI_VERSION > 2147483646) 
   /// A JavaScript bigint value.
   class BigInt : public Value {
   public:
@@ -754,7 +762,9 @@ namespace Napi {
         : std::is_same<T, uint32_t>::value ? napi_uint32_array
         : std::is_same<T, float>::value ? napi_float32_array
         : std::is_same<T, double>::value ? napi_float64_array
-#ifdef NAPI_EXPERIMENTAL
+// currently experimental guard with version of NAPI_VERSION that it is 
+// released in once it is no longer experimental
+#if (NAPI_VERSION > 2147483646) 
         : std::is_same<T, int64_t>::value ? napi_bigint64_array
         : std::is_same<T, uint64_t>::value ? napi_biguint64_array
 #endif  // NAPI_EXPERIMENTAL
