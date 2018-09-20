@@ -75,11 +75,11 @@ function test(binding) {
       assert.strictEqual(binding.typedarray.getTypedArrayType(t), type);
       assert.strictEqual(binding.typedarray.getTypedArrayLength(t), length);
 
-      t[3] = 11n;
-      assert.strictEqual(binding.typedarray.getTypedArrayElement(t, 3), 11n);
-      binding.typedarray.setTypedArrayElement(t, 3, 22n);
-      assert.strictEqual(binding.typedarray.getTypedArrayElement(t, 3), 22n);
-      assert.strictEqual(t[3], 22n);
+      t[3] = eval(`11n`);
+      assert.strictEqual(binding.typedarray.getTypedArrayElement(t, 3), eval(`11n`));
+      binding.typedarray.setTypedArrayElement(t, 3, eval(`22n`));
+      assert.strictEqual(binding.typedarray.getTypedArrayElement(t, 3), eval(`22n`));
+      assert.strictEqual(t[3], eval(`22n`));
 
       const b = binding.typedarray.getTypedArrayBuffer(t);
       assert.ok(b instanceof ArrayBuffer);
@@ -98,11 +98,11 @@ function test(binding) {
       assert.strictEqual(binding.typedarray.getTypedArrayType(t), type);
       assert.strictEqual(binding.typedarray.getTypedArrayLength(t), length);
 
-      t[3] = 11n;
-      assert.strictEqual(binding.typedarray.getTypedArrayElement(t, 3), 11n);
-      binding.typedarray.setTypedArrayElement(t, 3, 22n);
-      assert.strictEqual(binding.typedarray.getTypedArrayElement(t, 3), 22n);
-      assert.strictEqual(t[3], 22n);
+      t[3] = eval(`11n`);
+      assert.strictEqual(binding.typedarray.getTypedArrayElement(t, 3), eval(`11n`));
+      binding.typedarray.setTypedArrayElement(t, 3, eval(`22n`));
+      assert.strictEqual(binding.typedarray.getTypedArrayElement(t, 3), eval(`22n`));
+      assert.strictEqual(t[3], eval(`22n`));
 
       assert.strictEqual(binding.typedarray.getTypedArrayBuffer(t), b);
     } catch (e) {
