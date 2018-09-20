@@ -57,6 +57,7 @@ to ideas specified in the **ECMA262 Language Specification**.
   - [node-gyp](doc/node-gyp.md)
   - [cmake-js](doc/cmake-js.md)
   - [Conversion tool](doc/conversion-tool.md)
+  - [Checker tool](doc/checker-tool.md)
   - [Generator](doc/generator.md)
 
 <a name="api"></a>
