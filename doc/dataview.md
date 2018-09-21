@@ -11,7 +11,7 @@ class.
 Allocates a new `Napi::DataView` instance with a given `Napi::ArrayBuffer`.
 
 ```cpp
-static Napi::DataView New(napi_env env, Napi::ArrayBuffer arrayBuffer);
+static Napi::DataView Napi::DataView::New(napi_env env, Napi::ArrayBuffer arrayBuffer);
 ```
 
 - `[in] env`: The environment in which to create the `Napi::DataView` instance.
@@ -24,7 +24,7 @@ Returns a new `Napi::DataView` instance.
 Allocates a new `Napi::DataView` instance with a given `Napi::ArrayBuffer`.
 
 ```cpp
-static Napi::DataView New(napi_env env, Napi::ArrayBuffer arrayBuffer, size_t byteOffset);
+static Napi::DataView Napi::DataView::New(napi_env env, Napi::ArrayBuffer arrayBuffer, size_t byteOffset);
 ```
 
 - `[in] env`: The environment in which to create the `Napi::DataView` instance.
@@ -38,7 +38,7 @@ Returns a new `Napi::DataView` instance.
 Allocates a new `Napi::DataView` instance with a given `Napi::ArrayBuffer`.
 
 ```cpp
-static Napi::DataView New(napi_env env, Napi::ArrayBuffer arrayBuffer, size_t byteOffset, size_t byteLength);
+static Napi::DataView Napi::DataView::New(napi_env env, Napi::ArrayBuffer arrayBuffer, size_t byteOffset, size_t byteLength);
 ```
 
 - `[in] env`: The environment in which to create the `Napi::DataView` instance.
@@ -53,7 +53,7 @@ Returns a new `Napi::DataView` instance.
 Initializes an empty instance of the `Napi::DataView` class.
 
 ```cpp
-DataView();
+Napi::DataView();
 ```
 
 ### Constructor
@@ -61,7 +61,7 @@ DataView();
 Initializes a wrapper instance of an existing `Napi::DataView` instance.
 
 ```cpp
-DataView(napi_env env, napi_value value);
+Napi::DataView(napi_env env, napi_value value);
 ```
 
 - `[in] env`: The environment in which to create the `Napi::DataView` instance.
@@ -70,7 +70,7 @@ DataView(napi_env env, napi_value value);
 ### ArrayBuffer
 
 ```cpp
-Napi::ArrayBuffer ArrayBuffer() const;
+Napi::ArrayBuffer Napi::DataView::ArrayBuffer() const;
 ```
 
 Returns the backing array buffer.
@@ -78,7 +78,7 @@ Returns the backing array buffer.
 ### ByteOffset
 
 ```cpp
-size_t ByteOffset() const;
+size_t Napi::DataView::ByteOffset() const;
 ```
 
 Returns the offset into the `Napi::DataView` where the array starts, in bytes.
@@ -86,7 +86,7 @@ Returns the offset into the `Napi::DataView` where the array starts, in bytes.
 ### ByteLength
 
 ```cpp
-size_t ByteLength() const;
+size_t Napi::DataView::ByteLength() const;
 ```
 
 Returns the length of the array, in bytes.
@@ -94,17 +94,17 @@ Returns the length of the array, in bytes.
 ### GetFloat32
 
 ```cpp
-float GetFloat32(size_t byteOffset) const;
+float Napi::DataView::GetFloat32(size_t byteOffset) const;
 ```
 
 - `[in] byteOffset`: The offset, in byte, from the start of the view where to read the data.
 
-Returns a signed 32-bit float (float) at the specified byte offset from the start of the `DataView`.
+Returns a signed 32-bit float (float) at the specified byte offset from the start of the `Napi::DataView`.
 
 ### GetFloat64
 
 ```cpp
-double GetFloat64(size_t byteOffset) const;
+double Napi::DataView::GetFloat64(size_t byteOffset) const;
 ```
 
 - `[in] byteOffset`: The offset, in byte, from the start of the view where to read the data.
@@ -114,7 +114,7 @@ Returns a signed 64-bit float (double) at the specified byte offset from the sta
 ### GetInt8
 
 ```cpp
-int8_t GetInt8(size_t byteOffset) const;
+int8_t Napi::DataView::GetInt8(size_t byteOffset) const;
 ```
 
 - `[in] byteOffset`: The offset, in byte, from the start of the view where to read the data.
@@ -124,7 +124,7 @@ Returns a signed 8-bit integer (byte) at the specified byte offset from the star
 ### GetInt16
 
 ```cpp
-int16_t GetInt16(size_t byteOffset) const;
+int16_t Napi::DataView::GetInt16(size_t byteOffset) const;
 ```
 
 - `[in] byteOffset`: The offset, in byte, from the start of the view where to read the data.
@@ -134,7 +134,7 @@ Returns a signed 16-bit integer (short) at the specified byte offset from the st
 ### GetInt32
 
 ```cpp
-int32_t GetInt32(size_t byteOffset) const;
+int32_t Napi::DataView::GetInt32(size_t byteOffset) const;
 ```
 
 - `[in] byteOffset`: The offset, in byte, from the start of the view where to read the data.
@@ -144,7 +144,7 @@ Returns a signed 32-bit integer (long) at the specified byte offset from the sta
 ### GetUint8
 
 ```cpp
-uint8_t GetUint8(size_t byteOffset) const;
+uint8_t Napi::DataView::GetUint8(size_t byteOffset) const;
 ```
 
 - `[in] byteOffset`: The offset, in byte, from the start of the view where to read the data.
@@ -154,7 +154,7 @@ Returns a unsigned 8-bit integer (unsigned byte) at the specified byte offset fr
 ### GetUint16
 
 ```cpp
-uint16_t GetUint16(size_t byteOffset) const;
+uint16_t Napi::DataView::GetUint16(size_t byteOffset) const;
 ```
 
 - `[in] byteOffset`: The offset, in byte, from the start of the view where to read the data.
@@ -164,7 +164,7 @@ Returns a unsigned 16-bit integer (unsigned short) at the specified byte offset 
 ### GetUint32
 
 ```cpp
-uint32_t GetUint32(size_t byteOffset) const;
+uint32_t Napi::DataView::GetUint32(size_t byteOffset) const;
 ```
 
 - `[in] byteOffset`: The offset, in byte, from the start of the view where to read the data.
@@ -174,7 +174,7 @@ Returns a unsigned 32-bit integer (unsigned long) at the specified byte offset f
 ### SetFloat32
 
 ```cpp
-void SetFloat32(size_t byteOffset, float value) const;
+void Napi::DataView::SetFloat32(size_t byteOffset, float value) const;
 ```
 
 - `[in] byteOffset`: The offset, in byte, from the start of the view where to read the data.
@@ -183,7 +183,7 @@ void SetFloat32(size_t byteOffset, float value) const;
 ### SetFloat64
 
 ```cpp
-void SetFloat64(size_t byteOffset, double value) const;
+void Napi::DataView::SetFloat64(size_t byteOffset, double value) const;
 ```
 
 - `[in] byteOffset`: The offset, in byte, from the start of the view where to read the data.
@@ -192,7 +192,7 @@ void SetFloat64(size_t byteOffset, double value) const;
 ### SetInt8
 
 ```cpp
-void SetInt8(size_t byteOffset, int8_t value) const;
+void Napi::DataView::SetInt8(size_t byteOffset, int8_t value) const;
 ```
 
 - `[in] byteOffset`: The offset, in byte, from the start of the view where to read the data.
@@ -201,7 +201,7 @@ void SetInt8(size_t byteOffset, int8_t value) const;
 ### SetInt16
 
 ```cpp
-void SetInt16(size_t byteOffset, int16_t value) const;
+void Napi::DataView::SetInt16(size_t byteOffset, int16_t value) const;
 ```
 
 - `[in] byteOffset`: The offset, in byte, from the start of the view where to read the data.
@@ -210,7 +210,7 @@ void SetInt16(size_t byteOffset, int16_t value) const;
 ### SetInt32
 
 ```cpp
-void SetInt32(size_t byteOffset, int32_t value) const;
+void Napi::DataView::SetInt32(size_t byteOffset, int32_t value) const;
 ```
 
 - `[in] byteOffset`: The offset, in byte, from the start of the view where to read the data.
@@ -219,7 +219,7 @@ void SetInt32(size_t byteOffset, int32_t value) const;
 ### SetUint8
 
 ```cpp
-void SetUint8(size_t byteOffset, uint8_t value) const;
+void Napi::DataView::SetUint8(size_t byteOffset, uint8_t value) const;
 ```
 
 - `[in] byteOffset`: The offset, in byte, from the start of the view where to read the data.
@@ -228,7 +228,7 @@ void SetUint8(size_t byteOffset, uint8_t value) const;
 ### SetUint16
 
 ```cpp
-void SetUint16(size_t byteOffset, uint16_t value) const;
+void Napi::DataView::SetUint16(size_t byteOffset, uint16_t value) const;
 ```
 
 - `[in] byteOffset`: The offset, in byte, from the start of the view where to read the data.
@@ -237,7 +237,7 @@ void SetUint16(size_t byteOffset, uint16_t value) const;
 ### SetUint32
 
 ```cpp
-void SetUint32(size_t byteOffset, uint32_t value) const;
+void Napi::DataView::SetUint32(size_t byteOffset, uint32_t value) const;
 ```
 
 - `[in] byteOffset`: The offset, in byte, from the start of the view where to read the data.

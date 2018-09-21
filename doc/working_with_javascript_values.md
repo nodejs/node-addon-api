@@ -4,10 +4,11 @@
 JavaScript object:
 
 - [Function](doc/function.md)
-    - [FunctionReference](doc/function_reference.md)
+  - [FunctionReference](doc/function_reference.md)
 - [ObjectWrap](doc/object_wrap.md)
-    - [ClassPropertyDescriptor](doc/class_property_descriptor.md)
+  - [ClassPropertyDescriptor](doc/class_property_descriptor.md)
 - [Buffer](doc/buffer.md)
 - [ArrayBuffer](doc/array_buffer.md)
 - [TypedArray](doc/typed_array.md)
-    - [TypedArrayOf](doc/typed_array_of.md)
+  - [TypedArrayOf](doc/typed_array_of.md)
+- [DataView](doc/dataview.md)
