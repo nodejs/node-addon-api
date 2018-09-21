@@ -7,24 +7,23 @@ A JavaScript BigInt value.
 ### New
 
 ```cpp
-static BigInt New(Napi::Env env, int64_t value);
-static BigInt New(Napi::Env env, uint64_t value);
+static Napi::BigInt Napi::BigInt::New(Napi::Env env, int64_t value);
 ```
 
- - `[in] env`: The environment in which to construct the `BigInt` object.
+ - `[in] env`: The environment in which to construct the `Napi::BigInt` object.
  - `[in] value`: The value the JavaScript `BigInt` will contain
 
 These APIs convert the C `int64_t` and `uint64_t` types to the JavaScript
 `BigInt` type.
 
 ```cpp
-static BigInt New(Napi::Env env,
+static Napi::BigInt Napi::BigInt::New(Napi::Env env,
                   int sign_bit,
                   size_t word_count,
                   const uint64_t* words);
 ```
 
- - `[in] env`: The environment in which to construct the `BigInt` object.
+ - `[in] env`: The environment in which to construct the `Napi::BigInt` object.
  - `[in] sign_bit`: Determines if the resulting `BigInt` will be positive or negative.
  - `[in] word_count`: The length of the words array.
  - `[in] words`: An array of `uint64_t` little-endian 64-bit words.
@@ -43,16 +42,15 @@ Returns a new JavaScript `BigInt`.
 Napi::BigInt();
 ```
 
-Returns a new empty JavaScript `BigInt`.
+Returns a new empty JavaScript `Napi::BigInt`.
 
 ### Int64Value
 
 ```cpp
-int64_t Int64Value(bool* lossless) const;
+int64_t Napi::BitInt::Int64Value(bool* lossless) const;
 ```
 
- - `[out] lossless`: Indicates whether the `BigInt` value was converted
-   losslessly.
+ - `[out] lossless`: Indicates whether the `BigInt` value was converted losslessly.
 
 Returns the C `int64_t` primitive equivalent of the given JavaScript
 `BigInt`. If needed it will truncate the value, setting lossless to false.
@@ -60,7 +58,7 @@ Returns the C `int64_t` primitive equivalent of the given JavaScript
 ### Uint64Value
 
 ```cpp
-uint64_t Uint64Value(bool* lossless) const;
+uint64_t Napi::BigInt::Uint64Value(bool* lossless) const;
 ```
 
  - `[out] lossless`: Indicates whether the `BigInt` value was converted
@@ -72,7 +70,7 @@ Returns the C `uint64_t` primitive equivalent of the given JavaScript
 ### WordCount
 
 ```cpp
-size_t WordCount() const;
+size_t Napi::BigInt::WordCount() const;
 ```
 
 Returns the number of words needed to store this `BigInt` value.
@@ -80,7 +78,7 @@ Returns the number of words needed to store this `BigInt` value.
 ### ToWords
 
 ```cpp
-void ToWords(size_t* word_count, int* sign_bit, uint64_t* words);
+void Napi::BigInt::ToWords(size_t* word_count, int* sign_bit, uint64_t* words);
 ```
 
  - `[out] sign_bit`: Integer representing if the JavaScript `BigInt` is positive
