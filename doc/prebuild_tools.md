@@ -1,7 +1,7 @@
 # Prebuild tools
 
 The distribution of a native add-on is equally important than its implementation.
-In order to install a native add-on tt's important to have all the necessary 
+In order to install a native add-on it's important to have all the necessary 
 dependencies installed and well configured (see the [setup](doc/setum.md) section).
 The end-user will need to compile the add-on when they will do an `npm install` 
 and in some cases this could create problems. To avoid the compilation process it's
