@@ -59,6 +59,7 @@ to ideas specified in the **ECMA262 Language Specification**.
   - [Conversion tool](doc/conversion-tool.md)
   - [Checker tool](doc/checker-tool.md)
   - [Generator](doc/generator.md)
+  - [Prebuild tools](doc/prebuild_tools.md)
 
 <a name="api"></a>
 
@@ -72,6 +73,7 @@ The following is the documentation for node-addon-api.
     - [String](doc/string.md)
     - [Name](doc/basic_types.md#name)
     - [Number](doc/number.md)
+    - [BigInt](doc/bigint.md)
     - [Boolean](doc/boolean.md)
     - [Env](doc/env.md)
     - [Value](doc/value.md)
