@@ -11,4 +11,14 @@ function test(binding) {
 
   const bool2 = binding.basic_types_boolean.createBoolean(false);
   assert.strictEqual(bool2, false);
+
+  const emptyBoolean = binding.basic_types_boolean.createEmptyBoolean();
+  assert.strictEqual(emptyBoolean, true);
+
+  const bool3 = binding.basic_types_boolean.createBoolean(true);
+  assert.strictEqual(bool3, true);
+
+  const bool4 = binding.basic_types_boolean.createBoolean(false);
+  assert.strictEqual(bool4, false);
+
 }
