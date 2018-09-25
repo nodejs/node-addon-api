@@ -80,4 +80,20 @@ function test(binding) {
     assert.strictEqual(0, binding.basic_types_number.toDouble(MIN_DOUBLE * MIN_DOUBLE));
     assert.strictEqual(Infinity, binding.basic_types_number.toDouble(MAX_DOUBLE * MAX_DOUBLE));
   }
+
+  // Test for operator overloading
+  {
+    assert.strictEqual(binding.basic_types_number.operatorInt32(MIN_INT32), true);
+    assert.strictEqual(binding.basic_types_number.operatorInt32(MAX_INT32), true);
+    assert.strictEqual(binding.basic_types_number.operatorUint32(MIN_UINT32), true);
+    assert.strictEqual(binding.basic_types_number.operatorUint32(MAX_UINT32), true);
+    assert.strictEqual(binding.basic_types_number.operatorInt64(MIN_INT64), true);
+    assert.strictEqual(binding.basic_types_number.operatorInt64(MAX_INT64), true);
+    assert.strictEqual(binding.basic_types_number.operatorFloat(MIN_FLOAT), true);
+    assert.strictEqual(binding.basic_types_number.operatorFloat(MAX_FLOAT), true);
+    assert.strictEqual(binding.basic_types_number.operatorFloat(MAX_DOUBLE), true);
+    assert.strictEqual(binding.basic_types_number.operatorDouble(MIN_DOUBLE), true);
+    assert.strictEqual(binding.basic_types_number.operatorDouble(MAX_DOUBLE), true);
+  }
+
 }
