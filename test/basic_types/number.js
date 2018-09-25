@@ -80,4 +80,37 @@ function test(binding) {
     assert.strictEqual(0, binding.basic_types_number.toDouble(MIN_DOUBLE * MIN_DOUBLE));
     assert.strictEqual(Infinity, binding.basic_types_number.toDouble(MAX_DOUBLE * MAX_DOUBLE));
   }
+
+  // Test for operator overloading
+  {
+    assert.strictEqual(binding.basic_types_number.operatorInt32(MIN_INT32), true);
+    assert.strictEqual(binding.basic_types_number.operatorInt32(MAX_INT32), true);
+    assert.strictEqual(binding.basic_types_number.operatorUint32(MIN_UINT32), true);
+    assert.strictEqual(binding.basic_types_number.operatorUint32(MAX_UINT32), true);
+    assert.strictEqual(binding.basic_types_number.operatorInt64(MIN_INT64), true);
+    assert.strictEqual(binding.basic_types_number.operatorInt64(MAX_INT64), true);
+    assert.strictEqual(binding.basic_types_number.operatorFloat(MIN_FLOAT), true);
+    assert.strictEqual(binding.basic_types_number.operatorFloat(MAX_FLOAT), true);
+    assert.strictEqual(binding.basic_types_number.operatorFloat(MAX_DOUBLE), true);
+    assert.strictEqual(binding.basic_types_number.operatorDouble(MIN_DOUBLE), true);
+    assert.strictEqual(binding.basic_types_number.operatorDouble(MAX_DOUBLE), true);
+  }
+
+  // Construction test
+  {
+    assert.strictEqual(binding.basic_types_number.createEmptyNumber(), true);
+    randomRangeTestForInteger(MIN_INT32, MAX_INT32, binding.basic_types_number.createNumberFromExistingValue);
+    assert.strictEqual(MIN_INT32, binding.basic_types_number.createNumberFromExistingValue(MIN_INT32));
+    assert.strictEqual(MAX_INT32, binding.basic_types_number.createNumberFromExistingValue(MAX_INT32));
+    randomRangeTestForInteger(MIN_UINT32, MAX_UINT32, binding.basic_types_number.createNumberFromExistingValue);
+    assert.strictEqual(MIN_UINT32, binding.basic_types_number.createNumberFromExistingValue(MIN_UINT32));
+    assert.strictEqual(MAX_UINT32, binding.basic_types_number.createNumberFromExistingValue(MAX_UINT32));
+    randomRangeTestForInteger(MIN_INT64, MAX_INT64, binding.basic_types_number.createNumberFromExistingValue);
+    assert.strictEqual(MIN_INT64, binding.basic_types_number.createNumberFromExistingValue(MIN_INT64));
+    assert.strictEqual(MAX_INT64, binding.basic_types_number.createNumberFromExistingValue(MAX_INT64));
+    assert.strictEqual(MIN_FLOAT, binding.basic_types_number.createNumberFromExistingValue(MIN_FLOAT));
+    assert.strictEqual(MAX_FLOAT, binding.basic_types_number.createNumberFromExistingValue(MAX_FLOAT));
+    assert.strictEqual(MIN_DOUBLE, binding.basic_types_number.createNumberFromExistingValue(MIN_DOUBLE));
+    assert.strictEqual(MAX_DOUBLE, binding.basic_types_number.createNumberFromExistingValue(MAX_DOUBLE));
+  }
 }
