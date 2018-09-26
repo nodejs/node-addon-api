@@ -30,7 +30,8 @@
         'typedarray.cc',
         'objectwrap.cc',
         'objectreference.cc',
-        'version_management.cc'
+        'version_management.cc',
+        'thunking_manual.cc',
       ],
       'conditions': [
         ['NAPI_VERSION!=""', { 'defines': ['NAPI_VERSION=<@(NAPI_VERSION)'] } ]
@@ -39,6 +40,7 @@
       'dependencies': ["<!(node -p \"require('../').gyp\")"],
       'cflags': [ '-Werror', '-Wall', '-Wextra', '-Wpedantic', '-Wunused-parameter' ],
       'cflags_cc': [ '-Werror', '-Wall', '-Wextra', '-Wpedantic', '-Wunused-parameter' ],
+      'defines': ['NODE_ADDON_API_DISABLE_DEPRECATED']
   },
   'targets': [
     {

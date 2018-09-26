@@ -55,18 +55,19 @@ Array GetPropertyNames(const CallbackInfo& info) {
 void DefineProperties(const CallbackInfo& info) {
   Object obj = info[0].As<Object>();
   String nameType = info[1].As<String>();
+  Env env = info.Env();
 
-  Boolean trueValue = Boolean::New(info.Env(), true);
+  Boolean trueValue = Boolean::New(env, true);
 
   if (nameType.Utf8Value() == "literal") {
     obj.DefineProperties({
-      PropertyDescriptor::Accessor("readonlyAccessor", TestGetter),
-      PropertyDescriptor::Accessor("readwriteAccessor", TestGetter, TestSetter),
+      PropertyDescriptor::Accessor(env, obj, "readonlyAccessor", TestGetter),
+      PropertyDescriptor::Accessor(env, obj, "readwriteAccessor", TestGetter, TestSetter),
       PropertyDescriptor::Value("readonlyValue", trueValue),
       PropertyDescriptor::Value("readwriteValue", trueValue, napi_writable),
       PropertyDescriptor::Value("enumerableValue", trueValue, napi_enumerable),
       PropertyDescriptor::Value("configurableValue", trueValue, napi_configurable),
-      PropertyDescriptor::Function("function", TestFunction),
+      PropertyDescriptor::Function(env, "function", TestFunction),
     });
   } else if (nameType.Utf8Value() == "string") {
     // VS2013 has lifetime issues when passing temporary objects into the constructor of another
@@ -82,30 +83,30 @@ void DefineProperties(const CallbackInfo& info) {
     std::string str7("function");
 
     obj.DefineProperties({
-      PropertyDescriptor::Accessor(str1, TestGetter),
-      PropertyDescriptor::Accessor(str2, TestGetter, TestSetter),
+      PropertyDescriptor::Accessor(env, obj, str1, TestGetter),
+      PropertyDescriptor::Accessor(env, obj, str2, TestGetter, TestSetter),
       PropertyDescriptor::Value(str3, trueValue),
       PropertyDescriptor::Value(str4, trueValue, napi_writable),
       PropertyDescriptor::Value(str5, trueValue, napi_enumerable),
       PropertyDescriptor::Value(str6, trueValue, napi_configurable),
-      PropertyDescriptor::Function(str7, TestFunction),
+      PropertyDescriptor::Function(env, str7, TestFunction),
     });
   } else if (nameType.Utf8Value() == "value") {
     obj.DefineProperties({
-      PropertyDescriptor::Accessor(
-        Napi::String::New(info.Env(), "readonlyAccessor"), TestGetter),
-      PropertyDescriptor::Accessor(
-        Napi::String::New(info.Env(), "readwriteAccessor"), TestGetter, TestSetter),
+      PropertyDescriptor::Accessor(env, obj,
+        Napi::String::New(env, "readonlyAccessor"), TestGetter),
+      PropertyDescriptor::Accessor(env, obj,
+        Napi::String::New(env, "readwriteAccessor"), TestGetter, TestSetter),
       PropertyDescriptor::Value(
-        Napi::String::New(info.Env(), "readonlyValue"), trueValue),
+        Napi::String::New(env, "readonlyValue"), trueValue),
       PropertyDescriptor::Value(
-        Napi::String::New(info.Env(), "readwriteValue"), trueValue, napi_writable),
+        Napi::String::New(env, "readwriteValue"), trueValue, napi_writable),
       PropertyDescriptor::Value(
-        Napi::String::New(info.Env(), "enumerableValue"), trueValue, napi_enumerable),
+        Napi::String::New(env, "enumerableValue"), trueValue, napi_enumerable),
       PropertyDescriptor::Value(
-        Napi::String::New(info.Env(), "configurableValue"), trueValue, napi_configurable),
-      PropertyDescriptor::Function(
-        Napi::String::New(info.Env(), "function"), TestFunction),
+        Napi::String::New(env, "configurableValue"), trueValue, napi_configurable),
+      PropertyDescriptor::Function(env,
+        Napi::String::New(env, "function"), TestFunction),
     });
   }
 }
