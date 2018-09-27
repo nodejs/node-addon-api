@@ -42,28 +42,28 @@ Value MaxDouble(const CallbackInfo& info) {
 }
 
 Value OperatorInt32(const CallbackInfo& info) {
-  Number jsValue = info[0].As<Number>();
-  return Boolean::New(info.Env(), jsValue.Int32Value() == static_cast<int32_t>(jsValue));
+  Number number = info[0].As<Number>();
+  return Boolean::New(info.Env(), number.Int32Value() == static_cast<int32_t>(number));
 }
 
 Value OperatorUint32(const CallbackInfo& info) {
-  Number jsValue = info[0].As<Number>();
-  return Boolean::New(info.Env(), jsValue.Uint32Value() == static_cast<uint32_t>(jsValue));
+  Number number = info[0].As<Number>();
+  return Boolean::New(info.Env(), number.Uint32Value() == static_cast<uint32_t>(number));
 }
 
 Value OperatorInt64(const CallbackInfo& info) {
-  Number jsValue = info[0].As<Number>();
-  return Boolean::New(info.Env(), jsValue.Int64Value() == static_cast<int64_t>(jsValue));
+  Number number = info[0].As<Number>();
+  return Boolean::New(info.Env(), number.Int64Value() == static_cast<int64_t>(number));
 }
 
 Value OperatorFloat(const CallbackInfo& info) {
-  Number jsValue = info[0].As<Number>();
-  return Boolean::New(info.Env(), jsValue.FloatValue() == static_cast<float>(jsValue));
+  Number number = info[0].As<Number>();
+  return Boolean::New(info.Env(), number.FloatValue() == static_cast<float>(number));
 }
 
 Value OperatorDouble(const CallbackInfo& info) {
-  Number jsValue = info[0].As<Number>();
-  return Boolean::New(info.Env(), jsValue.DoubleValue() == static_cast<double>(jsValue));
+  Number number = info[0].As<Number>();
+  return Boolean::New(info.Env(), number.DoubleValue() == static_cast<double>(number));
 }
 
 Value CreateEmptyNumber(const CallbackInfo& info) {
