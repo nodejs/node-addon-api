@@ -66,6 +66,15 @@ Value OperatorDouble(const CallbackInfo& info) {
   return Boolean::New(info.Env(), jsValue.DoubleValue() == static_cast<double>(jsValue));
 }
 
+Value CreateEmptyNumber(const CallbackInfo& info) {
+  Number* number = new Number();
+  return Boolean::New(info.Env(), number->IsEmpty());
+}
+
+Value CreateNumberFromExistingValue(const CallbackInfo& info) {
+  return info[0].As<Number>();
+}
+
 Object InitBasicTypesNumber(Env env) {
   Object exports = Object::New(env);
 
@@ -83,6 +92,8 @@ Object InitBasicTypesNumber(Env env) {
   exports["operatorInt64"] = Function::New(env, OperatorInt64);
   exports["operatorFloat"] = Function::New(env, OperatorFloat);
   exports["operatorDouble"] = Function::New(env, OperatorDouble);
+  exports["createEmptyNumber"] = Function::New(env, CreateEmptyNumber);
+  exports["createNumberFromExistingValue"] = Function::New(env, CreateNumberFromExistingValue);
 
   return exports;
 }

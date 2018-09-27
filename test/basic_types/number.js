@@ -96,4 +96,21 @@ function test(binding) {
     assert.strictEqual(binding.basic_types_number.operatorDouble(MAX_DOUBLE), true);
   }
 
+  // Construction test
+  {
+    assert.strictEqual(binding.basic_types_number.createEmptyNumber(), true);
+    randomRangeTestForInteger(MIN_INT32, MAX_INT32, binding.basic_types_number.createNumberFromExistingValue);
+    assert.strictEqual(MIN_INT32, binding.basic_types_number.createNumberFromExistingValue(MIN_INT32));
+    assert.strictEqual(MAX_INT32, binding.basic_types_number.createNumberFromExistingValue(MAX_INT32));
+    randomRangeTestForInteger(MIN_UINT32, MAX_UINT32, binding.basic_types_number.createNumberFromExistingValue);
+    assert.strictEqual(MIN_UINT32, binding.basic_types_number.createNumberFromExistingValue(MIN_UINT32));
+    assert.strictEqual(MAX_UINT32, binding.basic_types_number.createNumberFromExistingValue(MAX_UINT32));
+    randomRangeTestForInteger(MIN_INT64, MAX_INT64, binding.basic_types_number.createNumberFromExistingValue);
+    assert.strictEqual(MIN_INT64, binding.basic_types_number.createNumberFromExistingValue(MIN_INT64));
+    assert.strictEqual(MAX_INT64, binding.basic_types_number.createNumberFromExistingValue(MAX_INT64));
+    assert.strictEqual(MIN_FLOAT, binding.basic_types_number.createNumberFromExistingValue(MIN_FLOAT));
+    assert.strictEqual(MAX_FLOAT, binding.basic_types_number.createNumberFromExistingValue(MAX_FLOAT));
+    assert.strictEqual(MIN_DOUBLE, binding.basic_types_number.createNumberFromExistingValue(MIN_DOUBLE));
+    assert.strictEqual(MAX_DOUBLE, binding.basic_types_number.createNumberFromExistingValue(MAX_DOUBLE));
+  }
 }
