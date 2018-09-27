@@ -2,7 +2,8 @@
   'targets': [
     {
       'target_name': 'nothing',
-      'type': 'static_library'
+      'type': 'static_library',
+      'sources': [ 'nothing.c' ]
     },
     {
       'target_name': 'node-api',
