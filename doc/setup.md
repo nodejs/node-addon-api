@@ -68,4 +68,4 @@ At build time, the N-API back-compat library code will be used only when the
 targeted node version *does not* have N-API built-in.
 
 The preprocessor directive `NODE_ADDON_API_DISABLE_DEPRECATED` can be defined at
-compile time to skip the definition of deprecated APIs.
+compile time before including `napi.h` to skip the definition of deprecated APIs.
