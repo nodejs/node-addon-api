@@ -2704,6 +2704,7 @@ inline PropertyDescriptor PropertyDescriptor::Accessor(Napi::Env env,
 
 template <typename Callable>
 inline PropertyDescriptor PropertyDescriptor::Function(Napi::Env env,
+                                                       Napi::Object /*object*/,
                                                        const char* utf8name,
                                                        Callable cb,
                                                        napi_property_attributes attributes,
@@ -2722,15 +2723,17 @@ inline PropertyDescriptor PropertyDescriptor::Function(Napi::Env env,
 
 template <typename Callable>
 inline PropertyDescriptor PropertyDescriptor::Function(Napi::Env env,
+                                                       Napi::Object object,
                                                        const std::string& utf8name,
                                                        Callable cb,
                                                        napi_property_attributes attributes,
                                                        void* data) {
-  return Function(env, utf8name.c_str(), cb, attributes, data);
+  return Function(env, object, utf8name.c_str(), cb, attributes, data);
 }
 
 template <typename Callable>
 inline PropertyDescriptor PropertyDescriptor::Function(Napi::Env env,
+                                                       Napi::Object /*object*/,
                                                        Name name,
                                                        Callable cb,
                                                        napi_property_attributes attributes,

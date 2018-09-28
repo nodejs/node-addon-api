@@ -1412,18 +1412,21 @@ namespace Napi {
                                        void* data = nullptr);
     template <typename Callable>
     static PropertyDescriptor Function(Napi::Env env,
+                                       Napi::Object object,
                                        const char* utf8name,
                                        Callable cb,
                                        napi_property_attributes attributes = napi_default,
                                        void* data = nullptr);
     template <typename Callable>
     static PropertyDescriptor Function(Napi::Env env,
+                                       Napi::Object object,
                                        const std::string& utf8name,
                                        Callable cb,
                                        napi_property_attributes attributes = napi_default,
                                        void* data = nullptr);
     template <typename Callable>
     static PropertyDescriptor Function(Napi::Env env,
+                                       Napi::Object object,
                                        Name name,
                                        Callable cb,
                                        napi_property_attributes attributes = napi_default,

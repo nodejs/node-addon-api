@@ -75,7 +75,7 @@ void DefineProperties(const CallbackInfo& info) {
 #ifndef NODE_ADDON_API_DISABLE_DEPRECATED
       PropertyDescriptor::Function("function", TestFunction),
 #else // NODE_ADDON_API_DISABLE_DEPRECATED
-      PropertyDescriptor::Function(env, "function", TestFunction),
+      PropertyDescriptor::Function(env, obj, "function", TestFunction),
 #endif // !NODE_ADDON_API_DISABLE_DEPRECATED
     });
   } else if (nameType.Utf8Value() == "string") {
@@ -106,7 +106,7 @@ void DefineProperties(const CallbackInfo& info) {
 #ifndef NODE_ADDON_API_DISABLE_DEPRECATED
       PropertyDescriptor::Function(str7, TestFunction),
 #else // NODE_ADDON_API_DISABLE_DEPRECATED
-      PropertyDescriptor::Function(env, str7, TestFunction),
+      PropertyDescriptor::Function(env, obj, str7, TestFunction),
 #endif // !NODE_ADDON_API_DISABLE_DEPRECATED
     });
   } else if (nameType.Utf8Value() == "value") {
@@ -134,7 +134,7 @@ void DefineProperties(const CallbackInfo& info) {
       PropertyDescriptor::Function(
         Napi::String::New(env, "function"), TestFunction),
 #else // NODE_ADDON_API_DISABLE_DEPRECATED
-      PropertyDescriptor::Function(env,
+      PropertyDescriptor::Function(env, obj,
         Napi::String::New(env, "function"), TestFunction),
 #endif // !NODE_ADDON_API_DISABLE_DEPRECATED
     });
