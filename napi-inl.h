@@ -60,6 +60,10 @@ namespace details {
     }                                                    \
   } while (0)
 
+// Attach a data item to an object and delete it when the object gets
+// garbage-collected.
+// TODO: Replace this code with `napi_add_finalizer()` whenever it becomes
+// available on all supported versions of Node.js.
 template <typename FreeType>
 static inline napi_status AttachData(napi_env env,
                                      napi_value obj,
