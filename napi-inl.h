@@ -2827,21 +2827,22 @@ inline Function
 ObjectWrap<T>::DefineClass(Napi::Env env,
                            const char* utf8name,
                            const size_t props_count,
-                           const napi_property_descriptor* props,
+                           const napi_property_descriptor* descriptors,
                            void* data) {
   napi_status status;
+  std::vector<napi_property_descriptor> props(props_count);
 
-  // Before defining the class we can replace static method property descriptors
-  // with value property descriptors such that the value is a function-valued
-  // `napi_value` created with `CreateFunction()`. Note that we have to break
-  // constness to do this.
+  // We copy the descriptors to a local array because before defining the class
+  // we must replace static method property descriptors with value property
+  // descriptors such that the value is a function-valued `napi_value` created
+  // with `CreateFunction()`.
   //
   // This replacement could be made for instance methods as well, but V8 aborts
   // if we do that, because it expects methods defined on the prototype template
   // to have `FunctionTemplate`s.
   for (size_t index = 0; index < props_count; index++) {
-    napi_property_descriptor* prop =
-        const_cast<napi_property_descriptor*>(&props[index]);
+    props[index] = descriptors[index];
+    napi_property_descriptor* prop = &props[index];
     if (prop->method == T::StaticMethodCallbackWrapper) {
       status = CreateFunction(env,
                utf8name,
@@ -2870,46 +2871,13 @@ ObjectWrap<T>::DefineClass(Napi::Env env,
                              T::ConstructorCallbackWrapper,
                              data,
                              props_count,
-                             props,
+                             props.data(),
                              &value);
   NAPI_THROW_IF_FAILED(env, status, Function());
 
   // After defining the class we iterate once more over the property descriptors
   // and attach the data associated with accessors and instance methods to the
   // newly created JavaScript class.
-  //
-  // TODO: On some engines it might be possible to detach instance methods from
-  // the prototype. This would mean that the detached prototype method would
-  // become a plain function and so its data should be associated with itself
-  // rather than with the class. If this is the case then in this loop, and for
-  // prototype methods, we should retrieve the `napi_value` representing the
-  // resulting function and attach the data to *it* rather than the class.
-  //
-  // IOW if in JavaScript one does this,
-  //
-  // let MyClass = binding.defineMyClass();
-  // const someMethod = MyClass.prototype.someMethod;
-  // MyClass = null;
-  // global.gc();
-  // someMethod();
-  //
-  // then the class, onto which we attached the data, would be gone, and the
-  // data that will be passed to the native implementation of `someMethod()`
-  // would be stale and would cause a segfault if accessed, and so in the
-  // following loop, we may have to
-  //
-  // napi_get_named_property(env, value, "prototype", &proto);
-  // once at the top, and then, for each property, if it is an instance method,
-  // napi_get_named_property(env, value, prop->utf8name, &proto_method);
-  // or
-  // napi_get_property(env, prop->name, &proto_method);
-  // and then
-  // Napi::details::AttachData(env,
-  //                           proto_method,
-  //                           static_cast<...*>(prop->data));
-  //
-  // instead of attaching the data to the class. The downside is that all this
-  // retrieving of prototype properties would be very expensive.
   for (size_t idx = 0; idx < props_count; idx++) {
     const napi_property_descriptor* prop = &props[idx];
 
