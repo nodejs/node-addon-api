@@ -1,6 +1,7 @@
 {
   'variables': {
-    'NAPI_VERSION%': ""
+    'NAPI_VERSION%': "",
+    'disable_deprecated': "<!(node -p \"process.env['npm_config_disable_deprecated']\")"
   },
   'target_defaults': {
     'sources': [
@@ -34,13 +35,13 @@
         'thunking_manual.cc',
       ],
       'conditions': [
-        ['NAPI_VERSION!=""', { 'defines': ['NAPI_VERSION=<@(NAPI_VERSION)'] } ]
+        ['NAPI_VERSION!=""', { 'defines': ['NAPI_VERSION=<@(NAPI_VERSION)'] } ],
+        ['disable_deprecated=="true"', { 'defines': ['NODE_ADDON_API_DISABLE_DEPRECATED'] }]
       ],
       'include_dirs': ["<!@(node -p \"require('../').include\")"],
       'dependencies': ["<!(node -p \"require('../').gyp\")"],
       'cflags': [ '-Werror', '-Wall', '-Wextra', '-Wpedantic', '-Wunused-parameter' ],
-      'cflags_cc': [ '-Werror', '-Wall', '-Wextra', '-Wpedantic', '-Wunused-parameter' ],
-      'defines': ['NODE_ADDON_API_DISABLE_DEPRECATED']
+      'cflags_cc': [ '-Werror', '-Wall', '-Wextra', '-Wpedantic', '-Wunused-parameter' ]
   },
   'targets': [
     {

@@ -61,13 +61,22 @@ void DefineProperties(const CallbackInfo& info) {
 
   if (nameType.Utf8Value() == "literal") {
     obj.DefineProperties({
+#ifndef NODE_ADDON_API_DISABLE_DEPRECATED
+      PropertyDescriptor::Accessor("readonlyAccessor", TestGetter),
+      PropertyDescriptor::Accessor("readwriteAccessor", TestGetter, TestSetter),
+#else // NODE_ADDON_API_DISABLE_DEPRECATED
       PropertyDescriptor::Accessor(env, obj, "readonlyAccessor", TestGetter),
       PropertyDescriptor::Accessor(env, obj, "readwriteAccessor", TestGetter, TestSetter),
+#endif // !NODE_ADDON_API_DISABLE_DEPRECATED
       PropertyDescriptor::Value("readonlyValue", trueValue),
       PropertyDescriptor::Value("readwriteValue", trueValue, napi_writable),
       PropertyDescriptor::Value("enumerableValue", trueValue, napi_enumerable),
       PropertyDescriptor::Value("configurableValue", trueValue, napi_configurable),
+#ifndef NODE_ADDON_API_DISABLE_DEPRECATED
+      PropertyDescriptor::Function("function", TestFunction),
+#else // NODE_ADDON_API_DISABLE_DEPRECATED
       PropertyDescriptor::Function(env, "function", TestFunction),
+#endif // !NODE_ADDON_API_DISABLE_DEPRECATED
     });
   } else if (nameType.Utf8Value() == "string") {
     // VS2013 has lifetime issues when passing temporary objects into the constructor of another
@@ -83,20 +92,36 @@ void DefineProperties(const CallbackInfo& info) {
     std::string str7("function");
 
     obj.DefineProperties({
+#ifndef NODE_ADDON_API_DISABLE_DEPRECATED
+      PropertyDescriptor::Accessor(str1, TestGetter),
+      PropertyDescriptor::Accessor(str2, TestGetter, TestSetter),
+#else // NODE_ADDON_API_DISABLE_DEPRECATED
       PropertyDescriptor::Accessor(env, obj, str1, TestGetter),
       PropertyDescriptor::Accessor(env, obj, str2, TestGetter, TestSetter),
+#endif // !NODE_ADDON_API_DISABLE_DEPRECATED
       PropertyDescriptor::Value(str3, trueValue),
       PropertyDescriptor::Value(str4, trueValue, napi_writable),
       PropertyDescriptor::Value(str5, trueValue, napi_enumerable),
       PropertyDescriptor::Value(str6, trueValue, napi_configurable),
+#ifndef NODE_ADDON_API_DISABLE_DEPRECATED
+      PropertyDescriptor::Function(str7, TestFunction),
+#else // NODE_ADDON_API_DISABLE_DEPRECATED
       PropertyDescriptor::Function(env, str7, TestFunction),
+#endif // !NODE_ADDON_API_DISABLE_DEPRECATED
     });
   } else if (nameType.Utf8Value() == "value") {
     obj.DefineProperties({
+#ifndef NODE_ADDON_API_DISABLE_DEPRECATED
+      PropertyDescriptor::Accessor(
+        Napi::String::New(env, "readonlyAccessor"), TestGetter),
+      PropertyDescriptor::Accessor(
+        Napi::String::New(env, "readwriteAccessor"), TestGetter, TestSetter),
+#else // NODE_ADDON_API_DISABLE_DEPRECATED
       PropertyDescriptor::Accessor(env, obj,
         Napi::String::New(env, "readonlyAccessor"), TestGetter),
       PropertyDescriptor::Accessor(env, obj,
         Napi::String::New(env, "readwriteAccessor"), TestGetter, TestSetter),
+#endif // !NODE_ADDON_API_DISABLE_DEPRECATED
       PropertyDescriptor::Value(
         Napi::String::New(env, "readonlyValue"), trueValue),
       PropertyDescriptor::Value(
@@ -105,8 +130,13 @@ void DefineProperties(const CallbackInfo& info) {
         Napi::String::New(env, "enumerableValue"), trueValue, napi_enumerable),
       PropertyDescriptor::Value(
         Napi::String::New(env, "configurableValue"), trueValue, napi_configurable),
+#ifndef NODE_ADDON_API_DISABLE_DEPRECATED
+      PropertyDescriptor::Function(
+        Napi::String::New(env, "function"), TestFunction),
+#else // NODE_ADDON_API_DISABLE_DEPRECATED
       PropertyDescriptor::Function(env,
         Napi::String::New(env, "function"), TestFunction),
+#endif // !NODE_ADDON_API_DISABLE_DEPRECATED
     });
   }
 }

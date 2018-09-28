@@ -132,6 +132,12 @@ npm install
 npm test
 ```
 
+To avoid testing the deprecated portions of the API run
+```
+npm install
+npm test --disable-deprecated
+```
+
 Take a look and get inspired by our **[test suite](https://github.com/nodejs/node-addon-api/tree/master/test)**
 
 <a name="resources"></a>
