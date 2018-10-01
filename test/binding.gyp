@@ -36,7 +36,11 @@
       ],
       'conditions': [
         ['NAPI_VERSION!=""', { 'defines': ['NAPI_VERSION=<@(NAPI_VERSION)'] } ],
-        ['disable_deprecated=="true"', { 'defines': ['NODE_ADDON_API_DISABLE_DEPRECATED'] }]
+        ['disable_deprecated=="true"', {
+          'defines': ['NODE_ADDON_API_DISABLE_DEPRECATED']
+        }, {
+          'sources': ['object/object_deprecated.cc']
+        }]
       ],
       'include_dirs': ["<!@(node -p \"require('../').include\")"],
       'dependencies': ["<!(node -p \"require('../').gyp\")"],
