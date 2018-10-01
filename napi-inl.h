@@ -1651,20 +1651,27 @@ inline Value Function::Call(napi_value recv, size_t argc, const napi_value* args
 }
 
 inline Value Function::MakeCallback(
-    napi_value recv, const std::initializer_list<napi_value>& args) const {
-  return MakeCallback(recv, args.size(), args.begin());
+    napi_value recv,
+    const std::initializer_list<napi_value>& args,
+    napi_async_context context) const {
+  return MakeCallback(recv, args.size(), args.begin(), context);
 }
 
 inline Value Function::MakeCallback(
-    napi_value recv, const std::vector<napi_value>& args) const {
-  return MakeCallback(recv, args.size(), args.data());
+    napi_value recv,
+    const std::vector<napi_value>& args,
+    napi_async_context context) const {
+  return MakeCallback(recv, args.size(), args.data(), context);
 }
 
 inline Value Function::MakeCallback(
-    napi_value recv, size_t argc, const napi_value* args) const {
+    napi_value recv,
+    size_t argc,
+    const napi_value* args,
+    napi_async_context context) const {
   napi_value result;
   napi_status status = napi_make_callback(
-    _env, nullptr, recv, _value, argc, args, &result);
+    _env, context, recv, _value, argc, args, &result);
   NAPI_THROW_IF_FAILED(_env, status, Value());
   return Value(_env, result);
 }
@@ -2416,9 +2423,11 @@ inline Napi::Value FunctionReference::Call(
 }
 
 inline Napi::Value FunctionReference::MakeCallback(
-    napi_value recv, const std::initializer_list<napi_value>& args) const {
+    napi_value recv,
+    const std::initializer_list<napi_value>& args,
+    napi_async_context context) const {
   EscapableHandleScope scope(_env);
-  Napi::Value result = Value().MakeCallback(recv, args);
+  Napi::Value result = Value().MakeCallback(recv, args, context);
   if (scope.Env().IsExceptionPending()) {
     return Value();
   }
@@ -2426,9 +2435,11 @@ inline Napi::Value FunctionReference::MakeCallback(
 }
 
 inline Napi::Value FunctionReference::MakeCallback(
-    napi_value recv, const std::vector<napi_value>& args) const {
+    napi_value recv,
+    const std::vector<napi_value>& args,
+    napi_async_context context) const {
   EscapableHandleScope scope(_env);
-  Napi::Value result = Value().MakeCallback(recv, args);
+  Napi::Value result = Value().MakeCallback(recv, args, context);
   if (scope.Env().IsExceptionPending()) {
     return Value();
   }
@@ -2436,9 +2447,12 @@ inline Napi::Value FunctionReference::MakeCallback(
 }
 
 inline Napi::Value FunctionReference::MakeCallback(
-    napi_value recv, size_t argc, const napi_value* args) const {
+    napi_value recv,
+    size_t argc,
+    const napi_value* args,
+    napi_async_context context) const {
   EscapableHandleScope scope(_env);
-  Napi::Value result = Value().MakeCallback(recv, argc, args);
+  Napi::Value result = Value().MakeCallback(recv, argc, args, context);
   if (scope.Env().IsExceptionPending()) {
     return Value();
   }
@@ -3272,6 +3286,54 @@ inline Value EscapableHandleScope::Escape(napi_value escapee) {
   napi_status status = napi_escape_handle(_env, _scope, escapee, &result);
   NAPI_THROW_IF_FAILED(_env, status, Value());
   return Value(_env, result);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// AsyncContext class
+////////////////////////////////////////////////////////////////////////////////
+
+inline AsyncContext::AsyncContext(napi_env env, const char* resource_name)
+  : AsyncContext(env, resource_name, Object::New(env)) {
+}
+
+inline AsyncContext::AsyncContext(napi_env env,
+		                  const char* resource_name,
+                                  const Object& resource)
+  : _env(env),
+    _context(nullptr) {
+  napi_value resource_id;
+  napi_status status = napi_create_string_utf8(
+      _env, resource_name, NAPI_AUTO_LENGTH, &resource_id);
+  NAPI_THROW_IF_FAILED_VOID(_env, status);
+
+  status = napi_async_init(_env, resource, resource_id, &_context);
+  NAPI_THROW_IF_FAILED_VOID(_env, status);
+}
+
+inline AsyncContext::~AsyncContext() {
+  if (_context != nullptr) {
+    napi_async_destroy(_env, _context);
+    _context = nullptr;
+  }
+}
+
+inline AsyncContext::AsyncContext(AsyncContext&& other) {
+  _env = other._env;
+  other._env = nullptr;
+  _context = other._context;
+  other._context = nullptr;
+}
+
+inline AsyncContext& AsyncContext::operator =(AsyncContext&& other) {
+  _env = other._env;
+  other._env = nullptr;
+  _context = other._context;
+  other._context = nullptr;
+  return *this;
+}
+
+inline AsyncContext::operator napi_async_context() const {
+  return _context;
 }
 
 ////////////////////////////////////////////////////////////////////////////////

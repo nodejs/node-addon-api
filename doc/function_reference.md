@@ -171,12 +171,16 @@ Calls a referenced JavaScript function from a native add-on after an asynchronou
 operation.
 
 ```cpp
-Napi::Value Napi::FunctionReference::MakeCallback(napi_value recv, const std::initializer_list<napi_value>& args) const;
+Napi::Value Napi::FunctionReference::MakeCallback(napi_value recv, const std::initializer_list<napi_value>& args, napi_async_context = nullptr) const;
 ```
 
 - `[in] recv`: The `this` object passed to the referenced function when it's called.
 - `[in] args`: Initializer list of JavaScript values as `napi_value` representing
 the arguments of the referenced function.
+- `[in] context`: Context for the async operation that is invoking the callback.
+This should normally be a value previously obtained from [Napi::AsyncContext](async_context.md).
+However `nullptr` is also allowed, which indicates the current async context
+(if any) is to be used for the callback.
 
 Returns a `Napi::Value` representing the JavaScript object returned by the referenced
 function.
@@ -187,12 +191,16 @@ Calls a referenced JavaScript function from a native add-on after an asynchronou
 operation.
 
 ```cpp
-Napi::Value Napi::FunctionReference::MakeCallback(napi_value recv, const std::vector<napi_value>& args) const;
+Napi::Value Napi::FunctionReference::MakeCallback(napi_value recv, const std::vector<napi_value>& args, napi_async_context context = nullptr) const;
 ```
 
 - `[in] recv`: The `this` object passed to the referenced function when it's called.
 - `[in] args`: Vector of JavaScript values as `napi_value` representing the
 arguments of the referenced function.
+- `[in] context`: Context for the async operation that is invoking the callback.
+This should normally be a value previously obtained from [Napi::AsyncContext](async_context.md).
+However `nullptr` is also allowed, which indicates the current async context
+(if any) is to be used for the callback.
 
 Returns a `Napi::Value` representing the JavaScript object returned by the referenced
 function.
@@ -203,13 +211,17 @@ Calls a referenced JavaScript function from a native add-on after an asynchronou
 operation.
 
 ```cpp
-Napi::Value Napi::FunctionReference::MakeCallback(napi_value recv, size_t argc, const napi_value* args) const;
+Napi::Value Napi::FunctionReference::MakeCallback(napi_value recv, size_t argc, const napi_value* args, napi_async_context context = nullptr) const;
 ```
 
 - `[in] recv`: The `this` object passed to the referenced function when it's called.
 - `[in] argc`: The number of arguments passed to the referenced function.
 - `[in] args`: Array of JavaScript values as `napi_value` representing the
 arguments of the referenced function.
+- `[in] context`: Context for the async operation that is invoking the callback.
+This should normally be a value previously obtained from [Napi::AsyncContext](async_context.md).
+However `nullptr` is also allowed, which indicates the current async context
+(if any) is to be used for the callback.
 
 Returns a `Napi::Value` representing the JavaScript object returned by the referenced
 function.
