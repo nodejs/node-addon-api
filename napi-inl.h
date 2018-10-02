@@ -3444,11 +3444,11 @@ inline FunctionReference& AsyncWorker::Callback() {
 }
 
 inline void AsyncWorker::OnOK() {
-  _callback.MakeCallback(_receiver.Value(), std::initializer_list<napi_value>{});
+  _callback.Call(_receiver.Value(), std::initializer_list<napi_value>{});
 }
 
 inline void AsyncWorker::OnError(const Error& e) {
-  _callback.MakeCallback(_receiver.Value(), std::initializer_list<napi_value>{ e.Value() });
+  _callback.Call(_receiver.Value(), std::initializer_list<napi_value>{ e.Value() });
 }
 
 inline void AsyncWorker::SetError(const std::string& error) {
