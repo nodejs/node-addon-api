@@ -27,3 +27,5 @@ other asynchronous mechanism, the following API is necessary to ensure an
 asynchronous operation is properly tracked by the runtime:
 
 - **[AsyncContext](async_context.md)**
+
+- **[CallbackScope](callback_scope.md)**
