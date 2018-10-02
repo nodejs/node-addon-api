@@ -15,6 +15,7 @@ Object InitBasicTypesValue(Env env);
 Object InitBigInt(Env env);
 #endif
 Object InitBuffer(Env env);
+Object InitCallbackScope(Env env);
 Object InitDataView(Env env);
 Object InitDataViewReadWrite(Env env);
 Object InitError(Env env);
@@ -47,6 +48,7 @@ Object Init(Env env, Object exports) {
   exports.Set("bigint", InitBigInt(env));
 #endif
   exports.Set("buffer", InitBuffer(env));
+  exports.Set("callbackscope", InitCallbackScope(env));
   exports.Set("dataview", InitDataView(env));
   exports.Set("dataview_read_write", InitDataView(env));
   exports.Set("dataview_read_write", InitDataViewReadWrite(env));

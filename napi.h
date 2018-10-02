@@ -1671,6 +1671,22 @@ namespace Napi {
     napi_escapable_handle_scope _scope;
   };
 
+  class CallbackScope {
+  public:
+    CallbackScope(napi_env env, napi_callback_scope scope);
+    CallbackScope(napi_env env, napi_async_context context);
+    virtual ~CallbackScope();
+
+    operator napi_callback_scope() const;
+
+    Napi::Env Env() const;
+
+  private:
+    napi_env _env;
+    napi_async_context _async_context;
+    napi_callback_scope _scope;
+  };
+
   class AsyncContext {
   public:
     explicit AsyncContext(napi_env env, const char* resource_name);

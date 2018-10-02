@@ -14,6 +14,7 @@
         'bigint.cc',
         'binding.cc',
         'buffer.cc',
+        'callbackscope.cc',
         'dataview/dataview.cc',
         'dataview/dataview_read_write.cc',
         'error.cc',
