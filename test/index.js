@@ -11,6 +11,7 @@ let testModules = [
   'arraybuffer',
   'asynccontext',
   'asyncworker',
+  'basic_types/array',
   'basic_types/boolean',
   'basic_types/number',
   'basic_types/value',

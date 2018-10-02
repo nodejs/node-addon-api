@@ -7,6 +7,7 @@
         'arraybuffer.cc',
         'asynccontext.cc',
         'asyncworker.cc',
+        'basic_types/array.cc',
         'basic_types/boolean.cc',
         'basic_types/number.cc',
         'basic_types/value.cc',
