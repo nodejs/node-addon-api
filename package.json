@@ -6,14 +6,18 @@
     "Andrew Petersen (https://github.com/kirbysayshi)",
     "Anisha Rohra (https://github.com/anisha-rohra)",
     "Anna Henningsen (https://github.com/addaleax)",
+    "Arnaud Botella (https://github.com/BotellaA)",
     "Arunesh Chandra (https://github.com/aruneshchandra)",
     "Ben Berman (https://github.com/rivertam)",
     "Benjamin Byholm (https://github.com/kkoopa)",
     "Cory Mickelson (https://github.com/corymickelson)",
     "David Halls (https://github.com/davedoesdev)",
+    "Dongjin Na (https://github.com/nadongguri)",
     "Eric Bickle (https://github.com/ebickle)",
     "Gabriel Schulhof (https://github.com/gabrielschulhof)",
+    "Gus Caplan (https://github.com/devsnek)",
     "Hitesh Kanwathirtha (https://github.com/digitalinfinity)",
+    "Jake Yoon (https://github.com/yjaeseok)",
     "Jason Ginchereau (https://github.com/jasongin)",
     "Jim Schlight (https://github.com/jschlight)",
     "Jinho Bang (https://github.com/romandev)",
@@ -23,8 +27,10 @@
     "Matteo Collina (https://github.com/mcollina)",
     "Michael Dawson (https://github.com/mhdawson)",
     "Michele Campus (https://github.com/kYroL01)",
+    "Mikhail Cheshkov (https://github.com/mcheshkov)",
     "Nicola Del Gobbo (https://github.com/NickNaso)",
     "Nick Soggin (https://github.com/iSkore)",
+    "Philipp Renoth (https://github.com/DaAitch)",
     "Rolf Timmermans (https://github.com/rolftimmermans)",
     "Sampson Gao (https://github.com/sampsongao)",
     "Taylor Woll (https://github.com/boingoing)"
@@ -50,5 +56,5 @@
     "test": "node test",
     "doc": "doxygen doc/Doxyfile"
   },
-  "version": "1.4.0"
+  "version": "1.5.0"
 }
