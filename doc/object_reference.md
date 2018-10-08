@@ -2,7 +2,7 @@
 
 `Napi::ObjectReference` is a subclass of [`Napi::Reference`](reference.md), and is equivalent to an instance of `Napi::Reference<Object>`. This means that a `Napi::ObjectReference` holds a [`Napi::Object`](object.md), and a count of the number of references to that Object. When the count is greater than 0, an ObjectReference is not eligible for garbage collection. This ensures that the Object being held as a value of the ObjectReference will remain accessible, even if the original Object no longer is. However, ObjectReference is unique from a Reference since properties can be set and get to the Object itself that can be accessed through the ObjectReference.
 
-For more general information on references, please consult [`Napi::Reference`](referenc.md).
+For more general information on references, please consult [`Napi::Reference`](reference.md).
 
 ## Example
 ```cpp
