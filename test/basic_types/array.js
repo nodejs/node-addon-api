@@ -11,7 +11,7 @@ function test(binding) {
   const array = binding.basic_types_array.createArray();
   assert.strictEqual(binding.basic_types_array.getLength(array), 0);
 
-  // create arrry with length
+  // create array with length
 	const arrayWithLength = binding.basic_types_array.createArray(10);
   assert.strictEqual(binding.basic_types_array.getLength(arrayWithLength), 10);
 
@@ -28,10 +28,10 @@ function test(binding) {
   assert.strictEqual(binding.basic_types_array.get(array, 1), "test");
   assert.strictEqual(binding.basic_types_array.get(array, 2), 3.0);
   
-  // overrite test
+  // overwrite test
   binding.basic_types_array.set(array, 0, 5);
   assert.strictEqual(binding.basic_types_array.get(array, 0), 5);
 
-  // out of index
+  // out of index test
   assert.strictEqual(binding.basic_types_array.get(array, 5), undefined);
 }
