@@ -1312,6 +1312,7 @@ namespace Napi {
 
   class PropertyDescriptor {
   public:
+#ifndef NODE_ADDON_API_DISABLE_DEPRECATED
     template <typename Getter>
     static PropertyDescriptor Accessor(const char* utf8name,
                                        Getter getter,
@@ -1373,6 +1374,74 @@ namespace Napi {
                                        void* data = nullptr);
     template <typename Callable>
     static PropertyDescriptor Function(Name name,
+                                       Callable cb,
+                                       napi_property_attributes attributes = napi_default,
+                                       void* data = nullptr);
+#endif // !NODE_ADDON_API_DISABLE_DEPRECATED
+
+    template <typename Getter>
+    static PropertyDescriptor Accessor(Napi::Env env,
+                                       Napi::Object object,
+                                       const char* utf8name,
+                                       Getter getter,
+                                       napi_property_attributes attributes = napi_default,
+                                       void* data = nullptr);
+    template <typename Getter>
+    static PropertyDescriptor Accessor(Napi::Env env,
+                                       Napi::Object object,
+                                       const std::string& utf8name,
+                                       Getter getter,
+                                       napi_property_attributes attributes = napi_default,
+                                       void* data = nullptr);
+    template <typename Getter>
+    static PropertyDescriptor Accessor(Napi::Env env,
+                                       Napi::Object object,
+                                       Name name,
+                                       Getter getter,
+                                       napi_property_attributes attributes = napi_default,
+                                       void* data = nullptr);
+    template <typename Getter, typename Setter>
+    static PropertyDescriptor Accessor(Napi::Env env,
+                                       Napi::Object object,
+                                       const char* utf8name,
+                                       Getter getter,
+                                       Setter setter,
+                                       napi_property_attributes attributes = napi_default,
+                                       void* data = nullptr);
+    template <typename Getter, typename Setter>
+    static PropertyDescriptor Accessor(Napi::Env env,
+                                       Napi::Object object,
+                                       const std::string& utf8name,
+                                       Getter getter,
+                                       Setter setter,
+                                       napi_property_attributes attributes = napi_default,
+                                       void* data = nullptr);
+    template <typename Getter, typename Setter>
+    static PropertyDescriptor Accessor(Napi::Env env,
+                                       Napi::Object object,
+                                       Name name,
+                                       Getter getter,
+                                       Setter setter,
+                                       napi_property_attributes attributes = napi_default,
+                                       void* data = nullptr);
+    template <typename Callable>
+    static PropertyDescriptor Function(Napi::Env env,
+                                       Napi::Object object,
+                                       const char* utf8name,
+                                       Callable cb,
+                                       napi_property_attributes attributes = napi_default,
+                                       void* data = nullptr);
+    template <typename Callable>
+    static PropertyDescriptor Function(Napi::Env env,
+                                       Napi::Object object,
+                                       const std::string& utf8name,
+                                       Callable cb,
+                                       napi_property_attributes attributes = napi_default,
+                                       void* data = nullptr);
+    template <typename Callable>
+    static PropertyDescriptor Function(Napi::Env env,
+                                       Napi::Object object,
+                                       Name name,
                                        Callable cb,
                                        napi_property_attributes attributes = napi_default,
                                        void* data = nullptr);
@@ -1543,6 +1612,11 @@ namespace Napi {
     static napi_value InstanceGetterCallbackWrapper(napi_env env, napi_callback_info info);
     static napi_value InstanceSetterCallbackWrapper(napi_env env, napi_callback_info info);
     static void FinalizeCallback(napi_env env, void* data, void* hint);
+    static Function DefineClass(Napi::Env env,
+                                const char* utf8name,
+                                const size_t props_count,
+                                const napi_property_descriptor* props,
+                                void* data = nullptr);
 
     template <typename TCallback>
     struct MethodCallbackData {

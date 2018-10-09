@@ -44,7 +44,7 @@ to ideas specified in the **ECMA262 Language Specification**.
 - **[Contributors](#contributors)**
 - **[License](#license)**
 
-## **Current version: 1.4**
+## **Current version: 1.5**
 
 (See [CHANGELOG.md](CHANGELOG.md) for complete Changelog)
 
@@ -131,6 +131,12 @@ To run the **node-addon-api** tests do:
 ```
 npm install
 npm test
+```
+
+To avoid testing the deprecated portions of the API run
+```
+npm install
+npm test --disable-deprecated
 ```
 
 Take a look and get inspired by our **[test suite](https://github.com/nodejs/node-addon-api/tree/master/test)**
