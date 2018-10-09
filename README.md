@@ -19,10 +19,12 @@ of Node.js.
 
 It is important to remember that *other* Node.js interfaces such as
 `libuv` (included in a project via `#include <uv.h>`) are not ABI-stable across
-Node.js major versions. Thus, and addon must use N-API and/or `node-addon-api`
+Node.js major versions. Thus, an addon must use N-API and/or `node-addon-api`
 exclusively and build against a version of Node.js that includes an
 implementation of N-API (meaning a version of Node.js newer than 6.14.2) in
-order to benefit from ABI stability across Node.js major versions.
+order to benefit from ABI stability across Node.js major versions. Node.js
+provides an [ABI stability guide][] containing a detailed explanation of ABI
+stability in general, and the N-API ABI stability guarantee in particular.
 
 As new APIs are added to N-API, node-addon-api must be updated to provide
 wrappers for those new APIs. For this reason node-addon-api provides
@@ -167,3 +169,5 @@ Take a look and get inspired by our **[test suite](https://github.com/nodejs/nod
 <a name="license"></a>
 
 Licensed under [MIT](./LICENSE.md)
+
+[ABI stability guide]: https://nodejs.org/en/docs/guides/abi-stability/
