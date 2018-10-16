@@ -135,6 +135,22 @@ Value GetFinalizeCount(const CallbackInfo& info) {
    return Number::New(info.Env(), finalizeCount);
 }
 
+Value CreateBufferWithConstructor(const CallbackInfo& info) {
+  ArrayBuffer buffer = ArrayBuffer::New(info.Env(), testLength);
+  if (buffer.ByteLength() != testLength) {
+    Error::New(info.Env(), "Incorrect buffer length.").ThrowAsJavaScriptException();
+    return Value();
+  }
+  InitData(static_cast<uint8_t*>(buffer.Data()), testLength);
+  ArrayBuffer buffer2(info.Env(), buffer);
+  return buffer2;
+}
+
+Value CheckEmptyBuffer(const CallbackInfo& info) {
+  ArrayBuffer buffer;
+  return Boolean::New(info.Env(), buffer.IsEmpty());
+}
+
 } // end anonymous namespace
 
 Object InitArrayBuffer(Env env) {
@@ -148,6 +164,8 @@ Object InitArrayBuffer(Env env) {
     Function::New(env, CreateExternalBufferWithFinalizeHint);
   exports["checkBuffer"] = Function::New(env, CheckBuffer);
   exports["getFinalizeCount"] = Function::New(env, GetFinalizeCount);
+  exports["createBufferWithConstructor"] = Function::New(env, CreateBufferWithConstructor);
+  exports["checkEmptyBuffer"] = Function::New(env, CheckEmptyBuffer);
 
   return exports;
 }

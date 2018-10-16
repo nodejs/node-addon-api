@@ -53,5 +53,13 @@ function test(binding) {
       global.gc();
       assert.strictEqual(1, binding.arraybuffer.getFinalizeCount());
     },
+
+    'ArrayBuffer with constructor',
+    () => {
+      assert.strictEqual(true, binding.arraybuffer.checkEmptyBuffer());
+      const test = binding.arraybuffer.createBufferWithConstructor();
+      binding.arraybuffer.checkBuffer(test);
+      assert.ok(test instanceof ArrayBuffer);
+    },
   ]);
 }
