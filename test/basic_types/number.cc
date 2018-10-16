@@ -67,8 +67,8 @@ Value OperatorDouble(const CallbackInfo& info) {
 }
 
 Value CreateEmptyNumber(const CallbackInfo& info) {
-  Number* number = new Number();
-  return Boolean::New(info.Env(), number->IsEmpty());
+  Number number;
+  return Boolean::New(info.Env(), number.IsEmpty());
 }
 
 Value CreateNumberFromExistingValue(const CallbackInfo& info) {

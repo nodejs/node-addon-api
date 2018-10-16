@@ -12,8 +12,8 @@ Value CreateEmptyBoolean(const CallbackInfo& info) {
 }
 
 Value CreateBooleanFromExistingValue(const CallbackInfo& info) {
-  Boolean* boolean =  new Boolean(info.Env(), info[0].As<Boolean>());
-  return Boolean::New(info.Env(), boolean->Value());
+  Boolean boolean(info.Env(), info[0].As<Boolean>());
+  return Boolean::New(info.Env(), boolean.Value());
 }
 
 Value CreateBooleanFromPrimitive(const CallbackInfo& info) {
