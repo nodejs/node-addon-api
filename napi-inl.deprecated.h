@@ -73,7 +73,7 @@ inline PropertyDescriptor PropertyDescriptor::Accessor(const char* utf8name,
                                                        void* /*data*/) {
   typedef details::AccessorCallbackData<Getter, Setter> CbData;
   // TODO: Delete when the function is destroyed
-  auto callbackData = new CbData({ getter, setter });
+  auto callbackData = new CbData({ getter, setter, nullptr });
 
   return PropertyDescriptor({
     utf8name,
@@ -104,7 +104,7 @@ inline PropertyDescriptor PropertyDescriptor::Accessor(napi_value name,
                                                        void* /*data*/) {
   typedef details::AccessorCallbackData<Getter, Setter> CbData;
   // TODO: Delete when the function is destroyed
-  auto callbackData = new CbData({ getter, setter });
+  auto callbackData = new CbData({ getter, setter, nullptr });
 
   return PropertyDescriptor({
     nullptr,

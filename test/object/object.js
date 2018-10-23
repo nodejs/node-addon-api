@@ -26,12 +26,23 @@ function test(binding) {
     assertPropertyIsNot(obj, 'readonlyAccessor', 'configurable');
     assert.strictEqual(obj.readonlyAccessor, true);
 
+    assertPropertyIsNot(obj, 'readonlyAccessorWithUserData', 'enumerable');
+    assertPropertyIsNot(obj, 'readonlyAccessorWithUserData', 'configurable');
+    assert.strictEqual(obj.readonlyAccessorWithUserData, 1234, nameType);
+
     assertPropertyIsNot(obj, 'readwriteAccessor', 'enumerable');
     assertPropertyIsNot(obj, 'readwriteAccessor', 'configurable');
     obj.readwriteAccessor = false;
     assert.strictEqual(obj.readwriteAccessor, false);
     obj.readwriteAccessor = true;
     assert.strictEqual(obj.readwriteAccessor, true);
+
+    assertPropertyIsNot(obj, 'readwriteAccessorWithUserData', 'enumerable');
+    assertPropertyIsNot(obj, 'readwriteAccessorWithUserData', 'configurable');
+    obj.readwriteAccessorWithUserData = 2;
+    assert.strictEqual(obj.readwriteAccessorWithUserData, 2);
+    obj.readwriteAccessorWithUserData = -14;
+    assert.strictEqual(obj.readwriteAccessorWithUserData, -14);
 
     assertPropertyIsNot(obj, 'readonlyValue', 'writable');
     assertPropertyIsNot(obj, 'readonlyValue', 'enumerable');
