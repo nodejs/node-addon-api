@@ -12,11 +12,11 @@ function test(binding) {
     assert.ok(propDesc[attribute]);
   }
 
-  function assertPropertyIsNot(obj, key, attribute) {
-    const propDesc = Object.getOwnPropertyDescriptor(obj, key);
+    function assertPropertyIsNot(obj, key, attribute) {
+      const propDesc = Object.getOwnPropertyDescriptor(obj, key);
     assert.ok(propDesc);
     assert.ok(!propDesc[attribute]);
-  }
+    }
 
   function testDefineProperties(nameType) {
     const obj = {};
@@ -26,12 +26,23 @@ function test(binding) {
     assertPropertyIsNot(obj, 'readonlyAccessor', 'configurable');
     assert.strictEqual(obj.readonlyAccessor, true);
 
+    assertPropertyIsNot(obj, 'readonlyAccessorWithUd', 'enumerable');
+    assertPropertyIsNot(obj, 'readonlyAccessorWithUd', 'configurable');
+    assert.strictEqual(obj.readonlyAccessorWithUd, 1234, nameType);
+
     assertPropertyIsNot(obj, 'readwriteAccessor', 'enumerable');
     assertPropertyIsNot(obj, 'readwriteAccessor', 'configurable');
     obj.readwriteAccessor = false;
     assert.strictEqual(obj.readwriteAccessor, false);
     obj.readwriteAccessor = true;
     assert.strictEqual(obj.readwriteAccessor, true);
+
+    assertPropertyIsNot(obj, 'readwriteAccessorWithUd', 'enumerable');
+    assertPropertyIsNot(obj, 'readwriteAccessorWithUd', 'configurable');
+    obj.readwriteAccessorWithUd = 2;
+    assert.strictEqual(obj.readwriteAccessorWithUd, 2);
+    obj.readwriteAccessorWithUd = -14;
+    assert.strictEqual(obj.readwriteAccessorWithUd, -14);
 
     assertPropertyIsNot(obj, 'readonlyValue', 'writable');
     assertPropertyIsNot(obj, 'readonlyValue', 'enumerable');

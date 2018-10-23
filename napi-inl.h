@@ -176,6 +176,7 @@ struct AccessorCallbackData {
       CallbackInfo callbackInfo(env, info);
       AccessorCallbackData* callbackData =
         static_cast<AccessorCallbackData*>(callbackInfo.Data());
+      callbackInfo.SetData(callbackData->data);
       return callbackData->getterCallback(callbackInfo);
     });
   }
@@ -186,6 +187,7 @@ struct AccessorCallbackData {
       CallbackInfo callbackInfo(env, info);
       AccessorCallbackData* callbackData =
         static_cast<AccessorCallbackData*>(callbackInfo.Data());
+      callbackInfo.SetData(callbackData->data);
       callbackData->setterCallback(callbackInfo);
       return nullptr;
     });
@@ -193,6 +195,7 @@ struct AccessorCallbackData {
 
   Getter getterCallback;
   Setter setterCallback;
+  void* data;
 };
 
 }  // namespace details
@@ -2603,9 +2606,10 @@ PropertyDescriptor::Accessor(Napi::Env env,
                              const char* utf8name,
                              Getter getter,
                              napi_property_attributes attributes,
-                             void* /*data*/) {
+                             void* data) {
   typedef details::CallbackData<Getter, Napi::Value> CbData;
   auto callbackData = new CbData({ getter, nullptr });
+  callbackData->data = data;
 
   napi_status status = AttachData(env, object, callbackData);
   NAPI_THROW_IF_FAILED(env, status, napi_property_descriptor());
@@ -2638,9 +2642,10 @@ inline PropertyDescriptor PropertyDescriptor::Accessor(Napi::Env env,
                                                        Name name,
                                                        Getter getter,
                                                        napi_property_attributes attributes,
-                                                       void* /*data*/) {
+                                                       void* data) {
   typedef details::CallbackData<Getter, Napi::Value> CbData;
   auto callbackData = new CbData({ getter, nullptr });
+  callbackData->data = data;
 
   napi_status status = AttachData(env, object, callbackData);
   NAPI_THROW_IF_FAILED(env, status, napi_property_descriptor());
@@ -2664,9 +2669,10 @@ inline PropertyDescriptor PropertyDescriptor::Accessor(Napi::Env env,
                                                        Getter getter,
                                                        Setter setter,
                                                        napi_property_attributes attributes,
-                                                       void* /*data*/) {
+                                                       void* data) {
   typedef details::AccessorCallbackData<Getter, Setter> CbData;
   auto callbackData = new CbData({ getter, setter });
+  callbackData->data = data;
 
   napi_status status = AttachData(env, object, callbackData);
   NAPI_THROW_IF_FAILED(env, status, napi_property_descriptor());
@@ -2701,9 +2707,10 @@ inline PropertyDescriptor PropertyDescriptor::Accessor(Napi::Env env,
                                                        Getter getter,
                                                        Setter setter,
                                                        napi_property_attributes attributes,
-                                                       void* /*data*/) {
+                                                       void* data) {
   typedef details::AccessorCallbackData<Getter, Setter> CbData;
   auto callbackData = new CbData({ getter, setter });
+  callbackData->data = data;
 
   napi_status status = AttachData(env, object, callbackData);
   NAPI_THROW_IF_FAILED(env, status, napi_property_descriptor());
