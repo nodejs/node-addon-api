@@ -14,15 +14,16 @@ asynchronously so that their methods can return in advance of the work being
 completed.
 
 Node Addon API provides an interface to support functions that cover
-the most common asynchronous use cases. There is an abstract classes to implement
+the most common asynchronous use cases. There are abstract classes to implement
 asynchronous operations:
 
 - **[`Napi::AsyncWorker`](async_worker.md)**
+- **[`Napi::AsyncPromise`](async_promise.md)**
 
-These class helps manage asynchronous operations through an abstraction
+These classes help manage asynchronous operations through an abstraction
 of the concept of moving data between the **event loop** and **worker threads**.
 
-Also, the above class may not be appropriate for every scenario. When using any
+Also, the above classes may not be appropriate for every scenario. When using any
 other asynchronous mechanism, the following API is necessary to ensure an
 asynchronous operation is properly tracked by the runtime:
 

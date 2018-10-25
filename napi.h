@@ -1761,6 +1761,109 @@ namespace Napi {
     std::string _error;
   };
 
+  // An async worker class which fulfills promises
+  template <class T>
+  class AsyncPromise {
+  public:
+    typedef T DerivedTask_t;
+
+    // Subclass this and provide the subclass type as template argument <T>
+    // when declaring an instance of AsyncPromise
+    class BaseTask
+    {
+    public:
+      typedef BaseTask Base_t;
+
+      virtual ~BaseTask();
+
+      // No need to move or copy
+      BaseTask(BaseTask&& other) = delete;
+      BaseTask(const BaseTask&) = delete;
+      BaseTask& operator =(BaseTask&& other) = delete;
+      BaseTask& operator =(BaseTask&) = delete;
+
+      Napi::Env Env() const;
+
+      operator napi_async_work() const;
+      operator napi_deferred() const;
+
+    protected:
+      explicit BaseTask(Napi::Env env);
+
+      void SetError(const std::string& error);
+      void Resolve(Value value);
+      void Reject(Value value);
+
+      virtual void Execute() = 0;
+      virtual void OnOK();
+      virtual void OnCancel();
+      virtual void OnError(const Error& e);
+
+    private:
+
+      static void OnExecute(napi_env env,
+                            void * this_pointer);
+      static void OnWorkComplete(napi_env env,
+                                 napi_status status,
+                                 void * this_pointer);
+
+      void Init(const char* resource_name,
+                const Object& resource);
+      void Queue();
+      void Cancel();
+      Napi::Promise Promise() const;
+      bool IsQueued() const;
+      bool IsFulfilled() const;
+
+      void AssertQueued() const;
+      void AssertNotQueued() const;
+      void AssertNotFulfilled() const;
+
+      napi_env _env;
+      napi_async_work _work;
+      napi_deferred _deferred;
+      napi_value _promise;
+      std::string _error;
+      bool _queued;
+      bool _fulfilled;
+
+      friend class AsyncPromise;
+    };
+
+    // We can be moved but not copied
+    explicit AsyncPromise(Napi::Env env);
+    AsyncPromise(Napi::Env env,
+                 const char* resource_name);
+    AsyncPromise(Napi::Env env,
+                const char* resource_name,
+                const Object& resource);
+    AsyncPromise(AsyncPromise&& other);
+    AsyncPromise(const AsyncPromise& other) = delete;
+
+    ~AsyncPromise();
+
+    AsyncPromise & operator =(AsyncPromise&& other);
+    AsyncPromise & operator =(const AsyncPromise& other) = delete;
+
+    operator napi_async_work() const;
+    operator napi_deferred() const;
+
+    Napi::Env Env() const;
+    Napi::Promise Promise() const;
+    DerivedTask_t* Task();
+
+    void Queue();
+    void Cancel();
+    void Resolve(Value value);
+    void Reject(Value value);
+
+  private:
+    DerivedTask_t* _task;
+    napi_env _env;
+
+    void AssertTask() const;
+  };
+
   // Memory management.
   class MemoryManagement {
     public:
