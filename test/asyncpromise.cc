@@ -39,12 +39,12 @@ protected:
       _succeed = true;
       break;
 
-      case Test::fail_before_queue:
+    case Test::fail_before_queue:
       _succeed = false;
       Reject(Error::New(info.Env(), _data).Value());
       break;
 
-      case Test::fail_in_execute:
+    case Test::fail_in_execute:
       _succeed = false;
       break;
     }
