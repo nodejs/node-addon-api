@@ -3633,8 +3633,7 @@ inline void AsyncWorker::OnWorkComplete(
 // AsyncPromise class
 ////////////////////////////////////////////////////////////////////////////////
 
-template <class T>
-inline AsyncPromise<T>::BaseTask::~BaseTask() {
+inline AsyncPromise::BaseTask::~BaseTask() {
   if (_work != nullptr) {
     napi_status status = napi_delete_async_work(_env, _work);
     if ((status) != napi_ok)
@@ -3643,23 +3642,19 @@ inline AsyncPromise<T>::BaseTask::~BaseTask() {
   }
 }
 
-template <class T>
-inline AsyncPromise<T>::BaseTask::operator napi_async_work() const {
+inline AsyncPromise::BaseTask::operator napi_async_work() const {
   return _work;
 }
 
-template <class T>
-inline AsyncPromise<T>::BaseTask::operator napi_deferred() const {
+inline AsyncPromise::BaseTask::operator napi_deferred() const {
   return _deferred;
 }
 
-template <class T>
-inline Napi::Env AsyncPromise<T>::BaseTask::Env() const {
+inline Napi::Env AsyncPromise::BaseTask::Env() const {
   return _env;
 }
 
-template <class T>
-inline void AsyncPromise<T>::BaseTask::Queue() {
+inline void AsyncPromise::BaseTask::Queue() {
   AssertNotQueued();
   AssertNotFulfilled();
 
@@ -3669,53 +3664,47 @@ inline void AsyncPromise<T>::BaseTask::Queue() {
   _queued = true;
 }
 
-template <class T>
-inline void AsyncPromise<T>::BaseTask::Cancel() {
+inline void AsyncPromise::BaseTask::Cancel() {
   AssertQueued();
 
   napi_status status = napi_cancel_async_work(_env, _work);
   NAPI_THROW_IF_FAILED_VOID(_env, status);
 }
 
-template <class T>
-inline void AsyncPromise<T>::BaseTask::Resolve(Value value) {
+inline void AsyncPromise::BaseTask::Resolve(Value value) {
   napi_status status = napi_resolve_deferred(_env, _deferred, value);
   if ((status) != napi_ok) throw value;
   _fulfilled = true;
 }
 
-template <class T>
-inline void AsyncPromise<T>::BaseTask::Reject(Value value) {
+inline void AsyncPromise::BaseTask::Reject(Value value) {
   napi_status status = napi_reject_deferred(_env, _deferred, value);
   if ((status) != napi_ok) throw value;
   _fulfilled = true;
 }
 
-template <class T>
-inline Promise AsyncPromise<T>::BaseTask::Promise() const {
+inline Promise AsyncPromise::BaseTask::Promise() const {
   return Napi::Promise(_env, _promise);
 }
 
-template <class T>
-inline bool AsyncPromise<T>::BaseTask::IsQueued() const {
+inline bool AsyncPromise::BaseTask::IsQueued() const {
   return _queued;
 }
 
-template <class T>
-inline bool AsyncPromise<T>::BaseTask::IsFulfilled() const {
+inline bool AsyncPromise::BaseTask::IsFulfilled() const {
   return _fulfilled;
 }
 
-template <class T>
-inline AsyncPromise<T>::BaseTask::BaseTask(Napi::Env env)
-  : _env(env),
-  _queued(false),
+inline AsyncPromise::BaseTask::BaseTask()
+  : _queued(false),
   _fulfilled(false) {
 }
 
-template <class T>
-inline void AsyncPromise<T>::BaseTask::Init(const char* resource_name,
+inline void AsyncPromise::BaseTask::Init(Napi::Env env,
+  const char* resource_name,
   const Object& resource) {
+  _env = env;
+
   napi_status status = napi_create_promise(_env, &_deferred, &_promise);
   NAPI_THROW_IF_FAILED_VOID(_env, status);
 
@@ -3725,31 +3714,59 @@ inline void AsyncPromise<T>::BaseTask::Init(const char* resource_name,
 
   status = napi_create_async_work(_env, resource, resource_id, OnExecute, OnWorkComplete, this, &_work);
   NAPI_THROW_IF_FAILED_VOID(_env, status);
+
+  OnInit();
+
+  if (!IsFulfilled())
+    Queue();
 }
 
-template <class T>
-inline void AsyncPromise<T>::BaseTask::SetError(const std::string& error) {
+inline void AsyncPromise::BaseTask::Init(const CallbackInfo& info,
+  const char* resource_name,
+  const Object& resource) {
+  _env = info.Env();
+
+  napi_status status = napi_create_promise(_env, &_deferred, &_promise);
+  NAPI_THROW_IF_FAILED_VOID(_env, status);
+
+  napi_value resource_id;
+  status = napi_create_string_latin1(_env, resource_name, NAPI_AUTO_LENGTH, &resource_id);
+  NAPI_THROW_IF_FAILED_VOID(_env, status);
+
+  status = napi_create_async_work(_env, resource, resource_id, OnExecute, OnWorkComplete, this, &_work);
+  NAPI_THROW_IF_FAILED_VOID(_env, status);
+
+  OnInit(info);
+
+  if (!IsFulfilled())
+    Queue();
+}
+
+inline void AsyncPromise::BaseTask::SetError(const std::string& error) {
   _error = error;
 }
 
-template <class T>
-inline void AsyncPromise<T>::BaseTask::OnOK() {
+
+inline void AsyncPromise::BaseTask::OnInit() {
+}
+
+inline void AsyncPromise::BaseTask::OnInit(const CallbackInfo& info) {
+}
+
+inline void AsyncPromise::BaseTask::OnOK() {
   Resolve(Napi::Env(_env).Undefined());
 }
 
-template <class T>
-inline void AsyncPromise<T>::BaseTask::OnCancel() {
+inline void AsyncPromise::BaseTask::OnCancel() {
   Reject(Napi::String::New(_env, "Async task canceled"));
 }
 
-template <class T>
-inline void AsyncPromise<T>::BaseTask::OnError(const Error & e) {
+inline void AsyncPromise::BaseTask::OnError(const Error & e) {
   Reject(e.Value());
 }
 
-template <class T>
-inline void AsyncPromise<T>::BaseTask::OnExecute(napi_env env,
-                                                 void * this_pointer) {
+inline void AsyncPromise::BaseTask::OnExecute(napi_env env,
+  void * this_pointer) {
   BaseTask * self = static_cast<BaseTask*>(this_pointer);
 #ifdef NAPI_CPP_EXCEPTIONS
   try {
@@ -3763,10 +3780,9 @@ inline void AsyncPromise<T>::BaseTask::OnExecute(napi_env env,
 #endif // NAPI_CPP_EXCEPTIONS
 }
 
-template <class T>
-inline void AsyncPromise<T>::BaseTask::OnWorkComplete(napi_env env,
-                                                      napi_status status,
-                                                      void * this_pointer) {
+inline void AsyncPromise::BaseTask::OnWorkComplete(napi_env env,
+  napi_status status,
+  void * this_pointer) {
   BaseTask * self = static_cast<BaseTask*>(this_pointer);
   if (status != napi_cancelled) {
     HandleScope scope(self->_env);
@@ -3785,59 +3801,73 @@ inline void AsyncPromise<T>::BaseTask::OnWorkComplete(napi_env env,
   delete self;
 }
 
-template <class T>
-inline void AsyncPromise<T>::BaseTask::AssertQueued() const {
-  if (IsQueued())
+inline void AsyncPromise::BaseTask::AssertQueued() const {
+  if (!IsQueued())
     NAPI_THROW(Error::New(_env, "Attempt to perform an operation not legal for an async promise before task is queued"));
 }
 
-template <class T>
-inline void AsyncPromise<T>::BaseTask::AssertNotQueued() const {
+inline void AsyncPromise::BaseTask::AssertNotQueued() const {
   if (IsQueued())
     NAPI_THROW(Error::New(_env, "Attempt to perform an operation not legal for an async promise after task is queued"));
 }
 
-template <class T>
-inline void AsyncPromise<T>::BaseTask::AssertNotFulfilled() const {
+inline void AsyncPromise::BaseTask::AssertNotFulfilled() const {
   if (IsFulfilled())
     NAPI_THROW(Error::New(_env, "Attempt to perform an operation not legal for an async promise after it is fulfilled"));
 }
 
 template <class T>
-inline AsyncPromise<T>::AsyncPromise(Napi::Env env)
-  : AsyncPromise(env,
-                 "async_promise") {
+AsyncPromise AsyncPromise::New(Napi::Env env) {
+  return AsyncPromise::New<T>(env, "async_promise");
 }
 
 template <class T>
-inline AsyncPromise<T>::AsyncPromise(Napi::Env env,
-    const char* resource_name)
-    : AsyncPromise(env,
-                   resource_name,
-                   Object::New(env)) {
+AsyncPromise AsyncPromise::New(Napi::Env env,
+  const char* resource_name) {
+  return AsyncPromise::New<T>(env, resource_name, Object::New(env));
 }
 
 template <class T>
-inline AsyncPromise<T>::AsyncPromise(Napi::Env env,
-                                     const char* resource_name,
-                                     const Object& resource)
-  : _env(env),
-  _task(new DerivedTask_t(env)) {
-  static_assert(std::is_base_of<BaseTask, DerivedTask_t>::value, "AsyncPromise task must be derived from AsyncPromise::Task");
+AsyncPromise AsyncPromise::New(Napi::Env env,
+  const char* resource_name,
+  const Object& resource) {
+  static_assert(std::is_base_of<BaseTask, T>::value, "AsyncPromise task must be a subclass of AsyncPromise::BaseTask");
 
-  _task->Init(resource_name, resource);
+  auto res = AsyncPromise(env, new T());
+  res._task->Init(env, resource_name, resource);
+  return res;
 }
 
 template <class T>
-inline AsyncPromise<T>::AsyncPromise(AsyncPromise&& other) {
+AsyncPromise AsyncPromise::New(const CallbackInfo& info) {
+  return AsyncPromise::New<T>(info, "async_promise");
+}
+
+template <class T>
+AsyncPromise AsyncPromise::New(const CallbackInfo& info,
+  const char* resource_name) {
+  return AsyncPromise::New<T>(info, resource_name, Object::New(info.Env()));
+}
+
+template <class T>
+AsyncPromise AsyncPromise::New(const CallbackInfo& info,
+  const char* resource_name,
+  const Object& resource) {
+  static_assert(std::is_base_of<BaseTask, T>::value, "AsyncPromise task must be a subclass of AsyncPromise::BaseTask");
+
+  auto res = AsyncPromise(info.Env(), new T());
+  res._task->Init(info, resource_name, resource);
+  return res;
+}
+
+inline AsyncPromise::AsyncPromise(AsyncPromise&& other) {
   _env = other._env;
   other._env = nullptr;
   _task = other._task;
   other._task = nullptr;
 }
 
-template <class T>
-inline AsyncPromise<T>::~AsyncPromise() {
+inline AsyncPromise::~AsyncPromise() {
   // If we are being popped off the stack without being queued, free the task
   if (_task && !_task->IsQueued())
   {
@@ -3850,71 +3880,49 @@ inline AsyncPromise<T>::~AsyncPromise() {
   }
 }
 
-template <class T>
-inline AsyncPromise<T> & AsyncPromise<T>::operator =(AsyncPromise&& other) {
+inline AsyncPromise & AsyncPromise::operator =(AsyncPromise&& other) {
   _env = other._env;
   other._env = nullptr;
   _task = other._task;
   other._task = nullptr;
 }
 
-template <class T>
-inline AsyncPromise<T>::operator napi_async_work() const {
+inline AsyncPromise::operator napi_async_work() const {
   AssertTask();
   return _task->operator napi_async_work();
 }
 
-template <class T>
-inline AsyncPromise<T>::operator napi_deferred() const {
+inline AsyncPromise::operator napi_deferred() const {
   AssertTask();
   return _task->operator napi_deferred();
 }
 
-template <class T>
-inline Napi::Env AsyncPromise<T>::Env() const {
+inline Napi::Env AsyncPromise::Env() const {
   return _env;
 }
 
-template <class T>
-inline Promise AsyncPromise<T>::Promise() const {
+inline Promise AsyncPromise::Promise() const {
   AssertTask();
   return _task->Promise();
 }
 
-template <class T>
-inline typename AsyncPromise<T>::DerivedTask_t * AsyncPromise<T>::Task() {
+inline AsyncPromise::BaseTask * AsyncPromise::Task() {
   AssertTask();
   return _task;
 }
 
-template <class T>
-inline void AsyncPromise<T>::Queue() {
-  AssertTask();
-  _task->Queue();
-}
-
-template <class T>
-inline void AsyncPromise<T>::Cancel() {
+inline void AsyncPromise::Cancel() {
   AssertTask();
   _task->Cancel();
 }
 
-template <class T>
-inline void AsyncPromise<T>::Resolve(Value value) {
-  AssertTask();
-  _task->AssertNotQueued();
-  _task->Resolve(value);
+inline AsyncPromise::AsyncPromise(Napi::Env env,
+  BaseTask* task)
+  : _env(env),
+  _task(task) {
 }
 
-template <class T>
-inline void AsyncPromise<T>::Reject(Value value) {
-  AssertTask();
-  _task->AssertNotQueued();
-  _task->Reject(value);
-}
-
-template <class T>
-inline void AsyncPromise<T>::AssertTask() const {
+inline void AsyncPromise::AssertTask() const {
   if (!_task)
     NAPI_THROW(Error::New(_env, "Attempt to access abandoned async promise object"));
 }

@@ -1762,13 +1762,10 @@ namespace Napi {
   };
 
   // An async worker class which fulfills promises
-  template <class T>
   class AsyncPromise {
   public:
-    typedef T DerivedTask_t;
-
     // Subclass this and provide the subclass type as template argument <T>
-    // when declaring an instance of AsyncPromise
+    // calling an AsyncPromise factory
     class BaseTask
     {
     public:
@@ -1788,26 +1785,31 @@ namespace Napi {
       operator napi_deferred() const;
 
     protected:
-      explicit BaseTask(Napi::Env env);
+      explicit BaseTask();
 
       void SetError(const std::string& error);
       void Resolve(Value value);
       void Reject(Value value);
 
+      virtual void OnInit();
+      virtual void OnInit(const CallbackInfo& info);
       virtual void Execute() = 0;
       virtual void OnOK();
       virtual void OnCancel();
       virtual void OnError(const Error& e);
 
     private:
-
       static void OnExecute(napi_env env,
                             void * this_pointer);
       static void OnWorkComplete(napi_env env,
                                  napi_status status,
                                  void * this_pointer);
 
-      void Init(const char* resource_name,
+      void Init(Napi::Env env,
+                const char* resource_name,
+                const Object& resource);
+      void Init(const CallbackInfo& info,
+                const char* resource_name,
                 const Object& resource);
       void Queue();
       void Cancel();
@@ -1830,35 +1832,47 @@ namespace Napi {
       friend class AsyncPromise;
     };
 
+    // Factories
+    template <class T>
+    static AsyncPromise New(Napi::Env env);
+    template <class T>
+    static AsyncPromise New(Napi::Env env,
+                            const char* resource_name);
+    template <class T>
+    static AsyncPromise New(Napi::Env env,
+                            const char* resource_name,
+                            const Object& resource);
+    template <class T>
+    static AsyncPromise New(const CallbackInfo& info);
+    template <class T>
+    static AsyncPromise New(const CallbackInfo& info,
+                            const char* resource_name);
+    template <class T>
+    static AsyncPromise New(const CallbackInfo& info,
+                            const char* resource_name,
+                            const Object& resource);
+
     // We can be moved but not copied
-    explicit AsyncPromise(Napi::Env env);
-    AsyncPromise(Napi::Env env,
-                 const char* resource_name);
-    AsyncPromise(Napi::Env env,
-                const char* resource_name,
-                const Object& resource);
     AsyncPromise(AsyncPromise&& other);
     AsyncPromise(const AsyncPromise& other) = delete;
-
-    ~AsyncPromise();
-
     AsyncPromise & operator =(AsyncPromise&& other);
     AsyncPromise & operator =(const AsyncPromise& other) = delete;
+
+    ~AsyncPromise();
 
     operator napi_async_work() const;
     operator napi_deferred() const;
 
     Napi::Env Env() const;
     Napi::Promise Promise() const;
-    DerivedTask_t* Task();
-
-    void Queue();
     void Cancel();
-    void Resolve(Value value);
-    void Reject(Value value);
+    BaseTask* Task();
 
   private:
-    DerivedTask_t* _task;
+    AsyncPromise(Napi::Env env,
+                 BaseTask* task);
+
+    BaseTask* _task;
     napi_env _env;
 
     void AssertTask() const;

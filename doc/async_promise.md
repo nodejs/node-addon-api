@@ -1,52 +1,82 @@
 # AsyncPromise
 
-The `Napi::AsyncPromise<T>` class along with its abstract `BaseTask` inner
+The `Napi::AsyncPromise` class along with its abstract `BaseTask` inner
 class provide the ability to queue an asynchronous task which will resolve a promise
 on successful completion or reject it on error. You can use these classes to handle
 many of the the tedious tasks of signaling asynchronous completion and returning
 results to the event loop from worker threads.
 
-The `Napi::AsyncPromise<T>` class manages the initial lifetime of
-an instance of the user-defined task `<T>` which must be a subclass of the
-`BaseTask` inner class. It creates an instance during construction, and it will
-destroy the instance and signal promise rejection in the event that the N-API
-native function which uses it exits before the task is successfully queued.
+The `Napi::AsyncPromise` class manages the initial lifetime of an instance of a user-defined task. It creates an instance and arranges for its destruction. It
+also provides access to the promise associated with the task.
 
-The user must declare a subclass of `Napi::AsyncPromise<T>::BaseTask` and, at
-minimum, implement a constructor and an override of the pure virtual
-`Napi::AsyncPromise<T>::BaseTask::Execute()` method. The default implementation of
-success handling will resolve the promise with the `undefined` JavaScript value.
-The default implementation of error handling will reject the promise with a
-JavaScript error value. The methods `Napi::AsyncPromise<T>::BaseTask::OnOK()` and
-`Napi::AsyncPromise<T>::BaseTask::OnError()` may be overridden as needed to provide
-other results to code awaiting promise fulfillment.
+There are three requirements for the user-defined task:
+- It must be a subclass of `Napi::AsyncPromise::BaseTask`
+- It must be default constructable
+- It must override `Napi::AsyncPromise::BaseTask::Execute()`
 
-The user will often also wish to add other methods to the task subclass to
-perform initialization needed for deferred task execution. The native N-API
-function accesses the instance of the task subclass by calling
-`Napi::AsyncPromise<T>::Task()`.
+There are additional methods which may be overridden to provide custom behavior:
+- `Napi::AsyncPromise::BaseTask::OnInit()` will usually be overridden to provide
+initialization of the task. If control passes out of this method without
+fulfilling the promise, the task will be queued for execution.
 
-When the task is fully initialized, the N-API native function requests execution
-by calling `Napi::AsyncPromise<T>::Queue()`. When a worker thread is available
-the `<T>::Execute()` method will be invoked.  If `<T>::Execute()`
-completes without throwing an exception or making a call to
-`BaseTask::SetError()`, then `<T>::OnOK()` will be invoked on the event thread.
-If `<T>::Execute()` instead throws an exception or calls `BaseTask::SetError()`,
-`<T>::OnError()` will be invoked on the event thread. After one of these
-completion methods has finished, the instance of `<T>` is destroyed.
+  There are two overloads of this method:
+  1. `OnInit()` taking no arguments
+  2. `OnInit(const Napi::CallbackInfo &)`
 
-## AsyncPromise\<T\>::BaseTask Types
+  If an instance of `Napi::Env` is passed to the `Napi::AsyncPromise` factory
+  method, the first overload will be called. If an instance of `Napi::CallbackInfo`
+  is passed to the `Napi::AsyncPromise` factory method, the second overload will
+  be called.
+
+  **NOTE: Make sure that you implement the appropriate overload.**
+
+  The default implementations of both methods do nothing. Customarily, the
+  user will provide an implementation of the second overload in order to process
+  arguments from JavaScript callers. If an error occurrs during initialization,
+  call `Reject()` on the task before returning. The promise will be rejected,
+  and the task will be destroyed without being queued for execution.
+
+- `Napi::AsyncPromise::BaseTask::OnOK()` will usually be overridden to return
+results to the code awaiting the promise resolution. This method will be called
+if the override of `Execute()` completes without an exception and without calling
+`SetError()`.
+
+  The default implmentation will reslove the promise with the JavaScript
+  `undefined` value. Override this method to provide custom results to the
+  routine awaiting the task completion
+
+- `Napi::AsyncPromise::BaseTask::OnCancel()` is called if the task is canceled
+prior to being picked up by a thread in the work queue. A task that has begun
+processing cannot be canceled.
+
+  The default implementation will reject the promise with a message string.
+  Override this method to provide custom behavior.
+
+- `Napi::AsyncPromise::BaseTask::OnError()` is called if the the override of
+`Execute()` either calls `SetError()` or throws an exception.
+
+  The default implementation will reject the promise with a JavaScript error
+  with the message provided either by the call to `SetError()` or by the
+  exception that was thrown. Override this method to provide custom behavior.
+
+The task instance will be destroyed when it is no longer needed. If
+the promise was fulfilled without queuing the task, the task will be
+destroyed when the parent instance of `Napi::AsyncPromise` goes out-of-scope.
+If the task was queued for execution, the task will be destroyed after
+execution or cancellation.
+
+## AsyncPromise::BaseTask Types
 
 ### Base_t
 
 Defines the fully-qualified type of `BaseTask` for convience.
 
-## AsyncPromise\<T\>::BaseTask Public Methods
+## AsyncPromise::BaseTask Public Methods
 
 ### Env
 
 ```cpp
-Napi::Env Napi::AsyncPromise<T>::BaseTask::Env() const;
+Napi::Env Napi::AsyncPromise::BaseTask::Env() const;
 ```
 
 Requests the environment in which the task was created.
@@ -54,66 +84,73 @@ Requests the environment in which the task was created.
 #### Arguments
 None
 
-## AsyncPromise\<T\>::BaseTask Public Operators
+## AsyncPromise::BaseTask Public Operators
 
 ### napi_async_work
 
 ```cpp
-Napi::AsyncPromise<T>::BaseTask::operator napi_async_work() const;
+Napi::AsyncPromise::BaseTask::operator napi_async_work() const;
 ```
 
-Returns the N-API `napi_async_work` wrapped by the `<T>` instance. This
+Returns the N-API `napi_async_work` wrapped by the task instance. This
 can be used to mix usage of the C N-API and node-addon-api.
 
 ### napi_deferred
 
 ```cpp
-Napi::AsyncPromise<T>::BaseTask::operator napi_deferred() const;
+Napi::AsyncPromise::BaseTask::operator napi_deferred() const;
 ```
 
-Returns the N-API `napi_deferred` wrapped by the `<T>` instance. This
+Returns the N-API `napi_deferred` wrapped by the task instance. This
 can be used to mix usage of the C N-API and node-addon-api.
 
-## AsyncPromise\<T\>::BaseTask Protected Methods
+## AsyncPromise::BaseTask Protected Methods
 
 ### Constructor
 
 ```cpp
-explicit Napi::AsyncPromise<T>::BaseTask::BaseTask(Napi::Env env);
+explicit Napi::AsyncPromise::BaseTask::BaseTask();
 ```
 
 Constructs the `BaseTask` instance.
 
 #### Arguments
-- `[in] env`: The environment in which the task is being created
+None
+
 
 ### SetError
 
 ```cpp
-void Napi::AsyncPromise<T>::BaseTask::SetError(const std::string& error);
+void Napi::AsyncPromise::BaseTask::SetError(const std::string& error);
 ```
 
-To be used from `<T>::Execute()`. Sets an error message for later use by
-`<T>::OnError`. Calling this method will cause `<T>::OnError` to be
-invoked after task execution is complete. The default implementation of
+To be used from `Execute()`. Sets an error message for later use by
+`OnError()`. Calling this method will cause `OnError()` to be
+invoked after task execution is complete.
+
+The default implementation of
 `BaseTask::OnError()` will reject the promise with a JavaScript error
 instance having the message passed in the argument to this function.
 
 #### Arguments
 - `[in] error`: An error message associated with the promise rejection
 
+
 ### Resolve
 
 ```cpp
-void Napi::AsyncPromise<T>::BaseTask::Resolve(Value value);
+void Napi::AsyncPromise::BaseTask::Resolve(Value value);
 ```
 
-To be used from `<T>::OnOK()`. **Do not** use this method within `<T>::Execute()`.
-The default implementation of `BaseTask::OnOK()` calls this method with the
+To be used from `OnInit()`, `OnOK()`, `OnCancel()`, or `OnError()`.
+**Do not** use this method from your implementation of `Execute()`.
+
+The default implementation of `OnOK()` calls this method with the
 JavaScript `undefined` value to resolve the promise.
 
 #### Arguments
 - `[in] value`: The value with which to resolve the promise
+
 
 ### Reject
 
@@ -121,12 +158,53 @@ JavaScript `undefined` value to resolve the promise.
 void Napi::AsyncPromise<T>::BaseTask::Reject(Value value) const;
 ```
 
-To be used from `<T>::OnError()`. **Do not** use this method within `<T>::Execute()`.
-The default implementation of `BaseTask::OnError()` calls this method with a
-JavaScript error object to reject the promise.
+To be used from `OnInit()`, `OnOK()`, `OnCancel()`, or `OnError()`.
+**Do not** use this method from your implementation of `Execute()`.
+
+The default implementation of `OnError()` calls this method with
+a JavaScript error object to reject the promise.
+The default implementation of `OnCancel()` calls this method with
+a JavaScript message string indicating cancellation of the task.
 
 #### Arguments
 - `[in] value`: The value with which to reject the promise
+
+
+### OnInit
+
+```cpp
+virtual void Napi::AsyncPromise<T>::BaseTask::OnInit();
+```
+
+This method is called after the base class initialization if only
+the JavaScript environment was passed to the `Napi::AsyncPromise`
+factory method.
+
+The default implementation does nothing. If control passes out of
+this method without fulfilling the promise, the task will be queued
+for execution.
+
+#### Arguments
+None
+
+
+### OnInit
+
+```cpp
+virtual void Napi::AsyncPromise<T>::BaseTask::OnInit(const CallbackInfo& info);
+```
+
+This method is called after the base class initialization if an instance
+of `Napi::CallbackInfo` was passed to the `Napi::AsyncPromise`
+factory method.
+
+The default implementation does nothing. If control passes out of
+this method without fulfilling the promise, the task will be queued
+for execution.
+
+#### Arguments
+- `[in] info`: The arguments to the N-API callback function
+
 
 ### Execute
 
@@ -134,13 +212,18 @@ JavaScript error object to reject the promise.
 virtual void Napi::AsyncPromise<T>::BaseTask::Execute() = 0;
 ```
 
-The method called by the worker thread to perform the deferred task. If the
-task completes successfully, store any values needed for promise resolution
-in the `<T>` instance on which this method is executed. If the task fails,
-call `BaseTask::SetError()` to record the error for promise rejection.
+This method called in the context of a worker thread to perform the deferred
+task. Store any values needed for promise resolution by the result handlers
+`OnOK()` and `OnError()`.
+If the task fails, call `BaseTask::SetError()` to record the error and
+trigger the calling of `OnError()`.
+
+**NOTE: Do not call N-API functions from `Execute()`. Any such calls must
+be made from result handlers.**
 
 #### Arguments
 None
+
 
 ### OnOK
 
@@ -148,13 +231,17 @@ None
 virtual void Napi::AsyncPromise<T>::BaseTask::OnOK();
 ```
 
-The method is scheduled on the main event loop following
-successfull completion of `<T>::Execute()`. The default implementation
-resolves the promise with the JavaScript `undefined` value. Override this
-method to perform custom promise resolution.
+This method is executed on the main event loop following
+successfull completion of `Execute()`. N-API functions are available
+to the implementation of this method.
+
+The default implementation resolves the promise with the JavaScript
+`undefined` value. Override this method to perform custom promise
+resolution.
 
 #### Arguments
 None
+
 
 ### OnCancel
 
@@ -162,14 +249,19 @@ None
 virtual void Napi::AsyncPromise<T>::BaseTask::OnCancel();
 ```
 
-The method is scheduled on the main event loop following
-cancellation of the task. The task will only be canceled by a call to
-`AsyncPromise<T>::Cancel()`. The default implementation rejects the promise with
-a JavaScript string value. Override this method to perform a different operation
+This method is executed on the main event loop following
+cancellation of the task. N-API functions are available to the
+implementation of this method.
+
+The task will only be canceled by a call to `AsyncPromise::Cancel()`.
+
+The default implementation rejects the promise with
+a JavaScript string value. Override this method to perform custom actions
 when the task is cancelled.
 
 #### Arguments
 None
+
 
 ### OnError
 
@@ -177,56 +269,121 @@ None
 virtual Napi::AsyncPromise<T>::BaseTask::OnError();
 ```
 
-The method is scheduled on the main event loop following
-unsuccessful completion of or an exception thrown from `<T>::Execute()`.
+This method is executed on the main event loop following
+unsuccessful completion of or an exception thrown from `Execute()`.
+N-API functions are available to the implementation of this method.
+
 The default implementation rejects the promise with an instance of a
 JavaScript error constructed with either the message passed to
-`BaseTask::SetError()` or, if an exception was caught, the result of
+`SetError()` or, if an exception was caught, the result of
 calling `std::exception::what()`.
 
 #### Arguments
 None
 
-## AsyncPromise\<T\> Methods
+## AsyncPromise Methods
 
-### Constructor
+### Factory
 
 ```cpp
-explicit Napi::AsyncPromise<T>::AsyncPromise(Napi::Env env);
+static Napi::AsyncPromise AsyncPromise::New<T>(Napi::Env env);
 ```
 
-Constructs and initializes an instance of the `AsyncPromise` management class
+Constructs and initializes an instance of `AsyncPromise`
 for a task of type `<T>`.
+
+When this factory method is used, the task initialization handler `OnInit()`
+with no arguments will be invoked.
 
 #### Arguments
 - `[in] env`: The environment in which the task is being created
 
-### Constructor
+
+### Factory
 
 ```cpp
-Napi::AsyncPromise<T>::AsyncPromise(Napi::Env env, const char* resource_name);
+static Napi::AsyncPromise AsyncPromise::New<T>(Napi::Env env, const char* resource_name);
 ```
 
-Constructs and initializes an instance of the `AsyncPromise` management class
+Constructs and initializes an instance of `AsyncPromise`
 for a task of type `<T>`.
+
+When this factory method is used, the task initialization handler `OnInit()`
+with no arguments will be invoked.
 
 #### Arguments
 - `[in] env`: The environment in which the task is being created
 - `[in] resource_name`: Identifier for the kind of resource that is being provided for diagnostic information exposed by the `async_hooks` API
 
-### Constructor
+
+### Factory
 
 ```cpp
-Napi::AsyncPromise<T>::AsyncPromise(Napi::Env env, const char* resource_name, const Object& resource);
+static Napi::AsyncPromise AsyncPromise::New<T>(Napi::Env env, const char* resource_name, const Object& resource);
 ```
 
-Constructs and initializes an instance of the `AsyncPromise` management class
+Constructs and initializes an instance of `AsyncPromise`
 for a task of type `<T>`.
+
+When this factory method is used, the task initialization handler `OnInit()`
+with no arguments will be invoked.
 
 #### Arguments
 - `[in] env`: The environment in which the task is being created
 - `[in] resource_name`: Identifier for the kind of resource that is being provided for diagnostic information exposed by the `async_hooks` API
 - `[in] resource`: An object associated with the async work that will be passed to possible `async_hooks` init hooks
+
+
+### Factory
+
+```cpp
+static Napi::AsyncPromise AsyncPromise::New<T>(const CallbackInfo& info);
+```
+
+Constructs and initializes an instance of `AsyncPromise`
+for a task of type `<T>`.
+
+When this factory method is used, the task initialization handler `OnInit()`
+with a `CallbackInfo` argument will be invoked.
+
+#### Arguments
+- `[in] info`: The JavaScript context provided to the native callback
+
+
+### Factory
+
+```cpp
+static Napi::AsyncPromise AsyncPromise::New<T>(const CallbackInfo& info, const char* resource_name);
+```
+
+Constructs and initializes an instance of `AsyncPromise`
+for a task of type `<T>`.
+
+When this factory method is used, the task initialization handler `OnInit()`
+with a `CallbackInfo` argument will be invoked.
+
+#### Arguments
+- `[in] info`: The JavaScript context provided to the native callback
+- `[in] resource_name`: Identifier for the kind of resource that is being provided for diagnostic information exposed by the `async_hooks` API
+
+
+### Factory
+
+```cpp
+static Napi::AsyncPromise AsyncPromise::New<T>(const CallbackInfo& info, const char* resource_name, const Object& resource);
+```
+
+Constructs and initializes an instance of `AsyncPromise`
+for a task of type `<T>`.
+
+When this factory method is used, the task initialization handler `OnInit()`
+with a `CallbackInfo` argument will be invoked.
+
+#### Arguments
+- `[in] info`: The JavaScript context provided to the native callback
+- `[in] resource_name`: Identifier for the kind of resource that is being provided for diagnostic information exposed by the `async_hooks` API
+- `[in] resource`: An object associated with the async work that will be passed to possible `async_hooks` init hooks
+
 
 ### Constructor
 
@@ -234,11 +391,12 @@ for a task of type `<T>`.
 Napi::AsyncPromise<T>::AsyncPromise(AsyncPromise&& other);
 ```
 
-Constructs and initializes an instance of the `AsyncPromise` management class
-for a task of type `<T>` by taking ownership from another instance.
+Constructs and initializes an instance of `AsyncPromise`
+by taking ownership from another instance.
 
 #### Arguments
 - `[in] other`: The other instance from which to take ownership
+
 
 ### Env
 
@@ -251,6 +409,7 @@ Requests the environment in which the task was created.
 #### Arguments
 None
 
+
 ### Promise
 
 ```cpp
@@ -262,32 +421,6 @@ Requests the promise associated with the task.
 #### Arguments
 None
 
-### Task
-
-```cpp
-<T> * Napi::AsyncPromise<T>::Task();
-```
-
-Requests a pointer to the instance of the user-defined task that will be scheduled.
-Note that after the task has been queued, access to task instance may result in
-undefined behavior.
-
-#### Arguments
-None
-
-### Queue
-
-```cpp
-void Napi::AsyncPromise<T>::Queue();
-```
-
-Submits the underlying task for processing on a worker thread. After the task has
-been queued, any further access to the task instance may result in undefined
-behavior. The only subsequent legal operations are request for cancellation and
-the `Napi::Promise` object.
-
-#### Arguments
-None
 
 ### Cancel
 
@@ -304,36 +437,22 @@ to provide custom cancelation handling.
 #### Arguments
 None
 
-### Resolve
+
+### Task
 
 ```cpp
-void Napi::AsyncPromise<T>::Resolve(Value value);
+<T> * Napi::AsyncPromise<T>::Task();
 ```
 
-Resolves the promise using the provided value. The native N-API routine may
-want to do this in the event that the promise conditions can be resolved
-without executing the task. If the task has been queued or already filfilled,
-this method will throw a JavaScript error.
+Requests a pointer to the instance of the user-defined task that will be scheduled.
+Note that after the task has been queued, access to task instance may result in
+undefined behavior.
 
 #### Arguments
-- `[in] value`: The value with which to resolve the promise
+None
 
-### Reject
 
-```cpp
-void Napi::AsyncPromise<T>::Reject(Value value);
-```
-
-Rejects the promise using the provided value. The native N-API routine may
-want to do this in the event that the promise conditions can be rejected
-without executing the task - for instance, during parameter validation.
-If the task has been queued or already filfilled,
-this method will throw a JavaScript error.
-
-#### Arguments
-- `[in] value`: The value with which to resolve the promise
-
-## AsyncPromise\<T\> Operators
+## AsyncPromise Operators
 
 ### napi_async_work
 
@@ -341,8 +460,9 @@ this method will throw a JavaScript error.
 Napi::AsyncPromise<T>::operator napi_async_work() const;
 ```
 
-Returns the N-API `napi_async_work` wrapped by the `<T>` instance. This
+Returns the N-API `napi_async_work` wrapped by the task instance. This
 can be used to mix usage of the C N-API and node-addon-api.
+
 
 ### napi_deferred
 
@@ -350,23 +470,21 @@ can be used to mix usage of the C N-API and node-addon-api.
 Napi::AsyncPromise<T>::operator napi_deferred() const;
 ```
 
-Returns the N-API `napi_deferred` wrapped by the `<T>` instance. This
+Returns the N-API `napi_deferred` wrapped by the task instance. This
 can be used to mix usage of the C N-API and node-addon-api.
+
 
 ## Example
 
 The basic usage pattern for `Napi::AsyncPromise` is summarized in these steps:
 
-1. Declare a subclass of `Napi::AsyncPromise<T>::BaseTask` using the subclass
-type as the template parameter
-2. In the subclass, define a constructor and override the `Execute()` abstract method
-3. At the top of the N-API native routine, declare an instance of `Napi::AsyncPromise<T>`
-using the subclass type as the template parameter
-4. Set the subclass task parameters
-5. Queue the async promise
-6. Return the promise from the native routine
+1. Declare a subclass of `Napi::AsyncPromise::BaseTask`
+1. In the subclass, define an override of the appropriate `OnInit()` method
+1. In the subclass, define an override of the `Execute()` abstract method
+1. In the N-API callback function, create an instance of `Napi::AsyncPromise`
+using the appropriate factory method and return its promise
 
-As noted above, the the other virtual methods of `Napi::AsyncPromis<T>::BaseTask`
+As noted above, the the other virtual methods of `Napi::AsyncPromise::BaseTask`
 may be overridden to provide custom behavior.
 
 The code below demonstrates a basic example of using `Napi::AsyncPromise`:
@@ -377,52 +495,36 @@ The code below demonstrates a basic example of using `Napi::AsyncPromise`:
 #include <chrono>
 #include <thread>
 
-// Native routine registered with N-API as a JavaScript callable function
+// Native routine registered with N-API as a JavaScript callback
 Napi::Value PromisingEcho(const Napi::CallbackInfo & info) {
   // Define the task subclass
-  class EchoTask : public Napi::AsyncPromise<EchoTask>::BaseTask {
-    private:
-      std::string _echo_str;
+  class EchoTask : public Napi::AsyncPromise::BaseTask {
+  private:
+    std::string _echo_str;
 
-      void Execute() override {
-        // Simulate an asynchronous task running on a worker thread
-        std::this_thread::sleep_for(std::chrono::seconds(2));
-
-        // Set data for promise fulfillment
-        _echo_str += " ... done";
+    void OnInit(const Napi::CallbackInfo & info) override {
+      if (info.Length() < 1 || !info[0].IsString()) {
+        // Bad argument - reject the promise
+        // This will fulfill the promise and skip the task
+        Reject(Napi::TypeError::New(info.Env(), "Echo requires a string argument").Value());
       }
+    }
 
-      void OnOK() override {
-        // Echo the message to any awaiters
-        Resolve(Napi::String::New(Env(), _echo_str));
-      }
+    void Execute() override {
+      // Simulate an long-running task running on a worker thread
+      std::this_thread::sleep_for(std::chrono::seconds(1));
 
-    public:
-      EchoTask(Napi::Env env) : Base_t(env) {}
+      // Set data for promise fulfillment
+      _echo_str += " ... done";
+    }
 
-      void SetString(const std::string & echo_str) {
-        // Save this for later
-        _echo_str = echo_str;
-      }
+    void OnOK() override {
+      // Echo the message to any awaiters
+      Resolve(Napi::String::New(Env(), _echo_str));
+    }
   }
 
-  // Declare the async promise that we'll be returning
-  AsyncPromise<EchoTask> echo_promise(info.Env());
-
-  // Validate the function parameter from our JavaScript caller
-  if (info.Length() < 1 || !info[0].IsString()) {
-    // Bad argument - reject the promise and bail without queueing the task
-    echo_promise.Reject(Napi::TypeError::New(info.Env(), "Echo requires a string argument").Value());
-    return echo_promise.Promise();
-  }
-
-  // Set the task parameter
-  echo_promise.Task()->SetString(info[0].As<Napi::String>());
-
-  // Queue the async work
-  echo_promise.Queue();
-
-  // Return the promise to JavaScript land
-  return echo_promise.Promise();
+  // Declare the task and return its promise
+  return Napi::AsyncPromise::New<EchoTask>(info).Promise();
 }
 ```

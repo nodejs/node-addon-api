@@ -2,7 +2,7 @@
 
 using namespace Napi;
 
-class TestPromise : public AsyncPromise<TestPromise>::BaseTask {
+class TestPromise : public AsyncPromise::BaseTask {
 public:
   enum class Test
   {
@@ -13,45 +13,40 @@ public:
   };
 
   static Value MakePromise(const CallbackInfo& info) {
-    auto test = (Test)info[0].As<Number>().Uint32Value();
-    Object resource = info[1].As<Object>();
-    std::string data = info[2].As<String>();
-
-    AsyncPromise<TestPromise> async_promise(info.Env(), "TestResource", resource);
-
-    async_promise.Task()->_data = data;
-
-    switch (test)
-    {
-    case Test::succeed_before_queue:
-      async_promise.Resolve(String::New(info.Env(), data));
-      break;
-
-      case Test::succeed_in_execute:
-      async_promise.Task()->_succeed = true;
-      async_promise.Queue();
-      break;
-
-      case Test::fail_before_queue:
-      async_promise.Reject(Error::New(info.Env(), data).Value());
-      break;
-
-      case Test::fail_in_execute:
-      async_promise.Task()->_succeed = false;
-      async_promise.Queue();
-      break;
-    }
-
-    return async_promise.Promise();
+    return AsyncPromise::New<TestPromise>(info).Promise();
   }
-
-  TestPromise(Napi::Env env)
-      : Base_t(env) {}
 
 protected:
   void Execute() override {
     if (!_succeed) {
       SetError(_data);
+    }
+  }
+
+  void OnInit(const CallbackInfo& info) override {
+    auto test = (Test)info[0].As<Number>().Uint32Value();
+    Object resource = info[1].As<Object>();
+    _data = info[2].As<String>();
+
+    switch (test)
+    {
+    case Test::succeed_before_queue:
+      _succeed = true;
+      Resolve(String::New(info.Env(), _data));
+      break;
+
+    case Test::succeed_in_execute:
+      _succeed = true;
+      break;
+
+      case Test::fail_before_queue:
+      _succeed = false;
+      Reject(Error::New(info.Env(), _data).Value());
+      break;
+
+      case Test::fail_in_execute:
+      _succeed = false;
+      break;
     }
   }
 
