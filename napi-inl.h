@@ -3636,7 +3636,9 @@ inline void AsyncWorker::OnWorkComplete(
 template <class T>
 inline AsyncPromise<T>::BaseTask::~BaseTask() {
   if (_work != nullptr) {
-    napi_delete_async_work(_env, _work);
+    napi_status status = napi_delete_async_work(_env, _work);
+    if ((status) != napi_ok)
+      Error::New(_env).ThrowAsJavaScriptException();
     _work = nullptr;
   }
 }
