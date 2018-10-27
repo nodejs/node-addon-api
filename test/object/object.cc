@@ -46,12 +46,12 @@ void TestSetter(const CallbackInfo& info) {
    testValue = info[0].As<Boolean>();
 }
 
-Value TestGetterWithUd(const CallbackInfo& info) {
+Value TestGetterWithUserData(const CallbackInfo& info) {
   const UserDataHolder* holder = reinterpret_cast<UserDataHolder*>(info.Data());
   return Number::New(info.Env(), holder->value);
 }
 
-void TestSetterWithUd(const CallbackInfo& info) {
+void TestSetterWithUserData(const CallbackInfo& info) {
   UserDataHolder* holder = reinterpret_cast<UserDataHolder*>(info.Data());
   holder->value = info[0].As<Number>().Int32Value();
 }
@@ -79,8 +79,8 @@ void DefineProperties(const CallbackInfo& info) {
     obj.DefineProperties({
       PropertyDescriptor::Accessor(env, obj, "readonlyAccessor", TestGetter),
       PropertyDescriptor::Accessor(env, obj, "readwriteAccessor", TestGetter, TestSetter),
-      PropertyDescriptor::Accessor(env, obj, "readonlyAccessorWithUd", TestGetterWithUd, napi_property_attributes::napi_default, reinterpret_cast<void*>(holder)),
-      PropertyDescriptor::Accessor(env, obj, "readwriteAccessorWithUd", TestGetterWithUd, TestSetterWithUd, napi_property_attributes::napi_default, reinterpret_cast<void*>(holder)),
+      PropertyDescriptor::Accessor(env, obj, "readonlyAccessorWithUserData", TestGetterWithUserData, napi_property_attributes::napi_default, reinterpret_cast<void*>(holder)),
+      PropertyDescriptor::Accessor(env, obj, "readwriteAccessorWithUserData", TestGetterWithUserData, TestSetterWithUserData, napi_property_attributes::napi_default, reinterpret_cast<void*>(holder)),
       PropertyDescriptor::Value("readonlyValue", trueValue),
       PropertyDescriptor::Value("readwriteValue", trueValue, napi_writable),
       PropertyDescriptor::Value("enumerableValue", trueValue, napi_enumerable),
@@ -94,8 +94,8 @@ void DefineProperties(const CallbackInfo& info) {
     // work around the issue.
     std::string str1("readonlyAccessor");
     std::string str2("readwriteAccessor");
-    std::string str1a("readonlyAccessorWithUd");
-    std::string str2a("readwriteAccessorWithUd");
+    std::string str1a("readonlyAccessorWithUserData");
+    std::string str2a("readwriteAccessorWithUserData");
     std::string str3("readonlyValue");
     std::string str4("readwriteValue");
     std::string str5("enumerableValue");
@@ -105,8 +105,8 @@ void DefineProperties(const CallbackInfo& info) {
     obj.DefineProperties({
       PropertyDescriptor::Accessor(env, obj, str1, TestGetter),
       PropertyDescriptor::Accessor(env, obj, str2, TestGetter, TestSetter),
-      PropertyDescriptor::Accessor(env, obj, str1a, TestGetterWithUd, napi_property_attributes::napi_default, reinterpret_cast<void*>(holder)),
-      PropertyDescriptor::Accessor(env, obj, str2a, TestGetterWithUd, TestSetterWithUd, napi_property_attributes::napi_default, reinterpret_cast<void*>(holder)),
+      PropertyDescriptor::Accessor(env, obj, str1a, TestGetterWithUserData, napi_property_attributes::napi_default, reinterpret_cast<void*>(holder)),
+      PropertyDescriptor::Accessor(env, obj, str2a, TestGetterWithUserData, TestSetterWithUserData, napi_property_attributes::napi_default, reinterpret_cast<void*>(holder)),
       PropertyDescriptor::Value(str3, trueValue),
       PropertyDescriptor::Value(str4, trueValue, napi_writable),
       PropertyDescriptor::Value(str5, trueValue, napi_enumerable),
@@ -120,9 +120,9 @@ void DefineProperties(const CallbackInfo& info) {
       PropertyDescriptor::Accessor(env, obj,
         Napi::String::New(env, "readwriteAccessor"), TestGetter, TestSetter),
       PropertyDescriptor::Accessor(env, obj,
-        Napi::String::New(env, "readonlyAccessorWithUd"), TestGetterWithUd, napi_property_attributes::napi_default, reinterpret_cast<void*>(holder)),
+        Napi::String::New(env, "readonlyAccessorWithUserData"), TestGetterWithUserData, napi_property_attributes::napi_default, reinterpret_cast<void*>(holder)),
       PropertyDescriptor::Accessor(env, obj,
-        Napi::String::New(env, "readwriteAccessorWithUd"), TestGetterWithUd, TestSetterWithUd, napi_property_attributes::napi_default, reinterpret_cast<void*>(holder)),
+        Napi::String::New(env, "readwriteAccessorWithUserData"), TestGetterWithUserData, TestSetterWithUserData, napi_property_attributes::napi_default, reinterpret_cast<void*>(holder)),
       PropertyDescriptor::Value(
         Napi::String::New(env, "readonlyValue"), trueValue),
       PropertyDescriptor::Value(

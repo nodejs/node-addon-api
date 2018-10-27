@@ -12,11 +12,11 @@ function test(binding) {
     assert.ok(propDesc[attribute]);
   }
 
-    function assertPropertyIsNot(obj, key, attribute) {
-      const propDesc = Object.getOwnPropertyDescriptor(obj, key);
+  function assertPropertyIsNot(obj, key, attribute) {
+    const propDesc = Object.getOwnPropertyDescriptor(obj, key);
     assert.ok(propDesc);
     assert.ok(!propDesc[attribute]);
-    }
+  }
 
   function testDefineProperties(nameType) {
     const obj = {};
@@ -26,9 +26,9 @@ function test(binding) {
     assertPropertyIsNot(obj, 'readonlyAccessor', 'configurable');
     assert.strictEqual(obj.readonlyAccessor, true);
 
-    assertPropertyIsNot(obj, 'readonlyAccessorWithUd', 'enumerable');
-    assertPropertyIsNot(obj, 'readonlyAccessorWithUd', 'configurable');
-    assert.strictEqual(obj.readonlyAccessorWithUd, 1234, nameType);
+    assertPropertyIsNot(obj, 'readonlyAccessorWithUserData', 'enumerable');
+    assertPropertyIsNot(obj, 'readonlyAccessorWithUserData', 'configurable');
+    assert.strictEqual(obj.readonlyAccessorWithUserData, 1234, nameType);
 
     assertPropertyIsNot(obj, 'readwriteAccessor', 'enumerable');
     assertPropertyIsNot(obj, 'readwriteAccessor', 'configurable');
@@ -37,12 +37,12 @@ function test(binding) {
     obj.readwriteAccessor = true;
     assert.strictEqual(obj.readwriteAccessor, true);
 
-    assertPropertyIsNot(obj, 'readwriteAccessorWithUd', 'enumerable');
-    assertPropertyIsNot(obj, 'readwriteAccessorWithUd', 'configurable');
-    obj.readwriteAccessorWithUd = 2;
-    assert.strictEqual(obj.readwriteAccessorWithUd, 2);
-    obj.readwriteAccessorWithUd = -14;
-    assert.strictEqual(obj.readwriteAccessorWithUd, -14);
+    assertPropertyIsNot(obj, 'readwriteAccessorWithUserData', 'enumerable');
+    assertPropertyIsNot(obj, 'readwriteAccessorWithUserData', 'configurable');
+    obj.readwriteAccessorWithUserData = 2;
+    assert.strictEqual(obj.readwriteAccessorWithUserData, 2);
+    obj.readwriteAccessorWithUserData = -14;
+    assert.strictEqual(obj.readwriteAccessorWithUserData, -14);
 
     assertPropertyIsNot(obj, 'readonlyValue', 'writable');
     assertPropertyIsNot(obj, 'readonlyValue', 'enumerable');
