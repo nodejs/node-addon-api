@@ -33,7 +33,8 @@
     "Philipp Renoth (https://github.com/DaAitch)",
     "Rolf Timmermans (https://github.com/rolftimmermans)",
     "Sampson Gao (https://github.com/sampsongao)",
-    "Taylor Woll (https://github.com/boingoing)"
+    "Taylor Woll (https://github.com/boingoing)",
+    "Thomas Gentilhomme (https://github.com/fraxken)"
   ],
   "dependencies": {},
   "description": "Node.js API (N-API)",
@@ -56,5 +57,5 @@
     "test": "node test",
     "doc": "doxygen doc/Doxyfile"
   },
-  "version": "1.5.0"
+  "version": "1.6.0"
 }

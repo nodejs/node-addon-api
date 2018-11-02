@@ -1,6 +1,36 @@
 # node-addon-api Changelog
 
-## 2018-10-03 Version 1.5.0 (Current), @NickNasso
+## 2018-11-02 Version 1.6.0 (Current), @NickNaso
+
+### Notable changes:
+
+#### Documentation
+
+- Improved documentation about ABI stability.
+
+#### API
+
+- Add `Napi::CallbackScope` class that help to have the equivalent of the scope
+associated with a callback in place when making certain N-API calls
+
+#### TEST
+
+- Added tests for `Napi::Array` class.
+- Added tests for `Napi::ArrayBuffer` class.
+
+### Commmits
+
+* [[`8ce605c657`](https://github.com/nodejs/node-addon-api/commit/8ce605c657)] - **build**: avoid using package-lock.json (Jaeseok Yoon) [#359](https://github.com/nodejs/node-addon-api/pull/359)
+* [[`fa3a6150b3`](https://github.com/nodejs/node-addon-api/commit/fa3a6150b3)] - **src**: use MakeCallback() -\> Call() in AsyncWorker (Jinho Bang) [#361](https://github.com/nodejs/node-addon-api/pull/361)
+* [[`2342415463`](https://github.com/nodejs/node-addon-api/commit/2342415463)] - **test**: create test objects in the stack instead of the heap (Dongjin Na) [#371](https://github.com/nodejs/node-addon-api/pull/371)
+* [[`67b7db0a6f`](https://github.com/nodejs/node-addon-api/commit/67b7db0a6f)] - **test**: write tests for Array class (Jaeseok Yoon) [#363](https://github.com/nodejs/node-addon-api/pull/363)
+* [[`729f6dc4ee`](https://github.com/nodejs/node-addon-api/commit/729f6dc4ee)] - **test**: add arraybuffer tests (Dongjin Na) [#369](https://github.com/nodejs/node-addon-api/pull/369)
+* [[`405f3e5b5b`](https://github.com/nodejs/node-addon-api/commit/405f3e5b5b)] - **src**: implement CallbackScope class (Jinho Bang) [#362](https://github.com/nodejs/node-addon-api/pull/362)
+* [[`015d95312f`](https://github.com/nodejs/node-addon-api/commit/015d95312f)] - **doc**: fix Napi::Reference link (Gentilhomme) [#365](https://github.com/nodejs/node-addon-api/pull/365)
+* [[`fd65078e3c`](https://github.com/nodejs/node-addon-api/commit/fd65078e3c)] - README.md: link to new ABI stability guide (Gabriel Schulhof) [#367](https://github.com/nodejs/node-addon-api/pull/367)
+* [[`ffebf9ba9a`](https://github.com/nodejs/node-addon-api/commit/ffebf9ba9a)] - Updates for release 1.5.0 (NickNaso)
+
+## 2018-10-03 Version 1.5.0 (Current), @NickNaso
 
 ### Notable changes:
 
@@ -12,7 +42,7 @@
 #### API
 
 - Add `Napi::AsyncContext` class to handle asynchronous operation.
-- Add B`Napi::igInt` class to work with BigInt type.
+- Add `Napi::BigInt` class to work with BigInt type.
 - Add `Napi::VersionManagement` class to retrieve the versions of Node.js and N-API.
 - Fix potential memory leaks.
 - DataView feature is enabled by default
@@ -65,7 +95,7 @@ yet backported in the previous Node.js version.
 * [[`622ffaea76`](https://github.com/nodejs/node-addon-api/commit/622ffaea76)] - **test**: Tighten up compiler warnings (Mikhail Cheshkov) [#315](https://github.com/nodejs/node-addon-api/pull/315)
 * [[`fd3c37b0f2`](https://github.com/nodejs/node-addon-api/commit/fd3c37b0f2)] - **tools**: add tool to check for N-API modules (Gabriel Schulhof) [#346](https://github.com/nodejs/node-addon-api/pull/346)
 
-## 2018-07-19 Version 1.4.0, @NickNasso
+## 2018-07-19 Version 1.4.0, @NickNaso
 
 ### Notable changes:
 
