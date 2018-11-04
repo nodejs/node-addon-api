@@ -59,8 +59,8 @@ static Napi::ArrayBuffer Napi::ArrayBuffer::New(napi_env env,
 - `[in] externalData`: The pointer to the external data to wrap.
 - `[in] byteLength`: The length of the `externalData`, in bytes.
 - `[in] finalizeCallback`: A function to be called when the `Napi::ArrayBuffer` is
-  destroyed. It must implement `operator()`, accept a `void*` (which is the
-  `externalData` pointer), and return `void`.
+  destroyed. It must implement `operator()` with parameters `(Napi::Env, void*)`,
+  and return `void`.
 
 Returns a new `Napi::ArrayBuffer` instance.
 
@@ -85,9 +85,9 @@ static Napi::ArrayBuffer Napi::ArrayBuffer::New(napi_env env,
 - `[in] env`: The environment in which to create the `Napi::ArrayBuffer` instance.
 - `[in] externalData`: The pointer to the external data to wrap.
 - `[in] byteLength`: The length of the `externalData`, in bytes.
-- `[in] finalizeCallback`: The function to be called when the `Napi::ArrayBuffer` is
-  destroyed. It must implement `operator()`, accept a `void*` (which is the
-  `externalData` pointer) and `Hint*`, and return `void`.
+- `[in] finalizeCallback`: A function to be called when the `Napi::ArrayBuffer` is
+  destroyed. It must implement `operator()` with parameters `(Napi::Env, void*, Hint*)`,
+  and return `void`.
 - `[in] finalizeHint`: The hint to be passed as the second parameter of the
   finalize callback.
 

@@ -56,9 +56,9 @@ static Napi::Buffer<T> Napi::Buffer::New(napi_env env,
 - `[in] env`: The environment in which to create the `Napi::Buffer` object.
 - `[in] data`: The pointer to the external data to expose.
 - `[in] length`: The number of `T` elements in the external data.
-- `[in] finalizeCallback`: The function to be called when the `Napi::Buffer` is
-  destroyed. It must implement `operator()`, accept a `T*` (which is the
-  external data pointer), and return `void`.
+- `[in] finalizeCallback`: A function to be called when the `Napi::ArrayBuffer` is
+  destroyed. It must implement `operator()` with parameters `(Napi::Env, T*)`,
+  and return `void`.
 
 Returns a new `Napi::Buffer` object.
 
@@ -82,9 +82,9 @@ static Napi::Buffer<T> Napi::Buffer::New(napi_env env,
 - `[in] env`: The environment in which to create the `Napi::Buffer` object.
 - `[in] data`: The pointer to the external data to expose.
 - `[in] length`: The number of `T` elements in the external data.
-- `[in] finalizeCallback`: The function to be called when the `Napi::Buffer` is
-  destroyed. It must implement `operator()`, accept a `T*` (which is the
-  external data pointer) and `Hint*`, and return `void`.
+- `[in] finalizeCallback`: A function to be called when the `Napi::ArrayBuffer` is
+  destroyed. It must implement `operator()` with parameters `(Napi::Env, T*, Hint*)`,
+  and return `void`.
 - `[in] finalizeHint`: The hint to be passed as the second parameter of the
   finalize callback.
 

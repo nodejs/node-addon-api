@@ -29,7 +29,9 @@ static Napi::External Napi::External::New(napi_env env,
 
 - `[in] env`: The `napi_env` environment in which to construct the `Napi::External` object.
 - `[in] data`: The arbitrary C++ data to be held by the `Napi::External` object.
-- `[in] finalizeCallback`: A function called when the `Napi::External` object is released by the garbage collector accepting a T* and returning void.
+- `[in] finalizeCallback`: A function to be called when the `Napi::ArrayBuffer` is
+  destroyed. It must implement `operator()` with parameters `(Napi::Env, T*)`,
+  and return `void`.
 
 Returns the created `Napi::External<T>` object.
 
@@ -45,7 +47,9 @@ static Napi::External Napi::External::New(napi_env env,
 
 - `[in] env`: The `napi_env` environment in which to construct the `Napi::External` object.
 - `[in] data`: The arbitrary C++ data to be held by the `Napi::External` object.
-- `[in] finalizeCallback`: A function called when the `Napi::External` object is released by the garbage collector accepting T* and Hint* parameters and returning void.
+- `[in] finalizeCallback`: A function to be called when the `Napi::ArrayBuffer` is
+  destroyed. It must implement `operator()` with parameters `(Napi::Env, T*, Hint*)`,
+  and return `void`.
 - `[in] finalizeHint`: A hint value passed to the `finalizeCallback` function.
 
 Returns the created `Napi::External<T>` object.
