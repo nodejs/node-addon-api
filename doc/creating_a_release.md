@@ -26,7 +26,7 @@ These are the steps to follow to create a new release:
 * Add any new contributors to the "contributors" section in
   the package.json
 
-* Do a clean checkout of node-add-api.
+* Do a clean checkout of node-addon-api.
 
 * Login and then run `npm publish`.
 
