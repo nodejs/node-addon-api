@@ -102,6 +102,7 @@ The following is the documentation for node-addon-api.
  - [Async Operations](doc/async_operations.md)
     - [AsyncWorker](doc/async_worker.md)
  - [Promises](doc/promises.md)
+ - [JSON](doc/json.md)
  - [Version management](doc/version_management.md)
 
 <a name="examples"></a>

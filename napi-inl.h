@@ -3453,6 +3453,30 @@ inline const napi_node_version* VersionManagement::GetNodeVersion(Env env) {
   return result;
 }
 
+////////////////////////////////////////////////////////////////////////////////
+// JSON class
+////////////////////////////////////////////////////////////////////////////////
+inline Value JSON::Parse(Env env, String json_string) {
+  Object json = env.Global().Get("JSON").As<Object>();
+  Function parse = json.Get("parse").As<Function>();
+  return parse.Call(json, { json_string });
+}
+
+inline Value JSON::Stringify(Env env,
+                             Value json_object,
+                             Value replacer = Value(),
+                             Value space = Value()) {
+  Object json = env.Global().Get("JSON").As<Object>();
+  Function stringify = json.Get("stringify").As<Function>();
+  if (replacer.IsEmpty()) {
+    replacer = env.Null();
+  }
+  if (space.IsEmpty()) {
+    space = env.Null();
+  }
+  return stringify.Call(json, { json_object, replacer, space });
+}
+
 // These macros shouldn't be useful in user code.
 #undef NAPI_THROW
 #undef NAPI_THROW_IF_FAILED

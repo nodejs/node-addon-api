@@ -17,6 +17,7 @@
         'error.cc',
         'external.cc',
         'function.cc',
+        'json.cc',
         'handlescope.cc',
         'memory_management.cc',
         'name.cc',

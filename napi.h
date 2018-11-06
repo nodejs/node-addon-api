@@ -1652,6 +1652,13 @@ namespace Napi {
       static const napi_node_version* GetNodeVersion(Env env);
   };
 
+  // JSON
+  class JSON {
+    public:
+      static Value Parse(Env env, String json_string);
+      static Value Stringify(Env env, Value json_object, Value replacer, Value space);
+  };
+
 } // namespace Napi
 
 // Inline implementations of all the above class methods are included here.

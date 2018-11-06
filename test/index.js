@@ -20,6 +20,7 @@ let testModules = [
   'error',
   'external',
   'function',
+  'json',
   'handlescope',
   'memory_management',
   'name',
