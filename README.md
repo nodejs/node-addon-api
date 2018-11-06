@@ -113,16 +113,16 @@ The following is the documentation for node-addon-api.
 
 ### **Examples**
 
-Are you new to **node-addon-api**? Take a look at our **[examples](https://github.com/nodejs/abi-stable-node-addon-examples)**
+Are you new to **node-addon-api**? Take a look at our **[examples](https://github.com/nodejs/node-addon-examples)**
 
-- **[Hello World](https://github.com/nodejs/abi-stable-node-addon-examples/tree/master/1_hello_world/node-addon-api)**
-- **[Pass arguments to a function](https://github.com/nodejs/abi-stable-node-addon-examples/tree/master/2_function_arguments/node-addon-api)**
-- **[Callbacks](https://github.com/nodejs/abi-stable-node-addon-examples/tree/master/3_callbacks/node-addon-api)**
-- **[Object factory](https://github.com/nodejs/abi-stable-node-addon-examples/tree/master/4_object_factory/node-addon-api)**
-- **[Function factory](https://github.com/nodejs/abi-stable-node-addon-examples/tree/master/5_function_factory/node-addon-api)**
-- **[Wrapping C++ Object](https://github.com/nodejs/abi-stable-node-addon-examples/tree/master/6_object_wrap/node-addon-api)**
-- **[Factory of wrapped object](https://github.com/nodejs/abi-stable-node-addon-examples/tree/master/7_factory_wrap/node-addon-api)**
-- **[Passing wrapped object around](https://github.com/nodejs/abi-stable-node-addon-examples/tree/master/8_passing_wrapped/node-addon-api)**
+- **[Hello World](https://github.com/nodejs/node-addon-examples/tree/master/1_hello_world/node-addon-api)**
+- **[Pass arguments to a function](https://github.com/nodejs/node-addon-examples/tree/master/2_function_arguments/node-addon-api)**
+- **[Callbacks](https://github.com/nodejs/node-addon-examples/tree/master/3_callbacks/node-addon-api)**
+- **[Object factory](https://github.com/nodejs/node-addon-examples/tree/master/4_object_factory/node-addon-api)**
+- **[Function factory](https://github.com/nodejs/node-addon-examples/tree/master/5_function_factory/node-addon-api)**
+- **[Wrapping C++ Object](https://github.com/nodejs/node-addon-examples/tree/master/6_object_wrap/node-addon-api)**
+- **[Factory of wrapped object](https://github.com/nodejs/node-addon-examples/tree/master/7_factory_wrap/node-addon-api)**
+- **[Passing wrapped object around](https://github.com/nodejs/node-addon-examples/tree/master/8_passing_wrapped/node-addon-api)**
 
 <a name="tests"></a>
 
