@@ -1684,7 +1684,6 @@ namespace Napi {
 
   private:
     napi_env _env;
-    napi_async_context _async_context;
     napi_callback_scope _scope;
   };
 #endif

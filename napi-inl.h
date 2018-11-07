@@ -3415,8 +3415,7 @@ inline CallbackScope::CallbackScope(
 }
 
 inline CallbackScope::CallbackScope(napi_env env, napi_async_context context)
-    : _env(env),
-      _async_context(context) {
+    : _env(env) {
   napi_status status = napi_open_callback_scope(
       _env, Object::New(env), context, &_scope);
   NAPI_THROW_IF_FAILED_VOID(_env, status);
