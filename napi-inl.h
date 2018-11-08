@@ -3462,7 +3462,7 @@ inline Value JSON::Parse(Env env, String json_string) {
   return parse.Call(json, { json_string });
 }
 
-inline Value JSON::Stringify(Env env,
+inline String JSON::Stringify(Env env,
                              Value json_object,
                              Value replacer = Value(),
                              Value space = Value()) {
@@ -3474,7 +3474,7 @@ inline Value JSON::Stringify(Env env,
   if (space.IsEmpty()) {
     space = env.Null();
   }
-  return stringify.Call(json, { json_object, replacer, space });
+  return stringify.Call(json, { json_object, replacer, space }).As<String>();
 }
 
 // These macros shouldn't be useful in user code.

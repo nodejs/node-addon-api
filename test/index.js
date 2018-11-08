@@ -2,8 +2,8 @@
 
 process.config.target_defaults.default_configuration =
   require('fs')
-    .readdirSync(require('path').join(__dirname, 'build'))
-    .filter((item) => (item === 'Debug' || item === 'Release'))[0];
+  .readdirSync(require('path').join(__dirname, 'build'))
+  .filter((item) => (item === 'Debug' || item === 'Release'))[0];
 
 // FIXME: We might need a way to load test modules automatically without
 // explicit declaration as follows.
@@ -20,8 +20,8 @@ let testModules = [
   'error',
   'external',
   'function',
-  'json',
   'handlescope',
+  'json',
   'memory_management',
   'name',
   'object/delete_property',
@@ -39,7 +39,7 @@ let testModules = [
 ];
 
 if ((process.env.npm_config_NAPI_VERSION !== undefined) &&
-    (process.env.npm_config_NAPI_VERSION < 50000)) {
+  (process.env.npm_config_NAPI_VERSION < 50000)) {
   // currently experimental only test if NAPI_VERSION
   // is set to experimental. We can't use C max int
   // as that is not supported as a number on earlier
@@ -62,7 +62,7 @@ if (typeof global.gc === 'function') {
   console.log('\nAll tests passed!');
 } else {
   // Make it easier to run with the correct (version-dependent) command-line args.
-  const child = require('./napi_child').spawnSync(process.argv[0], [ '--expose-gc', __filename ], {
+  const child = require('./napi_child').spawnSync(process.argv[0], ['--expose-gc', __filename], {
     stdio: 'inherit',
   });
 

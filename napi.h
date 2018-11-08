@@ -1656,7 +1656,7 @@ namespace Napi {
   class JSON {
     public:
       static Value Parse(Env env, String json_string);
-      static Value Stringify(Env env, Value json_object, Value replacer, Value space);
+      static String Stringify(Env env, Value json_object, Value replacer, Value space);
   };
 
 } // namespace Napi
