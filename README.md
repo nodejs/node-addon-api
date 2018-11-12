@@ -31,7 +31,7 @@ wrappers for those new APIs. For this reason node-addon-api provides
 methods that allow callers to obtain the underlying N-API handles so
 direct calls to N-API and the use of the objects/methods provided by
 node-addon-api can be used together. For example, in order to be able
-to use an API for which the node-add-api does not yet provide a wrapper.
+to use an API for which the node-addon-api does not yet provide a wrapper.
 
 APIs exposed by node-addon-api are generally used to create and
 manipulate JavaScript values. Concepts and operations generally map
