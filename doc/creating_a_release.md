@@ -44,7 +44,7 @@ following the style used in publishing the previous release.
 * Validate all tests pass by running npm test on master.
 
 * Use **[CI](https://ci.nodejs.org/view/x%20-%20Abi%20stable%20module%20API/job/node-test-node-addon-api/)**
-to validate tests pass for latest 11, 10, 9, 8, 6, 4 releases (note there are still some issues on SmartOS and
+to validate tests pass for latest 11, 10, 8, 6 releases (note there are still some issues on SmartOS and
 Windows in the testing).
 
 * Do a clean checkout of node-add-api.
