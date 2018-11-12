@@ -3404,6 +3404,8 @@ inline Value EscapableHandleScope::Escape(napi_value escapee) {
   return Value(_env, result);
 }
 
+
+#if (NAPI_VERSION > 2)
 ////////////////////////////////////////////////////////////////////////////////
 // CallbackScope class
 ////////////////////////////////////////////////////////////////////////////////
@@ -3431,6 +3433,7 @@ inline CallbackScope::operator napi_callback_scope() const {
 inline Napi::Env CallbackScope::Env() const {
   return Napi::Env(_env);
 }
+#endif
 
 ////////////////////////////////////////////////////////////////////////////////
 // AsyncContext class

@@ -2,6 +2,7 @@
 
 using namespace Napi;
 
+#if (NAPI_VERSION > 2)
 namespace {
 
 static void RunInCallbackScope(const CallbackInfo& info) {
@@ -18,3 +19,4 @@ Object InitCallbackScope(Env env) {
   exports["runInCallbackScope"] = Function::New(env, RunInCallbackScope);
   return exports;
 }
+#endif
