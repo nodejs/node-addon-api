@@ -26,7 +26,7 @@ optionally including only the specified properties if a replacer array is
 specified.
 
 ```cpp
-static Napi::Value Napi::JSON::Stringify(Napi::Env env,
+static Napi::String Napi::JSON::Stringify(Napi::Env env,
                               Napi::Object json_object,
                               Napi::Value replacer,
                               Napi::Value space);
@@ -43,4 +43,4 @@ included in the resulting JSON string.
 the output JSON string for readability purposes.
 
 Returns a new `Napi::String` object that is the stringified **JSON** representation
-created from `Napi::Value`.
+created from `Napi::Object`.
