@@ -53,6 +53,12 @@ if ((process.env.npm_config_NAPI_VERSION !== undefined) &&
   testModules.splice(testModules.indexOf('typedarray-bigint'), 1);
 }
 
+if ((process.env.npm_config_NAPI_VERSION !== undefined) &&
+    (process.env.npm_config_NAPI_VERSION < 3)) {
+  testModules.splice(testModules.indexOf('callbackscope'), 1);
+  testModules.splice(testModules.indexOf('version_management'), 1);
+}
+
 if (typeof global.gc === 'function') {
   console.log('Starting test suite\n');
 

@@ -1671,6 +1671,7 @@ namespace Napi {
     napi_escapable_handle_scope _scope;
   };
 
+#if (NAPI_VERSION > 2)
   class CallbackScope {
   public:
     CallbackScope(napi_env env, napi_callback_scope scope);
@@ -1686,6 +1687,7 @@ namespace Napi {
     napi_async_context _async_context;
     napi_callback_scope _scope;
   };
+#endif
 
   class AsyncContext {
   public:
