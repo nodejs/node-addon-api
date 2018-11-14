@@ -1,5 +1,26 @@
 # node-addon-api Changelog
 
+## 2018-11-14 Version 1.6.1 (Current), @NickNaso
+
+### Notable changes:
+
+#### Documentation
+
+- Updated links for examples to point to node-addon-examples repo.
+- Fixed typos on some parts of documentation.
+
+#### API
+
+- Removed unused member on `Napi::CallbackScope`.
+- Enabled or disabled `Napi::CallbackScope` only with N-API v3.
+
+### Commmits
+
+* [[`e7cd292a74`](https://github.com/nodejs/node-addon-api/commit/e7cd292a74)] - **src**: remove unused CallbackScope member (Gabriel Schulhof) [#391](https://github.com/nodejs/node-addon-api/pull/391)
+* [[`d47399fe25`](https://github.com/nodejs/node-addon-api/commit/d47399fe25)] - **src**: guard CallbackScope with N-API v3 (Michael Dawson) [#395](https://github.com/nodejs/node-addon-api/pull/395)
+* [[`29a0262ab9`](https://github.com/nodejs/node-addon-api/commit/29a0262ab9)] - **doc**: fix typo (Dongjin Na) [#385](https://github.com/nodejs/node-addon-api/pull/385)
+* [[`b6dc15b88d`](https://github.com/nodejs/node-addon-api/commit/b6dc15b88d)] - **doc**: make links point to node-addon-examples repo (Nicola Del Gobbo) [#389](https://github.com/nodejs/node-addon-api/pull/389)
+
 ## 2018-11-02 Version 1.6.0 (Current), @NickNaso
 
 ### Notable changes:
