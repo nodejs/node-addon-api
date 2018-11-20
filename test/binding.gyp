@@ -16,6 +16,7 @@
         'binding.cc',
         'buffer.cc',
         'callbackscope.cc',
+        'cleanuphook.cc',
         'dataview/dataview.cc',
         'dataview/dataview_read_write.cc',
         'error.cc',

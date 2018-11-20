@@ -3705,6 +3705,28 @@ inline const napi_node_version* VersionManagement::GetNodeVersion(Env env) {
   return result;
 }
 
+#if (NAPI_VERSION > 2)
+////////////////////////////////////////////////////////////////////////////////
+// Cleanup class
+////////////////////////////////////////////////////////////////////////////////
+
+inline CleanupHook::CleanupHook(Env env) : _env(env) {
+  napi_status status = napi_add_env_cleanup_hook(_env, NapiHook, static_cast<void*>(this));
+  NAPI_THROW_IF_FAILED_VOID(_env, status);
+}
+
+inline CleanupHook::~CleanupHook() {
+  napi_status status = napi_remove_env_cleanup_hook(_env, NapiHook, static_cast<void*>(this));
+  NAPI_THROW_IF_FAILED_VOID(_env, status);
+}
+
+inline void CleanupHook::NapiHook(void* arg) {
+  CleanupHook* self = static_cast<CleanupHook*>(arg);
+  self->Cleanup();
+  delete self;
+}
+#endif
+
 // These macros shouldn't be useful in user code.
 #undef NAPI_THROW
 #undef NAPI_THROW_IF_FAILED

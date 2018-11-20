@@ -1773,6 +1773,18 @@ namespace Napi {
       static const napi_node_version* GetNodeVersion(Env env);
   };
 
+#if (NAPI_VERSION > 2)
+  class CleanupHook {
+    public:
+      CleanupHook(Env env);
+      virtual ~CleanupHook();
+      virtual void Cleanup() = 0;
+    private:
+      napi_env _env;
+      static void NapiHook(void* arg);
+  };
+#endif
+
 } // namespace Napi
 
 // Inline implementations of all the above class methods are included here.

@@ -18,6 +18,7 @@ let testModules = [
   'bigint',
   'buffer',
   'callbackscope',
+  'cleanuphook',
   'dataview/dataview',
   'dataview/dataview_read_write',
   'error',

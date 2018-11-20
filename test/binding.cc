@@ -18,6 +18,7 @@ Object InitBigInt(Env env);
 Object InitBuffer(Env env);
 #if (NAPI_VERSION > 2)
 Object InitCallbackScope(Env env);
+Object InitCleanupHook(Env env);
 #endif
 Object InitDataView(Env env);
 Object InitDataViewReadWrite(Env env);
@@ -54,6 +55,7 @@ Object Init(Env env, Object exports) {
   exports.Set("buffer", InitBuffer(env));
 #if (NAPI_VERSION > 2)
   exports.Set("callbackscope", InitCallbackScope(env));
+  exports.Set("cleanuphook", InitCleanupHook(env));
 #endif
   exports.Set("dataview", InitDataView(env));
   exports.Set("dataview_read_write", InitDataView(env));
