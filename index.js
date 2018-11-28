@@ -17,6 +17,7 @@ var versionArray = process.version
 var isNodeApiBuiltin = (
   versionArray[0] > 8 ||
   (versionArray[0] == 8 && versionArray[1] >= 6) ||
+  (versionArray[0] == 6 && versionArray[1] >= 15) ||
   (versionArray[0] == 6 && versionArray[1] >= 14 && versionArray[2] >= 2));
 
 // The flag is not needed when the Node version is not 8, nor if the API is
