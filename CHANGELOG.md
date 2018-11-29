@@ -1,5 +1,17 @@
 # node-addon-api Changelog
 
+## 2018-11-29 Version 1.6.2 (Current), @NickNaso
+
+### Notable changes:
+
+#### API
+
+- Fixed selection logic for version 6.x.
+
+### Commmits
+
+* [[`07a0fc4e95`](https://github.com/nodejs/node-addon-api/commit/07a0fc4e95)] - **src**: fix selection logic for 6.x (Michael Dawson) [#402](https://github.com/nodejs/node-addon-api/pull/402)
+
 ## 2018-11-14 Version 1.6.1 (Current), @NickNaso
 
 ### Notable changes:
@@ -12,7 +24,7 @@
 #### API
 
 - Removed unused member on `Napi::CallbackScope`.
-- Enabled or disabled `Napi::CallbackScope` only with N-API v3.
+- Enabled `Napi::CallbackScope` only with N-API v3.
 
 ### Commmits
 
