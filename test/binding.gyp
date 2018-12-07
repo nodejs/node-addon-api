@@ -8,6 +8,7 @@
         'arraybuffer.cc',
         'asynccontext.cc',
         'asyncworker.cc',
+        'asyncworker-persistent.cc',
         'basic_types/array.cc',
         'basic_types/boolean.cc',
         'basic_types/number.cc',
@@ -43,6 +44,12 @@
           'defines': ['NODE_ADDON_API_DISABLE_DEPRECATED']
         }, {
           'sources': ['object/object_deprecated.cc']
+        }],
+        ['OS=="mac"', {
+          'cflags+': ['-fvisibility=hidden'],
+          'xcode_settings': {
+            'OTHER_CFLAGS': ['-fvisibility=hidden']
+          }
         }]
       ],
       'include_dirs': ["<!@(node -p \"require('../').include\")"],

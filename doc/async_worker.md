@@ -66,6 +66,15 @@ the computation that happened in the `Napi::AsyncWorker::Execute` method, unless
 the default implementation of `Napi::AsyncWorker::OnOK` or
 `Napi::AsyncWorker::OnError` is overridden.
 
+### SuppressDestruct
+
+```cpp
+void Napi::AsyncWorker::SuppressDestruct();
+```
+
+Prevents the destruction of the `Napi::AsyncWorker` instance upon completion of
+the `Napi::AsyncWorker::OnOK` callback.
+
 ### SetError
 
 Sets the error message for the error that happened during the execution. Setting
