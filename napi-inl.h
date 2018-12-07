@@ -3510,7 +3510,8 @@ inline AsyncWorker::AsyncWorker(const Object& receiver,
                                 const Object& resource)
   : _env(callback.Env()),
     _receiver(Napi::Persistent(receiver)),
-    _callback(Napi::Persistent(callback)) {
+    _callback(Napi::Persistent(callback)),
+    _suppress_destruct(false) {
   napi_value resource_id;
   napi_status status = napi_create_string_latin1(
       _env, resource_name, NAPI_AUTO_LENGTH, &resource_id);
@@ -3536,6 +3537,7 @@ inline AsyncWorker::AsyncWorker(AsyncWorker&& other) {
   _receiver = std::move(other._receiver);
   _callback = std::move(other._callback);
   _error = std::move(other._error);
+  _suppress_destruct = other._suppress_destruct;
 }
 
 inline AsyncWorker& AsyncWorker::operator =(AsyncWorker&& other) {
@@ -3546,6 +3548,7 @@ inline AsyncWorker& AsyncWorker::operator =(AsyncWorker&& other) {
   _receiver = std::move(other._receiver);
   _callback = std::move(other._callback);
   _error = std::move(other._error);
+  _suppress_destruct = other._suppress_destruct;
   return *this;
 }
 
@@ -3573,6 +3576,10 @@ inline ObjectReference& AsyncWorker::Receiver() {
 
 inline FunctionReference& AsyncWorker::Callback() {
   return _callback;
+}
+
+inline void AsyncWorker::SuppressDestruct() {
+  _suppress_destruct = true;
 }
 
 inline void AsyncWorker::OnOK() {
@@ -3615,7 +3622,9 @@ inline void AsyncWorker::OnWorkComplete(
       return nullptr;
     });
   }
-  delete self;
+  if (!self->_suppress_destruct) {
+    delete self;
+  }
 }
 
 ////////////////////////////////////////////////////////////////////////////////

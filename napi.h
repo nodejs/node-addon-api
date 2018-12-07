@@ -1778,6 +1778,7 @@ namespace Napi {
 
     void Queue();
     void Cancel();
+    void SuppressDestruct();
 
     ObjectReference& Receiver();
     FunctionReference& Callback();
@@ -1816,6 +1817,7 @@ namespace Napi {
     ObjectReference _receiver;
     FunctionReference _callback;
     std::string _error;
+    bool _suppress_destruct;
   };
 
   // Memory management.
