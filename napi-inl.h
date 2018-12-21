@@ -2608,8 +2608,7 @@ PropertyDescriptor::Accessor(Napi::Env env,
                              napi_property_attributes attributes,
                              void* data) {
   typedef details::CallbackData<Getter, Napi::Value> CbData;
-  auto callbackData = new CbData({ getter, nullptr });
-  callbackData->data = data;
+  auto callbackData = new CbData({ getter, data });
 
   napi_status status = AttachData(env, object, callbackData);
   NAPI_THROW_IF_FAILED(env, status, napi_property_descriptor());
@@ -2644,8 +2643,7 @@ inline PropertyDescriptor PropertyDescriptor::Accessor(Napi::Env env,
                                                        napi_property_attributes attributes,
                                                        void* data) {
   typedef details::CallbackData<Getter, Napi::Value> CbData;
-  auto callbackData = new CbData({ getter, nullptr });
-  callbackData->data = data;
+  auto callbackData = new CbData({ getter, data });
 
   napi_status status = AttachData(env, object, callbackData);
   NAPI_THROW_IF_FAILED(env, status, napi_property_descriptor());
@@ -2671,8 +2669,7 @@ inline PropertyDescriptor PropertyDescriptor::Accessor(Napi::Env env,
                                                        napi_property_attributes attributes,
                                                        void* data) {
   typedef details::AccessorCallbackData<Getter, Setter> CbData;
-  auto callbackData = new CbData({ getter, setter });
-  callbackData->data = data;
+  auto callbackData = new CbData({ getter, setter, data });
 
   napi_status status = AttachData(env, object, callbackData);
   NAPI_THROW_IF_FAILED(env, status, napi_property_descriptor());
@@ -2709,8 +2706,7 @@ inline PropertyDescriptor PropertyDescriptor::Accessor(Napi::Env env,
                                                        napi_property_attributes attributes,
                                                        void* data) {
   typedef details::AccessorCallbackData<Getter, Setter> CbData;
-  auto callbackData = new CbData({ getter, setter });
-  callbackData->data = data;
+  auto callbackData = new CbData({ getter, setter, data });
 
   napi_status status = AttachData(env, object, callbackData);
   NAPI_THROW_IF_FAILED(env, status, napi_property_descriptor());
