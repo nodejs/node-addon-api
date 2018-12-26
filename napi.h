@@ -633,12 +633,12 @@ namespace Napi {
   public:
     static External New(napi_env env, T* data);
 
-    // Finalizer must implement operator() accepting a T* and returning void.
+    // Finalizer must implement `void operator()(Env env, T* data)`.
     template <typename Finalizer>
     static External New(napi_env env,
                         T* data,
                         Finalizer finalizeCallback);
-    // Finalizer must implement operator() accepting a T* and Hint* and returning void.
+    // Finalizer must implement `void operator()(Env env, T* data, Hint* hint)`.
     template <typename Finalizer, typename Hint>
     static External New(napi_env env,
                         T* data,
@@ -686,8 +686,7 @@ namespace Napi {
       size_t byteLength,         ///< Length of the external buffer to be used by the array,
                                  ///  in bytes
       Finalizer finalizeCallback ///< Function to be called when the array buffer is destroyed;
-                                 ///  must implement `operator()`, accept a `void*` (which is the
-                                 ///  data buffer pointer), and return `void`
+                                 ///  must implement `void operator()(Env env, void* externalData)`
     );
 
     /// Creates a new ArrayBuffer instance, using an external buffer with specified byte length.
@@ -698,8 +697,7 @@ namespace Napi {
       size_t byteLength,          ///< Length of the external buffer to be used by the array,
                                   ///  in bytes
       Finalizer finalizeCallback, ///< Function to be called when the array buffer is destroyed;
-                                  ///  must implement `operator()`, accept a `void*` (which is the
-                                  ///  data buffer pointer) and `Hint*`, and return `void`
+                                  ///  must implement `void operator()(Env env, void* externalData, Hint* hint)`
       Hint* finalizeHint          ///< Hint (second parameter) to be passed to the finalize callback
     );
 
@@ -969,12 +967,12 @@ namespace Napi {
     static Buffer<T> New(napi_env env, size_t length);
     static Buffer<T> New(napi_env env, T* data, size_t length);
 
-    // Finalizer must implement operator() accepting a T* and returning void.
+    // Finalizer must implement `void operator()(Env env, T* data)`.
     template <typename Finalizer>
     static Buffer<T> New(napi_env env, T* data,
                          size_t length,
                          Finalizer finalizeCallback);
-    // Finalizer must implement operator() accepting a T* and Hint* and returning void.
+    // Finalizer must implement `void operator()(Env env, T* data, Hint* hint)`.
     template <typename Finalizer, typename Hint>
     static Buffer<T> New(napi_env env, T* data,
                          size_t length,
