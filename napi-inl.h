@@ -1060,7 +1060,7 @@ inline bool Object::Delete(uint32_t index) {
   return result;
 }
 
-inline Array Object::GetPropertyNames() {
+inline Array Object::GetPropertyNames() const {
   napi_value result;
   napi_status status = napi_get_property_names(_env, _value, &result);
   NAPI_THROW_IF_FAILED(_env, status, Array());

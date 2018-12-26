@@ -601,7 +601,7 @@ namespace Napi {
       uint32_t index ///< Property / element index
     );
 
-    Array GetPropertyNames(); ///< Get all property names
+    Array GetPropertyNames() const; ///< Get all property names
 
     /// Defines a property on the object.
     void DefineProperty(
