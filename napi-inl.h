@@ -19,11 +19,15 @@ namespace details {
 
 #ifdef NAPI_CPP_EXCEPTIONS
 
-#define NAPI_THROW(e)  throw e
-
 // When C++ exceptions are enabled, Errors are thrown directly. There is no need
-// to return anything after the throw statement. The variadic parameter is an
+// to return anything after the throw statements. The variadic parameter is an
 // optional return value that is ignored.
+// We need _VOID versions of the macros to avoid warnings resulting from
+// leaving the NAPI_THROW_* `...` argument empty.
+
+#define NAPI_THROW(e, ...)  throw e
+#define NAPI_THROW_VOID(e)  throw e
+
 #define NAPI_THROW_IF_FAILED(env, status, ...)           \
   if ((status) != napi_ok) throw Error::New(env);
 
@@ -32,19 +36,30 @@ namespace details {
 
 #else // NAPI_CPP_EXCEPTIONS
 
-#define NAPI_THROW(e)  (e).ThrowAsJavaScriptException();
-
 // When C++ exceptions are disabled, Errors are thrown as JavaScript exceptions,
 // which are pending until the callback returns to JS.  The variadic parameter
 // is an optional return value; usually it is an empty result.
+// We need _VOID versions of the macros to avoid warnings resulting from
+// leaving the NAPI_THROW_* `...` argument empty.
+
+#define NAPI_THROW(e, ...)                               \
+  do {                                                   \
+    (e).ThrowAsJavaScriptException();                    \
+    return __VA_ARGS__;                                  \
+  } while (0)
+
+#define NAPI_THROW_VOID(e)                               \
+  do {                                                   \
+    (e).ThrowAsJavaScriptException();                    \
+    return;                                              \
+  } while (0)
+
 #define NAPI_THROW_IF_FAILED(env, status, ...)           \
   if ((status) != napi_ok) {                             \
     Error::New(env).ThrowAsJavaScriptException();        \
     return __VA_ARGS__;                                  \
   }
 
-// We need a _VOID version of this macro to avoid warnings resulting from
-// leaving the NAPI_THROW_IF_FAILED `...` argument empty.
 #define NAPI_THROW_IF_FAILED_VOID(env, status)           \
   if ((status) != napi_ok) {                             \
     Error::New(env).ThrowAsJavaScriptException();        \
@@ -1309,8 +1324,8 @@ inline DataView DataView::New(napi_env env,
                               size_t byteOffset) {
   if (byteOffset > arrayBuffer.ByteLength()) {
     NAPI_THROW(RangeError::New(env,
-        "Start offset is outside the bounds of the buffer"));
-    return DataView();
+        "Start offset is outside the bounds of the buffer"),
+        DataView());
   }
   return New(env, arrayBuffer, byteOffset,
       arrayBuffer.ByteLength() - byteOffset);
@@ -1321,8 +1336,8 @@ inline DataView DataView::New(napi_env env,
                               size_t byteOffset,
                               size_t byteLength) {
   if (byteOffset + byteLength > arrayBuffer.ByteLength()) {
-    NAPI_THROW(RangeError::New(env, "Invalid DataView length"));
-    return DataView();
+    NAPI_THROW(RangeError::New(env, "Invalid DataView length"),
+               DataView());
   }
   napi_value value;
   napi_status status = napi_create_dataview(
@@ -1448,8 +1463,7 @@ inline T DataView::ReadData(size_t byteOffset) const {
   if (byteOffset + sizeof(T) > _length ||
       byteOffset + sizeof(T) < byteOffset) {  // overflow
     NAPI_THROW(RangeError::New(_env,
-        "Offset is outside the bounds of the DataView"));
-    return 0;
+        "Offset is outside the bounds of the DataView"), 0);
   }
 
   return *reinterpret_cast<T*>(static_cast<uint8_t*>(_data) + byteOffset);
@@ -1459,9 +1473,8 @@ template <typename T>
 inline void DataView::WriteData(size_t byteOffset, T value) const {
   if (byteOffset + sizeof(T) > _length ||
       byteOffset + sizeof(T) < byteOffset) {  // overflow
-    NAPI_THROW(RangeError::New(_env,
+    NAPI_THROW_VOID(RangeError::New(_env,
         "Offset is outside the bounds of the DataView"));
-    return;
   }
 
   *reinterpret_cast<T*>(static_cast<uint8_t*>(_data) + byteOffset) = value;
@@ -1597,7 +1610,7 @@ inline TypedArrayOf<T>::TypedArrayOf(napi_env env,
   : TypedArray(env, value, type, length), _data(data) {
   if (!(type == TypedArrayTypeForPrimitiveType<T>() ||
       (type == napi_uint8_clamped_array && std::is_same<T, uint8_t>::value))) {
-    NAPI_THROW(TypeError::New(env, "Array type must match the template parameter. "
+    NAPI_THROW_VOID(TypeError::New(env, "Array type must match the template parameter. "
       "(Uint8 arrays may optionally have the \"clamped\" array type.)"));
   }
 }
@@ -2031,8 +2044,20 @@ inline const std::string& Error::Message() const NAPI_NOEXCEPT {
 inline void Error::ThrowAsJavaScriptException() const {
   HandleScope scope(_env);
   if (!IsEmpty()) {
+
+    // We intentionally don't use `NAPI_THROW_*` macros here to point
+    // that there is no possible recursion as `ThrowAsJavaScriptException`
+    // is part of `NAPI_THROW_*` macro definition for noexcept.
+
     napi_status status = napi_throw(_env, Value());
-    NAPI_THROW_IF_FAILED_VOID(_env, status);
+
+#ifdef NAPI_CPP_EXCEPTIONS
+    if (status != napi_ok) {
+      throw Error::New(_env);
+    }
+#else // NAPI_CPP_EXCEPTIONS
+    NAPI_FATAL_IF_FAILED(status, "Error::ThrowAsJavaScriptException", "napi_throw");
+#endif // NAPI_CPP_EXCEPTIONS
   }
 }
 
