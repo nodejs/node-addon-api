@@ -1673,7 +1673,11 @@ inline Function Function::New(napi_env env,
                                       CbData::Wrapper,
                                       callbackData,
                                       &value);
-  NAPI_THROW_IF_FAILED(env, status, Function());
+  if (status != napi_ok) {
+    delete callbackData;
+    NAPI_THROW_IF_FAILED(env, status, Function());
+  }
+
   return Function(env, value);
 }
 
@@ -2636,7 +2640,10 @@ PropertyDescriptor::Accessor(Napi::Env env,
   auto callbackData = new CbData({ getter, data });
 
   napi_status status = AttachData(env, object, callbackData);
-  NAPI_THROW_IF_FAILED(env, status, napi_property_descriptor());
+  if (status != napi_ok) {
+    delete callbackData;
+    NAPI_THROW_IF_FAILED(env, status, napi_property_descriptor());
+  }
 
   return PropertyDescriptor({
     utf8name,
@@ -2671,7 +2678,10 @@ inline PropertyDescriptor PropertyDescriptor::Accessor(Napi::Env env,
   auto callbackData = new CbData({ getter, data });
 
   napi_status status = AttachData(env, object, callbackData);
-  NAPI_THROW_IF_FAILED(env, status, napi_property_descriptor());
+  if (status != napi_ok) {
+    delete callbackData;
+    NAPI_THROW_IF_FAILED(env, status, napi_property_descriptor());
+  }
 
   return PropertyDescriptor({
     nullptr,
@@ -2697,7 +2707,10 @@ inline PropertyDescriptor PropertyDescriptor::Accessor(Napi::Env env,
   auto callbackData = new CbData({ getter, setter, data });
 
   napi_status status = AttachData(env, object, callbackData);
-  NAPI_THROW_IF_FAILED(env, status, napi_property_descriptor());
+  if (status != napi_ok) {
+    delete callbackData;
+    NAPI_THROW_IF_FAILED(env, status, napi_property_descriptor());
+  }
 
   return PropertyDescriptor({
     utf8name,
@@ -2734,7 +2747,10 @@ inline PropertyDescriptor PropertyDescriptor::Accessor(Napi::Env env,
   auto callbackData = new CbData({ getter, setter, data });
 
   napi_status status = AttachData(env, object, callbackData);
-  NAPI_THROW_IF_FAILED(env, status, napi_property_descriptor());
+  if (status != napi_ok) {
+    delete callbackData;
+    NAPI_THROW_IF_FAILED(env, status, napi_property_descriptor());
+  }
 
   return PropertyDescriptor({
     nullptr,
