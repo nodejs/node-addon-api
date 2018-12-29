@@ -2045,7 +2045,7 @@ inline void Error::ThrowAsJavaScriptException() const {
   HandleScope scope(_env);
   if (!IsEmpty()) {
 
-    // We intentionally don't use `NAPI_THROW_*` macros here to point
+    // We intentionally don't use `NAPI_THROW_*` macros here to ensure
     // that there is no possible recursion as `ThrowAsJavaScriptException`
     // is part of `NAPI_THROW_*` macro definition for noexcept.
 
