@@ -26,6 +26,7 @@ let testModules = [
   'handlescope',
   'memory_management',
   'name',
+  'nodethreadscheduler',
   'object/delete_property',
   'object/get_property',
   'object/has_own_property',
@@ -50,6 +51,7 @@ if ((process.env.npm_config_NAPI_VERSION !== undefined) &&
   // this should be guarded on the napi version
   // in which bigint was added.
   testModules.splice(testModules.indexOf('bigint'), 1);
+  testModules.splice(testModules.indexOf('nodethreadscheduler'), 1);
   testModules.splice(testModules.indexOf('typedarray-bigint'), 1);
 }
 

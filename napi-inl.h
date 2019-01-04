@@ -3677,6 +3677,112 @@ inline void AsyncWorker::OnWorkComplete(
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+// Node Thread Scheduler class
+////////////////////////////////////////////////////////////////////////////////
+
+#if (NAPI_VERSION > 2147483646)
+
+namespace {
+  struct NodeThreadSchedulerCallbackData {
+    std::function<void(Env)> callback;
+    std::shared_ptr<NodeThreadScheduler> scheduler;
+  };
+
+  inline void NodeThreadSchedulerCallJsCb(napi_env env, napi_value /*js_callback*/,
+                                          void* /*context*/, void* data) {
+    using CallbackData = NodeThreadSchedulerCallbackData;
+
+    // will delete callback_data
+    std::unique_ptr<CallbackData> callback_data(static_cast<CallbackData*>(data));
+    callback_data->callback(env);
+  }
+}
+
+inline std::shared_ptr<NodeThreadScheduler> NodeThreadScheduler::Create(Env env) {
+  return std::make_shared<NodeThreadScheduler>(env);
+}
+
+inline NodeThreadScheduler::NodeThreadScheduler(Env env)
+  : NodeThreadScheduler(env, String::From(env, "NodeThreadScheduler")) {
+}
+
+inline NodeThreadScheduler::NodeThreadScheduler(Env env, String async_resource_name)
+  : NodeThreadScheduler(env, Object(), async_resource_name) {
+}
+
+inline NodeThreadScheduler::NodeThreadScheduler(Env env, Object async_resource, String async_resource_name) {
+  HandleScope scope(env);
+
+  Function noop = Function::New(env, [](const CallbackInfo& /*info*/) {}, "", nullptr);
+
+  // as long as Napi::ThreadsafeFunction is missing we use C
+  napi_status status;
+
+  // no cleanup needed, nothing created if it fails
+  status = napi_create_threadsafe_function(env,
+                                           noop,                        // mandatory, but unused
+                                           async_resource,              // async_resource
+                                           async_resource_name,         // async_resource_name
+                                           0,                           // max_queue_size
+                                           1,                           // initial_thread_count
+                                           nullptr,                     // finalize data
+                                           nullptr,                     // finalizer
+                                           nullptr,                     // context
+                                           NodeThreadSchedulerCallJsCb, // call_js_cb
+                                           &schedule_function);
+  NAPI_THROW_IF_FAILED_VOID(env, status);
+
+  // we don't need a ref here as `initial_thread_count = 1`
+  // also: we could ref here, but as dtor may run on different thread where we're not allowed to call unref there
+}
+
+inline NodeThreadScheduler::~NodeThreadScheduler() {
+  
+  // may be called from 2nd thread, exactly once when std::shared_ptr is destroyed
+
+  if (schedule_function) {
+    // `napi_tsfn_abort` is not supported as we would need some bookkeeping of
+    //  all callbacks that have not been invoked yet and would leak callback data
+    napi_release_threadsafe_function(schedule_function, napi_tsfn_release);
+    schedule_function = nullptr;
+  }
+}
+
+template<typename Callable>
+inline bool NodeThreadScheduler::RunInNodeThread(Callable&& callable) {
+
+  // may be called from 2nd thread !
+
+  using CallbackData = NodeThreadSchedulerCallbackData;
+
+  // don't allow creating a callback function which cannot be invoked later
+  std::function<void(Env)> callback(std::forward<Callable>(callable));
+  if (!callback) {
+    return false;
+  }
+
+  CallbackData *callback_data = new CallbackData{std::move(callback),
+                                                 shared_from_this()};
+
+  napi_status status;
+  // as queue size is unlimited, `napi_tsfn_blocking` would also never block
+  status = napi_call_threadsafe_function(schedule_function, callback_data,
+                                         napi_tsfn_nonblocking);
+
+  // NAPI_THROW_* not allowed here
+
+  if (status != napi_ok) {
+    delete callback_data;
+    return false;
+  }
+
+  return true;
+}
+
+#endif // NAPI_VERSION > 2147483646
+
+
+////////////////////////////////////////////////////////////////////////////////
 // Memory Management class
 ////////////////////////////////////////////////////////////////////////////////
 

@@ -6,6 +6,7 @@
 #include <initializer_list>
 #include <string>
 #include <vector>
+#include <memory>
 
 // VS2015 RTM has bugs with constexpr, so require min of VS2015 Update 3 (known good version)
 #if !defined(_MSC_VER) || _MSC_FULL_VER >= 190024210
@@ -1759,6 +1760,40 @@ namespace Napi {
     FunctionReference _callback;
     std::string _error;
   };
+
+  // NodeThreadScheduler
+
+  #if (NAPI_VERSION > 2147483646)
+
+  class NodeThreadScheduler : public std::enable_shared_from_this<NodeThreadScheduler> {
+  public:
+    static std::shared_ptr<NodeThreadScheduler> Create(Env env);
+
+  public:
+
+    explicit NodeThreadScheduler(Env env);
+    explicit NodeThreadScheduler(Env env, String async_resource_name);
+    explicit NodeThreadScheduler(Env env, Object async_resource, String async_resource_name);
+
+    // noncopyable
+    NodeThreadScheduler(const NodeThreadScheduler&) = delete;
+    NodeThreadScheduler& operator=(const NodeThreadScheduler&) = delete;
+
+    // movable
+    NodeThreadScheduler(NodeThreadScheduler&&) = default;
+    NodeThreadScheduler& operator=(NodeThreadScheduler&&) = default;
+
+    ~NodeThreadScheduler() NAPI_NOEXCEPT;
+
+  public:
+    template<typename Callable>
+    bool RunInNodeThread(Callable&& callable);
+
+  private:
+    napi_threadsafe_function schedule_function = nullptr;
+  };
+
+#endif // NAPI_VERSION > 2147483646
 
   // Memory management.
   class MemoryManagement {

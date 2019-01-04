@@ -27,6 +27,9 @@ Object InitFunction(Env env);
 Object InitHandleScope(Env env);
 Object InitMemoryManagement(Env env);
 Object InitName(Env env);
+#if (NAPI_VERSION > 2147483646)
+Object InitNodeThreadScheduler(Env env);
+#endif
 Object InitObject(Env env);
 #ifndef NODE_ADDON_API_DISABLE_DEPRECATED
 Object InitObjectDeprecated(Env env);
@@ -62,6 +65,9 @@ Object Init(Env env, Object exports) {
   exports.Set("external", InitExternal(env));
   exports.Set("function", InitFunction(env));
   exports.Set("name", InitName(env));
+#if (NAPI_VERSION > 2147483646)
+  exports.Set("nodethreadscheduler", InitNodeThreadScheduler(env));
+#endif
   exports.Set("handlescope", InitHandleScope(env));
   exports.Set("memory_management", InitMemoryManagement(env));
   exports.Set("object", InitObject(env));

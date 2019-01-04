@@ -24,6 +24,7 @@
         'handlescope.cc',
         'memory_management.cc',
         'name.cc',
+        'nodethreadscheduler.cc',
         'object/delete_property.cc',
         'object/get_property.cc',
         'object/has_own_property.cc',
