@@ -116,7 +116,7 @@ against the class constructor.
 
 ## Methods
 
-### Contructor
+### Constructor
 
 Creates a new instance of a JavaScript object that wraps native instance.
 

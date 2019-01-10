@@ -108,7 +108,7 @@ Napi::Value Napi::Object::Get(____ key);
 ```
 - `[in] key`: The name of the property to return the value for.
 
-Returns the [`Napi::Value`](value.md) associated with the key property. Returns NULL if no such key exists.
+Returns the [`Napi::Value`](value.md) associated with the key property. Returns the value *undefined* if the key does not exist.
 
 The `key` can be any of the following types:
 - `napi_value`
