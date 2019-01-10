@@ -39,7 +39,6 @@ Napi::Number Napi::Number::New(napi_env env, double value);
  - `[in] env`: The `napi_env` environment in which to construct the `Napi::Number` object.
  - `[in] value`: The C++ primitive from which to instantiate the `Napi::Number`.
 
-
 Creates a new instance of a `Napi::Number` object.
 
 ### Int32Value

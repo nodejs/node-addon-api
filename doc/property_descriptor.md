@@ -192,7 +192,7 @@ static Napi::PropertyDescriptor Napi::PropertyDescriptor::Function (
 		            void *data = nullptr);
 ```
 
-* `[in] env`: The environemnt in which to create this accessor.
+* `[in] env`: The environment in which to create this accessor.
 * `[in] name`: The name of the Callable function.
 * `[in] cb`: The function
 * `[in] attributes`: Potential attributes for the getter function.

@@ -8,7 +8,7 @@ This prevents using descriptors from a different class when defining a new class
 
 ## Methods
 
-### Contructor
+### Constructor
 
 Creates new instance of `Napi::ClassPropertyDescriptor` descriptor object.
 
