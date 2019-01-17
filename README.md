@@ -141,6 +141,20 @@ npm install
 npm test --disable-deprecated
 ```
 
+### **Debug**
+
+To run the **node-addon-api** tests with `--debug` option:
+
+```
+npm run-script dev
+```
+
+If you want faster build, you might use the following option:
+
+```
+npm run-script dev:incremental
+```
+
 Take a look and get inspired by our **[test suite](https://github.com/nodejs/node-addon-api/tree/master/test)**
 
 <a name="resources"></a>

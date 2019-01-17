@@ -56,6 +56,10 @@
   "scripts": {
     "pretest": "node-gyp rebuild -C test",
     "test": "node test",
+    "predev": "node-gyp rebuild -C test --debug",
+    "dev": "node test",
+    "predev:incremental": "node-gyp configure build -C test --debug",
+    "dev:incremental": "node test",
     "doc": "doxygen doc/Doxyfile"
   },
   "version": "1.6.2"
