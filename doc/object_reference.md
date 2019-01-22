@@ -40,7 +40,7 @@ static Napi::ObjectReference Napi::ObjectReference::New(const Napi::Object& valu
 Returns the newly created reference.
 
 ```cpp
-static Napi::ObjectReference Napi::ObjectReference::Weak(const Napi::Object& value);
+static Napi::ObjectReference Napi::Weak(const Napi::Object& value);
 ```
 
 Creates a "weak" reference to the value, in that the initial count of number of references is set to 0.
@@ -50,7 +50,7 @@ Creates a "weak" reference to the value, in that the initial count of number of 
 Returns the newly created reference.
 
 ```cpp
-static Napi::ObjectReference Napi::ObjectReference::Persistent(const Napi::Object& value);
+static Napi::ObjectReference Napi::Persistent(const Napi::Object& value);
 ```
 
 Creates a "persistent" reference to the value, in that the initial count of number of references is set to 1.
