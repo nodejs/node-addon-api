@@ -25,7 +25,7 @@ Napi::Number(napi_env env, napi_value value);
 ```
 
  - `[in] env`: The `napi_env` environment in which to construct the `Napi::Number` object.
- - `[in] value`: The primitive to wrap.
+ - `[in] value`: The JavaScript value holding a number.
 
 
  Returns a non-empty `Napi::Number` object.
@@ -38,7 +38,7 @@ Napi::Number(napi_env env, napi_value value);
 Napi::Number Napi::Number::New(napi_env env, double value);
 ```
  - `[in] env`: The `napi_env` environment in which to construct the `Napi::Number` object.
- - `[in] value`: The C++ primitive from which to instantiate the `Napi::Value`. `value` must be a `c++ double`.
+ - `[in] value`: The C++ primitive from which to instantiate the `Napi::Value`.
 
 Creates a new instance of a `Napi::Number` object.
 
