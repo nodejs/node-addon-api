@@ -25,7 +25,7 @@ Napi::Number(napi_env env, napi_value value);
 ```
 
  - `[in] env`: The `napi_env` environment in which to construct the `Napi::Nuber` object.
- - `[in] value` - The primitive to wrap.
+ - `[in] value`: The primitive to wrap.
 
 
  Returns a non-empty `Napi::Number` object.
