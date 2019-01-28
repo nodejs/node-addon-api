@@ -24,7 +24,7 @@ Creates a new instance of a `Napi::Number` object.
 Napi::Number(napi_env env, napi_value value);
 ```
 
- - `[in] env`: The `napi_env` environment in which to construct the `Napi::Nuber` object.
+ - `[in] env`: The `napi_env` environment in which to construct the `Napi::Number` object.
  - `[in] value`: The primitive to wrap.
 
 
@@ -37,7 +37,7 @@ Napi::Number(napi_env env, napi_value value);
 ```cpp
 Napi::Number Napi::Number::New(napi_env env, double value);
 ```
- - `[in] env`: The `napi_env` environment in which to construct the `Napi::Nuber` object.
+ - `[in] env`: The `napi_env` environment in which to construct the `Napi::Number` object.
  - `[in] value`: The C++ primitive from which to instantiate the `Napi::Value`. `value` must be a `c++ double`.
 
 Creates a new instance of a `Napi::Number` object.
