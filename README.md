@@ -152,19 +152,26 @@ Take a look and get inspired by our **[test suite](https://github.com/nodejs/nod
 
 <a name="contributors"></a>
 
-### WG Members / Collaborators
-| Name                | GitHub link                                           |
+## WG Members / Collaborators
+
+### Active
+| Name                | GitHub Link                                           |
 | ------------------- | ----------------------------------------------------- |
 | Anna Henningsen     | [addaleax](https://github.com/addaleax)               |
 | Arunesh Chandra     | [aruneshchandra](https://github.com/aruneshchandra)   |
-| Benjamin Byholm     | [kkoopa](https://github.com/kkoopa)                   |
 | Gabriel Schulhof    | [gabrielschulhof](https://github.com/gabrielschulhof) |
 | Hitesh Kanwathirtha | [digitalinfinity](https://github.com/digitalinfinity) |
-| Jason Ginchereau    | [jasongin](https://github.com/jasongin)               |
+| Jim Schlight        | [jschlight](https://github.com/jschlight)             |
 | Michael Dawson      | [mhdawson](https://github.com/mhdawson)               |
 | Nicola Del Gobbo    | [NickNaso](https://github.com/NickNaso)               |
-| Sampson Gao         | [sampsongao](https://github.com/sampsongao)           |
 | Taylor Woll         | [boingoing](https://github.com/boingoing)             |
+
+### Emeritus
+| Name                | GitHub Link                                           |
+| ------------------- | ----------------------------------------------------- |
+| Benjamin Byholm     | [kkoopa](https://github.com/kkoopa)                   |
+| Jason Ginchereau    | [jasongin](https://github.com/jasongin)               |
+| Sampson Gao         | [sampsongao](https://github.com/sampsongao)           |
 
 <a name="license"></a>
 
