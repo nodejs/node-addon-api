@@ -161,9 +161,9 @@ Take a look and get inspired by our **[test suite](https://github.com/nodejs/nod
 | Arunesh Chandra     | [aruneshchandra](https://github.com/aruneshchandra)   |
 | Gabriel Schulhof    | [gabrielschulhof](https://github.com/gabrielschulhof) |
 | Hitesh Kanwathirtha | [digitalinfinity](https://github.com/digitalinfinity) |
+| Jim Schlight        | [jschlight](https://github.com/jschlight)             |
 | Michael Dawson      | [mhdawson](https://github.com/mhdawson)               |
 | Nicola Del Gobbo    | [NickNaso](https://github.com/NickNaso)               |
-| Jim Schlight        | [jschlight](https://github.com/jschlight)             |
 | Taylor Woll         | [boingoing](https://github.com/boingoing)             |
 
 ### Emeritus
