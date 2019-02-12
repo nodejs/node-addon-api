@@ -8,57 +8,8 @@ process.config.target_defaults.default_configuration =
 // FIXME: We might need a way to load test modules automatically without
 // explicit declaration as follows.
 let testModules = [
-  'arraybuffer',
-  'asynccontext',
-  'asyncworker',
   'asyncworker-persistent',
-  'basic_types/array',
-  'basic_types/boolean',
-  'basic_types/number',
-  'basic_types/value',
-  'bigint',
-  'buffer',
-  'callbackscope',
-  'dataview/dataview',
-  'dataview/dataview_read_write',
-  'error',
-  'external',
-  'function',
-  'handlescope',
-  'memory_management',
-  'name',
-  'object/delete_property',
-  'object/get_property',
-  'object/has_own_property',
-  'object/has_property',
-  'object/object',
-  'object/object_deprecated',
-  'object/set_property',
-  'promise',
-  'typedarray',
-  'typedarray-bigint',
-  'objectwrap',
-  'objectreference',
-  'version_management'
 ];
-
-if ((process.env.npm_config_NAPI_VERSION !== undefined) &&
-    (process.env.npm_config_NAPI_VERSION < 50000)) {
-  // currently experimental only test if NAPI_VERSION
-  // is set to experimental. We can't use C max int
-  // as that is not supported as a number on earlier
-  // Node.js versions. Once bigint is in a release
-  // this should be guarded on the napi version
-  // in which bigint was added.
-  testModules.splice(testModules.indexOf('bigint'), 1);
-  testModules.splice(testModules.indexOf('typedarray-bigint'), 1);
-}
-
-if ((process.env.npm_config_NAPI_VERSION !== undefined) &&
-    (process.env.npm_config_NAPI_VERSION < 3)) {
-  testModules.splice(testModules.indexOf('callbackscope'), 1);
-  testModules.splice(testModules.indexOf('version_management'), 1);
-}
 
 if (typeof global.gc === 'function') {
   console.log('Starting test suite\n');
