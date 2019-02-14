@@ -346,10 +346,6 @@ Napi::Array::Array();
 
 Returns an empty array.
 
-If an error occurs, a `Napi::Error` will be thrown. If C++ exceptions are not
-being used, callers should check the result of `Env::IsExceptionPending` before
-attempting to use the returned value.
-
 ```cpp
 Napi::Array::Array(napi_env env, napi_value value);
 ```
