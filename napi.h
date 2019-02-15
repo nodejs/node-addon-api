@@ -38,6 +38,64 @@ static_assert(sizeof(char16_t) == sizeof(wchar_t), "Size mismatch between char16
   #define NAPI_NOEXCEPT noexcept
 #endif
 
+#ifdef NAPI_CPP_EXCEPTIONS
+
+// When C++ exceptions are enabled, Errors are thrown directly. There is no need
+// to return anything after the throw statements. The variadic parameter is an
+// optional return value that is ignored.
+// We need _VOID versions of the macros to avoid warnings resulting from
+// leaving the NAPI_THROW_* `...` argument empty.
+
+#define NAPI_THROW(e, ...)  throw e
+#define NAPI_THROW_VOID(e)  throw e
+
+#define NAPI_THROW_IF_FAILED(env, status, ...)           \
+  if ((status) != napi_ok) throw Error::New(env);
+
+#define NAPI_THROW_IF_FAILED_VOID(env, status)           \
+  if ((status) != napi_ok) throw Error::New(env);
+
+#else // NAPI_CPP_EXCEPTIONS
+
+// When C++ exceptions are disabled, Errors are thrown as JavaScript exceptions,
+// which are pending until the callback returns to JS.  The variadic parameter
+// is an optional return value; usually it is an empty result.
+// We need _VOID versions of the macros to avoid warnings resulting from
+// leaving the NAPI_THROW_* `...` argument empty.
+
+#define NAPI_THROW(e, ...)                               \
+  do {                                                   \
+    (e).ThrowAsJavaScriptException();                    \
+    return __VA_ARGS__;                                  \
+  } while (0)
+
+#define NAPI_THROW_VOID(e)                               \
+  do {                                                   \
+    (e).ThrowAsJavaScriptException();                    \
+    return;                                              \
+  } while (0)
+
+#define NAPI_THROW_IF_FAILED(env, status, ...)           \
+  if ((status) != napi_ok) {                             \
+    Error::New(env).ThrowAsJavaScriptException();        \
+    return __VA_ARGS__;                                  \
+  }
+
+#define NAPI_THROW_IF_FAILED_VOID(env, status)           \
+  if ((status) != napi_ok) {                             \
+    Error::New(env).ThrowAsJavaScriptException();        \
+    return;                                              \
+  }
+
+#endif // NAPI_CPP_EXCEPTIONS
+
+#define NAPI_FATAL_IF_FAILED(status, location, message)  \
+  do {                                                   \
+    if ((status) != napi_ok) {                           \
+      Error::Fatal((location), (message));               \
+    }                                                    \
+  } while (0)
+
 ////////////////////////////////////////////////////////////////////////////////
 /// N-API C++ Wrapper Classes
 ///

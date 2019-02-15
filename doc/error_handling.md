@@ -153,3 +153,34 @@ if (env.IsExceptionPending()) {
 
 Since the exception was cleared here, it will not be propagated as a JavaScript
 exception after the native callback returns.
+
+## Calling N-API directly from a **node-addon-api** addon
+
+**node-addon-api** provides macros for throwing errors in response to non-OK
+`napi_status` results when calling [N-API](https://nodejs.org/docs/latest/api/n-api.html)
+functions from within a native addon. These macros are defined differently
+depending on whether C++ exceptions are enabled or not, but are available for
+use in either case.
+
+### `NAPI_THROW(e, ...)`
+
+This macro accepts a `Napi::Error`, throws it, and returns the value given as
+the last parameter. If C++ exceptions are enabled (by defining
+`NAPI_CPP_EXCEPTIONS` during the build), the return value will be ignored.
+
+### `NAPI_THROW_IF_FAILED(env, status, ...)`
+
+This macro accepts a `Napi::Env` and a `napi_status`. It constructs an error
+from the `napi_status`, throws it, and returns the value given as the last
+parameter. If C++ exceptions are enabled (by defining `NAPI_CPP_EXCEPTIONS`
+during the build), the return value will be ignored.
+
+### `NAPI_THROW_IF_FAILED_VOID(env, status)`
+
+This macro accepts a `Napi::Env` and a `napi_status`. It constructs an error
+from the `napi_status`, throws it, and returns.
+
+### `NAPI_FATAL_IF_FAILED(status, location, message)`
+
+This macro accepts a `napi_status`, a C string indicating the location where the
+error occurred, and a second C string for the message to display.
