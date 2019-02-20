@@ -165,13 +165,15 @@ use in either case.
 ### `NAPI_THROW(e, ...)`
 
 This macro accepts a `Napi::Error`, throws it, and returns the value given as
-the last parameter.
+the last parameter. If C++ exceptions are enabled (by defining
+`NAPI_CPP_EXCEPTIONS` during the build), the return value will be ignored.
 
 ### `NAPI_THROW_IF_FAILED(env, status, ...)`
 
 This macro accepts a `Napi::Env` and a `napi_status`. It constructs an error
 from the `napi_status`, throws it, and returns the value given as the last
-parameter.
+parameter. If C++ exceptions are enabled (by defining `NAPI_CPP_EXCEPTIONS`
+during the build), the return value will be ignored.
 
 ### `NAPI_THROW_IF_FAILED_VOID(env, status)`
 
