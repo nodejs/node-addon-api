@@ -43,6 +43,7 @@
   },
   "directories": {},
   "homepage": "https://github.com/nodejs/node-addon-api",
+  "keywords": ["n-api", "napi", "addon", "native", "bindings", "c", "c++", "nan", "node-addon-api"],
   "license": "MIT",
   "main": "index.js",
   "name": "node-addon-api",
