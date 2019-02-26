@@ -13,15 +13,15 @@ function test(binding, succeed) {
       setImmediate(() => {
         // If the work is supposed to fail, make sure there's an error.
         assert.strictEqual(succeed || e.message === 'test error', true);
-        assert.strictEqual(binding.workerGone(this), false);
-        binding.deleteWorker(this);
-        assert.strictEqual(binding.workerGone(this), true);
+        assert.strictEqual(binding.workerGone, false);
+        binding.deleteWorker();
+        assert.strictEqual(binding.workerGone, true);
         resolve();
       });
     }));
 }
 
-test(binding.persistentasyncworker, false, 'binding')
-  .then(() => test(binding.persistentasyncworker, true, 'binding'))
-  .then(() => test(noexceptBinding.persistentasyncworker, false, 'noxbinding'))
-  .then(() => test(noexceptBinding.persistentasyncworker, true, 'noxbinding'));
+test(binding.persistentasyncworker, false)
+  .then(() => test(binding.persistentasyncworker, true))
+  .then(() => test(noexceptBinding.persistentasyncworker, false))
+  .then(() => test(noexceptBinding.persistentasyncworker, true));

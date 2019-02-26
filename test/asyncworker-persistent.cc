@@ -23,7 +23,7 @@ public:
     worker->Queue();
   }
 
-  static Value WorkerGone(const CallbackInfo& info) {
+  static Value GetWorkerGone(const CallbackInfo& info) {
     return Boolean::New(info.Env(), current_worker == nullptr);
   }
 
@@ -58,7 +58,9 @@ PersistentTestWorker* PersistentTestWorker::current_worker = nullptr;
 Object InitPersistentAsyncWorker(Env env) {
   Object exports = Object::New(env);
   exports["doWork"] = Function::New(env, PersistentTestWorker::DoWork);
-  exports["workerGone"] = Function::New(env, PersistentTestWorker::WorkerGone);
+  exports.DefineProperty(
+      PropertyDescriptor::Accessor(env, exports, "workerGone",
+          PersistentTestWorker::GetWorkerGone));
   exports["deleteWorker"] =
       Function::New(env, PersistentTestWorker::DeleteWorker);
   return exports;
