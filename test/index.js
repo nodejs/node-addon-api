@@ -35,6 +35,7 @@ let testModules = [
   'object/object_deprecated',
   'object/set_property',
   'promise',
+  'threadsafe_function/threadsafe_function',
   'typedarray',
   'typedarray-bigint',
   'objectwrap',
