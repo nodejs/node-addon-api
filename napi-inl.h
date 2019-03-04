@@ -125,6 +125,78 @@ struct FinalizeData {
   Hint* hint;
 };
 
+template <typename ContextType=void,
+          typename Finalizer=std::function<void(Env, void*, ContextType*)>,
+          typename FinalizerDataType=void>
+struct ThreadSafeFinalize {
+  static inline
+  void Wrapper(napi_env env, void* rawFinalizeData, void* /* rawContext */) {
+    if (rawFinalizeData == nullptr)
+      return;
+
+    ThreadSafeFinalize* finalizeData =
+        static_cast<ThreadSafeFinalize*>(rawFinalizeData);
+    finalizeData->callback(Env(env));
+    if (finalizeData->tsfn) {
+      *finalizeData->tsfn = nullptr;
+    }
+    delete finalizeData;
+  }
+
+  static inline
+  void FinalizeWrapperWithData(napi_env env,
+                               void* rawFinalizeData,
+                               void* /* rawContext */) {
+    if (rawFinalizeData == nullptr)
+      return;
+
+    ThreadSafeFinalize* finalizeData =
+        static_cast<ThreadSafeFinalize*>(rawFinalizeData);
+    finalizeData->callback(Env(env), finalizeData->data);
+    if (finalizeData->tsfn) {
+      *finalizeData->tsfn = nullptr;
+    }
+    delete finalizeData;
+  }
+
+  static inline
+  void FinalizeWrapperWithContext(napi_env env,
+                                  void* rawFinalizeData,
+                                  void* rawContext) {
+    if (rawFinalizeData == nullptr)
+      return;
+
+    ThreadSafeFinalize* finalizeData =
+        static_cast<ThreadSafeFinalize*>(rawFinalizeData);
+    finalizeData->callback(Env(env), static_cast<ContextType*>(rawContext));
+    if (finalizeData->tsfn) {
+      *finalizeData->tsfn = nullptr;
+    }
+    delete finalizeData;
+  }
+
+  static inline
+  void FinalizeFinalizeWrapperWithDataAndContext(napi_env env,
+                                         void* rawFinalizeData,
+                                         void* rawContext) {
+    if (rawFinalizeData == nullptr)
+      return;
+
+    ThreadSafeFinalize* finalizeData =
+        static_cast<ThreadSafeFinalize*>(rawFinalizeData);
+    finalizeData->callback(Env(env), finalizeData->data,
+        static_cast<ContextType*>(rawContext));
+    if (finalizeData->tsfn) {
+      *finalizeData->tsfn = nullptr;
+    }
+    delete finalizeData;
+  }
+
+  FinalizerDataType* data;
+  Finalizer callback;
+  napi_threadsafe_function* tsfn;
+};
+
 template <typename Getter, typename Setter>
 struct AccessorCallbackData {
   static inline
@@ -3658,6 +3730,325 @@ inline void AsyncWorker::OnWorkComplete(
   }
   if (!self->_suppress_destruct) {
     self->Destroy();
+  }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// ThreadSafeFunction class
+////////////////////////////////////////////////////////////////////////////////
+
+// static
+template <typename ResourceString>
+inline ThreadSafeFunction ThreadSafeFunction::New(napi_env env,
+                                  const Function& callback,
+                                  ResourceString resourceName,
+                                  size_t maxQueueSize,
+                                  size_t initialThreadCount) {
+  return New(env, callback, Object(), resourceName, maxQueueSize,
+             initialThreadCount);
+}
+
+// static
+template <typename ResourceString, typename ContextType>
+inline ThreadSafeFunction ThreadSafeFunction::New(napi_env env,
+                                  const Function& callback,
+                                  ResourceString resourceName,
+                                  size_t maxQueueSize,
+                                  size_t initialThreadCount,
+                                  ContextType* context) {
+  return New(env, callback, Object(), resourceName, maxQueueSize,
+             initialThreadCount, context);
+}
+
+// static
+template <typename ResourceString, typename Finalizer>
+inline ThreadSafeFunction ThreadSafeFunction::New(napi_env env,
+                                  const Function& callback,
+                                  ResourceString resourceName,
+                                  size_t maxQueueSize,
+                                  size_t initialThreadCount,
+                                  Finalizer finalizeCallback) {
+  return New(env, callback, Object(), resourceName, maxQueueSize,
+             initialThreadCount, finalizeCallback);
+}
+
+// static
+template <typename ResourceString, typename Finalizer,
+          typename FinalizerDataType>
+inline ThreadSafeFunction ThreadSafeFunction::New(napi_env env,
+                                  const Function& callback,
+                                  ResourceString resourceName,
+                                  size_t maxQueueSize,
+                                  size_t initialThreadCount,
+                                  Finalizer finalizeCallback,
+                                  FinalizerDataType* data) {
+  return New(env, callback, Object(), resourceName, maxQueueSize,
+             initialThreadCount, finalizeCallback, data);
+}
+
+// static
+template <typename ResourceString, typename ContextType, typename Finalizer>
+inline ThreadSafeFunction ThreadSafeFunction::New(napi_env env,
+                                  const Function& callback,
+                                  ResourceString resourceName,
+                                  size_t maxQueueSize,
+                                  size_t initialThreadCount,
+                                  ContextType* context,
+                                  Finalizer finalizeCallback) {
+  return New(env, callback, Object(), resourceName, maxQueueSize,
+             initialThreadCount, context, finalizeCallback);
+}
+
+// static
+template <typename ResourceString, typename ContextType,
+          typename Finalizer, typename FinalizerDataType>
+inline ThreadSafeFunction ThreadSafeFunction::New(napi_env env,
+                                                  const Function& callback,
+                                                  ResourceString resourceName,
+                                                  size_t maxQueueSize,
+                                                  size_t initialThreadCount,
+                                                  ContextType* context,
+                                                  Finalizer finalizeCallback,
+                                                  FinalizerDataType* data) {
+  return New(env, callback, Object(), resourceName, maxQueueSize,
+             initialThreadCount, context, finalizeCallback, data);
+}
+
+// static
+template <typename ResourceString>
+inline ThreadSafeFunction ThreadSafeFunction::New(napi_env env,
+                                  const Function& callback,
+                                  const Object& resource,
+                                  ResourceString resourceName,
+                                  size_t maxQueueSize,
+                                  size_t initialThreadCount) {
+  return New(env, callback, resource, resourceName, maxQueueSize,
+             initialThreadCount, static_cast<void*>(nullptr) /* context */);
+}
+
+// static
+template <typename ResourceString, typename ContextType>
+inline ThreadSafeFunction ThreadSafeFunction::New(napi_env env,
+                                  const Function& callback,
+                                  const Object& resource,
+                                  ResourceString resourceName,
+                                  size_t maxQueueSize,
+                                  size_t initialThreadCount,
+                                  ContextType* context) {
+  return New(env, callback, resource, resourceName, maxQueueSize,
+             initialThreadCount, context,
+             [](Env, ContextType*) {} /* empty finalizer */);
+}
+
+// static
+template <typename ResourceString, typename Finalizer>
+inline ThreadSafeFunction ThreadSafeFunction::New(napi_env env,
+                                  const Function& callback,
+                                  const Object& resource,
+                                  ResourceString resourceName,
+                                  size_t maxQueueSize,
+                                  size_t initialThreadCount,
+                                  Finalizer finalizeCallback) {
+  return New(env, callback, resource, resourceName, maxQueueSize,
+             initialThreadCount, static_cast<void*>(nullptr) /* context */,
+             finalizeCallback, static_cast<void*>(nullptr) /* data */,
+             details::ThreadSafeFinalize<void, Finalizer>::Wrapper);
+}
+
+// static
+template <typename ResourceString, typename Finalizer,
+          typename FinalizerDataType>
+inline ThreadSafeFunction ThreadSafeFunction::New(napi_env env,
+                                  const Function& callback,
+                                  const Object& resource,
+                                  ResourceString resourceName,
+                                  size_t maxQueueSize,
+                                  size_t initialThreadCount,
+                                  Finalizer finalizeCallback,
+                                  FinalizerDataType* data) {
+  return New(env, callback, resource, resourceName, maxQueueSize,
+             initialThreadCount, static_cast<void*>(nullptr) /* context */,
+             finalizeCallback, data,
+             details::ThreadSafeFinalize<
+                 void, Finalizer, FinalizerDataType>::FinalizeWrapperWithData);
+}
+
+// static
+template <typename ResourceString, typename ContextType, typename Finalizer>
+inline ThreadSafeFunction ThreadSafeFunction::New(napi_env env,
+                                  const Function& callback,
+                                  const Object& resource,
+                                  ResourceString resourceName,
+                                  size_t maxQueueSize,
+                                  size_t initialThreadCount,
+                                  ContextType* context,
+                                  Finalizer finalizeCallback) {
+  return New(env, callback, resource, resourceName, maxQueueSize,
+             initialThreadCount, context, finalizeCallback,
+             static_cast<void*>(nullptr) /* data */,
+             details::ThreadSafeFinalize<
+                 ContextType, Finalizer>::FinalizeWrapperWithContext);
+}
+
+// static
+template <typename ResourceString, typename ContextType,
+          typename Finalizer, typename FinalizerDataType>
+inline ThreadSafeFunction ThreadSafeFunction::New(napi_env env,
+                                                  const Function& callback,
+                                                  const Object& resource,
+                                                  ResourceString resourceName,
+                                                  size_t maxQueueSize,
+                                                  size_t initialThreadCount,
+                                                  ContextType* context,
+                                                  Finalizer finalizeCallback,
+                                                  FinalizerDataType* data) {
+  return New(env, callback, resource, resourceName, maxQueueSize,
+             initialThreadCount, context, finalizeCallback, data,
+             details::ThreadSafeFinalize<ContextType, Finalizer,
+                 FinalizerDataType>::FinalizeFinalizeWrapperWithDataAndContext);
+}
+
+inline ThreadSafeFunction::ThreadSafeFunction()
+  : _tsfn(new napi_threadsafe_function(nullptr)) {
+}
+
+inline ThreadSafeFunction::ThreadSafeFunction(
+    napi_threadsafe_function tsfn)
+  : _tsfn(new napi_threadsafe_function(tsfn)) {
+}
+
+inline ThreadSafeFunction::ThreadSafeFunction(ThreadSafeFunction&& other)
+  : _tsfn(std::move(other._tsfn)) {
+  other._tsfn.reset();
+}
+
+inline ThreadSafeFunction& ThreadSafeFunction::operator =(
+    ThreadSafeFunction&& other) {
+  if (*_tsfn != nullptr) {
+    Error::Fatal("ThreadSafeFunction::operator =",
+        "You cannot assign a new TSFN because existing one is still alive.");
+    return *this;
+  }
+  _tsfn = std::move(other._tsfn);
+  other._tsfn.reset();
+  return *this;
+}
+
+inline napi_status ThreadSafeFunction::BlockingCall() const {
+  return CallInternal(nullptr, napi_tsfn_blocking);
+}
+
+template <typename Callback>
+inline napi_status ThreadSafeFunction::BlockingCall(
+    Callback callback) const {
+  return CallInternal(new CallbackWrapper(callback), napi_tsfn_blocking);
+}
+
+template <typename DataType, typename Callback>
+inline napi_status ThreadSafeFunction::BlockingCall(
+    DataType* data, Callback callback) const {
+  auto wrapper = [data, callback](Env env, Function jsCallback) {
+    callback(env, jsCallback, data);
+  };
+  return CallInternal(new CallbackWrapper(wrapper), napi_tsfn_blocking);
+}
+
+inline napi_status ThreadSafeFunction::NonBlockingCall() const {
+  return CallInternal(nullptr, napi_tsfn_nonblocking);
+}
+
+template <typename Callback>
+inline napi_status ThreadSafeFunction::NonBlockingCall(
+    Callback callback) const {
+  return CallInternal(new CallbackWrapper(callback), napi_tsfn_nonblocking);
+}
+
+template <typename DataType, typename Callback>
+inline napi_status ThreadSafeFunction::NonBlockingCall(
+    DataType* data, Callback callback) const {
+  auto wrapper = [data, callback](Env env, Function jsCallback) {
+    callback(env, jsCallback, data);
+  };
+  return CallInternal(new CallbackWrapper(wrapper), napi_tsfn_nonblocking);
+}
+
+inline napi_status ThreadSafeFunction::Acquire() const {
+  return napi_acquire_threadsafe_function(*_tsfn);
+}
+
+inline napi_status ThreadSafeFunction::Release() {
+  return napi_release_threadsafe_function(*_tsfn, napi_tsfn_release);
+}
+
+inline napi_status ThreadSafeFunction::Abort() {
+  return napi_release_threadsafe_function(*_tsfn, napi_tsfn_abort);
+}
+
+inline ThreadSafeFunction::ConvertibleContext
+ThreadSafeFunction::GetContext() const {
+  void* context;
+  napi_get_threadsafe_function_context(*_tsfn, &context);
+  return ConvertibleContext({ context });
+}
+
+// static
+template <typename ResourceString, typename ContextType,
+          typename Finalizer, typename FinalizerDataType>
+inline ThreadSafeFunction ThreadSafeFunction::New(napi_env env,
+                                                  const Function& callback,
+                                                  const Object& resource,
+                                                  ResourceString resourceName,
+                                                  size_t maxQueueSize,
+                                                  size_t initialThreadCount,
+                                                  ContextType* context,
+                                                  Finalizer finalizeCallback,
+                                                  FinalizerDataType* data,
+                                                  napi_finalize wrapper) {
+  static_assert(details::can_make_string<ResourceString>::value
+      || std::is_convertible<ResourceString, napi_value>::value,
+      "Resource name should be convertible to the string type");
+
+  ThreadSafeFunction tsfn;
+  auto* finalizeData = new details::ThreadSafeFinalize<ContextType, Finalizer,
+      FinalizerDataType>({ data, finalizeCallback, tsfn._tsfn.get() });
+  napi_status status = napi_create_threadsafe_function(env, callback, resource,
+      Value::From(env, resourceName), maxQueueSize, initialThreadCount,
+      finalizeData, wrapper, context, CallJS, tsfn._tsfn.get());
+  if (status != napi_ok) {
+    delete finalizeData;
+    NAPI_THROW_IF_FAILED(env, status, ThreadSafeFunction());
+  }
+
+  return tsfn;
+}
+
+inline napi_status ThreadSafeFunction::CallInternal(
+    CallbackWrapper* callbackWrapper,
+    napi_threadsafe_function_call_mode mode) const {
+  napi_status status = napi_call_threadsafe_function(
+      *_tsfn, callbackWrapper, mode);
+  if (status != napi_ok && callbackWrapper != nullptr) {
+    delete callbackWrapper;
+  }
+
+  return status;
+}
+
+// static
+inline void ThreadSafeFunction::CallJS(napi_env env,
+                                       napi_value jsCallback,
+                                       void* /* context */,
+                                       void* data) {
+  if (env == nullptr && jsCallback == nullptr) {
+    return;
+  }
+
+  if (data != nullptr) {
+    auto* callbackWrapper = static_cast<CallbackWrapper*>(data);
+    (*callbackWrapper)(env, Function(env, jsCallback));
+    delete callbackWrapper;
+  } else if (jsCallback != nullptr) {
+    Function(env, jsCallback).Call({});
   }
 }
 

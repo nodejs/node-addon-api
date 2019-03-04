@@ -33,6 +33,9 @@ Object InitObject(Env env);
 Object InitObjectDeprecated(Env env);
 #endif // !NODE_ADDON_API_DISABLE_DEPRECATED
 Object InitPromise(Env env);
+#if (NAPI_VERSION > 3)
+Object InitThreadSafeFunction(Env env);
+#endif
 Object InitTypedArray(Env env);
 Object InitObjectWrap(Env env);
 Object InitObjectReference(Env env);
@@ -71,6 +74,9 @@ Object Init(Env env, Object exports) {
   exports.Set("object_deprecated", InitObjectDeprecated(env));
 #endif // !NODE_ADDON_API_DISABLE_DEPRECATED
   exports.Set("promise", InitPromise(env));
+#if (NAPI_VERSION > 3)
+  exports.Set("threadsafe_function", InitThreadSafeFunction(env));
+#endif
   exports.Set("typedarray", InitTypedArray(env));
   exports.Set("objectwrap", InitObjectWrap(env));
   exports.Set("objectreference", InitObjectReference(env));
