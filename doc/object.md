@@ -142,7 +142,7 @@ Note: This is equivalent to the JavaScript instanceof operator.
 ```cpp
 void Napi::Object::DefineProperty (const Napi::PropertyDescriptor& property);
 ```
-- `[in] property`: A [`Napi::PropertyDescriptor`](propertydescriptor.md).
+- `[in] property`: A [`Napi::PropertyDescriptor`](property_descriptor.md).
 
 Define a property on the object.
 
@@ -151,7 +151,7 @@ Define a property on the object.
 ```cpp
 void Napi::Object::DefineProperties (____ properties)
 ```
-- `[in] properties`: A list of [`Napi::PropertyDescriptor`](propertydescriptor.md). Can be one of the following types:
+- `[in] properties`: A list of [`Napi::PropertyDescriptor`](property_descriptor.md). Can be one of the following types:
 	- const std::initializer_list<Napi::PropertyDescriptor>&
 	- const std::vector<Napi::PropertyDescriptor>&
 
