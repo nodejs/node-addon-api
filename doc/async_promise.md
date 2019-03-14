@@ -266,7 +266,7 @@ None
 ### OnError
 
 ```cpp
-virtual Napi::AsyncPromise<T>::BaseTask::OnError();
+virtual void Napi::AsyncPromise<T>::BaseTask::OnError();
 ```
 
 This method is executed on the main event loop following
