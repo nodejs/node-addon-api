@@ -55,8 +55,19 @@ To use **N-API** in a native module:
 ```gyp
   'defines': [ 'NAPI_DISABLE_CPP_EXCEPTIONS' ],
 ```
+  4. **Only** for **macOS** user please don't forget to insert these additional 
+  settings in the `binding.gyp` file:
+  
+  ```gyp
+  ['OS=="mac"', {
+      'cflags+': ['-fvisibility=hidden'],
+      'xcode_settings': {
+        'OTHER_CFLAGS': ['-fvisibility=hidden']
+      }
+  }]
+  ```
 
-  4. Include `napi.h` in the native module code.
+  5. Include `napi.h` in the native module code.
      To ensure only ABI-stable APIs are used, DO NOT include
      `node.h`, `nan.h`, or `v8.h`.
 
