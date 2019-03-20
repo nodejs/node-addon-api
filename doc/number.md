@@ -43,7 +43,7 @@ Creates a new instance of a `Napi::Number` object.
 
 ### Int32Value
 
-Converts a `Napi::Number` value to a `uint32_t` primitive type.
+Converts a `Napi::Number` value to a `int32_t` primitive type.
 
 ```cpp
 Napi::Number::Int32Value() const;
