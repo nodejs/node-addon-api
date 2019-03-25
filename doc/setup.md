@@ -55,14 +55,14 @@ To use **N-API** in a native module:
 ```gyp
   'defines': [ 'NAPI_DISABLE_CPP_EXCEPTIONS' ],
 ```
-  4. **Only** for **macOS** user please don't forget to insert these additional 
-  settings in the `binding.gyp` file:
-  
+  4. If you would like your native addon to support OSX, please also add the
+  following settings in the `binding.gyp` file:
+
   ```gyp
   ['OS=="mac"', {
       'cflags+': ['-fvisibility=hidden'],
       'xcode_settings': {
-        'OTHER_CFLAGS': ['-fvisibility=hidden']
+        'GCC_SYMBOLS_PRIVATE_EXTERN': 'YES', # -fvisibility=hidden
       }
   }]
   ```
