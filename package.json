@@ -3,6 +3,7 @@
     "url": "https://github.com/nodejs/node-addon-api/issues"
   },
   "contributors": [
+    "Abhishek Kumar Singh (https://github.com/abhi11210646)",
     "Andrew Petersen (https://github.com/kirbysayshi)",
     "Anisha Rohra (https://github.com/anisha-rohra)",
     "Anna Henningsen (https://github.com/addaleax)",
@@ -10,6 +11,8 @@
     "Arunesh Chandra (https://github.com/aruneshchandra)",
     "Ben Berman (https://github.com/rivertam)",
     "Benjamin Byholm (https://github.com/kkoopa)",
+    "Bill Gallafent (https://github.com/gallafent)",
+    "Bruce A. MacNaughton (https://github.com/bmacnaughton)",
     "Cory Mickelson (https://github.com/corymickelson)",
     "David Halls (https://github.com/davedoesdev)",
     "Dongjin Na (https://github.com/nadongguri)",
@@ -17,6 +20,7 @@
     "Gabriel Schulhof (https://github.com/gabrielschulhof)",
     "Gus Caplan (https://github.com/devsnek)",
     "Hitesh Kanwathirtha (https://github.com/digitalinfinity)",
+    "Jake Barnes (https://github.com/DuBistKomisch)",
     "Jake Yoon (https://github.com/yjaeseok)",
     "Jason Ginchereau (https://github.com/jasongin)",
     "Jim Schlight (https://github.com/jschlight)",
@@ -24,6 +28,7 @@
     "joshgarde (https://github.com/joshgarde)",
     "Konstantin Tarkus (https://github.com/koistya)",
     "Kyle Farnung (https://github.com/kfarnung)",
+    "Luciano Martorella (https://github.com/lmartorella)",
     "Matteo Collina (https://github.com/mcollina)",
     "Michael Dawson (https://github.com/mhdawson)",
     "Michele Campus (https://github.com/kYroL01)",
@@ -32,7 +37,9 @@
     "Nick Soggin (https://github.com/iSkore)",
     "Philipp Renoth (https://github.com/DaAitch)",
     "Rolf Timmermans (https://github.com/rolftimmermans)",
+    "Ryuichi Okumura (https://github.com/okuryu)",
     "Sampson Gao (https://github.com/sampsongao)",
+    "Sam Roberts (https://github.com/sam-github)",
     "Taylor Woll (https://github.com/boingoing)",
     "Thomas Gentilhomme (https://github.com/fraxken)"
   ],
@@ -62,5 +69,5 @@
     "dev:incremental": "node test",
     "doc": "doxygen doc/Doxyfile"
   },
-  "version": "1.6.2"
+  "version": "1.6.3"
 }

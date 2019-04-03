@@ -1,6 +1,45 @@
 # node-addon-api Changelog
 
-## 2018-11-29 Version 1.6.2 (Current), @NickNaso
+## 2019-04-03 Version 1.6.3, @NickNaso
+
+### Notable changes:
+
+#### API
+
+- Added `SuppressDestruct` method to `Napi::AsyncWorker`.
+- Added new build targets for debug.
+- Exposed macros that throw errors.
+- Fixed memory leaks caused by callback data when a napi error occurs.
+- Fixed missing `void *data` usage in `Napi::PropertyDescriptors`.
+
+#### Documentation
+
+- Some minor corrections all over the documentation
+
+### Commmits
+
+* [[`83b41c2fe4`](https://github.com/nodejs/node-addon-api/commit/83b41c2fe4)] - Document adding -fvisibility=hidden flag for macOS users (Nicola Del Gobbo) [#460](https://github.com/nodejs/node-addon-api/pull/460)
+* [[`1ed7ad8769`](https://github.com/nodejs/node-addon-api/commit/1ed7ad8769)] - **doc**: correct return type of Int32Value to int32\_t (Bill Gallafent) [#459](https://github.com/nodejs/node-addon-api/pull/459)
+* [[`b0f6b601aa`](https://github.com/nodejs/node-addon-api/commit/b0f6b601aa)] - **src**: add AsyncWorker destruction suppression (Gabriel Schulhof) [#407](https://github.com/nodejs/node-addon-api/pull/407)
+* [[`72b1975cff`](https://github.com/nodejs/node-addon-api/commit/72b1975cff)] - **doc**: fix links to the Property Descriptor docs (Ryuichi Okumura) [#458](https://github.com/nodejs/node-addon-api/pull/458)
+* [[`fcfc612728`](https://github.com/nodejs/node-addon-api/commit/fcfc612728)] - **build**: new build targets for debug purposes (Jinho Bang) [#186](https://github.com/nodejs/node-addon-api/pull/186)
+* [[`c629553cd7`](https://github.com/nodejs/node-addon-api/commit/c629553cd7)] - **doc**: minor doc corrections and clarifications (Bruce A. MacNaughton) [#426](https://github.com/nodejs/node-addon-api/pull/426)
+* [[`7b87e0b999`](https://github.com/nodejs/node-addon-api/commit/7b87e0b999)] - **doc**: update number.md (Bernardo Heynemann) [#436](https://github.com/nodejs/node-addon-api/pull/436)
+* [[`fcf173d2a1`](https://github.com/nodejs/node-addon-api/commit/fcf173d2a1)] - **src**: expose macros that throw errors (Gabriel Schulhof) [#448](https://github.com/nodejs/node-addon-api/pull/448)
+* [[`b409a2f987`](https://github.com/nodejs/node-addon-api/commit/b409a2f987)] - **package**: add npm search keywords (Sam Roberts) [#452](https://github.com/nodejs/node-addon-api/pull/452)
+* [[`0bc7987806`](https://github.com/nodejs/node-addon-api/commit/0bc7987806)] - **doc**: fix references to Weak and Persistent (Jake Barnes) [#428](https://github.com/nodejs/node-addon-api/pull/428)
+* [[`ad6f569f85`](https://github.com/nodejs/node-addon-api/commit/ad6f569f85)] - **doc**: dix typo (Abhishek Kumar Singh) [#435](https://github.com/nodejs/node-addon-api/pull/435)
+* [[`28df833a49`](https://github.com/nodejs/node-addon-api/commit/28df833a49)] - Merge pull request #441 from jschlight/master (Jim Schlight)
+* [[`4921e74d83`](https://github.com/nodejs/node-addon-api/commit/4921e74d83)] - Rearranges names to be alphabetical (Jim Schlight)
+* [[`48220335b0`](https://github.com/nodejs/node-addon-api/commit/48220335b0)] - Membership review update (Jim Schlight)
+* [[`44f0695533`](https://github.com/nodejs/node-addon-api/commit/44f0695533)] - Merge pull request #394 from NickNaso/create\_release (Nicola DelGobbo)
+* [[`fa49d68416`](https://github.com/nodejs/node-addon-api/commit/fa49d68416)] - **doc**: fix some `Finalizer` signatures (Philipp Renoth) [#414](https://github.com/nodejs/node-addon-api/pull/414)
+* [[`020ac4a628`](https://github.com/nodejs/node-addon-api/commit/020ac4a628)] - **src**: make `Object::GetPropertyNames()` const (Philipp Renoth)[#415](https://github.com/nodejs/node-addon-api/pull/415)
+* [[`91eaa6f4cb`](https://github.com/nodejs/node-addon-api/commit/91eaa6f4cb)] - **src**: fix callbackData leaks on error napi status (Philipp Renoth) [#417](https://github.com/nodejs/node-addon-api/pull/417)
+* [[`0b40275752`](https://github.com/nodejs/node-addon-api/commit/0b40275752)] - **src**: fix noexcept control flow issues (Philipp Renoth) [#420](https://github.com/nodejs/node-addon-api/pull/420)
+* [[`c1ff2936f9`](https://github.com/nodejs/node-addon-api/commit/c1ff2936f9)] - **src**: fix missing void\*data usage in PropertyDescriptors (Luciano Martorella) [#374](https://github.com/nodejs/node-addon-api/pull/374)
+
+## 2018-11-29 Version 1.6.2, @NickNaso
 
 ### Notable changes:
 
@@ -12,7 +51,7 @@
 
 * [[`07a0fc4e95`](https://github.com/nodejs/node-addon-api/commit/07a0fc4e95)] - **src**: fix selection logic for 6.x (Michael Dawson) [#402](https://github.com/nodejs/node-addon-api/pull/402)
 
-## 2018-11-14 Version 1.6.1 (Current), @NickNaso
+## 2018-11-14 Version 1.6.1, @NickNaso
 
 ### Notable changes:
 
@@ -33,7 +72,7 @@
 * [[`29a0262ab9`](https://github.com/nodejs/node-addon-api/commit/29a0262ab9)] - **doc**: fix typo (Dongjin Na) [#385](https://github.com/nodejs/node-addon-api/pull/385)
 * [[`b6dc15b88d`](https://github.com/nodejs/node-addon-api/commit/b6dc15b88d)] - **doc**: make links point to node-addon-examples repo (Nicola Del Gobbo) [#389](https://github.com/nodejs/node-addon-api/pull/389)
 
-## 2018-11-02 Version 1.6.0 (Current), @NickNaso
+## 2018-11-02 Version 1.6.0, @NickNaso
 
 ### Notable changes:
 
@@ -63,7 +102,7 @@ associated with a callback in place when making certain N-API calls
 * [[`fd65078e3c`](https://github.com/nodejs/node-addon-api/commit/fd65078e3c)] - README.md: link to new ABI stability guide (Gabriel Schulhof) [#367](https://github.com/nodejs/node-addon-api/pull/367)
 * [[`ffebf9ba9a`](https://github.com/nodejs/node-addon-api/commit/ffebf9ba9a)] - Updates for release 1.5.0 (NickNaso)
 
-## 2018-10-03 Version 1.5.0 (Current), @NickNaso
+## 2018-10-03 Version 1.5.0, @NickNaso
 
 ### Notable changes:
 
