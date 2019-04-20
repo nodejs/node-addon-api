@@ -100,9 +100,9 @@ typedef struct {
 #define NAPI_MODULE(modname, regfunc) \
   NAPI_MODULE_X(modname, regfunc, NULL, 0)
 
-#define NAPI_AUTO_LENGTH SIZE_MAX
-
 EXTERN_C_START
+
+static const size_t NAPI_AUTO_LENGTH = SIZE_MAX;
 
 NAPI_EXTERN void napi_module_register(napi_module* mod);
 
