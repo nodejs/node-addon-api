@@ -159,6 +159,11 @@ Take a look and get inspired by our **[test suite](https://github.com/nodejs/nod
 
 <a name="resources"></a>
 
+## **Contributing**
+
+We love contributions from the community to **node-addon-api**. 
+See [CONTRIBUTING.md](CONTRIBUTING.md) for more details on our philosophy around extending this module.
+
 ### **More resource and info about native Addons**
 - **[C++ Addons](https://nodejs.org/dist/latest/docs/api/addons.html)**
 - **[N-API](https://nodejs.org/dist/latest/docs/api/n-api.html)**
