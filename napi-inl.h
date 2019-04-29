@@ -2666,37 +2666,6 @@ inline Object FunctionReference::New(const std::vector<napi_value>& args) const 
 // CallbackInfo class
 ////////////////////////////////////////////////////////////////////////////////
 
-class ObjectWrapConstructionContext {
- public:
-  ObjectWrapConstructionContext(CallbackInfo* info) {
-    info->_objectWrapConstructionContext = this;
-  }
-
-  static inline void SetObjectWrapped(const CallbackInfo& info) {
-    if (info._objectWrapConstructionContext == nullptr) {
-      Napi::Error::Fatal("ObjectWrapConstructionContext::SetObjectWrapped",
-                         "_objectWrapConstructionContext is NULL");
-    }
-    info._objectWrapConstructionContext->_objectWrapped = true;
-  }
-
-  inline void Cleanup(const CallbackInfo& info) {
-    if (_objectWrapped) {
-      napi_status status = napi_remove_wrap(info.Env(), info.This(), nullptr);
-
-      // There's already a pending exception if we are at this point, so we have
-      // no choice but to fatally fail here.
-      NAPI_FATAL_IF_FAILED(status,
-                           "ObjectWrapConstructionContext::Cleanup",
-                           "Failed to remove wrap from unsuccessfully "
-                           "constructed ObjectWrap instance");
-    }
-  }
-
- private:
-  bool _objectWrapped = false;
-};
-
 inline CallbackInfo::CallbackInfo(napi_env env, napi_callback_info info)
     : _env(env), _info(info), _this(nullptr), _dynamicArgs(nullptr), _data(nullptr) {
   _argc = _staticArgCount;
@@ -3002,13 +2971,22 @@ inline ObjectWrap<T>::ObjectWrap(const Napi::CallbackInfo& callbackInfo) {
   status = napi_wrap(env, wrapper, this, FinalizeCallback, nullptr, &ref);
   NAPI_THROW_IF_FAILED_VOID(env, status);
 
-  ObjectWrapConstructionContext::SetObjectWrapped(callbackInfo);
   Reference<Object>* instanceRef = this;
   *instanceRef = Reference<Object>(env, ref);
 }
 
-template<typename T>
-inline ObjectWrap<T>::~ObjectWrap() {}
+template <typename T>
+inline ObjectWrap<T>::~ObjectWrap() {
+  // If the JS object still exists at this point, remove the finalizer added
+  // through `napi_wrap()`.
+  if (!IsEmpty()) {
+    Object object = Value();
+    // It is not valid to call `napi_remove_wrap()` with an empty `object`.
+    // This happens e.g. during garbage collection.
+    if (!object.IsEmpty())
+      napi_remove_wrap(Env(), object, nullptr);
+  }
+}
 
 template<typename T>
 inline T* ObjectWrap<T>::Unwrap(Object wrapper) {
@@ -3402,23 +3380,15 @@ inline napi_value ObjectWrap<T>::ConstructorCallbackWrapper(
 
   napi_value wrapper = details::WrapCallback([&] {
     CallbackInfo callbackInfo(env, info);
-    ObjectWrapConstructionContext constructionContext(&callbackInfo);
 #ifdef NAPI_CPP_EXCEPTIONS
-    try {
-      new T(callbackInfo);
-    } catch (const Error& e) {
-      // Re-throw the error after removing the failed wrap.
-      constructionContext.Cleanup(callbackInfo);
-      throw e;
-    }
+    new T(callbackInfo);
 #else
     T* instance = new T(callbackInfo);
     if (callbackInfo.Env().IsExceptionPending()) {
       // We need to clear the exception so that removing the wrap might work.
       Error e = callbackInfo.Env().GetAndClearPendingException();
-      constructionContext.Cleanup(callbackInfo);
-      e.ThrowAsJavaScriptException();
       delete instance;
+      e.ThrowAsJavaScriptException();
     }
 # endif  // NAPI_CPP_EXCEPTIONS
     return callbackInfo.This();
@@ -3545,7 +3515,7 @@ inline napi_value ObjectWrap<T>::InstanceSetterCallbackWrapper(
 
 template <typename T>
 inline void ObjectWrap<T>::FinalizeCallback(napi_env env, void* data, void* /*hint*/) {
-  T* instance = reinterpret_cast<T*>(data);
+  ObjectWrap<T>* instance = static_cast<ObjectWrap<T>*>(data);
   instance->Finalize(Napi::Env(env));
   delete instance;
 }
