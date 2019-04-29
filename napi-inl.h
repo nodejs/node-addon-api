@@ -271,7 +271,7 @@ inline bool Value::IsEmpty() const {
 }
 
 inline napi_valuetype Value::Type() const {
-  if (_value == nullptr) {
+  if (IsEmpty()) {
     return napi_undefined;
   }
 
@@ -314,7 +314,7 @@ inline bool Value::IsSymbol() const {
 }
 
 inline bool Value::IsArray() const {
-  if (_value == nullptr) {
+  if (IsEmpty()) {
     return false;
   }
 
@@ -325,7 +325,7 @@ inline bool Value::IsArray() const {
 }
 
 inline bool Value::IsArrayBuffer() const {
-  if (_value == nullptr) {
+  if (IsEmpty()) {
     return false;
   }
 
@@ -336,7 +336,7 @@ inline bool Value::IsArrayBuffer() const {
 }
 
 inline bool Value::IsTypedArray() const {
-  if (_value == nullptr) {
+  if (IsEmpty()) {
     return false;
   }
 
@@ -355,7 +355,7 @@ inline bool Value::IsFunction() const {
 }
 
 inline bool Value::IsPromise() const {
-  if (_value == nullptr) {
+  if (IsEmpty()) {
     return false;
   }
 
@@ -366,7 +366,7 @@ inline bool Value::IsPromise() const {
 }
 
 inline bool Value::IsDataView() const {
-  if (_value == nullptr) {
+  if (IsEmpty()) {
     return false;
   }
 
@@ -377,7 +377,7 @@ inline bool Value::IsDataView() const {
 }
 
 inline bool Value::IsBuffer() const {
-  if (_value == nullptr) {
+  if (IsEmpty()) {
     return false;
   }
 
