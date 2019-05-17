@@ -23,12 +23,12 @@ Void Init(Env env) {
 
   // Assign values to properties
   obj.Set("hello", "world");
-  obj.Set(42, "The Answer to Life, the Universe, and Everything");
+  obj.Set(uint32_t(42), "The Answer to Life, the Universe, and Everything");
   obj.Set("Douglas Adams", true);
 
   // Get properties
   Value val1 = obj.Get("hello");
-  Value val2 = obj.Get(42);
+  Value val2 = obj.Get(uint32_t(42));
   Value val3 = obj.Get("Douglas Adams");
 
   // Test if objects have properties.
