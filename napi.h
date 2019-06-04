@@ -1803,6 +1803,7 @@ namespace Napi {
     virtual void Execute() = 0;
     virtual void OnOK();
     virtual void OnError(const Error& e);
+    virtual void Destroy();
 
     void SetError(const std::string& error);
 

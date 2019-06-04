@@ -125,6 +125,19 @@ class was created, passing in the error as the first parameter.
 virtual void Napi::AsyncWorker::OnError(const Napi::Error& e);
 ```
 
+### Destroy
+
+This method is invoked when the instance must be deallocated. If
+`SuppressDestruct()` was not called then this method will be called after either
+`OnError()` or `OnOK()` complete. The default implementation of this method
+causes the instance to delete itself using the `delete` operator. The method is
+provided so as to ensure that instances allocated by means other than the `new`
+operator can be deallocated upon work completion.
+
+```cpp
+virtual void Napi::AsyncWorker::Destroy();
+```
+
 ### Constructor
 
 Creates a new `Napi::AsyncWorker`.
