@@ -3529,6 +3529,10 @@ inline AsyncWorker::~AsyncWorker() {
   }
 }
 
+inline void AsyncWorker::Destroy() {
+  delete this;
+}
+
 inline AsyncWorker::AsyncWorker(AsyncWorker&& other) {
   _env = other._env;
   other._env = nullptr;
@@ -3623,7 +3627,7 @@ inline void AsyncWorker::OnWorkComplete(
     });
   }
   if (!self->_suppress_destruct) {
-    delete self;
+    self->Destroy();
   }
 }
 
