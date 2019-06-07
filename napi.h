@@ -1800,6 +1800,13 @@ namespace Napi {
                          const char* resource_name,
                          const Object& resource);
 
+    explicit AsyncWorker(Napi::Env env);
+    explicit AsyncWorker(Napi::Env env,
+                         const char* resource_name);
+    explicit AsyncWorker(Napi::Env env,
+                         const char* resource_name,
+                         const Object& resource);
+
     virtual void Execute() = 0;
     virtual void OnOK();
     virtual void OnError(const Error& e);

@@ -105,8 +105,8 @@ virtual void Napi::AsyncWorker::Execute() = 0;
 
 ### OnOK
 
-This method is invoked when the computation in the `Excecute` method ends.
-The default implementation runs the Callback provided when the AsyncWorker class
+This method is invoked when the computation in the `Execute` method ends.
+The default implementation runs the Callback optionally provided when the AsyncWorker class
 was created.
 
 ```cpp
@@ -136,7 +136,7 @@ explicit Napi::AsyncWorker(const Napi::Function& callback);
 - `[in] callback`: The function which will be called when an asynchronous
 operations ends. The given function is called from the main event loop thread.
 
-Returns a`Napi::AsyncWork` instance which can later be queued for execution by calling
+Returns a `Napi::AsyncWorker` instance which can later be queued for execution by calling
 `Queue`.
 
 ### Constructor
@@ -153,7 +153,7 @@ operations ends. The given function is called from the main event loop thread.
 identifier for the kind of resource that is being provided for diagnostic
 information exposed by the async_hooks API.
 
-Returns a `Napi::AsyncWork` instance which can later be queued for execution by
+Returns a `Napi::AsyncWorker` instance which can later be queued for execution by
 calling `Napi::AsyncWork::Queue`.
 
 ### Constructor
@@ -172,7 +172,7 @@ information exposed by the async_hooks API.
 - `[in] resource`: Object associated with the asynchronous operation that
 will be passed to possible async_hooks.
 
-Returns a `Napi::AsyncWork` instance which can later be queued for execution by
+Returns a `Napi::AsyncWorker` instance which can later be queued for execution by
 calling `Napi::AsyncWork::Queue`.
 
 ### Constructor
@@ -187,7 +187,7 @@ explicit Napi::AsyncWorker(const Napi::Object& receiver, const Napi::Function& c
 - `[in] callback`: The function which will be called when an asynchronous
 operations ends. The given function is called from the main event loop thread.
 
-Returns a `Napi::AsyncWork` instance which can later be queued for execution by
+Returns a `Napi::AsyncWorker` instance which can later be queued for execution by
 calling `Napi::AsyncWork::Queue`.
 
 ### Constructor
@@ -227,6 +227,54 @@ will be passed to possible async_hooks.
 
 Returns a `Napi::AsyncWork` instance which can later be queued for execution by
 calling `Napi::AsyncWork::Queue`.
+
+
+### Constructor
+
+Creates a new `Napi::AsyncWorker`.
+
+```cpp
+explicit Napi::AsyncWorker(Napi::Env env);
+```
+
+- `[in] env`: The environment in which to create the `Napi::AsyncWorker`.
+
+Returns an `Napi::AsyncWorker` instance which can later be queued for execution by calling
+`Napi::AsyncWorker::Queue`.
+
+### Constructor
+
+Creates a new `Napi::AsyncWorker`.
+
+```cpp
+explicit Napi::AsyncWorker(Napi::Env env, const char* resource_name);
+```
+
+- `[in] env`: The environment in which to create the `Napi::AsyncWorker`.
+- `[in] resource_name`: Null-terminated strings that represents the
+identifier for the kind of resource that is being provided for diagnostic
+information exposed by the async_hooks API.
+
+Returns a `Napi::AsyncWorker` instance which can later be queued for execution by
+calling `Napi::AsyncWorker::Queue`.
+
+### Constructor
+
+Creates a new `Napi::AsyncWorker`.
+
+```cpp
+explicit Napi::AsyncWorker(Napi::Env env, const char* resource_name, const Napi::Object& resource);
+```
+
+- `[in] env`: The environment in which to create the `Napi::AsyncWorker`.
+- `[in] resource_name`:  Null-terminated strings that represents the
+identifier for the kind of resource that is being provided for diagnostic
+information exposed by the async_hooks API.
+- `[in] resource`: Object associated with the asynchronous operation that
+will be passed to possible async_hooks.
+
+Returns a `Napi::AsyncWorker` instance which can later be queued for execution by
+calling `Napi::AsyncWorker::Queue`.
 
 ### Destructor
 

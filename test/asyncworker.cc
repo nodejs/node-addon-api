@@ -29,8 +29,41 @@ private:
   bool _succeed;
 };
 
+class TestWorkerNoCallback : public AsyncWorker {
+public:
+  static Value DoWork(const CallbackInfo& info) {
+    napi_env env = info.Env();
+    bool succeed = info[0].As<Boolean>();
+    Object resource = info[1].As<Object>();
+
+    TestWorkerNoCallback* worker = new TestWorkerNoCallback(env, "TestResource", resource);
+    worker->_succeed = succeed;
+    worker->Queue();
+    return worker->_deferred.Promise();
+  }
+
+protected:
+  void Execute() override {
+  }
+  virtual void OnOK() override {
+      _deferred.Resolve(Env().Undefined());
+
+  }
+  virtual void OnError(const Napi::Error& e) override {
+      _deferred.Reject(Env().Undefined());
+  }
+
+private:
+  TestWorkerNoCallback(napi_env env, const char* resource_name, const Object& resource)
+      : AsyncWorker(env, resource_name, resource), _deferred(Napi::Promise::Deferred::New(env)) {
+      }
+  Promise::Deferred _deferred;
+  bool _succeed;
+};
+
 Object InitAsyncWorker(Env env) {
   Object exports = Object::New(env);
   exports["doWork"] = Function::New(env, TestWorker::DoWork);
+  exports["doWorkNoCallback"] = Function::New(env, TestWorkerNoCallback::DoWork);
   return exports;
 }

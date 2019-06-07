@@ -3522,6 +3522,32 @@ inline AsyncWorker::AsyncWorker(const Object& receiver,
   NAPI_THROW_IF_FAILED_VOID(_env, status);
 }
 
+inline AsyncWorker::AsyncWorker(Napi::Env env)
+  : AsyncWorker(env, "generic") {
+}
+
+inline AsyncWorker::AsyncWorker(Napi::Env env,
+                                const char* resource_name)
+  : AsyncWorker(env, resource_name, Object::New(env)) {
+}
+
+inline AsyncWorker::AsyncWorker(Napi::Env env,
+                                const char* resource_name,
+                                const Object& resource)
+  : _env(env),
+    _receiver(),
+    _callback(),
+    _suppress_destruct(false) {
+  napi_value resource_id;
+  napi_status status = napi_create_string_latin1(
+      _env, resource_name, NAPI_AUTO_LENGTH, &resource_id);
+  NAPI_THROW_IF_FAILED_VOID(_env, status);
+
+  status = napi_create_async_work(_env, resource, resource_id, OnExecute,
+                                  OnWorkComplete, this, &_work);
+  NAPI_THROW_IF_FAILED_VOID(_env, status);
+}
+
 inline AsyncWorker::~AsyncWorker() {
   if (_work != nullptr) {
     napi_delete_async_work(_env, _work);
@@ -3583,11 +3609,15 @@ inline void AsyncWorker::SuppressDestruct() {
 }
 
 inline void AsyncWorker::OnOK() {
-  _callback.Call(_receiver.Value(), std::initializer_list<napi_value>{});
+  if (!_callback.IsEmpty()) {
+    _callback.Call(_receiver.Value(), std::initializer_list<napi_value>{});
+  }
 }
 
 inline void AsyncWorker::OnError(const Error& e) {
-  _callback.Call(_receiver.Value(), std::initializer_list<napi_value>{ e.Value() });
+  if (!_callback.IsEmpty()) {
+    _callback.Call(_receiver.Value(), std::initializer_list<napi_value>{ e.Value() });
+  }
 }
 
 inline void AsyncWorker::SetError(const std::string& error) {
