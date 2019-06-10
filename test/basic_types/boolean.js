@@ -27,4 +27,10 @@ function test(binding) {
   const bool6 = binding.basic_types_boolean.createBooleanFromPrimitive(false);
   assert.strictEqual(bool6, false);
 
+  const bool7 = binding.basic_types_boolean.operatorBool(true);
+  assert.strictEqual(bool7, true);
+
+  const bool8 = binding.basic_types_boolean.operatorBool(false);
+  assert.strictEqual(bool8, false);
+
 }
