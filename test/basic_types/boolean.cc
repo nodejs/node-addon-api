@@ -21,6 +21,11 @@ Value CreateBooleanFromPrimitive(const CallbackInfo& info) {
   return Boolean::New(info.Env(), boolean);
 }
 
+Value OperatorBool(const CallbackInfo& info) {
+  Boolean boolean(info.Env(), info[0].As<Boolean>());
+  return Boolean::New(info.Env(), static_cast<bool>(boolean));
+}
+
 Object InitBasicTypesBoolean(Env env) {
   Object exports = Object::New(env);
 
@@ -28,5 +33,6 @@ Object InitBasicTypesBoolean(Env env) {
   exports["createEmptyBoolean"] = Function::New(env, CreateEmptyBoolean);
   exports["createBooleanFromExistingValue"] = Function::New(env, CreateBooleanFromExistingValue);
   exports["createBooleanFromPrimitive"] = Function::New(env, CreateBooleanFromPrimitive);
+  exports["operatorBool"] = Function::New(env, OperatorBool);
   return exports;
 }
