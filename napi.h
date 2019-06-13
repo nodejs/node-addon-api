@@ -1,7 +1,7 @@
 #ifndef SRC_NAPI_H_
 #define SRC_NAPI_H_
 
-#include "node_api.h"
+#include <node_api.h>
 #include <functional>
 #include <initializer_list>
 #include <string>
