@@ -73,12 +73,11 @@ const test = (binding) => {
         keys.push(key);
       }
 
-      assert.deepEqual(keys, [
-        'testGetSet',
-        'testGetter',
-        'testValue',
-        'testMethod'
-      ]);
+      assert(keys.length = 4);
+      assert(obj.testGetSet);
+      assert(obj.testGetter);
+      assert(obj.testValue);
+      assert(obj.testMethod);
     }
   };
 
