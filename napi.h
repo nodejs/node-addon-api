@@ -50,10 +50,10 @@ static_assert(sizeof(char16_t) == sizeof(wchar_t), "Size mismatch between char16
 #define NAPI_THROW_VOID(e)  throw e
 
 #define NAPI_THROW_IF_FAILED(env, status, ...)           \
-  if ((status) != napi_ok) throw Error::New(env);
+  if ((status) != napi_ok) throw Napi::Error::New(env);
 
 #define NAPI_THROW_IF_FAILED_VOID(env, status)           \
-  if ((status) != napi_ok) throw Error::New(env);
+  if ((status) != napi_ok) throw Napi::Error::New(env);
 
 #else // NAPI_CPP_EXCEPTIONS
 
@@ -77,13 +77,13 @@ static_assert(sizeof(char16_t) == sizeof(wchar_t), "Size mismatch between char16
 
 #define NAPI_THROW_IF_FAILED(env, status, ...)           \
   if ((status) != napi_ok) {                             \
-    Error::New(env).ThrowAsJavaScriptException();        \
+    Napi::Error::New(env).ThrowAsJavaScriptException();  \
     return __VA_ARGS__;                                  \
   }
 
 #define NAPI_THROW_IF_FAILED_VOID(env, status)           \
   if ((status) != napi_ok) {                             \
-    Error::New(env).ThrowAsJavaScriptException();        \
+    Napi::Error::New(env).ThrowAsJavaScriptException();  \
     return;                                              \
   }
 
@@ -92,7 +92,7 @@ static_assert(sizeof(char16_t) == sizeof(wchar_t), "Size mismatch between char16
 #define NAPI_FATAL_IF_FAILED(status, location, message)  \
   do {                                                   \
     if ((status) != napi_ok) {                           \
-      Error::Fatal((location), (message));               \
+      Napi::Error::Fatal((location), (message));         \
     }                                                    \
   } while (0)
 
