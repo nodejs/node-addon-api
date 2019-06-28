@@ -377,6 +377,17 @@ inline bool Value::IsNumber() const {
 inline bool Value::IsBigInt() const {
   return Type() == napi_bigint;
 }
+
+inline bool Value::IsDate() const {
+  if (IsEmpty()) {
+    return false;
+  }
+
+  bool result;
+  napi_status status = napi_is_date(_env, _value, &result);
+  NAPI_THROW_IF_FAILED(_env, status, false);
+  return result;
+}
 #endif  // NAPI_EXPERIMENTAL
 
 inline bool Value::IsString() const {
@@ -657,6 +668,35 @@ inline void BigInt::ToWords(int* sign_bit, size_t* word_count, uint64_t* words) 
   napi_status status = napi_get_value_bigint_words(
       _env, _value, sign_bit, word_count, words);
   NAPI_THROW_IF_FAILED_VOID(_env, status);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// Date Class
+////////////////////////////////////////////////////////////////////////////////
+
+inline Date Date::New(napi_env env, double val) {
+  napi_value value;
+  napi_status status = napi_create_date(env, val, &value);
+  NAPI_THROW_IF_FAILED(env, status, Date());
+  return Date(env, value);
+}
+
+inline Date::Date() : Value() {
+}
+
+inline Date::Date(napi_env env, napi_value value) : Value(env, value) {
+}
+
+inline Date::operator double() const {
+  return ValueOf();
+}
+
+inline double Date::ValueOf() const {
+  double result;
+  napi_status status = napi_get_date_value(
+      _env, _value, &result);
+  NAPI_THROW_IF_FAILED(_env, status, 0);
+  return result;
 }
 #endif  // NAPI_EXPERIMENTAL
 

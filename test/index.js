@@ -18,6 +18,7 @@ let testModules = [
   'basic_types/number',
   'basic_types/value',
   'bigint',
+  'date',
   'buffer',
   'callbackscope',
   'dataview/dataview',
@@ -54,6 +55,7 @@ if ((process.env.npm_config_NAPI_VERSION !== undefined) &&
   // this should be guarded on the napi version
   // in which bigint was added.
   testModules.splice(testModules.indexOf('bigint'), 1);
+  testModules.splice(testModules.indexOf('date'), 1);
   testModules.splice(testModules.indexOf('typedarray-bigint'), 1);
 }
 

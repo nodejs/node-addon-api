@@ -10,6 +10,7 @@ The following classes inherit, either directly or indirectly, from `Napi::Value`
 - [`Napi::ArrayBuffer`](array_buffer.md)
 - [`Napi::Boolean`](boolean.md)
 - [`Napi::Buffer`](buffer.md)
+- [`Napi::Date`](date.md)
 - [`Napi::External`](external.md)
 - [`Napi::Function`](function.md)
 - [`Napi::Name`](name.md)
@@ -225,6 +226,14 @@ bool Napi::Value::IsBuffer() const;
 ```
 
 Returns a `bool` indicating if this `Napi::Value` is a Node buffer.
+
+### IsDate
+
+```cpp
+bool Napi::Value::IsDate() const;
+```
+
+Returns a `bool` indicating if this `Napi::Value` is a JavaScript date.
 
 ### As
 

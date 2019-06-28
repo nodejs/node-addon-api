@@ -75,6 +75,7 @@ The following is the documentation for node-addon-api.
     - [String](doc/string.md)
     - [Name](doc/basic_types.md#name)
     - [Number](doc/number.md)
+    - [Date](doc/date.md)
     - [BigInt](doc/bigint.md)
     - [Boolean](doc/boolean.md)
     - [Env](doc/env.md)
