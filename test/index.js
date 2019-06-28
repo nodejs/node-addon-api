@@ -18,6 +18,7 @@ let testModules = [
   'basic_types/number',
   'basic_types/value',
   'bigint',
+  'date',
   'buffer',
   'callbackscope',
   'dataview/dataview',
@@ -67,6 +68,11 @@ if ((process.env.npm_config_NAPI_VERSION !== undefined) &&
     (process.env.npm_config_NAPI_VERSION < 4)) {
   testModules.splice(testModules.indexOf('threadsafe_function/threadsafe_function_ptr'), 1);
   testModules.splice(testModules.indexOf('threadsafe_function/threadsafe_function'), 1);
+}
+
+if ((process.env.npm_config_NAPI_VERSION !== undefined) &&
+    (process.env.npm_config_NAPI_VERSION < 5)) {
+  testModules.splice(testModules.indexOf('date'), 1);
 }
 
 if (typeof global.gc === 'function') {

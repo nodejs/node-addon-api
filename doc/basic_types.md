@@ -257,6 +257,14 @@ bool Napi::Value::IsExternal() const;
 Returns `true` if the underlying value is a N-API external object or `false`
 otherwise.
 
+#### IsDate
+```cpp
+bool Napi::Value::IsDate() const;
+```
+
+Returns `true` if the underlying value is a JavaScript `Date` or `false`
+otherwise.
+
 #### ToBoolean
 ```cpp
 Napi::Boolean Napi::Value::ToBoolean() const;

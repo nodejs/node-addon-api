@@ -14,6 +14,7 @@
         'basic_types/number.cc',
         'basic_types/value.cc',
         'bigint.cc',
+        'date.cc',
         'binding.cc',
         'buffer.cc',
         'callbackscope.cc',
