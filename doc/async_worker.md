@@ -79,7 +79,7 @@ the `Napi::AsyncWorker::OnOK` callback.
 
 Sets the error message for the error that happened during the execution. Setting
 an error message will cause the `Napi::AsyncWorker::OnError` method to be
-invoked instead of `Napi::AsyncWorker::OnOKOnOK` once the
+invoked instead of `Napi::AsyncWorker::OnOK` once the
 `Napi::AsyncWorker::Execute` method completes.
 
 ```cpp
@@ -115,7 +115,7 @@ virtual void Napi::AsyncWorker::OnOK();
 
 ### OnError
 
-This method is invoked afer `Napi::AsyncWorker::Execute` completes if an error
+This method is invoked after `Napi::AsyncWorker::Execute` completes if an error
 occurs while `Napi::AsyncWorker::Execute` is running and C++ exceptions are
 enabled or if an error was set through a call to `Napi::AsyncWorker::SetError`.
 The default implementation calls the callback provided when the `Napi::AsyncWorker`
@@ -208,7 +208,7 @@ calling `Napi::AsyncWork::Queue`.
 Creates a new `Napi::AsyncWorker`.
 
 ```cpp
-explicit Napi::AsyncWorker(const Napi::Object& receiver, const Napi::Function& callback,const char* resource_name);
+explicit Napi::AsyncWorker(const Napi::Object& receiver, const Napi::Function& callback, const char* resource_name);
 ```
 
 - `[in] receiver`: The `this` object passed to the called function.
@@ -361,7 +361,7 @@ the work on the `Napi::AsyncWorker::Execute` method is done the
 `Napi::AsyncWorker::OnOk` method is called and the results return back to
 JavaScript invoking the stored callback with its associated environment.
 
-The following code shows an example on how to create and and use an `Napi::AsyncWorker`
+The following code shows an example on how to create and use an `Napi::AsyncWorker`
 
 ```cpp
 #include<napi.h>
