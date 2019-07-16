@@ -3686,7 +3686,7 @@ inline void AsyncWorker::SuppressDestruct() {
 
 inline void AsyncWorker::OnOK() {
   if (!_callback.IsEmpty()) {
-    _callback.Call(_receiver.Value(), std::initializer_list<napi_value>{});
+    _callback.Call(_receiver.Value(), GetResult(_callback.Env()));
   }
 }
 
@@ -3700,7 +3700,14 @@ inline void AsyncWorker::SetError(const std::string& error) {
   _error = error;
 }
 
-inline void AsyncWorker::OnExecute(napi_env /*env*/, void* this_pointer) {
+inline std::vector<napi_value> AsyncWorker::GetResult(Napi::Env /*env*/) {
+  return {};
+}
+// The OnExecute method receives an napi_env argument. However, do NOT
+// use it within this method, as it does not run on the main thread and must
+// not run any method that would cause JavaScript to run. In practice, this
+// means that almost any use of napi_env will be incorrect.
+inline void AsyncWorker::OnExecute(napi_env /*DO_NOT_USE*/, void* this_pointer) {
   AsyncWorker* self = static_cast<AsyncWorker*>(this_pointer);
 #ifdef NAPI_CPP_EXCEPTIONS
   try {

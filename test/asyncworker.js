@@ -66,6 +66,14 @@ function test(binding) {
       assert.strictEqual(typeof this, 'object');
       assert.strictEqual(this.data, 'test data');
     }, 'test data');
+
+    binding.asyncworker.doWorkWithResult(true, {}, function (succeed, succeedString) {
+      assert(arguments.length == 2);
+      assert(succeed);
+      assert(succeedString == "ok");
+      assert.strictEqual(typeof this, 'object');
+      assert.strictEqual(this.data, 'test data');
+    }, 'test data');
     return;
   }
 
@@ -74,6 +82,30 @@ function test(binding) {
     const triggerAsyncId = async_hooks.executionAsyncId();
     binding.asyncworker.doWork(true, { foo: 'foo' }, function (e) {
       assert.strictEqual(typeof e, 'undefined');
+      assert.strictEqual(typeof this, 'object');
+      assert.strictEqual(this.data, 'test data');
+    }, 'test data');
+
+    hooks.then(actual => {
+      assert.deepStrictEqual(actual, [
+        { eventName: 'init',
+          type: 'TestResource',
+          triggerAsyncId: triggerAsyncId,
+          resource: { foo: 'foo' } },
+        { eventName: 'before' },
+        { eventName: 'after' },
+        { eventName: 'destroy' }
+      ]);
+    }).catch(common.mustNotCall());
+  }
+
+  {
+    const hooks = installAsyncHooksForTest();
+    const triggerAsyncId = async_hooks.executionAsyncId();
+    binding.asyncworker.doWorkWithResult(true, { foo: 'foo' }, function (succeed, succeedString) {
+      assert(arguments.length == 2);
+      assert(succeed);
+      assert(succeedString == "ok");
       assert.strictEqual(typeof this, 'object');
       assert.strictEqual(this.data, 'test data');
     }, 'test data');
