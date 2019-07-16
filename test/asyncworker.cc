@@ -9,14 +9,25 @@ public:
     Object resource = info[1].As<Object>();
     Function cb = info[2].As<Function>();
     Value data = info[3];
+    bool setResult = info[4].As<Boolean>();
 
     TestWorker* worker = new TestWorker(cb, "TestResource", resource);
     worker->Receiver().Set("data", data);
     worker->_succeed = succeed;
+    worker->_setResult = setResult;
     worker->Queue();
   }
 
 protected:
+  std::vector<napi_value> GetResult(Napi::Env env) override {
+    if (_setResult)
+      return {Boolean::New(env, _succeed),
+              String::New(env, _succeed ? "ok" : "error")};
+    else {
+      return {};
+    }
+  }
+
   void Execute() override {
     if (!_succeed) {
       SetError("test error");
@@ -27,6 +38,7 @@ private:
   TestWorker(Function cb, const char* resource_name, const Object& resource)
       : AsyncWorker(cb, resource_name, resource) {}
   bool _succeed;
+  bool _setResult;
 };
 
 class TestWorkerNoCallback : public AsyncWorker {

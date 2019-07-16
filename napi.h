@@ -1812,6 +1812,7 @@ namespace Napi {
     virtual void OnOK();
     virtual void OnError(const Error& e);
     virtual void Destroy();
+    virtual std::vector<napi_value> GetResult(Napi::Env env);
 
     void SetError(const std::string& error);
 

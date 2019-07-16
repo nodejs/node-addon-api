@@ -79,7 +79,7 @@ the `Napi::AsyncWorker::OnOK` callback.
 
 Sets the error message for the error that happened during the execution. Setting
 an error message will cause the `Napi::AsyncWorker::OnError` method to be
-invoked instead of `Napi::AsyncWorker::OnOKOnOK` once the
+invoked instead of `Napi::AsyncWorker::OnOK` once the
 `Napi::AsyncWorker::Execute` method completes.
 
 ```cpp
@@ -107,10 +107,20 @@ virtual void Napi::AsyncWorker::Execute() = 0;
 
 This method is invoked when the computation in the `Execute` method ends.
 The default implementation runs the Callback optionally provided when the AsyncWorker class
-was created.
+was created. The callback will by default receive no arguments. To provide arguments,
+override the `GetResult()` method.
 
 ```cpp
 virtual void Napi::AsyncWorker::OnOK();
+```
+### GetResult
+
+This method returns the arguments passed to the Callback invoked by the default
+`OnOK()` implementation. The default implementation returns an empty vector,
+providing no arguments to the Callback.
+
+```cpp
+virtual std::vector<napi_value> Napi::AsyncWorker::GetResult(Napi::Env env);
 ```
 
 ### OnError
