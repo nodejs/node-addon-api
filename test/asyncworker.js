@@ -58,24 +58,22 @@ function test(binding) {
       assert.strictEqual(typeof e, 'undefined');
       assert.strictEqual(typeof this, 'object');
       assert.strictEqual(this.data, 'test data');
-    }, 'test data', false);
-
-    binding.asyncworker.doWork(true, {}, function (succeed, succeedString) {
-      assert(arguments.length == 2);
-      assert(succeed);
-      assert(succeedString == "ok");
-      assert.strictEqual(typeof e, 'undefined');
-      assert.strictEqual(typeof this, 'object');
-      assert.strictEqual(this.data, 'test data');
-      console.log("ok!");
-    }, 'test data', true);
+    }, 'test data');
 
     binding.asyncworker.doWork(false, {}, function (e) {
       assert.ok(e instanceof Error);
       assert.strictEqual(e.message, 'test error');
       assert.strictEqual(typeof this, 'object');
       assert.strictEqual(this.data, 'test data');
-    }, 'test data', false);
+    }, 'test data');
+
+    binding.asyncworker.doWorkWithResult(true, {}, function (succeed, succeedString) {
+      assert(arguments.length == 2);
+      assert(succeed);
+      assert(succeedString == "ok");
+      assert.strictEqual(typeof this, 'object');
+      assert.strictEqual(this.data, 'test data');
+    }, 'test data');
     return;
   }
 
@@ -86,7 +84,7 @@ function test(binding) {
       assert.strictEqual(typeof e, 'undefined');
       assert.strictEqual(typeof this, 'object');
       assert.strictEqual(this.data, 'test data');
-    }, 'test data', false);
+    }, 'test data');
 
     hooks.then(actual => {
       assert.deepStrictEqual(actual, [
@@ -101,17 +99,16 @@ function test(binding) {
     }).catch(common.mustNotCall());
   }
 
-
   {
     const hooks = installAsyncHooksForTest();
     const triggerAsyncId = async_hooks.executionAsyncId();
-    binding.asyncworker.doWork(true, { foo: 'foo' }, function (succeed, succeedString) {
+    binding.asyncworker.doWorkWithResult(true, { foo: 'foo' }, function (succeed, succeedString) {
       assert(arguments.length == 2);
       assert(succeed);
       assert(succeedString == "ok");
       assert.strictEqual(typeof this, 'object');
       assert.strictEqual(this.data, 'test data');
-    }, 'test data', true);
+    }, 'test data');
 
     hooks.then(actual => {
       assert.deepStrictEqual(actual, [
@@ -135,7 +132,7 @@ function test(binding) {
       assert.strictEqual(e.message, 'test error');
       assert.strictEqual(typeof this, 'object');
       assert.strictEqual(this.data, 'test data');
-    }, 'test data', false);
+    }, 'test data');
 
     hooks.then(actual => {
       assert.deepStrictEqual(actual, [
