@@ -3260,6 +3260,13 @@ inline ClassPropertyDescriptor<T> ObjectWrap<T>::InstanceValue(
 }
 
 template <typename T>
+inline void ObjectWrap<T>::OverrideFinalizeCallback(T* instance,
+    napi_finalize finalizeCallback) {
+  ObjectWrap<T>* base = instance;
+  base->_finalizeCallbackOverride = finalizeCallback;
+}
+
+template <typename T>
 inline napi_value ObjectWrap<T>::ConstructorCallbackWrapper(
     napi_env env,
     napi_callback_info info) {
@@ -3400,9 +3407,13 @@ inline napi_value ObjectWrap<T>::InstanceSetterCallbackWrapper(
 }
 
 template <typename T>
-inline void ObjectWrap<T>::FinalizeCallback(napi_env /*env*/, void* data, void* /*hint*/) {
+inline void ObjectWrap<T>::FinalizeCallback(napi_env env, void* data, void* hint) {
   T* instance = reinterpret_cast<T*>(data);
-  delete instance;
+  if(instance->_finalizeCallbackOverride == nullptr){
+    delete instance;
+  } else {
+    (*(instance->_finalizeCallbackOverride))(env, data, hint);
+  }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
