@@ -1570,6 +1570,7 @@ namespace Napi {
   class ObjectWrap : public Reference<Object> {
   public:
     ObjectWrap(const CallbackInfo& callbackInfo);
+    virtual ~ObjectWrap();
 
     static T* Unwrap(Object wrapper);
 
@@ -1657,6 +1658,7 @@ namespace Napi {
     static PropertyDescriptor InstanceValue(Symbol name,
                                             Napi::Value value,
                                             napi_property_attributes attributes = napi_default);
+    virtual void Finalize(Napi::Env env);
 
   private:
     static napi_value ConstructorCallbackWrapper(napi_env env, napi_callback_info info);

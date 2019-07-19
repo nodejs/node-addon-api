@@ -190,6 +190,17 @@ property of the `Napi::CallbackInfo`.
 
 Returns a `Napi::Function` representing the constructor function for the class.
 
+### Finalize
+
+Provides an opportunity to run cleanup code that requires access to the `Napi::Env`
+before the wrapped native object instance is freed.  Override to implement.
+
+```cpp
+virtual void Finalize(Napi::Env env);
+```
+
+- `[in] env`: `Napi::Env`.
+
 ### StaticMethod
 
 Creates property descriptor that represents a static method of a JavaScript class.
