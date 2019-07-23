@@ -1,5 +1,19 @@
 # node-addon-api Changelog
 
+## 2019-07-23 Version 1.7.1, @NickNaso
+
+### Notable changes:
+
+#### API
+
+- Fixed compilation problems that happen on Node.js with N-API version less than 4.
+
+### Commmits
+
+* [[`c20bcbd069`](https://github.com/nodejs/node-addon-api/commit/c20bcbd069)] - Merge pull request #518 from NickNaso/master (Nicola Del Gobbo)
+* [[`6720d57253`](https://github.com/nodejs/node-addon-api/commit/6720d57253)] - Create the native threadsafe\_function for test only for N-API greater than 3. (NickNaso)
+* [[`37b6c185ad`](https://github.com/nodejs/node-addon-api/commit/37b6c185ad)] - Fix compilation breakage on 1.7.0 (NickNaso)
+
 ## 2019-07-23 Version 1.7.0, @NickNaso
 
 ### Notable changes:
