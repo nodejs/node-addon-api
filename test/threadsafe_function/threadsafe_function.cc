@@ -2,6 +2,8 @@
 #include <thread>
 #include "napi.h"
 
+#if (NAPI_VERSION > 3)
+
 using namespace Napi;
 
 constexpr size_t ARRAY_LENGTH = 10;
@@ -177,3 +179,5 @@ Object InitThreadSafeFunction(Env env) {
 
   return exports;
 }
+
+#endif

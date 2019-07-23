@@ -1830,6 +1830,7 @@ namespace Napi {
     bool _suppress_destruct;
   };
 
+  #if (NAPI_VERSION > 3)
   class ThreadSafeFunction {
   public:
     // This API may only be called from the main thread.
@@ -2029,6 +2030,7 @@ namespace Napi {
 
     std::unique_ptr<napi_threadsafe_function> _tsfn;
   };
+  #endif
 
   // Memory management.
   class MemoryManagement {

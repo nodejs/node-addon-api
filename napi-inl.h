@@ -125,6 +125,7 @@ struct FinalizeData {
   Hint* hint;
 };
 
+#if (NAPI_VERSION > 3)
 template <typename ContextType=void,
           typename Finalizer=std::function<void(Env, void*, ContextType*)>,
           typename FinalizerDataType=void>
@@ -196,6 +197,7 @@ struct ThreadSafeFinalize {
   Finalizer callback;
   napi_threadsafe_function* tsfn;
 };
+#endif
 
 template <typename Getter, typename Setter>
 struct AccessorCallbackData {
@@ -3740,6 +3742,7 @@ inline void AsyncWorker::OnWorkComplete(
   }
 }
 
+#if (NAPI_VERSION > 3)
 ////////////////////////////////////////////////////////////////////////////////
 // ThreadSafeFunction class
 ////////////////////////////////////////////////////////////////////////////////
@@ -4058,6 +4061,7 @@ inline void ThreadSafeFunction::CallJS(napi_env env,
     Function(env, jsCallback).Call({});
   }
 }
+#endif
 
 ////////////////////////////////////////////////////////////////////////////////
 // Memory Management class
