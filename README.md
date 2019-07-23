@@ -46,7 +46,7 @@ to ideas specified in the **ECMA262 Language Specification**.
 - **[Contributors](#contributors)**
 - **[License](#license)**
 
-## **Current version: 1.6.3**
+## **Current version: 1.7.0**
 
 (See [CHANGELOG.md](CHANGELOG.md) for complete Changelog)
 
@@ -162,7 +162,7 @@ Take a look and get inspired by our **[test suite](https://github.com/nodejs/nod
 
 ## **Contributing**
 
-We love contributions from the community to **node-addon-api**. 
+We love contributions from the community to **node-addon-api**.
 See [CONTRIBUTING.md](CONTRIBUTING.md) for more details on our philosophy around extending this module.
 
 ### **More resource and info about native Addons**

@@ -1,5 +1,48 @@
 # node-addon-api Changelog
 
+## 2019-07-23 Version 1.7.0, @NickNaso
+
+### Notable changes:
+
+#### API
+
+- Added `Napi::ThreadSafeFunction` api.
+- Added `Napi::AsyncWorker::GetResult()` method to `Napi::AsyncWorker`.
+- Added `Napi::AsyncWorker::Destroy()()` method to `Napi::AsyncWorker`.
+- Use full namespace on macros that create the errors.
+
+#### Documentation
+
+- Added documentation about contribution philosophy.
+- Added documentation for `Napi::ThreadSafeFunction`.
+- Some minor corrections all over the documentation.
+
+#### TEST
+
+- Added test case for bool operator.
+- Fixed test case for `Napi::ObjectWrap`.
+
+### Commmits
+
+* [[`717c9ab163`](https://github.com/nodejs/node-addon-api/commit/717c9ab163)] - **AsyncWorker**: add GetResult() method (Kevin Eady) [#512](https://github.com/nodejs/node-addon-api/pull/512)
+* [[`d9d991bbc9`](https://github.com/nodejs/node-addon-api/commit/d9d991bbc9)] - **doc**: add ThreadSafeFunction to main README (#513) (Kevin Eady) [#513](https://github.com/nodejs/node-addon-api/pull/513)
+* [[`ac6000d0fd`](https://github.com/nodejs/node-addon-api/commit/ac6000d0fd)] - **doc**: fix minor typo (Yohei Kishimoto) [#510](https://github.com/nodejs/node-addon-api/pull/510)
+* [[`e9fa1eaa86`](https://github.com/nodejs/node-addon-api/commit/e9fa1eaa86)] - **doc**: document ThreadSafeFunction (#494) (Kevin Eady) [#494](https://github.com/nodejs/node-addon-api/pull/494)
+* [[`cab3b1e2a2`](https://github.com/nodejs/node-addon-api/commit/cab3b1e2a2)] - **doc**: ClassPropertyDescriptor example (Ross Weir) [#507](https://github.com/nodejs/node-addon-api/pull/507)
+* [[`c32d7dbdcf`](https://github.com/nodejs/node-addon-api/commit/c32d7dbdcf)] - **macros**: create errors fully namespaced (Gabriel Schulhof) [#506](https://github.com/nodejs/node-addon-api/pull/506)
+* [[`0a90df2fcb`](https://github.com/nodejs/node-addon-api/commit/0a90df2fcb)] - Implement ThreadSafeFunction class (Jinho Bang)
+* [[`1fb540eeb5`](https://github.com/nodejs/node-addon-api/commit/1fb540eeb5)] - Use curly brackets to include node\_api.h (NickNaso) [#493](https://github.com/nodejs/node-addon-api/pull/493)
+* [[`b2b08122ea`](https://github.com/nodejs/node-addon-api/commit/b2b08122ea)] - **AsyncWorker**: make callback optional (Kevin Eady) [#489](https://github.com/nodejs/node-addon-api/pull/489)
+* [[`a0cac77c82`](https://github.com/nodejs/node-addon-api/commit/a0cac77c82)] - Added test for bool operator (NickNaso) [#490](https://github.com/nodejs/node-addon-api/pull/490)
+* [[`ab7d8fcc48`](https://github.com/nodejs/node-addon-api/commit/ab7d8fcc48)] - **src**: fix objectwrap test case (Michael Dawson) [#495](https://github.com/nodejs/node-addon-api/pull/495)
+* [[`3b6b9eb88a`](https://github.com/nodejs/node-addon-api/commit/3b6b9eb88a)] - **AsyncWorker**: introduce Destroy() method (Gabriel Schulhof) [#488](https://github.com/nodejs/node-addon-api/pull/488)
+* [[`f633fbd95d`](https://github.com/nodejs/node-addon-api/commit/f633fbd95d)] - string.md: Document existing New(env, value, length) APIs (Tux3) [#486](https://github.com/nodejs/node-addon-api/pull/486)
+* [[`aaea55eda9`](https://github.com/nodejs/node-addon-api/commit/aaea55eda9)] - Little fix on code example (Nicola Del Gobbo) [#470](https://github.com/nodejs/node-addon-api/pull/470)
+* [[`e1cf9a35a1`](https://github.com/nodejs/node-addon-api/commit/e1cf9a35a1)] - Use `Value::IsEmpty` to check for empty value (NickNaso) [#478](https://github.com/nodejs/node-addon-api/pull/478)
+* [[`3ad5dfc7d9`](https://github.com/nodejs/node-addon-api/commit/3ad5dfc7d9)] - Fix link (Alba Mendez) [#481](https://github.com/nodejs/node-addon-api/pull/481)
+* [[`a3b4d99c45`](https://github.com/nodejs/node-addon-api/commit/a3b4d99c45)] - **doc**: Add contribution philosophy doc (Hitesh Kanwathirtha)
+* [[`36863f087b`](https://github.com/nodejs/node-addon-api/commit/36863f087b)] - **doc**: refer to TypedArray and ArrayBuffer from Array (Gabriel "_|Nix|_" Schulhof) [#465](https://github.com/nodejs/node-addon-api/pull/465)
+
 ## 2019-04-03 Version 1.6.3, @NickNaso
 
 ### Notable changes:
@@ -14,7 +57,7 @@
 
 #### Documentation
 
-- Some minor corrections all over the documentation
+- Some minor corrections all over the documentation.
 
 ### Commmits
 

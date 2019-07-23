@@ -4,6 +4,7 @@
   },
   "contributors": [
     "Abhishek Kumar Singh (https://github.com/abhi11210646)",
+    "Alba Mendez (https://github.com/jmendeth)",
     "Andrew Petersen (https://github.com/kirbysayshi)",
     "Anisha Rohra (https://github.com/anisha-rohra)",
     "Anna Henningsen (https://github.com/addaleax)",
@@ -26,6 +27,7 @@
     "Jim Schlight (https://github.com/jschlight)",
     "Jinho Bang (https://github.com/romandev)",
     "joshgarde (https://github.com/joshgarde)",
+    "Kevin Eady (https://github.com/KevinEady)",
     "Konstantin Tarkus (https://github.com/koistya)",
     "Kyle Farnung (https://github.com/kfarnung)",
     "Luciano Martorella (https://github.com/lmartorella)",
@@ -37,11 +39,14 @@
     "Nick Soggin (https://github.com/iSkore)",
     "Philipp Renoth (https://github.com/DaAitch)",
     "Rolf Timmermans (https://github.com/rolftimmermans)",
+    "Ross Weir (https://github.com/ross-weir)",
     "Ryuichi Okumura (https://github.com/okuryu)",
     "Sampson Gao (https://github.com/sampsongao)",
     "Sam Roberts (https://github.com/sam-github)",
     "Taylor Woll (https://github.com/boingoing)",
-    "Thomas Gentilhomme (https://github.com/fraxken)"
+    "Thomas Gentilhomme (https://github.com/fraxken)",
+    "Tux3 (https://github.com/tux3)",
+    "Yohei Kishimoto (https://github.com/morokosi)"
   ],
   "dependencies": {},
   "description": "Node.js API (N-API)",
@@ -69,5 +74,5 @@
     "dev:incremental": "node test",
     "doc": "doxygen doc/Doxyfile"
   },
-  "version": "1.6.3"
+  "version": "1.7.0"
 }
