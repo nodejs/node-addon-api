@@ -1658,6 +1658,7 @@ namespace Napi {
                                             Napi::Value value,
                                             napi_property_attributes attributes = napi_default);
     virtual void Finalize(Napi::Env env);
+
   private:
     static napi_value ConstructorCallbackWrapper(napi_env env, napi_callback_info info);
     static napi_value StaticVoidMethodCallbackWrapper(napi_env env, napi_callback_info info);
