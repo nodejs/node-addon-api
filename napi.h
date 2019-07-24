@@ -1657,10 +1657,8 @@ namespace Napi {
     static PropertyDescriptor InstanceValue(Symbol name,
                                             Napi::Value value,
                                             napi_property_attributes attributes = napi_default);
-  protected:
-    static void OverrideFinalizeCallback(T* instance, napi_finalize finalizeCallback);
+    virtual void Finalize(Napi::Env env);
   private:
-    napi_finalize _finalizeCallbackOverride = nullptr;
     static napi_value ConstructorCallbackWrapper(napi_env env, napi_callback_info info);
     static napi_value StaticVoidMethodCallbackWrapper(napi_env env, napi_callback_info info);
     static napi_value StaticMethodCallbackWrapper(napi_env env, napi_callback_info info);

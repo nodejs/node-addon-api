@@ -190,25 +190,16 @@ property of the `Napi::CallbackInfo`.
 
 Returns a `Napi::Function` representing the constructor function for the class.
 
-### OverrideFinalizeCallback
+### Finalize
 
-Overrides default `Napi::ObjectWrap::FinalizeCallback` with a user defined finalizer.
+Hooks into `Napi::ObjectWrap::FinalizeCallback` giving access to `Napi::Env`
+before the native instance is freed.
 
 ```cpp
-static void Napi::ObjectWrap::OverrideFinalizeCallback(T* instance,
-                  napi_finalize finalizeCallback);
+virtual void Finalize(Napi::Env env);
 ```
 
-- `[in] instance`: `this` pointer from the native instance.
-- `[in] finalizeCallback`: function that implements [napi_finalize](https://nodejs.org/api/n-api.html#n_api_napi_finalize "N-API documentation for napi_finalize.").
-
-`Napi::ObjectWrap::OverrideFinalizeCallback` is protected and
-intended to be called from a native instance method; for example, in the native
-constructor.
-
-NOTE: The default `Napi::ObjectWrap::FinalizeCallback` frees
-the native instance.  A user defined finalzier is, therefore, 
-responsible for freeing the native instance.
+- `[in] env`: `Napi::Env`.
 
 ### StaticMethod
 
