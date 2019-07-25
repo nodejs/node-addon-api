@@ -25,8 +25,8 @@ public:
   Test(const Napi::CallbackInfo& info) :
     Napi::ObjectWrap<Test>(info) {
     
-    if(info.Length() > 0){
-      finalizerCb_ = Napi::Persistent(info[0].As<Napi::Function>());
+    if(info.Length() > 0) {
+      finalizeCb_ = Napi::Persistent(info[0].As<Napi::Function>());
     }
 
   }
@@ -110,20 +110,20 @@ public:
     }));
   }
 
-  void Finalize(Napi::Env env){
+  void Finalize(Napi::Env env) {
     
-    if(finalizerCb_.IsEmpty()){
+    if(finalizeCb_.IsEmpty()) {
       return;
     }
 
-    finalizerCb_.Call(env.Global(), {Napi::Boolean::New(env, true)});
-    finalizerCb_.Unref();
+    finalizeCb_.Call(env.Global(), {Napi::Boolean::New(env, true)});
+    finalizeCb_.Unref();
 
   }
 
 private:
   std::string value_;
-  Napi::FunctionReference finalizerCb_;
+  Napi::FunctionReference finalizeCb_;
 };
 
 Napi::Object InitObjectWrap(Napi::Env env) {

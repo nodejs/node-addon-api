@@ -182,21 +182,21 @@ const test = (binding) => {
     }
   };
 
-  const testFinalizer = (clazz) => {
+  const testFinalize = (clazz) => {
     
-    let finalizerCalled = false;
-    const finalizerCb = function(called){
-      finalizerCalled = called;
+    let finalizeCalled = false;
+    const finalizeCb = function(called) {
+      finalizeCalled = called;
     };
 
-    //Scope Test instance so that it can be gc'd
-    (function(){
-      new Test(finalizerCb);
+    //Scope Test instance so that it can be gc'd.
+    (function() {
+      new Test(finalizeCb);
     })();
 
     global.gc();
 
-    assert.strictEqual(finalizerCalled, true);
+    assert.strictEqual(finalizeCalled, true);
 
   };
 
@@ -216,7 +216,7 @@ const test = (binding) => {
     testStaticMethod(clazz);
 
     testStaticEnumerables(clazz);    
-    testFinalizer(clazz);
+    testFinalize(clazz);
   };
 
   // `Test` is needed for accessing exposed symbols
