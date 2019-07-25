@@ -1570,7 +1570,8 @@ namespace Napi {
   class ObjectWrap : public Reference<Object> {
   public:
     ObjectWrap(const CallbackInfo& callbackInfo);
-
+    virtual ~ObjectWrap();
+    
     static T* Unwrap(Object wrapper);
 
     // Methods exposed to JavaScript must conform to one of these callback signatures.

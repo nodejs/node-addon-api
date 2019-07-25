@@ -2887,6 +2887,9 @@ inline ObjectWrap<T>::ObjectWrap(const Napi::CallbackInfo& callbackInfo) {
 }
 
 template<typename T>
+inline ObjectWrap<T>::~ObjectWrap() {}
+
+template<typename T>
 inline T* ObjectWrap<T>::Unwrap(Object wrapper) {
   T* unwrapped;
   napi_status status = napi_unwrap(wrapper.Env(), wrapper, reinterpret_cast<void**>(&unwrapped));
@@ -3260,7 +3263,7 @@ inline ClassPropertyDescriptor<T> ObjectWrap<T>::InstanceValue(
 }
 
 template <typename T>
-inline void ObjectWrap<T>::Finalize(Napi::Env env) {}
+inline void ObjectWrap<T>::Finalize(Napi::Env /*env*/) {}
 
 template <typename T>
 inline napi_value ObjectWrap<T>::ConstructorCallbackWrapper(
