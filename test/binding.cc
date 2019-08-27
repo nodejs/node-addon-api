@@ -5,6 +5,9 @@ using namespace Napi;
 
 Object InitArrayBuffer(Env env);
 Object InitAsyncContext(Env env);
+#if (NAPI_VERSION > 3)
+Object InitAsyncProgressWorker(Env env);
+#endif
 Object InitAsyncWorker(Env env);
 Object InitPersistentAsyncWorker(Env env);
 Object InitBasicTypesArray(Env env);
@@ -50,6 +53,9 @@ Object InitThunkingManual(Env env);
 Object Init(Env env, Object exports) {
   exports.Set("arraybuffer", InitArrayBuffer(env));
   exports.Set("asynccontext", InitAsyncContext(env));
+#if (NAPI_VERSION > 3)
+  exports.Set("asyncprogressworker", InitAsyncProgressWorker(env));
+#endif
   exports.Set("asyncworker", InitAsyncWorker(env));
   exports.Set("persistentasyncworker", InitPersistentAsyncWorker(env));
   exports.Set("basic_types_array", InitBasicTypesArray(env));
