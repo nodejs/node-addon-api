@@ -10,6 +10,7 @@ process.config.target_defaults.default_configuration =
 let testModules = [
   'arraybuffer',
   'asynccontext',
+  'asyncprogressworker',
   'asyncworker',
   'asyncworker-nocallback',
   'asyncworker-persistent',
@@ -66,6 +67,7 @@ if ((process.env.npm_config_NAPI_VERSION !== undefined) &&
 
 if ((process.env.npm_config_NAPI_VERSION !== undefined) &&
     (process.env.npm_config_NAPI_VERSION < 4)) {
+  testModules.splice(testModules.indexOf('asyncprogressworker'), 1);
   testModules.splice(testModules.indexOf('threadsafe_function/threadsafe_function_ptr'), 1);
   testModules.splice(testModules.indexOf('threadsafe_function/threadsafe_function'), 1);
 }

@@ -9,7 +9,9 @@
 
 // Note: Do not include this file directly! Include "napi.h" instead.
 
+#include <algorithm>
 #include <cstring>
+#include <mutex>
 #include <type_traits>
 
 namespace Napi {
@@ -4112,6 +4114,154 @@ inline void ThreadSafeFunction::CallJS(napi_env env,
     Function(env, jsCallback).Call({});
   }
 }
+
+////////////////////////////////////////////////////////////////////////////////
+// Async Progress Worker class
+////////////////////////////////////////////////////////////////////////////////
+
+template<class T>
+inline AsyncProgressWorker<T>::AsyncProgressWorker(const Function& callback)
+  : AsyncProgressWorker(callback, "generic") {
+}
+
+template<class T>
+inline AsyncProgressWorker<T>::AsyncProgressWorker(const Function& callback,
+                                const char* resource_name)
+  : AsyncProgressWorker(callback, resource_name, Object::New(callback.Env())) {
+}
+
+template<class T>
+inline AsyncProgressWorker<T>::AsyncProgressWorker(const Function& callback,
+                                const char* resource_name,
+                                const Object& resource)
+  : AsyncProgressWorker(Object::New(callback.Env()),
+                callback,
+                resource_name,
+                resource) {
+}
+
+template<class T>
+inline AsyncProgressWorker<T>::AsyncProgressWorker(const Object& receiver,
+                                const Function& callback)
+  : AsyncProgressWorker(receiver, callback, "generic") {
+}
+
+template<class T>
+inline AsyncProgressWorker<T>::AsyncProgressWorker(const Object& receiver,
+                                const Function& callback,
+                                const char* resource_name)
+  : AsyncProgressWorker(receiver,
+                callback,
+                resource_name,
+                Object::New(callback.Env())) {
+}
+
+template<class T>
+inline AsyncProgressWorker<T>::AsyncProgressWorker(const Object& receiver,
+                                                   const Function& callback,
+                                                   const char* resource_name,
+                                                   const Object& resource)
+  : AsyncWorker(receiver, callback, resource_name, resource),
+    _asyncdata(nullptr),
+    _asyncsize(0) {
+  _tsfn = ThreadSafeFunction::New(callback.Env(), callback, resource_name, 1, 1);
+}
+
+#if NAPI_VERSION > 4
+template<class T>
+inline AsyncProgressWorker<T>::AsyncProgressWorker(Napi::Env env)
+  : AsyncProgressWorker(env, "generic") {
+}
+
+template<class T>
+inline AsyncProgressWorker<T>::AsyncProgressWorker(Napi::Env env,
+                                const char* resource_name)
+  : AsyncProgressWorker(env, resource_name, Object::New(env)) {
+}
+
+template<class T>
+inline AsyncProgressWorker<T>::AsyncProgressWorker(Napi::Env env,
+                                const char* resource_name,
+                                const Object& resource)
+  : AsyncWorker(env, resource_name, resource),
+    _asyncdata(nullptr),
+    _asyncsize(0) {
+  // TODO: Once the changes to make the callback optional for threadsafe
+  // functions are no longer optional we can remove the dummy Function here.
+  Function callback;
+  _tsfn = ThreadSafeFunction::New(env, callback, resource_name, 1, 1);
+}
+#endif
+
+template<class T>
+inline AsyncProgressWorker<T>::~AsyncProgressWorker() {
+  // Abort pending tsfn call.
+  // Don't send progress events after we've already completed.
+  _tsfn.Abort();
+  {
+    std::lock_guard<std::mutex> lock(_mutex);
+    _asyncdata = nullptr;
+    _asyncsize = 0;
+  }
+  _tsfn.Release();
+}
+
+template<class T>
+inline void AsyncProgressWorker<T>::Execute() {
+  ExecutionProgress progress(this);
+  Execute(progress);
+}
+
+template<class T>
+inline void AsyncProgressWorker<T>::WorkProgress_(Napi::Env /* env */, Napi::Function /* jsCallback */, void* _data) {
+  AsyncProgressWorker* self = static_cast<AsyncProgressWorker*>(_data);
+
+  T* data;
+  size_t size;
+  {
+    std::lock_guard<std::mutex> lock(self->_mutex);
+    data = self->_asyncdata;
+    size = self->_asyncsize;
+    self->_asyncdata = nullptr;
+    self->_asyncsize = 0;
+  }
+
+  self->OnProgress(data, size);
+  delete[] data;
+}
+
+template<class T>
+inline void AsyncProgressWorker<T>::SendProgress_(const T* data, size_t count) {
+    T* new_data = new T[count];
+    std::copy(data, data + count, new_data);
+
+    T* old_data;
+    {
+      std::lock_guard<std::mutex> lock(_mutex);
+      old_data = _asyncdata;
+      _asyncdata = new_data;
+      _asyncsize = count;
+    }
+    _tsfn.NonBlockingCall(this, WorkProgress_);
+
+    delete[] old_data;
+}
+
+template<class T>
+inline void AsyncProgressWorker<T>::Signal() const {
+  _tsfn.NonBlockingCall(this, WorkProgress_);
+}
+
+template<class T>
+inline void AsyncProgressWorker<T>::ExecutionProgress::Signal() const {
+  _worker->Signal();
+}
+
+template<class T>
+inline void AsyncProgressWorker<T>::ExecutionProgress::Send(const T* data, size_t count) const {
+  _worker->SendProgress_(data, count);
+}
+
 #endif
 
 ////////////////////////////////////////////////////////////////////////////////
