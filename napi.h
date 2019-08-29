@@ -2029,8 +2029,13 @@ namespace Napi {
                        napi_value jsCallback,
                        void* context,
                        void* data);
+    struct Deleter {
+      // napi_threadsafe_function is managed by Node.js, leave it alone.
+      void operator()(napi_threadsafe_function*) const {};
+    };
 
-    std::unique_ptr<napi_threadsafe_function> _tsfn;
+    std::unique_ptr<napi_threadsafe_function, Deleter> _tsfn;
+    Deleter _d;
   };
   #endif
 

@@ -3926,12 +3926,12 @@ inline ThreadSafeFunction ThreadSafeFunction::New(napi_env env,
 }
 
 inline ThreadSafeFunction::ThreadSafeFunction()
-  : _tsfn(new napi_threadsafe_function(nullptr)) {
+  : _tsfn(new napi_threadsafe_function(nullptr), _d) {
 }
 
 inline ThreadSafeFunction::ThreadSafeFunction(
     napi_threadsafe_function tsfn)
-  : _tsfn(new napi_threadsafe_function(tsfn)) {
+  : _tsfn(new napi_threadsafe_function(tsfn), _d) {
 }
 
 inline ThreadSafeFunction::ThreadSafeFunction(ThreadSafeFunction&& other)
