@@ -4,12 +4,6 @@
 `Napi::Date` class inherits its behavior from `Napi::Value` class
 (for more info see [`Napi::Value`](value.md))
 
-This class is considered _experimental_ and requires explicit opt-in to access:
-
-```cpp
-#define NAPI_EXPERIMENTAL
-```
-
 ## Methods
 
 ### Constructor

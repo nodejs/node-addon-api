@@ -377,7 +377,9 @@ inline bool Value::IsNumber() const {
 inline bool Value::IsBigInt() const {
   return Type() == napi_bigint;
 }
+#endif  // NAPI_EXPERIMENTAL
 
+#if (NAPI_VERSION > 4)
 inline bool Value::IsDate() const {
   if (IsEmpty()) {
     return false;
@@ -388,7 +390,7 @@ inline bool Value::IsDate() const {
   NAPI_THROW_IF_FAILED(_env, status, false);
   return result;
 }
-#endif  // NAPI_EXPERIMENTAL
+#endif
 
 inline bool Value::IsString() const {
   return Type() == napi_string;
@@ -669,7 +671,9 @@ inline void BigInt::ToWords(int* sign_bit, size_t* word_count, uint64_t* words) 
       _env, _value, sign_bit, word_count, words);
   NAPI_THROW_IF_FAILED_VOID(_env, status);
 }
+#endif  // NAPI_EXPERIMENTAL
 
+#if (NAPI_VERSION > 4)
 ////////////////////////////////////////////////////////////////////////////////
 // Date Class
 ////////////////////////////////////////////////////////////////////////////////
@@ -698,7 +702,7 @@ inline double Date::ValueOf() const {
   NAPI_THROW_IF_FAILED(_env, status, 0);
   return result;
 }
-#endif  // NAPI_EXPERIMENTAL
+#endif
 
 ////////////////////////////////////////////////////////////////////////////////
 // Name class

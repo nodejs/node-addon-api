@@ -55,7 +55,6 @@ if ((process.env.npm_config_NAPI_VERSION !== undefined) &&
   // this should be guarded on the napi version
   // in which bigint was added.
   testModules.splice(testModules.indexOf('bigint'), 1);
-  testModules.splice(testModules.indexOf('date'), 1);
   testModules.splice(testModules.indexOf('typedarray-bigint'), 1);
 }
 
@@ -69,6 +68,11 @@ if ((process.env.npm_config_NAPI_VERSION !== undefined) &&
     (process.env.npm_config_NAPI_VERSION < 4)) {
   testModules.splice(testModules.indexOf('threadsafe_function/threadsafe_function_ptr'), 1);
   testModules.splice(testModules.indexOf('threadsafe_function/threadsafe_function'), 1);
+}
+
+if ((process.env.npm_config_NAPI_VERSION !== undefined) &&
+    (process.env.npm_config_NAPI_VERSION < 5)) {
+  testModules.splice(testModules.indexOf('date'), 1);
 }
 
 if (typeof global.gc === 'function') {

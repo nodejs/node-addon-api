@@ -15,11 +15,13 @@ Object InitBasicTypesValue(Env env);
 // released in once it is no longer experimental
 #if (NAPI_VERSION > 2147483646)
 Object InitBigInt(Env env);
-Object InitDate(Env env);
 #endif
 Object InitBuffer(Env env);
 #if (NAPI_VERSION > 2)
 Object InitCallbackScope(Env env);
+#endif
+#if (NAPI_VERSION > 4)
+Object InitDate(Env env);
 #endif
 Object InitDataView(Env env);
 Object InitDataViewReadWrite(Env env);
@@ -57,6 +59,8 @@ Object Init(Env env, Object exports) {
 // released in once it is no longer experimental
 #if (NAPI_VERSION > 2147483646)
   exports.Set("bigint", InitBigInt(env));
+#endif
+#if (NAPI_VERSION > 4)
   exports.Set("date", InitDate(env));
 #endif
   exports.Set("buffer", InitBuffer(env));

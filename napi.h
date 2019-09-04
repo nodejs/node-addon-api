@@ -115,8 +115,10 @@ namespace Napi {
 // released in once it is no longer experimental
 #if (NAPI_VERSION > 2147483646)
   class BigInt;
-  class Date;
 #endif  // NAPI_EXPERIMENTAL
+#if (NAPI_VERSION > 4)
+  class Date;
+#endif
   class String;
   class Object;
   class Array;
@@ -246,8 +248,10 @@ namespace Napi {
 // released in once it is no longer experimental
 #if (NAPI_VERSION > 2147483646)
     bool IsBigInt() const;      ///< Tests if a value is a JavaScript bigint.
-    bool IsDate() const;        ///< Tests if a value is a JavaScript date.
 #endif  // NAPI_EXPERIMENTAL
+#if (NAPI_VERSION > 4)
+    bool IsDate() const;        ///< Tests if a value is a JavaScript date.
+#endif
     bool IsString() const;      ///< Tests if a value is a JavaScript string.
     bool IsSymbol() const;      ///< Tests if a value is a JavaScript symbol.
     bool IsArray() const;       ///< Tests if a value is a JavaScript array.
@@ -358,7 +362,9 @@ namespace Napi {
     /// be needed to store this BigInt (i.e. the return value of `WordCount()`).
     void ToWords(int* sign_bit, size_t* word_count, uint64_t* words);
   };
+#endif  // NAPI_EXPERIMENTAL
 
+#if (NAPI_VERSION > 4)
   /// A JavaScript date value.
   class Date : public Value {
   public:
@@ -374,7 +380,7 @@ namespace Napi {
 
     double ValueOf() const;   ///< Converts a Date value to a double primitive.
   };
-#endif  // NAPI_EXPERIMENTAL
+  #endif
 
   /// A JavaScript string or symbol value (that can be used as a property name).
   class Name : public Value {
