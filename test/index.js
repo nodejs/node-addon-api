@@ -48,10 +48,12 @@ let testModules = [
   'version_management'
 ];
 
-if ((process.env.npm_config_NAPI_VERSION !== undefined) &&
-    (process.env.npm_config_NAPI_VERSION < 50000)) {
-  // currently experimental only test if NAPI_VERSION
-  // is set to experimental. We can't use C max int
+const napiVersion = Number(process.versions.napi)
+const nodeMajorVersion = Number(process.versions.node.match(/\d+/)[0])
+
+if (nodeMajorVersion < 10) {
+  // currently experimental only test if node major version
+  // is set to experimental. We can't use napi_experimental here
   // as that is not supported as a number on earlier
   // Node.js versions. Once bigint is in a release
   // this should be guarded on the napi version
@@ -60,25 +62,25 @@ if ((process.env.npm_config_NAPI_VERSION !== undefined) &&
   testModules.splice(testModules.indexOf('typedarray-bigint'), 1);
 }
 
-if ((process.env.npm_config_NAPI_VERSION !== undefined) &&
-    (process.env.npm_config_NAPI_VERSION < 3)) {
+if (napiVersion < 3) {
   testModules.splice(testModules.indexOf('callbackscope'), 1);
   testModules.splice(testModules.indexOf('version_management'), 1);
 }
 
-if ((process.env.npm_config_NAPI_VERSION !== undefined) &&
-    (process.env.npm_config_NAPI_VERSION < 4)) {
+if (napiVersion < 4) {
   testModules.splice(testModules.indexOf('threadsafe_function/threadsafe_function_ptr'), 1);
   testModules.splice(testModules.indexOf('threadsafe_function/threadsafe_function_unref'), 1);
   testModules.splice(testModules.indexOf('threadsafe_function/threadsafe_function'), 1);
 }
 
-if ((process.env.npm_config_NAPI_VERSION !== undefined) &&
-    (process.env.npm_config_NAPI_VERSION < 5)) {
+if (napiVersion < 5) {
   testModules.splice(testModules.indexOf('date'), 1);
 }
 
 if (typeof global.gc === 'function') {
+  console.log(`Testing with N-API Version '${napiVersion}'.`);
+  console.log(`Testing with Node.js Major Version '${nodeMajorVersion}'.\n`);
+
   console.log('Starting test suite\n');
 
   // Requiring each module runs tests in the module.

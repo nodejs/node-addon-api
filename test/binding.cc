@@ -1,4 +1,3 @@
-#define NAPI_EXPERIMENTAL
 #include "napi.h"
 
 using namespace Napi;
@@ -11,9 +10,9 @@ Object InitBasicTypesArray(Env env);
 Object InitBasicTypesBoolean(Env env);
 Object InitBasicTypesNumber(Env env);
 Object InitBasicTypesValue(Env env);
-// currently experimental guard with version of NAPI_VERSION that it is
+// currently experimental guard with version of NODE_MAJOR_VERSION that it is
 // released in once it is no longer experimental
-#if (NAPI_VERSION > 2147483646)
+#if (NODE_MAJOR_VERSION >= 10)
 Object InitBigInt(Env env);
 #endif
 Object InitBuffer(Env env);
@@ -56,9 +55,9 @@ Object Init(Env env, Object exports) {
   exports.Set("basic_types_boolean", InitBasicTypesBoolean(env));
   exports.Set("basic_types_number", InitBasicTypesNumber(env));
   exports.Set("basic_types_value", InitBasicTypesValue(env));
-// currently experimental guard with version of NAPI_VERSION that it is
+// currently experimental guard with version of NODE_MAJOR_VERSION that it is
 // released in once it is no longer experimental
-#if (NAPI_VERSION > 2147483646)
+#if (NODE_MAJOR_VERSION >= 10)
   exports.Set("bigint", InitBigInt(env));
 #endif
 #if (NAPI_VERSION > 4)
