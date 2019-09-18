@@ -111,9 +111,9 @@ namespace Napi {
   class Value;
   class Boolean;
   class Number;
-// currently experimental guard with version of NAPI_VERSION that it is
+// currently experimental guard with definition of NAPI_EXPERIMENTAL that it is
 // released in once it is no longer experimental
-#if (NAPI_VERSION > 2147483646)
+#ifdef NAPI_EXPERIMENTAL
   class BigInt;
 #endif  // NAPI_EXPERIMENTAL
 #if (NAPI_VERSION > 4)
@@ -139,9 +139,9 @@ namespace Napi {
   typedef TypedArrayOf<uint32_t> Uint32Array; ///< Typed-array of unsigned 32-bit integers
   typedef TypedArrayOf<float> Float32Array;   ///< Typed-array of 32-bit floating-point values
   typedef TypedArrayOf<double> Float64Array;  ///< Typed-array of 64-bit floating-point values
-// currently experimental guard with version of NAPI_VERSION that it is
+// currently experimental guard with definition of NAPI_EXPERIMENTAL that it is
 // released in once it is no longer experimental
-#if (NAPI_VERSION > 2147483646)
+#ifdef NAPI_EXPERIMENTAL
   typedef TypedArrayOf<int64_t> BigInt64Array;   ///< Typed array of signed 64-bit integers
   typedef TypedArrayOf<uint64_t> BigUint64Array; ///< Typed array of unsigned 64-bit integers
 #endif  // NAPI_EXPERIMENTAL
@@ -244,9 +244,9 @@ namespace Napi {
     bool IsNull() const;        ///< Tests if a value is a null JavaScript value.
     bool IsBoolean() const;     ///< Tests if a value is a JavaScript boolean.
     bool IsNumber() const;      ///< Tests if a value is a JavaScript number.
-// currently experimental guard with version of NAPI_VERSION that it is
+// currently experimental guard with definition of NAPI_EXPERIMENTAL that it is
 // released in once it is no longer experimental
-#if (NAPI_VERSION > 2147483646)
+#ifdef NAPI_EXPERIMENTAL
     bool IsBigInt() const;      ///< Tests if a value is a JavaScript bigint.
 #endif  // NAPI_EXPERIMENTAL
 #if (NAPI_VERSION > 4)
@@ -321,9 +321,9 @@ namespace Napi {
     double DoubleValue() const;   ///< Converts a Number value to a 64-bit floating-point value.
   };
 
-// currently experimental guard with version of NAPI_VERSION that it is
+// currently experimental guard with definition of NAPI_EXPERIMENTAL that it is
 // released in once it is no longer experimental
-#if (NAPI_VERSION > 2147483646)
+#ifdef NAPI_EXPERIMENTAL
   /// A JavaScript bigint value.
   class BigInt : public Value {
   public:
@@ -843,9 +843,9 @@ namespace Napi {
         : std::is_same<T, uint32_t>::value ? napi_uint32_array
         : std::is_same<T, float>::value ? napi_float32_array
         : std::is_same<T, double>::value ? napi_float64_array
-// currently experimental guard with version of NAPI_VERSION that it is
+// currently experimental guard with definition of NAPI_EXPERIMENTAL that it is
 // released in once it is no longer experimental
-#if (NAPI_VERSION > 2147483646)
+#ifdef NAPI_EXPERIMENTAL
         : std::is_same<T, int64_t>::value ? napi_bigint64_array
         : std::is_same<T, uint64_t>::value ? napi_biguint64_array
 #endif  // NAPI_EXPERIMENTAL
