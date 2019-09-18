@@ -38,6 +38,7 @@ let testModules = [
   'object/set_property',
   'promise',
   'threadsafe_function/threadsafe_function_ptr',
+  'threadsafe_function/threadsafe_function_sum',
   'threadsafe_function/threadsafe_function',
   'typedarray',
   'typedarray-bigint',

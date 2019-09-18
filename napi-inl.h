@@ -3970,29 +3970,30 @@ inline ThreadSafeFunction ThreadSafeFunction::New(napi_env env,
 }
 
 inline ThreadSafeFunction::ThreadSafeFunction()
-  : _tsfn(new napi_threadsafe_function(nullptr), _d) {
+  : _tsfn() {
 }
 
 inline ThreadSafeFunction::ThreadSafeFunction(
     napi_threadsafe_function tsfn)
-  : _tsfn(new napi_threadsafe_function(tsfn), _d) {
+  : _tsfn(tsfn) {
 }
 
 inline ThreadSafeFunction::ThreadSafeFunction(ThreadSafeFunction&& other)
   : _tsfn(std::move(other._tsfn)) {
-  other._tsfn.reset();
+}
+
+inline ThreadSafeFunction::ThreadSafeFunction(const ThreadSafeFunction& other)
+  : _tsfn(other._tsfn) {
 }
 
 inline ThreadSafeFunction& ThreadSafeFunction::operator =(
     ThreadSafeFunction&& other) {
-  if (*_tsfn != nullptr) {
-    Error::Fatal("ThreadSafeFunction::operator =",
-        "You cannot assign a new TSFN because existing one is still alive.");
-    return *this;
-  }
-  _tsfn = std::move(other._tsfn);
-  other._tsfn.reset();
+  _tsfn = other._tsfn;
   return *this;
+}
+
+inline ThreadSafeFunction::operator napi_threadsafe_function() const {
+  return _tsfn;
 }
 
 inline napi_status ThreadSafeFunction::BlockingCall() const {
@@ -4034,21 +4035,21 @@ inline napi_status ThreadSafeFunction::NonBlockingCall(
 }
 
 inline napi_status ThreadSafeFunction::Acquire() const {
-  return napi_acquire_threadsafe_function(*_tsfn);
+  return napi_acquire_threadsafe_function(_tsfn);
 }
 
 inline napi_status ThreadSafeFunction::Release() {
-  return napi_release_threadsafe_function(*_tsfn, napi_tsfn_release);
+  return napi_release_threadsafe_function(_tsfn, napi_tsfn_release);
 }
 
 inline napi_status ThreadSafeFunction::Abort() {
-  return napi_release_threadsafe_function(*_tsfn, napi_tsfn_abort);
+  return napi_release_threadsafe_function(_tsfn, napi_tsfn_abort);
 }
 
 inline ThreadSafeFunction::ConvertibleContext
 ThreadSafeFunction::GetContext() const {
   void* context;
-  napi_get_threadsafe_function_context(*_tsfn, &context);
+  napi_get_threadsafe_function_context(_tsfn, &context);
   return ConvertibleContext({ context });
 }
 
@@ -4071,10 +4072,10 @@ inline ThreadSafeFunction ThreadSafeFunction::New(napi_env env,
 
   ThreadSafeFunction tsfn;
   auto* finalizeData = new details::ThreadSafeFinalize<ContextType, Finalizer,
-      FinalizerDataType>({ data, finalizeCallback, tsfn._tsfn.get() });
+      FinalizerDataType>({ data, finalizeCallback, &tsfn._tsfn });
   napi_status status = napi_create_threadsafe_function(env, callback, resource,
       Value::From(env, resourceName), maxQueueSize, initialThreadCount,
-      finalizeData, wrapper, context, CallJS, tsfn._tsfn.get());
+      finalizeData, wrapper, context, CallJS, &tsfn._tsfn);
   if (status != napi_ok) {
     delete finalizeData;
     NAPI_THROW_IF_FAILED(env, status, ThreadSafeFunction());
@@ -4087,7 +4088,7 @@ inline napi_status ThreadSafeFunction::CallInternal(
     CallbackWrapper* callbackWrapper,
     napi_threadsafe_function_call_mode mode) const {
   napi_status status = napi_call_threadsafe_function(
-      *_tsfn, callbackWrapper, mode);
+      _tsfn, callbackWrapper, mode);
   if (status != napi_ok && callbackWrapper != nullptr) {
     delete callbackWrapper;
   }

@@ -1987,7 +1987,10 @@ namespace Napi {
     ThreadSafeFunction(napi_threadsafe_function tsFunctionValue);
 
     ThreadSafeFunction(ThreadSafeFunction&& other);
+    ThreadSafeFunction(const ThreadSafeFunction& other);
     ThreadSafeFunction& operator=(ThreadSafeFunction&& other);
+
+    operator napi_threadsafe_function() const;
 
     // This API may be called from any thread.
     napi_status BlockingCall() const;
@@ -2053,13 +2056,8 @@ namespace Napi {
                        napi_value jsCallback,
                        void* context,
                        void* data);
-    struct Deleter {
-      // napi_threadsafe_function is managed by Node.js, leave it alone.
-      void operator()(napi_threadsafe_function*) const {};
-    };
 
-    std::unique_ptr<napi_threadsafe_function, Deleter> _tsfn;
-    Deleter _d;
+    napi_threadsafe_function _tsfn;
   };
   #endif
 
