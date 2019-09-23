@@ -1,3 +1,4 @@
+#define NAPI_EXPERIMENTAL
 #include "napi.h"
 
 using namespace Napi;
