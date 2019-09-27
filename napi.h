@@ -709,6 +709,14 @@ namespace Napi {
     bool InstanceOf(
       const Function& constructor ///< Constructor function
     ) const;
+
+    template <typename Finalizer, typename T>
+    inline void AddFinalizer(Finalizer finalizeCallback, T* data);
+
+    template <typename Finalizer, typename T, typename Hint>
+    inline void AddFinalizer(Finalizer finalizeCallback,
+                             T* data,
+                             Hint* finalizeHint);
   };
 
   template <typename T>

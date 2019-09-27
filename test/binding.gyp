@@ -27,6 +27,7 @@
         'memory_management.cc',
         'name.cc',
         'object/delete_property.cc',
+        'object/finalizer.cc',
         'object/get_property.cc',
         'object/has_own_property.cc',
         'object/has_property.cc',

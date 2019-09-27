@@ -30,6 +30,7 @@ let testModules = [
   'memory_management',
   'name',
   'object/delete_property',
+  'object/finalizer',
   'object/get_property',
   'object/has_own_property',
   'object/has_property',

@@ -24,16 +24,21 @@ namespace details {
 template <typename FreeType>
 static inline napi_status AttachData(napi_env env,
                                      napi_value obj,
-                                     FreeType* data) {
+                                     FreeType* data,
+                                     napi_finalize finalizer = nullptr,
+                                     void* hint = nullptr) {
   napi_value symbol, external;
   napi_status status = napi_create_symbol(env, nullptr, &symbol);
   if (status == napi_ok) {
+    if (finalizer == nullptr) {
+      finalizer = [](napi_env /*env*/, void* data, void* /*hint*/) {
+        delete static_cast<FreeType*>(data);
+      };
+    }
     status = napi_create_external(env,
                               data,
-                              [](napi_env /*env*/, void* data, void* /*hint*/) {
-                                delete static_cast<FreeType*>(data);
-                              },
-                              nullptr,
+                              finalizer,
+                              hint,
                               &external);
     if (status == napi_ok) {
       napi_property_descriptor desc = {
@@ -1168,6 +1173,40 @@ inline bool Object::InstanceOf(const Function& constructor) const {
   napi_status status = napi_instanceof(_env, _value, constructor, &result);
   NAPI_THROW_IF_FAILED(_env, status, false);
   return result;
+}
+
+template <typename Finalizer, typename T>
+inline void Object::AddFinalizer(Finalizer finalizeCallback, T* data) {
+  details::FinalizeData<T, Finalizer>* finalizeData =
+    new details::FinalizeData<T, Finalizer>({ finalizeCallback, nullptr });
+  napi_status status =
+      details::AttachData(_env,
+                          *this,
+                          data,
+                          details::FinalizeData<T, Finalizer>::Wrapper,
+                          finalizeData);
+  if (status != napi_ok) {
+    delete finalizeData;
+    NAPI_THROW_IF_FAILED_VOID(_env, status);
+  }
+}
+
+template <typename Finalizer, typename T, typename Hint>
+inline void Object::AddFinalizer(Finalizer finalizeCallback,
+                                 T* data,
+                                 Hint* finalizeHint) {
+  details::FinalizeData<T, Finalizer, Hint>* finalizeData =
+    new details::FinalizeData<T, Finalizer, Hint>({ finalizeCallback, finalizeHint });
+  napi_status status =
+      details::AttachData(_env,
+                          *this,
+                          data,
+                          details::FinalizeData<T, Finalizer, Hint>::WrapperWithHint,
+                          finalizeData);
+  if (status != napi_ok) {
+    delete finalizeData;
+    NAPI_THROW_IF_FAILED_VOID(_env, status);
+  }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
