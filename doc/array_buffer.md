@@ -123,7 +123,7 @@ Returns the length of the wrapped data, in bytes.
 ### Data
 
 ```cpp
-T* Napi::ArrayBuffer::Data() const;
+void* Napi::ArrayBuffer::Data() const;
 ```
 
 Returns a pointer the wrapped data.
