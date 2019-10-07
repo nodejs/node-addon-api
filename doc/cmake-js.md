@@ -1,16 +1,55 @@
 # CMake.js
 
-**CMake.js** is a build tool that allow native addon developer to compile their
-C++ code into executable form. It works like **[node-gyp](node-gyp.md)** but
-instead of Google's **gyp** format it is base on **CMake** build system.
+[**CMake.js**](https://github.com/cmake-js/cmake-js#cmakejs-mit) is a build tool that allow native addon developers to compile their
+C or C++ code into executable form. It works like **[node-gyp](node-gyp.md)** but
+instead of Google's [**gyp**](https://gyp.gsrc.io) tool it is based on the [**CMake**](https://cmake.org) build system.
 
-## **CMake** reference
+## Quick Start
 
-  - [Installation](https://www.npmjs.com/package/cmake-js#installation)
-  - [How to use](https://www.npmjs.com/package/cmake-js#usage)
+### Install CMake
+
+CMake.js requires that CMake be installed. Installers for a variety of platforms can be found on the [CMake website](https://cmake.org).
+
+### Install CMake.js
+
+CMake.js is typically installed as a global package:
+
+```bash
+npm install -g cmake-js
+cmake-js --help
+```
+
+### CMakeLists.txt
+
+Your project will require a `CMakeLists.txt` file. The [CMake.js README file](https://github.com/cmake-js/cmake-js#usage) shows what's necessary.
+
+### NAPI_VERSION
+
+When building N-API addons, it's crucial to specify the N-API version your code is designed to work with. With CMake.js, this information is specified in the `CMakeLists.txt` file:
+
+```
+add_definitions(-DNAPI_VERSION=3)
+```
+
+Since N-API is ABI-stable, your N-API addon will work, without recompilation, with the N-API version you specify in `NAPI_VERSION` and all subsequent N-API versions.
+
+In the absence of a need for features available only in a specific N-API version, version 3 is a good choice as it is the version of N-API that was active when N-API left experimental status.
+
+### node-addon-api
+
+If your N-API native add-on uses the optional [**node-addon-api**](https://github.com/nodejs/node-addon-api#node-addon-api-module) C++ wrapper, the `CMakeLists.txt` file requires additional configuration information as described on the [CMake.js README file](https://github.com/cmake-js/cmake-js#n-api-and-node-addon-api).
+
+## Example
+
+A working example of an N-API native addon built using CMake.js can be found on the [node-addon-examples repository](https://github.com/nodejs/node-addon-examples/tree/master/build_with_cmake#building-n-api-addons-using-cmakejs).
+
+## **CMake** Reference
+
+  - [Installation](https://github.com/cmake-js/cmake-js#installation)
+  - [How to use](https://github.com/cmake-js/cmake-js#usage)
   - [Using N-API and node-addon-api](https://github.com/cmake-js/cmake-js#n-api-and-node-addon-api)
-  - [Tutorials](https://www.npmjs.com/package/cmake-js#tutorials)
-  - [Use case in the works - ArrayFire.js](https://www.npmjs.com/package/cmake-js#use-case-in-the-works---arrayfirejs)
+  - [Tutorials](https://github.com/cmake-js/cmake-js#tutorials)
+  - [Use case in the works - ArrayFire.js](https://github.com/cmake-js/cmake-js#use-case-in-the-works---arrayfirejs)
 
 Sometimes finding the right settings is not easy so to accomplish at most
 complicated task please refer to:
