@@ -4033,6 +4033,20 @@ inline napi_status ThreadSafeFunction::NonBlockingCall(
   return CallInternal(new CallbackWrapper(wrapper), napi_tsfn_nonblocking);
 }
 
+inline void ThreadSafeFunction::Ref(napi_env env) const {
+  if (_tsfn != nullptr) {
+    napi_status status = napi_ref_threadsafe_function(env, *_tsfn);
+    NAPI_THROW_IF_FAILED_VOID(env, status);
+  }
+}
+
+inline void ThreadSafeFunction::Unref(napi_env env) const {
+  if (_tsfn != nullptr) {
+    napi_status status = napi_unref_threadsafe_function(env, *_tsfn);
+    NAPI_THROW_IF_FAILED_VOID(env, status);
+  }
+}
+
 inline napi_status ThreadSafeFunction::Acquire() const {
   return napi_acquire_threadsafe_function(*_tsfn);
 }

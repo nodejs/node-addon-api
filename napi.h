@@ -2011,6 +2011,12 @@ namespace Napi {
     template <typename DataType, typename Callback>
     napi_status NonBlockingCall(DataType* data, Callback callback) const;
 
+    // This API may only be called from the main thread.
+    void Ref(napi_env env) const;
+
+    // This API may only be called from the main thread.
+    void Unref(napi_env env) const;
+
     // This API may be called from any thread.
     napi_status Acquire() const;
 

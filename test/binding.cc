@@ -38,6 +38,7 @@ Object InitObjectDeprecated(Env env);
 Object InitPromise(Env env);
 #if (NAPI_VERSION > 3)
 Object InitThreadSafeFunctionPtr(Env env);
+Object InitThreadSafeFunctionUnref(Env env);
 Object InitThreadSafeFunction(Env env);
 #endif
 Object InitTypedArray(Env env);
@@ -83,6 +84,7 @@ Object Init(Env env, Object exports) {
   exports.Set("promise", InitPromise(env));
 #if (NAPI_VERSION > 3)
   exports.Set("threadsafe_function_ptr", InitThreadSafeFunctionPtr(env));
+  exports.Set("threadsafe_function_unref", InitThreadSafeFunctionUnref(env));
   exports.Set("threadsafe_function", InitThreadSafeFunction(env));
 #endif
   exports.Set("typedarray", InitTypedArray(env));
