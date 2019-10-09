@@ -55,6 +55,7 @@ static Value TestWithTSFN(const CallbackInfo& info) {
       std::function<decltype(FinalizerCallback)>(FinalizerCallback), testData);
 
   for (int i = 0; i < threadCount; ++i) {
+    // A copy of the ThreadSafeFunction will go to the thread entry point
     testData->threads.push_back( thread(entryWithTSFN, tsfn, i) );
   }
 
@@ -110,6 +111,7 @@ static Value CreateThread(const CallbackInfo& info) {
   TestData* testData = static_cast<TestData*>(info.Data());
   ThreadSafeFunction tsfn = testData->tsfn;
   int threadId = testData->threads.size();
+  // A copy of the ThreadSafeFunction will go to the thread entry point
   testData->threads.push_back( thread(entryAcquire, tsfn, threadId) );
   return Number::New(info.Env(), threadId);
 }
