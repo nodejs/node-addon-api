@@ -4,6 +4,7 @@
     'sources': [
         'arraybuffer.cc',
         'asynccontext.cc',
+        'asyncprogressqueueworker.cc',
         'asyncprogressworker.cc',
         'asyncworker.cc',
         'asyncworker-persistent.cc',
