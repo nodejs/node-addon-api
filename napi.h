@@ -6,6 +6,7 @@
 #include <initializer_list>
 #include <memory>
 #include <mutex>
+#include <queue>
 #include <string>
 #include <vector>
 
@@ -1966,6 +1967,12 @@ namespace Napi {
     napi_async_context _context;
   };
 
+
+  inline void OnAsyncWorkExecute(napi_env env, void* asyncworker);
+  inline void OnAsyncWorkComplete(napi_env env,
+                                  napi_status status,
+                                  void* asyncworker);
+
   class AsyncWorker {
   public:
     virtual ~AsyncWorker();
@@ -2242,8 +2249,53 @@ namespace Napi {
     napi_threadsafe_function _tsfn;
   };
 
+  template <typename DataType>
+  class AsyncProgressWorkerBase : public AsyncWorker {
+    public:
+     virtual void OnWorkProgress(DataType* data) = 0;
+     class ThreadSafeData {
+       public:
+        ThreadSafeData(AsyncProgressWorkerBase* asyncprogressworker, DataType* data)
+          : _asyncprogressworker(asyncprogressworker), _data(data) {}
+
+        AsyncProgressWorkerBase* asyncprogressworker() { return _asyncprogressworker; };
+        DataType* data() { return _data; };
+
+       private:
+        AsyncProgressWorkerBase* _asyncprogressworker;
+        DataType* _data;
+     };
+    protected:
+     explicit AsyncProgressWorkerBase(const Object& receiver,
+                                      const Function& callback,
+                                      const char* resource_name,
+                                      const Object& resource,
+                                      size_t queue_size = 1);
+    virtual ~AsyncProgressWorkerBase();
+
+// Optional callback of Napi::ThreadSafeFunction only available after NAPI_VERSION 4.
+// Refs: https://github.com/nodejs/node/pull/27791
+#if NAPI_VERSION > 4
+     explicit AsyncProgressWorkerBase(Napi::Env env,
+                                      const char* resource_name,
+                                      const Object& resource,
+                                      size_t queue_size = 1);
+#endif
+
+     static inline void OnAsyncWorkProgress(Napi::Env env,
+                                            Napi::Function jsCallback,
+                                            void* data);
+
+
+     void NonBlockingCall(DataType* data);
+
+    private:
+     ThreadSafeFunction _tsfn;
+     static inline void Finalizer(Napi::Env env, void* data, AsyncProgressWorkerBase* context) {};
+  };
+
   template<class T>
-  class AsyncProgressWorker : public AsyncWorker {
+  class AsyncProgressWorker : public AsyncProgressWorkerBase<void> {
     public:
      virtual ~AsyncProgressWorker();
 
@@ -2256,6 +2308,8 @@ namespace Napi {
         explicit ExecutionProgress(AsyncProgressWorker* worker) : _worker(worker) {}
         AsyncProgressWorker* const _worker;
      };
+
+     void OnWorkProgress(void*) override;
 
     protected:
      explicit AsyncProgressWorker(const Function& callback);
@@ -2288,8 +2342,6 @@ namespace Napi {
      virtual void OnProgress(const T* data, size_t count) = 0;
 
     private:
-     static void WorkProgress_(Napi::Env env, Napi::Function jsCallback, void* data);
-
      void Execute() override;
      void Signal() const;
      void SendProgress_(const T* data, size_t count);
@@ -2297,7 +2349,6 @@ namespace Napi {
      std::mutex _mutex;
      T* _asyncdata;
      size_t _asyncsize;
-     ThreadSafeFunction _tsfn;
   };
   #endif
 

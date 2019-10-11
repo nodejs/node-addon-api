@@ -4587,9 +4587,59 @@ inline void ThreadSafeFunction::CallJS(napi_env env,
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+// Async Progress Worker Base class
+////////////////////////////////////////////////////////////////////////////////
+template <typename DataType>
+inline AsyncProgressWorkerBase<DataType>::AsyncProgressWorkerBase(const Object& receiver,
+                                                                  const Function& callback,
+                                                                  const char* resource_name,
+                                                                  const Object& resource,
+                                                                  size_t queue_size)
+  : AsyncWorker(receiver, callback, resource_name, resource) {
+  // Fill all possible arguments to work around from ambiguous ThreadSafeFunction::New signatures.
+  _tsfn = ThreadSafeFunction::New(callback.Env(), callback, resource, resource_name, queue_size, 1, this, Finalizer, this);
+}
+
+#if NAPI_VERSION > 4
+template <typename DataType>
+inline AsyncProgressWorkerBase<DataType>::AsyncProgressWorkerBase(Napi::Env env,
+                                                                  const char* resource_name,
+                                                                  const Object& resource,
+                                                                  size_t queue_size)
+  : AsyncWorker(env, resource_name, resource) {
+  // TODO: Once the changes to make the callback optional for threadsafe
+  // functions are no longer optional we can remove the dummy Function here.
+  Function callback;
+  // Fill all possible arguments to work around from ambiguous ThreadSafeFunction::New signatures.
+  _tsfn = ThreadSafeFunction::New(env, callback, resource, resource_name, queue_size, 1, this, Finalizer, this);
+}
+#endif
+
+template<typename DataType>
+inline AsyncProgressWorkerBase<DataType>::~AsyncProgressWorkerBase() {
+  // Abort pending tsfn call.
+  // Don't send progress events after we've already completed.
+  this->_tsfn.Abort();
+  this->_tsfn.Release();
+}
+
+template <typename DataType>
+inline void AsyncProgressWorkerBase<DataType>::OnAsyncWorkProgress(Napi::Env /* env */,
+                                Napi::Function /* jsCallback */,
+                                void* data) {
+  ThreadSafeData* tsd = static_cast<ThreadSafeData*>(data);
+  tsd->asyncprogressworker()->OnWorkProgress(tsd->data());
+}
+
+template <typename DataType>
+inline void AsyncProgressWorkerBase<DataType>::NonBlockingCall(DataType* data) {
+  auto tsd = new AsyncProgressWorkerBase::ThreadSafeData(this, data);
+  _tsfn.NonBlockingCall(tsd, OnAsyncWorkProgress);
+}
+
+////////////////////////////////////////////////////////////////////////////////
 // Async Progress Worker class
 ////////////////////////////////////////////////////////////////////////////////
-
 template<class T>
 inline AsyncProgressWorker<T>::AsyncProgressWorker(const Function& callback)
   : AsyncProgressWorker(callback, "generic") {
@@ -4632,10 +4682,9 @@ inline AsyncProgressWorker<T>::AsyncProgressWorker(const Object& receiver,
                                                    const Function& callback,
                                                    const char* resource_name,
                                                    const Object& resource)
-  : AsyncWorker(receiver, callback, resource_name, resource),
+  : AsyncProgressWorkerBase(receiver, callback, resource_name, resource),
     _asyncdata(nullptr),
     _asyncsize(0) {
-  _tsfn = ThreadSafeFunction::New(callback.Env(), callback, resource_name, 1, 1);
 }
 
 #if NAPI_VERSION > 4
@@ -4654,27 +4703,19 @@ template<class T>
 inline AsyncProgressWorker<T>::AsyncProgressWorker(Napi::Env env,
                                                    const char* resource_name,
                                                    const Object& resource)
-  : AsyncWorker(env, resource_name, resource),
+  : AsyncProgressWorkerBase(env, resource_name, resource),
     _asyncdata(nullptr),
     _asyncsize(0) {
-  // TODO: Once the changes to make the callback optional for threadsafe
-  // functions are no longer optional we can remove the dummy Function here.
-  Function callback;
-  _tsfn = ThreadSafeFunction::New(env, callback, resource_name, 1, 1);
 }
 #endif
 
 template<class T>
 inline AsyncProgressWorker<T>::~AsyncProgressWorker() {
-  // Abort pending tsfn call.
-  // Don't send progress events after we've already completed.
-  _tsfn.Abort();
   {
-    std::lock_guard<std::mutex> lock(_mutex);
+    std::lock_guard<std::mutex> lock(this->_mutex);
     _asyncdata = nullptr;
     _asyncsize = 0;
   }
-  _tsfn.Release();
 }
 
 template<class T>
@@ -4684,20 +4725,18 @@ inline void AsyncProgressWorker<T>::Execute() {
 }
 
 template<class T>
-inline void AsyncProgressWorker<T>::WorkProgress_(Napi::Env /* env */, Napi::Function /* jsCallback */, void* _data) {
-  AsyncProgressWorker* self = static_cast<AsyncProgressWorker*>(_data);
-
+inline void AsyncProgressWorker<T>::OnWorkProgress(void*) {
   T* data;
   size_t size;
   {
-    std::lock_guard<std::mutex> lock(self->_mutex);
-    data = self->_asyncdata;
-    size = self->_asyncsize;
-    self->_asyncdata = nullptr;
-    self->_asyncsize = 0;
+    std::lock_guard<std::mutex> lock(this->_mutex);
+    data = this->_asyncdata;
+    size = this->_asyncsize;
+    this->_asyncdata = nullptr;
+    this->_asyncsize = 0;
   }
 
-  self->OnProgress(data, size);
+  this->OnProgress(data, size);
   delete[] data;
 }
 
@@ -4708,19 +4747,19 @@ inline void AsyncProgressWorker<T>::SendProgress_(const T* data, size_t count) {
 
     T* old_data;
     {
-      std::lock_guard<std::mutex> lock(_mutex);
+      std::lock_guard<std::mutex> lock(this->_mutex);
       old_data = _asyncdata;
       _asyncdata = new_data;
       _asyncsize = count;
     }
-    _tsfn.NonBlockingCall(this, WorkProgress_);
+    this->NonBlockingCall(nullptr);
 
     delete[] old_data;
 }
 
 template<class T>
 inline void AsyncProgressWorker<T>::Signal() const {
-  _tsfn.NonBlockingCall(this, WorkProgress_);
+  this->NonBlockingCall(nullptr);
 }
 
 template<class T>
