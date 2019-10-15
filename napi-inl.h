@@ -3472,7 +3472,10 @@ inline HandleScope::HandleScope(Napi::Env env) : _env(env) {
 }
 
 inline HandleScope::~HandleScope() {
-  napi_close_handle_scope(_env, _scope);
+  napi_status status = napi_close_handle_scope(_env, _scope);
+  NAPI_FATAL_IF_FAILED(status,
+                       "HandleScope::~HandleScope",
+                       "napi_close_handle_scope");
 }
 
 inline HandleScope::operator napi_handle_scope() const {
@@ -3497,7 +3500,10 @@ inline EscapableHandleScope::EscapableHandleScope(Napi::Env env) : _env(env) {
 }
 
 inline EscapableHandleScope::~EscapableHandleScope() {
-  napi_close_escapable_handle_scope(_env, _scope);
+  napi_status status = napi_close_escapable_handle_scope(_env, _scope);
+  NAPI_FATAL_IF_FAILED(status,
+                       "EscapableHandleScope::~EscapableHandleScope",
+                       "napi_close_escapable_handle_scope");
 }
 
 inline EscapableHandleScope::operator napi_escapable_handle_scope() const {
@@ -3533,7 +3539,10 @@ inline CallbackScope::CallbackScope(napi_env env, napi_async_context context)
 }
 
 inline CallbackScope::~CallbackScope() {
-  napi_close_callback_scope(_env, _scope);
+  napi_status status = napi_close_callback_scope(_env, _scope);
+  NAPI_FATAL_IF_FAILED(status,
+                       "CallbackScope::~CallbackScope",
+                       "napi_close_callback_scope");
 }
 
 inline CallbackScope::operator napi_callback_scope() const {
