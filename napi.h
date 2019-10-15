@@ -1729,6 +1729,10 @@ namespace Napi {
     explicit HandleScope(Napi::Env env);
     ~HandleScope();
 
+    // Disallow copying to prevent double close of napi_handle_scope
+    HandleScope(HandleScope const &) = delete;
+    void operator=(HandleScope const &) = delete;
+
     operator napi_handle_scope() const;
 
     Napi::Env Env() const;
@@ -1743,6 +1747,10 @@ namespace Napi {
     EscapableHandleScope(napi_env env, napi_escapable_handle_scope scope);
     explicit EscapableHandleScope(Napi::Env env);
     ~EscapableHandleScope();
+
+    // Disallow copying to prevent double close of napi_escapable_handle_scope
+    EscapableHandleScope(EscapableHandleScope const &) = delete;
+    void operator=(EscapableHandleScope const &) = delete;
 
     operator napi_escapable_handle_scope() const;
 
@@ -1760,6 +1768,10 @@ namespace Napi {
     CallbackScope(napi_env env, napi_callback_scope scope);
     CallbackScope(napi_env env, napi_async_context context);
     virtual ~CallbackScope();
+
+    // Disallow copying to prevent double close of napi_callback_scope
+    CallbackScope(CallbackScope const &) = delete;
+    void operator=(CallbackScope const &) = delete;
 
     operator napi_callback_scope() const;
 
