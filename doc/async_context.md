@@ -45,6 +45,16 @@ The `Napi::AsyncContext` to be destroyed.
 virtual Napi::AsyncContext::~AsyncContext();
 ```
 
+### Env
+
+Requests the environment in which the async context has been initially created.
+
+```cpp
+Napi::Env Env() const;
+```
+
+Returns the `Napi::Env` environment in which the async context has been created.
+
 ## Operator
 
 ```cpp
