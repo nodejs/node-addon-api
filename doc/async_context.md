@@ -53,7 +53,7 @@ Requests the environment in which the async context has been initially created.
 Napi::Env Env() const;
 ```
 
-Returns the Env environment in which the async context has been created.
+Returns the `Napi::Env` environment in which the async context has been created.
 
 ## Operator
 
