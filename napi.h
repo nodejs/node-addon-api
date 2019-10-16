@@ -1784,6 +1784,8 @@ namespace Napi {
 
     operator napi_async_context() const;
 
+    Napi::Env Env() const;
+
   private:
     napi_env _env;
     napi_async_context _context;
