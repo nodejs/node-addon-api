@@ -161,7 +161,7 @@ static Napi::Function Napi::ObjectWrap::DefineClass(Napi::Env env,
 JavaScript constructor function.
 * `[in] properties`: Initializer list of class property descriptor describing
 static and instance properties and methods of the class.
-See: [`Class propertry and descriptor`](class_property_descriptor.md).
+See: [`Class property and descriptor`](class_property_descriptor.md).
 * `[in] data`: User-provided data passed to the constructor callback as `data`
 property of the `Napi::CallbackInfo`.
 
@@ -184,7 +184,7 @@ static Napi::Function Napi::ObjectWrap::DefineClass(Napi::Env env,
 JavaScript constructor function.
 * `[in] properties`: Vector of class property descriptor describing static and
 instance properties and methods of the class.
-See: [`Class propertry and descriptor`](class_property_descriptor.md).
+See: [`Class property and descriptor`](class_property_descriptor.md).
 * `[in] data`: User-provided data passed to the constructor callback as `data`
 property of the `Napi::CallbackInfo`.
 
