@@ -1,6 +1,6 @@
 # CMake.js
 
-[**CMake.js**](https://github.com/cmake-js/cmake-js#cmakejs-mit) is a build tool that allow native addon developers to compile their
+[**CMake.js**](https://github.com/cmake-js/cmake-js) is a build tool that allow native addon developers to compile their
 C or C++ code into executable form. It works like **[node-gyp](node-gyp.md)** but
 instead of Google's [**gyp**](https://gyp.gsrc.io) tool it is based on the [**CMake**](https://cmake.org) build system.
 
@@ -12,12 +12,14 @@ CMake.js requires that CMake be installed. Installers for a variety of platforms
 
 ### Install CMake.js
 
-CMake.js is typically installed as a global package:
+For developers, CMake.js is typically installed as a global package:
 
 ```bash
 npm install -g cmake-js
 cmake-js --help
 ```
+
+> For *users* of your native addon, CMake.js should be configured as a dependency in your `package.json` as described in the [CMake.js documentation](https://github.com/cmake-js/cmake-js).
 
 ### CMakeLists.txt
 
@@ -34,6 +36,14 @@ add_definitions(-DNAPI_VERSION=3)
 Since N-API is ABI-stable, your N-API addon will work, without recompilation, with the N-API version you specify in `NAPI_VERSION` and all subsequent N-API versions.
 
 In the absence of a need for features available only in a specific N-API version, version 3 is a good choice as it is the version of N-API that was active when N-API left experimental status.
+
+### NAPI_EXPERIMENTAL
+
+The following line in the `CMakeLists.txt` file will enable N-API experimental features if your code requires them:
+
+```
+add_definitions(-DNAPI_EXPERIMENTAL)
+```
 
 ### node-addon-api
 
