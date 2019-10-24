@@ -24,16 +24,21 @@ namespace details {
 template <typename FreeType>
 static inline napi_status AttachData(napi_env env,
                                      napi_value obj,
-                                     FreeType* data) {
+                                     FreeType* data,
+                                     napi_finalize finalizer = nullptr,
+                                     void* hint = nullptr) {
   napi_value symbol, external;
   napi_status status = napi_create_symbol(env, nullptr, &symbol);
   if (status == napi_ok) {
+    if (finalizer == nullptr) {
+      finalizer = [](napi_env /*env*/, void* data, void* /*hint*/) {
+        delete static_cast<FreeType*>(data);
+      };
+    }
     status = napi_create_external(env,
                               data,
-                              [](napi_env /*env*/, void* data, void* /*hint*/) {
-                                delete static_cast<FreeType*>(data);
-                              },
-                              nullptr,
+                              finalizer,
+                              hint,
                               &external);
     if (status == napi_ok) {
       napi_property_descriptor desc = {
@@ -1170,6 +1175,40 @@ inline bool Object::InstanceOf(const Function& constructor) const {
   return result;
 }
 
+template <typename Finalizer, typename T>
+inline void Object::AddFinalizer(Finalizer finalizeCallback, T* data) {
+  details::FinalizeData<T, Finalizer>* finalizeData =
+    new details::FinalizeData<T, Finalizer>({ finalizeCallback, nullptr });
+  napi_status status =
+      details::AttachData(_env,
+                          *this,
+                          data,
+                          details::FinalizeData<T, Finalizer>::Wrapper,
+                          finalizeData);
+  if (status != napi_ok) {
+    delete finalizeData;
+    NAPI_THROW_IF_FAILED_VOID(_env, status);
+  }
+}
+
+template <typename Finalizer, typename T, typename Hint>
+inline void Object::AddFinalizer(Finalizer finalizeCallback,
+                                 T* data,
+                                 Hint* finalizeHint) {
+  details::FinalizeData<T, Finalizer, Hint>* finalizeData =
+    new details::FinalizeData<T, Finalizer, Hint>({ finalizeCallback, finalizeHint });
+  napi_status status =
+      details::AttachData(_env,
+                          *this,
+                          data,
+                          details::FinalizeData<T, Finalizer, Hint>::WrapperWithHint,
+                          finalizeData);
+  if (status != napi_ok) {
+    delete finalizeData;
+    NAPI_THROW_IF_FAILED_VOID(_env, status);
+  }
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 // External class
 ////////////////////////////////////////////////////////////////////////////////
@@ -1994,47 +2033,43 @@ inline Error Error::New(napi_env env) {
   status = napi_get_last_error_info(env, &info);
   NAPI_FATAL_IF_FAILED(status, "Error::New", "napi_get_last_error_info");
 
-  if (status == napi_ok) {
-    if (info->error_code == napi_pending_exception) {
+  if (info->error_code == napi_pending_exception) {
+    status = napi_get_and_clear_last_exception(env, &error);
+    NAPI_FATAL_IF_FAILED(status, "Error::New", "napi_get_and_clear_last_exception");
+  }
+  else {
+    const char* error_message = info->error_message != nullptr ?
+      info->error_message : "Error in native callback";
+
+    bool isExceptionPending;
+    status = napi_is_exception_pending(env, &isExceptionPending);
+    NAPI_FATAL_IF_FAILED(status, "Error::New", "napi_is_exception_pending");
+
+    if (isExceptionPending) {
       status = napi_get_and_clear_last_exception(env, &error);
       NAPI_FATAL_IF_FAILED(status, "Error::New", "napi_get_and_clear_last_exception");
     }
-    else {
-      const char* error_message = info->error_message != nullptr ?
-        info->error_message : "Error in native callback";
 
-      bool isExceptionPending;
-      status = napi_is_exception_pending(env, &isExceptionPending);
-      NAPI_FATAL_IF_FAILED(status, "Error::New", "napi_is_exception_pending");
+    napi_value message;
+    status = napi_create_string_utf8(
+      env,
+      error_message,
+      std::strlen(error_message),
+      &message);
+    NAPI_FATAL_IF_FAILED(status, "Error::New", "napi_create_string_utf8");
 
-      if (isExceptionPending) {
-        status = napi_get_and_clear_last_exception(env, &error);
-        NAPI_FATAL_IF_FAILED(status, "Error::New", "napi_get_and_clear_last_exception");
-      }
-
-      napi_value message;
-      status = napi_create_string_utf8(
-        env,
-        error_message,
-        std::strlen(error_message),
-        &message);
-      NAPI_FATAL_IF_FAILED(status, "Error::New", "napi_create_string_utf8");
-
-      if (status == napi_ok) {
-        switch (info->error_code) {
-        case napi_object_expected:
-        case napi_string_expected:
-        case napi_boolean_expected:
-        case napi_number_expected:
-          status = napi_create_type_error(env, nullptr, message, &error);
-          break;
-        default:
-          status = napi_create_error(env, nullptr,  message, &error);
-          break;
-        }
-        NAPI_FATAL_IF_FAILED(status, "Error::New", "napi_create_error");
-      }
+    switch (info->error_code) {
+    case napi_object_expected:
+    case napi_string_expected:
+    case napi_boolean_expected:
+    case napi_number_expected:
+      status = napi_create_type_error(env, nullptr, message, &error);
+      break;
+    default:
+      status = napi_create_error(env, nullptr,  message, &error);
+      break;
     }
+    NAPI_FATAL_IF_FAILED(status, "Error::New", "napi_create_error");
   }
 
   return Error(env, error);
@@ -3472,7 +3507,10 @@ inline HandleScope::HandleScope(Napi::Env env) : _env(env) {
 }
 
 inline HandleScope::~HandleScope() {
-  napi_close_handle_scope(_env, _scope);
+  napi_status status = napi_close_handle_scope(_env, _scope);
+  NAPI_FATAL_IF_FAILED(status,
+                       "HandleScope::~HandleScope",
+                       "napi_close_handle_scope");
 }
 
 inline HandleScope::operator napi_handle_scope() const {
@@ -3497,7 +3535,10 @@ inline EscapableHandleScope::EscapableHandleScope(Napi::Env env) : _env(env) {
 }
 
 inline EscapableHandleScope::~EscapableHandleScope() {
-  napi_close_escapable_handle_scope(_env, _scope);
+  napi_status status = napi_close_escapable_handle_scope(_env, _scope);
+  NAPI_FATAL_IF_FAILED(status,
+                       "EscapableHandleScope::~EscapableHandleScope",
+                       "napi_close_escapable_handle_scope");
 }
 
 inline EscapableHandleScope::operator napi_escapable_handle_scope() const {
@@ -3533,7 +3574,10 @@ inline CallbackScope::CallbackScope(napi_env env, napi_async_context context)
 }
 
 inline CallbackScope::~CallbackScope() {
-  napi_close_callback_scope(_env, _scope);
+  napi_status status = napi_close_callback_scope(_env, _scope);
+  NAPI_FATAL_IF_FAILED(status,
+                       "CallbackScope::~CallbackScope",
+                       "napi_close_callback_scope");
 }
 
 inline CallbackScope::operator napi_callback_scope() const {
@@ -3591,6 +3635,10 @@ inline AsyncContext& AsyncContext::operator =(AsyncContext&& other) {
 
 inline AsyncContext::operator napi_async_context() const {
   return _context;
+}
+
+inline Napi::Env AsyncContext::Env() const {
+  return Napi::Env(_env);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -4032,6 +4080,20 @@ inline napi_status ThreadSafeFunction::NonBlockingCall(
     callback(env, jsCallback, data);
   };
   return CallInternal(new CallbackWrapper(wrapper), napi_tsfn_nonblocking);
+}
+
+inline void ThreadSafeFunction::Ref(napi_env env) const {
+  if (_tsfn != nullptr) {
+    napi_status status = napi_ref_threadsafe_function(env, _tsfn);
+    NAPI_THROW_IF_FAILED_VOID(env, status);
+  }
+}
+
+inline void ThreadSafeFunction::Unref(napi_env env) const {
+  if (_tsfn != nullptr) {
+    napi_status status = napi_unref_threadsafe_function(env, _tsfn);
+    NAPI_THROW_IF_FAILED_VOID(env, status);
+  }
 }
 
 inline napi_status ThreadSafeFunction::Acquire() const {

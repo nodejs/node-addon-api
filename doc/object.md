@@ -137,6 +137,40 @@ Returns a `bool` that is true if the `Napi::Object` is an instance created by th
 
 Note: This is equivalent to the JavaScript instanceof operator.
 
+### AddFinalizer()
+```cpp
+template <typename Finalizer, typename T>
+inline void AddFinalizer(Finalizer finalizeCallback, T* data);
+```
+
+- `[in] finalizeCallback`: The function to call when the object is garbage-collected.
+- `[in] data`: The data to associate with the object.
+
+Associates `data` with the object, calling `finalizeCallback` when the object is garbage-collected. `finalizeCallback`
+has the signature
+```cpp
+void finalizeCallback(Napi::Env env, T* data);
+```
+where `data` is the pointer that was passed into the call to `AddFinalizer()`.
+
+### AddFinalizer()
+```cpp
+template <typename Finalizer, typename T, typename Hint>
+inline void AddFinalizer(Finalizer finalizeCallback,
+                         T* data,
+                         Hint* finalizeHint);
+```
+
+- `[in] data`: The data to associate with the object.
+- `[in] finalizeCallback`: The function to call when the object is garbage-collected.
+
+Associates `data` with the object, calling `finalizeCallback` when the object is garbage-collected. An additional hint
+may be given. It will also be passed to `finalizeCallback`, which has the signature
+```cpp
+void finalizeCallback(Napi::Env env, T* data, Hint* hint);
+```
+where `data` and `hint` are the pointers that were passed into the call to `AddFinalizer()`.
+
 ### DefineProperty()
 
 ```cpp

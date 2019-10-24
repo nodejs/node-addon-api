@@ -32,6 +32,10 @@ Value HasPropertyWithNapiWrapperValue(const CallbackInfo& info);
 Value HasPropertyWithCStyleString(const CallbackInfo& info);
 Value HasPropertyWithCppStyleString(const CallbackInfo& info);
 
+// Native wrappers for testing Object::AddFinalizer()
+Value AddFinalizer(const CallbackInfo& info);
+Value AddFinalizerWithHint(const CallbackInfo& info);
+
 static bool testValue = true;
 // Used to test void* Data() integrity
 struct UserDataHolder {
@@ -200,6 +204,9 @@ Object InitObject(Env env) {
   exports["hasPropertyWithCppStyleString"] = Function::New(env, HasPropertyWithCppStyleString);
 
   exports["createObjectUsingMagic"] = Function::New(env, CreateObjectUsingMagic);
+
+  exports["addFinalizer"] = Function::New(env, AddFinalizer);
+  exports["addFinalizerWithHint"] = Function::New(env, AddFinalizerWithHint);
 
   return exports;
 }

@@ -179,20 +179,21 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for more details on our philosophy around
 | Name                | GitHub Link                                           |
 | ------------------- | ----------------------------------------------------- |
 | Anna Henningsen     | [addaleax](https://github.com/addaleax)               |
-| Arunesh Chandra     | [aruneshchandra](https://github.com/aruneshchandra)   |
 | Gabriel Schulhof    | [gabrielschulhof](https://github.com/gabrielschulhof) |
 | Hitesh Kanwathirtha | [digitalinfinity](https://github.com/digitalinfinity) |
 | Jim Schlight        | [jschlight](https://github.com/jschlight)             |
 | Michael Dawson      | [mhdawson](https://github.com/mhdawson)               |
+| Kevin Eady          | [KevinEady](https://github.com/KevinEady)
 | Nicola Del Gobbo    | [NickNaso](https://github.com/NickNaso)               |
-| Taylor Woll         | [boingoing](https://github.com/boingoing)             |
 
 ### Emeritus
 | Name                | GitHub Link                                           |
 | ------------------- | ----------------------------------------------------- |
+| Arunesh Chandra     | [aruneshchandra](https://github.com/aruneshchandra)   |
 | Benjamin Byholm     | [kkoopa](https://github.com/kkoopa)                   |
 | Jason Ginchereau    | [jasongin](https://github.com/jasongin)               |
 | Sampson Gao         | [sampsongao](https://github.com/sampsongao)           |
+| Taylor Woll         | [boingoing](https://github.com/boingoing)             |
 
 <a name="license"></a>
 
