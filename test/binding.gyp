@@ -47,9 +47,9 @@
         ['NAPI_VERSION!=""', { 'defines': ['NAPI_VERSION=<@(NAPI_VERSION)'] } ],
         ['disable_deprecated=="true"', {
           'defines': ['NODE_ADDON_API_DISABLE_DEPRECATED']
-        }, {
-          'sources': ['object/object_deprecated.cc']
-        }],
+        }
+          # Otherwise, {'sources':[source files testing deprecated features] }
+        ],
         ['OS=="mac"', {
           'cflags+': ['-fvisibility=hidden'],
           'xcode_settings': {

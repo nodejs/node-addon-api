@@ -64,28 +64,6 @@ Napi::PropertyDescriptor::PropertyDescriptor (napi_property_descriptor desc);
 ### Accessor
 
 ```cpp
-static Napi::PropertyDescriptor Napi::PropertyDescriptor::Accessor (___ name,
-                Getter getter,
-                napi_property_attributes attributes = napi_default,
-                void *data = nullptr);
-```
-
-* `[in] name`: The name used for the getter function.
-* `[in] getter`: A getter function.
-* `[in] attributes`: Potential attributes for the getter function.
-* `[in] data`: A pointer to data of any type, default is a null pointer.
-
-Returns a PropertyDescriptor that contains a function.
-
-The name of the property can be any of the following types:
-- `const char*`
-- `const std::string &`
-- `napi_value value`
-- `Napi::Name`
-
-**This signature is deprecated. It will result in a memory leak if used.**
-
-```cpp
 static Napi::PropertyDescriptor Napi::PropertyDescriptor::Accessor (
                 Napi::Env env,
                 Napi::Object object,
@@ -108,30 +86,6 @@ The name of the property can be any of the following types:
 - `const char*`
 - `const std::string &`
 - `Napi::Name`
-
-```cpp
-static Napi::PropertyDescriptor Napi::PropertyDescriptor::Accessor (___ name,
-                Getter getter,
-                Setter setter,
-                napi_property_attributes attributes = napi_default,
-                void *data = nullptr);
-```
-
-* `[in] name`: The name of the getter and setter function.
-* `[in] getter`: The getter function.
-* `[in] setter`: The setter function.
-* `[in] attributes`: Potential attributes for the getter function.
-* `[in] data`: A pointer to data of any type, default is a null pointer.
-
-Returns a `Napi::PropertyDescriptor` that contains a `Getter` and `Setter` function.
-
-The name of the property can be any of the following types:
-- `const char*`
-- `const std::string &`
-- `napi_value value`
-- `Napi::Name`
-
-**This signature is deprecated. It will result in a memory leak if used.**
 
 ```cpp
 static Napi::PropertyDescriptor Napi::PropertyDescriptor::Accessor (
@@ -160,28 +114,6 @@ The name of the property can be any of the following types:
 - `Napi::Name`
 
 ### Function
-
-```cpp
-static Napi::PropertyDescriptor Napi::PropertyDescriptor::Function (___ name,
-                Callable cb,
-                napi_property_attributes attributes = napi_default,
-		            void *data = nullptr);
-```
-
-* `[in] name`: The name of the Callable function.
-* `[in] cb`: The function
-* `[in] attributes`: Potential attributes for the getter function.
-* `[in] data`: A pointer to data of any type, default is a null pointer.
-
-Returns a `Napi::PropertyDescriptor` that contains a callable `Napi::Function`.
-
-The name of the property can be any of the following types:
-- `const char*`
-- `const std::string &`
-- `napi_value value`
-- `Napi::Name`
-
-**This signature is deprecated. It will result in a memory leak if used.**
 
 ```cpp
 static Napi::PropertyDescriptor Napi::PropertyDescriptor::Function (

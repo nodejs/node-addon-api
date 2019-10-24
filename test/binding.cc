@@ -32,9 +32,6 @@ Object InitHandleScope(Env env);
 Object InitMemoryManagement(Env env);
 Object InitName(Env env);
 Object InitObject(Env env);
-#ifndef NODE_ADDON_API_DISABLE_DEPRECATED
-Object InitObjectDeprecated(Env env);
-#endif // !NODE_ADDON_API_DISABLE_DEPRECATED
 Object InitPromise(Env env);
 #if (NAPI_VERSION > 3)
 Object InitThreadSafeFunctionPtr(Env env);
@@ -78,9 +75,6 @@ Object Init(Env env, Object exports) {
   exports.Set("handlescope", InitHandleScope(env));
   exports.Set("memory_management", InitMemoryManagement(env));
   exports.Set("object", InitObject(env));
-#ifndef NODE_ADDON_API_DISABLE_DEPRECATED
-  exports.Set("object_deprecated", InitObjectDeprecated(env));
-#endif // !NODE_ADDON_API_DISABLE_DEPRECATED
   exports.Set("promise", InitPromise(env));
 #if (NAPI_VERSION > 3)
   exports.Set("threadsafe_function_ptr", InitThreadSafeFunctionPtr(env));

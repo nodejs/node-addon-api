@@ -35,7 +35,6 @@ let testModules = [
   'object/has_own_property',
   'object/has_property',
   'object/object',
-  'object/object_deprecated',
   'object/set_property',
   'promise',
   'threadsafe_function/threadsafe_function_ptr',
