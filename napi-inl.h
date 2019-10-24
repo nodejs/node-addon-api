@@ -4026,20 +4026,6 @@ inline ThreadSafeFunction::ThreadSafeFunction(
   : _tsfn(tsfn) {
 }
 
-inline ThreadSafeFunction::ThreadSafeFunction(ThreadSafeFunction&& other)
-  : _tsfn(std::move(other._tsfn)) {
-}
-
-inline ThreadSafeFunction::ThreadSafeFunction(const ThreadSafeFunction& other)
-  : _tsfn(other._tsfn) {
-}
-
-inline ThreadSafeFunction& ThreadSafeFunction::operator =(
-    ThreadSafeFunction&& other) {
-  _tsfn = other._tsfn;
-  return *this;
-}
-
 inline ThreadSafeFunction::operator napi_threadsafe_function() const {
   return _tsfn;
 }

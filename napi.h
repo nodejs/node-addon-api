@@ -2008,10 +2008,6 @@ namespace Napi {
     ThreadSafeFunction();
     ThreadSafeFunction(napi_threadsafe_function tsFunctionValue);
 
-    ThreadSafeFunction(ThreadSafeFunction&& other);
-    ThreadSafeFunction(const ThreadSafeFunction& other);
-    ThreadSafeFunction& operator=(ThreadSafeFunction&& other);
-
     operator napi_threadsafe_function() const;
 
     // This API may be called from any thread.
