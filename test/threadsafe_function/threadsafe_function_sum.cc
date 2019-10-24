@@ -10,6 +10,9 @@ using namespace std;
 namespace {
 
 struct TestData {
+
+  TestData(Promise::Deferred&& deferred) : deferred(std::move(deferred)) {};
+  
   // Native Promise returned to JavaScript
   Promise::Deferred deferred;
 
@@ -46,9 +49,7 @@ static Value TestWithTSFN(const CallbackInfo& info) {
 
   // We pass the test data to the Finalizer for cleanup. The finalizer is
   // responsible for deleting this data as well.
-  TestData *testData = new TestData({
-    Promise::Deferred::New(info.Env())
-  });
+  TestData *testData = new TestData(Promise::Deferred::New(info.Env()));
 
   ThreadSafeFunction tsfn = ThreadSafeFunction::New(
       info.Env(), cb, "Test", 0, threadCount,
@@ -76,9 +77,7 @@ static Value TestDelayedTSFN(const CallbackInfo& info) {
   int threadCount = info[0].As<Number>().Int32Value();
   Function cb = info[1].As<Function>();
 
-  TestData *testData = new TestData({
-    Promise::Deferred::New(info.Env())
-  });
+  TestData *testData = new TestData(Promise::Deferred::New(info.Env()));
 
   vector< std::promise<ThreadSafeFunction> > tsfnPromises;
 
@@ -129,9 +128,7 @@ static Value TestAcquire(const CallbackInfo& info) {
 
   // We pass the test data to the Finalizer for cleanup. The finalizer is
   // responsible for deleting this data as well.
-  TestData *testData = new TestData({
-    Promise::Deferred::New(env)
-  });
+  TestData *testData = new TestData(Promise::Deferred::New(info.Env()));
 
   testData->tsfn = ThreadSafeFunction::New(
       env, cb, "Test", 0, 1,
