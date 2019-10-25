@@ -1,11 +1,11 @@
 #include "napi.h"
 #include <thread>
+#include <cstdlib>
 #include <future>
 
 #if (NAPI_VERSION > 3)
 
 using namespace Napi;
-using namespace std;
 
 namespace {
 
@@ -18,7 +18,7 @@ struct TestData {
 
   // List of threads created for test. This list only ever accessed via main
   // thread.
-  vector<thread> threads = {};
+  std::vector<std::thread> threads = {};
 
   ThreadSafeFunction tsfn = ThreadSafeFunction();
 };
@@ -57,7 +57,7 @@ static Value TestWithTSFN(const CallbackInfo& info) {
 
   for (int i = 0; i < threadCount; ++i) {
     // A copy of the ThreadSafeFunction will go to the thread entry point
-    testData->threads.push_back( thread(entryWithTSFN, tsfn, i) );
+    testData->threads.push_back( std::thread(entryWithTSFN, tsfn, i) );
   }
 
   return testData->deferred.Promise();
@@ -79,11 +79,11 @@ static Value TestDelayedTSFN(const CallbackInfo& info) {
 
   TestData *testData = new TestData(Promise::Deferred::New(info.Env()));
 
-  vector< std::promise<ThreadSafeFunction> > tsfnPromises;
+  std::vector< std::promise<ThreadSafeFunction> > tsfnPromises;
 
   for (int i = 0; i < threadCount; ++i) {
     tsfnPromises.emplace_back();
-    testData->threads.push_back( thread(entryDelayedTSFN, tsfnPromises[i].get_future(), i) );
+    testData->threads.push_back( std::thread(entryDelayedTSFN, tsfnPromises[i].get_future(), i) );
   }
 
   testData->tsfn = ThreadSafeFunction::New(
@@ -111,7 +111,7 @@ static Value CreateThread(const CallbackInfo& info) {
   ThreadSafeFunction tsfn = testData->tsfn;
   int threadId = testData->threads.size();
   // A copy of the ThreadSafeFunction will go to the thread entry point
-  testData->threads.push_back( thread(entryAcquire, tsfn, threadId) );
+  testData->threads.push_back( std::thread(entryAcquire, tsfn, threadId) );
   return Number::New(info.Env(), threadId);
 }
 
