@@ -27,14 +27,16 @@ static inline napi_status AttachData(napi_env env,
                                      FreeType* data,
                                      napi_finalize finalizer = nullptr,
                                      void* hint = nullptr) {
+  napi_status status;
+  if (finalizer == nullptr) {
+    finalizer = [](napi_env /*env*/, void* data, void* /*hint*/) {
+      delete static_cast<FreeType*>(data);
+    };
+  }
+#if (NAPI_VERSION < 5)
   napi_value symbol, external;
-  napi_status status = napi_create_symbol(env, nullptr, &symbol);
+  status = napi_create_symbol(env, nullptr, &symbol);
   if (status == napi_ok) {
-    if (finalizer == nullptr) {
-      finalizer = [](napi_env /*env*/, void* data, void* /*hint*/) {
-        delete static_cast<FreeType*>(data);
-      };
-    }
     status = napi_create_external(env,
                               data,
                               finalizer,
@@ -54,6 +56,9 @@ static inline napi_status AttachData(napi_env env,
       status = napi_define_properties(env, obj, 1, &desc);
     }
   }
+#else  // NAPI_VERSION >= 5
+  status = napi_add_finalizer(env, obj, data, finalizer, hint, nullptr);
+#endif
   return status;
 }
 
