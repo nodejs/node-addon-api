@@ -69,6 +69,7 @@ if ((process.env.npm_config_NAPI_VERSION !== undefined) &&
 if ((process.env.npm_config_NAPI_VERSION !== undefined) &&
     (process.env.npm_config_NAPI_VERSION < 4)) {
   testModules.splice(testModules.indexOf('threadsafe_function/threadsafe_function_ptr'), 1);
+  testModules.splice(testModules.indexOf('threadsafe_function/threadsafe_function_unref'), 1);
   testModules.splice(testModules.indexOf('threadsafe_function/threadsafe_function'), 1);
 }
 
