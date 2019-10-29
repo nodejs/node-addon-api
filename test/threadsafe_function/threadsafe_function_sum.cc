@@ -63,35 +63,79 @@ static Value TestWithTSFN(const CallbackInfo& info) {
   return testData->deferred.Promise();
 }
 
+// Task instance created for each new std::thread
+class DelayedTSFNTask {
+public:
+  // Each instance has its own tsfn
+  ThreadSafeFunction tsfn;
 
-void entryDelayedTSFN(std::future<ThreadSafeFunction> tsfnFuture, int threadId) {
-  std::this_thread::sleep_for(std::chrono::milliseconds(std::rand() % 100 + 1));
-  ThreadSafeFunction tsfn = tsfnFuture.get();
-  tsfn.BlockingCall( [=](Napi::Env env, Function callback) {
-    callback.Call( { Number::New(env, static_cast<double>(threadId))});
-  });
-  tsfn.Release();
+  // Thread-safety
+  std::mutex mtx;
+  std::condition_variable cv;
+
+  // Entry point for std::thread
+  void entryDelayedTSFN(int threadId) {
+    std::unique_lock<std::mutex> lk(mtx);
+    cv.wait(lk);
+    tsfn.BlockingCall([=](Napi::Env env, Function callback) {
+      callback.Call({Number::New(env, static_cast<double>(threadId))});
+    });
+    tsfn.Release();
+  };
+};
+
+struct TestDataDelayed {
+
+  TestDataDelayed(Promise::Deferred &&deferred)
+      : deferred(std::move(deferred)){};
+  ~TestDataDelayed() { taskInsts.clear(); };
+  // Native Promise returned to JavaScript
+  Promise::Deferred deferred;
+
+  // List of threads created for test. This list only ever accessed via main
+  // thread.
+  std::vector<std::thread> threads = {};
+
+  // List of DelayedTSFNThread instances
+  std::vector<std::unique_ptr<DelayedTSFNTask>> taskInsts = {};
+
+  ThreadSafeFunction tsfn = ThreadSafeFunction();
+};
+
+void FinalizerCallbackDelayed(Napi::Env env, TestDataDelayed *finalizeData) {
+  for (size_t i = 0; i < finalizeData->threads.size(); ++i) {
+    finalizeData->threads[i].join();
+  }
+  finalizeData->deferred.Resolve(Boolean::New(env, true));
+  delete finalizeData;
 }
 
-static Value TestDelayedTSFN(const CallbackInfo& info) {
+static Value TestDelayedTSFN(const CallbackInfo &info) {
   int threadCount = info[0].As<Number>().Int32Value();
   Function cb = info[1].As<Function>();
 
-  TestData *testData = new TestData(Promise::Deferred::New(info.Env()));
+  TestDataDelayed *testData =
+      new TestDataDelayed(Promise::Deferred::New(info.Env()));
 
-  std::vector< std::promise<ThreadSafeFunction> > tsfnPromises;
+  testData->tsfn =
+      ThreadSafeFunction::New(info.Env(), cb, "Test", 0, threadCount,
+                              std::function<decltype(FinalizerCallbackDelayed)>(
+                                  FinalizerCallbackDelayed),
+                              testData);
 
   for (int i = 0; i < threadCount; ++i) {
-    tsfnPromises.emplace_back();
-    testData->threads.push_back( std::thread(entryDelayedTSFN, tsfnPromises[i].get_future(), i) );
+    testData->taskInsts.push_back(
+        std::unique_ptr<DelayedTSFNTask>(new DelayedTSFNTask()));
+    testData->threads.push_back(std::thread(&DelayedTSFNTask::entryDelayedTSFN,
+                                            testData->taskInsts.back().get(),
+                                            i));
   }
+  std::this_thread::sleep_for(std::chrono::milliseconds(std::rand() % 100 + 1));
 
-  testData->tsfn = ThreadSafeFunction::New(
-      info.Env(), cb, "Test", 0, threadCount,
-      std::function<decltype(FinalizerCallback)>(FinalizerCallback), testData);
-
-  for (int i = 0; i < threadCount; ++i) {
-    tsfnPromises[i].set_value(testData->tsfn);
+  for (auto &task : testData->taskInsts) {
+    std::lock_guard<std::mutex> lk(task->mtx);
+    task->tsfn = testData->tsfn;
+    task->cv.notify_all();
   }
 
   return testData->deferred.Promise();
