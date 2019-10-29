@@ -4047,6 +4047,12 @@ inline napi_status ThreadSafeFunction::BlockingCall() const {
   return CallInternal(nullptr, napi_tsfn_blocking);
 }
 
+template <>
+inline napi_status ThreadSafeFunction::BlockingCall(
+    void* data) const {
+  return napi_call_threadsafe_function(*_tsfn, data, napi_tsfn_blocking);
+}
+
 template <typename Callback>
 inline napi_status ThreadSafeFunction::BlockingCall(
     Callback callback) const {
@@ -4064,6 +4070,12 @@ inline napi_status ThreadSafeFunction::BlockingCall(
 
 inline napi_status ThreadSafeFunction::NonBlockingCall() const {
   return CallInternal(nullptr, napi_tsfn_nonblocking);
+}
+
+template <>
+inline napi_status ThreadSafeFunction::NonBlockingCall(
+    void* data) const {
+  return napi_call_threadsafe_function(*_tsfn, data, napi_tsfn_nonblocking);
 }
 
 template <typename Callback>
