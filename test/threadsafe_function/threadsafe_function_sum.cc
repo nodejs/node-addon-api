@@ -1,7 +1,6 @@
 #include "napi.h"
 #include <thread>
 #include <cstdlib>
-#include <future>
 
 #if (NAPI_VERSION > 3)
 
