@@ -1,6 +1,8 @@
 #include "napi.h"
 #include <thread>
 #include <cstdlib>
+#include <condition_variable>
+#include <mutex>
 
 #if (NAPI_VERSION > 3)
 
