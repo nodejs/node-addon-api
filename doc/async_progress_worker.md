@@ -1,6 +1,6 @@
 # AsyncProgressWorker
 
-`Napi::AsyncProgressWorker` is an abstract class, which implements `Napi::AsyncWorker`
+`Napi::AsyncProgressWorker` is an abstract class which implements `Napi::AsyncWorker`
 while extending `Napi::AsyncWorker` internally with `Napi::ThreadSafeFunction` for
 moving work progress reports from worker thread(s) to event loop threads.
 
@@ -19,7 +19,7 @@ For the most basic use, only the `Napi::AsyncProgressWorker::Execute` and
 
 ## Methods
 
-[`Napi::AsyncWorker`]() provides detailed descriptions for most methods.
+[`Napi::AsyncWorker`][] provides detailed descriptions for most methods.
 
 ### Execute
 
@@ -149,7 +149,7 @@ Creates a new `Napi::AsyncProgressWorker`.
 explicit Napi::AsyncProgressWorker(const Napi::Object& receiver, const Napi::Function& callback, const char* resource_name, const Napi::Object& resource);
 ```
 
-- `[in] receiver`: The `this` object passed to the called function.
+- `[in] receiver`: The `this` object to be passed to the called function.
 - `[in] callback`: The function which will be called when an asynchronous
 operations ends. The given function is called from the main event loop thread.
 - `[in] resource_name`:  Null-terminated string that represents the
@@ -253,11 +253,11 @@ void Napi::AsyncProgressWorker::ExecutionProcess::Send(const T* data, size_t cou
 
 The first step to use the `Napi::AsyncProgressWorker` class is to create a new class that
 inherits from it and implement the `Napi::AsyncProgressWorker::Execute` abstract method.
-Typically input to your worker will be saved within the class' fields generally
+Typically input to the worker will be saved within the class' fields generally
 passed in through its constructor.
 
 During the worker thread execution, the first argument of `Napi::AsyncProgressWorker::Execute`
-can be used to report the process of the execution.
+can be used to report the progress of the execution.
 
 When the `Napi::AsyncProgressWorker::Execute` method completes without errors the
 `Napi::AsyncProgressWorker::OnOK` function callback will be invoked. In this function the
@@ -269,7 +269,7 @@ function runs in the background out of the **event loop** thread and at the end
 the `Napi::AsyncProgressWorker::OnOK` or `Napi::AsyncProgressWorker::OnError` function will be
 called and are executed as part of the event loop.
 
-The code below shows a basic example of `Napi::AsyncProgressWorker` the implementation:
+The code below shows a basic example of the `Napi::AsyncProgressWorker` implementation:
 
 ```cpp
 #include<napi.h>
@@ -309,16 +309,16 @@ class EchoWorker : public AsyncProgressWorker<uint32_t> {
 };
 ```
 
-The `EchoWorker`'s contructor calls the base class' constructor to pass in the
+The `EchoWorker`'s constructor calls the base class' constructor to pass in the
 callback that the `Napi::AsyncProgressWorker` base class will store persistently. When
 the work on the `Napi::AsyncProgressWorker::Execute` method is done the
-`Napi::AsyncProgressWorker::OnOk` method is called and the results return back to
-JavaScript invoking the stored callback with its associated environment.
+`Napi::AsyncProgressWorker::OnOk` method is called and the results are return back to
+JavaScript when the stored callback is invoked with its associated environment.
 
 The following code shows an example of how to create and use an `Napi::AsyncProgressWorker`
 
 ```cpp
-#include<napi.h>
+#include <napi.h>
 
 // Include EchoWorker class
 // ..
@@ -326,7 +326,7 @@ The following code shows an example of how to create and use an `Napi::AsyncProg
 use namespace Napi;
 
 Value Echo(const CallbackInfo& info) {
-    // You need to validate the arguments here
+    // We need to validate the arguments here
     Function cb = info[1].As<Function>();
     std::string in = info[0].As<String>();
     EchoWorker* wk = new EchoWorker(cb, in);
@@ -335,10 +335,10 @@ Value Echo(const CallbackInfo& info) {
 }
 ```
 
-Using the implementation of a `Napi::AsyncProgressWorker` is straight forward. You only
-need to create a new instance and pass to its constructor the callback you want to
-execute when your asynchronous task ends and other data you need for your
-computation. Once created the only other action you have to do is to call the
-`Napi::AsyncProgressWorker::Queue` method that will queue the created worker for execution.
+The implementation of a `Napi::AsyncProgressWorker` can be used by creating a
+new instance and passing to its constructor the callback to execute when the
+asynchronous task ends and other data needed for the computation. Once created,
+the only other action needed is to call the `Napi::AsyncProgressWorker::Queue`
+method that will queue the created worker for execution.
 
 [`Napi::AsyncWorker`]: ./async_worker.md
