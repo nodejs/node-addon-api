@@ -10,8 +10,9 @@ Object InitBasicTypesArray(Env env);
 Object InitBasicTypesBoolean(Env env);
 Object InitBasicTypesNumber(Env env);
 Object InitBasicTypesValue(Env env);
-// currently experimental guard with version of NODE_MAJOR_VERSION that it is
-// released in once it is no longer experimental
+// Currently experimental guard with NODE_MAJOR_VERISION in which it was
+// released. Once it is no longer experimental guard with the NAPI_VERSION
+// in which it is released instead.
 #if (NODE_MAJOR_VERSION >= 10)
 Object InitBigInt(Env env);
 #endif
@@ -55,8 +56,9 @@ Object Init(Env env, Object exports) {
   exports.Set("basic_types_boolean", InitBasicTypesBoolean(env));
   exports.Set("basic_types_number", InitBasicTypesNumber(env));
   exports.Set("basic_types_value", InitBasicTypesValue(env));
-// currently experimental guard with version of NODE_MAJOR_VERSION that it is
-// released in once it is no longer experimental
+// Currently experimental guard with NODE_MAJOR_VERISION in which it was
+// released. Once it is no longer experimental guard with the NAPI_VERSION
+// in which it is released instead.
 #if (NODE_MAJOR_VERSION >= 10)
   exports.Set("bigint", InitBigInt(env));
 #endif

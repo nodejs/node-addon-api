@@ -52,12 +52,9 @@ const napiVersion = Number(process.versions.napi)
 const nodeMajorVersion = Number(process.versions.node.match(/\d+/)[0])
 
 if (nodeMajorVersion < 10) {
-  // currently experimental only test if node major version
-  // is set to experimental. We can't use napi_experimental here
-  // as that is not supported as a number on earlier
-  // Node.js versions. Once bigint is in a release
-  // this should be guarded on the napi version
-  // in which bigint was added.
+  // Currently experimental guard with NODE_MAJOR_VERISION in which it was
+  // released. Once it is no longer experimental guard with the NAPI_VERSION
+  // in which it is released instead.
   testModules.splice(testModules.indexOf('bigint'), 1);
   testModules.splice(testModules.indexOf('typedarray-bigint'), 1);
 }
