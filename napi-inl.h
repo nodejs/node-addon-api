@@ -4110,7 +4110,8 @@ inline napi_status ThreadSafeFunction::Abort() {
 inline ThreadSafeFunction::ConvertibleContext
 ThreadSafeFunction::GetContext() const {
   void* context;
-  napi_get_threadsafe_function_context(*_tsfn, &context);
+  napi_status status = napi_get_threadsafe_function_context(*_tsfn, &context);
+  NAPI_FATAL_IF_FAILED(status, "ThreadSafeFunction::GetContext", "napi_get_threadsafe_function_context");
   return ConvertibleContext({ context });
 }
 

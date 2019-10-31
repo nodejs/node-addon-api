@@ -37,6 +37,7 @@ Object InitObjectDeprecated(Env env);
 #endif // !NODE_ADDON_API_DISABLE_DEPRECATED
 Object InitPromise(Env env);
 #if (NAPI_VERSION > 3)
+Object InitThreadSafeFunctionCtx(Env env);
 Object InitThreadSafeFunctionPtr(Env env);
 Object InitThreadSafeFunctionUnref(Env env);
 Object InitThreadSafeFunction(Env env);
@@ -83,6 +84,7 @@ Object Init(Env env, Object exports) {
 #endif // !NODE_ADDON_API_DISABLE_DEPRECATED
   exports.Set("promise", InitPromise(env));
 #if (NAPI_VERSION > 3)
+  exports.Set("threadsafe_function_ctx", InitThreadSafeFunctionCtx(env));
   exports.Set("threadsafe_function_ptr", InitThreadSafeFunctionPtr(env));
   exports.Set("threadsafe_function_unref", InitThreadSafeFunctionUnref(env));
   exports.Set("threadsafe_function", InitThreadSafeFunction(env));
