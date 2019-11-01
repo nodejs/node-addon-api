@@ -1,11 +1,13 @@
+// Currently experimental guard with NODE_MAJOR_VERISION in which it was
+// released. Once it is no longer experimental guard with the NAPI_VERSION
+// in which it is released instead.
+#if (NODE_MAJOR_VERSION >= 10)
+
 #define NAPI_EXPERIMENTAL
 #include "napi.h"
 
 using namespace Napi;
 
-// currently experimental guard with version of NAPI_VERSION that it is
-// released in once it is no longer experimental
-#if (NAPI_VERSION > 2147483646)
 namespace {
 
 Value IsLossless(const CallbackInfo& info) {

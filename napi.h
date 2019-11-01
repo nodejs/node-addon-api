@@ -5,6 +5,7 @@
 #include <functional>
 #include <initializer_list>
 #include <memory>
+#include <mutex>
 #include <string>
 #include <vector>
 
@@ -111,9 +112,10 @@ namespace Napi {
   class Value;
   class Boolean;
   class Number;
-// currently experimental guard with version of NAPI_VERSION that it is
-// released in once it is no longer experimental
-#if (NAPI_VERSION > 2147483646)
+// Currently experimental guard with the definition of NAPI_EXPERIMENTAL.
+// Once it is no longer experimental guard with the NAPI_VERSION in which it is
+// released instead.
+#ifdef NAPI_EXPERIMENTAL
   class BigInt;
 #endif  // NAPI_EXPERIMENTAL
 #if (NAPI_VERSION > 4)
@@ -139,9 +141,10 @@ namespace Napi {
   typedef TypedArrayOf<uint32_t> Uint32Array; ///< Typed-array of unsigned 32-bit integers
   typedef TypedArrayOf<float> Float32Array;   ///< Typed-array of 32-bit floating-point values
   typedef TypedArrayOf<double> Float64Array;  ///< Typed-array of 64-bit floating-point values
-// currently experimental guard with version of NAPI_VERSION that it is
-// released in once it is no longer experimental
-#if (NAPI_VERSION > 2147483646)
+// Currently experimental guard with the definition of NAPI_EXPERIMENTAL.
+// Once it is no longer experimental guard with the NAPI_VERSION in which it is
+// released instead.
+#ifdef NAPI_EXPERIMENTAL
   typedef TypedArrayOf<int64_t> BigInt64Array;   ///< Typed array of signed 64-bit integers
   typedef TypedArrayOf<uint64_t> BigUint64Array; ///< Typed array of unsigned 64-bit integers
 #endif  // NAPI_EXPERIMENTAL
@@ -244,9 +247,10 @@ namespace Napi {
     bool IsNull() const;        ///< Tests if a value is a null JavaScript value.
     bool IsBoolean() const;     ///< Tests if a value is a JavaScript boolean.
     bool IsNumber() const;      ///< Tests if a value is a JavaScript number.
-// currently experimental guard with version of NAPI_VERSION that it is
-// released in once it is no longer experimental
-#if (NAPI_VERSION > 2147483646)
+// Currently experimental guard with the definition of NAPI_EXPERIMENTAL.
+// Once it is no longer experimental guard with the NAPI_VERSION in which it is
+// released instead.
+#ifdef NAPI_EXPERIMENTAL
     bool IsBigInt() const;      ///< Tests if a value is a JavaScript bigint.
 #endif  // NAPI_EXPERIMENTAL
 #if (NAPI_VERSION > 4)
@@ -321,9 +325,10 @@ namespace Napi {
     double DoubleValue() const;   ///< Converts a Number value to a 64-bit floating-point value.
   };
 
-// currently experimental guard with version of NAPI_VERSION that it is
-// released in once it is no longer experimental
-#if (NAPI_VERSION > 2147483646)
+// Currently experimental guard with the definition of NAPI_EXPERIMENTAL.
+// Once it is no longer experimental guard with the NAPI_VERSION in which it is
+// released instead.
+#ifdef NAPI_EXPERIMENTAL
   /// A JavaScript bigint value.
   class BigInt : public Value {
   public:
@@ -851,9 +856,10 @@ namespace Napi {
         : std::is_same<T, uint32_t>::value ? napi_uint32_array
         : std::is_same<T, float>::value ? napi_float32_array
         : std::is_same<T, double>::value ? napi_float64_array
-// currently experimental guard with version of NAPI_VERSION that it is
-// released in once it is no longer experimental
-#if (NAPI_VERSION > 2147483646)
+// Currently experimental guard with the definition of NAPI_EXPERIMENTAL.
+// Once it is no longer experimental guard with the NAPI_VERSION in which it is
+// released instead.
+#ifdef NAPI_EXPERIMENTAL
         : std::is_same<T, int64_t>::value ? napi_bigint64_array
         : std::is_same<T, uint64_t>::value ? napi_biguint64_array
 #endif  // NAPI_EXPERIMENTAL
@@ -2008,8 +2014,7 @@ namespace Napi {
     ThreadSafeFunction();
     ThreadSafeFunction(napi_threadsafe_function tsFunctionValue);
 
-    ThreadSafeFunction(ThreadSafeFunction&& other);
-    ThreadSafeFunction& operator=(ThreadSafeFunction&& other);
+    operator napi_threadsafe_function() const;
 
     // This API may be called from any thread.
     napi_status BlockingCall() const;
@@ -2081,13 +2086,67 @@ namespace Napi {
                        napi_value jsCallback,
                        void* context,
                        void* data);
-    struct Deleter {
-      // napi_threadsafe_function is managed by Node.js, leave it alone.
-      void operator()(napi_threadsafe_function*) const {};
-    };
 
-    std::unique_ptr<napi_threadsafe_function, Deleter> _tsfn;
-    Deleter _d;
+    napi_threadsafe_function _tsfn;
+  };
+
+  template<class T>
+  class AsyncProgressWorker : public AsyncWorker {
+    public:
+     virtual ~AsyncProgressWorker();
+
+     class ExecutionProgress {
+        friend class AsyncProgressWorker;
+       public:
+        void Signal() const;
+        void Send(const T* data, size_t count) const;
+       private:
+        explicit ExecutionProgress(AsyncProgressWorker* worker) : _worker(worker) {}
+        AsyncProgressWorker* const _worker;
+     };
+
+    protected:
+    explicit AsyncProgressWorker(const Function& callback);
+    explicit AsyncProgressWorker(const Function& callback,
+                         const char* resource_name);
+    explicit AsyncProgressWorker(const Function& callback,
+                         const char* resource_name,
+                         const Object& resource);
+    explicit AsyncProgressWorker(const Object& receiver,
+                         const Function& callback);
+    explicit AsyncProgressWorker(const Object& receiver,
+                         const Function& callback,
+                         const char* resource_name);
+    explicit AsyncProgressWorker(const Object& receiver,
+                         const Function& callback,
+                         const char* resource_name,
+                         const Object& resource);
+
+// Optional callback of Napi::ThreadSafeFunction only available after NAPI_VERSION 4.
+// Refs: https://github.com/nodejs/node/pull/27791
+#if NAPI_VERSION > 4
+    explicit AsyncProgressWorker(Napi::Env env);
+    explicit AsyncProgressWorker(Napi::Env env,
+                         const char* resource_name);
+    explicit AsyncProgressWorker(Napi::Env env,
+                         const char* resource_name,
+                         const Object& resource);
+#endif
+
+     virtual void Execute(const ExecutionProgress& progress) = 0;
+     virtual void OnProgress(const T* data, size_t count) = 0;
+
+    private:
+     static void WorkProgress_(Napi::Env env, Napi::Function jsCallback, void* data);
+
+     void Execute() override;
+     void Signal() const;
+     void SendProgress_(const T* data, size_t count);
+
+     std::mutex _mutex;
+     T* _asyncdata;
+     size_t _asyncsize;
+     ThreadSafeFunction _tsfn;
   };
   #endif
 

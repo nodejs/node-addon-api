@@ -1,12 +1,14 @@
 {
   'variables': {
-    'NAPI_VERSION%': "",
+    'NAPI_VERSION%': "<!(node -p \"process.versions.napi\")",
+    'NODE_MAJOR_VERSION%': "<!(node -p \"process.versions.node.match(/\\d+/)[0]\")",
     'disable_deprecated': "<!(node -p \"process.env['npm_config_disable_deprecated']\")"
   },
   'target_defaults': {
     'sources': [
         'arraybuffer.cc',
         'asynccontext.cc',
+        'asyncprogressworker.cc',
         'asyncworker.cc',
         'asyncworker-persistent.cc',
         'basic_types/array.cc',
@@ -36,6 +38,7 @@
         'promise.cc',
         'threadsafe_function/threadsafe_function_existing_tsfn.cc',
         'threadsafe_function/threadsafe_function_ptr.cc',
+        'threadsafe_function/threadsafe_function_sum.cc',
         'threadsafe_function/threadsafe_function_unref.cc',
         'threadsafe_function/threadsafe_function.cc',
         'typedarray.cc',
@@ -58,6 +61,7 @@
           }
         }]
       ],
+      'defines': ['NODE_MAJOR_VERSION=<@(NODE_MAJOR_VERSION)'],
       'include_dirs': ["<!@(node -p \"require('../').include\")"],
       'dependencies': ["<!(node -p \"require('../').gyp\")"],
       'cflags': [ '-Werror', '-Wall', '-Wextra', '-Wpedantic', '-Wunused-parameter' ],

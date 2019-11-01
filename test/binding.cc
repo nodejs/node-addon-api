@@ -1,19 +1,22 @@
-#define NAPI_EXPERIMENTAL
 #include "napi.h"
 
 using namespace Napi;
 
 Object InitArrayBuffer(Env env);
 Object InitAsyncContext(Env env);
+#if (NAPI_VERSION > 3)
+Object InitAsyncProgressWorker(Env env);
+#endif
 Object InitAsyncWorker(Env env);
 Object InitPersistentAsyncWorker(Env env);
 Object InitBasicTypesArray(Env env);
 Object InitBasicTypesBoolean(Env env);
 Object InitBasicTypesNumber(Env env);
 Object InitBasicTypesValue(Env env);
-// currently experimental guard with version of NAPI_VERSION that it is
-// released in once it is no longer experimental
-#if (NAPI_VERSION > 2147483646)
+// Currently experimental guard with NODE_MAJOR_VERISION in which it was
+// released. Once it is no longer experimental guard with the NAPI_VERSION
+// in which it is released instead.
+#if (NODE_MAJOR_VERSION >= 10)
 Object InitBigInt(Env env);
 #endif
 Object InitBuffer(Env env);
@@ -39,6 +42,7 @@ Object InitPromise(Env env);
 #if (NAPI_VERSION > 3)
 Object InitThreadSafeFunctionExistingTsfn(Env env);
 Object InitThreadSafeFunctionPtr(Env env);
+Object InitThreadSafeFunctionSum(Env env);
 Object InitThreadSafeFunctionUnref(Env env);
 Object InitThreadSafeFunction(Env env);
 #endif
@@ -51,15 +55,19 @@ Object InitThunkingManual(Env env);
 Object Init(Env env, Object exports) {
   exports.Set("arraybuffer", InitArrayBuffer(env));
   exports.Set("asynccontext", InitAsyncContext(env));
+#if (NAPI_VERSION > 3)
+  exports.Set("asyncprogressworker", InitAsyncProgressWorker(env));
+#endif
   exports.Set("asyncworker", InitAsyncWorker(env));
   exports.Set("persistentasyncworker", InitPersistentAsyncWorker(env));
   exports.Set("basic_types_array", InitBasicTypesArray(env));
   exports.Set("basic_types_boolean", InitBasicTypesBoolean(env));
   exports.Set("basic_types_number", InitBasicTypesNumber(env));
   exports.Set("basic_types_value", InitBasicTypesValue(env));
-// currently experimental guard with version of NAPI_VERSION that it is
-// released in once it is no longer experimental
-#if (NAPI_VERSION > 2147483646)
+// Currently experimental guard with NODE_MAJOR_VERISION in which it was
+// released. Once it is no longer experimental guard with the NAPI_VERSION
+// in which it is released instead.
+#if (NODE_MAJOR_VERSION >= 10)
   exports.Set("bigint", InitBigInt(env));
 #endif
 #if (NAPI_VERSION > 4)
@@ -86,6 +94,7 @@ Object Init(Env env, Object exports) {
 #if (NAPI_VERSION > 3)
   exports.Set("threadsafe_function_existing_tsfn", InitThreadSafeFunctionExistingTsfn(env));
   exports.Set("threadsafe_function_ptr", InitThreadSafeFunctionPtr(env));
+  exports.Set("threadsafe_function_sum", InitThreadSafeFunctionSum(env));
   exports.Set("threadsafe_function_unref", InitThreadSafeFunctionUnref(env));
   exports.Set("threadsafe_function", InitThreadSafeFunction(env));
 #endif
