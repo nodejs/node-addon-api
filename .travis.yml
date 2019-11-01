@@ -56,13 +56,7 @@ install:
 script:
   # Travis CI sets NVM_NODEJS_ORG_MIRROR, but it makes node-gyp fail to download headers for nightly builds.
   - unset NVM_NODEJS_ORG_MIRROR
-  - NODEJS_MAJOR_VERSION=$(node -p "process.versions.node.match(/\d+/)[0]")
 
-  - |
-    if [ ${NODEJS_MAJOR_VERSION} -gt 11 ]; then
-      npm test
-    else
-      npm test $NPMOPT --NAPI_VERSION=$(node -p "process.versions.napi")
-    fi
+  - npm test
 after_success:
   - cpp-coveralls --gcov-options '\-lp' --build-root test/build --exclude test

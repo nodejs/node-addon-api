@@ -383,9 +383,10 @@ inline bool Value::IsNumber() const {
   return Type() == napi_number;
 }
 
-// currently experimental guard with version of NAPI_VERSION that it is
-// released in once it is no longer experimental
-#if (NAPI_VERSION > 2147483646)
+// Currently experimental guard with the definition of NAPI_EXPERIMENTAL.
+// Once it is no longer experimental guard with the NAPI_VERSION in which it is
+// released instead.
+#ifdef NAPI_EXPERIMENTAL
 inline bool Value::IsBigInt() const {
   return Type() == napi_bigint;
 }
@@ -620,9 +621,10 @@ inline double Number::DoubleValue() const {
   return result;
 }
 
-// currently experimental guard with version of NAPI_VERSION that it is
-// released in once it is no longer experimental
-#if (NAPI_VERSION > 2147483646)
+// Currently experimental guard with the definition of NAPI_EXPERIMENTAL.
+// Once it is no longer experimental guard with the NAPI_VERSION in which it is
+// released instead.
+#ifdef NAPI_EXPERIMENTAL
 ////////////////////////////////////////////////////////////////////////////////
 // BigInt Class
 ////////////////////////////////////////////////////////////////////////////////
