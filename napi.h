@@ -5,6 +5,7 @@
 #include <functional>
 #include <initializer_list>
 #include <memory>
+#include <mutex>
 #include <string>
 #include <vector>
 
@@ -2013,8 +2014,7 @@ namespace Napi {
     ThreadSafeFunction();
     ThreadSafeFunction(napi_threadsafe_function tsFunctionValue);
 
-    ThreadSafeFunction(ThreadSafeFunction&& other);
-    ThreadSafeFunction& operator=(ThreadSafeFunction&& other);
+    operator napi_threadsafe_function() const;
 
     // This API may be called from any thread.
     napi_status BlockingCall() const;
@@ -2086,13 +2086,67 @@ namespace Napi {
                        napi_value jsCallback,
                        void* context,
                        void* data);
-    struct Deleter {
-      // napi_threadsafe_function is managed by Node.js, leave it alone.
-      void operator()(napi_threadsafe_function*) const {};
-    };
 
-    std::unique_ptr<napi_threadsafe_function, Deleter> _tsfn;
-    Deleter _d;
+    napi_threadsafe_function _tsfn;
+  };
+
+  template<class T>
+  class AsyncProgressWorker : public AsyncWorker {
+    public:
+     virtual ~AsyncProgressWorker();
+
+     class ExecutionProgress {
+        friend class AsyncProgressWorker;
+       public:
+        void Signal() const;
+        void Send(const T* data, size_t count) const;
+       private:
+        explicit ExecutionProgress(AsyncProgressWorker* worker) : _worker(worker) {}
+        AsyncProgressWorker* const _worker;
+     };
+
+    protected:
+    explicit AsyncProgressWorker(const Function& callback);
+    explicit AsyncProgressWorker(const Function& callback,
+                         const char* resource_name);
+    explicit AsyncProgressWorker(const Function& callback,
+                         const char* resource_name,
+                         const Object& resource);
+    explicit AsyncProgressWorker(const Object& receiver,
+                         const Function& callback);
+    explicit AsyncProgressWorker(const Object& receiver,
+                         const Function& callback,
+                         const char* resource_name);
+    explicit AsyncProgressWorker(const Object& receiver,
+                         const Function& callback,
+                         const char* resource_name,
+                         const Object& resource);
+
+// Optional callback of Napi::ThreadSafeFunction only available after NAPI_VERSION 4.
+// Refs: https://github.com/nodejs/node/pull/27791
+#if NAPI_VERSION > 4
+    explicit AsyncProgressWorker(Napi::Env env);
+    explicit AsyncProgressWorker(Napi::Env env,
+                         const char* resource_name);
+    explicit AsyncProgressWorker(Napi::Env env,
+                         const char* resource_name,
+                         const Object& resource);
+#endif
+
+     virtual void Execute(const ExecutionProgress& progress) = 0;
+     virtual void OnProgress(const T* data, size_t count) = 0;
+
+    private:
+     static void WorkProgress_(Napi::Env env, Napi::Function jsCallback, void* data);
+
+     void Execute() override;
+     void Signal() const;
+     void SendProgress_(const T* data, size_t count);
+
+     std::mutex _mutex;
+     T* _asyncdata;
+     size_t _asyncsize;
+     ThreadSafeFunction _tsfn;
   };
   #endif
 

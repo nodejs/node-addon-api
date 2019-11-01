@@ -9,7 +9,9 @@
 
 // Note: Do not include this file directly! Include "napi.h" instead.
 
+#include <algorithm>
 #include <cstring>
+#include <mutex>
 #include <type_traits>
 
 namespace Napi {
@@ -27,14 +29,16 @@ static inline napi_status AttachData(napi_env env,
                                      FreeType* data,
                                      napi_finalize finalizer = nullptr,
                                      void* hint = nullptr) {
+  napi_status status;
+  if (finalizer == nullptr) {
+    finalizer = [](napi_env /*env*/, void* data, void* /*hint*/) {
+      delete static_cast<FreeType*>(data);
+    };
+  }
+#if (NAPI_VERSION < 5)
   napi_value symbol, external;
-  napi_status status = napi_create_symbol(env, nullptr, &symbol);
+  status = napi_create_symbol(env, nullptr, &symbol);
   if (status == napi_ok) {
-    if (finalizer == nullptr) {
-      finalizer = [](napi_env /*env*/, void* data, void* /*hint*/) {
-        delete static_cast<FreeType*>(data);
-      };
-    }
     status = napi_create_external(env,
                               data,
                               finalizer,
@@ -54,6 +58,9 @@ static inline napi_status AttachData(napi_env env,
       status = napi_define_properties(env, obj, 1, &desc);
     }
   }
+#else  // NAPI_VERSION >= 5
+  status = napi_add_finalizer(env, obj, data, finalizer, hint, nullptr);
+#endif
   return status;
 }
 
@@ -4020,29 +4027,16 @@ inline ThreadSafeFunction ThreadSafeFunction::New(napi_env env,
 }
 
 inline ThreadSafeFunction::ThreadSafeFunction()
-  : _tsfn(new napi_threadsafe_function(nullptr), _d) {
+  : _tsfn() {
 }
 
 inline ThreadSafeFunction::ThreadSafeFunction(
     napi_threadsafe_function tsfn)
-  : _tsfn(new napi_threadsafe_function(tsfn), _d) {
+  : _tsfn(tsfn) {
 }
 
-inline ThreadSafeFunction::ThreadSafeFunction(ThreadSafeFunction&& other)
-  : _tsfn(std::move(other._tsfn)) {
-  other._tsfn.reset();
-}
-
-inline ThreadSafeFunction& ThreadSafeFunction::operator =(
-    ThreadSafeFunction&& other) {
-  if (*_tsfn != nullptr) {
-    Error::Fatal("ThreadSafeFunction::operator =",
-        "You cannot assign a new TSFN because existing one is still alive.");
-    return *this;
-  }
-  _tsfn = std::move(other._tsfn);
-  other._tsfn.reset();
-  return *this;
+inline ThreadSafeFunction::operator napi_threadsafe_function() const {
+  return _tsfn;
 }
 
 inline napi_status ThreadSafeFunction::BlockingCall() const {
@@ -4085,34 +4079,34 @@ inline napi_status ThreadSafeFunction::NonBlockingCall(
 
 inline void ThreadSafeFunction::Ref(napi_env env) const {
   if (_tsfn != nullptr) {
-    napi_status status = napi_ref_threadsafe_function(env, *_tsfn);
+    napi_status status = napi_ref_threadsafe_function(env, _tsfn);
     NAPI_THROW_IF_FAILED_VOID(env, status);
   }
 }
 
 inline void ThreadSafeFunction::Unref(napi_env env) const {
   if (_tsfn != nullptr) {
-    napi_status status = napi_unref_threadsafe_function(env, *_tsfn);
+    napi_status status = napi_unref_threadsafe_function(env, _tsfn);
     NAPI_THROW_IF_FAILED_VOID(env, status);
   }
 }
 
 inline napi_status ThreadSafeFunction::Acquire() const {
-  return napi_acquire_threadsafe_function(*_tsfn);
+  return napi_acquire_threadsafe_function(_tsfn);
 }
 
 inline napi_status ThreadSafeFunction::Release() {
-  return napi_release_threadsafe_function(*_tsfn, napi_tsfn_release);
+  return napi_release_threadsafe_function(_tsfn, napi_tsfn_release);
 }
 
 inline napi_status ThreadSafeFunction::Abort() {
-  return napi_release_threadsafe_function(*_tsfn, napi_tsfn_abort);
+  return napi_release_threadsafe_function(_tsfn, napi_tsfn_abort);
 }
 
 inline ThreadSafeFunction::ConvertibleContext
 ThreadSafeFunction::GetContext() const {
   void* context;
-  napi_get_threadsafe_function_context(*_tsfn, &context);
+  napi_get_threadsafe_function_context(_tsfn, &context);
   return ConvertibleContext({ context });
 }
 
@@ -4135,10 +4129,10 @@ inline ThreadSafeFunction ThreadSafeFunction::New(napi_env env,
 
   ThreadSafeFunction tsfn;
   auto* finalizeData = new details::ThreadSafeFinalize<ContextType, Finalizer,
-      FinalizerDataType>({ data, finalizeCallback, tsfn._tsfn.get() });
+      FinalizerDataType>({ data, finalizeCallback, &tsfn._tsfn });
   napi_status status = napi_create_threadsafe_function(env, callback, resource,
       Value::From(env, resourceName), maxQueueSize, initialThreadCount,
-      finalizeData, wrapper, context, CallJS, tsfn._tsfn.get());
+      finalizeData, wrapper, context, CallJS, &tsfn._tsfn);
   if (status != napi_ok) {
     delete finalizeData;
     NAPI_THROW_IF_FAILED(env, status, ThreadSafeFunction());
@@ -4151,7 +4145,7 @@ inline napi_status ThreadSafeFunction::CallInternal(
     CallbackWrapper* callbackWrapper,
     napi_threadsafe_function_call_mode mode) const {
   napi_status status = napi_call_threadsafe_function(
-      *_tsfn, callbackWrapper, mode);
+      _tsfn, callbackWrapper, mode);
   if (status != napi_ok && callbackWrapper != nullptr) {
     delete callbackWrapper;
   }
@@ -4176,6 +4170,154 @@ inline void ThreadSafeFunction::CallJS(napi_env env,
     Function(env, jsCallback).Call({});
   }
 }
+
+////////////////////////////////////////////////////////////////////////////////
+// Async Progress Worker class
+////////////////////////////////////////////////////////////////////////////////
+
+template<class T>
+inline AsyncProgressWorker<T>::AsyncProgressWorker(const Function& callback)
+  : AsyncProgressWorker(callback, "generic") {
+}
+
+template<class T>
+inline AsyncProgressWorker<T>::AsyncProgressWorker(const Function& callback,
+                                const char* resource_name)
+  : AsyncProgressWorker(callback, resource_name, Object::New(callback.Env())) {
+}
+
+template<class T>
+inline AsyncProgressWorker<T>::AsyncProgressWorker(const Function& callback,
+                                const char* resource_name,
+                                const Object& resource)
+  : AsyncProgressWorker(Object::New(callback.Env()),
+                callback,
+                resource_name,
+                resource) {
+}
+
+template<class T>
+inline AsyncProgressWorker<T>::AsyncProgressWorker(const Object& receiver,
+                                const Function& callback)
+  : AsyncProgressWorker(receiver, callback, "generic") {
+}
+
+template<class T>
+inline AsyncProgressWorker<T>::AsyncProgressWorker(const Object& receiver,
+                                const Function& callback,
+                                const char* resource_name)
+  : AsyncProgressWorker(receiver,
+                callback,
+                resource_name,
+                Object::New(callback.Env())) {
+}
+
+template<class T>
+inline AsyncProgressWorker<T>::AsyncProgressWorker(const Object& receiver,
+                                                   const Function& callback,
+                                                   const char* resource_name,
+                                                   const Object& resource)
+  : AsyncWorker(receiver, callback, resource_name, resource),
+    _asyncdata(nullptr),
+    _asyncsize(0) {
+  _tsfn = ThreadSafeFunction::New(callback.Env(), callback, resource_name, 1, 1);
+}
+
+#if NAPI_VERSION > 4
+template<class T>
+inline AsyncProgressWorker<T>::AsyncProgressWorker(Napi::Env env)
+  : AsyncProgressWorker(env, "generic") {
+}
+
+template<class T>
+inline AsyncProgressWorker<T>::AsyncProgressWorker(Napi::Env env,
+                                const char* resource_name)
+  : AsyncProgressWorker(env, resource_name, Object::New(env)) {
+}
+
+template<class T>
+inline AsyncProgressWorker<T>::AsyncProgressWorker(Napi::Env env,
+                                const char* resource_name,
+                                const Object& resource)
+  : AsyncWorker(env, resource_name, resource),
+    _asyncdata(nullptr),
+    _asyncsize(0) {
+  // TODO: Once the changes to make the callback optional for threadsafe
+  // functions are no longer optional we can remove the dummy Function here.
+  Function callback;
+  _tsfn = ThreadSafeFunction::New(env, callback, resource_name, 1, 1);
+}
+#endif
+
+template<class T>
+inline AsyncProgressWorker<T>::~AsyncProgressWorker() {
+  // Abort pending tsfn call.
+  // Don't send progress events after we've already completed.
+  _tsfn.Abort();
+  {
+    std::lock_guard<std::mutex> lock(_mutex);
+    _asyncdata = nullptr;
+    _asyncsize = 0;
+  }
+  _tsfn.Release();
+}
+
+template<class T>
+inline void AsyncProgressWorker<T>::Execute() {
+  ExecutionProgress progress(this);
+  Execute(progress);
+}
+
+template<class T>
+inline void AsyncProgressWorker<T>::WorkProgress_(Napi::Env /* env */, Napi::Function /* jsCallback */, void* _data) {
+  AsyncProgressWorker* self = static_cast<AsyncProgressWorker*>(_data);
+
+  T* data;
+  size_t size;
+  {
+    std::lock_guard<std::mutex> lock(self->_mutex);
+    data = self->_asyncdata;
+    size = self->_asyncsize;
+    self->_asyncdata = nullptr;
+    self->_asyncsize = 0;
+  }
+
+  self->OnProgress(data, size);
+  delete[] data;
+}
+
+template<class T>
+inline void AsyncProgressWorker<T>::SendProgress_(const T* data, size_t count) {
+    T* new_data = new T[count];
+    std::copy(data, data + count, new_data);
+
+    T* old_data;
+    {
+      std::lock_guard<std::mutex> lock(_mutex);
+      old_data = _asyncdata;
+      _asyncdata = new_data;
+      _asyncsize = count;
+    }
+    _tsfn.NonBlockingCall(this, WorkProgress_);
+
+    delete[] old_data;
+}
+
+template<class T>
+inline void AsyncProgressWorker<T>::Signal() const {
+  _tsfn.NonBlockingCall(this, WorkProgress_);
+}
+
+template<class T>
+inline void AsyncProgressWorker<T>::ExecutionProgress::Signal() const {
+  _worker->Signal();
+}
+
+template<class T>
+inline void AsyncProgressWorker<T>::ExecutionProgress::Send(const T* data, size_t count) const {
+  _worker->SendProgress_(data, count);
+}
+
 #endif
 
 ////////////////////////////////////////////////////////////////////////////////

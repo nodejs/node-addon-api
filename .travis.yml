@@ -16,11 +16,13 @@ env:
     - NODEJS_VERSION=node/8
     - NODEJS_VERSION=node/10
     - NODEJS_VERSION=node/12
+    - NODEJS_VERSION=node/13
     - NODEJS_VERSION=nightly
 matrix:
   fast_finish: true
   allow_failures:
     - env: NODEJS_VERSION=nightly
+    - env: NODEJS_VERSION=node/6
 sudo: false
 cache:
   directories:

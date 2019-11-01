@@ -8,6 +8,7 @@
     'sources': [
         'arraybuffer.cc',
         'asynccontext.cc',
+        'asyncprogressworker.cc',
         'asyncworker.cc',
         'asyncworker-persistent.cc',
         'basic_types/array.cc',
@@ -36,6 +37,7 @@
         'object/set_property.cc',
         'promise.cc',
         'threadsafe_function/threadsafe_function_ptr.cc',
+        'threadsafe_function/threadsafe_function_sum.cc',
         'threadsafe_function/threadsafe_function_unref.cc',
         'threadsafe_function/threadsafe_function.cc',
         'typedarray.cc',

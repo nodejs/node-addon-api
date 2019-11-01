@@ -10,6 +10,7 @@ process.config.target_defaults.default_configuration =
 let testModules = [
   'arraybuffer',
   'asynccontext',
+  'asyncprogressworker',
   'asyncworker',
   'asyncworker-nocallback',
   'asyncworker-persistent',
@@ -39,6 +40,7 @@ let testModules = [
   'object/set_property',
   'promise',
   'threadsafe_function/threadsafe_function_ptr',
+  'threadsafe_function/threadsafe_function_sum',
   'threadsafe_function/threadsafe_function_unref',
   'threadsafe_function/threadsafe_function',
   'typedarray',
@@ -65,7 +67,9 @@ if (napiVersion < 3) {
 }
 
 if (napiVersion < 4) {
+  testModules.splice(testModules.indexOf('asyncprogressworker'), 1);
   testModules.splice(testModules.indexOf('threadsafe_function/threadsafe_function_ptr'), 1);
+  testModules.splice(testModules.indexOf('threadsafe_function/threadsafe_function_sum'), 1);
   testModules.splice(testModules.indexOf('threadsafe_function/threadsafe_function_unref'), 1);
   testModules.splice(testModules.indexOf('threadsafe_function/threadsafe_function'), 1);
 }
