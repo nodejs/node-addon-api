@@ -200,8 +200,8 @@ napi_status Napi::ThreadSafeFunction::BlockingCall(void* data) const
 
 napi_status Napi::ThreadSafeFunction::NonBlockingCall(void* data) const
 ```
-- `data`: Data to pass to `call_js_cb` specified when creating the tsfn via
-  `napi_create_threadsafe_function`.
+- `data`: Data to pass to `call_js_cb` specified when creating the thread-safe
+  function via `napi_create_threadsafe_function`.
 
 Returns one of:
 - `napi_ok`: The call was successfully added to the queue.
