@@ -4097,8 +4097,8 @@ inline AsyncWorker::AsyncWorker(const Object& receiver,
       _env, resource_name, NAPI_AUTO_LENGTH, &resource_id);
   NAPI_THROW_IF_FAILED_VOID(_env, status);
 
-  status = napi_create_async_work(_env, resource, resource_id, OnExecute,
-                                  OnWorkComplete, this, &_work);
+  status = napi_create_async_work(_env, resource, resource_id, OnAsyncWorkExecute,
+                                  OnAsyncWorkComplete, this, &_work);
   NAPI_THROW_IF_FAILED_VOID(_env, status);
 }
 
@@ -4123,8 +4123,8 @@ inline AsyncWorker::AsyncWorker(Napi::Env env,
       _env, resource_name, NAPI_AUTO_LENGTH, &resource_id);
   NAPI_THROW_IF_FAILED_VOID(_env, status);
 
-  status = napi_create_async_work(_env, resource, resource_id, OnExecute,
-                                  OnWorkComplete, this, &_work);
+  status = napi_create_async_work(_env, resource, resource_id, OnAsyncWorkExecute,
+                                  OnAsyncWorkComplete, this, &_work);
   NAPI_THROW_IF_FAILED_VOID(_env, status);
 }
 
@@ -4211,40 +4211,51 @@ inline void AsyncWorker::SetError(const std::string& error) {
 inline std::vector<napi_value> AsyncWorker::GetResult(Napi::Env /*env*/) {
   return {};
 }
+// The OnAsyncWorkExecute method receives an napi_env argument. However, do NOT
+// use it within this method, as it does not run on the main thread and must
+// not run any method that would cause JavaScript to run. In practice, this
+// means that almost any use of napi_env will be incorrect.
+inline void AsyncWorker::OnAsyncWorkExecute(napi_env env, void* asyncworker) {
+  AsyncWorker* self = static_cast<AsyncWorker*>(asyncworker);
+  self->OnExecute(env);
+}
 // The OnExecute method receives an napi_env argument. However, do NOT
 // use it within this method, as it does not run on the main thread and must
 // not run any method that would cause JavaScript to run. In practice, this
 // means that almost any use of napi_env will be incorrect.
-inline void AsyncWorker::OnExecute(napi_env /*DO_NOT_USE*/, void* this_pointer) {
-  AsyncWorker* self = static_cast<AsyncWorker*>(this_pointer);
+inline void AsyncWorker::OnExecute(Napi::Env /*DO_NOT_USE*/) {
 #ifdef NAPI_CPP_EXCEPTIONS
   try {
-    self->Execute();
+    Execute();
   } catch (const std::exception& e) {
-    self->SetError(e.what());
+    SetError(e.what());
   }
 #else // NAPI_CPP_EXCEPTIONS
-  self->Execute();
+  Execute();
 #endif // NAPI_CPP_EXCEPTIONS
 }
 
-inline void AsyncWorker::OnWorkComplete(
-    napi_env /*env*/, napi_status status, void* this_pointer) {
-  AsyncWorker* self = static_cast<AsyncWorker*>(this_pointer);
+inline void AsyncWorker::OnAsyncWorkComplete(napi_env env,
+                                             napi_status status,
+                                             void* asyncworker) {
+  AsyncWorker* self = static_cast<AsyncWorker*>(asyncworker);
+  self->OnWorkComplete(env, status);
+}
+inline void AsyncWorker::OnWorkComplete(Napi::Env /*env*/, napi_status status) {
   if (status != napi_cancelled) {
-    HandleScope scope(self->_env);
+    HandleScope scope(_env);
     details::WrapCallback([&] {
-      if (self->_error.size() == 0) {
-        self->OnOK();
+      if (_error.size() == 0) {
+        OnOK();
       }
       else {
-        self->OnError(Error::New(self->_env, self->_error));
+        OnError(Error::New(_env, _error));
       }
       return nullptr;
     });
   }
-  if (!self->_suppress_destruct) {
-    self->Destroy();
+  if (!_suppress_destruct) {
+    Destroy();
   }
 }
 
@@ -4609,14 +4620,14 @@ inline AsyncProgressWorker<T>::AsyncProgressWorker(const Function& callback,
 
 template<class T>
 inline AsyncProgressWorker<T>::AsyncProgressWorker(const Object& receiver,
-                                const Function& callback)
+                                                   const Function& callback)
   : AsyncProgressWorker(receiver, callback, "generic") {
 }
 
 template<class T>
 inline AsyncProgressWorker<T>::AsyncProgressWorker(const Object& receiver,
-                                const Function& callback,
-                                const char* resource_name)
+                                                   const Function& callback,
+                                                   const char* resource_name)
   : AsyncProgressWorker(receiver,
                 callback,
                 resource_name,
@@ -4642,14 +4653,14 @@ inline AsyncProgressWorker<T>::AsyncProgressWorker(Napi::Env env)
 
 template<class T>
 inline AsyncProgressWorker<T>::AsyncProgressWorker(Napi::Env env,
-                                const char* resource_name)
+                                                   const char* resource_name)
   : AsyncProgressWorker(env, resource_name, Object::New(env)) {
 }
 
 template<class T>
 inline AsyncProgressWorker<T>::AsyncProgressWorker(Napi::Env env,
-                                const char* resource_name,
-                                const Object& resource)
+                                                   const char* resource_name,
+                                                   const Object& resource)
   : AsyncWorker(env, resource_name, resource),
     _asyncdata(nullptr),
     _asyncsize(0) {
@@ -4728,7 +4739,6 @@ template<class T>
 inline void AsyncProgressWorker<T>::ExecutionProgress::Send(const T* data, size_t count) const {
   _worker->SendProgress_(data, count);
 }
-
 #endif
 
 ////////////////////////////////////////////////////////////////////////////////
