@@ -136,6 +136,35 @@ class was created, passing in the error as the first parameter.
 virtual void Napi::AsyncWorker::OnError(const Napi::Error& e);
 ```
 
+### OnWorkComplete
+
+This method is invoked after the work has completed on JavaScript thread.
+The default implementation of this method checks the status of the work and
+tries to dispatch the result to `Napi::AsyncWorker::OnOk` or `Napi::AsyncWorker::Error`
+if the work has committed an error. If the work was cancelled, neither
+`Napi::AsyncWorker::OnOk` nor `Napi::AsyncWorker::Error` will be invoked.
+After the result is dispatched, the default implementation will call into
+`Napi::AsyncWorker::Destroy` if `SuppressDestruct()` was not called.
+
+```cpp
+virtual void OnWorkComplete(Napi::Env env, napi_status status);
+```
+
+### OnExecute
+
+This method is invoked immediately on the work thread when scheduled.
+The default implementation of this method just calls the `Napi::AsyncWorker::Execute`
+and handles exceptions if cpp exceptions were enabled.
+
+The `OnExecute` method receives an `napi_env` argument. However, the `napi_env`
+must NOT be used within this method, as it does not run on the JavaScript
+thread and must not run any method that would cause JavaScript to run. In
+practice, this means that almost any use of `napi_env` will be incorrect.
+
+```cpp
+virtual void OnExecute(Napi::Env env);
+```
+
 ### Destroy
 
 This method is invoked when the instance must be deallocated. If

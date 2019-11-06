@@ -1986,6 +1986,10 @@ namespace Napi {
     ObjectReference& Receiver();
     FunctionReference& Callback();
 
+    virtual void OnExecute(Napi::Env env);
+    virtual void OnWorkComplete(Napi::Env env,
+                                napi_status status);
+
   protected:
     explicit AsyncWorker(const Function& callback);
     explicit AsyncWorker(const Function& callback,
@@ -2019,10 +2023,10 @@ namespace Napi {
     void SetError(const std::string& error);
 
   private:
-    static void OnExecute(napi_env env, void* this_pointer);
-    static void OnWorkComplete(napi_env env,
-                               napi_status status,
-                               void* this_pointer);
+    static inline void OnAsyncWorkExecute(napi_env env, void* asyncworker);
+    static inline void OnAsyncWorkComplete(napi_env env,
+                                           napi_status status,
+                                           void* asyncworker);
 
     napi_env _env;
     napi_async_work _work;
@@ -2254,33 +2258,32 @@ namespace Napi {
      };
 
     protected:
-    explicit AsyncProgressWorker(const Function& callback);
-    explicit AsyncProgressWorker(const Function& callback,
-                         const char* resource_name);
-    explicit AsyncProgressWorker(const Function& callback,
-                         const char* resource_name,
-                         const Object& resource);
-    explicit AsyncProgressWorker(const Object& receiver,
-                         const Function& callback);
-    explicit AsyncProgressWorker(const Object& receiver,
-                         const Function& callback,
-                         const char* resource_name);
-    explicit AsyncProgressWorker(const Object& receiver,
-                         const Function& callback,
-                         const char* resource_name,
-                         const Object& resource);
+     explicit AsyncProgressWorker(const Function& callback);
+     explicit AsyncProgressWorker(const Function& callback,
+                                  const char* resource_name);
+     explicit AsyncProgressWorker(const Function& callback,
+                                  const char* resource_name,
+                                  const Object& resource);
+     explicit AsyncProgressWorker(const Object& receiver,
+                                  const Function& callback);
+     explicit AsyncProgressWorker(const Object& receiver,
+                                  const Function& callback,
+                                  const char* resource_name);
+     explicit AsyncProgressWorker(const Object& receiver,
+                                  const Function& callback,
+                                  const char* resource_name,
+                                  const Object& resource);
 
 // Optional callback of Napi::ThreadSafeFunction only available after NAPI_VERSION 4.
 // Refs: https://github.com/nodejs/node/pull/27791
 #if NAPI_VERSION > 4
-    explicit AsyncProgressWorker(Napi::Env env);
-    explicit AsyncProgressWorker(Napi::Env env,
-                         const char* resource_name);
-    explicit AsyncProgressWorker(Napi::Env env,
-                         const char* resource_name,
-                         const Object& resource);
+     explicit AsyncProgressWorker(Napi::Env env);
+     explicit AsyncProgressWorker(Napi::Env env,
+                                  const char* resource_name);
+     explicit AsyncProgressWorker(Napi::Env env,
+                                  const char* resource_name,
+                                  const Object& resource);
 #endif
-
      virtual void Execute(const ExecutionProgress& progress) = 0;
      virtual void OnProgress(const T* data, size_t count) = 0;
 
