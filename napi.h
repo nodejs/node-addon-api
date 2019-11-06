@@ -91,6 +91,13 @@ static_assert(sizeof(char16_t) == sizeof(wchar_t), "Size mismatch between char16
 
 #endif // NAPI_CPP_EXCEPTIONS
 
+# define NAPI_DISALLOW_ASSIGN(CLASS) void operator=(const CLASS&) = delete;
+# define NAPI_DISALLOW_COPY(CLASS) CLASS(const CLASS&) = delete;
+
+#define NAPI_DISALLOW_ASSIGN_COPY(CLASS)  \
+    NAPI_DISALLOW_ASSIGN(CLASS)           \
+    NAPI_DISALLOW_COPY(CLASS)
+
 #define NAPI_FATAL_IF_FAILED(status, location, message)  \
   do {                                                   \
     if ((status) != napi_ok) {                           \
@@ -1129,7 +1136,7 @@ namespace Napi {
     // A reference can be moved but cannot be copied.
     Reference(Reference<T>&& other);
     Reference<T>& operator =(Reference<T>&& other);
-    Reference<T>& operator =(const Reference<T>&) = delete;
+    NAPI_DISALLOW_ASSIGN(Reference<T>)
 
     operator napi_ref() const;
     bool operator ==(const Reference<T> &other) const;
@@ -1174,7 +1181,7 @@ namespace Napi {
     ObjectReference& operator =(Reference<Object>&& other);
     ObjectReference(ObjectReference&& other);
     ObjectReference& operator =(ObjectReference&& other);
-    ObjectReference& operator =(const ObjectReference&) = delete;
+    NAPI_DISALLOW_ASSIGN(ObjectReference)
 
     Napi::Value Get(const char* utf8name) const;
     Napi::Value Get(const std::string& utf8name) const;
@@ -1211,8 +1218,7 @@ namespace Napi {
     FunctionReference& operator =(Reference<Function>&& other);
     FunctionReference(FunctionReference&& other);
     FunctionReference& operator =(FunctionReference&& other);
-    FunctionReference(const FunctionReference&) = delete;
-    FunctionReference& operator =(const FunctionReference&) = delete;
+    NAPI_DISALLOW_ASSIGN_COPY(FunctionReference)
 
     Napi::Value operator ()(const std::initializer_list<napi_value>& args) const;
 
@@ -1402,8 +1408,7 @@ namespace Napi {
     ~CallbackInfo();
 
     // Disallow copying to prevent multiple free of _dynamicArgs
-    CallbackInfo(CallbackInfo const &) = delete;
-    void operator=(CallbackInfo const &) = delete;
+    NAPI_DISALLOW_ASSIGN_COPY(CallbackInfo)
 
     Napi::Env Env() const;
     Value NewTarget() const;
@@ -1891,8 +1896,7 @@ namespace Napi {
     ~HandleScope();
 
     // Disallow copying to prevent double close of napi_handle_scope
-    HandleScope(HandleScope const &) = delete;
-    void operator=(HandleScope const &) = delete;
+    NAPI_DISALLOW_ASSIGN_COPY(HandleScope)
 
     operator napi_handle_scope() const;
 
@@ -1910,8 +1914,7 @@ namespace Napi {
     ~EscapableHandleScope();
 
     // Disallow copying to prevent double close of napi_escapable_handle_scope
-    EscapableHandleScope(EscapableHandleScope const &) = delete;
-    void operator=(EscapableHandleScope const &) = delete;
+    NAPI_DISALLOW_ASSIGN_COPY(EscapableHandleScope)
 
     operator napi_escapable_handle_scope() const;
 
@@ -1931,8 +1934,7 @@ namespace Napi {
     virtual ~CallbackScope();
 
     // Disallow copying to prevent double close of napi_callback_scope
-    CallbackScope(CallbackScope const &) = delete;
-    void operator=(CallbackScope const &) = delete;
+    NAPI_DISALLOW_ASSIGN_COPY(CallbackScope)
 
     operator napi_callback_scope() const;
 
@@ -1952,8 +1954,7 @@ namespace Napi {
 
     AsyncContext(AsyncContext&& other);
     AsyncContext& operator =(AsyncContext&& other);
-    AsyncContext(const AsyncContext&) = delete;
-    AsyncContext& operator =(const AsyncContext&) = delete;
+    NAPI_DISALLOW_ASSIGN_COPY(AsyncContext)
 
     operator napi_async_context() const;
 
@@ -1971,8 +1972,7 @@ namespace Napi {
     // An async worker can be moved but cannot be copied.
     AsyncWorker(AsyncWorker&& other);
     AsyncWorker& operator =(AsyncWorker&& other);
-    AsyncWorker(const AsyncWorker&) = delete;
-    AsyncWorker& operator =(const AsyncWorker&) = delete;
+    NAPI_DISALLOW_ASSIGN_COPY(AsyncWorker)
 
     operator napi_async_work() const;
 
