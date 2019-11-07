@@ -13,8 +13,7 @@ async function test(binding) {
   const testCall = binding.threadsafe_function_existing_tsfn.testCall;
   let lastResult;
   
-  const funct = function(arg0) {
-    // console.log("TSFN called with args", ...arguments);
+  const funct = arg0 => {
     lastResult = arg0;
   }
   
