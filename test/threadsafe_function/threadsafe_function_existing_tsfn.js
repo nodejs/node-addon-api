@@ -11,18 +11,9 @@ module.exports = Promise.all([
 
 async function test(binding) {
   const testCall = binding.threadsafe_function_existing_tsfn.testCall;
-  let lastResult;
   
-  const funct = arg0 => {
-    lastResult = arg0;
-  }
-  
-  await testCall({ blocking: true,  data: true  }, funct);
-  assert(typeof lastResult === "number");
-  await testCall({ blocking: true,  data: false }, funct);
-  assert(typeof lastResult === "undefined");
-  await testCall({ blocking: false, data: true  }, funct);
-  assert(typeof lastResult === "number");
-  await testCall({ blocking: false, data: false }, funct);
-  assert(typeof lastResult === "undefined");
+  assert(typeof await testCall({ blocking: true,  data: true  }) === "number");
+  assert(typeof await testCall({ blocking: true,  data: false }) === "undefined");
+  assert(typeof await testCall({ blocking: false, data: true  }) === "number");
+  assert(typeof await testCall({ blocking: false, data: false }) === "undefined");
 }

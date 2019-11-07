@@ -8,42 +8,49 @@ using namespace Napi;
 namespace {
 
 struct TestContext {
-  TestContext(Promise::Deferred &&deferred) : deferred(std::move(deferred)){};
+  TestContext(Promise::Deferred &&deferred)
+      : deferred(std::move(deferred)), callData(nullptr){};
+
   napi_threadsafe_function tsfn;
   Promise::Deferred deferred;
+  double *callData;
+
+  ~TestContext() {
+    if (callData != nullptr)
+      delete callData;
+  };
 };
 
-void FinalizeCB(napi_env /*env*/, void *context, void * /*finalizedata*/) {
+void FinalizeCB(napi_env env, void * /*finalizeData */, void *context) {
   TestContext *testContext = static_cast<TestContext *>(context);
+  if (testContext->callData != nullptr) {
+    testContext->deferred.Resolve(Number::New(env, *testContext->callData));
+  } else {
+    testContext->deferred.Resolve(Napi::Env(env).Undefined());
+  }
   delete testContext;
 }
 
-void CallJSWithData(napi_env env, napi_value value, void *context, void *data) {
+void CallJSWithData(napi_env env, napi_value /* callback */, void *context,
+                    void *data) {
   TestContext *testContext = static_cast<TestContext *>(context);
-  double *dblVal = static_cast<double *>(data);
-  Function(env, value).Call({Number::New(env, *dblVal)});
-  delete dblVal;
+  testContext->callData = static_cast<double *>(data);
 
   napi_status status =
       napi_release_threadsafe_function(testContext->tsfn, napi_tsfn_release);
 
   NAPI_THROW_IF_FAILED_VOID(env, status);
-
-  testContext->deferred.Resolve(Env(env).Undefined());
 }
 
-void CallJSNoData(napi_env env, napi_value value, void *context,
+void CallJSNoData(napi_env env, napi_value /* callback */, void *context,
                   void * /*data*/) {
   TestContext *testContext = static_cast<TestContext *>(context);
-  Value undef = Env(env).Undefined();
-  Function(env, value).Call({undef});
+  testContext->callData = nullptr;
 
   napi_status status =
       napi_release_threadsafe_function(testContext->tsfn, napi_tsfn_release);
 
   NAPI_THROW_IF_FAILED_VOID(env, status);
-
-  testContext->deferred.Resolve(undef);
 }
 
 static Value TestCall(const CallbackInfo &info) {
@@ -61,9 +68,7 @@ static Value TestCall(const CallbackInfo &info) {
   }
 
   // Allow optional callback passed from JS. Useful for testing.
-  Function cb = info.Length() > 1
-                    ? info[1].As<Function>()
-                    : Function::New(env, [](const CallbackInfo &/*info*/) {});
+  Function cb = Function::New(env, [](const CallbackInfo & /*info*/) {});
 
   TestContext *testContext = new TestContext(Napi::Promise::Deferred(env));
 
@@ -82,13 +87,13 @@ static Value TestCall(const CallbackInfo &info) {
     if (hasData) {
       wrapped.BlockingCall(static_cast<void *>(new double(std::rand())));
     } else {
-      wrapped.BlockingCall(nullptr);
+      wrapped.BlockingCall(static_cast<void *>(nullptr));
     }
   } else {
     if (hasData) {
       wrapped.NonBlockingCall(static_cast<void *>(new double(std::rand())));
     } else {
-      wrapped.NonBlockingCall(nullptr);
+      wrapped.NonBlockingCall(static_cast<void *>(nullptr));
     }
   }
 
