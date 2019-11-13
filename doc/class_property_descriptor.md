@@ -20,7 +20,7 @@ class Example : public Napi::ObjectWrap<Example> {
     static Napi::FunctionReference constructor;
     double _value;
     Napi::Value GetValue(const Napi::CallbackInfo &info);
-    Napi::Value SetValue(const Napi::CallbackInfo &info);
+    void SetValue(const Napi::CallbackInfo &info, const Napi::Value &value);
 };
 
 Napi::Object Example::Init(Napi::Env env, Napi::Object exports) {
@@ -52,12 +52,11 @@ Napi::Value Example::GetValue(const Napi::CallbackInfo &info) {
     return Napi::Number::New(env, this->_value);
 }
 
-Napi::Value Example::SetValue(const Napi::CallbackInfo &info, const Napi::Value &value) {
+void Example::SetValue(const Napi::CallbackInfo &info, const Napi::Value &value) {
     Napi::Env env = info.Env();
     // ...
     Napi::Number arg = value.As<Napi::Number>();
     this->_value = arg.DoubleValue();
-    return this->GetValue(info);
 }
 
 // Initialize native add-on
