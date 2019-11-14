@@ -49,6 +49,7 @@ Object InitThreadSafeFunction(Env env);
 #endif
 Object InitTypedArray(Env env);
 Object InitObjectWrap(Env env);
+Object InitObjectWrapConstructorException(Env env);
 Object InitObjectReference(Env env);
 Object InitVersionManagement(Env env);
 Object InitThunkingManual(Env env);
@@ -102,6 +103,8 @@ Object Init(Env env, Object exports) {
 #endif
   exports.Set("typedarray", InitTypedArray(env));
   exports.Set("objectwrap", InitObjectWrap(env));
+  exports.Set("objectwrapConstructorException",
+      InitObjectWrapConstructorException(env));
   exports.Set("objectreference", InitObjectReference(env));
   exports.Set("version_management", InitVersionManagement(env));
   exports.Set("thunking_manual", InitThunkingManual(env));

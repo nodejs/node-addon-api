@@ -132,6 +132,7 @@ namespace Napi {
   template <typename T> class Reference;
   class TypedArray;
   template <typename T> class TypedArrayOf;
+  class ObjectWrapConstructionContext;
 
   typedef TypedArrayOf<int8_t> Int8Array;     ///< Typed-array of signed 8-bit integers
   typedef TypedArrayOf<uint8_t> Uint8Array;   ///< Typed-array of unsigned 8-bit integers
@@ -1377,6 +1378,7 @@ namespace Napi {
 
   class CallbackInfo {
   public:
+    friend class ObjectWrapConstructionContext;
     CallbackInfo(napi_env env, napi_callback_info info);
     ~CallbackInfo();
 
@@ -1403,6 +1405,7 @@ namespace Napi {
     napi_value _staticArgs[6];
     napi_value* _dynamicArgs;
     void* _data;
+    ObjectWrapConstructionContext* _objectWrapConstructionContext;
   };
 
   class PropertyDescriptor {
