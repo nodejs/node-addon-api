@@ -2702,6 +2702,37 @@ inline Object FunctionReference::New(const std::vector<napi_value>& args) const 
 // CallbackInfo class
 ////////////////////////////////////////////////////////////////////////////////
 
+class ObjectWrapCleanup {
+ public:
+  ObjectWrapCleanup(CallbackInfo* info) {
+    info->_object_wrap_cleanup = this;
+  }
+
+  static inline void MarkWrapOK(const CallbackInfo& info) {
+    if (info._object_wrap_cleanup == nullptr) {
+      Napi::Error::Fatal("ObjectWrapCleanup::MarkWrapOK",
+                         "_object_wrap_cleanup is NULL");
+    }
+    info._object_wrap_cleanup->_wrap_worked = true;
+  }
+
+  inline void RemoveWrap(const CallbackInfo& info) {
+    if (_wrap_worked) {
+      napi_status status = napi_remove_wrap(info.Env(), info.This(), nullptr);
+
+      // There's already a pending exception if we are at this point, so we have
+      // no choice but to fatally fail here.
+      NAPI_FATAL_IF_FAILED(status,
+                           "ObjectWrapCleanup::RemoveWrap",
+                           "Failed to remove wrap from unsuccessfully "
+                           "constructed ObjectWrap instance");
+    }
+  }
+
+ private:
+  bool _wrap_worked = false;
+};
+
 inline CallbackInfo::CallbackInfo(napi_env env, napi_callback_info info)
     : _env(env), _info(info), _this(nullptr), _dynamicArgs(nullptr), _data(nullptr) {
   _argc = _staticArgCount;
@@ -3110,6 +3141,7 @@ inline ObjectWrap<T>::ObjectWrap(const Napi::CallbackInfo& callbackInfo) {
   status = napi_wrap(env, wrapper, instance, FinalizeCallback, nullptr, &ref);
   NAPI_THROW_IF_FAILED_VOID(env, status);
 
+  ObjectWrapCleanup::MarkWrapOK(callbackInfo);
   Reference<Object>* instanceRef = instance;
   *instanceRef = Reference<Object>(env, ref);
 }
@@ -3683,10 +3715,27 @@ inline napi_value ObjectWrap<T>::ConstructorCallbackWrapper(
     return nullptr;
   }
 
-  T* instance;
   napi_value wrapper = details::WrapCallback([&] {
     CallbackInfo callbackInfo(env, info);
-    instance = new T(callbackInfo);
+    ObjectWrapCleanup cleanup(&callbackInfo);
+#ifdef NAPI_CPP_EXCEPTIONS
+    try {
+      new T(callbackInfo);
+    } catch (const Error& e) {
+      // re-throw the error after removing the failed wrap.
+      cleanup.RemoveWrap(callbackInfo);
+      throw e;
+    }
+#else
+    T* instance = new T(callbackInfo);
+    if (callbackInfo.Env().IsExceptionPending()) {
+      // We need to clear the exception so that removing the wrap might work.
+      Error e = callbackInfo.Env().GetAndClearPendingException();
+      cleanup.RemoveWrap(callbackInfo);
+      e.ThrowAsJavaScriptException();
+      delete instance;
+    }
+# endif  // NAPI_CPP_EXCEPTIONS
     return callbackInfo.This();
   });
 
