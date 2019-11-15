@@ -1,4 +1,9 @@
+// Currently experimental guard with NODE_MAJOR_VERISION in which it was
+// released. Once it is no longer experimental guard with the NAPI_VERSION
+// in which it is released instead.
+#if (NODE_MAJOR_VERSION >= 10)
 #define NAPI_EXPERIMENTAL
+#endif
 #include "napi.h"
 
 using namespace Napi;
@@ -65,9 +70,10 @@ Value CreateTypedArray(const CallbackInfo& info) {
       NAPI_TYPEDARRAY_NEW(Float64Array, info.Env(), length, napi_float64_array) :
       NAPI_TYPEDARRAY_NEW_BUFFER(Float64Array, info.Env(), length, buffer, bufferOffset,
                                  napi_float64_array);
-// currently experimental guard with version of NAPI_VERSION that it is
-// released in once it is no longer experimental
-#if (NAPI_VERSION > 2147483646)
+// Currently experimental guard with NODE_MAJOR_VERISION in which it was
+// released. Once it is no longer experimental guard with the NAPI_VERSION
+// in which it is released instead.
+#if (NODE_MAJOR_VERSION >= 10)
   } else if (arrayType == "bigint64") {
     return buffer.IsUndefined() ?
       NAPI_TYPEDARRAY_NEW(BigInt64Array, info.Env(), length, napi_bigint64_array) :
@@ -101,9 +107,10 @@ Value GetTypedArrayType(const CallbackInfo& info) {
     case napi_uint32_array: return String::New(info.Env(), "uint32");
     case napi_float32_array: return String::New(info.Env(), "float32");
     case napi_float64_array: return String::New(info.Env(), "float64");
-// currently experimental guard with version of NAPI_VERSION that it is
-// released in once it is no longer experimental
-#if (NAPI_VERSION > 2147483646)
+// Currently experimental guard with NODE_MAJOR_VERISION in which it was
+// released. Once it is no longer experimental guard with the NAPI_VERSION
+// in which it is released instead.
+#if (NODE_MAJOR_VERSION >= 10)
     case napi_bigint64_array: return String::New(info.Env(), "bigint64");
     case napi_biguint64_array: return String::New(info.Env(), "biguint64");
 #endif
@@ -143,9 +150,10 @@ Value GetTypedArrayElement(const CallbackInfo& info) {
       return Number::New(info.Env(), array.As<Float32Array>()[index]);
     case napi_float64_array:
       return Number::New(info.Env(), array.As<Float64Array>()[index]);
-// currently experimental guard with version of NAPI_VERSION that it is
-// released in once it is no longer experimental
-#if (NAPI_VERSION > 2147483646)
+// Currently experimental guard with NODE_MAJOR_VERISION in which it was
+// released. Once it is no longer experimental guard with the NAPI_VERSION
+// in which it is released instead.
+#if (NODE_MAJOR_VERSION >= 10)
     case napi_bigint64_array:
       return BigInt::New(info.Env(), array.As<BigInt64Array>()[index]);
     case napi_biguint64_array:
@@ -189,9 +197,10 @@ void SetTypedArrayElement(const CallbackInfo& info) {
     case napi_float64_array:
       array.As<Float64Array>()[index] = value.DoubleValue();
       break;
-// currently experimental guard with version of NAPI_VERSION that it is
-// released in once it is no longer experimental
-#if (NAPI_VERSION > 2147483646)
+// Currently experimental guard with NODE_MAJOR_VERISION in which it was
+// released. Once it is no longer experimental guard with the NAPI_VERSION
+// in which it is released instead.
+#if (NODE_MAJOR_VERSION >= 10)
     case napi_bigint64_array: {
       bool lossless;
       array.As<BigInt64Array>()[index] = value.As<BigInt>().Int64Value(&lossless);

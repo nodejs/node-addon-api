@@ -58,7 +58,10 @@ Napi::ThreadSafeFunction::ThreadSafeFunction(napi_threadsafe_function tsfn);
 - `tsfn`: The `napi_threadsafe_function` which is a handle for an existing
   thread-safe function.
 
-Returns a non-empty `Napi::ThreadSafeFunction` instance.
+Returns a non-empty `Napi::ThreadSafeFunction` instance. When using this
+constructor, only use the `Blocking(void*)` / `NonBlocking(void*)` overloads;
+the `Callback` and templated `data*` overloads should _not_ be used. See below
+for additional details.
 
 ### New
 
@@ -171,6 +174,9 @@ There are several overloaded implementations of `BlockingCall()` and
 `NonBlockingCall()` for use with optional parameters: skip the optional
 parameter for that specific overload.
 
+**These specific function overloads should only be used on a `ThreadSafeFunction`
+created via `ThreadSafeFunction::New`.**
+
 ```cpp
 napi_status Napi::ThreadSafeFunction::BlockingCall(DataType* data, Callback callback) const
 
@@ -185,6 +191,17 @@ napi_status Napi::ThreadSafeFunction::NonBlockingCall(DataType* data, Callback c
   jsCallback, DataType* data)`, skipping `data` if not provided. It is not
   necessary to call into JavaScript via `MakeCallback()` because N-API runs
   `callback` in a context appropriate for callbacks.
+
+**These specific function overloads should only be used on a `ThreadSafeFunction`
+created via `ThreadSafeFunction(napi_threadsafe_function)`.**
+
+```cpp
+napi_status Napi::ThreadSafeFunction::BlockingCall(void* data) const
+
+napi_status Napi::ThreadSafeFunction::NonBlockingCall(void* data) const
+```
+- `data`: Data to pass to `call_js_cb` specified when creating the thread-safe
+  function via `napi_create_threadsafe_function`.
 
 Returns one of:
 - `napi_ok`: The call was successfully added to the queue.
