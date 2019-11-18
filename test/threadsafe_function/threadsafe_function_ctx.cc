@@ -49,7 +49,6 @@ TSFNWrap::TSFNWrap(const CallbackInfo &info) : ObjectWrap<TSFNWrap>(info) {
       Object::New(env), "Test", 1, 1, _ctx,
       [this](Napi::Env env, Reference<Napi::Value> *ctx) {
         _deferred->Resolve(env.Undefined());
-        _deferred.reset();
         ctx->Reset();
         delete ctx;
       });
