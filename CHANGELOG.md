@@ -1,5 +1,68 @@
 # node-addon-api Changelog
 
+## 2019-11-21 Version 2.0.0, @NickNaso
+
+### Notable changes:
+
+#### API
+
+- Added `Napi::AsyncProgressWorker` api.
+- Added error checking on `Napi::ThreadSafeFunction::GetContext`.
+- Added copy constructor to `Napi::ThreadSafeFunction`.
+- Added `Napi::ThreadSafeFunction::Ref` and `Napi::ThreadSafeFunction::Unref` to `Napi::ThreadSafeFunction`.
+- Added `Napi::Object::AddFinalizer` method.
+- Use `napi_add_finalizer()` to attach data when building against N-API 5.
+- Added `Napi::Date` api.
+- Added `Napi::ObjectWrap::Finalize` method.
+
+#### Documentation
+
+- Added documentation for `Napi::AsyncProgressWorker`.
+- Improve `Napi::AsyncWorker` documentation.
+- Added documentation for `Napi::Object::AddFinalizer` method.
+- Improved documentation for `Napi::ThreadSafeFunction`.
+- Improved documentation about the usage of CMake as build tool.
+- Some minor corrections all over the documentation.
+
+#### TEST
+
+- Added test cases for `Napi::AsyncProgressWorker` api.
+- Added test cases for `Napi::Date` api.
+- Added test cases for new features added to `Napi::ThreadSafeFunction`.
+
+### Commmits
+
+* [[`c881168d49`](https://github.com/nodejs/node-addon-api/commit/c881168d49)] - **tsfn**: add error checking on GetContext (#583) (Kevin Eady) [#583](https://github.com/nodejs/node-addon-api/pull/583)
+* [[`24d75dd82f`](https://github.com/nodejs/node-addon-api/commit/24d75dd82f)] - Merge pull request #588 from NickNaso/add-asyncprogress-worker-readme (Nicola Del Gobbo)
+* [[`aa79e37b62`](https://github.com/nodejs/node-addon-api/commit/aa79e37b62)] - Merge pull request #587 from timrach/patch-1 (Nicola Del Gobbo)
+* [[`df75e08c2b`](https://github.com/nodejs/node-addon-api/commit/df75e08c2b)] - **tsfn**: support direct calls to underlying napi\_tsfn (Kevin Eady) [#58](https://github.com/nodejs/node-addon-api/pull/58)
+* [[`2298dfae58`](https://github.com/nodejs/node-addon-api/commit/2298dfae58)] - **doc**: Added AsyncProgressWorker to readme (NickNaso)
+* [[`b3609d33b6`](https://github.com/nodejs/node-addon-api/commit/b3609d33b6)] - Fix return type and declaration of setter callback (Tim Rach)
+* [[`295e560f55`](https://github.com/nodejs/node-addon-api/commit/295e560f55)] - **test**: improve guards for experimental features (legendecas)
+* [[`2e71842f63`](https://github.com/nodejs/node-addon-api/commit/2e71842f63)] - **tsfn**: Implement copy constructor (Kevin Eady) [#546](https://github.com/nodejs/node-addon-api/pull/546)
+* [[`650562cab9`](https://github.com/nodejs/node-addon-api/commit/650562cab9)] - **src**: implement AsyncProgressWorker (legendecas) [#529](https://github.com/nodejs/node-addon-api/pull/529)
+* [[`bdfd14101f`](https://github.com/nodejs/node-addon-api/commit/bdfd14101f)] - **src**: attach data with napi\_add\_finalizer (Gabriel Schulhof) [#577](https://github.com/nodejs/node-addon-api/pull/577)
+* [[`9e955a802b`](https://github.com/nodejs/node-addon-api/commit/9e955a802b)] - **doc**: change node.js to Node.js per guideline (#579) (Tobias Nießen) [#579](https://github.com/nodejs/node-addon-api/pull/579)
+* [[`b42e21e3a9`](https://github.com/nodejs/node-addon-api/commit/b42e21e3a9)] - **build**: move node/6 to travis allowed failures and add node/13 (#573) (Gabriel Schulhof)
+* [[`8d6132f609`](https://github.com/nodejs/node-addon-api/commit/8d6132f609)] - **doc**: improve AsyncWorker docs (#571) (legendecas) [#571](https://github.com/nodejs/node-addon-api/pull/571)
+* [[`bc8fc23627`](https://github.com/nodejs/node-addon-api/commit/bc8fc23627)] - **test**: do not run TSFN tests on NAPI\_VERSION \< 4 (legendecas) [#576](https://github.com/nodejs/node-addon-api/pull/576)
+* [[`bcc1d58fc4`](https://github.com/nodejs/node-addon-api/commit/bcc1d58fc4)] - implement Object::AddFinalizer (Gabriel Schulhof)
+* [[`e9a4bcd52a`](https://github.com/nodejs/node-addon-api/commit/e9a4bcd52a)] - **doc**: updates Make.js doc to current best practices (Jim Schlight) [#558](https://github.com/nodejs/node-addon-api/pull/558)
+* [[`b513d1aa7a`](https://github.com/nodejs/node-addon-api/commit/b513d1aa7a)] - **doc**: fix return type of ArrayBuffer::Data (Tobias Nießen) [#552](https://github.com/nodejs/node-addon-api/pull/552)
+* [[`34c11cf0a4`](https://github.com/nodejs/node-addon-api/commit/34c11cf0a4)] - **src**: disallow copying, double close of scopes (legendecas) [#566](https://github.com/nodejs/node-addon-api/pull/566)
+* [[`ce139a05e8`](https://github.com/nodejs/node-addon-api/commit/ce139a05e8)] - **src**: make failure of closing scopes fatal (legendecas) [#566](https://github.com/nodejs/node-addon-api/pull/566)
+* [[`740c79823e`](https://github.com/nodejs/node-addon-api/commit/740c79823e)] - **src**: add Env() to AsyncContext (Rolf Timmermans) [#568](https://github.com/nodejs/node-addon-api/pull/568)
+* [[`ea9ce1c801`](https://github.com/nodejs/node-addon-api/commit/ea9ce1c801)] - **tsfn**: add wrappers for Ref and Unref (Kevin Eady) [#561](https://github.com/nodejs/node-addon-api/pull/561)
+* [[`2e1769e1a3`](https://github.com/nodejs/node-addon-api/commit/2e1769e1a3)] - **error**: remove unnecessary if condition (legendecas) [#562](https://github.com/nodejs/node-addon-api/pull/562)
+* [[`828f223a87`](https://github.com/nodejs/node-addon-api/commit/828f223a87)] - **doc**: fix spelling in ObjectWrap doc (#563) (Tobias Nießen) [#563](https://github.com/nodejs/node-addon-api/pull/563)
+* [[`dd9fa8a4a8`](https://github.com/nodejs/node-addon-api/commit/dd9fa8a4a8)] - **doc**: move Arunesh and Taylor to Emeritus (#540) (Michael Dawson) [#540](https://github.com/nodejs/node-addon-api/pull/540)
+* [[`cf8b8415df`](https://github.com/nodejs/node-addon-api/commit/cf8b8415df)] - **doc**: add Kevin to the list of collaborators (#539) (Michael Dawson) [#539](https://github.com/nodejs/node-addon-api/pull/539)
+* [[`5d6aeae7b5`](https://github.com/nodejs/node-addon-api/commit/5d6aeae7b5)] - **build**: enable travis for fast PR check (legendecas)
+* [[`6192e705cd`](https://github.com/nodejs/node-addon-api/commit/6192e705cd)] - **src**: add napi\_date (Mathias Küsel) [#497](https://github.com/nodejs/node-addon-api/pull/497)
+* [[`7b1ee96d52`](https://github.com/nodejs/node-addon-api/commit/7b1ee96d52)] - **doc**: update prebuild\_tools.md (Nurbol Alpysbayev) [#527](https://github.com/nodejs/node-addon-api/pull/527)
+* [[`0b4f3a5b8c`](https://github.com/nodejs/node-addon-api/commit/0b4f3a5b8c)] - **tsfn**: fix crash on releasing tsfn (legendecas) [#532](https://github.com/nodejs/node-addon-api/pull/532)
+* [[`c3c8814d2f`](https://github.com/nodejs/node-addon-api/commit/c3c8814d2f)] - implement virutal ObjectWrap::Finalize (Michael Price) [#515](https://github.com/nodejs/node-addon-api/pull/515)
+
 ## 2019-07-23 Version 1.7.1, @NickNaso
 
 ### Notable changes:
