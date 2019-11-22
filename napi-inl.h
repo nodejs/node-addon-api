@@ -3172,7 +3172,7 @@ inline ClassPropertyDescriptor<T> ObjectWrap<T>::StaticMethod(
     const char* utf8name,
     napi_property_attributes attributes,
     void* data) {
-  napi_property_descriptor desc = {};
+  napi_property_descriptor desc = napi_property_descriptor();
   desc.utf8name = utf8name;
   desc.method = &ObjectWrap<T>::WrappedMethod<method>;
   desc.data = data;
@@ -3186,7 +3186,7 @@ inline ClassPropertyDescriptor<T> ObjectWrap<T>::StaticMethod(
     Symbol name,
     napi_property_attributes attributes,
     void* data) {
-  napi_property_descriptor desc = {};
+  napi_property_descriptor desc = napi_property_descriptor();
   desc.name = name;
   desc.method = &ObjectWrap<T>::WrappedMethod<method>;
   desc.data = data;
@@ -3200,7 +3200,7 @@ inline ClassPropertyDescriptor<T> ObjectWrap<T>::StaticMethod(
     const char* utf8name,
     napi_property_attributes attributes,
     void* data) {
-  napi_property_descriptor desc = {};
+  napi_property_descriptor desc = napi_property_descriptor();
   desc.utf8name = utf8name;
   desc.method = &ObjectWrap<T>::WrappedMethod<method>;
   desc.data = data;
@@ -3214,7 +3214,7 @@ inline ClassPropertyDescriptor<T> ObjectWrap<T>::StaticMethod(
     Symbol name,
     napi_property_attributes attributes,
     void* data) {
-  napi_property_descriptor desc = {};
+  napi_property_descriptor desc = napi_property_descriptor();
   desc.name = name;
   desc.method = &ObjectWrap<T>::WrappedMethod<method>;
   desc.data = data;
@@ -3364,7 +3364,7 @@ inline ClassPropertyDescriptor<T> ObjectWrap<T>::InstanceMethod(
     const char* utf8name,
     napi_property_attributes attributes,
     void* data) {
-  napi_property_descriptor desc = {};
+  napi_property_descriptor desc = napi_property_descriptor();
   desc.utf8name = utf8name;
   desc.method = &ObjectWrap<T>::WrappedMethod<method>;
   desc.data = data;
@@ -3378,7 +3378,7 @@ inline ClassPropertyDescriptor<T> ObjectWrap<T>::InstanceMethod(
     const char* utf8name,
     napi_property_attributes attributes,
     void* data) {
-  napi_property_descriptor desc = {};
+  napi_property_descriptor desc = napi_property_descriptor();
   desc.utf8name = utf8name;
   desc.method = &ObjectWrap<T>::WrappedMethod<method>;
   desc.data = data;
@@ -3392,7 +3392,7 @@ inline ClassPropertyDescriptor<T> ObjectWrap<T>::InstanceMethod(
     Symbol name,
     napi_property_attributes attributes,
     void* data) {
-  napi_property_descriptor desc = {};
+  napi_property_descriptor desc = napi_property_descriptor();
   desc.name = name;
   desc.method = &ObjectWrap<T>::WrappedMethod<method>;
   desc.data = data;
@@ -3406,7 +3406,7 @@ inline ClassPropertyDescriptor<T> ObjectWrap<T>::InstanceMethod(
     Symbol name,
     napi_property_attributes attributes,
     void* data) {
-  napi_property_descriptor desc = {};
+  napi_property_descriptor desc = napi_property_descriptor();
   desc.name = name;
   desc.method = &ObjectWrap<T>::WrappedMethod<method>;
   desc.data = data;
@@ -3459,7 +3459,7 @@ inline ClassPropertyDescriptor<T> ObjectWrap<T>::InstanceAccessor(
     const char* utf8name,
     napi_property_attributes attributes,
     void* data) {
-  napi_property_descriptor desc = {};
+  napi_property_descriptor desc = napi_property_descriptor();
   desc.utf8name = utf8name;
   desc.getter = This::WrapGetter(This::GetterTag<getter>());
   desc.setter = This::WrapSetter(This::SetterTag<setter>());
@@ -3475,7 +3475,7 @@ inline ClassPropertyDescriptor<T> ObjectWrap<T>::InstanceAccessor(
     Symbol name,
     napi_property_attributes attributes,
     void* data) {
-  napi_property_descriptor desc = {};
+  napi_property_descriptor desc = napi_property_descriptor();
   desc.name = name;
   desc.getter = This::WrapGetter(This::GetterTag<getter>());
   desc.setter = This::WrapSetter(This::SetterTag<setter>());
