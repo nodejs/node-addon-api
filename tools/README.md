@@ -49,10 +49,10 @@ Napi::FunctionReference constructor;
 void [ClassName]::Init(Napi::Env env, Napi::Object exports, Napi::Object module) {
   Napi::HandleScope scope(env);
   Napi::Function ctor = DefineClass(env, "Canvas", {
-    InstanceMethod("Func1", &[ClassName]::Func1),
-    InstanceMethod("Func2", &[ClassName]::Func2),
-    InstanceAccessor("Value", &[ClassName]::ValueGetter),
-    StaticMethod("MethodName", &[ClassName]::StaticMethod),
+    InstanceMethod<&[ClassName]::Func1>("Func1"),
+    InstanceMethod<&[ClassName]::Func2>("Func2"),
+    InstanceAccessor<&[ClassName]::ValueGetter>("Value"),
+    StaticMethod<&[ClassName]::StaticMethod>("MethodName"),
     InstanceValue("Value", Napi::[Type]::New(env, value)),
   });
 

@@ -26,9 +26,9 @@ class Example : public Napi::ObjectWrap<Example> {
 Napi::Object Example::Init(Napi::Env env, Napi::Object exports) {
     Napi::Function func = DefineClass(env, "Example", {
         // Register a class instance accessor with getter and setter functions.
-        InstanceAccessor("value", &Example::GetValue, &Example::SetValue),
-        // We can also register a readonly accessor by passing nullptr as the setter.
-        InstanceAccessor("readOnlyProp", &Example::GetValue, nullptr)
+        InstanceAccessor<&Example::GetValue, &Example::SetValue>("value"),
+        // We can also register a readonly accessor by omitting the setter.
+        InstanceAccessor<&Example::GetValue>("readOnlyProp")
     });
 
     constructor = Napi::Persistent(func);

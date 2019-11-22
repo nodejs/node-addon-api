@@ -15,9 +15,11 @@ const test = (binding) => {
     {
       obj.testSetter = 'instance getter';
       assert.strictEqual(obj.testGetter, 'instance getter');
+      assert.strictEqual(obj.testGetterT, 'instance getter');
 
       obj.testSetter = 'instance getter 2';
       assert.strictEqual(obj.testGetter, 'instance getter 2');
+      assert.strictEqual(obj.testGetterT, 'instance getter 2');
     }
 
     // read write-only
@@ -36,6 +38,9 @@ const test = (binding) => {
       let error;
       try { obj.testGetter = 'write'; } catch (e) { error = e; }
       assert.strictEqual(error.name, 'TypeError');
+
+      try { obj.testGetterT = 'write'; } catch (e) { error = e; }
+      assert.strictEqual(error.name, 'TypeError');
     }
 
     // rw
@@ -45,6 +50,12 @@ const test = (binding) => {
 
       obj.testGetSet = 'instance getset 2';
       assert.strictEqual(obj.testGetSet, 'instance getset 2');
+
+      obj.testGetSetT = 'instance getset 3';
+      assert.strictEqual(obj.testGetSetT, 'instance getset 3');
+
+      obj.testGetSetT = 'instance getset 4';
+      assert.strictEqual(obj.testGetSetT, 'instance getset 4');
     }
 
     // rw symbol
@@ -54,12 +65,22 @@ const test = (binding) => {
 
       obj[clazz.kTestAccessorInternal] = 'instance internal getset 2';
       assert.strictEqual(obj[clazz.kTestAccessorInternal], 'instance internal getset 2');
+
+      obj[clazz.kTestAccessorTInternal] = 'instance internal getset 3';
+      assert.strictEqual(obj[clazz.kTestAccessorTInternal], 'instance internal getset 3');
+
+      obj[clazz.kTestAccessorTInternal] = 'instance internal getset 4';
+      assert.strictEqual(obj[clazz.kTestAccessorTInternal], 'instance internal getset 4');
     }
   };
 
   const testMethod = (obj, clazz) => {
     assert.strictEqual(obj.testMethod('method'), 'method instance');
     assert.strictEqual(obj[clazz.kTestMethodInternal]('method'), 'method instance internal');
+    obj.testVoidMethodT('method<>(const char*)');
+    assert.strictEqual(obj.testMethodT(), 'method<>(const char*)');
+    obj[clazz.kTestVoidMethodTInternal]('method<>(Symbol)');
+    assert.strictEqual(obj[clazz.kTestMethodTInternal](), 'method<>(Symbol)');
   };
 
   const testEnumerables = (obj, clazz) => {
@@ -112,10 +133,12 @@ const test = (binding) => {
       const tempObj = {};
       clazz.testStaticSetter = tempObj;
       assert.strictEqual(clazz.testStaticGetter, tempObj);
+      assert.strictEqual(clazz.testStaticGetterT, tempObj);
 
       const tempArray = [];
       clazz.testStaticSetter = tempArray;
       assert.strictEqual(clazz.testStaticGetter, tempArray);
+      assert.strictEqual(clazz.testStaticGetterT, tempArray);
     }
 
     // read write-only
@@ -134,6 +157,8 @@ const test = (binding) => {
       let error;
       try { clazz.testStaticGetter = 'write'; } catch (e) { error = e; }
       assert.strictEqual(error.name, 'TypeError');
+      try { clazz.testStaticGetterT = 'write'; } catch (e) { error = e; }
+      assert.strictEqual(error.name, 'TypeError');
     }
 
     // rw
@@ -143,18 +168,30 @@ const test = (binding) => {
 
       clazz.testStaticGetSet = 4;
       assert.strictEqual(clazz.testStaticGetSet, 4);
+
+      clazz.testStaticGetSetT = -9;
+      assert.strictEqual(clazz.testStaticGetSetT, -9);
+
+      clazz.testStaticGetSetT = -4;
+      assert.strictEqual(clazz.testStaticGetSetT, -4);
     }
 
     // rw symbol
     {
       clazz[clazz.kTestStaticAccessorInternal] = 'static internal getset';
       assert.strictEqual(clazz[clazz.kTestStaticAccessorInternal], 'static internal getset');
+      clazz[clazz.kTestStaticAccessorTInternal] = 'static internal getset <>';
+      assert.strictEqual(clazz[clazz.kTestStaticAccessorTInternal], 'static internal getset <>');
     }
   };
 
   const testStaticMethod = (clazz) => {
     assert.strictEqual(clazz.testStaticMethod('method'), 'method static');
     assert.strictEqual(clazz[clazz.kTestStaticMethodInternal]('method'), 'method static internal');
+    clazz.testStaticVoidMethodT('static method<>(const char*)');
+    assert.strictEqual(clazz.testStaticMethodT(), 'static method<>(const char*)');
+    clazz[clazz.kTestStaticVoidMethodTInternal]('static method<>(Symbol)');
+    assert.strictEqual(clazz[clazz.kTestStaticMethodTInternal](), 'static method<>(Symbol)');
   };
 
   const testStaticEnumerables = (clazz) => {
