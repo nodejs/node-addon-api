@@ -1593,8 +1593,8 @@ namespace Napi {
   ///       public:
   ///         static void Initialize(Napi::Env& env, Napi::Object& target) {
   ///           Napi::Function constructor = DefineClass(env, "Example", {
-  ///             InstanceAccessor("value", &Example::GetSomething, &Example::SetSomething),
-  ///             InstanceMethod("doSomething", &Example::DoSomething),
+  ///             InstanceAccessor<&Example::GetSomething, &Example::SetSomething>("value"),
+  ///             InstanceMethod<&Example::DoSomething>("doSomething"),
   ///           });
   ///           target.Set("Example", constructor);
   ///         }
@@ -1648,6 +1648,22 @@ namespace Napi {
                                            StaticMethodCallback method,
                                            napi_property_attributes attributes = napi_default,
                                            void* data = nullptr);
+    template <StaticVoidMethodCallback method>
+    static PropertyDescriptor StaticMethod(const char* utf8name,
+                                           napi_property_attributes attributes = napi_default,
+                                           void* data = nullptr);
+    template <StaticVoidMethodCallback method>
+    static PropertyDescriptor StaticMethod(Symbol name,
+                                           napi_property_attributes attributes = napi_default,
+                                           void* data = nullptr);
+    template <StaticMethodCallback method>
+    static PropertyDescriptor StaticMethod(const char* utf8name,
+                                           napi_property_attributes attributes = napi_default,
+                                           void* data = nullptr);
+    template <StaticMethodCallback method>
+    static PropertyDescriptor StaticMethod(Symbol name,
+                                           napi_property_attributes attributes = napi_default,
+                                           void* data = nullptr);
     static PropertyDescriptor StaticAccessor(const char* utf8name,
                                              StaticGetterCallback getter,
                                              StaticSetterCallback setter,
@@ -1658,6 +1674,14 @@ namespace Napi {
                                              StaticSetterCallback setter,
                                              napi_property_attributes attributes = napi_default,
                                              void* data = nullptr);
+    template <StaticGetterCallback getter, StaticSetterCallback setter=nullptr>
+    static PropertyDescriptor StaticAccessor(const char* utf8name,
+                                             napi_property_attributes attributes = napi_default,
+                                             void* data = nullptr);
+    template <StaticGetterCallback getter, StaticSetterCallback setter=nullptr>
+    static PropertyDescriptor StaticAccessor(Symbol name,
+                                             napi_property_attributes attributes = napi_default,
+                                             void* data = nullptr);
     static PropertyDescriptor InstanceMethod(const char* utf8name,
                                              InstanceVoidMethodCallback method,
                                              napi_property_attributes attributes = napi_default,
@@ -1672,6 +1696,22 @@ namespace Napi {
                                              void* data = nullptr);
     static PropertyDescriptor InstanceMethod(Symbol name,
                                              InstanceMethodCallback method,
+                                             napi_property_attributes attributes = napi_default,
+                                             void* data = nullptr);
+    template <InstanceVoidMethodCallback method>
+    static PropertyDescriptor InstanceMethod(const char* utf8name,
+                                             napi_property_attributes attributes = napi_default,
+                                             void* data = nullptr);
+    template <InstanceMethodCallback method>
+    static PropertyDescriptor InstanceMethod(const char* utf8name,
+                                             napi_property_attributes attributes = napi_default,
+                                             void* data = nullptr);
+    template <InstanceVoidMethodCallback method>
+    static PropertyDescriptor InstanceMethod(Symbol name,
+                                             napi_property_attributes attributes = napi_default,
+                                             void* data = nullptr);
+    template <InstanceMethodCallback method>
+    static PropertyDescriptor InstanceMethod(Symbol name,
                                              napi_property_attributes attributes = napi_default,
                                              void* data = nullptr);
     static PropertyDescriptor InstanceAccessor(const char* utf8name,
@@ -1682,6 +1722,14 @@ namespace Napi {
     static PropertyDescriptor InstanceAccessor(Symbol name,
                                                InstanceGetterCallback getter,
                                                InstanceSetterCallback setter,
+                                               napi_property_attributes attributes = napi_default,
+                                               void* data = nullptr);
+    template <InstanceGetterCallback getter, InstanceSetterCallback setter=nullptr>
+    static PropertyDescriptor InstanceAccessor(const char* utf8name,
+                                               napi_property_attributes attributes = napi_default,
+                                               void* data = nullptr);
+    template <InstanceGetterCallback getter, InstanceSetterCallback setter=nullptr>
+    static PropertyDescriptor InstanceAccessor(Symbol name,
                                                napi_property_attributes attributes = napi_default,
                                                void* data = nullptr);
     static PropertyDescriptor StaticValue(const char* utf8name,
@@ -1699,6 +1747,8 @@ namespace Napi {
     virtual void Finalize(Napi::Env env);
 
   private:
+    using This = ObjectWrap<T>;
+
     static napi_value ConstructorCallbackWrapper(napi_env env, napi_callback_info info);
     static napi_value StaticVoidMethodCallbackWrapper(napi_env env, napi_callback_info info);
     static napi_value StaticMethodCallbackWrapper(napi_env env, napi_callback_info info);
@@ -1735,6 +1785,45 @@ namespace Napi {
       StaticAccessorCallbackData;
     typedef AccessorCallbackData<InstanceGetterCallback, InstanceSetterCallback>
       InstanceAccessorCallbackData;
+
+    template <StaticVoidMethodCallback method>
+    static napi_value WrappedMethod(napi_env env, napi_callback_info info) noexcept;
+
+    template <StaticMethodCallback method>
+    static napi_value WrappedMethod(napi_env env, napi_callback_info info) noexcept;
+
+    template <InstanceVoidMethodCallback method>
+    static napi_value WrappedMethod(napi_env env, napi_callback_info info) noexcept;
+
+    template <InstanceMethodCallback method>
+    static napi_value WrappedMethod(napi_env env, napi_callback_info info) noexcept;
+
+    template <StaticSetterCallback method>
+    static napi_value WrappedMethod(napi_env env, napi_callback_info info) noexcept;
+
+    template <InstanceSetterCallback method>
+    static napi_value WrappedMethod(napi_env env, napi_callback_info info) noexcept;
+
+    template <StaticGetterCallback   getter> struct StaticGetterTag {};
+    template <StaticSetterCallback   setter> struct StaticSetterTag {};
+    template <InstanceGetterCallback getter> struct GetterTag {};
+    template <InstanceSetterCallback setter> struct SetterTag {};
+
+    template <StaticGetterCallback getter>
+    static napi_callback WrapStaticGetter(StaticGetterTag<getter>) noexcept { return &This::WrappedMethod<getter>; }
+    static napi_callback WrapStaticGetter(StaticGetterTag<nullptr>) noexcept { return nullptr; }
+
+    template <StaticSetterCallback setter>
+    static napi_callback WrapStaticSetter(StaticSetterTag<setter>) noexcept { return &This::WrappedMethod<setter>; }
+    static napi_callback WrapStaticSetter(StaticSetterTag<nullptr>) noexcept { return nullptr; }
+
+    template <InstanceGetterCallback getter>
+    static napi_callback WrapGetter(GetterTag<getter>) noexcept { return &This::WrappedMethod<getter>; }
+    static napi_callback WrapGetter(GetterTag<nullptr>) noexcept { return nullptr; }
+
+    template <InstanceSetterCallback setter>
+    static napi_callback WrapSetter(SetterTag<setter>) noexcept { return &This::WrappedMethod<setter>; }
+    static napi_callback WrapSetter(SetterTag<nullptr>) noexcept { return nullptr; }
   };
 
   class HandleScope {

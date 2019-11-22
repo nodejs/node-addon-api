@@ -34,8 +34,8 @@ class Example : public Napi::ObjectWrap<Example> {
 Napi::Object Example::Init(Napi::Env env, Napi::Object exports) {
     // This method is used to hook the accessor and method callbacks
     Napi::Function func = DefineClass(env, "Example", {
-        InstanceMethod("GetValue", &Example::GetValue),
-        InstanceMethod("SetValue", &Example::SetValue)
+        InstanceMethod<&Example::GetValue>("GetValue"),
+        InstanceMethod<&Example::SetValue>("SetValue")
     });
 
     // Create a peristent reference to the class constructor. This will allow
@@ -289,6 +289,93 @@ One or more of `napi_property_attributes`.
 Returns `Napi::PropertyDescriptor` object that represents a static method of a
 JavaScript class.
 
+### StaticMethod
+
+Creates property descriptor that represents a static method of a JavaScript class.
+
+```cpp
+template <StaticVoidMethodCallback method>
+static Napi::PropertyDescriptor Napi::ObjectWrap::StaticMethod(const char* utf8name,
+                                       napi_property_attributes attributes = napi_default,
+                                       void* data = nullptr);
+```
+
+- `[in] method`: The native function that represents a static method of a
+JavaScript class. This function returns nothing.
+- `[in] utf8name`: Null-terminated string that represents the name of a static
+method for the class.
+- `[in] attributes`: The attributes associated with a particular property.
+One or more of `napi_property_attributes`.
+- `[in] data`: User-provided data passed into method when it is invoked.
+
+Returns `Napi::PropertyDescriptor` object that represents the static method of a
+JavaScript class.
+
+### StaticMethod
+
+Creates property descriptor that represents a static method of a JavaScript class.
+
+```cpp
+template <StaticMethodCallback method>
+static Napi::PropertyDescriptor Napi::ObjectWrap::StaticMethod(const char* utf8name,
+                                       napi_property_attributes attributes = napi_default,
+                                       void* data = nullptr);
+```
+
+- `[in] method`: The native function that represents a static method of a
+JavaScript class.
+- `[in] utf8name`: Null-terminated string that represents the name of a static
+method for the class.
+- `[in] attributes`: The attributes associated with a particular property.
+One or more of `napi_property_attributes`.
+- `[in] data`: User-provided data passed into method when it is invoked.
+
+Returns `Napi::PropertyDescriptor` object that represents a static method of a
+JavaScript class.
+
+### StaticMethod
+
+Creates property descriptor that represents a static method of a JavaScript class.
+
+```cpp
+template <StaticVoidMethodCallback method>
+static Napi::PropertyDescriptor Napi::ObjectWrap::StaticMethod(Symbol name,
+                                       napi_property_attributes attributes = napi_default,
+                                       void* data = nullptr);
+```
+
+- `[in] method`: The native function that represents a static method of a
+JavaScript class.
+- `[in] name`: Napi:Symbol that represents the name of a static
+method for the class.
+- `[in] attributes`: The attributes associated with a particular property.
+One or more of `napi_property_attributes`.
+- `[in] data`: User-provided data passed into method when it is invoked.
+
+Returns `Napi::PropertyDescriptor` object that represents the static method of a
+JavaScript class.
+
+### StaticMethod
+
+Creates property descriptor that represents a static method of a JavaScript class.
+
+```cpp
+template <StaticMethodCallback method>
+static Napi::PropertyDescriptor Napi::ObjectWrap::StaticMethod(Symbol name,
+                                       napi_property_attributes attributes = napi_default,
+                                       void* data = nullptr);
+```
+
+- `[in] method`: The native function that represents a static method of a
+JavaScript class.
+- `[in] name`: Napi:Symbol that represents the name of a static.
+- `[in] attributes`: The attributes associated with a particular property.
+One or more of `napi_property_attributes`.
+- `[in] data`: User-provided data passed into method when it is invoked.
+
+Returns `Napi::PropertyDescriptor` object that represents a static method of a
+JavaScript class.
+
 ### StaticAccessor
 
 Creates property descriptor that represents a static accessor property of a
@@ -342,6 +429,57 @@ is invoked.
 Returns `Napi::PropertyDescriptor` object that represents a static accessor
 property of a JavaScript class.
 
+### StaticAccessor
+
+Creates property descriptor that represents a static accessor property of a
+JavaScript class.
+
+```cpp
+template <StaticGetterCallback getter, StaticSetterCallback setter=nullptr>
+static Napi::PropertyDescriptor Napi::ObjectWrap::StaticAccessor(const char* utf8name,
+                                         napi_property_attributes attributes = napi_default,
+                                         void* data = nullptr);
+```
+
+- `[in] getter`: The native function to call when a get access to the property of
+a JavaScript class is performed.
+- `[in] setter`: The native function to call when a set access to the property of
+a JavaScript class is performed.
+- `[in] utf8name`: Null-terminated string that represents the name of a static
+accessor property for the class.
+- `[in] attributes`: The attributes associated with a particular property.
+One or more of `napi_property_attributes`.
+- `[in] data`: User-provided data passed into getter or setter when
+is invoked.
+
+Returns `Napi::PropertyDescriptor` object that represents a static accessor
+property of a JavaScript class.
+
+### StaticAccessor
+
+Creates property descriptor that represents a static accessor property of a
+JavaScript class.
+
+```cpp
+template <StaticGetterCallback getter, StaticSetterCallback setter=nullptr>
+static Napi::PropertyDescriptor Napi::ObjectWrap::StaticAccessor(Symbol name,
+                                         napi_property_attributes attributes = napi_default,
+                                         void* data = nullptr);
+```
+
+- `[in] getter`: The native function to call when a get access to the property of
+a JavaScript class is performed.
+- `[in] setter`: The native function to call when a set access to the property of
+a JavaScript class is performed.
+- `[in] name`: Napi:Symbol that represents the name of a static accessor.
+- `[in] attributes`: The attributes associated with a particular property.
+One or more of `napi_property_attributes`.
+- `[in] data`: User-provided data passed into getter or setter when
+is invoked.
+
+Returns `Napi::PropertyDescriptor` object that represents a static accessor
+property of a JavaScript class.
+
 ### InstanceMethod
 
 Creates property descriptor that represents an instance method of a JavaScript class.
@@ -423,6 +561,94 @@ static Napi::PropertyDescriptor Napi::ObjectWrap::InstanceMethod(Napi::Symbol na
 instance method for the class.
 - `[in] method`: The native function that represents an instance method of a
 JavaScript class.
+- `[in] attributes`: The attributes associated with a particular property.
+One or more of `napi_property_attributes`.
+- `[in] data`: User-provided data passed into method when it is invoked.
+
+Returns `Napi::PropertyDescriptor` object that represents an instance method of a
+JavaScript class.
+
+### InstanceMethod
+
+Creates property descriptor that represents an instance method of a JavaScript class.
+
+```cpp
+template <InstanceVoidMethodCallback method>
+static Napi::PropertyDescriptor Napi::ObjectWrap::InstanceMethod(const char* utf8name,
+                                         napi_property_attributes attributes = napi_default,
+                                         void* data = nullptr);
+```
+
+- `[in] method`: The native function that represents an instance method of a
+JavaScript class.
+- `[in] utf8name`: Null-terminated string that represents the name of an instance
+method for the class.
+- `[in] attributes`: The attributes associated with a particular property.
+One or more of `napi_property_attributes`.
+- `[in] data`: User-provided data passed into method when it is invoked.
+
+Returns `Napi::PropertyDescriptor` object that represents an instance method of a
+JavaScript class.
+
+### InstanceMethod
+
+Creates property descriptor that represents an instance method of a JavaScript class.
+
+```cpp
+template <InstanceMethodCallback method>
+static Napi::PropertyDescriptor Napi::ObjectWrap::InstanceMethod(const char* utf8name,
+                                         napi_property_attributes attributes = napi_default,
+                                         void* data = nullptr);
+```
+
+- `[in] method`: The native function that represents an instance method of a
+JavaScript class.
+- `[in] utf8name`: Null-terminated string that represents the name of an instance
+method for the class.
+- `[in] attributes`: The attributes associated with a particular property.
+One or more of `napi_property_attributes`.
+- `[in] data`: User-provided data passed into method when it is invoked.
+
+Returns `Napi::PropertyDescriptor` object that represents an instance method of a
+JavaScript class.
+
+### InstanceMethod
+
+Creates property descriptor that represents an instance method of a JavaScript class.
+
+```cpp
+template <InstanceVoidMethodCallback method>
+static Napi::PropertyDescriptor Napi::ObjectWrap::InstanceMethod(Napi::Symbol name,
+                                         napi_property_attributes attributes = napi_default,
+                                         void* data = nullptr);
+```
+
+- `[in] method`: The native function that represents an instance method of a
+JavaScript class.
+- `[in] name`: The `Napi::Symbol` object whose value is used to identify the
+instance method for the class.
+- `[in] attributes`: The attributes associated with a particular property.
+One or more of `napi_property_attributes`.
+- `[in] data`: User-provided data passed into method when it is invoked.
+
+Returns `Napi::PropertyDescriptor` object that represents an instance method of a
+JavaScript class.
+
+### InstanceMethod
+
+Creates property descriptor that represents an instance method of a JavaScript class.
+
+```cpp
+template <InstanceMethodCallback method>
+static Napi::PropertyDescriptor Napi::ObjectWrap::InstanceMethod(Napi::Symbol name,
+                                         napi_property_attributes attributes = napi_default,
+                                         void* data = nullptr);
+```
+
+- `[in] method`: The native function that represents an instance method of a
+JavaScript class.
+- `[in] name`: The `Napi::Symbol` object whose value is used to identify the
+instance method for the class.
 - `[in] attributes`: The attributes associated with a particular property.
 One or more of `napi_property_attributes`.
 - `[in] data`: User-provided data passed into method when it is invoked.
@@ -475,6 +701,56 @@ instance accessor.
 a JavaScript class is performed.
 - `[in] setter`: The native function to call when a set access to the property of
 a JavaScript class is performed.
+- `[in] attributes`: The attributes associated with the particular property.
+One or more of `napi_property_attributes`.
+- `[in] data`: User-provided data passed into getter or setter when this is invoked.
+
+Returns `Napi::PropertyDescriptor` object that represents an instance accessor
+property of a JavaScript class.
+
+### InstanceAccessor
+
+Creates property descriptor that represents an instance accessor property of a
+JavaScript class.
+
+```cpp
+template <InstanceGetterCallback getter, InstanceSetterCallback setter=nullptr>
+static Napi::PropertyDescriptor Napi::ObjectWrap::InstanceAccessor(const char* utf8name,
+                                           napi_property_attributes attributes = napi_default,
+                                           void* data = nullptr);
+```
+
+- `[in] getter`: The native function to call when a get access to the property of
+a JavaScript class is performed.
+- `[in] setter`: The native function to call when a set access to the property of
+a JavaScript class is performed.
+- `[in] utf8name`: Null-terminated string that represents the name of an instance
+accessor property for the class.
+- `[in] attributes`: The attributes associated with the particular property.
+One or more of `napi_property_attributes`.
+- `[in] data`: User-provided data passed into getter or setter when this is invoked.
+
+Returns `Napi::PropertyDescriptor` object that represents an instance accessor
+property of a JavaScript class.
+
+### InstanceAccessor
+
+Creates property descriptor that represents an instance accessor property of a
+JavaScript class.
+
+```cpp
+template <InstanceGetterCallback getter, InstanceSetterCallback setter=nullptr>
+static Napi::PropertyDescriptor Napi::ObjectWrap::InstanceAccessor(Symbol name,
+                                           napi_property_attributes attributes = napi_default,
+                                           void* data = nullptr);
+```
+
+- `[in] getter`: The native function to call when a get access to the property of
+a JavaScript class is performed.
+- `[in] setter`: The native function to call when a set access to the property of
+a JavaScript class is performed.
+- `[in] name`: The `Napi::Symbol` object whose value is used to identify the
+instance accessor.
 - `[in] attributes`: The attributes associated with the particular property.
 One or more of `napi_property_attributes`.
 - `[in] data`: User-provided data passed into getter or setter when this is invoked.
