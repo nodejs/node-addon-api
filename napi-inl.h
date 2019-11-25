@@ -1766,6 +1766,51 @@ CreateFunction(napi_env env,
   return status;
 }
 
+template <Function::VoidCallback cb>
+inline Function Function::New(napi_env env, const char* utf8name, void* data) {
+  napi_value result = nullptr;
+  napi_status status = napi_create_function(
+      env, utf8name, NAPI_AUTO_LENGTH,
+      [](napi_env env, napi_callback_info info) {
+        CallbackInfo callbackInfo(env, info);
+        return details::WrapCallback([&] {
+          cb(callbackInfo);
+          return nullptr;
+        });
+      }, data, &result);
+  NAPI_THROW_IF_FAILED(env, status, Function());
+  return Function(env, result);
+}
+
+template <Function::Callback cb>
+inline Function Function::New(napi_env env, const char* utf8name, void* data) {
+  napi_value result = nullptr;
+  napi_status status = napi_create_function(
+      env, utf8name, NAPI_AUTO_LENGTH,
+      [](napi_env env, napi_callback_info info) {
+        CallbackInfo callbackInfo(env, info);
+        return details::WrapCallback([&] {
+          return cb(callbackInfo);
+        });
+      }, data, &result);
+  NAPI_THROW_IF_FAILED(env, status, Function());
+  return Function(env, result);
+}
+
+template <Function::VoidCallback cb>
+inline Function Function::New(napi_env env,
+                              const std::string& utf8name,
+                              void* data) {
+  return Function::New<cb>(env, utf8name.c_str(), data);
+}
+
+template <Function::Callback cb>
+inline Function Function::New(napi_env env,
+                              const std::string& utf8name,
+                              void* data) {
+  return Function::New<cb>(env, utf8name.c_str(), data);
+}
+
 template <typename Callable>
 inline Function Function::New(napi_env env,
                               Callable cb,

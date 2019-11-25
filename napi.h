@@ -993,6 +993,29 @@ namespace Napi {
 
   class Function : public Object {
   public:
+    typedef void (*VoidCallback)(const CallbackInfo& info);
+    typedef Value (*Callback)(const CallbackInfo& info);
+
+    template <VoidCallback cb>
+    static Function New(napi_env env,
+                        const char* utf8name = nullptr,
+                        void* data = nullptr);
+
+    template <Callback cb>
+    static Function New(napi_env env,
+                        const char* utf8name = nullptr,
+                        void* data = nullptr);
+
+    template <VoidCallback cb>
+    static Function New(napi_env env,
+                        const std::string& utf8name,
+                        void* data = nullptr);
+
+    template <Callback cb>
+    static Function New(napi_env env,
+                        const std::string& utf8name,
+                        void* data = nullptr);
+
     /// Callable must implement operator() accepting a const CallbackInfo&
     /// and return either void or Value.
     template <typename Callable>
