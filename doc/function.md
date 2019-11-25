@@ -25,7 +25,7 @@ Value Fn(const CallbackInfo& info) {
 }
 
 Object Init(Env env, Object exports) {
-  exports.Set(String::New(env, "fn"), Function::New(env, Fn));
+  exports.Set(String::New(env, "fn"), Function::New<Fn>(env));
 }
 
 NODE_API_MODULE(NODE_GYP_MODULE_NAME, Init)
@@ -46,6 +46,27 @@ JavaScript after returning from an [asynchronous operation](async_operations.md)
 and in general in situations which don't have an existing JavaScript function on
 the stack. The `Call` method is used when there is already a JavaScript function
 on the stack (for example when running a native method called from JavaScript).
+
+## Type definitions
+
+### Napi::Function::VoidCallback
+
+This is the type describing a callback returning `void` that will be invoked
+from JavaScript.
+
+```cpp
+typedef void (*VoidCallback)(const Napi::CallbackInfo& info);
+```
+
+### Napi::Function::Callback
+
+This is the type describing a callback returning a value that will be invoked
+from JavaScript.
+
+
+```cpp
+typedef Value (*Callback)(const Napi::CallbackInfo& info);
+```
 
 ## Methods
 
@@ -69,6 +90,86 @@ Napi::Function::Function(napi_env env, napi_value value);
 - `[in] value`: The `napi_value` which is a handle for a JavaScript function.
 
 Returns a non-empty `Napi::Function` instance.
+
+### New
+
+Creates an instance of a `Napi::Function` object.
+
+```cpp
+template <Napi::VoidCallback cb>
+static Napi::Function New(napi_env env,
+                          const char* utf8name = nullptr,
+                          void* data = nullptr);
+```
+
+- `[template] cb`: The native function to invoke when the JavaScript function is
+invoked.
+- `[in] env`: The `napi_env` environment in which to construct the `Napi::Function` object.
+- `[in] utf8name`: Null-terminated string to be used as the name of the function.
+- `[in] data`: User-provided data context. This will be passed back into the
+function when invoked later.
+
+Returns an instance of a `Napi::Function` object.
+
+### New
+
+Creates an instance of a `Napi::Function` object.
+
+```cpp
+template <Napi::Callback cb>
+static Napi::Function New(napi_env env,
+                          const char* utf8name = nullptr,
+                          void* data = nullptr);
+```
+
+- `[template] cb`: The native function to invoke when the JavaScript function is
+invoked.
+- `[in] env`: The `napi_env` environment in which to construct the `Napi::Function` object.
+- `[in] utf8name`: Null-terminated string to be used as the name of the function.
+- `[in] data`: User-provided data context. This will be passed back into the
+function when invoked later.
+
+Returns an instance of a `Napi::Function` object.
+
+### New
+
+Creates an instance of a `Napi::Function` object.
+
+```cpp
+template <Napi::VoidCallback cb>
+static Napi::Function New(napi_env env,
+                          const std::string& utf8name,
+                          void* data = nullptr);
+```
+
+- `[template] cb`: The native function to invoke when the JavaScript function is
+invoked.
+- `[in] env`: The `napi_env` environment in which to construct the `Napi::Function` object.
+- `[in] utf8name`: String to be used as the name of the function.
+- `[in] data`: User-provided data context. This will be passed back into the
+function when invoked later.
+
+Returns an instance of a `Napi::Function` object.
+
+### New
+
+Creates an instance of a `Napi::Function` object.
+
+```cpp
+template <Napi::Callback cb>
+static Napi::Function New(napi_env env,
+                          const std::string& utf8name,
+                          void* data = nullptr);
+```
+
+- `[template] cb`: The native function to invoke when the JavaScript function is
+invoked.
+- `[in] env`: The `napi_env` environment in which to construct the `Napi::Function` object.
+- `[in] utf8name`: String to be used as the name of the function.
+- `[in] data`: User-provided data context. This will be passed back into the
+function when invoked later.
+
+Returns an instance of a `Napi::Function` object.
 
 ### New
 

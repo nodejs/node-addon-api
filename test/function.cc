@@ -105,6 +105,7 @@ void IsConstructCall(const CallbackInfo& info) {
 } // end anonymous namespace
 
 Object InitFunction(Env env) {
+  Object result = Object::New(env);
   Object exports = Object::New(env);
   exports["voidCallback"] = Function::New(env, VoidCallback, "voidCallback");
   exports["valueCallback"] = Function::New(env, ValueCallback, std::string("valueCallback"));
@@ -120,5 +121,29 @@ Object InitFunction(Env env) {
   exports["callConstructorWithArgs"] = Function::New(env, CallConstructorWithArgs);
   exports["callConstructorWithVector"] = Function::New(env, CallConstructorWithVector);
   exports["isConstructCall"] = Function::New(env, IsConstructCall);
-  return exports;
+  result["plain"] = exports;
+
+  exports = Object::New(env);
+  exports["voidCallback"] = Function::New<VoidCallback>(env, "voidCallback");
+  exports["valueCallback"] =
+      Function::New<ValueCallback>(env, std::string("valueCallback"));
+  exports["voidCallbackWithData"] =
+      Function::New<VoidCallbackWithData>(env, nullptr, &testData);
+  exports["valueCallbackWithData"] =
+      Function::New<ValueCallbackWithData>(env, nullptr, &testData);
+  exports["callWithArgs"] = Function::New<CallWithArgs>(env);
+  exports["callWithVector"] = Function::New<CallWithVector>(env);
+  exports["callWithReceiverAndArgs"] =
+      Function::New<CallWithReceiverAndArgs>(env);
+  exports["callWithReceiverAndVector"] =
+      Function::New<CallWithReceiverAndVector>(env);
+  exports["callWithInvalidReceiver"] =
+      Function::New<CallWithInvalidReceiver>(env);
+  exports["callConstructorWithArgs"] =
+      Function::New<CallConstructorWithArgs>(env);
+  exports["callConstructorWithVector"] =
+      Function::New<CallConstructorWithVector>(env);
+  exports["isConstructCall"] = Function::New<IsConstructCall>(env);
+  result["templated"] = exports;
+  return result;
 }
