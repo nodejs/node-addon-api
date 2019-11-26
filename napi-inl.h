@@ -2120,7 +2120,7 @@ inline Error& Error::operator =(Error&& other) {
 inline Error::Error(const Error& other) : ObjectReference(other) {
 }
 
-inline Error& Error::operator =(Error& other) {
+inline Error& Error::operator =(const Error& other) {
   Reset();
 
   _env = other.Env();

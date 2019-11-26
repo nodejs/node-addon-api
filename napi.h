@@ -1108,7 +1108,7 @@ namespace Napi {
     // A reference can be moved but cannot be copied.
     Reference(Reference<T>&& other);
     Reference<T>& operator =(Reference<T>&& other);
-    Reference<T>& operator =(Reference<T>&) = delete;
+    Reference<T>& operator =(const Reference<T>&) = delete;
 
     operator napi_ref() const;
     bool operator ==(const Reference<T> &other) const;
@@ -1153,7 +1153,7 @@ namespace Napi {
     ObjectReference& operator =(Reference<Object>&& other);
     ObjectReference(ObjectReference&& other);
     ObjectReference& operator =(ObjectReference&& other);
-    ObjectReference& operator =(ObjectReference&) = delete;
+    ObjectReference& operator =(const ObjectReference&) = delete;
 
     Napi::Value Get(const char* utf8name) const;
     Napi::Value Get(const std::string& utf8name) const;
@@ -1191,7 +1191,7 @@ namespace Napi {
     FunctionReference(FunctionReference&& other);
     FunctionReference& operator =(FunctionReference&& other);
     FunctionReference(const FunctionReference&) = delete;
-    FunctionReference& operator =(FunctionReference&) = delete;
+    FunctionReference& operator =(const FunctionReference&) = delete;
 
     Napi::Value operator ()(const std::initializer_list<napi_value>& args) const;
 
@@ -1333,7 +1333,7 @@ namespace Napi {
     Error(Error&& other);
     Error& operator =(Error&& other);
     Error(const Error&);
-    Error& operator =(Error&);
+    Error& operator =(const Error&);
 
     const std::string& Message() const NAPI_NOEXCEPT;
     void ThrowAsJavaScriptException() const;
@@ -1806,7 +1806,7 @@ namespace Napi {
     AsyncContext(AsyncContext&& other);
     AsyncContext& operator =(AsyncContext&& other);
     AsyncContext(const AsyncContext&) = delete;
-    AsyncContext& operator =(AsyncContext&) = delete;
+    AsyncContext& operator =(const AsyncContext&) = delete;
 
     operator napi_async_context() const;
 
@@ -1825,7 +1825,7 @@ namespace Napi {
     AsyncWorker(AsyncWorker&& other);
     AsyncWorker& operator =(AsyncWorker&& other);
     AsyncWorker(const AsyncWorker&) = delete;
-    AsyncWorker& operator =(AsyncWorker&) = delete;
+    AsyncWorker& operator =(const AsyncWorker&) = delete;
 
     operator napi_async_work() const;
 
