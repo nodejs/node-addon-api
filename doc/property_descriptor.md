@@ -26,15 +26,9 @@ Void Init(Env env) {
   Object obj = Object::New(env);
 
   // Accessor
-  PropertyDescriptor pd1 = PropertyDescriptor::Accessor(env,
-                                                        obj,
-                                                        "pd1",
-                                                        TestGetter);
-  PropertyDescriptor pd2 = PropertyDescriptor::Accessor(env,
-                                                        obj,
-                                                        "pd2",
-                                                        TestGetter,
-                                                        TestSetter);
+  PropertyDescriptor pd1 = PropertyDescriptor::Accessor<TestGetter>("pd1");
+  PropertyDescriptor pd2 =
+      PropertyDescriptor::Accessor<TestGetter, TestSetter>("pd2");
   // Function
   PropertyDescriptor pd3 = PropertyDescriptor::Function(env,
                                                         "function",
@@ -51,6 +45,26 @@ Void Init(Env env) {
 }
 ```
 
+## Types
+
+### PropertyDescriptor::GetterCallback
+
+```cpp
+typedef Napi::Value (*GetterCallback)(const Napi::CallbackInfo& info);
+```
+
+This is the signature of a getter function to be passed as a template parameter
+to `PropertyDescriptor::Accessor`.
+
+### PropertyDescriptor::SetterCallback
+
+```cpp
+typedef void (*SetterCallback)(const Napi::CallbackInfo& info);
+```
+
+This is the signature of a setter function to be passed as a template parameter
+to `PropertyDescriptor::Accessor`.
+
 ## Methods
 
 ### Constructor
@@ -62,6 +76,47 @@ Napi::PropertyDescriptor::PropertyDescriptor (napi_property_descriptor desc);
 * `[in] desc`: A PropertyDescriptor that is needed in order to create another PropertyDescriptor.
 
 ### Accessor
+
+```cpp
+template <Napi::PropertyDescriptor::GetterCallback Getter>
+static Napi::PropertyDescriptor Napi::PropertyDescriptor::Accessor (___ name,
+                             napi_property_attributes attributes = napi_default,
+                             void* data = nullptr);
+```
+
+* `[template] Getter`: A getter function.
+* `[in] attributes`: Potential attributes for the getter function.
+* `[in] data`: A pointer to data of any type, default is a null pointer.
+
+Returns a PropertyDescriptor that contains a read-only property.
+
+The name of the property can be any of the following types:
+- `const char*`
+- `const std::string &`
+- `napi_value value`
+- `Napi::Name`
+
+```cpp
+template <
+Napi::PropertyDescriptor::GetterCallback Getter,
+Napi::PropertyDescriptor::SetterCallback Setter>
+static Napi::PropertyDescriptor Napi::PropertyDescriptor::Accessor (___ name,
+                             napi_property_attributes attributes = napi_default,
+                             void* data = nullptr);
+```
+
+* `[template] Getter`: A getter function.
+* `[template] Setter`: A setter function.
+* `[in] attributes`: Potential attributes for the getter function.
+* `[in] data`: A pointer to data of any type, default is a null pointer.
+
+Returns a PropertyDescriptor that contains a read-write property.
+
+The name of the property can be any of the following types:
+- `const char*`
+- `const std::string &`
+- `napi_value value`
+- `Napi::Name`
 
 ```cpp
 static Napi::PropertyDescriptor Napi::PropertyDescriptor::Accessor (___ name,

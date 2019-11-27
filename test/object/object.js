@@ -22,6 +22,7 @@ function test(binding) {
     const obj = {};
     binding.object.defineProperties(obj, nameType);
 
+    // accessors
     assertPropertyIsNot(obj, 'readonlyAccessor', 'enumerable');
     assertPropertyIsNot(obj, 'readonlyAccessor', 'configurable');
     assert.strictEqual(obj.readonlyAccessor, true);
@@ -44,6 +45,30 @@ function test(binding) {
     obj.readwriteAccessorWithUserData = -14;
     assert.strictEqual(obj.readwriteAccessorWithUserData, -14);
 
+    // templated accessors
+    assertPropertyIsNot(obj, 'readonlyAccessorT', 'enumerable');
+    assertPropertyIsNot(obj, 'readonlyAccessorT', 'configurable');
+    assert.strictEqual(obj.readonlyAccessorT, true);
+
+    assertPropertyIsNot(obj, 'readonlyAccessorWithUserDataT', 'enumerable');
+    assertPropertyIsNot(obj, 'readonlyAccessorWithUserDataT', 'configurable');
+    assert.strictEqual(obj.readonlyAccessorWithUserDataT, -14, nameType);
+
+    assertPropertyIsNot(obj, 'readwriteAccessorT', 'enumerable');
+    assertPropertyIsNot(obj, 'readwriteAccessorT', 'configurable');
+    obj.readwriteAccessorT = false;
+    assert.strictEqual(obj.readwriteAccessorT, false);
+    obj.readwriteAccessorT = true;
+    assert.strictEqual(obj.readwriteAccessorT, true);
+
+    assertPropertyIsNot(obj, 'readwriteAccessorWithUserDataT', 'enumerable');
+    assertPropertyIsNot(obj, 'readwriteAccessorWithUserDataT', 'configurable');
+    obj.readwriteAccessorWithUserDataT = 2;
+    assert.strictEqual(obj.readwriteAccessorWithUserDataT, 2);
+    obj.readwriteAccessorWithUserDataT = -14;
+    assert.strictEqual(obj.readwriteAccessorWithUserDataT, -14);
+
+    // values
     assertPropertyIsNot(obj, 'readonlyValue', 'writable');
     assertPropertyIsNot(obj, 'readonlyValue', 'enumerable');
     assertPropertyIsNot(obj, 'readonlyValue', 'configurable');
@@ -65,6 +90,7 @@ function test(binding) {
     assertPropertyIsNot(obj, 'configurableValue', 'enumerable');
     assertPropertyIs(obj, 'configurableValue', 'configurable');
 
+    // functions
     assertPropertyIsNot(obj, 'function', 'writable');
     assertPropertyIsNot(obj, 'function', 'enumerable');
     assertPropertyIsNot(obj, 'function', 'configurable');
