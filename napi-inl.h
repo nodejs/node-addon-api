@@ -2732,6 +2732,108 @@ inline void CallbackInfo::SetData(void* data) {
 // PropertyDescriptor class
 ////////////////////////////////////////////////////////////////////////////////
 
+template <typename PropertyDescriptor::GetterCallback Getter>
+PropertyDescriptor
+PropertyDescriptor::Accessor(const char* utf8name,
+                             napi_property_attributes attributes,
+                             void* data) {
+  napi_property_descriptor desc = napi_property_descriptor();
+
+  desc.utf8name = utf8name;
+  desc.getter = &GetterCallbackWrapper<Getter>;
+  desc.attributes = attributes;
+  desc.data = data;
+
+  return desc;
+}
+
+template <typename PropertyDescriptor::GetterCallback Getter>
+PropertyDescriptor
+PropertyDescriptor::Accessor(const std::string& utf8name,
+                             napi_property_attributes attributes,
+                             void* data) {
+  return Accessor<Getter>(utf8name.c_str(), attributes, data);
+}
+
+template <typename PropertyDescriptor::GetterCallback Getter>
+PropertyDescriptor
+PropertyDescriptor::Accessor(Name name,
+                             napi_property_attributes attributes,
+                             void* data) {
+  napi_property_descriptor desc = napi_property_descriptor();
+
+  desc.name = name;
+  desc.getter = &GetterCallbackWrapper<Getter>;
+  desc.attributes = attributes;
+  desc.data = data;
+
+  return desc;
+}
+
+template <
+typename PropertyDescriptor::GetterCallback Getter,
+typename PropertyDescriptor::SetterCallback Setter>
+PropertyDescriptor
+PropertyDescriptor::Accessor(const char* utf8name,
+                             napi_property_attributes attributes,
+                             void* data) {
+
+  napi_property_descriptor desc = napi_property_descriptor();
+
+  desc.utf8name = utf8name;
+  desc.getter = &GetterCallbackWrapper<Getter>;
+  desc.setter = &SetterCallbackWrapper<Setter>;
+  desc.attributes = attributes;
+  desc.data = data;
+
+  return desc;
+}
+
+template <
+typename PropertyDescriptor::GetterCallback Getter,
+typename PropertyDescriptor::SetterCallback Setter>
+PropertyDescriptor
+PropertyDescriptor::Accessor(const std::string& utf8name,
+                             napi_property_attributes attributes,
+                             void* data) {
+  return Accessor<Getter, Setter>(utf8name.c_str(), attributes, data);
+}
+
+template <
+typename PropertyDescriptor::GetterCallback Getter,
+typename PropertyDescriptor::SetterCallback Setter>
+PropertyDescriptor
+PropertyDescriptor::Accessor(Name name,
+                             napi_property_attributes attributes,
+                             void* data) {
+  napi_property_descriptor desc = napi_property_descriptor();
+
+  desc.name = name;
+  desc.getter = &GetterCallbackWrapper<Getter>;
+  desc.setter = &SetterCallbackWrapper<Setter>;
+  desc.attributes = attributes;
+  desc.data = data;
+
+  return desc;
+}
+
+template <typename PropertyDescriptor::GetterCallback Getter>
+napi_value
+PropertyDescriptor::GetterCallbackWrapper(napi_env env,
+                                          napi_callback_info info) {
+  CallbackInfo cbInfo(env, info);
+  return Getter(cbInfo);
+}
+
+template <typename PropertyDescriptor::SetterCallback Setter>
+napi_value
+PropertyDescriptor::SetterCallbackWrapper(napi_env env,
+                                          napi_callback_info info) {
+  CallbackInfo cbInfo(env, info);
+  Setter(cbInfo);
+  return nullptr;
+}
+
 template <typename Getter>
 inline PropertyDescriptor
 PropertyDescriptor::Accessor(Napi::Env env,
