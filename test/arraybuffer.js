@@ -61,5 +61,11 @@ function test(binding) {
       binding.arraybuffer.checkBuffer(test);
       assert.ok(test instanceof ArrayBuffer);
     },
+
+    'ArrayBuffer updates data pointer and length when detached',
+    () => {
+      const mem = new WebAssembly.Memory({ initial: 1 });
+      binding.arraybuffer.checkDetachUpdatesData(mem.buffer, () => mem.grow(1));
+    },
   ]);
 }

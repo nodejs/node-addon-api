@@ -151,6 +151,37 @@ Value CheckEmptyBuffer(const CallbackInfo& info) {
   return Boolean::New(info.Env(), buffer.IsEmpty());
 }
 
+void CheckDetachUpdatesData(const CallbackInfo& info) {
+  if (!info[0].IsArrayBuffer()) {
+    Error::New(info.Env(), "A buffer was expected.").ThrowAsJavaScriptException();
+    return;
+  }
+
+  if (!info[1].IsFunction()) {
+    Error::New(info.Env(), "A function was expected.").ThrowAsJavaScriptException();
+    return;
+  }
+
+  ArrayBuffer buffer = info[0].As<ArrayBuffer>();
+  Function detach = info[1].As<Function>();
+
+  // This potentially causes the buffer to cache its data pointer and length.
+  buffer.Data();
+  buffer.ByteLength();
+
+  detach.Call({});
+
+  if (buffer.Data() != nullptr) {
+    Error::New(info.Env(), "Incorrect data pointer.").ThrowAsJavaScriptException();
+    return;
+  }
+
+  if (buffer.ByteLength() != 0) {
+    Error::New(info.Env(), "Incorrect buffer length.").ThrowAsJavaScriptException();
+    return;
+  }
+}
+
 } // end anonymous namespace
 
 Object InitArrayBuffer(Env env) {
@@ -166,6 +197,7 @@ Object InitArrayBuffer(Env env) {
   exports["getFinalizeCount"] = Function::New(env, GetFinalizeCount);
   exports["createBufferWithConstructor"] = Function::New(env, CreateBufferWithConstructor);
   exports["checkEmptyBuffer"] = Function::New(env, CheckEmptyBuffer);
+  exports["checkDetachUpdatesData"] = Function::New(env, CheckDetachUpdatesData);
 
   return exports;
 }
