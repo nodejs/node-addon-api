@@ -802,13 +802,6 @@ namespace Napi {
 
     void* Data();        ///< Gets a pointer to the data buffer.
     size_t ByteLength(); ///< Gets the length of the array buffer in bytes.
-
-  private:
-    mutable void* _data;
-    mutable size_t _length;
-
-    ArrayBuffer(napi_env env, napi_value value, void* data, size_t length);
-    void EnsureInfo() const;
   };
 
   /// A JavaScript typed-array value with unknown array type.
