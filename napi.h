@@ -124,6 +124,7 @@ namespace Napi {
   class String;
   class Object;
   class Array;
+  class ArrayBuffer;
   class Function;
   template <typename T> class Buffer;
   class Error;
