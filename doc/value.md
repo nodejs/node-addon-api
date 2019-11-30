@@ -6,7 +6,7 @@ Value is a the base class upon which other JavaScript values such as Number, Boo
 
 The following classes inherit, either directly or indirectly, from `Napi::Value`:
 
-- [`Napi::Array`](array.md)
+- [`Napi::Array`](basic_types.md#array)
 - [`Napi::ArrayBuffer`](array_buffer.md)
 - [`Napi::Boolean`](boolean.md)
 - [`Napi::Buffer`](buffer.md)

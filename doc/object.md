@@ -2,7 +2,7 @@
 
 The `Napi::Object` class corresponds to a JavaScript object. It is extended by the following node-addon-api classes that you may use when working with more specific types:
 
-- [`Napi::Value`](value.md) and extends [`Napi::Array`](array.md)
+- [`Napi::Value`](value.md) and extends [`Napi::Array`](basic_types.md#array)
 - [`Napi::ArrayBuffer`](array_buffer.md)
 - [`Napi::Buffer<T>`](buffer.md)
 - [`Napi::Function`](function.md)
