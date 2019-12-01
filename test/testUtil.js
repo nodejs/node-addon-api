@@ -2,7 +2,7 @@
 // with an async delay and GC call between each.
 function runGCTests(tests, i, title) {
   if (!i) {
-     i = 0;
+    i = 0;
   }
 
   if (tests[i]) {
@@ -25,5 +25,5 @@ function runGCTests(tests, i, title) {
 }
 
 module.exports = {
-   runGCTests,
+  runGCTests,
 };

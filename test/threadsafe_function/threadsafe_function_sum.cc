@@ -28,7 +28,7 @@ void FinalizerCallback(Napi::Env env, TestData* finalizeData){
   for (size_t i = 0; i < finalizeData->threads.size(); ++i) {
     finalizeData->threads[i].join();
   }
-  finalizeData->deferred.Resolve(Boolean::New(env,true));
+  finalizeData->deferred.Resolve(Boolean::New(env, true));
   delete finalizeData;
 }
 
