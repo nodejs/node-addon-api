@@ -61,3 +61,17 @@ Napi::Error Napi::Env::GetAndClearPendingException();
 ```
 
 Returns an `Napi::Error` object representing the environment's pending exception, if any.
+
+### RunScript
+
+```cpp
+Napi::Value Napi::Env::RunScript(____ script);
+```
+- `[in] script`: A string containing JavaScript code to execute.
+
+Runs JavaScript code contained in a string and returns its result.
+
+The `script` can be any of the following types:
+- [`Napi::String`](string.md)
+- `const char *`
+- `const std::string &`

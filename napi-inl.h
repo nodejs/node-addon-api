@@ -319,6 +319,22 @@ inline Error Env::GetAndClearPendingException() {
   return Error(_env, value);
 }
 
+inline Value Env::RunScript(const char* utf8script) {
+  String script = String::New(_env, utf8script);
+  return RunScript(script);
+}
+
+inline Value Env::RunScript(const std::string& utf8script) {
+  return RunScript(utf8script.c_str());
+}
+
+inline Value Env::RunScript(String script) {
+  napi_value result;
+  napi_status status = napi_run_script(_env, script, &result);
+  NAPI_THROW_IF_FAILED(_env, status, Undefined());
+  return Value(_env, result);
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 // Value class
 ////////////////////////////////////////////////////////////////////////////////

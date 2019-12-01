@@ -36,6 +36,7 @@
         'object/object.cc',
         'object/set_property.cc',
         'promise.cc',
+        'run_script.cc',
         'threadsafe_function/threadsafe_function_ctx.cc',
         'threadsafe_function/threadsafe_function_existing_tsfn.cc',
         'threadsafe_function/threadsafe_function_ptr.cc',
