@@ -39,6 +39,7 @@ let testModules = [
   'object/object_deprecated',
   'object/set_property',
   'promise',
+  'run_script',
   'threadsafe_function/threadsafe_function_ctx',
   'threadsafe_function/threadsafe_function_existing_tsfn',
   'threadsafe_function/threadsafe_function_ptr',

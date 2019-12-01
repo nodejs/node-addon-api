@@ -178,6 +178,10 @@ namespace Napi {
     bool IsExceptionPending() const;
     Error GetAndClearPendingException();
 
+    Value RunScript(const char* utf8script);
+    Value RunScript(const std::string& utf8script);
+    Value RunScript(String script);
+
   private:
     napi_env _env;
   };
