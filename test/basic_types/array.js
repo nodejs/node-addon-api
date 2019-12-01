@@ -12,7 +12,7 @@ function test(binding) {
   assert.strictEqual(binding.basic_types_array.getLength(array), 0);
 
   // create array with length
-	const arrayWithLength = binding.basic_types_array.createArray(10);
+  const arrayWithLength = binding.basic_types_array.createArray(10);
   assert.strictEqual(binding.basic_types_array.getLength(arrayWithLength), 10);
 
   // set function test
