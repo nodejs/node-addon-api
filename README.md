@@ -174,7 +174,7 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for more details on our philosophy around
 
 <a name="contributors"></a>
 
-## WG Members / Collaborators
+## Team members
 
 ### Active
 | Name                | GitHub Link                                           |
