@@ -207,6 +207,7 @@
   "dependencies": {},
   "description": "Node.js API (N-API)",
   "devDependencies": {
+    "benchmark": "^2.1.4",
     "safe-buffer": "^5.1.1"
   },
   "directories": {},
@@ -232,6 +233,8 @@
     "url": "git://github.com/nodejs/node-addon-api.git"
   },
   "scripts": {
+    "prebenchmark": "node-gyp rebuild -C benchmark",
+    "benchmark": "node benchmark",
     "pretest": "node-gyp rebuild -C test",
     "test": "node test",
     "predev": "node-gyp rebuild -C test --debug",
