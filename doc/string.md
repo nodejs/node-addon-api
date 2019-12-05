@@ -62,7 +62,7 @@ Napi::String::New(napi_env env, const char16_t* value, size_t length);
 
 - `[in] env`: The `napi_env` environment in which to construct the `Napi::Value` object.
 - `[in] value`: The C++ primitive from which to instantiate the `Napi::Value`. `value` may be any of:
-  - `std::string&` - represents an ANSI string.
+  - `std::string&` - represents a UTF8 string.
   - `std::u16string&` - represents a UTF16-LE string.
   - `const char*` - represents a UTF8 string.
   - `const char16_t*` - represents a UTF16-LE string.
