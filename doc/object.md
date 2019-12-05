@@ -101,6 +101,22 @@ While the value must be any of the following types:
 - `bool`
 - `double`
 
+### Delete()
+
+```cpp
+bool Napi::Object::Delete(____ key);
+```
+- `[in] key`: The name of the property to delete.
+
+Deletes the property associated with the given key. Returns `true` if the property was deleted.
+
+The `key` can be any of the following types:
+- `napi_value`
+- [`Napi::Value`](value.md)
+- `const char *`
+- `const std::string &`
+- `uint32_t`
+
 ### Get()
 
 ```cpp
@@ -170,6 +186,29 @@ may be given. It will also be passed to `finalizeCallback`, which has the signat
 void finalizeCallback(Napi::Env env, T* data, Hint* hint);
 ```
 where `data` and `hint` are the pointers that were passed into the call to `AddFinalizer()`.
+
+### GetPropertyNames()
+```cpp
+Napi::Array Napi::Object::GetPropertyNames() const;
+```
+
+Returns the names of the enumerable properties of the object as a [`Napi::Array`](basic_types.md#array) of strings.
+The properties whose key is a `Symbol` will not be included.
+
+### HasOwnProperty()
+```cpp
+bool Napi::Object::HasOwnProperty(____ key); const
+```
+- `[in] key` The name of the property to check.
+
+Returns a `bool` that is *true* if the object has an own property named `key` and *false* otherwise.
+
+The key can be any of the following types:
+- `napi_value`
+- [`Napi::Value`](value.md)
+- `const char*`
+- `const std::string&`
+- `uint32_t`
 
 ### DefineProperty()
 
