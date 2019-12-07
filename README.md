@@ -162,6 +162,16 @@ Take a look and get inspired by our **[test suite](https://github.com/nodejs/nod
 
 <a name="resources"></a>
 
+### **Benchmarks**
+
+You can run the available benchmarks using the following command:
+
+```
+npm run-script benchmark
+```
+
+See [benchmark/README.md](benchmark/README.md) for more details about running and adding benchmarks.
+
 ## **Contributing**
 
 We love contributions from the community to **node-addon-api**.
