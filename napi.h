@@ -526,6 +526,16 @@ namespace Napi {
       napi_env env ///< N-API environment
     );
 
+    static Object New(
+      napi_env env, ///< N-API environment
+      const std::initializer_list<PropertyDescriptor> &properties  ///< initial prperties
+    );
+
+    static Object New(
+      napi_env env, ///< N-API environment
+      const std::vector<PropertyDescriptor> &properties  ///< initial prperties
+    );
+
     Object();                               ///< Creates a new _empty_ Object instance.
     Object(napi_env env, napi_value value); ///< Wraps a N-API value primitive.
 

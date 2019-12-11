@@ -971,6 +971,18 @@ inline Object Object::New(napi_env env) {
   return Object(env, value);
 }
 
+inline Object Object::New(napi_env env, const std::initializer_list<PropertyDescriptor> &properties) {
+  Object obj = Object::New(env);
+  obj.DefineProperties(properties);
+  return obj;
+}
+
+inline Object Object::New(napi_env env, const std::vector<PropertyDescriptor> &properties) {
+  Object obj = Object::New(env);
+  obj.DefineProperties(properties);
+  return obj;
+}
+
 inline Object::Object() : Value() {
 }
 
