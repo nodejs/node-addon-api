@@ -70,4 +70,10 @@ function test(bindingPath) {
   assert.ifError(p.error);
   assert.ok(p.stderr.toString().includes(
       'FATAL ERROR: Error::ThrowFatalError This is a fatal error'));
+
+  assert.throws(() => binding.error.throwDefaultError(false),
+    /Cannot convert undefined or null to object/);
+
+  assert.throws(() => binding.error.throwDefaultError(true),
+    /A number was expected/);
 }

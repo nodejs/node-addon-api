@@ -22,7 +22,7 @@ function test(binding) {
   function testShouldThrowErrorIfKeyIsInvalid(nativeDeleteProperty) {
     assert.throws(() => {
       nativeDeleteProperty(undefined, 'test');
-    }, /object was expected/);
+    }, /Cannot convert undefined or null to object/);
   }
 
   testDeleteProperty(binding.object.deletePropertyWithNapiValue);
