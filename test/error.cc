@@ -158,6 +158,40 @@ void ThrowFatalError(const CallbackInfo& /*info*/) {
   Error::Fatal("Error::ThrowFatalError", "This is a fatal error");
 }
 
+void ThrowDefaultError(const CallbackInfo& info) {
+  napi_value dummy;
+  napi_env env = info.Env();
+  napi_status status = napi_get_undefined(env, &dummy);
+  NAPI_FATAL_IF_FAILED(status, "ThrowDefaultError", "napi_get_undefined");
+
+  if (info[0].As<Boolean>().Value()) {
+    // Provoke N-API into setting an error, then use the `Napi::Error::New`
+    // factory with only the `env` parameter to throw an exception generated
+    // from the last error.
+    uint32_t dummy_uint32;
+    status = napi_get_value_uint32(env, dummy, &dummy_uint32);
+    if (status == napi_ok) {
+      Error::Fatal("ThrowDefaultError", "napi_get_value_uint32");
+    }
+    // We cannot use `NAPI_THROW_IF_FAILED()` here because we do not wish
+    // control to pass back to the engine if we throw an exception here and C++
+    // exceptions are turned on.
+    Napi::Error::New(env).ThrowAsJavaScriptException();
+  }
+
+  // Produce and throw a second error that has different content than the one
+  // above. If the one above was thrown, then throwing the one below should
+  // have the effect of re-throwing the one above.
+  status = napi_get_named_property(env, dummy, "xyzzy", &dummy);
+  if (status == napi_ok) {
+    Error::Fatal("ThrowDefaultError", "napi_get_named_property");
+  }
+
+  // The macro creates a `Napi::Error` using the factory that takes only the
+  // env, however, it heeds the exception mechanism to be used.
+  NAPI_THROW_IF_FAILED_VOID(env, status);
+}
+
 } // end anonymous namespace
 
 Object InitError(Env env) {
@@ -174,5 +208,6 @@ Object InitError(Env env) {
   exports["catchAndRethrowErrorThatEscapesScope"] =
     Function::New(env, CatchAndRethrowErrorThatEscapesScope);
   exports["throwFatalError"] = Function::New(env, ThrowFatalError);
+  exports["throwDefaultError"] = Function::New(env, ThrowDefaultError);
   return exports;
 }

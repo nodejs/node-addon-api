@@ -15,7 +15,7 @@ function test(binding) {
   function testShouldThrowErrorIfKeyIsInvalid(nativeGetProperty) {
     assert.throws(() => {
       nativeGetProperty(undefined, 'test');
-    }, /object was expected/);
+    }, /Cannot convert undefined or null to object/);
   }
 
   testGetProperty(binding.object.getPropertyWithNapiValue);
