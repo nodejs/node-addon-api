@@ -76,6 +76,33 @@ Napi::Object Napi::Object::New(napi_env env);
 
 Creates a new `Napi::Object` value.
 
+### New()
+
+```cpp
+Napi::Object Napi::Object::New(napi_env env,
+  const std::initializer_list<PropertyDescriptor> &properties);
+```
+
+- `[in] env`: The `napi_env` environment in which to construct the `Napi::Value` object.
+- `[in] properties`: Initializer list of `Napi::PropertyDescriptor` describing
+properties for the object. See: [Property and descriptor](property_descriptor.md).
+
+Creates a new `Napi::Object` value.
+
+### New()
+
+```cpp
+Napi::Object Napi::Object::New(napi_env env,
+  const std::vector<PropertyDescriptor> &properties);
+```
+
+- `[in] env`: The `napi_env` environment in which to construct the `Napi::Value` object.
+- `[in] properties`: Vector of `Napi::PropertyDescriptor` describing properties
+for the object. See: [Property and descriptor](property_descriptor.md).
+
+Creates a new `Napi::Object` value.
+
+
 ### Set()
 
 ```cpp
