@@ -139,6 +139,14 @@ static Napi::Object Init(Napi::Env env, Napi::Object exports) {
   cplusplus["fourArgFunction"] = Napi::Function::New(env, FourArgFunction);
   exports["cplusplus"] = cplusplus;
 
+  Napi::Object templated = Napi::Object::New(env);
+  templated["noArgFunction"] = Napi::Function::New<NoArgFunction>(env);
+  templated["oneArgFunction"] = Napi::Function::New<OneArgFunction>(env);
+  templated["twoArgFunction"] = Napi::Function::New<TwoArgFunction>(env);
+  templated["threeArgFunction"] = Napi::Function::New<ThreeArgFunction>(env);
+  templated["fourArgFunction"] = Napi::Function::New<FourArgFunction>(env);
+  exports["templated"] = templated;
+
   return exports;
 }
 
