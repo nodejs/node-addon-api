@@ -126,11 +126,9 @@ namespace Napi {
   class Array;
   class ArrayBuffer;
   class Function;
-  template <typename T> class Buffer;
   class Error;
   class PropertyDescriptor;
   class CallbackInfo;
-  template <typename T> class Reference;
   class TypedArray;
   template <typename T> class TypedArrayOf;
 
