@@ -150,9 +150,6 @@ struct ThreadSafeFinalize {
     ThreadSafeFinalize* finalizeData =
         static_cast<ThreadSafeFinalize*>(rawFinalizeData);
     finalizeData->callback(Env(env));
-    if (finalizeData->tsfn) {
-      *finalizeData->tsfn = nullptr;
-    }
     delete finalizeData;
   }
 
@@ -166,9 +163,6 @@ struct ThreadSafeFinalize {
     ThreadSafeFinalize* finalizeData =
         static_cast<ThreadSafeFinalize*>(rawFinalizeData);
     finalizeData->callback(Env(env), finalizeData->data);
-    if (finalizeData->tsfn) {
-      *finalizeData->tsfn = nullptr;
-    }
     delete finalizeData;
   }
 
@@ -182,9 +176,6 @@ struct ThreadSafeFinalize {
     ThreadSafeFinalize* finalizeData =
         static_cast<ThreadSafeFinalize*>(rawFinalizeData);
     finalizeData->callback(Env(env), static_cast<ContextType*>(rawContext));
-    if (finalizeData->tsfn) {
-      *finalizeData->tsfn = nullptr;
-    }
     delete finalizeData;
   }
 
@@ -199,15 +190,11 @@ struct ThreadSafeFinalize {
         static_cast<ThreadSafeFinalize*>(rawFinalizeData);
     finalizeData->callback(Env(env), finalizeData->data,
         static_cast<ContextType*>(rawContext));
-    if (finalizeData->tsfn) {
-      *finalizeData->tsfn = nullptr;
-    }
     delete finalizeData;
   }
 
   FinalizerDataType* data;
   Finalizer callback;
-  napi_threadsafe_function* tsfn;
 };
 #endif
 
@@ -4528,7 +4515,7 @@ inline ThreadSafeFunction ThreadSafeFunction::New(napi_env env,
 
   ThreadSafeFunction tsfn;
   auto* finalizeData = new details::ThreadSafeFinalize<ContextType, Finalizer,
-      FinalizerDataType>({ data, finalizeCallback, &tsfn._tsfn });
+      FinalizerDataType>({ data, finalizeCallback });
   napi_status status = napi_create_threadsafe_function(env, callback, resource,
       Value::From(env, resourceName), maxQueueSize, initialThreadCount,
       finalizeData, wrapper, context, CallJS, &tsfn._tsfn);
