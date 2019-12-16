@@ -150,9 +150,6 @@ struct ThreadSafeFinalize {
     ThreadSafeFinalize* finalizeData =
         static_cast<ThreadSafeFinalize*>(rawFinalizeData);
     finalizeData->callback(Env(env));
-    if (finalizeData->tsfn) {
-      *finalizeData->tsfn = nullptr;
-    }
     delete finalizeData;
   }
 
@@ -166,9 +163,6 @@ struct ThreadSafeFinalize {
     ThreadSafeFinalize* finalizeData =
         static_cast<ThreadSafeFinalize*>(rawFinalizeData);
     finalizeData->callback(Env(env), finalizeData->data);
-    if (finalizeData->tsfn) {
-      *finalizeData->tsfn = nullptr;
-    }
     delete finalizeData;
   }
 
@@ -182,9 +176,6 @@ struct ThreadSafeFinalize {
     ThreadSafeFinalize* finalizeData =
         static_cast<ThreadSafeFinalize*>(rawFinalizeData);
     finalizeData->callback(Env(env), static_cast<ContextType*>(rawContext));
-    if (finalizeData->tsfn) {
-      *finalizeData->tsfn = nullptr;
-    }
     delete finalizeData;
   }
 
@@ -199,9 +190,6 @@ struct ThreadSafeFinalize {
         static_cast<ThreadSafeFinalize*>(rawFinalizeData);
     finalizeData->callback(Env(env), finalizeData->data,
         static_cast<ContextType*>(rawContext));
-    if (finalizeData->tsfn) {
-      *finalizeData->tsfn = nullptr;
-    }
     delete finalizeData;
   }
 
