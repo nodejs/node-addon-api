@@ -195,7 +195,6 @@ struct ThreadSafeFinalize {
 
   FinalizerDataType* data;
   Finalizer callback;
-  napi_threadsafe_function* tsfn;
 };
 #endif
 
@@ -4518,7 +4517,7 @@ inline ThreadSafeFunction ThreadSafeFunction::New(napi_env env,
 
   ThreadSafeFunction tsfn;
   auto* finalizeData = new details::ThreadSafeFinalize<ContextType, Finalizer,
-      FinalizerDataType>({ data, finalizeCallback, &tsfn._tsfn });
+      FinalizerDataType>({ data, finalizeCallback });
   napi_status status = napi_create_threadsafe_function(env, callback, resource,
       Value::From(env, resourceName), maxQueueSize, initialThreadCount,
       finalizeData, wrapper, context, CallJS, &tsfn._tsfn);
