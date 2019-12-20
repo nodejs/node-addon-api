@@ -3120,7 +3120,7 @@ inline ObjectWrap<T>::ObjectWrap(const Napi::CallbackInfo& callbackInfo) {
   napi_status status;
   napi_ref ref;
   T* instance = static_cast<T*>(this);
-  status = napi_wrap(env, wrapper, instance, FinalizeCallback, nullptr, &ref);
+  status = napi_wrap(env, wrapper, instance, FinalizeCallback, (void*)callbackInfo.zombie, &ref);
   NAPI_THROW_IF_FAILED_VOID(env, status);
 
   Reference<Object>* instanceRef = instance;
@@ -3699,8 +3699,15 @@ inline napi_value ObjectWrap<T>::ConstructorCallbackWrapper(
   T* instance;
   napi_value wrapper = details::WrapCallback([&] {
     CallbackInfo callbackInfo(env, info);
-    instance = new T(callbackInfo);
-    return callbackInfo.This();
+    callbackInfo.zombie = new Zombie();
+    try {
+      instance = new T(callbackInfo);
+      return callbackInfo.This();
+    }
+    catch (...) {
+      callbackInfo.zombie->isZombie = true;
+      throw;
+    }
   });
 
   return wrapper;
@@ -3823,7 +3830,16 @@ inline napi_value ObjectWrap<T>::InstanceSetterCallbackWrapper(
 }
 
 template <typename T>
-inline void ObjectWrap<T>::FinalizeCallback(napi_env env, void* data, void* /*hint*/) {
+inline void ObjectWrap<T>::FinalizeCallback(napi_env env, void* data, void* hint) {
+ if (hint != nullptr) {
+    Zombie* zombie = (Zombie*)hint;
+    bool isZombie = zombie->isZombie;
+    delete zombie;
+    if (isZombie) {
+      return;
+    }
+  }
+
   T* instance = reinterpret_cast<T*>(data);
   instance->Finalize(Napi::Env(env));
   delete instance;

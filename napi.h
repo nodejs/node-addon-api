@@ -1396,6 +1396,10 @@ namespace Napi {
     RangeError(napi_env env, napi_value value);
   };
 
+  struct Zombie {
+    bool isZombie = false;
+  };
+
   class CallbackInfo {
   public:
     CallbackInfo(napi_env env, napi_callback_info info);
@@ -1413,6 +1417,8 @@ namespace Napi {
     Value This() const;
     void* Data() const;
     void SetData(void* data);
+
+    Zombie* zombie;
 
   private:
     const size_t _staticArgCount = 6;
