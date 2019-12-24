@@ -3700,6 +3700,7 @@ inline napi_value ObjectWrap<T>::ConstructorCallbackWrapper(
   napi_value wrapper = details::WrapCallback([&] {
     CallbackInfo callbackInfo(env, info);
     callbackInfo.zombie = new Zombie();
+#ifdef NAPI_CPP_EXCEPTIONS
     try {
       instance = new T(callbackInfo);
       return callbackInfo.This();
@@ -3708,6 +3709,14 @@ inline napi_value ObjectWrap<T>::ConstructorCallbackWrapper(
       callbackInfo.zombie->isZombie = true;
       throw;
     }
+#else
+    instance = new T(callbackInfo);
+    if (callbackInfo.Env().IsExceptionPending()) {
+      callbackInfo.zombie->isZombie = true;
+      return nullptr;
+    }
+    return callbackInfo.This();
+#endif
   });
 
   return wrapper;
