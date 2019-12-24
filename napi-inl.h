@@ -3697,7 +3697,7 @@ inline napi_value ObjectWrap<T>::ConstructorCallbackWrapper(
   }
 
   T* instance;
-  napi_value wrapper = details::WrapCallback([&] {
+  napi_value wrapper = details::WrapCallback([&] () -> napi_value {
     CallbackInfo callbackInfo(env, info);
     callbackInfo.zombie = new Zombie();
 #ifdef NAPI_CPP_EXCEPTIONS
