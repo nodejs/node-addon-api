@@ -172,11 +172,30 @@ private:
 
 std::string Test::s_staticMethodText;
 
+#ifdef NAPI_CPP_EXCEPTIONS
+class TestConstructorExceptions : public Napi::ObjectWrap<TestConstructorExceptions> {
+public:
+  TestConstructorExceptions(const Napi::CallbackInfo& info) : 
+    Napi::ObjectWrap<TestConstructorExceptions>(info) {
+      throw Napi::Error::New(info.Env(), "Constructor exceptions should not cause v8 GC to fail");
+    }
+
+    static void Initialize(Napi::Env env, Napi::Object exports) {
+      exports.Set("TestConstructorExceptions", DefineClass(env, "TestConstructorExceptions", {}));
+    }
+};
+#endif
+
+
 Napi::Object InitObjectWrap(Napi::Env env) {
   testStaticContextRef = Napi::Persistent(Napi::Object::New(env));
   testStaticContextRef.SuppressDestruct();
 
   Napi::Object exports = Napi::Object::New(env);
   Test::Initialize(env, exports);
+
+#ifdef NAPI_CPP_EXCEPTIONS
+  TestConstructorExceptions::Initialize(env, exports);
+#endif
   return exports;
 }

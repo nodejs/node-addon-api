@@ -256,9 +256,21 @@ const test = (binding) => {
     testFinalize(clazz);
   };
 
+  const testConstructorExceptions = () => {
+    const TestConstructorExceptions = binding.objectwrap.TestConstructorExceptions;
+    if (TestConstructorExceptions) {
+      console.log("Runnig test testConstructorExceptions");
+      assert.throws(() => { new TestConstructorExceptions(); });
+      global.gc();
+      console.log("Test testConstructorExceptions complete");
+    }
+  }
+
   // `Test` is needed for accessing exposed symbols
   testObj(new Test(), Test);
   testClass(Test);
+
+  testConstructorExceptions();
 }
 
 test(require(`./build/${buildType}/binding.node`));
