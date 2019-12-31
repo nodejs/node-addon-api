@@ -258,12 +258,10 @@ const test = (binding) => {
 
   const testConstructorExceptions = () => {
     const TestConstructorExceptions = binding.objectwrap.TestConstructorExceptions;
-    if (TestConstructorExceptions) {
-      console.log("Runnig test testConstructorExceptions");
-      assert.throws(() => { new TestConstructorExceptions(); });
-      global.gc();
-      console.log("Test testConstructorExceptions complete");
-    }
+    console.log("Runnig test testConstructorExceptions");
+    assert.throws(() => { new TestConstructorExceptions(); });
+    global.gc();
+    console.log("Test testConstructorExceptions complete");
   }
 
   // `Test` is needed for accessing exposed symbols

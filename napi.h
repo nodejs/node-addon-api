@@ -1396,11 +1396,8 @@ namespace Napi {
     RangeError(napi_env env, napi_value value);
   };
 
-  struct Zombie {
-    bool isZombie = false;
-  };
-
   class CallbackInfo {
+    friend class FinalizerHint;
   public:
     CallbackInfo(napi_env env, napi_callback_info info);
     ~CallbackInfo();
@@ -1418,8 +1415,6 @@ namespace Napi {
     void* Data() const;
     void SetData(void* data);
 
-    Zombie* zombie;
-
   private:
     const size_t _staticArgCount = 6;
     napi_env _env;
@@ -1430,6 +1425,7 @@ namespace Napi {
     napi_value _staticArgs[6];
     napi_value* _dynamicArgs;
     void* _data;
+    FinalizerHint* finalizerHint;
   };
 
   class PropertyDescriptor {

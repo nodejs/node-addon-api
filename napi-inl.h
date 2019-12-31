@@ -2711,6 +2711,27 @@ inline Object FunctionReference::New(const std::vector<napi_value>& args) const 
   return scope.Escape(Value().New(args)).As<Object>();
 }
 
+class FinalizerHint {
+  private:
+    FinalizerHint() {}
+  public:
+    bool shouldFinalize;
+    
+    static void Init(CallbackInfo& info, bool shouldFinalize = true) {
+      info.finalizerHint = new FinalizerHint(); 
+      info.finalizerHint->shouldFinalize = shouldFinalize;
+    }
+
+    static void Clear(CallbackInfo& info) {
+      info.finalizerHint = nullptr;
+    }
+    
+    static FinalizerHint* Get(const CallbackInfo& info) {
+      return info.finalizerHint;
+    }
+};
+
+
 ////////////////////////////////////////////////////////////////////////////////
 // CallbackInfo class
 ////////////////////////////////////////////////////////////////////////////////
@@ -3120,7 +3141,12 @@ inline ObjectWrap<T>::ObjectWrap(const Napi::CallbackInfo& callbackInfo) {
   napi_status status;
   napi_ref ref;
   T* instance = static_cast<T*>(this);
-  status = napi_wrap(env, wrapper, instance, FinalizeCallback, (void*)callbackInfo.zombie, &ref);
+  FinalizerHint* finalizerHint = FinalizerHint::Get(callbackInfo);
+  status = napi_wrap(env, wrapper, instance, FinalizeCallback, (void*)finalizerHint, &ref);
+  if (status != napi_ok && finalizerHint != nullptr) {
+      FinalizerHint::Clear(const_cast<Napi::CallbackInfo&>(callbackInfo));
+      delete finalizerHint;
+  }
   NAPI_THROW_IF_FAILED_VOID(env, status);
 
   Reference<Object>* instanceRef = instance;
@@ -3699,21 +3725,26 @@ inline napi_value ObjectWrap<T>::ConstructorCallbackWrapper(
   T* instance;
   napi_value wrapper = details::WrapCallback([&] () -> napi_value {
     CallbackInfo callbackInfo(env, info);
-    callbackInfo.zombie = new Zombie();
+    FinalizerHint::Init(callbackInfo);
 #ifdef NAPI_CPP_EXCEPTIONS
     try {
       instance = new T(callbackInfo);
       return callbackInfo.This();
     }
     catch (...) {
-      callbackInfo.zombie->isZombie = true;
+      FinalizerHint* finalizerHint = FinalizerHint::Get(callbackInfo);
+      if (finalizerHint != nullptr) {
+         finalizerHint->shouldFinalize = false;
+      }
       throw;
     }
 #else
     instance = new T(callbackInfo);
     if (callbackInfo.Env().IsExceptionPending()) {
-      callbackInfo.zombie->isZombie = true;
-      return nullptr;
+      FinalizerHint* finalizerHint = FinalizerHint::Get(callbackInfo);
+      if (finalizerHint != nullptr) {
+         finalizerHint->shouldFinalize = false;
+      }
     }
     return callbackInfo.This();
 #endif
@@ -3841,10 +3872,10 @@ inline napi_value ObjectWrap<T>::InstanceSetterCallbackWrapper(
 template <typename T>
 inline void ObjectWrap<T>::FinalizeCallback(napi_env env, void* data, void* hint) {
  if (hint != nullptr) {
-    Zombie* zombie = (Zombie*)hint;
-    bool isZombie = zombie->isZombie;
-    delete zombie;
-    if (isZombie) {
+    FinalizerHint* finalizerHint = (FinalizerHint*)hint;
+    bool shouldFinalize = finalizerHint->shouldFinalize;
+    delete finalizerHint;
+    if (!shouldFinalize) {
       return;
     }
   }
