@@ -3137,12 +3137,11 @@ inline ObjectWrap<T>::ObjectWrap(const Napi::CallbackInfo& callbackInfo) {
   napi_value wrapper = callbackInfo.This();
   napi_status status;
   napi_ref ref;
-  T* instance = static_cast<T*>(this);
-  status = napi_wrap(env, wrapper, instance, FinalizeCallback, nullptr, &ref);
+  status = napi_wrap(env, wrapper, this, FinalizeCallback, nullptr, &ref);
   NAPI_THROW_IF_FAILED_VOID(env, status);
 
   ObjectWrapCleanup::MarkWrapOK(callbackInfo);
-  Reference<Object>* instanceRef = instance;
+  Reference<Object>* instanceRef = this;
   *instanceRef = Reference<Object>(env, ref);
 }
 
@@ -3722,7 +3721,7 @@ inline napi_value ObjectWrap<T>::ConstructorCallbackWrapper(
     try {
       new T(callbackInfo);
     } catch (const Error& e) {
-      // re-throw the error after removing the failed wrap.
+      // Re-throw the error after removing the failed wrap.
       cleanup.RemoveWrap(callbackInfo);
       throw e;
     }
