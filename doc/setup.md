@@ -27,7 +27,6 @@ To use **N-API** in a native module:
 
 ```gyp
   'include_dirs': ["<!@(node -p \"require('node-addon-api').include\")"],
-  'dependencies': ["<!(node -p \"require('node-addon-api').gyp\")"],
 ```
 
   3. Decide whether the package will enable C++ exceptions in the N-API wrapper.
