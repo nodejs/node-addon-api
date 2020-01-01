@@ -4212,17 +4212,17 @@ inline std::vector<napi_value> AsyncWorker::GetResult(Napi::Env /*env*/) {
   return {};
 }
 // The OnAsyncWorkExecute method receives an napi_env argument. However, do NOT
-// use it within this method, as it does not run on the main thread and must
-// not run any method that would cause JavaScript to run. In practice, this
-// means that almost any use of napi_env will be incorrect.
+// use it within this method, as it does not run on the JavaScript thread and
+// must not run any method that would cause JavaScript to run. In practice,
+// this means that almost any use of napi_env will be incorrect.
 inline void AsyncWorker::OnAsyncWorkExecute(napi_env env, void* asyncworker) {
   AsyncWorker* self = static_cast<AsyncWorker*>(asyncworker);
   self->OnExecute(env);
 }
 // The OnExecute method receives an napi_env argument. However, do NOT
-// use it within this method, as it does not run on the main thread and must
-// not run any method that would cause JavaScript to run. In practice, this
-// means that almost any use of napi_env will be incorrect.
+// use it within this method, as it does not run on the JavaScript thread and
+// must not run any method that would cause JavaScript to run. In practice,
+// this means that almost any use of napi_env will be incorrect.
 inline void AsyncWorker::OnExecute(Napi::Env /*DO_NOT_USE*/) {
 #ifdef NAPI_CPP_EXCEPTIONS
   try {

@@ -157,9 +157,9 @@ The default implementation of this method just calls the `Napi::AsyncWorker::Exe
 and handles exceptions if cpp exceptions were enabled.
 
 The `OnExecute` method receives an `napi_env` argument. However, do NOT
-use it within this method, as it does not run on the main thread and must
-not run any method that would cause JavaScript to run. In practice, this
-means that almost any use of `napi_env` will be incorrect.
+use it within this method, as it does not run on the JavaScript thread and
+must not run any method that would cause JavaScript to run. In practice,
+this means that almost any use of `napi_env` will be incorrect.
 
 ```cpp
 virtual void OnExecute(Napi::Env env);
