@@ -211,6 +211,7 @@
     "safe-buffer": "^5.1.1"
   },
   "directories": {},
+  "gypfile": false,
   "homepage": "https://github.com/nodejs/node-addon-api",
   "keywords": [
     "n-api",
