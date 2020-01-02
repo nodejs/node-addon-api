@@ -4,15 +4,8 @@ const assert = require('assert');
 
 const test = (binding) => {
   const { ConstructorExceptionTest } = binding.objectwrapConstructorException;
-  let gotException = false;
-  try {
-    new ConstructorExceptionTest();
-  } catch (anException) {
-    gotException = true;
-  }
+  assert.throws(() => (new ConstructorExceptionTest()));
   global.gc();
-
-  assert.strictEqual(gotException, true);
 }
 
 test(require(`./build/${buildType}/binding.node`));
