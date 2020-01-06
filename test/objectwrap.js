@@ -72,6 +72,18 @@ const test = (binding) => {
       obj[clazz.kTestAccessorTInternal] = 'instance internal getset 4';
       assert.strictEqual(obj[clazz.kTestAccessorTInternal], 'instance internal getset 4');
     }
+
+    // own property
+    {
+      obj.testSetter = 'own property value';
+      // Make sure the properties are enumerable.
+      assert(Object.getOwnPropertyNames(obj).indexOf('ownProperty') >= 0);
+      assert(Object.getOwnPropertyNames(obj).indexOf('ownPropertyT') >= 0);
+
+      // Make sure the properties return the right value.
+      assert.strictEqual(obj.ownProperty, 'own property value');
+      assert.strictEqual(obj.ownPropertyT, 'own property value');
+    }
   };
 
   const testMethod = (obj, clazz) => {
@@ -84,10 +96,12 @@ const test = (binding) => {
   };
 
   const testEnumerables = (obj, clazz) => {
-    // Object.keys: only object
-    assert.deepEqual(Object.keys(obj), []);
+    // Object.keys: only object without prototype
+    assert(Object.keys(obj).length === 2);
+    assert(Object.keys(obj).indexOf('ownProperty') >= 0);
+    assert(Object.keys(obj).indexOf('ownPropertyT') >= 0);
 
-    // for..in: object + prototype
+    // for..in: object and prototype
     {
       const keys = [];
       for (let key in obj) {
