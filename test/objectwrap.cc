@@ -28,7 +28,22 @@ public:
     if(info.Length() > 0) {
       finalizeCb_ = Napi::Persistent(info[0].As<Napi::Function>());
     }
+    // Create an own instance property.
+    info.This().As<Napi::Object>().DefineProperty(
+        Napi::PropertyDescriptor::Accessor(info.Env(),
+                                           info.This().As<Napi::Object>(),
+                                           "ownProperty",
+                                           OwnPropertyGetter,
+                                           napi_enumerable, this));
 
+    // Create an own instance property with a templated function.
+    info.This().As<Napi::Object>().DefineProperty(
+        Napi::PropertyDescriptor::Accessor<OwnPropertyGetter>("ownPropertyT",
+                                                              napi_enumerable, this));
+  }
+
+  static Napi::Value OwnPropertyGetter(const Napi::CallbackInfo& info) {
+    return static_cast<Test*>(info.Data())->Getter(info);
   }
 
   void Setter(const Napi::CallbackInfo& /*info*/, const Napi::Value& value) {
