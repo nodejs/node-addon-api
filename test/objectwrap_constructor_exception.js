@@ -4,7 +4,7 @@ const assert = require('assert');
 
 const test = (binding) => {
   const { ConstructorExceptionTest } = binding.objectwrapConstructorException;
-  assert.throws(() => (new ConstructorExceptionTest()));
+  assert.throws(() => (new ConstructorExceptionTest()), /an exception/);
   global.gc();
 }
 
