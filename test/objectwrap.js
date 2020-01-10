@@ -98,7 +98,7 @@ const test = (binding) => {
   const testEnumerables = (obj, clazz) => {
     // Object.keys: only object without prototype
     assert(Object.keys(obj).length === 2);
-    assert(Object.keys(obj).indexOf('ownProperty') >= 0);
+    assert(Object.keys(obj).includes('ownProperty'));
     assert(Object.keys(obj).indexOf('ownPropertyT') >= 0);
 
     // for..in: object and prototype
