@@ -46,7 +46,7 @@ function test(binding) {
   });
 
   assert.throws(TestTooBigBigInt, {
-    name: 'RangeError',
-    message: 'Maximum BigInt size exceeded',
+    name: /^(RangeError|Error)$/,
+    message: /^(Maximum BigInt size exceeded|Invalid argument)$/,
   });
 }
