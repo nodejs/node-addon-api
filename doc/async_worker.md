@@ -371,7 +371,7 @@ The code below shows a basic example of `Napi::AsyncWorker` the implementation:
 #include <chrono>
 #include <thread>
 
-use namespace Napi;
+using namespace Napi;
 
 class EchoWorker : public AsyncWorker {
     public:
@@ -380,12 +380,12 @@ class EchoWorker : public AsyncWorker {
 
         ~EchoWorker() {}
     // This code will be executed on the worker thread
-    void Execute() {
+    void Execute() override {
         // Need to simulate cpu heavy task
         std::this_thread::sleep_for(std::chrono::seconds(1));
     }
 
-    void OnOK() {
+    void OnOK() override {
         HandleScope scope(Env());
         Callback().Call({Env().Null(), String::New(Env(), echo)});
     }
