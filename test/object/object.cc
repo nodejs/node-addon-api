@@ -64,6 +64,11 @@ Value TestFunction(const CallbackInfo& info) {
    return Boolean::New(info.Env(), true);
 }
 
+Value TestFunctionWithUserData(const CallbackInfo& info) {
+  UserDataHolder* holder = reinterpret_cast<UserDataHolder*>(info.Data());
+  return Number::New(info.Env(), holder->value);
+}
+
 Array GetPropertyNames(const CallbackInfo& info) {
   Object obj = info[0].As<Object>();
   Array arr = obj.GetPropertyNames();
@@ -104,6 +109,7 @@ void DefineProperties(const CallbackInfo& info) {
       PropertyDescriptor::Value("enumerableValue", trueValue, napi_enumerable),
       PropertyDescriptor::Value("configurableValue", trueValue, napi_configurable),
       PropertyDescriptor::Function(env, obj, "function", TestFunction),
+      PropertyDescriptor::Function(env, obj, "functionWithUserData", TestFunctionWithUserData, napi_property_attributes::napi_default, reinterpret_cast<void*>(holder)),
     });
   } else if (nameType.Utf8Value() == "string") {
     // VS2013 has lifetime issues when passing temporary objects into the constructor of another
@@ -125,6 +131,7 @@ void DefineProperties(const CallbackInfo& info) {
     std::string str5("enumerableValue");
     std::string str6("configurableValue");
     std::string str7("function");
+    std::string str8("functionWithUserData");
 
     obj.DefineProperties({
       PropertyDescriptor::Accessor(env, obj, str1, TestGetter),
@@ -148,6 +155,7 @@ void DefineProperties(const CallbackInfo& info) {
       PropertyDescriptor::Value(str5, trueValue, napi_enumerable),
       PropertyDescriptor::Value(str6, trueValue, napi_configurable),
       PropertyDescriptor::Function(env, obj, str7, TestFunction),
+      PropertyDescriptor::Function(env, obj, str8, TestFunctionWithUserData, napi_property_attributes::napi_default, reinterpret_cast<void*>(holder)),
     });
   } else if (nameType.Utf8Value() == "value") {
     obj.DefineProperties({
@@ -184,6 +192,8 @@ void DefineProperties(const CallbackInfo& info) {
         Napi::String::New(env, "configurableValue"), trueValue, napi_configurable),
       PropertyDescriptor::Function(env, obj,
         Napi::String::New(env, "function"), TestFunction),
+      PropertyDescriptor::Function(env, obj,
+        Napi::String::New(env, "functionWithUserData"), TestFunctionWithUserData, napi_property_attributes::napi_default, reinterpret_cast<void*>(holder)),
     });
   }
 }
