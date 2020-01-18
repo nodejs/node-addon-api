@@ -65,8 +65,8 @@ Value TestFunction(const CallbackInfo& info) {
 }
 
 Value TestFunctionWithUserData(const CallbackInfo& info) {
-  UserDataHolder* functionHolder = reinterpret_cast<UserDataHolder*>(info.Data());
-  return Number::New(info.Env(), functionHolder->value);
+  UserDataHolder* holder = reinterpret_cast<UserDataHolder*>(info.Data());
+  return Number::New(info.Env(), holder->value);
 }
 
 Array GetPropertyNames(const CallbackInfo& info) {
@@ -82,9 +82,7 @@ void DefineProperties(const CallbackInfo& info) {
 
   Boolean trueValue = Boolean::New(env, true);
   UserDataHolder* holder = new UserDataHolder();
-  UserDataHolder* functionHolder = new UserDataHolder();
   holder->value = 1234;
-  functionHolder->value = 4321;
 
   if (nameType.Utf8Value() == "literal") {
     obj.DefineProperties({
@@ -111,7 +109,7 @@ void DefineProperties(const CallbackInfo& info) {
       PropertyDescriptor::Value("enumerableValue", trueValue, napi_enumerable),
       PropertyDescriptor::Value("configurableValue", trueValue, napi_configurable),
       PropertyDescriptor::Function(env, obj, "function", TestFunction),
-      PropertyDescriptor::Function(env, obj, "functionWithUserData", TestFunctionWithUserData, napi_property_attributes::napi_default, reinterpret_cast<void*>(functionHolder)),
+      PropertyDescriptor::Function(env, obj, "functionWithUserData", TestFunctionWithUserData, napi_property_attributes::napi_default, reinterpret_cast<void*>(holder)),
     });
   } else if (nameType.Utf8Value() == "string") {
     // VS2013 has lifetime issues when passing temporary objects into the constructor of another
@@ -157,7 +155,7 @@ void DefineProperties(const CallbackInfo& info) {
       PropertyDescriptor::Value(str5, trueValue, napi_enumerable),
       PropertyDescriptor::Value(str6, trueValue, napi_configurable),
       PropertyDescriptor::Function(env, obj, str7, TestFunction),
-      PropertyDescriptor::Function(env, obj, str8, TestFunctionWithUserData, napi_property_attributes::napi_default, reinterpret_cast<void*>(functionHolder)),
+      PropertyDescriptor::Function(env, obj, str8, TestFunctionWithUserData, napi_property_attributes::napi_default, reinterpret_cast<void*>(holder)),
     });
   } else if (nameType.Utf8Value() == "value") {
     obj.DefineProperties({
@@ -195,7 +193,7 @@ void DefineProperties(const CallbackInfo& info) {
       PropertyDescriptor::Function(env, obj,
         Napi::String::New(env, "function"), TestFunction),
       PropertyDescriptor::Function(env, obj,
-        Napi::String::New(env, "functionWithUserData"), TestFunctionWithUserData, napi_property_attributes::napi_default, reinterpret_cast<void*>(functionHolder)),
+        Napi::String::New(env, "functionWithUserData"), TestFunctionWithUserData, napi_property_attributes::napi_default, reinterpret_cast<void*>(holder)),
     });
   }
 }

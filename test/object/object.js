@@ -95,7 +95,7 @@ function test(binding) {
     assertPropertyIsNot(obj, 'function', 'enumerable');
     assertPropertyIsNot(obj, 'function', 'configurable');
     assert.strictEqual(obj.function(), true);
-    assert.strictEqual(obj.functionWithUserData(), 4321);
+    assert.strictEqual(obj.functionWithUserData(), obj.readonlyAccessorWithUserDataT);
   }
 
   testDefineProperties('literal');
