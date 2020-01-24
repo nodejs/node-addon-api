@@ -409,7 +409,7 @@ The following code shows an example of how to create and use an `Napi::AsyncWork
 // Include EchoWorker class
 // ..
 
-use namespace Napi;
+using namespace Napi;
 
 Value Echo(const CallbackInfo& info) {
     // You need to validate the arguments here.
