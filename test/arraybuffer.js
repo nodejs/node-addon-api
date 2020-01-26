@@ -58,8 +58,13 @@ function test(binding) {
 
     'ArrayBuffer updates data pointer and length when detached',
     () => {
+      // Detach the ArrayBuffer in JavaScript.
       const mem = new WebAssembly.Memory({ initial: 1 });
       binding.arraybuffer.checkDetachUpdatesData(mem.buffer, () => mem.grow(1));
+
+      // Let C++ detach the ArrayBuffer.
+      const extBuffer = binding.arraybuffer.createExternalBuffer();
+      binding.arraybuffer.checkDetachUpdatesData(extBuffer);
     },
   ]);
 }
