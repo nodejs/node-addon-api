@@ -157,19 +157,43 @@ void CheckDetachUpdatesData(const CallbackInfo& info) {
     return;
   }
 
-  if (!info[1].IsFunction()) {
-    Error::New(info.Env(), "A function was expected.").ThrowAsJavaScriptException();
-    return;
-  }
-
   ArrayBuffer buffer = info[0].As<ArrayBuffer>();
-  Function detach = info[1].As<Function>();
 
   // This potentially causes the buffer to cache its data pointer and length.
   buffer.Data();
   buffer.ByteLength();
 
-  detach.Call({});
+#if NAPI_VERSION >= 7
+  if (buffer.IsDetached()) {
+    Error::New(info.Env(), "Buffer should not be detached.").ThrowAsJavaScriptException();
+    return;
+  }
+#endif
+
+  if (info.Length() == 2) {
+    // Detach externally (in JavaScript).
+    if (!info[1].IsFunction()) {
+      Error::New(info.Env(), "A function was expected.").ThrowAsJavaScriptException();
+      return;
+    }
+
+    Function detach = info[1].As<Function>();
+    detach.Call({});
+  } else {
+#if NAPI_VERSION >= 7
+    // Detach directly.
+    buffer.Detach();
+#else
+    return;
+#endif
+  }
+
+#if NAPI_VERSION >= 7
+  if (!buffer.IsDetached()) {
+    Error::New(info.Env(), "Buffer should be detached.").ThrowAsJavaScriptException();
+    return;
+  }
+#endif
 
   if (buffer.Data() != nullptr) {
     Error::New(info.Env(), "Incorrect data pointer.").ThrowAsJavaScriptException();
