@@ -4771,6 +4771,123 @@ template<class T>
 inline void AsyncProgressWorker<T>::ExecutionProgress::Send(const T* data, size_t count) const {
   _worker->SendProgress_(data, count);
 }
+
+////////////////////////////////////////////////////////////////////////////////
+// Async Progress Queue Worker class
+////////////////////////////////////////////////////////////////////////////////
+template<class T>
+inline AsyncProgressQueueWorker<T>::AsyncProgressQueueWorker(const Function& callback)
+  : AsyncProgressQueueWorker(callback, "generic") {
+}
+
+template<class T>
+inline AsyncProgressQueueWorker<T>::AsyncProgressQueueWorker(const Function& callback,
+                                                             const char* resource_name)
+  : AsyncProgressQueueWorker(callback, resource_name, Object::New(callback.Env())) {
+}
+
+template<class T>
+inline AsyncProgressQueueWorker<T>::AsyncProgressQueueWorker(const Function& callback,
+                                                             const char* resource_name,
+                                                             const Object& resource)
+  : AsyncProgressQueueWorker(Object::New(callback.Env()),
+                             callback,
+                             resource_name,
+                             resource) {
+}
+
+template<class T>
+inline AsyncProgressQueueWorker<T>::AsyncProgressQueueWorker(const Object& receiver,
+                                                             const Function& callback)
+  : AsyncProgressQueueWorker(receiver, callback, "generic") {
+}
+
+template<class T>
+inline AsyncProgressQueueWorker<T>::AsyncProgressQueueWorker(const Object& receiver,
+                                                             const Function& callback,
+                                                             const char* resource_name)
+  : AsyncProgressQueueWorker(receiver,
+                             callback,
+                             resource_name,
+                             Object::New(callback.Env())) {
+}
+
+template<class T>
+inline AsyncProgressQueueWorker<T>::AsyncProgressQueueWorker(const Object& receiver,
+                                                             const Function& callback,
+                                                             const char* resource_name,
+                                                             const Object& resource)
+  : AsyncProgressWorkerBase<std::pair<T*, size_t>>(receiver, callback, resource_name, resource, /** unlimited queue size */0) {
+}
+
+#if NAPI_VERSION > 4
+template<class T>
+inline AsyncProgressQueueWorker<T>::AsyncProgressQueueWorker(Napi::Env env)
+  : AsyncProgressQueueWorker(env, "generic") {
+}
+
+template<class T>
+inline AsyncProgressQueueWorker<T>::AsyncProgressQueueWorker(Napi::Env env,
+                                const char* resource_name)
+  : AsyncProgressQueueWorker(env, resource_name, Object::New(env)) {
+}
+
+template<class T>
+inline AsyncProgressQueueWorker<T>::AsyncProgressQueueWorker(Napi::Env env,
+                                                             const char* resource_name,
+                                                             const Object& resource)
+  : AsyncProgressWorkerBase<std::pair<T*, size_t>>(env, resource_name, resource, /** unlimited queue size */0) {
+}
+#endif
+
+template<class T>
+inline void AsyncProgressQueueWorker<T>::Execute() {
+  ExecutionProgress progress(this);
+  Execute(progress);
+}
+
+template<class T>
+inline void AsyncProgressQueueWorker<T>::OnWorkProgress(std::pair<T*, size_t>* datapair) {
+  if (datapair == nullptr) {
+    return;
+  }
+
+  T *data = datapair->first;
+  size_t size = datapair->second;
+
+  this->OnProgress(data, size);
+  delete datapair;
+  delete[] data;
+}
+
+template<class T>
+inline void AsyncProgressQueueWorker<T>::SendProgress_(const T* data, size_t count) {
+    T* new_data = new T[count];
+    std::copy(data, data + count, new_data);
+
+    auto pair = new std::pair<T*, size_t>(new_data, count);
+    this->NonBlockingCall(pair);
+}
+
+template<class T>
+inline void AsyncProgressQueueWorker<T>::Signal() const {
+  this->NonBlockingCall(nullptr);
+}
+
+template<class T>
+inline void AsyncProgressQueueWorker<T>::OnWorkComplete(Napi::Env env, napi_status status) {
+  AsyncWorker::OnWorkComplete(env, status);
+}
+
+template<class T>
+inline void AsyncProgressQueueWorker<T>::ExecutionProgress::Signal() const {
+  _worker->Signal();
+}
+
+template<class T>
+inline void AsyncProgressQueueWorker<T>::ExecutionProgress::Send(const T* data, size_t count) const {
+  _worker->SendProgress_(data, count);
+}
 #endif
 
 ////////////////////////////////////////////////////////////////////////////////

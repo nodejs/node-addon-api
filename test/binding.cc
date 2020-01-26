@@ -5,6 +5,7 @@ using namespace Napi;
 Object InitArrayBuffer(Env env);
 Object InitAsyncContext(Env env);
 #if (NAPI_VERSION > 3)
+Object InitAsyncProgressQueueWorker(Env env);
 Object InitAsyncProgressWorker(Env env);
 #endif
 Object InitAsyncWorker(Env env);
@@ -60,6 +61,7 @@ Object Init(Env env, Object exports) {
   exports.Set("arraybuffer", InitArrayBuffer(env));
   exports.Set("asynccontext", InitAsyncContext(env));
 #if (NAPI_VERSION > 3)
+  exports.Set("asyncprogressqueueworker", InitAsyncProgressQueueWorker(env));
   exports.Set("asyncprogressworker", InitAsyncProgressWorker(env));
 #endif
   exports.Set("asyncworker", InitAsyncWorker(env));

@@ -2350,6 +2350,60 @@ namespace Napi {
      T* _asyncdata;
      size_t _asyncsize;
   };
+
+  template<class T>
+  class AsyncProgressQueueWorker : public AsyncProgressWorkerBase<std::pair<T*, size_t>> {
+    public:
+     virtual ~AsyncProgressQueueWorker() {};
+
+     class ExecutionProgress {
+        friend class AsyncProgressQueueWorker;
+       public:
+        void Signal() const;
+        void Send(const T* data, size_t count) const;
+       private:
+        explicit ExecutionProgress(AsyncProgressQueueWorker* worker) : _worker(worker) {}
+        AsyncProgressQueueWorker* const _worker;
+     };
+
+     void OnWorkComplete(Napi::Env env, napi_status status) override;
+     void OnWorkProgress(std::pair<T*, size_t>*) override;
+
+    protected:
+     explicit AsyncProgressQueueWorker(const Function& callback);
+     explicit AsyncProgressQueueWorker(const Function& callback,
+                                       const char* resource_name);
+     explicit AsyncProgressQueueWorker(const Function& callback,
+                                       const char* resource_name,
+                                       const Object& resource);
+     explicit AsyncProgressQueueWorker(const Object& receiver,
+                                       const Function& callback);
+     explicit AsyncProgressQueueWorker(const Object& receiver,
+                                       const Function& callback,
+                                       const char* resource_name);
+     explicit AsyncProgressQueueWorker(const Object& receiver,
+                                       const Function& callback,
+                                       const char* resource_name,
+                                       const Object& resource);
+
+// Optional callback of Napi::ThreadSafeFunction only available after NAPI_VERSION 4.
+// Refs: https://github.com/nodejs/node/pull/27791
+#if NAPI_VERSION > 4
+     explicit AsyncProgressQueueWorker(Napi::Env env);
+     explicit AsyncProgressQueueWorker(Napi::Env env,
+                                       const char* resource_name);
+     explicit AsyncProgressQueueWorker(Napi::Env env,
+                                       const char* resource_name,
+                                       const Object& resource);
+#endif
+     virtual void Execute(const ExecutionProgress& progress) = 0;
+     virtual void OnProgress(const T* data, size_t count) = 0;
+
+    private:
+     void Execute() override;
+     void Signal() const;
+     void SendProgress_(const T* data, size_t count);
+  };
   #endif
 
   // Memory management.

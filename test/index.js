@@ -10,6 +10,7 @@ process.config.target_defaults.default_configuration =
 let testModules = [
   'arraybuffer',
   'asynccontext',
+  'asyncprogressqueueworker',
   'asyncprogressworker',
   'asyncworker',
   'asyncworker-nocallback',
@@ -72,6 +73,7 @@ if (napiVersion < 3) {
 }
 
 if (napiVersion < 4) {
+  testModules.splice(testModules.indexOf('asyncprogressqueueworker'), 1);
   testModules.splice(testModules.indexOf('asyncprogressworker'), 1);
   testModules.splice(testModules.indexOf('threadsafe_function/threadsafe_function_ctx'), 1);
   testModules.splice(testModules.indexOf('threadsafe_function/threadsafe_function_existing_tsfn'), 1);
