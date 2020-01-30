@@ -3121,8 +3121,9 @@ inline ObjectWrap<T>::~ObjectWrap() {
     Object object = Value();
     // It is not valid to call `napi_remove_wrap()` with an empty `object`.
     // This happens e.g. during garbage collection.
-    if (!object.IsEmpty())
+    if (!object.IsEmpty() && _construction_failed) {
       napi_remove_wrap(Env(), object, nullptr);
+    }
   }
 }
 
@@ -3694,15 +3695,17 @@ inline napi_value ObjectWrap<T>::ConstructorCallbackWrapper(
 
   napi_value wrapper = details::WrapCallback([&] {
     CallbackInfo callbackInfo(env, info);
-#ifdef NAPI_CPP_EXCEPTIONS
-    new T(callbackInfo);
-#else
     T* instance = new T(callbackInfo);
+#ifdef NAPI_CPP_EXCEPTIONS
+    instance->_construction_failed = false;
+#else
     if (callbackInfo.Env().IsExceptionPending()) {
       // We need to clear the exception so that removing the wrap might work.
       Error e = callbackInfo.Env().GetAndClearPendingException();
       delete instance;
       e.ThrowAsJavaScriptException();
+    } else {
+      instance->_construction_failed = false;
     }
 # endif  // NAPI_CPP_EXCEPTIONS
     return callbackInfo.This();

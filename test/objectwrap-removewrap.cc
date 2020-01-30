@@ -1,7 +1,6 @@
 #include <napi.h>
 #include <assert.h>
 
-#ifdef NAPI_CPP_EXCEPTIONS
 namespace {
 
 static int dtor_called = 0;
@@ -21,7 +20,11 @@ Napi::Value GetDtorCalled(const Napi::CallbackInfo& info) {
 class Test : public Napi::ObjectWrap<Test> {
 public:
   Test(const Napi::CallbackInfo& info) : Napi::ObjectWrap<Test>(info) {
+#ifdef NAPI_CPP_EXCEPTIONS
     throw Napi::Error::New(Env(), "Some error");
+#else
+    Napi::Error::New(Env(), "Some error").ThrowAsJavaScriptException();
+#endif
   }
 
   static void Initialize(Napi::Env env, Napi::Object exports) {
@@ -30,16 +33,13 @@ public:
   }
 
 private:
-  DtorCounter dtor_ounter_;
+  DtorCounter dtor_counter_;
 };
 
 }  // anonymous namespace
-#endif  // NAPI_CPP_EXCEPTIONS
 
 Napi::Object InitObjectWrapRemoveWrap(Napi::Env env) {
   Napi::Object exports = Napi::Object::New(env);
-#ifdef NAPI_CPP_EXCEPTIONS
   Test::Initialize(env, exports);
-#endif
   return exports;
 }
