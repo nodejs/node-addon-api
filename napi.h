@@ -166,6 +166,12 @@ namespace Napi {
   ///
   /// In the V8 JavaScript engine, a N-API environment approximately corresponds to an Isolate.
   class Env {
+#if NAPI_VERSION > 5
+  private:
+    template <typename T> static void DefaultFini(Env, T* data);
+    template <typename DataType, typename HintType>
+    static void DefaultFiniWithHint(Env, DataType* data, HintType* hint);
+#endif  // NAPI_VERSION > 5
   public:
     Env(napi_env env);
 
@@ -181,6 +187,22 @@ namespace Napi {
     Value RunScript(const char* utf8script);
     Value RunScript(const std::string& utf8script);
     Value RunScript(String script);
+
+#if NAPI_VERSION > 5
+    template <typename T> T* GetInstanceData();
+
+    template <typename T> using Finalizer = void (*)(Env, T*);
+    template <typename T, Finalizer<T> fini = Env::DefaultFini<T>>
+    void SetInstanceData(T* data);
+
+    template <typename DataType, typename HintType>
+    using FinalizerWithHint = void (*)(Env, DataType*, HintType*);
+    template <typename DataType,
+              typename HintType,
+              FinalizerWithHint<DataType, HintType> fini =
+                Env::DefaultFiniWithHint<DataType, HintType>>
+    void SetInstanceData(DataType* data, HintType* hint);
+#endif  // NAPI_VERSION > 5
 
   private:
     napi_env _env;

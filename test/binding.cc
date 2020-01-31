@@ -2,6 +2,9 @@
 
 using namespace Napi;
 
+#if (NAPI_VERSION > 5)
+Object InitAddonData(Env env);
+#endif
 Object InitArrayBuffer(Env env);
 Object InitAsyncContext(Env env);
 #if (NAPI_VERSION > 3)
@@ -55,6 +58,9 @@ Object InitVersionManagement(Env env);
 Object InitThunkingManual(Env env);
 
 Object Init(Env env, Object exports) {
+#if (NAPI_VERSION > 5)
+  exports.Set("addon_data", InitAddonData(env));
+#endif
   exports.Set("arraybuffer", InitArrayBuffer(env));
   exports.Set("asynccontext", InitAsyncContext(env));
 #if (NAPI_VERSION > 3)
