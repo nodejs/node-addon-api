@@ -17,21 +17,29 @@ struct ProgressData {
 
 class TestWorker : public AsyncProgressQueueWorker<ProgressData> {
 public:
-  static Napi::Value DoWork(const CallbackInfo& info) {
+  static Napi::Value CreateWork(const CallbackInfo& info) {
     int32_t times = info[0].As<Number>().Int32Value();
     Function cb = info[1].As<Function>();
     Function progress = info[2].As<Function>();
 
     TestWorker* worker = new TestWorker(cb, progress, "TestResource", Object::New(info.Env()));
     worker->_times = times;
-    worker->Queue();
 
     return Napi::External<TestWorker>::New(info.Env(), worker);
+  }
+
+  static Napi::Value QueueWork(const CallbackInfo& info) {
+    auto wrap = info[0].As<Napi::External<TestWorker>>();
+    auto worker = wrap.Data();
+    worker->Queue();
+    return Napi::Boolean::New(info.Env(), true);
   }
 
   static Napi::Value CancelWork(const CallbackInfo& info) {
     auto wrap = info[0].As<Napi::External<TestWorker>>();
     auto worker = wrap.Data();
+    // We cannot cancel a worker if it got started. So we have to do a quick cancel.
+    worker->Queue();
     worker->Cancel();
     return Napi::Boolean::New(info.Env(), true);
   }
@@ -70,7 +78,8 @@ private:
 
 Object InitAsyncProgressQueueWorker(Env env) {
   Object exports = Object::New(env);
-  exports["doWork"] = Function::New(env, TestWorker::DoWork);
+  exports["createWork"] = Function::New(env, TestWorker::CreateWork);
+  exports["queueWork"] = Function::New(env, TestWorker::QueueWork);
   exports["cancelWork"] = Function::New(env, TestWorker::CancelWork);
   return exports;
 }

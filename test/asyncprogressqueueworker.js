@@ -9,13 +9,14 @@ test(require(`./build/${buildType}/binding_noexcept.node`));
 function test({ asyncprogressqueueworker }) {
   success(asyncprogressqueueworker);
   fail(asyncprogressqueueworker);
+  cancel(asyncprogressqueueworker);
   return;
 }
 
 function success(binding) {
   const expected = [0, 1, 2, 3];
   const actual = [];
-  binding.doWork(expected.length,
+  const worker = binding.createWork(expected.length,
     common.mustCall((err) => {
       if (err) {
         assert.fail(err);
@@ -27,10 +28,11 @@ function success(binding) {
       actual.push(_progress);
     }, expected.length)
   );
+  assert.strictEqual(binding.queueWork(worker), true);
 }
 
 function fail(binding) {
-  binding.doWork(-1,
+  const worker = binding.createWork(-1,
     common.mustCall((err) => {
       assert.throws(() => { throw err }, /test error/)
     }),
@@ -38,4 +40,17 @@ function fail(binding) {
       assert.fail('unexpected progress report');
     }
   );
+  assert.strictEqual(binding.queueWork(worker), true);
+}
+
+function cancel(binding) {
+  const worker = binding.createWork(-1,
+    () => {
+      assert.fail('unexpected callback');
+    },
+    () => {
+      assert.fail('unexpected progress report');
+    }
+  );
+  binding.cancelWork(worker);
 }
