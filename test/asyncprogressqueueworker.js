@@ -20,12 +20,11 @@ function success(binding) {
       if (err) {
         assert.fail(err);
       }
+      // All queued items shall be invoked before complete callback.
+      assert.deepEqual(actual, expected);
     }),
     common.mustCall((_progress) => {
       actual.push(_progress);
-      if (actual.length === expected.length) {
-        assert.deepEqual(actual, expected);
-      }
     }, expected.length)
   );
 }

@@ -2265,6 +2265,7 @@ namespace Napi {
         AsyncProgressWorkerBase* _asyncprogressworker;
         DataType* _data;
      };
+     void OnWorkComplete(Napi::Env env, napi_status status) override;
     protected:
      explicit AsyncProgressWorkerBase(const Object& receiver,
                                       const Function& callback,
@@ -2286,12 +2287,13 @@ namespace Napi {
                                             Napi::Function jsCallback,
                                             void* data);
 
-
      void NonBlockingCall(DataType* data);
 
     private:
      ThreadSafeFunction _tsfn;
-     static inline void Finalizer(Napi::Env env, void* data, AsyncProgressWorkerBase* context) {};
+     bool _work_completed = false;
+     napi_status _complete_status;
+     static inline void OnThreadSafeFunctionFinalize(Napi::Env env, void* data, AsyncProgressWorkerBase* context);
   };
 
   template<class T>

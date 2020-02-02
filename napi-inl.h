@@ -4597,7 +4597,7 @@ inline AsyncProgressWorkerBase<DataType>::AsyncProgressWorkerBase(const Object& 
                                                                   size_t queue_size)
   : AsyncWorker(receiver, callback, resource_name, resource) {
   // Fill all possible arguments to work around from ambiguous ThreadSafeFunction::New signatures.
-  _tsfn = ThreadSafeFunction::New(callback.Env(), callback, resource, resource_name, queue_size, 1, this, Finalizer, this);
+  _tsfn = ThreadSafeFunction::New(callback.Env(), callback, resource, resource_name, queue_size, 1, this, OnThreadSafeFunctionFinalize, this);
 }
 
 #if NAPI_VERSION > 4
@@ -4611,7 +4611,7 @@ inline AsyncProgressWorkerBase<DataType>::AsyncProgressWorkerBase(Napi::Env env,
   // functions are no longer optional we can remove the dummy Function here.
   Function callback;
   // Fill all possible arguments to work around from ambiguous ThreadSafeFunction::New signatures.
-  _tsfn = ThreadSafeFunction::New(env, callback, resource, resource_name, queue_size, 1, this, Finalizer, this);
+  _tsfn = ThreadSafeFunction::New(env, callback, resource, resource_name, queue_size, 1, this, OnThreadSafeFunctionFinalize, this);
 }
 #endif
 
@@ -4619,8 +4619,8 @@ template<typename DataType>
 inline AsyncProgressWorkerBase<DataType>::~AsyncProgressWorkerBase() {
   // Abort pending tsfn call.
   // Don't send progress events after we've already completed.
-  this->_tsfn.Abort();
-  this->_tsfn.Release();
+  // It's ok to call ThreadSafeFunction::Abort and ThreadSafeFunction::Release duplicated.
+  _tsfn.Abort();
 }
 
 template <typename DataType>
@@ -4635,6 +4635,20 @@ template <typename DataType>
 inline void AsyncProgressWorkerBase<DataType>::NonBlockingCall(DataType* data) {
   auto tsd = new AsyncProgressWorkerBase::ThreadSafeData(this, data);
   _tsfn.NonBlockingCall(tsd, OnAsyncWorkProgress);
+}
+
+template <typename DataType>
+inline void AsyncProgressWorkerBase<DataType>::OnWorkComplete(Napi::Env env, napi_status status) {
+  _work_completed = true;
+  _complete_status = status;
+  _tsfn.Release();
+}
+
+template <typename DataType>
+inline void AsyncProgressWorkerBase<DataType>::OnThreadSafeFunctionFinalize(Napi::Env env, void* data, AsyncProgressWorkerBase* context) {
+  if (context->_work_completed) {
+    context->AsyncWorker::OnWorkComplete(env, context->_complete_status);
+  }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -4876,7 +4890,8 @@ inline void AsyncProgressQueueWorker<T>::Signal() const {
 
 template<class T>
 inline void AsyncProgressQueueWorker<T>::OnWorkComplete(Napi::Env env, napi_status status) {
-  AsyncWorker::OnWorkComplete(env, status);
+  // Draining queued items in TSFN.
+  AsyncProgressWorkerBase<std::pair<T*, size_t>>::OnWorkComplete(env, status);
 }
 
 template<class T>
