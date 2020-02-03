@@ -4638,14 +4638,14 @@ inline void AsyncProgressWorkerBase<DataType>::NonBlockingCall(DataType* data) {
 }
 
 template <typename DataType>
-inline void AsyncProgressWorkerBase<DataType>::OnWorkComplete(Napi::Env env, napi_status status) {
+inline void AsyncProgressWorkerBase<DataType>::OnWorkComplete(Napi::Env /* env */, napi_status status) {
   _work_completed = true;
   _complete_status = status;
   _tsfn.Release();
 }
 
 template <typename DataType>
-inline void AsyncProgressWorkerBase<DataType>::OnThreadSafeFunctionFinalize(Napi::Env env, void* data, AsyncProgressWorkerBase* context) {
+inline void AsyncProgressWorkerBase<DataType>::OnThreadSafeFunctionFinalize(Napi::Env env, void* /* data */, AsyncProgressWorkerBase* context) {
   if (context->_work_completed) {
     context->AsyncWorker::OnWorkComplete(env, context->_complete_status);
   }
