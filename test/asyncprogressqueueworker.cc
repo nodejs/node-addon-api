@@ -46,6 +46,9 @@ public:
 
 protected:
   void Execute(const ExecutionProgress& progress) override {
+    using namespace std::chrono_literals;
+    std::this_thread::sleep_for(1s);
+
     if (_times < 0) {
       SetError("test error");
     }

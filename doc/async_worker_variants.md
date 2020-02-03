@@ -344,10 +344,10 @@ method that will queue the created worker for execution.
 # AsyncProgressQueueWorker
 
 `Napi::AsyncProgressQueueWorker` acts exactly like `Napi::AsyncProgressWorker`
-except that each progress commited by `Napi::AsyncProgressQueueWorker::ExecutionProgress::Send`
+except that each progress committed by `Napi::AsyncProgressQueueWorker::ExecutionProgress::Send`
 during `Napi::AsyncProgressQueueWorker::Execute` is guaranteed to be
 processed by `Napi::AsyncProgressQueueWorker::OnProgress` on JavaScript thread
-by committing order order.
+by committing order.
 
 For the most basic use, only the `Napi::AsyncProgressQueueWorker::Execute` and
 `Napi::AsyncProgressQueueWorker::OnProgress` method must be implemented in a subclass.
@@ -368,9 +368,9 @@ The data pointed to will be copied to internal slots of `Napi::AsyncProgressQueu
 after the call to `Napi::AsyncProgressQueueWorker::ExecutionProcess::Send` the data can
 be safely released.
 
-`Napi::AsyncProgressQueueWorker::ExecutionProcess::Send` guarantees **eventual**
-invocation of `Napi::AsyncProgressQueueWorker::OnProgress`, which means
-multiple send will be cast to orderly invocation of `Napi::AsyncProgressQueueWorker::OnProgress`
+`Napi::AsyncProgressQueueWorker::ExecutionProcess::Send` guarantees invocation
+of `Napi::AsyncProgressQueueWorker::OnProgress`, which means multiple send will
+be cast to orderly invocation of `Napi::AsyncProgressQueueWorker::OnProgress`
 with each data.
 
 ```cpp

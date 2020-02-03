@@ -2,6 +2,7 @@
 const buildType = process.config.target_defaults.default_configuration;
 const common = require('./common')
 const assert = require('assert');
+const os = require('os');
 
 test(require(`./build/${buildType}/binding.node`));
 test(require(`./build/${buildType}/binding_noexcept.node`));
@@ -44,6 +45,12 @@ function fail(binding) {
 }
 
 function cancel(binding) {
+  // make sure the work we are going to cancel will not be
+  // able to start by using all the threads in the pool.
+  for (let i = 0; i < os.cpus().length; ++i) {
+    const worker = binding.createWork(-1, () => {}, () => {});
+    binding.queueWork(worker);
+  }
   const worker = binding.createWork(-1,
     () => {
       assert.fail('unexpected callback');
