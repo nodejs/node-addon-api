@@ -272,12 +272,12 @@ called and are executed as part of the event loop.
 The code below shows a basic example of the `Napi::AsyncProgressWorker` implementation:
 
 ```cpp
-#include<napi.h>
+#include <napi.h>
 
 #include <chrono>
 #include <thread>
 
-use namespace Napi;
+using namespace Napi;
 
 class EchoWorker : public AsyncProgressWorker<uint32_t> {
     public:
@@ -323,7 +323,7 @@ The following code shows an example of how to create and use an `Napi::AsyncProg
 // Include EchoWorker class
 // ..
 
-use namespace Napi;
+using namespace Napi;
 
 Value Echo(const CallbackInfo& info) {
     // We need to validate the arguments here
@@ -339,6 +339,116 @@ The implementation of a `Napi::AsyncProgressWorker` can be used by creating a
 new instance and passing to its constructor the callback to execute when the
 asynchronous task ends and other data needed for the computation. Once created,
 the only other action needed is to call the `Napi::AsyncProgressWorker::Queue`
+method that will queue the created worker for execution.
+
+# AsyncProgressQueueWorker
+
+`Napi::AsyncProgressQueueWorker` acts exactly like `Napi::AsyncProgressWorker`
+except that each progress commited by `Napi::AsyncProgressQueueWorker::ExecutionProgress::Send`
+during `Napi::AsyncProgressQueueWorker::Execute` is guaranteed to be
+processed by `Napi::AsyncProgressQueueWorker::OnProgress` on JavaScript thread
+by committing order order.
+
+For the most basic use, only the `Napi::AsyncProgressQueueWorker::Execute` and
+`Napi::AsyncProgressQueueWorker::OnProgress` method must be implemented in a subclass.
+
+# AsyncProgressQueueWorker::ExecutionProcess
+
+A bridge class created before the worker thread execution of `Napi::AsyncProgressQueueWorker::Execute`.
+
+## Methods
+
+### Send
+
+`Napi::AsyncProgressQueueWorker::ExecutionProcess::Send` takes two arguments, a pointer
+to a generic type of data, and a `size_t` to indicate how many items the pointer is
+pointing to.
+
+The data pointed to will be copied to internal slots of `Napi::AsyncProgressQueueWorker` so
+after the call to `Napi::AsyncProgressQueueWorker::ExecutionProcess::Send` the data can
+be safely released.
+
+`Napi::AsyncProgressQueueWorker::ExecutionProcess::Send` guarantees **eventual**
+invocation of `Napi::AsyncProgressQueueWorker::OnProgress`, which means
+multiple send will be cast to orderly invocation of `Napi::AsyncProgressQueueWorker::OnProgress`
+with each data.
+
+```cpp
+void Napi::AsyncProgressQueueWorker::ExecutionProcess::Send(const T* data, size_t count) const;
+```
+
+## Example
+
+The code below shows a basic example of the `Napi::AsyncProgressQueueWorker` implementation:
+
+```cpp
+#include <napi.h>
+
+#include <chrono>
+#include <thread>
+
+using namespace Napi;
+
+class EchoWorker : public AsyncProgressQueueWorker<uint32_t> {
+    public:
+        EchoWorker(Function& callback, std::string& echo)
+        : AsyncProgressQueueWorker(callback), echo(echo) {}
+
+        ~EchoWorker() {}
+    // This code will be executed on the worker thread
+    void Execute(const ExecutionProgress& progress) {
+        // Need to simulate cpu heavy task
+        for (uint32_t i = 0; i < 100; ++i) {
+          progress.Send(&i, 1)
+          std::this_thread::sleep_for(std::chrono::seconds(1));
+        }
+    }
+
+    void OnOK() {
+        HandleScope scope(Env());
+        Callback().Call({Env().Null(), String::New(Env(), echo)});
+    }
+
+    void OnProgress(const uint32_t* data, size_t /* count */) {
+        HandleScope scope(Env());
+        Callback().Call({Env().Null(), Env().Null(), Number::New(Env(), *data)});
+    }
+
+    private:
+        std::string echo;
+};
+```
+
+The `EchoWorker`'s constructor calls the base class' constructor to pass in the
+callback that the `Napi::AsyncProgressQueueWorker` base class will store persistently. When
+the work on the `Napi::AsyncProgressQueueWorker::Execute` method is done the
+`Napi::AsyncProgressQueueWorker::OnOk` method is called and the results are return back to
+JavaScript when the stored callback is invoked with its associated environment.
+
+The following code shows an example of how to create and use an `Napi::AsyncProgressQueueWorker`
+
+```cpp
+#include <napi.h>
+
+// Include EchoWorker class
+// ..
+
+using namespace Napi;
+
+Value Echo(const CallbackInfo& info) {
+    // We need to validate the arguments here
+    Function cb = info[1].As<Function>();
+    std::string in = info[0].As<String>();
+    EchoWorker* wk = new EchoWorker(cb, in);
+    wk->Queue();
+    return info.Env().Undefined();
+}
+```
+
+The implementation of a `Napi::AsyncProgressQueueWorker` can be used by creating a
+new instance and passing to its constructor the callback to execute when the
+asynchronous task ends and other data needed for the computation. Once created,
+the only other action needed is to call the `Napi::AsyncProgressQueueWorker::Queue`
 method that will queue the created worker for execution.
 
 [`Napi::AsyncWorker`]: ./async_worker.md
