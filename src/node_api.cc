@@ -2238,7 +2238,7 @@ napi_status napi_get_value_string_latin1(napi_env env,
   if (!buf) {
     CHECK_ARG(env, result);
     *result = val.As<v8::String>()->Length();
-  } else {
+  } else if (bufsize != 0) {
     int copied = val.As<v8::String>()->WriteOneByte(
       reinterpret_cast<uint8_t*>(buf), 0, bufsize - 1,
       v8::String::NO_NULL_TERMINATION);
@@ -2247,6 +2247,8 @@ napi_status napi_get_value_string_latin1(napi_env env,
     if (result != nullptr) {
       *result = copied;
     }
+  } else if (result != nullptr) {
+    *result = 0;
   }
 
   return napi_clear_last_error(env);
@@ -2274,7 +2276,7 @@ napi_status napi_get_value_string_utf8(napi_env env,
   if (!buf) {
     CHECK_ARG(env, result);
     *result = val.As<v8::String>()->Utf8Length();
-  } else {
+  } else if (bufsize != 0) {
     int copied = val.As<v8::String>()->WriteUtf8(
       buf, bufsize - 1, nullptr, v8::String::REPLACE_INVALID_UTF8 |
       v8::String::NO_NULL_TERMINATION);
@@ -2283,6 +2285,8 @@ napi_status napi_get_value_string_utf8(napi_env env,
     if (result != nullptr) {
       *result = copied;
     }
+  } else if (result != nullptr) {
+    *result = 0;
   }
 
   return napi_clear_last_error(env);
@@ -2311,7 +2315,7 @@ napi_status napi_get_value_string_utf16(napi_env env,
     CHECK_ARG(env, result);
     // V8 assumes UTF-16 length is the same as the number of characters.
     *result = val.As<v8::String>()->Length();
-  } else {
+  } else if (bufsize != 0) {
     int copied = val.As<v8::String>()->Write(
       reinterpret_cast<uint16_t*>(buf), 0, bufsize - 1,
       v8::String::NO_NULL_TERMINATION);
@@ -2320,6 +2324,8 @@ napi_status napi_get_value_string_utf16(napi_env env,
     if (result != nullptr) {
       *result = copied;
     }
+  } else if (result != nullptr) {
+    *result = 0;
   }
 
   return napi_clear_last_error(env);
