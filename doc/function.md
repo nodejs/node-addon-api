@@ -11,8 +11,8 @@ functions that were created in JavaScript and passed to the native add-on.
 The `Napi::Function` class inherits its behavior from the `Napi::Object` class (for more info
 see: [`Napi::Object`](object.md)).
 
-> For callbacks, that will be called with an asynchronous events from
-> non-JavaScript thread, please refer to [`Napi::ThreadSafeFunction`] for more
+> For callbacks that will be called with asynchronous events from a
+> non-JavaScript thread, please refer to [`Napi::ThreadSafeFunction`][] for more
 > examples.
 
 ## Example
