@@ -190,6 +190,7 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for more details on our philosophy around
 | Name                | GitHub Link                                           |
 | ------------------- | ----------------------------------------------------- |
 | Anna Henningsen     | [addaleax](https://github.com/addaleax)               |
+| Chengzhong Wu       | [legendecas](https://github.com/legendecas)           |
 | Gabriel Schulhof    | [gabrielschulhof](https://github.com/gabrielschulhof) |
 | Hitesh Kanwathirtha | [digitalinfinity](https://github.com/digitalinfinity) |
 | Jim Schlight        | [jschlight](https://github.com/jschlight)             |
