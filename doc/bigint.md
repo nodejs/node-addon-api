@@ -8,6 +8,7 @@ A JavaScript BigInt value.
 
 ```cpp
 static Napi::BigInt Napi::BigInt::New(Napi::Env env, int64_t value);
+static Napi::BigInt Napi::BigInt::New(Napi::Env env, uint64_t value);
 ```
 
  - `[in] env`: The environment in which to construct the `Napi::BigInt` object.
