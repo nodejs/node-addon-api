@@ -11,6 +11,10 @@ functions that were created in JavaScript and passed to the native add-on.
 The `Napi::Function` class inherits its behavior from the `Napi::Object` class (for more info
 see: [`Napi::Object`](object.md)).
 
+> For callbacks that will be called with asynchronous events from a
+> non-JavaScript thread, please refer to [`Napi::ThreadSafeFunction`][] for more
+> examples.
+
 ## Example
 
 ```cpp
@@ -393,3 +397,5 @@ Napi::Value Napi::Function::operator ()(const std::initializer_list<napi_value>&
 - `[in] args`: Initializer list of JavaScript values as `napi_value`.
 
 Returns a `Napi::Value` representing the JavaScript value returned by the function.
+
+[`Napi::ThreadSafeFunction`]: ./threadsafe_function.md
