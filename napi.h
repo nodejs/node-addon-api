@@ -2215,7 +2215,22 @@ namespace Napi {
     ConvertibleContext GetContext() const;
 
   private:
-    using CallbackWrapper = std::function<void(Napi::Env, Napi::Function)>;
+    class CallbackWrapper {
+    private:
+      using ContextlessCallback = std::function<void(Env, Function)>;
+      using ContextedCallback = std::function<void(Env, Function, void *)>;
+
+      ContextlessCallback ctxless;
+      ContextedCallback ctxfull;
+
+    public:
+      CallbackWrapper(ContextlessCallback arg) : ctxless(arg){};
+      CallbackWrapper(ContextedCallback arg) : ctxfull(arg){};
+
+      void operator()(Napi::Env env, Napi::Function callback, void *context) {
+        ctxfull ? ctxfull(env, callback, context) : ctxless(env, callback);
+      };
+    };
 
     template <typename ResourceString, typename ContextType,
               typename Finalizer, typename FinalizerDataType>

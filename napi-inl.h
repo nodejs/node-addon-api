@@ -4574,7 +4574,7 @@ inline napi_status ThreadSafeFunction::CallInternal(
 // static
 inline void ThreadSafeFunction::CallJS(napi_env env,
                                        napi_value jsCallback,
-                                       void* /* context */,
+                                       void* context,
                                        void* data) {
   if (env == nullptr && jsCallback == nullptr) {
     return;
@@ -4582,7 +4582,7 @@ inline void ThreadSafeFunction::CallJS(napi_env env,
 
   if (data != nullptr) {
     auto* callbackWrapper = static_cast<CallbackWrapper*>(data);
-    (*callbackWrapper)(env, Function(env, jsCallback));
+    (*callbackWrapper)(env, Function(env, jsCallback), context);
     delete callbackWrapper;
   } else if (jsCallback != nullptr) {
     Function(env, jsCallback).Call({});
