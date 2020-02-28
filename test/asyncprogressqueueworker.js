@@ -29,7 +29,7 @@ function success(binding) {
       actual.push(_progress);
     }, expected.length)
   );
-  assert.strictEqual(binding.queueWork(worker), true);
+  binding.queueWork(worker);
 }
 
 function fail(binding) {
@@ -41,7 +41,7 @@ function fail(binding) {
       assert.fail('unexpected progress report');
     }
   );
-  assert.strictEqual(binding.queueWork(worker), true);
+  binding.queueWork(worker);
 }
 
 function cancel(binding) {

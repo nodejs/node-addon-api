@@ -22,26 +22,27 @@ public:
     Function cb = info[1].As<Function>();
     Function progress = info[2].As<Function>();
 
-    TestWorker* worker = new TestWorker(cb, progress, "TestResource", Object::New(info.Env()));
-    worker->_times = times;
+    TestWorker* worker = new TestWorker(cb,
+                                        progress,
+                                        "TestResource",
+                                        Object::New(info.Env()),
+                                        times);
 
     return Napi::External<TestWorker>::New(info.Env(), worker);
   }
 
-  static Napi::Value QueueWork(const CallbackInfo& info) {
+  static void QueueWork(const CallbackInfo& info) {
     auto wrap = info[0].As<Napi::External<TestWorker>>();
     auto worker = wrap.Data();
     worker->Queue();
-    return Napi::Boolean::New(info.Env(), true);
   }
 
-  static Napi::Value CancelWork(const CallbackInfo& info) {
+  static void CancelWork(const CallbackInfo& info) {
     auto wrap = info[0].As<Napi::External<TestWorker>>();
     auto worker = wrap.Data();
     // We cannot cancel a worker if it got started. So we have to do a quick cancel.
     worker->Queue();
     worker->Cancel();
-    return Napi::Boolean::New(info.Env(), true);
   }
 
 protected:
@@ -61,20 +62,25 @@ protected:
 
   void OnProgress(const ProgressData* data, size_t /* count */) override {
     Napi::Env env = Env();
-    if (!_progress.IsEmpty()) {
+    if (!_js_progress_cb.IsEmpty()) {
       Number progress = Number::New(env, data->progress);
-      _progress.MakeCallback(Receiver().Value(), { progress });
+      _js_progress_cb.Call(Receiver().Value(), { progress });
     }
   }
 
 private:
-  TestWorker(Function cb, Function progress, const char* resource_name, const Object& resource)
-    : AsyncProgressQueueWorker(cb, resource_name, resource) {
-    _progress.Reset(progress, 1);
+  TestWorker(Function cb,
+             Function progress,
+             const char* resource_name,
+             const Object& resource,
+             int32_t times)
+    : AsyncProgressQueueWorker(cb, resource_name, resource),
+      _times(times) {
+    _js_progress_cb.Reset(progress, 1);
   }
 
   int32_t _times;
-  FunctionReference _progress;
+  FunctionReference _js_progress_cb;
 };
 
 } // namespace

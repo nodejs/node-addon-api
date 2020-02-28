@@ -346,8 +346,8 @@ method that will queue the created worker for execution.
 `Napi::AsyncProgressQueueWorker` acts exactly like `Napi::AsyncProgressWorker`
 except that each progress committed by `Napi::AsyncProgressQueueWorker::ExecutionProgress::Send`
 during `Napi::AsyncProgressQueueWorker::Execute` is guaranteed to be
-processed by `Napi::AsyncProgressQueueWorker::OnProgress` on JavaScript thread
-by committing order.
+processed by `Napi::AsyncProgressQueueWorker::OnProgress` on the JavaScript
+thread in the order it was committed.
 
 For the most basic use, only the `Napi::AsyncProgressQueueWorker::Execute` and
 `Napi::AsyncProgressQueueWorker::OnProgress` method must be implemented in a subclass.
@@ -369,9 +369,9 @@ after the call to `Napi::AsyncProgressQueueWorker::ExecutionProcess::Send` the d
 be safely released.
 
 `Napi::AsyncProgressQueueWorker::ExecutionProcess::Send` guarantees invocation
-of `Napi::AsyncProgressQueueWorker::OnProgress`, which means multiple send will
-be cast to orderly invocation of `Napi::AsyncProgressQueueWorker::OnProgress`
-with each data.
+of `Napi::AsyncProgressQueueWorker::OnProgress`, which means multiple `Send`
+call will result in the in-order invocation of `Napi::AsyncProgressQueueWorker::OnProgress`
+with each data item.
 
 ```cpp
 void Napi::AsyncProgressQueueWorker::ExecutionProcess::Send(const T* data, size_t count) const;
@@ -420,12 +420,14 @@ class EchoWorker : public AsyncProgressQueueWorker<uint32_t> {
 ```
 
 The `EchoWorker`'s constructor calls the base class' constructor to pass in the
-callback that the `Napi::AsyncProgressQueueWorker` base class will store persistently. When
-the work on the `Napi::AsyncProgressQueueWorker::Execute` method is done the
-`Napi::AsyncProgressQueueWorker::OnOk` method is called and the results are return back to
-JavaScript when the stored callback is invoked with its associated environment.
+callback that the `Napi::AsyncProgressQueueWorker` base class will store
+persistently. When the work on the `Napi::AsyncProgressQueueWorker::Execute`
+method is done the `Napi::AsyncProgressQueueWorker::OnOk` method is called and
+the results are returned back to JavaScript when the stored callback is invoked
+with its associated environment.
 
-The following code shows an example of how to create and use an `Napi::AsyncProgressQueueWorker`
+The following code shows an example of how to create and use an
+`Napi::AsyncProgressQueueWorker`.
 
 ```cpp
 #include <napi.h>
@@ -436,7 +438,7 @@ The following code shows an example of how to create and use an `Napi::AsyncProg
 using namespace Napi;
 
 Value Echo(const CallbackInfo& info) {
-    // We need to validate the arguments here
+    // We need to validate the arguments here.
     Function cb = info[1].As<Function>();
     std::string in = info[0].As<String>();
     EchoWorker* wk = new EchoWorker(cb, in);

@@ -6,7 +6,6 @@
 #include <initializer_list>
 #include <memory>
 #include <mutex>
-#include <queue>
 #include <string>
 #include <vector>
 
@@ -1967,12 +1966,6 @@ namespace Napi {
     napi_async_context _context;
   };
 
-
-  inline void OnAsyncWorkExecute(napi_env env, void* asyncworker);
-  inline void OnAsyncWorkComplete(napi_env env,
-                                  napi_status status,
-                                  void* asyncworker);
-
   class AsyncWorker {
   public:
     virtual ~AsyncWorker();
@@ -2287,7 +2280,7 @@ namespace Napi {
                                             Napi::Function jsCallback,
                                             void* data);
 
-     void NonBlockingCall(DataType* data);
+     napi_status NonBlockingCall(DataType* data);
 
     private:
      ThreadSafeFunction _tsfn;

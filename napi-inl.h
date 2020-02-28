@@ -4596,8 +4596,16 @@ inline AsyncProgressWorkerBase<DataType>::AsyncProgressWorkerBase(const Object& 
                                                                   const Object& resource,
                                                                   size_t queue_size)
   : AsyncWorker(receiver, callback, resource_name, resource) {
-  // Fill all possible arguments to work around from ambiguous ThreadSafeFunction::New signatures.
-  _tsfn = ThreadSafeFunction::New(callback.Env(), callback, resource, resource_name, queue_size, 1, this, OnThreadSafeFunctionFinalize, this);
+  // Fill all possible arguments to work around ambiguous ThreadSafeFunction::New signatures.
+  _tsfn = ThreadSafeFunction::New(callback.Env(),
+                                  callback,
+                                  resource,
+                                  resource_name,
+                                  queue_size,
+                                  /** initialThreadCount */ 1,
+                                  /** context */ this,
+                                  OnThreadSafeFunctionFinalize,
+                                  /** finalizeData */ this);
 }
 
 #if NAPI_VERSION > 4
@@ -4608,10 +4616,18 @@ inline AsyncProgressWorkerBase<DataType>::AsyncProgressWorkerBase(Napi::Env env,
                                                                   size_t queue_size)
   : AsyncWorker(env, resource_name, resource) {
   // TODO: Once the changes to make the callback optional for threadsafe
-  // functions are no longer optional we can remove the dummy Function here.
+  // functions are available on all versions we can remove the dummy Function here.
   Function callback;
-  // Fill all possible arguments to work around from ambiguous ThreadSafeFunction::New signatures.
-  _tsfn = ThreadSafeFunction::New(env, callback, resource, resource_name, queue_size, 1, this, OnThreadSafeFunctionFinalize, this);
+  // Fill all possible arguments to work around ambiguous ThreadSafeFunction::New signatures.
+  _tsfn = ThreadSafeFunction::New(env,
+                                  callback,
+                                  resource,
+                                  resource_name,
+                                  queue_size,
+                                  /** initialThreadCount */ 1,
+                                  /** context */ this,
+                                  OnThreadSafeFunctionFinalize,
+                                  /** finalizeData */ this);
 }
 #endif
 
@@ -4632,9 +4648,9 @@ inline void AsyncProgressWorkerBase<DataType>::OnAsyncWorkProgress(Napi::Env /* 
 }
 
 template <typename DataType>
-inline void AsyncProgressWorkerBase<DataType>::NonBlockingCall(DataType* data) {
+inline napi_status AsyncProgressWorkerBase<DataType>::NonBlockingCall(DataType* data) {
   auto tsd = new AsyncProgressWorkerBase::ThreadSafeData(this, data);
-  _tsfn.NonBlockingCall(tsd, OnAsyncWorkProgress);
+  return _tsfn.NonBlockingCall(tsd, OnAsyncWorkProgress);
 }
 
 template <typename DataType>
