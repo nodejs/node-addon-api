@@ -160,8 +160,6 @@ npm run-script dev:incremental
 
 Take a look and get inspired by our **[test suite](https://github.com/nodejs/node-addon-api/tree/master/test)**
 
-<a name="resources"></a>
-
 ### **Benchmarks**
 
 You can run the available benchmarks using the following command:
@@ -172,15 +170,25 @@ npm run-script benchmark
 
 See [benchmark/README.md](benchmark/README.md) for more details about running and adding benchmarks.
 
-## **Contributing**
-
-We love contributions from the community to **node-addon-api**.
-See [CONTRIBUTING.md](CONTRIBUTING.md) for more details on our philosophy around extending this module.
+<a name="resources"></a>
 
 ### **More resource and info about native Addons**
 - **[C++ Addons](https://nodejs.org/dist/latest/docs/api/addons.html)**
 - **[N-API](https://nodejs.org/dist/latest/docs/api/n-api.html)**
 - **[N-API - Next Generation Node API for Native Modules](https://youtu.be/-Oniup60Afs)**
+
+As node-addon-api's core mission is to expose the plain C N-API as C++
+wrappers, tools that facilitate n-api/node-addon-api providing more
+convenient patterns on developing a Node.js add-ons with n-api/node-addon-api
+can be published to NPM as standalone packages. It is also recommended to tag
+such packages with `node-addon-api` to provide more visibility to the community.
+
+Quick links to NPM searches: [keywords:node-addon-api](https://www.npmjs.com/search?q=keywords%3Anode-addon-api).
+
+## **Contributing**
+
+We love contributions from the community to **node-addon-api**!
+See [CONTRIBUTING.md](CONTRIBUTING.md) for more details on our philosophy around extending this module.
 
 <a name="contributors"></a>
 
