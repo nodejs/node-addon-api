@@ -187,7 +187,7 @@ Quick links to NPM searches: [keywords:node-addon-api](https://www.npmjs.com/sea
 
 ## **Contributing**
 
-We love contributions from the community to **node-addon-api**.
+We love contributions from the community to **node-addon-api**!
 See [CONTRIBUTING.md](CONTRIBUTING.md) for more details on our philosophy around extending this module.
 
 <a name="contributors"></a>
