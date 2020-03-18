@@ -181,7 +181,7 @@ As node-addon-api's core mission is to expose the plain C N-API as C++
 wrappers, tools that facilitates n-api/node-addon-api to provide more
 convenient patterns on developing a Node.js add-on with n-api/node-addon-api
 can be published to NPM as standalone packages. It is also recommended to tag
-the package with `node-addon-api` to expose more visibilities on community.
+such packages with `node-addon-api` to provide more visibility to the community.
 
 Quick links to NPM searches: [keywords:node-addon-api](https://www.npmjs.com/search?q=keywords%3Anode-addon-api).
 
