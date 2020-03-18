@@ -178,7 +178,7 @@ See [benchmark/README.md](benchmark/README.md) for more details about running an
 - **[N-API - Next Generation Node API for Native Modules](https://youtu.be/-Oniup60Afs)**
 
 As node-addon-api's core mission is to expose the plain C N-API as C++
-wrappers, tools that facilitates n-api/node-addon-api to provide more
+wrappers, tools that facilitate n-api/node-addon-api providing more
 convenient patterns on developing a Node.js add-on with n-api/node-addon-api
 can be published to NPM as standalone packages. It is also recommended to tag
 such packages with `node-addon-api` to provide more visibility to the community.
