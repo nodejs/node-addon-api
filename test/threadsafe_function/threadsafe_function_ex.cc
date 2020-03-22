@@ -30,11 +30,11 @@ public:
     return deferred.Promise();
   };
 
-  Napi::Value GetContextFromTsfn(const CallbackInfo &info) {
+  Napi::Value GetContextFromTsfn(const CallbackInfo &) {
     return _tsfn.GetContext()->Value();
   };
 
-  Napi::Value Release(const CallbackInfo &info) {
+  Napi::Value Release(const CallbackInfo &) {
     _tsfn.Release();
     return _deferred.Promise();
   };
@@ -79,7 +79,7 @@ TSFNWrap::TSFNWrap(const CallbackInfo &info)
         delete ctx;
       },
       static_cast<void*>(nullptr),                                 // FinalizerDataType* data,
-      [](napi_env env, napi_value js_callback, void *context, void *data) { // call_js_cb
+      [](napi_env, napi_value, void *context, void *data) { // call_js_cb
         std::unique_ptr<CallJsData> callData(static_cast<CallJsData*>(data));
         callData->resolve(static_cast<TSFNContext*>(context));
       });
