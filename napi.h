@@ -2036,6 +2036,80 @@ namespace Napi {
   };
 
   #if (NAPI_VERSION > 3)
+
+  template <typename ContextType>
+  class ThreadSafeFunctionEx {
+  public:
+    // This API may only be called from the main thread.
+    template <typename ResourceString, typename Finalizer, typename FinalizerDataType>
+    static ThreadSafeFunctionEx<ContextType> New(napi_env env,
+                                  const Function& callback,
+                                  const Object& resource,
+                                  ResourceString resourceName,
+                                  size_t maxQueueSize,
+                                  size_t initialThreadCount,
+                                  ContextType* context,
+                                  Finalizer finalizeCallback,
+                                  FinalizerDataType* data,
+                                  napi_threadsafe_function_call_js call_js_cb);
+
+    ThreadSafeFunctionEx<ContextType>();
+    ThreadSafeFunctionEx<ContextType>(napi_threadsafe_function tsFunctionValue);
+
+    operator napi_threadsafe_function() const;
+
+    // // This API may be called from any thread.
+    // napi_status BlockingCall() const;
+
+    // This API may be called from any thread.
+    template <typename DataType = void>
+    napi_status BlockingCall(DataType* data = nullptr) const;
+
+    // // This API may be called from any thread.
+    // napi_status NonBlockingCall() const;
+
+    // This API may be called from any thread.
+    template <typename DataType = void>
+    napi_status NonBlockingCall(DataType* data = nullptr) const;
+
+    // This API may only be called from the main thread.
+    void Ref(napi_env env) const;
+
+    // This API may only be called from the main thread.
+    void Unref(napi_env env) const;
+
+    // This API may be called from any thread.
+    napi_status Acquire() const;
+
+    // This API may be called from any thread.
+    napi_status Release();
+
+    // This API may be called from any thread.
+    napi_status Abort();
+
+    // This API may be called from any thread.
+    ContextType* GetContext() const;
+
+  private:
+    using CallbackWrapper = std::function<void(Napi::Env, Napi::Function, ContextType* context)>;
+
+    template <typename ResourceString,
+              typename Finalizer, typename FinalizerDataType>
+    static ThreadSafeFunctionEx<ContextType> New(napi_env env,
+                                  const Function& callback,
+                                  const Object& resource,
+                                  ResourceString resourceName,
+                                  size_t maxQueueSize,
+                                  size_t initialThreadCount,
+                                  ContextType* context,
+                                  Finalizer finalizeCallback,
+                                  FinalizerDataType* data,
+                                  napi_finalize wrapper,
+                                  napi_threadsafe_function_call_js call_js_cb);
+
+    napi_threadsafe_function _tsfn;
+  };
+
   class ThreadSafeFunction {
   public:
     // This API may only be called from the main thread.

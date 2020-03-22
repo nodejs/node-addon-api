@@ -42,6 +42,7 @@ let testModules = [
   'promise',
   'run_script',
   'threadsafe_function/threadsafe_function_ctx',
+  'threadsafe_function/threadsafe_function_ex',
   'threadsafe_function/threadsafe_function_existing_tsfn',
   'threadsafe_function/threadsafe_function_ptr',
   'threadsafe_function/threadsafe_function_sum',
@@ -76,6 +77,7 @@ if (napiVersion < 4) {
   testModules.splice(testModules.indexOf('asyncprogressqueueworker'), 1);
   testModules.splice(testModules.indexOf('asyncprogressworker'), 1);
   testModules.splice(testModules.indexOf('threadsafe_function/threadsafe_function_ctx'), 1);
+  testModules.splice(testModules.indexOf('threadsafe_function/threadsafe_function_ex'), 1);
   testModules.splice(testModules.indexOf('threadsafe_function/threadsafe_function_existing_tsfn'), 1);
   testModules.splice(testModules.indexOf('threadsafe_function/threadsafe_function_ptr'), 1);
   testModules.splice(testModules.indexOf('threadsafe_function/threadsafe_function_sum'), 1);
