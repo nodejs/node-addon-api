@@ -42,6 +42,7 @@ to ideas specified in the **ECMA262 Language Specification**.
 - **[Examples](#examples)**
 - **[Tests](#tests)**
 - **[More resource and info about native Addons](#resources)**
+- **[Badges](#badges)**
 - **[Code of Conduct](CODE_OF_CONDUCT.md)**
 - **[Contributors](#contributors)**
 - **[License](#license)**
@@ -185,6 +186,24 @@ such packages with `node-addon-api` to provide more visibility to the community.
 
 Quick links to NPM searches: [keywords:node-addon-api](https://www.npmjs.com/search?q=keywords%3Anode-addon-api).
 
+<a name="badges"></a>
+
+### **Badges**
+
+The use of badges is recommended to indicate the minimum version of N-API
+required for the module. This helps to determine which Node.js major versions are
+supported. Addon maintainers can consult the [N-API support matrix][] to determine
+which Node.js versions provide a given N-API version. The following badges are
+available:
+
+![N-API v1 Badge](https://github.com/nodejs/abi-stable-node/blob/doc/assets/N-API%20v1%20Badge.svg)
+![N-API v2 Badge](https://github.com/nodejs/abi-stable-node/blob/doc/assets/N-API%20v2%20Badge.svg)
+![N-API v3 Badge](https://github.com/nodejs/abi-stable-node/blob/doc/assets/N-API%20v3%20Badge.svg)
+![N-API v4 Badge](https://github.com/nodejs/abi-stable-node/blob/doc/assets/N-API%20v4%20Badge.svg)
+![N-API v5 Badge](https://github.com/nodejs/abi-stable-node/blob/doc/assets/N-API%20v5%20Badge.svg)
+![N-API v6 Badge](https://github.com/nodejs/abi-stable-node/blob/doc/assets/N-API%20v6%20Badge.svg)
+![N-API Experimental Version Badge](https://github.com/nodejs/abi-stable-node/blob/doc/assets/N-API%20Experimental%20Version%20Badge.svg)
+
 ## **Contributing**
 
 We love contributions from the community to **node-addon-api**!
@@ -220,3 +239,4 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for more details on our philosophy around
 Licensed under [MIT](./LICENSE.md)
 
 [ABI stability guide]: https://nodejs.org/en/docs/guides/abi-stability/
+[N-API support matrix]: https://nodejs.org/dist/latest/docs/api/n-api.html#n_api_n_api_version_matrix
