@@ -386,14 +386,11 @@ inline bool Value::IsNumber() const {
   return Type() == napi_number;
 }
 
-// Currently experimental guard with the definition of NAPI_EXPERIMENTAL.
-// Once it is no longer experimental guard with the NAPI_VERSION in which it is
-// released instead.
-#ifdef NAPI_EXPERIMENTAL
+#if NAPI_VERSION > 5
 inline bool Value::IsBigInt() const {
   return Type() == napi_bigint;
 }
-#endif  // NAPI_EXPERIMENTAL
+#endif  // NAPI_VERSION > 5
 
 #if (NAPI_VERSION > 4)
 inline bool Value::IsDate() const {
@@ -624,10 +621,7 @@ inline double Number::DoubleValue() const {
   return result;
 }
 
-// Currently experimental guard with the definition of NAPI_EXPERIMENTAL.
-// Once it is no longer experimental guard with the NAPI_VERSION in which it is
-// released instead.
-#ifdef NAPI_EXPERIMENTAL
+#if NAPI_VERSION > 5
 ////////////////////////////////////////////////////////////////////////////////
 // BigInt Class
 ////////////////////////////////////////////////////////////////////////////////
@@ -688,7 +682,7 @@ inline void BigInt::ToWords(int* sign_bit, size_t* word_count, uint64_t* words) 
       _env, _value, sign_bit, word_count, words);
   NAPI_THROW_IF_FAILED_VOID(_env, status);
 }
-#endif  // NAPI_EXPERIMENTAL
+#endif  // NAPI_VERSION > 5
 
 #if (NAPI_VERSION > 4)
 ////////////////////////////////////////////////////////////////////////////////
