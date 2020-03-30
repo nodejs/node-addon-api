@@ -57,15 +57,6 @@ let testModules = [
 ];
 
 const napiVersion = Number(process.versions.napi)
-const nodeMajorVersion = Number(process.versions.node.match(/\d+/)[0])
-
-if (nodeMajorVersion < 10) {
-  // Currently experimental guard with NODE_MAJOR_VERISION in which it was
-  // released. Once it is no longer experimental guard with the NAPI_VERSION
-  // in which it is released instead.
-  testModules.splice(testModules.indexOf('bigint'), 1);
-  testModules.splice(testModules.indexOf('typedarray-bigint'), 1);
-}
 
 if (napiVersion < 3) {
   testModules.splice(testModules.indexOf('callbackscope'), 1);
@@ -87,9 +78,13 @@ if (napiVersion < 5) {
   testModules.splice(testModules.indexOf('date'), 1);
 }
 
+if (napiVersion < 6) {
+  testModules.splice(testModules.indexOf('bigint'), 1);
+  testModules.splice(testModules.indexOf('typedarray-bigint'), 1);
+}
+
 if (typeof global.gc === 'function') {
   console.log(`Testing with N-API Version '${napiVersion}'.`);
-  console.log(`Testing with Node.js Major Version '${nodeMajorVersion}'.\n`);
 
   console.log('Starting test suite\n');
 
