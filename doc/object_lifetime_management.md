@@ -69,7 +69,7 @@ for (int i = 0; i < LOOP_MAX; i++) {
   Napi::HandleScope scope(info.Env());
   std::string name = std::string("inner-scope") + std::to_string(i);
   Napi::Value newValue = Napi::String::New(info.Env(), name.c_str());
-  // do something with neValue
+  // do something with newValue
 };
 ```
 
