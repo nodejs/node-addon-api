@@ -2037,9 +2037,13 @@ namespace Napi {
 
   #if (NAPI_VERSION > 3)
 
-  template <typename ContextType>
+  
+  template <typename ContextType, typename DataType>
   class ThreadSafeFunctionEx {
   public:
+
+    using ThreadSafeFunctionCallJS = std::function<void(Napi::Env, Napi::Function, ContextType *context, DataType *data)>;
+
     // This API may only be called from the main thread.
     template <typename ResourceString, typename Finalizer, typename FinalizerDataType>
     static ThreadSafeFunctionEx<ContextType> New(napi_env env,
@@ -2051,7 +2055,7 @@ namespace Napi {
                                   ContextType* context,
                                   Finalizer finalizeCallback,
                                   FinalizerDataType* data,
-                                  napi_threadsafe_function_call_js call_js_cb);
+                                  ThreadSafeFunctionCallJS call_js_cb);
 
     ThreadSafeFunctionEx<ContextType>();
     ThreadSafeFunctionEx<ContextType>(napi_threadsafe_function tsFunctionValue);
@@ -2062,14 +2066,12 @@ namespace Napi {
     // napi_status BlockingCall() const;
 
     // This API may be called from any thread.
-    template <typename DataType = void>
     napi_status BlockingCall(DataType* data = nullptr) const;
 
     // // This API may be called from any thread.
     // napi_status NonBlockingCall() const;
 
     // This API may be called from any thread.
-    template <typename DataType = void>
     napi_status NonBlockingCall(DataType* data = nullptr) const;
 
     // This API may only be called from the main thread.
@@ -2091,7 +2093,7 @@ namespace Napi {
     ContextType* GetContext() const;
 
   private:
-    using CallbackWrapper = std::function<void(Napi::Env, Napi::Function, ContextType* context)>;
+    // using CallbackWrapper = std::function<void(Napi::Env, Napi::Function, ContextType* context)>;
 
     template <typename ResourceString,
               typename Finalizer, typename FinalizerDataType>
@@ -2105,7 +2107,15 @@ namespace Napi {
                                   Finalizer finalizeCallback,
                                   FinalizerDataType* data,
                                   napi_finalize wrapper,
-                                  napi_threadsafe_function_call_js call_js_cb);
+                                  ThreadSafeFunctionCallJS call_js_cb);
+
+    static void CallJS(napi_env env,
+                       napi_value jsCallback,
+                       void* context,
+                       void* data);
+
+  protected:
+    void CallJS
 
     napi_threadsafe_function _tsfn;
   };

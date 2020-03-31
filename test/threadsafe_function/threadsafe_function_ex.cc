@@ -79,9 +79,9 @@ TSFNWrap::TSFNWrap(const CallbackInfo &info)
         delete ctx;
       },
       static_cast<void*>(nullptr),                                 // FinalizerDataType* data,
-      [](napi_env, napi_value, void *context, void *data) { // call_js_cb
+      [](Napi::Env, Napi::Value, TSFNContext *context, void *data) { // call_js_cb
         std::unique_ptr<CallJsData> callData(static_cast<CallJsData*>(data));
-        callData->resolve(static_cast<TSFNContext*>(context));
+        callData->resolve(context);
       });
 }
 } // namespace
