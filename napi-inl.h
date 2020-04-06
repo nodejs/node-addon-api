@@ -4792,7 +4792,7 @@ inline void AsyncProgressWorker<T>::SendProgress_(const T* data, size_t count) {
 
 template<class T>
 inline void AsyncProgressWorker<T>::Signal() const {
-  this->NonBlockingCall(nullptr);
+  this->NonBlockingCall(static_cast<T*>(nullptr));
 }
 
 template<class T>
