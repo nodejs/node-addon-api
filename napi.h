@@ -2036,17 +2036,13 @@ namespace Napi {
   };
 
   #if (NAPI_VERSION > 3)
-
-  
-  template <typename ContextType, typename DataType>
+  template <typename ContextType = void, typename DataType = void, void (*CallJs)(Napi::Env, Napi::Function, ContextType*, DataType*) = nullptr > 
   class ThreadSafeFunctionEx {
   public:
 
-    using ThreadSafeFunctionCallJS = std::function<void(Napi::Env, Napi::Function, ContextType *context, DataType *data)>;
-
     // This API may only be called from the main thread.
     template <typename ResourceString, typename Finalizer, typename FinalizerDataType>
-    static ThreadSafeFunctionEx<ContextType> New(napi_env env,
+    static ThreadSafeFunctionEx<ContextType, DataType, CallJs> New(napi_env env,
                                   const Function& callback,
                                   const Object& resource,
                                   ResourceString resourceName,
@@ -2054,11 +2050,10 @@ namespace Napi {
                                   size_t initialThreadCount,
                                   ContextType* context,
                                   Finalizer finalizeCallback,
-                                  FinalizerDataType* data,
-                                  ThreadSafeFunctionCallJS call_js_cb);
+                                  FinalizerDataType* data);
 
-    ThreadSafeFunctionEx<ContextType>();
-    ThreadSafeFunctionEx<ContextType>(napi_threadsafe_function tsFunctionValue);
+    ThreadSafeFunctionEx<ContextType, DataType, CallJs>();
+    ThreadSafeFunctionEx<ContextType, DataType, CallJs>(napi_threadsafe_function tsFunctionValue);
 
     operator napi_threadsafe_function() const;
 
@@ -2093,11 +2088,10 @@ namespace Napi {
     ContextType* GetContext() const;
 
   private:
-    // using CallbackWrapper = std::function<void(Napi::Env, Napi::Function, ContextType* context)>;
 
     template <typename ResourceString,
               typename Finalizer, typename FinalizerDataType>
-    static ThreadSafeFunctionEx<ContextType> New(napi_env env,
+    static ThreadSafeFunctionEx<ContextType, DataType, CallJs> New(napi_env env,
                                   const Function& callback,
                                   const Object& resource,
                                   ResourceString resourceName,
@@ -2106,17 +2100,13 @@ namespace Napi {
                                   ContextType* context,
                                   Finalizer finalizeCallback,
                                   FinalizerDataType* data,
-                                  napi_finalize wrapper,
-                                  ThreadSafeFunctionCallJS call_js_cb);
+                                  napi_finalize wrapper);
 
-    static void CallJS(napi_env env,
-                       napi_value jsCallback,
-                       void* context,
-                       void* data);
-
+    static void CallJsInternal(napi_env env,
+                               napi_value jsCallback,
+                               void* context,
+                               void* data);
   protected:
-    void CallJS
-
     napi_threadsafe_function _tsfn;
   };
 

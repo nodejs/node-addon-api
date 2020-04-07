@@ -4,19 +4,28 @@
 
 using namespace Napi;
 
-using TSFNContext = Reference<Napi::Value>;
-
 namespace {
 
-struct CallJsData {
-  CallJsData(Napi::Env env) : deferred(Promise::Deferred::New(env)) { };
+// Context of our TSFN.
+using TSFNContext = Reference<Napi::Value>;
 
-  void resolve(TSFNContext* context) {
-    deferred.Resolve(context->Value());
-  };
+// Data passed to ThreadSafeFunctionEx::[Non]BlockingCall
+struct CallJsData {
+  CallJsData(Napi::Env env) : deferred(Promise::Deferred::New(env)){};
+
   Promise::Deferred deferred;
 };
 
+// CallJs callback function
+static void CallJs(Napi::Env /*env*/, Napi::Function /*jsCallback*/,
+                   TSFNContext *context, CallJsData *data) {
+  data->deferred.Resolve(context->Value());
+}
+
+// Full type of our ThreadSafeFunctionEx
+using TSFN = ThreadSafeFunctionEx<TSFNContext, CallJsData, CallJs>;
+
+// A JS-accessible wrap that holds a TSFN.
 class TSFNWrap : public ObjectWrap<TSFNWrap> {
 public:
   static Object Init(Napi::Env env, Object exports);
@@ -25,7 +34,7 @@ public:
   Napi::Value GetContextByCall(const CallbackInfo &info) {
     Napi::Env env = info.Env();
     std::unique_ptr<CallJsData> callData = std::make_unique<CallJsData>(env);
-    auto& deferred = callData->deferred;
+    auto &deferred = callData->deferred;
     _tsfn.BlockingCall(callData.release());
     return deferred.Promise();
   };
@@ -40,7 +49,7 @@ public:
   };
 
 private:
-  ThreadSafeFunctionEx<TSFNContext> _tsfn;
+  TSFN _tsfn;
   Promise::Deferred _deferred;
 };
 
@@ -63,7 +72,7 @@ TSFNWrap::TSFNWrap(const CallbackInfo &info)
   TSFNContext *ctx = new Reference<Napi::Value>;
   *ctx = Persistent(info[0]);
 
-  _tsfn = ThreadSafeFunctionEx<TSFNContext>::New(
+  _tsfn = ThreadSafeFunctionEx<TSFNContext, CallJsData, CallJs>::New(
       info.Env(), // napi_env env,
       Function::New(
           env,
@@ -74,15 +83,13 @@ TSFNWrap::TSFNWrap(const CallbackInfo &info)
       1,                                         // size_t initialThreadCount,
       ctx,                                       // ContextType* context,
 
-      [this](Napi::Env env, void*, TSFNContext *ctx) {  // Finalizer finalizeCallback,
+      [this](Napi::Env env, void *,
+             TSFNContext *ctx) { // Finalizer finalizeCallback,
         _deferred.Resolve(env.Undefined());
         delete ctx;
       },
-      static_cast<void*>(nullptr),                                 // FinalizerDataType* data,
-      [](Napi::Env, Napi::Value, TSFNContext *context, void *data) { // call_js_cb
-        std::unique_ptr<CallJsData> callData(static_cast<CallJsData*>(data));
-        callData->resolve(context);
-      });
+      static_cast<void *>(nullptr) // FinalizerDataType* data,
+  );
 }
 } // namespace
 
