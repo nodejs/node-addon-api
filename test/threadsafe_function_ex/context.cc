@@ -9,21 +9,18 @@ namespace {
 // Context of our TSFN.
 using TSFNContext = Reference<Napi::Value>;
 
-// Data passed to ThreadSafeFunctionEx::[Non]BlockingCall
-struct CallJsData {
-  CallJsData(Napi::Env env) : deferred(Promise::Deferred::New(env)){};
-
-  Promise::Deferred deferred;
-};
+// Data passed (as pointer) to ThreadSafeFunctionEx::[Non]BlockingCall
+using TSFNData = Promise::Deferred;
 
 // CallJs callback function
 static void CallJs(Napi::Env /*env*/, Napi::Function /*jsCallback*/,
-                   TSFNContext *context, CallJsData *data) {
-  data->deferred.Resolve(context->Value());
+                   TSFNContext *context, TSFNData *data) {
+  data->Resolve(context->Value());
+  delete data;
 }
 
 // Full type of our ThreadSafeFunctionEx
-using TSFN = ThreadSafeFunctionEx<TSFNContext, CallJsData, CallJs>;
+using TSFN = ThreadSafeFunctionEx<TSFNContext, TSFNData, CallJs>;
 
 // A JS-accessible wrap that holds a TSFN.
 class TSFNWrap : public ObjectWrap<TSFNWrap> {
@@ -33,10 +30,9 @@ public:
 
   Napi::Value GetContextByCall(const CallbackInfo &info) {
     Napi::Env env = info.Env();
-    std::unique_ptr<CallJsData> callData = std::make_unique<CallJsData>(env);
-    auto &deferred = callData->deferred;
-    _tsfn.BlockingCall(callData.release());
-    return deferred.Promise();
+    auto* callData = new TSFNData(env);
+    _tsfn.NonBlockingCall( callData );
+    return callData->Promise();
   };
 
   Napi::Value GetContextFromTsfn(const CallbackInfo &) {
@@ -69,10 +65,9 @@ TSFNWrap::TSFNWrap(const CallbackInfo &info)
       _deferred(Promise::Deferred::New(info.Env())) {
   Napi::Env env = info.Env();
 
-  TSFNContext *ctx = new Reference<Napi::Value>;
-  *ctx = Persistent(info[0]);
+  TSFNContext *context = new TSFNContext(Persistent(info[0]));
 
-  _tsfn = ThreadSafeFunctionEx<TSFNContext, CallJsData, CallJs>::New(
+  _tsfn = TSFN::New(
       info.Env(), // napi_env env,
       Function::New(
           env,
@@ -81,7 +76,7 @@ TSFNWrap::TSFNWrap(const CallbackInfo &info)
       "Test",                                    // ResourceString resourceName,
       1,                                         // size_t maxQueueSize,
       1,                                         // size_t initialThreadCount,
-      ctx,                                       // ContextType* context,
+      context,                                   // ContextType* context,
 
       [this](Napi::Env env, void *,
              TSFNContext *ctx) { // Finalizer finalizeCallback,
@@ -93,7 +88,7 @@ TSFNWrap::TSFNWrap(const CallbackInfo &info)
 }
 } // namespace
 
-Object InitThreadSafeFunctionEx(Env env) {
+Object InitThreadSafeFunctionExContext(Env env) {
   return TSFNWrap::Init(env, Object::New(env));
 }
 

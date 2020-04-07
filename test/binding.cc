@@ -43,12 +43,13 @@ Object InitPromise(Env env);
 Object InitRunScript(Env env);
 #if (NAPI_VERSION > 3)
 Object InitThreadSafeFunctionCtx(Env env);
-Object InitThreadSafeFunctionEx(Env env);
 Object InitThreadSafeFunctionExistingTsfn(Env env);
 Object InitThreadSafeFunctionPtr(Env env);
 Object InitThreadSafeFunctionSum(Env env);
 Object InitThreadSafeFunctionUnref(Env env);
 Object InitThreadSafeFunction(Env env);
+Object InitThreadSafeFunctionExContext(Env env);
+Object InitThreadSafeFunctionExSimple(Env env);
 #endif
 Object InitTypedArray(Env env);
 Object InitObjectWrap(Env env);
@@ -101,12 +102,13 @@ Object Init(Env env, Object exports) {
   exports.Set("run_script", InitRunScript(env));
 #if (NAPI_VERSION > 3)
   exports.Set("threadsafe_function_ctx", InitThreadSafeFunctionCtx(env));
-  exports.Set("threadsafe_function_ex", InitThreadSafeFunctionEx(env));
   exports.Set("threadsafe_function_existing_tsfn", InitThreadSafeFunctionExistingTsfn(env));
   exports.Set("threadsafe_function_ptr", InitThreadSafeFunctionPtr(env));
   exports.Set("threadsafe_function_sum", InitThreadSafeFunctionSum(env));
   exports.Set("threadsafe_function_unref", InitThreadSafeFunctionUnref(env));
   exports.Set("threadsafe_function", InitThreadSafeFunction(env));
+  exports.Set("threadsafe_function_ex_context", InitThreadSafeFunctionExContext(env));
+  exports.Set("threadsafe_function_ex_simple", InitThreadSafeFunctionExSimple(env));
 #endif
   exports.Set("typedarray", InitTypedArray(env));
   exports.Set("objectwrap", InitObjectWrap(env));

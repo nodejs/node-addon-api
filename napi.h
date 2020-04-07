@@ -2057,14 +2057,8 @@ namespace Napi {
 
     operator napi_threadsafe_function() const;
 
-    // // This API may be called from any thread.
-    // napi_status BlockingCall() const;
-
     // This API may be called from any thread.
     napi_status BlockingCall(DataType* data = nullptr) const;
-
-    // // This API may be called from any thread.
-    // napi_status NonBlockingCall() const;
 
     // This API may be called from any thread.
     napi_status NonBlockingCall(DataType* data = nullptr) const;
