@@ -43,18 +43,12 @@ TSFNWrap::TSFNWrap(const CallbackInfo &info)
     : ObjectWrap<TSFNWrap>(info),
       _deferred(Promise::Deferred::New(info.Env())) {
 
-  _tsfn = TSFN::New(
-      info.Env(),                   // napi_env env,
-      Function(),                   // const Function& callback,
-      Value(),                      // const Object& resource,
-      "Test",                       // ResourceString resourceName,
-      1,                            // size_t maxQueueSize,
-      1,                            // size_t initialThreadCount,
-      static_cast<void *>(nullptr), // ContextType* context,
-      [this](Napi::Env env,         // Finalizer finalizeCallback,
-             void * /*data*/,
-             void * /*ctx*/) { _deferred.Resolve(env.Undefined()); },
-      static_cast<void *>(nullptr) // FinalizerDataType* data,
+  _tsfn = TSFN::New(info.Env(), // napi_env env,
+                    Function(), // const Function& callback,
+                    Value(),    // const Object& resource,
+                    "Test",     // ResourceString resourceName,
+                    1,          // size_t maxQueueSize,
+                    1           // size_t initialThreadCount
   );
 }
 } // namespace

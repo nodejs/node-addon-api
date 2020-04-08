@@ -2041,7 +2041,17 @@ namespace Napi {
   public:
 
     // This API may only be called from the main thread.
-    template <typename ResourceString, typename Finalizer, typename FinalizerDataType>
+    template <typename ResourceString>
+    static ThreadSafeFunctionEx<ContextType, DataType, CallJs> New(napi_env env,
+                                  const Function& callback,
+                                  const Object& resource,
+                                  ResourceString resourceName,
+                                  size_t maxQueueSize,
+                                  size_t initialThreadCount,
+                                  ContextType* context = nullptr);
+
+    // This API may only be called from the main thread.
+    template <typename ResourceString, typename Finalizer, typename FinalizerDataType = void>
     static ThreadSafeFunctionEx<ContextType, DataType, CallJs> New(napi_env env,
                                   const Function& callback,
                                   const Object& resource,
@@ -2050,7 +2060,7 @@ namespace Napi {
                                   size_t initialThreadCount,
                                   ContextType* context,
                                   Finalizer finalizeCallback,
-                                  FinalizerDataType* data);
+                                  FinalizerDataType* data = nullptr);
 
     ThreadSafeFunctionEx<ContextType, DataType, CallJs>();
     ThreadSafeFunctionEx<ContextType, DataType, CallJs>(napi_threadsafe_function tsFunctionValue);

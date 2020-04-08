@@ -196,6 +196,22 @@ struct ThreadSafeFinalize {
   FinalizerDataType* data;
   Finalizer callback;
 };
+
+template <typename ContextType, typename DataType, typename CallJs, CallJs call>
+typename std::enable_if<call != nullptr>::type
+static inline CallJsWrapper(napi_env env, napi_value jsCallback, void *context, void *data) {
+  call(env, Function(env, jsCallback), static_cast<ContextType *>(context),
+       static_cast<DataType *>(data));
+}
+
+template <typename ContextType, typename DataType, typename CallJs, CallJs call>
+typename std::enable_if<call == nullptr>::type
+static inline CallJsWrapper(napi_env env, napi_value jsCallback, void * /*context*/,
+              void * /*data*/) {
+  if (jsCallback != nullptr) {
+    Function(env, jsCallback).Call(0, nullptr);
+  }
+}
 #endif
 
 template <typename Getter, typename Setter>
@@ -4263,6 +4279,20 @@ inline void AsyncWorker::OnWorkComplete(Napi::Env /*env*/, napi_status status) {
 // static
 template <typename ContextType, typename DataType,
           void (*CallJs)(Napi::Env, Napi::Function, ContextType *, DataType *)>
+template <typename ResourceString>
+inline ThreadSafeFunctionEx<ContextType, DataType, CallJs>
+ThreadSafeFunctionEx<ContextType, DataType, CallJs>::New(
+    napi_env env, const Function &callback, const Object &resource,
+    ResourceString resourceName, size_t maxQueueSize, size_t initialThreadCount,
+    ContextType *context) {
+  return New(
+      env, callback, resource, resourceName, maxQueueSize, initialThreadCount,
+      context, [](Env, void *, ContextType *) {}, static_cast<void *>(nullptr));
+}
+
+// static
+template <typename ContextType, typename DataType,
+          void (*CallJs)(Napi::Env, Napi::Function, ContextType *, DataType *)>
 template <typename ResourceString, typename Finalizer,
           typename FinalizerDataType>
 inline ThreadSafeFunctionEx<ContextType, DataType, CallJs>
@@ -4397,19 +4427,13 @@ ThreadSafeFunctionEx<ContextType, DataType, CallJs>::New(
   return tsfn;
 }
 
+// static
 template <typename ContextType, typename DataType,
           void (*CallJs)(Napi::Env, Napi::Function, ContextType *, DataType *)>
 void ThreadSafeFunctionEx<ContextType, DataType, CallJs>::CallJsInternal(
     napi_env env, napi_value jsCallback, void *context, void *data) {
-
-  if (CallJs == nullptr) {
-    if (jsCallback != nullptr) {
-      Function(env, jsCallback).Call(0, nullptr);
-    }
-  } else {
-    CallJs(env, Function(env, jsCallback), static_cast<ContextType *>(context),
-           static_cast<DataType *>(data));
-  }
+  details::CallJsWrapper<ContextType, DataType, decltype(CallJs), CallJs>(
+      env, jsCallback, context, data);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
