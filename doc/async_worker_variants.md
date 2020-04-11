@@ -399,7 +399,7 @@ class EchoWorker : public AsyncProgressQueueWorker<uint32_t> {
     void Execute(const ExecutionProgress& progress) {
         // Need to simulate cpu heavy task
         for (uint32_t i = 0; i < 100; ++i) {
-          progress.Send(&i, 1)
+          progress.Send(&i, 1);
           std::this_thread::sleep_for(std::chrono::seconds(1));
         }
     }
