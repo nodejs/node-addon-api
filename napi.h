@@ -9,6 +9,12 @@
 #include <string>
 #include <vector>
 
+// Reset the NAPI_VERSION which is set by some versions of node_api.h
+// See: https://github.com/nodejs/node/commit/8476053c132fd9613aab547aba165190f8064254
+#if defined(NAPI_EXPERIMENTAL) && NAPI_VERSION == 2147483647
+#undef NAPI_VERSION
+#endif
+
 // VS2015 RTM has bugs with constexpr, so require min of VS2015 Update 3 (known good version)
 #if !defined(_MSC_VER) || _MSC_FULL_VER >= 190024210
 #define NAPI_HAS_CONSTEXPR 1
