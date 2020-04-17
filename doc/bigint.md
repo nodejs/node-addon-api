@@ -48,7 +48,7 @@ Returns a new empty JavaScript `Napi::BigInt`.
 ### Int64Value
 
 ```cpp
-int64_t Napi::BitInt::Int64Value(bool* lossless) const;
+int64_t Napi::BigInt::Int64Value(bool* lossless) const;
 ```
 
  - `[out] lossless`: Indicates whether the `BigInt` value was converted losslessly.
