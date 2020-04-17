@@ -48,6 +48,7 @@ Object InitThreadSafeFunctionPtr(Env env);
 Object InitThreadSafeFunctionSum(Env env);
 Object InitThreadSafeFunctionUnref(Env env);
 Object InitThreadSafeFunction(Env env);
+Object InitThreadSafeFunctionExCall(Env env);
 Object InitThreadSafeFunctionExContext(Env env);
 Object InitThreadSafeFunctionExSimple(Env env);
 #endif
@@ -107,6 +108,7 @@ Object Init(Env env, Object exports) {
   exports.Set("threadsafe_function_sum", InitThreadSafeFunctionSum(env));
   exports.Set("threadsafe_function_unref", InitThreadSafeFunctionUnref(env));
   exports.Set("threadsafe_function", InitThreadSafeFunction(env));
+  exports.Set("threadsafe_function_ex_call", InitThreadSafeFunctionExCall(env));
   exports.Set("threadsafe_function_ex_context", InitThreadSafeFunctionExContext(env));
   exports.Set("threadsafe_function_ex_simple", InitThreadSafeFunctionExSimple(env));
 #endif

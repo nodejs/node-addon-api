@@ -41,6 +41,7 @@ let testModules = [
   'object/set_property',
   'promise',
   'run_script',
+  'threadsafe_function_ex/call',
   'threadsafe_function_ex/context',
   'threadsafe_function_ex/simple',
   'threadsafe_function/threadsafe_function_ctx',
@@ -83,6 +84,7 @@ if (napiVersion < 4) {
   testModules.splice(testModules.indexOf('threadsafe_function/threadsafe_function_sum'), 1);
   testModules.splice(testModules.indexOf('threadsafe_function/threadsafe_function_unref'), 1);
   testModules.splice(testModules.indexOf('threadsafe_function/threadsafe_function'), 1);
+  testModules.splice(testModules.indexOf('threadsafe_function_ex/call'), 1);
   testModules.splice(testModules.indexOf('threadsafe_function_ex/context'), 1);
   testModules.splice(testModules.indexOf('threadsafe_function_ex/simple'), 1);
 }
