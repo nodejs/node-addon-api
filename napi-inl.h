@@ -1631,7 +1631,7 @@ inline uint8_t TypedArray::ElementSize() const {
 #if (NAPI_VERSION > 5)
     case napi_bigint64_array:
     case napi_biguint64_array:
-#endif
+#endif  // (NAPI_VERSION > 5)
       return 8;
     default:
       return 0;
