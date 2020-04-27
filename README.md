@@ -47,13 +47,20 @@ to ideas specified in the **ECMA262 Language Specification**.
 - **[Contributors](#contributors)**
 - **[License](#license)**
 
-## **Current version: 2.0.0**
+## **Current version: 3.0.0**
 
 (See [CHANGELOG.md](CHANGELOG.md) for complete Changelog)
 
 [![NPM](https://nodei.co/npm/node-addon-api.png?downloads=true&downloadRank=true)](https://nodei.co/npm/node-addon-api/) [![NPM](https://nodei.co/npm-dl/node-addon-api.png?months=6&height=1)](https://nodei.co/npm/node-addon-api/)
 
 <a name="setup"></a>
+
+node-addon-api is based on the https://nodejs.org/api/n-api.html and supports using different N-API versison. 
+This allows addons built with it to run with Node.js versions which support the targetted N-API version. 
+**However** node-addon-api the support model is to support only the active LTS Node.js versions. This means that
+every year there will be a new major which drops support for the Node.js LTS version which has gone out of service.
+
+The oldest Node.js version that the current node-addon-version supports is currently Node.js 10.x.
 
 ## Setup
   - [Installation and usage](doc/setup.md)
