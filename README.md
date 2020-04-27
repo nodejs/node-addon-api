@@ -55,7 +55,7 @@ to ideas specified in the **ECMA262 Language Specification**.
 
 <a name="setup"></a>
 
-node-addon-api is based on the https://nodejs.org/api/n-api.html and supports using different N-API versison. 
+node-addon-api is based on the https://nodejs.org/api/n-api.html and supports using different N-API versions. 
 This allows addons built with it to run with Node.js versions which support the targetted N-API version. 
 **However** node-addon-api the support model is to support only the active LTS Node.js versions. This means that
 every year there will be a new major which drops support for the Node.js LTS version which has gone out of service.
