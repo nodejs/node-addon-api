@@ -12,6 +12,10 @@
       "url": "https://github.com/jmendeth"
     },
     {
+      "name": "András Timár, Dr",
+      "url": "https://github.com/timarandras"
+    },
+    {
       "name": "Andrew Petersen",
       "url": "https://github.com/kirbysayshi"
     },
@@ -30,6 +34,10 @@
     {
       "name": "Arunesh Chandra",
       "url": "https://github.com/aruneshchandra"
+    },
+    {
+      "name": "Azlan Mukhtar",
+      "url": "https://github.com/azlan"
     },
     {
       "name": "Ben Berman",
@@ -56,6 +64,10 @@
       "url": "https://github.com/davedoesdev"
     },
     {
+      "name": "Dmitry Ashkadov",
+      "url": "https://github.com/dmitryash"
+    },
+    {
       "name": "Dongjin Na",
       "url": "https://github.com/nadongguri"
     },
@@ -68,12 +80,20 @@
       "url": "https://github.com/gabrielschulhof"
     },
     {
+      "name": "Guenter Sandner",
+      "url": "https://github.com/gms1"
+    },
+    {
       "name": "Gus Caplan",
       "url": "https://github.com/devsnek"
     },
     {
       "name": "Hitesh Kanwathirtha",
       "url": "https://github.com/digitalinfinity"
+    },
+    {
+      "name": "ikokostya",
+      "url": "https://github.com/ikokostya"
     },
     {
       "name": "Jake Barnes",
@@ -98,6 +118,10 @@
     {
       "name": "joshgarde",
       "url": "https://github.com/joshgarde"
+    },
+    {
+      "name": "Kelvin",
+      "url": "https://github.com/kelvinhammond"
     },
     {
       "name": "Kevin Eady",
@@ -202,6 +226,10 @@
     {
       "name": "Yohei Kishimoto",
       "url": "https://github.com/morokosi"
+    },
+    {
+      "name": "Yulong Wang",
+      "url": "https://github.com/fs-eire"
     }
   ],
   "dependencies": {},
@@ -244,5 +272,5 @@
     "dev:incremental": "node test",
     "doc": "doxygen doc/Doxyfile"
   },
-  "version": "2.0.0"
+  "version": "3.0.0"
 }
