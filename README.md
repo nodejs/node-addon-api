@@ -21,7 +21,7 @@ It is important to remember that *other* Node.js interfaces such as
 `libuv` (included in a project via `#include <uv.h>`) are not ABI-stable across
 Node.js major versions. Thus, an addon must use N-API and/or `node-addon-api`
 exclusively and build against a version of Node.js that includes an
-implementation of N-API (meaning a version of Node.js newer than 6.14.2) in
+implementation of N-API (meaning an active LTS version of Node.js) in
 order to benefit from ABI stability across Node.js major versions. Node.js
 provides an [ABI stability guide][] containing a detailed explanation of ABI
 stability in general, and the N-API ABI stability guarantee in particular.
@@ -47,13 +47,20 @@ to ideas specified in the **ECMA262 Language Specification**.
 - **[Contributors](#contributors)**
 - **[License](#license)**
 
-## **Current version: 2.0.0**
+## **Current version: 3.0.0**
 
 (See [CHANGELOG.md](CHANGELOG.md) for complete Changelog)
 
 [![NPM](https://nodei.co/npm/node-addon-api.png?downloads=true&downloadRank=true)](https://nodei.co/npm/node-addon-api/) [![NPM](https://nodei.co/npm-dl/node-addon-api.png?months=6&height=1)](https://nodei.co/npm/node-addon-api/)
 
 <a name="setup"></a>
+
+node-addon-api is based on [N-API](https://nodejs.org/api/n-api.html) and supports using different N-API versions. 
+This allows addons built with it to run with Node.js versions which support the targeted N-API version. 
+**However** the node-addon-api support model is to support only the active LTS Node.js versions. This means that
+every year there will be a new major which drops support for the Node.js LTS version which has gone out of service.
+
+The oldest Node.js version supported by the current version of node-addon-api is Node.js 10.x.
 
 ## Setup
   - [Installation and usage](doc/setup.md)
