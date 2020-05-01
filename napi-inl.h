@@ -3228,9 +3228,15 @@ ObjectWrap<T>::DefineClass(Napi::Env env,
                              &value);
   NAPI_THROW_IF_FAILED(env, status, Function());
 
+  napi_value proto;
+  status = napi_get_prototype(env, value, &proto);
+  NAPI_THROW_IF_FAILED(env, status, Function());
+
   // After defining the class we iterate once more over the property descriptors
   // and attach the data associated with accessors and instance methods to the
   // newly created JavaScript class.
+  // Note that instance data should be attached to the prototype instead in case
+  // the class constructor is garbage collected.
   for (size_t idx = 0; idx < props_count; idx++) {
     const napi_property_descriptor* prop = &props[idx];
 
@@ -3243,18 +3249,18 @@ ObjectWrap<T>::DefineClass(Napi::Env env,
     } else if (prop->getter == T::InstanceGetterCallbackWrapper ||
         prop->setter == T::InstanceSetterCallbackWrapper) {
       status = Napi::details::AttachData(env,
-                          value,
+                          proto,
                           static_cast<InstanceAccessorCallbackData*>(prop->data));
       NAPI_THROW_IF_FAILED(env, status, Function());
     } else if (prop->method != nullptr && !(prop->attributes & napi_static)) {
       if (prop->method == T::InstanceVoidMethodCallbackWrapper) {
         status = Napi::details::AttachData(env,
-                      value,
+                      proto,
                       static_cast<InstanceVoidMethodCallbackData*>(prop->data));
         NAPI_THROW_IF_FAILED(env, status, Function());
       } else if (prop->method == T::InstanceMethodCallbackWrapper) {
         status = Napi::details::AttachData(env,
-                          value,
+                          proto,
                           static_cast<InstanceMethodCallbackData*>(prop->data));
         NAPI_THROW_IF_FAILED(env, status, Function());
       }
