@@ -115,7 +115,7 @@ The following is the documentation for node-addon-api.
  - [Async Operations](doc/async_operations.md)
     - [AsyncWorker](doc/async_worker.md)
     - [AsyncContext](doc/async_context.md)
-    - [AsyncProgressWorker](doc/async_progress_worker.md)
+    - [AsyncProgressWorker](doc/async_worker_variants.md)
  - [Thread-safe Functions](doc/threadsafe_function.md)
  - [Promises](doc/promises.md)
  - [Version management](doc/version_management.md)
