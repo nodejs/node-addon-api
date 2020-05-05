@@ -3167,12 +3167,29 @@ inline ObjectWrap<T>::~ObjectWrap() {
   }
 }
 
+namespace details {
+  // This type resolution fails, if the T is not convertible to ObjectWrap<T>
+  template<class T>
+  using ObjectWrapSaferType = typename std::enable_if<
+    std::is_convertible<T*, ObjectWrap<T>*>::value, T>::type;
+
+  template<class T>
+#ifndef NAPI_UNSAFER_UNWRAP
+  ObjectWrapSaferType<T>*
+#else
+  T*
+#endif
+  SaferUnwrap(Object wrapper) {
+    T* unwrapped;
+    napi_status status = napi_unwrap(wrapper.Env(), wrapper, reinterpret_cast<void**>(&unwrapped));
+    NAPI_THROW_IF_FAILED(wrapper.Env(), status, nullptr);
+    return unwrapped;
+  }
+}
+
 template<typename T>
 inline T* ObjectWrap<T>::Unwrap(Object wrapper) {
-  T* unwrapped;
-  napi_status status = napi_unwrap(wrapper.Env(), wrapper, reinterpret_cast<void**>(&unwrapped));
-  NAPI_THROW_IF_FAILED(wrapper.Env(), status, nullptr);
-  return unwrapped;
+  return details::SaferUnwrap<T>(wrapper);
 }
 
 template <typename T>

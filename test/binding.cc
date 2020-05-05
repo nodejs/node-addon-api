@@ -51,6 +51,7 @@ Object InitThreadSafeFunction(Env env);
 #endif
 Object InitTypedArray(Env env);
 Object InitObjectWrap(Env env);
+Object InitObjectWrapSaferUnwrap(Env env);
 Object InitObjectWrapConstructorException(Env env);
 Object InitObjectWrapRemoveWrap(Env env);
 Object InitObjectReference(Env env);
@@ -108,6 +109,7 @@ Object Init(Env env, Object exports) {
 #endif
   exports.Set("typedarray", InitTypedArray(env));
   exports.Set("objectwrap", InitObjectWrap(env));
+  exports.Set("objectwrapSaferUnwrap", InitObjectWrapSaferUnwrap(env));
   exports.Set("objectwrapConstructorException",
       InitObjectWrapConstructorException(env));
   exports.Set("objectwrap_removewrap", InitObjectWrapRemoveWrap(env));
