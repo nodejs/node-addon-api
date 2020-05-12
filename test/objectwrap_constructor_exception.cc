@@ -5,6 +5,7 @@ class ConstructorExceptionTest :
 public:
   ConstructorExceptionTest(const Napi::CallbackInfo& info) :
     Napi::ObjectWrap<ConstructorExceptionTest>(info) {
+    fprintf(stderr, "That was the interesting reference\n");
     Napi::Error error = Napi::Error::New(info.Env(), "an exception");
 #ifdef NAPI_DISABLE_CPP_EXCEPTIONS
     error.ThrowAsJavaScriptException();

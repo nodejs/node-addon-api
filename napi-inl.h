@@ -10,6 +10,7 @@
 // Note: Do not include this file directly! Include "napi.h" instead.
 
 #include <algorithm>
+#include <atomic>
 #include <cstring>
 #include <mutex>
 #include <type_traits>
@@ -18,6 +19,8 @@ namespace Napi {
 
 // Helpers to handle functions exposed from C++.
 namespace details {
+
+extern std::atomic_bool needs_objectwrap_destructor_fix;
 
 // Attach a data item to an object and delete it when the object gets
 // garbage-collected.
@@ -251,11 +254,16 @@ struct AccessorCallbackData {
 // Module registration
 ////////////////////////////////////////////////////////////////////////////////
 
-#define NODE_API_MODULE(modname, regfunc)                 \
-  napi_value __napi_ ## regfunc(napi_env env,             \
-                                napi_value exports) {     \
-    return Napi::RegisterModule(env, exports, regfunc);   \
-  }                                                       \
+#define NODE_API_MODULE(modname, regfunc)                      \
+  namespace Napi {                                             \
+    namespace details {                                        \
+      std::atomic_bool needs_objectwrap_destructor_fix(false); \
+    }                                                          \
+  }                                                            \
+  napi_value __napi_ ## regfunc(napi_env env,                  \
+                                napi_value exports) {          \
+    return Napi::RegisterModule(env, exports, regfunc);        \
+  }                                                            \
   NAPI_MODULE(modname, __napi_ ## regfunc)
 
 // Adapt the NAPI_MODULE registration function:
@@ -264,6 +272,12 @@ struct AccessorCallbackData {
 inline napi_value RegisterModule(napi_env env,
                                  napi_value exports,
                                  ModuleRegisterCallback registerCallback) {
+  const napi_node_version* nver = Napi::VersionManagement::GetNodeVersion(env);
+  Napi::details::needs_objectwrap_destructor_fix =
+    (nver->major < 10 ||
+      (nver->major == 10 && nver->minor < 15) ||
+      (nver->major == 10 && nver->minor == 15 && nver->patch < 3));
+
   return details::WrapCallback([&] {
     return napi_value(registerCallback(Napi::Env(env),
                                        Napi::Object(env, exports)));
@@ -2985,6 +2999,16 @@ inline ObjectWrap<T>::~ObjectWrap() {
     // This happens e.g. during garbage collection.
     if (!object.IsEmpty() && _construction_failed) {
       napi_remove_wrap(Env(), object, nullptr);
+
+      if (Napi::details::needs_objectwrap_destructor_fix) {
+        // If construction failed we delete the reference via
+        // `napi_remove_wrap()`, not via `napi_delete_reference()` in the
+        // `Reference<Object>` destructor. This will prevent the
+        // `Reference<Object>` destructor from doing a double delete of this
+        // reference.
+        _ref = nullptr;
+        _env = nullptr;
+      }
     }
   }
 }
