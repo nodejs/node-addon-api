@@ -47,6 +47,7 @@
         'objectwrap-removewrap.cc',
         'objectwrap_multiple_inheritance.cc',
         'objectreference.cc',
+        'reference.cc',
         'version_management.cc',
         'thunking_manual.cc',
       ],

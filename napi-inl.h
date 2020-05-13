@@ -1740,8 +1740,14 @@ inline TypedArrayOf<T>::TypedArrayOf() : TypedArray(), _data(nullptr) {
 template <typename T>
 inline TypedArrayOf<T>::TypedArrayOf(napi_env env, napi_value value)
   : TypedArray(env, value), _data(nullptr) {
-  napi_status status = napi_get_typedarray_info(
-    _env, _value, &_type, &_length, reinterpret_cast<void**>(&_data), nullptr, nullptr);
+  napi_status status = napi_ok;
+  if (value != nullptr) {
+    status = napi_get_typedarray_info(
+      _env, _value, &_type, &_length, reinterpret_cast<void**>(&_data), nullptr, nullptr);
+  } else {
+    _type = TypedArrayTypeForPrimitiveType<T>();
+    _length = 0;
+  }
   NAPI_THROW_IF_FAILED_VOID(_env, status);
 }
 

@@ -55,6 +55,7 @@ let testModules = [
   'objectwrap-removewrap',
   'objectwrap_multiple_inheritance',
   'objectreference',
+  'reference',
   'version_management'
 ];
 
