@@ -54,6 +54,7 @@ let testModules = [
   'objectwrap_constructor_exception',
   'objectwrap-removewrap',
   'objectreference',
+  'reference',
   'version_management'
 ];
 

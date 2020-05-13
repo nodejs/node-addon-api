@@ -46,6 +46,7 @@
         'objectwrap_constructor_exception.cc',
         'objectwrap-removewrap.cc',
         'objectreference.cc',
+        'reference.cc',
         'version_management.cc',
         'thunking_manual.cc',
       ],
