@@ -53,6 +53,7 @@ let testModules = [
   'objectwrap',
   'objectwrap_constructor_exception',
   'objectwrap-removewrap',
+  'objectwrap_multiple_inheritance',
   'objectreference',
   'version_management'
 ];
