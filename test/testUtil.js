@@ -1,5 +1,17 @@
 // Run each test function in sequence,
 // with an async delay and GC call between each.
+
+function tick(x, cb) {
+  function ontick() {
+    if (--x === 0) {
+      if (typeof cb === 'function') cb();
+    } else {
+      setImmediate(ontick);
+    }
+  }
+  setImmediate(ontick);
+};
+
 function runGCTests(tests, i, title) {
   if (!i) {
     i = 0;
@@ -18,7 +30,7 @@ function runGCTests(tests, i, title) {
       }
       setImmediate(() => {
         global.gc();
-        runGCTests(tests, i + 1, title);
+        tick(10, runGCTests(tests, i + 1, title));
       });
     }
   }
