@@ -58,6 +58,7 @@ let testModules = [
 ];
 
 const napiVersion = Number(process.versions.napi)
+const majorNodeVersion = process.versions.node.split('.')[0]
 
 if (napiVersion < 3) {
   testModules.splice(testModules.indexOf('callbackscope'), 1);
@@ -98,8 +99,14 @@ if (typeof global.gc === 'function') {
 
   console.log('\nAll tests passed!');
 } else {
-  // Make it easier to run with the correct (version-dependent) command-line args.
-  const child = require('./napi_child').spawnSync(process.argv[0], [ '--expose-gc', __filename ], {
+  // Construct the correct (version-dependent) command-line args.
+  let args = ['--expose-gc', '--no-concurrent-array-buffer-freeing'];
+  if (majorNodeVersion >= 14) {
+    args.push('--no-concurrent-array-buffer-sweeping');
+  }
+  args.push(__filename);
+
+  const child = require('./napi_child').spawnSync(process.argv[0], args, {
     stdio: 'inherit',
   });
 
