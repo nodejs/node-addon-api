@@ -1,9 +1,33 @@
 'use strict';
 
+// Command line:
+// None to launch all tests, otherwise
+// $2: name of test
+// $3: mode ("worker" or "child")
+
+const { Worker, workerData, isMainThread } = require('worker_threads');
+
 process.config.target_defaults.default_configuration =
   require('fs')
     .readdirSync(require('path').join(__dirname, 'build'))
     .filter((item) => (item === 'Debug' || item === 'Release'))[0];
+
+if (!isMainThread) {
+  require('./' + workerData);
+  return;
+}
+
+if (process.argv.length === 4) {
+  if (process.argv[3] === 'child') {
+    require('./' + process.argv[2]);
+  } else if (process.argv[3] === 'worker') {
+    (new Worker(__filename, { workerData: process.argv[2] }))
+      .on('exit', (code) => {
+        process.exit(code);
+      });
+  }
+  return;
+}
 
 // FIXME: We might need a way to load test modules automatically without
 // explicit declaration as follows.
@@ -60,7 +84,6 @@ let testModules = [
 ];
 
 const napiVersion = Number(process.versions.napi)
-const majorNodeVersion = process.versions.node.split('.')[0]
 
 if (napiVersion < 3) {
   testModules.splice(testModules.indexOf('callbackscope'), 1);
@@ -88,35 +111,28 @@ if (napiVersion < 6) {
   testModules.splice(testModules.indexOf('addon_data'), 1);
 }
 
-if (typeof global.gc === 'function') {
-  console.log(`Testing with N-API Version '${napiVersion}'.`);
+console.log(`Testing with N-API Version '${napiVersion}'.`);
+console.log('Starting test suite\n');
 
-  console.log('Starting test suite\n');
-
-  // Requiring each module runs tests in the module.
-  testModules.forEach(name => {
-    console.log(`Running test '${name}'`);
-    require('./' + name);
-  });
-
-  console.log('\nAll tests passed!');
-} else {
-  // Construct the correct (version-dependent) command-line args.
-  let args = ['--expose-gc', '--no-concurrent-array-buffer-freeing'];
-  if (majorNodeVersion >= 14) {
-    args.push('--no-concurrent-array-buffer-sweeping');
-  }
-  args.push(__filename);
-
-  const child = require('./napi_child').spawnSync(process.argv[0], args, {
-    stdio: 'inherit',
-  });
-
+function runOneChild(name, mode) {
+  console.log(`Running test '${name}' as ${mode}`);
+  const child = require('./napi_child').spawnSync(process.execPath, [
+    __filename, name, mode
+  ], { stdio: 'inherit' });
   if (child.signal) {
-    console.error(`Tests aborted with ${child.signal}`);
-    process.exitCode = 1;
-  } else {
+    console.error(`Test ${name} run as ${mode} aborted with ${child.signal}`);
+    if (!process.exitCode) {
+      process.exitCode = 1;
+    }
+  }
+  if (!process.exitCode && child.status !== 0) {
     process.exitCode = child.status;
   }
-  process.exit(process.exitCode);
 }
+
+testModules.forEach((name) => {
+  runOneChild(name, 'child');
+  runOneChild(name, 'worker');
+});
+
+process.exit(process.exitCode);
