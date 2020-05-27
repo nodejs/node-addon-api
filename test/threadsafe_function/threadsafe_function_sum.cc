@@ -13,12 +13,21 @@ namespace {
 struct TestData {
 
   TestData(Promise::Deferred&& deferred) : deferred(std::move(deferred)) {};
+
+  // These variables are accessed only from the main thread. They keep track of
+  // the number of expected incoming calls that have completed. We do not want
+  // to release the thread-safe function until all expected calls are complete.
+  size_t threadsCreated = 0;
+  size_t callsCompleted = 0;
+  // A value of true for this variable indicates that no more new threads will
+  // be created.
+  bool threadsStopped = false;
   
   // Native Promise returned to JavaScript
   Promise::Deferred deferred;
 
-  // List of threads created for test. This list only ever accessed via main
-  // thread.
+  // List of threads created for test. This list is only ever accessed via the
+  // main thread.
   std::vector<std::thread> threads = {};
 
   ThreadSafeFunction tsfn = ThreadSafeFunction();
@@ -142,11 +151,16 @@ static Value TestDelayedTSFN(const CallbackInfo &info) {
   return testData->deferred.Promise();
 }
 
-void entryAcquire(ThreadSafeFunction tsfn, int threadId) {
+void entryAcquire(ThreadSafeFunction tsfn, int threadId, TestData* testData) {
   tsfn.Acquire();
   std::this_thread::sleep_for(std::chrono::milliseconds(std::rand() % 100 + 1));
   tsfn.BlockingCall( [=](Napi::Env env, Function callback) {
     callback.Call( { Number::New(env, static_cast<double>(threadId))});
+    testData->callsCompleted++;
+    if (testData->threadsStopped &&
+        testData->callsCompleted == testData->threadsCreated) {
+      testData->tsfn.Release();
+    }
   });
   tsfn.Release();
 }
@@ -156,14 +170,15 @@ static Value CreateThread(const CallbackInfo& info) {
   ThreadSafeFunction tsfn = testData->tsfn;
   int threadId = testData->threads.size();
   // A copy of the ThreadSafeFunction will go to the thread entry point
-  testData->threads.push_back( std::thread(entryAcquire, tsfn, threadId) );
+  testData->threads
+    .push_back(std::thread(entryAcquire, tsfn, threadId, testData));
+  testData->threadsCreated++;
   return Number::New(info.Env(), threadId);
 }
 
 static Value StopThreads(const CallbackInfo& info) {
   TestData* testData = static_cast<TestData*>(info.Data());
-  ThreadSafeFunction tsfn = testData->tsfn;
-  tsfn.Release();
+  testData->threadsStopped = true;
   return info.Env().Undefined();
 }
 
