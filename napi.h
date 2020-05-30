@@ -2042,7 +2042,7 @@ namespace Napi {
     bool _suppress_destruct;
   };
 
-  #if (NAPI_VERSION > 3)
+  #if (NAPI_VERSION > 3 && !defined(__wasm32__))
   class ThreadSafeFunction {
   public:
     // This API may only be called from the main thread.
@@ -2405,7 +2405,7 @@ namespace Napi {
      void Signal() const;
      void SendProgress_(const T* data, size_t count);
   };
-  #endif
+  #endif  // NAPI_VERSION > 3 && !defined(__wasm32__)
 
   // Memory management.
   class MemoryManagement {
