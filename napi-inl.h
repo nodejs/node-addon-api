@@ -137,7 +137,7 @@ struct FinalizeData {
   Hint* hint;
 };
 
-#if (NAPI_VERSION > 3)
+#if (NAPI_VERSION > 3 && !defined(__wasm32__))
 template <typename ContextType=void,
           typename Finalizer=std::function<void(Env, void*, ContextType*)>,
           typename FinalizerDataType=void>
@@ -196,7 +196,7 @@ struct ThreadSafeFinalize {
   FinalizerDataType* data;
   Finalizer callback;
 };
-#endif
+#endif  // NAPI_VERSION > 3 && !defined(__wasm32__)
 
 template <typename Getter, typename Setter>
 struct AccessorCallbackData {
@@ -4302,7 +4302,7 @@ inline void AsyncWorker::OnWorkComplete(Napi::Env /*env*/, napi_status status) {
   }
 }
 
-#if (NAPI_VERSION > 3)
+#if (NAPI_VERSION > 3 && !defined(__wasm32__))
 ////////////////////////////////////////////////////////////////////////////////
 // ThreadSafeFunction class
 ////////////////////////////////////////////////////////////////////////////////
@@ -4969,7 +4969,7 @@ template<class T>
 inline void AsyncProgressQueueWorker<T>::ExecutionProgress::Send(const T* data, size_t count) const {
   _worker->SendProgress_(data, count);
 }
-#endif
+#endif  // NAPI_VERSION > 3 && !defined(__wasm32__)
 
 ////////////////////////////////////////////////////////////////////////////////
 // Memory Management class
