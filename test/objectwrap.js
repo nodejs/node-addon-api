@@ -109,10 +109,14 @@ const test = (binding) => {
       }
 
       assert(keys.length == 6);
+      // on prototype
       assert(keys.includes("testGetSet"));
       assert(keys.includes("testGetter"));
       assert(keys.includes("testValue"));
       assert(keys.includes("testMethod"));
+      // on object only
+      assert(keys.includes("ownProperty"));
+      assert(keys.includes("ownPropertyT"));
     }
   };
 
