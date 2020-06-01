@@ -45,6 +45,7 @@
     "Sam Roberts (https://github.com/sam-github)",
     "Taylor Woll (https://github.com/boingoing)",
     "Thomas Gentilhomme (https://github.com/fraxken)",
+    "Tobias Nießen (https://github.com/tniessen)",
     "Tux3 (https://github.com/tux3)",
     "Yohei Kishimoto (https://github.com/morokosi)"
   ],
@@ -74,5 +75,5 @@
     "dev:incremental": "node test",
     "doc": "doxygen doc/Doxyfile"
   },
-  "version": "1.7.1"
+  "version": "1.7.2"
 }
