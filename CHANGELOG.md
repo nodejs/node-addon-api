@@ -1,5 +1,17 @@
 # node-addon-api Changelog
 
+## 2020-06-02 Version 2.0.1, @NickNaso
+
+### Notable changes:
+
+#### API
+
+- Fix memory corruption vulnerability
+
+### Commmits
+
+* [[`265fea9edd`](https://github.com/nodejs/node-addon-api/commit/265fea9edd)] - **napi**: fix memory corruption vulnerability (Tobias Nießen )
+
 ## 2019-11-21 Version 2.0.0, @NickNaso
 
 ### Notable changes:
