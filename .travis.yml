@@ -14,7 +14,7 @@ env:
   matrix:
     - NODEJS_VERSION=node/10
     - NODEJS_VERSION=node/12
-    - NODEJS_VERSION=node/13
+    - NODEJS_VERSION=node/14
     - NODEJS_VERSION=nightly
 matrix:
   fast_finish: true

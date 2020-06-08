@@ -1,5 +1,99 @@
 # node-addon-api Changelog
 
+## 2020-04-30 Version 3.0.0, @NickNaso
+
+### Notable changes:
+
+#### API
+
+- `Napi::Object` added templated property descriptors.
+- `Napi::ObjectWrap` added templated methods.
+- `Napi::ObjectWrap` the wrap is removed only on failure.
+- `Napi::ObjectWrap` the constructor's exceptions are gracefully handled.
+- `Napi::Function` added templated factory functions.
+- Added `Env::RunScript` method to run JavaScript code contained in a string.
+- Added templated version of `Napi::Function`.
+- Added benchmarking framework.
+- Added support for natove addon instance data.
+- Added `Napi::AsyncProgressQueueWorker` api.
+- Changed the guards to `NAPI_VERSION > 5`.
+- Removed N-API implementation (v6.x and v8.x support).
+- `Napi::AsyncWorker::OnWorkComplete` and `Napi::AsyncWorker::OnExecute` methods
+are override-able.
+- Removed erroneous finalizer cleanup in `Napi::ThreadSafeFunction`.
+- Disabled cahcing in `Napi::ArrayBuffer`.
+- Explicitly disallow assign and copy operator.
+- Some minor corrections and improvements.
+
+#### Documentation
+
+- Updated documentation for `Napi::Object`.
+- Updated documentation for `Napi::Function`.
+- Updated documentation for `Napi::ObjectWrap`.
+- Added documentation on how to add benchmark.
+- Added documentation for `Napi::AsyncProgressQueueWorker`.
+- Added suggestion about tags to use on NPM.
+- Added reference to N-API badges.
+- Some minor corrections all over the documentation.
+
+#### TEST
+
+- Updated test cases for `Napi::Object`.
+- Updated test cases for `Napi::Function`.
+- Updated test cases for `Napi::ObjectWrap`.
+- Updated test cases for `Napi::Env`.
+- Added test cases for `Napi::AsyncProgressQueueWorker`.
+- Some minor corrections all over the test suite.
+
+### Commits
+
+* [[`187318e37f`](https://github.com/nodejs/node-addon-api/commit/187318e37f)] - **doc**: Removed references to Node.js lower than 10.x. (#709) (Nicola Del Gobbo)
+* [[`9c9accfbbe`](https://github.com/nodejs/node-addon-api/commit/9c9accfbbe)] - **src**: add support for addon instance data (Gabriel Schulhof) [#663](https://github.com/nodejs/node-addon-api/pull/663)
+* [[`82a96502a4`](https://github.com/nodejs/node-addon-api/commit/82a96502a4)] - **src**: change guards to NAPI\_VERSION \> 5 (Gabriel Schulhof) [#697](https://github.com/nodejs/node-addon-api/pull/697)
+* [[`a64e8a5641`](https://github.com/nodejs/node-addon-api/commit/a64e8a5641)] - **ci**: move travis from 13 to 14 (#707) (Gabriel Schulhof)
+* [[`4de23c9d6b`](https://github.com/nodejs/node-addon-api/commit/4de23c9d6b)] - **doc**: fix support bigint64/biguint64 guards (Yulong Wang) [#705](https://github.com/nodejs/node-addon-api/pull/705)
+* [[`fedc8195e3`](https://github.com/nodejs/node-addon-api/commit/fedc8195e3)] - **doc**: fix semicolon missing in async\_worker.md (Azlan Mukhtar) [#701](https://github.com/nodejs/node-addon-api/pull/701)
+* [[`cdb662506c`](https://github.com/nodejs/node-addon-api/commit/cdb662506c)] - **doc**: fix typo in bigint.md (#700) (Kelvin)
+* [[`e1a827ae29`](https://github.com/nodejs/node-addon-api/commit/e1a827ae29)] - **src**: fix AsyncProgressQueueWorker compilation (#696) (Gabriel Schulhof) [#696](https://github.com/nodejs/node-addon-api/pull/696)
+* [[`2c3d5df463`](https://github.com/nodejs/node-addon-api/commit/2c3d5df463)] - Merge pull request #692 from kelvinhammond/patch-1 (Nicola Del Gobbo)
+* [[`623e876949`](https://github.com/nodejs/node-addon-api/commit/623e876949)] - Merge pull request #688 from NickNaso/badges (Nicola Del Gobbo)
+* [[`6c97913d1f`](https://github.com/nodejs/node-addon-api/commit/6c97913d1f)] - Fix minor typo in object\_lifetime\_management.md (Kelvin)
+* [[`6b8dd47c55`](https://github.com/nodejs/node-addon-api/commit/6b8dd47c55)] - Added badge section to documentation. (NickNaso)
+* [[`89e62a9154`](https://github.com/nodejs/node-addon-api/commit/89e62a9154)] - **doc**: recommend tags of addon helpers (legendecas) [#683](https://github.com/nodejs/node-addon-api/pull/683)
+* [[`ab018444ae`](https://github.com/nodejs/node-addon-api/commit/ab018444ae)] - **src**: implement AsyncProgressQueueWorker (legendecas) [#585](https://github.com/nodejs/node-addon-api/pull/585)
+* [[`d43da6ac2b`](https://github.com/nodejs/node-addon-api/commit/d43da6ac2b)] - **doc**: add @legendecas to active member list (legendecas)
+* [[`cb498bbe7f`](https://github.com/nodejs/node-addon-api/commit/cb498bbe7f)] - **doc**: Add Napi::BigInt::New() overload for uint64\_t (ikokostya)
+* [[`baaaa8452c`](https://github.com/nodejs/node-addon-api/commit/baaaa8452c)] - **doc**: link threadsafe function from JS function (legendecas)
+* [[`7f56a78ff7`](https://github.com/nodejs/node-addon-api/commit/7f56a78ff7)] - **objectwrap**: remove wrap only on failure (Gabriel Schulhof)
+* [[`4d816183da`](https://github.com/nodejs/node-addon-api/commit/4d816183da)] - **doc**: fix example code (András Timár, Dr) [#657](https://github.com/nodejs/node-addon-api/pull/657)
+* [[`7ac6e21801`](https://github.com/nodejs/node-addon-api/commit/7ac6e21801)] - **gyp**: fix gypfile name in index.js (Anna Henningsen) [#658](https://github.com/nodejs/node-addon-api/pull/658)
+* [[`46484202ca`](https://github.com/nodejs/node-addon-api/commit/46484202ca)] - **test**: user data in function property descriptor (Kevin Eady) [#652](https://github.com/nodejs/node-addon-api/pull/652)
+* [[`0f8d730483`](https://github.com/nodejs/node-addon-api/commit/0f8d730483)] - **doc**: fix syntax error in example (András Timár, Dr) [#650](https://github.com/nodejs/node-addon-api/pull/650)
+* [[`4e885069f1`](https://github.com/nodejs/node-addon-api/commit/4e885069f1)] - **src**: call `napi\_remove\_wrap()` in `ObjectWrap` dtor (Anna Henningsen) [#475](https://github.com/nodejs/node-addon-api/pull/475)
+* [[`2fde5c3ca3`](https://github.com/nodejs/node-addon-api/commit/2fde5c3ca3)] - **test**: update BigInt test for recent change in core (Michael Dawson) [#649](https://github.com/nodejs/node-addon-api/pull/649)
+* [[`e8935bd8d9`](https://github.com/nodejs/node-addon-api/commit/e8935bd8d9)] - **test**: add test for own properties on ObjectWrap (Guenter Sandner) [#645](https://github.com/nodejs/node-addon-api/pull/645)
+* [[`23ff7f0b24`](https://github.com/nodejs/node-addon-api/commit/23ff7f0b24)] - **src**: make OnWorkComplete and OnExecute override-able (legendecas) [#589](https://github.com/nodejs/node-addon-api/pull/589)
+* [[`86384f94d3`](https://github.com/nodejs/node-addon-api/commit/86384f94d3)] - **objectwrap**: gracefully handle constructor exceptions (Gabriel Schulhof)
+* [[`9af69da01f`](https://github.com/nodejs/node-addon-api/commit/9af69da01f)] - remove N-API implementation, v6.x and v8.x support (Gabriel Schulhof) [#643](https://github.com/nodejs/node-addon-api/pull/643)
+* [[`920d544779`](https://github.com/nodejs/node-addon-api/commit/920d544779)] - **benchmark**: add templated version of Function (Gabriel Schulhof) [#637](https://github.com/nodejs/node-addon-api/pull/637)
+* [[`03759f7759`](https://github.com/nodejs/node-addon-api/commit/03759f7759)] - ignore benchmark built archives (legendecas) [#631](https://github.com/nodejs/node-addon-api/pull/631)
+* [[`5eeabb0214`](https://github.com/nodejs/node-addon-api/commit/5eeabb0214)] - **tsfn**: Remove erroneous finalizer cleanup (Kevin Eady) [#636](https://github.com/nodejs/node-addon-api/pull/636)
+* [[`9e0e0f31e4`](https://github.com/nodejs/node-addon-api/commit/9e0e0f31e4)] - **src**: remove unnecessary forward declarations (Gabriel Schulhof) [#633](https://github.com/nodejs/node-addon-api/pull/633)
+* [[`79deefb6f3`](https://github.com/nodejs/node-addon-api/commit/79deefb6f3)] - **src**: explicitly disallow assign and copy (legendecas) [#590](https://github.com/nodejs/node-addon-api/pull/590)
+* [[`af50ac281b`](https://github.com/nodejs/node-addon-api/commit/af50ac281b)] - **error**: do not replace pending exception (Gabriel Schulhof) [#629](https://github.com/nodejs/node-addon-api/pull/629)
+* [[`b72f1d6978`](https://github.com/nodejs/node-addon-api/commit/b72f1d6978)] - Disable caching in ArrayBuffer (Tobias Nießen) [#611](https://github.com/nodejs/node-addon-api/pull/611)
+* [[`0e7483eb7b`](https://github.com/nodejs/node-addon-api/commit/0e7483eb7b)] - Fix code format in tests (Tobias Nießen) [#617](https://github.com/nodejs/node-addon-api/pull/617)
+* [[`6a0646356d`](https://github.com/nodejs/node-addon-api/commit/6a0646356d)] - add benchmarking framework (Gabriel Schulhof) [#623](https://github.com/nodejs/node-addon-api/pull/623)
+* [[`ffc71edd54`](https://github.com/nodejs/node-addon-api/commit/ffc71edd54)] - Add Env::RunScript (Tobias Nießen) [#616](https://github.com/nodejs/node-addon-api/pull/616)
+* [[`a1b106066e`](https://github.com/nodejs/node-addon-api/commit/a1b106066e)] - **src**: add templated function factories (Gabriel Schulhof) [#608](https://github.com/nodejs/node-addon-api/pull/608)
+* [[`c584343217`](https://github.com/nodejs/node-addon-api/commit/c584343217)] - Add GetPropertyNames, HasOwnProperty, Delete (#615) (Tobias Nießen) [#615](https://github.com/nodejs/node-addon-api/pull/615)
+* [[`3acc4b32f5`](https://github.com/nodejs/node-addon-api/commit/3acc4b32f5)] - Fix std::string encoding (#619) (Tobias Nießen) [#619](https://github.com/nodejs/node-addon-api/pull/619)
+* [[`e71d0eadcc`](https://github.com/nodejs/node-addon-api/commit/e71d0eadcc)] - \[doc\] Fixed links to array documentation (#613) (Nicola Del Gobbo)
+* [[`3dfb1f0591`](https://github.com/nodejs/node-addon-api/commit/3dfb1f0591)] - Change "WG" to "team" (Tobias Nießen)
+* [[`ce91e14860`](https://github.com/nodejs/node-addon-api/commit/ce91e14860)] - **objectwrap**: add template methods (Dmitry Ashkadov) [#604](https://github.com/nodejs/node-addon-api/pull/604)
+* [[`cfa71b60f7`](https://github.com/nodejs/node-addon-api/commit/cfa71b60f7)] - **object**: add templated property descriptors (Gabriel Schulhof) [#610](https://github.com/nodejs/node-addon-api/pull/610)
+* [[`734725e971`](https://github.com/nodejs/node-addon-api/commit/734725e971)] - Correctly define copy assignment operators. (Rolf Timmermans)
+
 ## 2019-11-21 Version 2.0.0, @NickNaso
 
 ### Notable changes:
@@ -30,7 +124,7 @@
 - Added test cases for `Napi::Date` api.
 - Added test cases for new features added to `Napi::ThreadSafeFunction`.
 
-### Commmits
+### Commits
 
 * [[`c881168d49`](https://github.com/nodejs/node-addon-api/commit/c881168d49)] - **tsfn**: add error checking on GetContext (#583) (Kevin Eady) [#583](https://github.com/nodejs/node-addon-api/pull/583)
 * [[`24d75dd82f`](https://github.com/nodejs/node-addon-api/commit/24d75dd82f)] - Merge pull request #588 from NickNaso/add-asyncprogress-worker-readme (Nicola Del Gobbo)
@@ -71,7 +165,7 @@
 
 - Fixed compilation problems that happen on Node.js with N-API version less than 4.
 
-### Commmits
+### Commits
 
 * [[`c20bcbd069`](https://github.com/nodejs/node-addon-api/commit/c20bcbd069)] - Merge pull request #518 from NickNaso/master (Nicola Del Gobbo)
 * [[`6720d57253`](https://github.com/nodejs/node-addon-api/commit/6720d57253)] - Create the native threadsafe\_function for test only for N-API greater than 3. (NickNaso)
@@ -99,7 +193,7 @@
 - Added test case for bool operator.
 - Fixed test case for `Napi::ObjectWrap`.
 
-### Commmits
+### Commits
 
 * [[`717c9ab163`](https://github.com/nodejs/node-addon-api/commit/717c9ab163)] - **AsyncWorker**: add GetResult() method (Kevin Eady) [#512](https://github.com/nodejs/node-addon-api/pull/512)
 * [[`d9d991bbc9`](https://github.com/nodejs/node-addon-api/commit/d9d991bbc9)] - **doc**: add ThreadSafeFunction to main README (#513) (Kevin Eady) [#513](https://github.com/nodejs/node-addon-api/pull/513)
@@ -136,7 +230,7 @@
 
 - Some minor corrections all over the documentation.
 
-### Commmits
+### Commits
 
 * [[`83b41c2fe4`](https://github.com/nodejs/node-addon-api/commit/83b41c2fe4)] - Document adding -fvisibility=hidden flag for macOS users (Nicola Del Gobbo) [#460](https://github.com/nodejs/node-addon-api/pull/460)
 * [[`1ed7ad8769`](https://github.com/nodejs/node-addon-api/commit/1ed7ad8769)] - **doc**: correct return type of Int32Value to int32\_t (Bill Gallafent) [#459](https://github.com/nodejs/node-addon-api/pull/459)
@@ -185,7 +279,7 @@
 - Removed unused member on `Napi::CallbackScope`.
 - Enabled `Napi::CallbackScope` only with N-API v3.
 
-### Commmits
+### Commits
 
 * [[`e7cd292a74`](https://github.com/nodejs/node-addon-api/commit/e7cd292a74)] - **src**: remove unused CallbackScope member (Gabriel Schulhof) [#391](https://github.com/nodejs/node-addon-api/pull/391)
 * [[`d47399fe25`](https://github.com/nodejs/node-addon-api/commit/d47399fe25)] - **src**: guard CallbackScope with N-API v3 (Michael Dawson) [#395](https://github.com/nodejs/node-addon-api/pull/395)
@@ -210,7 +304,7 @@ associated with a callback in place when making certain N-API calls
 - Added tests for `Napi::Array` class.
 - Added tests for `Napi::ArrayBuffer` class.
 
-### Commmits
+### Commits
 
 * [[`8ce605c657`](https://github.com/nodejs/node-addon-api/commit/8ce605c657)] - **build**: avoid using package-lock.json (Jaeseok Yoon) [#359](https://github.com/nodejs/node-addon-api/pull/359)
 * [[`fa3a6150b3`](https://github.com/nodejs/node-addon-api/commit/fa3a6150b3)] - **src**: use MakeCallback() -\> Call() in AsyncWorker (Jinho Bang) [#361](https://github.com/nodejs/node-addon-api/pull/361)

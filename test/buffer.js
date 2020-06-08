@@ -48,6 +48,8 @@ function test(binding) {
     },
     () => {
         global.gc();
+    },
+    () => {
         assert.strictEqual(1, binding.buffer.getFinalizeCount());
     },
 
@@ -60,6 +62,8 @@ function test(binding) {
     },
     () => {
         global.gc();
+    },
+    () => {
         assert.strictEqual(1, binding.buffer.getFinalizeCount());
     },
   ]);

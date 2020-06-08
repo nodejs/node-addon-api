@@ -339,6 +339,48 @@ inline Value Env::RunScript(String script) {
   return Value(_env, result);
 }
 
+#if NAPI_VERSION > 5
+template <typename T, Env::Finalizer<T> fini>
+inline void Env::SetInstanceData(T* data) {
+  napi_status status =
+    napi_set_instance_data(_env, data, [](napi_env env, void* data, void*) {
+      fini(env, static_cast<T*>(data));
+    }, nullptr);
+  NAPI_THROW_IF_FAILED_VOID(_env, status);
+}
+
+template <typename DataType,
+          typename HintType,
+          Napi::Env::FinalizerWithHint<DataType, HintType> fini>
+inline void Env::SetInstanceData(DataType* data, HintType* hint) {
+  napi_status status =
+    napi_set_instance_data(_env, data,
+      [](napi_env env, void* data, void* hint) {
+        fini(env, static_cast<DataType*>(data), static_cast<HintType*>(hint));
+      }, hint);
+  NAPI_THROW_IF_FAILED_VOID(_env, status);
+}
+
+template <typename T>
+inline T* Env::GetInstanceData() {
+  void* data = nullptr;
+
+  napi_status status = napi_get_instance_data(_env, &data);
+  NAPI_THROW_IF_FAILED(_env, status, nullptr);
+
+  return static_cast<T*>(data);
+}
+
+template <typename T> void Env::DefaultFini(Env, T* data) {
+  delete data;
+}
+
+template <typename DataType, typename HintType>
+void Env::DefaultFiniWithHint(Env, DataType* data, HintType*) {
+  delete data;
+}
+#endif  // NAPI_VERSION > 5
+
 ////////////////////////////////////////////////////////////////////////////////
 // Value class
 ////////////////////////////////////////////////////////////////////////////////
@@ -403,14 +445,11 @@ inline bool Value::IsNumber() const {
   return Type() == napi_number;
 }
 
-// Currently experimental guard with the definition of NAPI_EXPERIMENTAL.
-// Once it is no longer experimental guard with the NAPI_VERSION in which it is
-// released instead.
-#ifdef NAPI_EXPERIMENTAL
+#if NAPI_VERSION > 5
 inline bool Value::IsBigInt() const {
   return Type() == napi_bigint;
 }
-#endif  // NAPI_EXPERIMENTAL
+#endif  // NAPI_VERSION > 5
 
 #if (NAPI_VERSION > 4)
 inline bool Value::IsDate() const {
@@ -641,10 +680,7 @@ inline double Number::DoubleValue() const {
   return result;
 }
 
-// Currently experimental guard with the definition of NAPI_EXPERIMENTAL.
-// Once it is no longer experimental guard with the NAPI_VERSION in which it is
-// released instead.
-#ifdef NAPI_EXPERIMENTAL
+#if NAPI_VERSION > 5
 ////////////////////////////////////////////////////////////////////////////////
 // BigInt Class
 ////////////////////////////////////////////////////////////////////////////////
@@ -705,7 +741,7 @@ inline void BigInt::ToWords(int* sign_bit, size_t* word_count, uint64_t* words) 
       _env, _value, sign_bit, word_count, words);
   NAPI_THROW_IF_FAILED_VOID(_env, status);
 }
-#endif  // NAPI_EXPERIMENTAL
+#endif  // NAPI_VERSION > 5
 
 #if (NAPI_VERSION > 4)
 ////////////////////////////////////////////////////////////////////////////////
@@ -1645,6 +1681,10 @@ inline uint8_t TypedArray::ElementSize() const {
     case napi_float32_array:
       return 4;
     case napi_float64_array:
+#if (NAPI_VERSION > 5)
+    case napi_bigint64_array:
+    case napi_biguint64_array:
+#endif  // (NAPI_VERSION > 5)
       return 8;
     default:
       return 0;

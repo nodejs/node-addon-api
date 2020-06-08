@@ -119,12 +119,9 @@ namespace Napi {
   class Value;
   class Boolean;
   class Number;
-// Currently experimental guard with the definition of NAPI_EXPERIMENTAL.
-// Once it is no longer experimental guard with the NAPI_VERSION in which it is
-// released instead.
-#ifdef NAPI_EXPERIMENTAL
+#if NAPI_VERSION > 5
   class BigInt;
-#endif  // NAPI_EXPERIMENTAL
+#endif  // NAPI_VERSION > 5
 #if (NAPI_VERSION > 4)
   class Date;
 #endif
@@ -147,13 +144,10 @@ namespace Napi {
   typedef TypedArrayOf<uint32_t> Uint32Array; ///< Typed-array of unsigned 32-bit integers
   typedef TypedArrayOf<float> Float32Array;   ///< Typed-array of 32-bit floating-point values
   typedef TypedArrayOf<double> Float64Array;  ///< Typed-array of 64-bit floating-point values
-// Currently experimental guard with the definition of NAPI_EXPERIMENTAL.
-// Once it is no longer experimental guard with the NAPI_VERSION in which it is
-// released instead.
-#ifdef NAPI_EXPERIMENTAL
+#if NAPI_VERSION > 5
   typedef TypedArrayOf<int64_t> BigInt64Array;   ///< Typed array of signed 64-bit integers
   typedef TypedArrayOf<uint64_t> BigUint64Array; ///< Typed array of unsigned 64-bit integers
-#endif  // NAPI_EXPERIMENTAL
+#endif  // NAPI_VERSION > 5
 
   /// Defines the signature of a N-API C++ module's registration callback (init) function.
   typedef Object (*ModuleRegisterCallback)(Env env, Object exports);
@@ -172,6 +166,12 @@ namespace Napi {
   ///
   /// In the V8 JavaScript engine, a N-API environment approximately corresponds to an Isolate.
   class Env {
+#if NAPI_VERSION > 5
+  private:
+    template <typename T> static void DefaultFini(Env, T* data);
+    template <typename DataType, typename HintType>
+    static void DefaultFiniWithHint(Env, DataType* data, HintType* hint);
+#endif  // NAPI_VERSION > 5
   public:
     Env(napi_env env);
 
@@ -187,6 +187,22 @@ namespace Napi {
     Value RunScript(const char* utf8script);
     Value RunScript(const std::string& utf8script);
     Value RunScript(String script);
+
+#if NAPI_VERSION > 5
+    template <typename T> T* GetInstanceData();
+
+    template <typename T> using Finalizer = void (*)(Env, T*);
+    template <typename T, Finalizer<T> fini = Env::DefaultFini<T>>
+    void SetInstanceData(T* data);
+
+    template <typename DataType, typename HintType>
+    using FinalizerWithHint = void (*)(Env, DataType*, HintType*);
+    template <typename DataType,
+              typename HintType,
+              FinalizerWithHint<DataType, HintType> fini =
+                Env::DefaultFiniWithHint<DataType, HintType>>
+    void SetInstanceData(DataType* data, HintType* hint);
+#endif  // NAPI_VERSION > 5
 
   private:
     napi_env _env;
@@ -257,12 +273,9 @@ namespace Napi {
     bool IsNull() const;        ///< Tests if a value is a null JavaScript value.
     bool IsBoolean() const;     ///< Tests if a value is a JavaScript boolean.
     bool IsNumber() const;      ///< Tests if a value is a JavaScript number.
-// Currently experimental guard with the definition of NAPI_EXPERIMENTAL.
-// Once it is no longer experimental guard with the NAPI_VERSION in which it is
-// released instead.
-#ifdef NAPI_EXPERIMENTAL
+#if NAPI_VERSION > 5
     bool IsBigInt() const;      ///< Tests if a value is a JavaScript bigint.
-#endif  // NAPI_EXPERIMENTAL
+#endif  // NAPI_VERSION > 5
 #if (NAPI_VERSION > 4)
     bool IsDate() const;        ///< Tests if a value is a JavaScript date.
 #endif
@@ -335,10 +348,7 @@ namespace Napi {
     double DoubleValue() const;   ///< Converts a Number value to a 64-bit floating-point value.
   };
 
-// Currently experimental guard with the definition of NAPI_EXPERIMENTAL.
-// Once it is no longer experimental guard with the NAPI_VERSION in which it is
-// released instead.
-#ifdef NAPI_EXPERIMENTAL
+#if NAPI_VERSION > 5
   /// A JavaScript bigint value.
   class BigInt : public Value {
   public:
@@ -377,7 +387,7 @@ namespace Napi {
     /// be needed to store this BigInt (i.e. the return value of `WordCount()`).
     void ToWords(int* sign_bit, size_t* word_count, uint64_t* words);
   };
-#endif  // NAPI_EXPERIMENTAL
+#endif  // NAPI_VERSION > 5
 
 #if (NAPI_VERSION > 4)
   /// A JavaScript date value.
@@ -859,13 +869,10 @@ namespace Napi {
         : std::is_same<T, uint32_t>::value ? napi_uint32_array
         : std::is_same<T, float>::value ? napi_float32_array
         : std::is_same<T, double>::value ? napi_float64_array
-// Currently experimental guard with the definition of NAPI_EXPERIMENTAL.
-// Once it is no longer experimental guard with the NAPI_VERSION in which it is
-// released instead.
-#ifdef NAPI_EXPERIMENTAL
+#if NAPI_VERSION > 5
         : std::is_same<T, int64_t>::value ? napi_bigint64_array
         : std::is_same<T, uint64_t>::value ? napi_biguint64_array
-#endif  // NAPI_EXPERIMENTAL
+#endif  // NAPI_VERSION > 5
         : unknown_array_type;
     }
     /// !endcond

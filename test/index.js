@@ -8,6 +8,7 @@ process.config.target_defaults.default_configuration =
 // FIXME: We might need a way to load test modules automatically without
 // explicit declaration as follows.
 let testModules = [
+  'addon_data',
   'arraybuffer',
   'asynccontext',
   'asyncprogressqueueworker',
@@ -61,15 +62,7 @@ let testModules = [
 ];
 
 const napiVersion = Number(process.versions.napi)
-const nodeMajorVersion = Number(process.versions.node.match(/\d+/)[0])
-
-if (nodeMajorVersion < 10) {
-  // Currently experimental guard with NODE_MAJOR_VERISION in which it was
-  // released. Once it is no longer experimental guard with the NAPI_VERSION
-  // in which it is released instead.
-  testModules.splice(testModules.indexOf('bigint'), 1);
-  testModules.splice(testModules.indexOf('typedarray-bigint'), 1);
-}
+const majorNodeVersion = process.versions.node.split('.')[0]
 
 if (napiVersion < 3) {
   testModules.splice(testModules.indexOf('callbackscope'), 1);
@@ -95,9 +88,14 @@ if (napiVersion < 5) {
   testModules.splice(testModules.indexOf('date'), 1);
 }
 
+if (napiVersion < 6) {
+  testModules.splice(testModules.indexOf('bigint'), 1);
+  testModules.splice(testModules.indexOf('typedarray-bigint'), 1);
+  testModules.splice(testModules.indexOf('addon_data'), 1);
+}
+
 if (typeof global.gc === 'function') {
   console.log(`Testing with N-API Version '${napiVersion}'.`);
-  console.log(`Testing with Node.js Major Version '${nodeMajorVersion}'.\n`);
 
   console.log('Starting test suite\n');
 
@@ -109,8 +107,14 @@ if (typeof global.gc === 'function') {
 
   console.log('\nAll tests passed!');
 } else {
-  // Make it easier to run with the correct (version-dependent) command-line args.
-  const child = require('./napi_child').spawnSync(process.argv[0], [ '--expose-gc', __filename ], {
+  // Construct the correct (version-dependent) command-line args.
+  let args = ['--expose-gc', '--no-concurrent-array-buffer-freeing'];
+  if (majorNodeVersion >= 14) {
+    args.push('--no-concurrent-array-buffer-sweeping');
+  }
+  args.push(__filename);
+
+  const child = require('./napi_child').spawnSync(process.argv[0], args, {
     stdio: 'inherit',
   });
 
