@@ -37,6 +37,7 @@
         'threadsafe_function_ex/call.cc',
         'threadsafe_function_ex/context.cc',
         'threadsafe_function_ex/simple.cc',
+        'threadsafe_function_ex/threadsafe.cc',
         'threadsafe_function/threadsafe_function_ctx.cc',
         'threadsafe_function/threadsafe_function_existing_tsfn.cc',
         'threadsafe_function/threadsafe_function_ptr.cc',
