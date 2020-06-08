@@ -10,7 +10,6 @@ constexpr size_t ARRAY_LENGTH = 10;
 constexpr size_t MAX_QUEUE_SIZE = 2;
 
 static std::thread threadsEx[2];
-static ThreadSafeFunction tsfnEx;
 
 struct ThreadSafeFunctionInfo {
   enum CallType {
@@ -23,6 +22,19 @@ struct ThreadSafeFunctionInfo {
   FunctionReference jsFinalizeCallback;
   uint32_t maxQueueSize;
 } tsfnInfoEx;
+
+static void TSFNCallJS(Env env, Function jsCallback,
+                       ThreadSafeFunctionInfo * /* context */, int *data) {
+  // If called with no data
+  if (data == nullptr) {
+    jsCallback.Call({});
+  } else {
+    jsCallback.Call({Number::New(env, *data)});
+  }
+}
+
+using TSFN = ThreadSafeFunctionEx<ThreadSafeFunctionInfo, int, TSFNCallJS>;
+static TSFN tsfnEx;
 
 // Thread data to transmit to JS
 static int intsEx[ARRAY_LENGTH];
@@ -49,19 +61,16 @@ static void DataSourceThreadEx() {
   bool queueWasClosing = false;
   for (int index = ARRAY_LENGTH - 1; index > -1 && !queueWasClosing; index--) {
     napi_status status = napi_generic_failure;
-    auto callback = [](Env env, Function jsCallback, int* data) {
-      jsCallback.Call({ Number::New(env, *data) });
-    };
 
     switch (info->type) {
       case ThreadSafeFunctionInfo::DEFAULT:
         status = tsfnEx.BlockingCall();
         break;
       case ThreadSafeFunctionInfo::BLOCKING:
-        status = tsfnEx.BlockingCall(&intsEx[index], callback);
+        status = tsfnEx.BlockingCall(&intsEx[index]);
         break;
       case ThreadSafeFunctionInfo::NON_BLOCKING:
-        status = tsfnEx.NonBlockingCall(&intsEx[index], callback);
+        status = tsfnEx.NonBlockingCall(&intsEx[index]);
         break;
     }
 
@@ -135,7 +144,7 @@ static Value StartThreadInternalEx(const CallbackInfo& info,
   tsfnInfoEx.startSecondary = info[2].As<Boolean>();
   tsfnInfoEx.maxQueueSize = info[3].As<Number>().Uint32Value();
 
-  tsfnEx = ThreadSafeFunction::New(info.Env(), info[0].As<Function>(),
+  tsfnEx = TSFN::New(info.Env(), info[0].As<Function>(), Object::New(info.Env()),
       "Test", tsfnInfoEx.maxQueueSize, 2, &tsfnInfoEx, JoinTheThreadsEx, threadsEx);
 
   threadsEx[0] = std::thread(DataSourceThreadEx);
