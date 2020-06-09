@@ -14,14 +14,14 @@
 - Added `Env::RunScript` method to run JavaScript code contained in a string.
 - Added templated version of `Napi::Function`.
 - Added benchmarking framework.
-- Added support for natove addon instance data.
+- Added support for native addon instance data.
 - Added `Napi::AsyncProgressQueueWorker` api.
 - Changed the guards to `NAPI_VERSION > 5`.
 - Removed N-API implementation (v6.x and v8.x support).
 - `Napi::AsyncWorker::OnWorkComplete` and `Napi::AsyncWorker::OnExecute` methods
 are override-able.
 - Removed erroneous finalizer cleanup in `Napi::ThreadSafeFunction`.
-- Disabled cahcing in `Napi::ArrayBuffer`.
+- Disabled caching in `Napi::ArrayBuffer`.
 - Explicitly disallow assign and copy operator.
 - Some minor corrections and improvements.
 
