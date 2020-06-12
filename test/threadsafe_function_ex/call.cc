@@ -18,9 +18,15 @@ struct TSFNData {
 // CallJs callback function
 static void CallJs(Napi::Env env, Napi::Function jsCallback,
                    TSFNContext * /*context*/, TSFNData *data) {
-  jsCallback.Call(env.Undefined(), {data->data.Value()});
-  data->deferred.Resolve(data->data.Value());
-  delete data;
+  if (!(env == nullptr || jsCallback == nullptr)) {
+    if (data != nullptr) {
+      jsCallback.Call(env.Undefined(), {data->data.Value()});
+      data->deferred.Resolve(data->data.Value());
+    }
+  }
+  if (data != nullptr) {
+    delete data;
+  }
 }
 
 // Full type of our ThreadSafeFunctionEx

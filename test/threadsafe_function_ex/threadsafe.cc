@@ -9,9 +9,9 @@ using namespace Napi;
 constexpr size_t ARRAY_LENGTH = 10;
 constexpr size_t MAX_QUEUE_SIZE = 2;
 
-static std::thread threadsEx[2];
+static std::thread threads[2];
 
-struct ThreadSafeFunctionInfo {
+static struct ThreadSafeFunctionInfo {
   enum CallType {
     DEFAULT,
     BLOCKING,
@@ -21,40 +21,43 @@ struct ThreadSafeFunctionInfo {
   bool startSecondary;
   FunctionReference jsFinalizeCallback;
   uint32_t maxQueueSize;
-} tsfnInfoEx;
+} tsfnInfo;
 
 static void TSFNCallJS(Env env, Function jsCallback,
                        ThreadSafeFunctionInfo * /* context */, int *data) {
-  // If called with no data
-  if (data == nullptr) {
-    jsCallback.Call({});
-  } else {
-    jsCallback.Call({Number::New(env, *data)});
+  // A null environment signifies the threadsafe function has been finalized.
+  if (!(env == nullptr || jsCallback == nullptr)) {
+    // If called with no data
+    if (data == nullptr) {
+      jsCallback.Call({});
+    } else {
+      jsCallback.Call({Number::New(env, *data)});
+    }
   }
 }
 
 using TSFN = ThreadSafeFunctionEx<ThreadSafeFunctionInfo, int, TSFNCallJS>;
-static TSFN tsfnEx;
+static TSFN tsfn;
 
 // Thread data to transmit to JS
-static int intsEx[ARRAY_LENGTH];
+static int ints[ARRAY_LENGTH];
 
-static void SecondaryThreadEx() {
-  if (tsfnEx.Release() != napi_ok) {
+static void SecondaryThread() {
+  if (tsfn.Release() != napi_ok) {
     Error::Fatal("SecondaryThread", "ThreadSafeFunction.Release() failed");
   }
 }
 
 // Source thread producing the data
-static void DataSourceThreadEx() {
-  ThreadSafeFunctionInfo* info = tsfnEx.GetContext();
+static void DataSourceThread() {
+  ThreadSafeFunctionInfo* info = tsfn.GetContext();
 
   if (info->startSecondary) {
-    if (tsfnEx.Acquire() != napi_ok) {
+    if (tsfn.Acquire() != napi_ok) {
       Error::Fatal("DataSourceThread", "ThreadSafeFunction.Acquire() failed");
     }
 
-    threadsEx[1] = std::thread(SecondaryThreadEx);
+    threads[1] = std::thread(SecondaryThread);
   }
 
   bool queueWasFull = false;
@@ -64,13 +67,13 @@ static void DataSourceThreadEx() {
 
     switch (info->type) {
       case ThreadSafeFunctionInfo::DEFAULT:
-        status = tsfnEx.BlockingCall();
+        status = tsfn.BlockingCall();
         break;
       case ThreadSafeFunctionInfo::BLOCKING:
-        status = tsfnEx.BlockingCall(&intsEx[index]);
+        status = tsfn.BlockingCall(&ints[index]);
         break;
       case ThreadSafeFunctionInfo::NON_BLOCKING:
-        status = tsfnEx.NonBlockingCall(&intsEx[index]);
+        status = tsfn.NonBlockingCall(&ints[index]);
         break;
     }
 
@@ -108,24 +111,24 @@ static void DataSourceThreadEx() {
     Error::Fatal("DataSourceThread", "Queue was never closing");
   }
 
-  if (!queueWasClosing && tsfnEx.Release() != napi_ok) {
+  if (!queueWasClosing && tsfn.Release() != napi_ok) {
     Error::Fatal("DataSourceThread", "ThreadSafeFunction.Release() failed");
   }
 }
 
-static Value StopThreadEx(const CallbackInfo& info) {
-  tsfnInfoEx.jsFinalizeCallback = Napi::Persistent(info[0].As<Function>());
+static Value StopThread(const CallbackInfo& info) {
+  tsfnInfo.jsFinalizeCallback = Napi::Persistent(info[0].As<Function>());
   bool abort = info[1].As<Boolean>();
   if (abort) {
-    tsfnEx.Abort();
+    tsfn.Abort();
   } else {
-    tsfnEx.Release();
+    tsfn.Release();
   }
   return Value();
 }
 
 // Join the thread and inform JS that we're done.
-static void JoinTheThreadsEx(Env /* env */,
+static void JoinTheThreads(Env /* env */,
                            std::thread* theThreads,
                            ThreadSafeFunctionInfo* info) {
   theThreads[0].join();
@@ -137,54 +140,54 @@ static void JoinTheThreadsEx(Env /* env */,
   info->jsFinalizeCallback.Reset();
 }
 
-static Value StartThreadInternalEx(const CallbackInfo& info,
+static Value StartThreadInternal(const CallbackInfo& info,
     ThreadSafeFunctionInfo::CallType type) {
-  tsfnInfoEx.type = type;
-  tsfnInfoEx.abort = info[1].As<Boolean>();
-  tsfnInfoEx.startSecondary = info[2].As<Boolean>();
-  tsfnInfoEx.maxQueueSize = info[3].As<Number>().Uint32Value();
+  tsfnInfo.type = type;
+  tsfnInfo.abort = info[1].As<Boolean>();
+  tsfnInfo.startSecondary = info[2].As<Boolean>();
+  tsfnInfo.maxQueueSize = info[3].As<Number>().Uint32Value();
 
-  tsfnEx = TSFN::New(info.Env(), info[0].As<Function>(), Object::New(info.Env()),
-      "Test", tsfnInfoEx.maxQueueSize, 2, &tsfnInfoEx, JoinTheThreadsEx, threadsEx);
+  tsfn = TSFN::New(info.Env(), info[0].As<Function>(), Object::New(info.Env()),
+      "Test", tsfnInfo.maxQueueSize, 2, &tsfnInfo, JoinTheThreads, threads);
 
-  threadsEx[0] = std::thread(DataSourceThreadEx);
+  threads[0] = std::thread(DataSourceThread);
 
   return Value();
 }
 
-static Value ReleaseEx(const CallbackInfo& /* info */) {
-  if (tsfnEx.Release() != napi_ok) {
+static Value Release(const CallbackInfo& /* info */) {
+  if (tsfn.Release() != napi_ok) {
     Error::Fatal("Release", "ThreadSafeFunction.Release() failed");
   }
   return Value();
 }
 
-static Value StartThreadEx(const CallbackInfo& info) {
-  return StartThreadInternalEx(info, ThreadSafeFunctionInfo::BLOCKING);
+static Value StartThread(const CallbackInfo& info) {
+  return StartThreadInternal(info, ThreadSafeFunctionInfo::BLOCKING);
 }
 
-static Value StartThreadNonblockingEx(const CallbackInfo& info) {
-  return StartThreadInternalEx(info, ThreadSafeFunctionInfo::NON_BLOCKING);
+static Value StartThreadNonblocking(const CallbackInfo& info) {
+  return StartThreadInternal(info, ThreadSafeFunctionInfo::NON_BLOCKING);
 }
 
-static Value StartThreadNoNativeEx(const CallbackInfo& info) {
-  return StartThreadInternalEx(info, ThreadSafeFunctionInfo::DEFAULT);
+static Value StartThreadNoNative(const CallbackInfo& info) {
+  return StartThreadInternal(info, ThreadSafeFunctionInfo::DEFAULT);
 }
 
 Object InitThreadSafeFunctionExThreadSafe(Env env) {
   for (size_t index = 0; index < ARRAY_LENGTH; index++) {
-    intsEx[index] = index;
+    ints[index] = index;
   }
 
   Object exports = Object::New(env);
   exports["ARRAY_LENGTH"] = Number::New(env, ARRAY_LENGTH);
   exports["MAX_QUEUE_SIZE"] = Number::New(env, MAX_QUEUE_SIZE);
-  exports["startThread"] = Function::New(env, StartThreadEx);
-  exports["startThreadNoNative"] = Function::New(env, StartThreadNoNativeEx);
+  exports["startThread"] = Function::New(env, StartThread);
+  exports["startThreadNoNative"] = Function::New(env, StartThreadNoNative);
   exports["startThreadNonblocking"] =
-      Function::New(env, StartThreadNonblockingEx);
-  exports["stopThread"] = Function::New(env, StopThreadEx);
-  exports["release"] = Function::New(env, ReleaseEx);
+      Function::New(env, StartThreadNonblocking);
+  exports["stopThread"] = Function::New(env, StopThread);
+  exports["release"] = Function::New(env, Release);
 
   return exports;
 }

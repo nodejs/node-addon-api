@@ -4473,9 +4473,6 @@ template <typename ContextType, typename DataType,
           void (*CallJs)(Napi::Env, Napi::Function, ContextType *, DataType *)>
 void ThreadSafeFunctionEx<ContextType, DataType, CallJs>::CallJsInternal(
     napi_env env, napi_value jsCallback, void *context, void *data) {
-  if (env == nullptr) {
-    raise(SIGTRAP);
-  }
   details::CallJsWrapper<ContextType, DataType, decltype(CallJs), CallJs>(
       env, jsCallback, context, data);
 }

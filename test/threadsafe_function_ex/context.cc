@@ -13,10 +13,16 @@ using TSFNContext = Reference<Napi::Value>;
 using TSFNData = Promise::Deferred;
 
 // CallJs callback function
-static void CallJs(Napi::Env /*env*/, Napi::Function /*jsCallback*/,
+static void CallJs(Napi::Env env, Napi::Function /*jsCallback*/,
                    TSFNContext *context, TSFNData *data) {
-  data->Resolve(context->Value());
-  delete data;
+  if (env != nullptr) {
+    if (data != nullptr) {
+      data->Resolve(context->Value());
+    }
+  }
+  if (data != nullptr) {
+    delete data;
+  }
 }
 
 // Full type of our ThreadSafeFunctionEx
