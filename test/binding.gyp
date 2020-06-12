@@ -37,6 +37,7 @@
         'run_script.cc',
         'threadsafe_function_ex/call.cc',
         'threadsafe_function_ex/context.cc',
+        'threadsafe_function_ex/example.cc',
         'threadsafe_function_ex/simple.cc',
         'threadsafe_function_ex/threadsafe.cc',
         'threadsafe_function/threadsafe_function_ctx.cc',
