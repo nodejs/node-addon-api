@@ -43,13 +43,24 @@ TSFNWrap::TSFNWrap(const CallbackInfo &info)
     : ObjectWrap<TSFNWrap>(info),
       _deferred(Promise::Deferred::New(info.Env())) {
 
-  _tsfn = TSFN::New(info.Env(), // napi_env env,
-                    Function(), // const Function& callback,
-                    Value(),    // const Object& resource,
-                    "Test",     // ResourceString resourceName,
-                    1,          // size_t maxQueueSize,
-                    1           // size_t initialThreadCount
+  auto env = info.Env();
+#if NAPI_VERSION == 4
+  // A threadsafe function on N-API 4 still requires a callback function.
+  _tsfn =
+      TSFN::New(env, // napi_env env,
+                TSFN::DefaultFunctionFactory(
+                    env), // N-API 5+: nullptr; else: const Function& callback,
+                "Test",   // ResourceString resourceName,
+                1,        // size_t maxQueueSize,
+                1         // size_t initialThreadCount
+      );
+#else
+  _tsfn = TSFN::New(env,    // napi_env env,
+                    "Test", // ResourceString resourceName,
+                    1,      // size_t maxQueueSize,
+                    1       // size_t initialThreadCount
   );
+#endif
 }
 } // namespace
 

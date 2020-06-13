@@ -74,7 +74,6 @@ TSFNWrap::TSFNWrap(const CallbackInfo &info)
 
   _tsfn = TSFN::New(env,      // napi_env env,
                     callback, // const Function& callback,
-                    Value(),  // const Object& resource,
                     "Test",   // ResourceString resourceName,
                     0,        // size_t maxQueueSize,
                     1         // size_t initialThreadCount,
