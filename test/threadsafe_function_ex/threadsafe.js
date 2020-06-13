@@ -7,6 +7,9 @@ const common = require('../common');
 test(require(`../build/${buildType}/binding.node`));
 test(require(`../build/${buildType}/binding_noexcept.node`));
 
+/**
+ * This spec replicates the non-`Ex` multi-threaded spec using the `Ex` API.
+ */
 function test(binding) {
   const expectedArray = (function(arrayLength) {
     const result = [];

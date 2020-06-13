@@ -36,8 +36,8 @@ public:
 
   Napi::Value GetContextByCall(const CallbackInfo &info) {
     Napi::Env env = info.Env();
-    auto* callData = new TSFNData(env);
-    _tsfn.NonBlockingCall( callData );
+    auto *callData = new TSFNData(env);
+    _tsfn.NonBlockingCall(callData);
     return callData->Promise();
   };
 

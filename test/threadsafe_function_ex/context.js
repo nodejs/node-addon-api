@@ -8,6 +8,16 @@ module.exports = Promise.all([
   test(require(`../build/${buildType}/binding_noexcept.node`))
 ]);
 
+/**
+ * The context provided to the threadsafe function's constructor is accessible
+ * on both the threadsafe function's callback as well the threadsafe function
+ * itself. This test ensures the context across all three are the same.
+ * - Creates a contexted threadsafe function with callback.
+ * - The callback forwards the item's data to the given JavaScript function in
+ *   the test.
+ * - Makes one call, and waits for call to complete.
+ * - Asserts the contexts are the same.
+ */
 async function test(binding) {
   const ctx = {};
   const tsfn = new binding.threadsafe_function_ex_context.TSFNWrap(ctx);
