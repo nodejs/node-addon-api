@@ -1,5 +1,5 @@
 const tests = [
-    // 'threadsafe', 
+    'threadsafe', 
     'basic', 
     'example'
 ];

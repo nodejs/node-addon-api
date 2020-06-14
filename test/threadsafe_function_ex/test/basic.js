@@ -43,8 +43,8 @@ class BasicTest extends TestRunner {
   async context({ TSFNWrap }) {
     const ctx = {};
     const tsfn = new TSFNWrap(ctx);
-    assert(ctx === await tsfn.getContextByCall(), "getContextByCall context not equal");
-    assert(ctx === tsfn.getContextFromTsfn(), "getContextFromTsfn context not equal");
+    assert(ctx === await tsfn.call(), "getContextByCall context not equal");
+    assert(ctx === tsfn.getContext(), "getContextFromTsfn context not equal");
     return await tsfn.release();
   }
 
