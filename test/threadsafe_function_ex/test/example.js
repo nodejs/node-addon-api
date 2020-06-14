@@ -9,9 +9,11 @@ class ExampleTest extends TestRunner {
 
   async example({ TSFNWrap }) {
     const ctx = {};
+    console.log("starting");
     const tsfn = new TSFNWrap(ctx);
-    assert(ctx === await tsfn.call(), "getContextByCall context not equal");
-    assert(ctx === tsfn.getContext(), "getContextFromTsfn context not equal");
+    console.log("tsfn is", tsfn);
+    console.log("start is", tsfn.start());
+    console.log();
     return await tsfn.release();
   }
 
