@@ -4551,7 +4551,7 @@ ThreadSafeFunctionEx<ContextType, DataType, CallJs>::New(
   return tsfn;
 }
 
-// static, with Callback [x] Resource [x] Finalizer [missing]
+// static, with Callback [passed] Resource [passed] Finalizer [missing]
 template <typename ContextType, typename DataType,
           void (*CallJs)(Napi::Env, Napi::Function, ContextType *, DataType *)>
 template <typename ResourceString>
@@ -4574,7 +4574,7 @@ ThreadSafeFunctionEx<ContextType, DataType, CallJs>::New(
   return tsfn;
 }
 
-// static, with Callback [x] Resource [missing ] Finalizer [x]
+// static, with Callback [passed] Resource [missing] Finalizer [passed]
 template <typename ContextType, typename DataType,
           void (*CallJs)(Napi::Env, Napi::Function, ContextType *, DataType *)>
 template <typename ResourceString, typename Finalizer,
@@ -4604,7 +4604,7 @@ ThreadSafeFunctionEx<ContextType, DataType, CallJs>::New(
   return tsfn;
 }
 
-// static, with: Callback [x] Resource [x] Finalizer [x]
+// static, with: Callback [passed] Resource [passed] Finalizer [passed]
 template <typename ContextType, typename DataType,
           void (*CallJs)(Napi::Env, Napi::Function, ContextType *, DataType *)>
 template <typename ResourceString, typename Finalizer,

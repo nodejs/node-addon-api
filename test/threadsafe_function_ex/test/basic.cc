@@ -7,17 +7,17 @@ using namespace Napi;
 namespace call {
 
 // Context of our TSFN.
-using Context = void;
+using Context = std::nullptr_t;
 
 // Data passed (as pointer) to ThreadSafeFunctionEx::[Non]BlockingCall
-struct DataType {
+struct Data {
   Reference<Napi::Value> data;
   Promise::Deferred deferred;
 };
 
 // CallJs callback function
 static void CallJs(Napi::Env env, Napi::Function jsCallback,
-                   Context * /*context*/, DataType *data) {
+                   Context * /*context*/, Data *data) {
   if (!(env == nullptr || jsCallback == nullptr)) {
     if (data != nullptr) {
       jsCallback.Call(env.Undefined(), {data->data.Value()});
@@ -30,7 +30,7 @@ static void CallJs(Napi::Env env, Napi::Function jsCallback,
 }
 
 // Full type of our ThreadSafeFunctionEx
-using TSFN = ThreadSafeFunctionEx<Context, DataType, CallJs>;
+using TSFN = ThreadSafeFunctionEx<Context, Data, CallJs>;
 
 // A JS-accessible wrap that holds a TSFN.
 class TSFNWrap : public ObjectWrap<TSFNWrap> {
@@ -46,36 +46,46 @@ public:
     locals.Set("TSFNWrap", func);
   }
 
-  TSFNWrap(const CallbackInfo &info)
-      : ObjectWrap<TSFNWrap>(info),
-        _deferred(Promise::Deferred::New(info.Env())) {
+  TSFNWrap(const CallbackInfo &info) : ObjectWrap<TSFNWrap>(info) {
     Napi::Env env = info.Env();
     Function callback = info[0].As<Function>();
-
     _tsfn = TSFN::New(env,      // napi_env env,
                       callback, // const Function& callback,
                       "Test",   // ResourceString resourceName,
                       0,        // size_t maxQueueSize,
-                      1         // size_t initialThreadCount,
-    );
+                      1,        // size_t initialThreadCount,
+                      nullptr,
+                      [this](Napi::Env env, void *,
+                             Context *ctx) { // Finalizer finalizeCallback,
+                        if (_deferred) {
+                          _deferred->Resolve(Boolean::New(env, true));
+                          _deferred.release();
+                        }
+                      });
   }
+
   Napi::Value Call(const CallbackInfo &info) {
     Napi::Env env = info.Env();
-    DataType *data =
-        new DataType{Napi::Reference<Napi::Value>(Persistent(info[0])),
-                     Promise::Deferred::New(env)};
+    Data *data = new Data{Napi::Reference<Napi::Value>(Persistent(info[0])),
+                          Promise::Deferred::New(env)};
     _tsfn.NonBlockingCall(data);
     return data->deferred.Promise();
   };
 
-  Napi::Value Release(const CallbackInfo &) {
+  Napi::Value Release(const CallbackInfo &info) {
+    if (_deferred) {
+      return _deferred->Promise();
+    }
+
+    auto env = info.Env();
+    _deferred.reset(new Promise::Deferred(Promise::Deferred::New(env)));
     _tsfn.Release();
-    return _deferred.Promise();
+    return _deferred->Promise();
   };
 
 private:
   TSFN _tsfn;
-  Promise::Deferred _deferred;
+  std::unique_ptr<Promise::Deferred> _deferred;
 };
 
 } // namespace call
@@ -86,11 +96,11 @@ namespace context {
 using Context = Reference<Napi::Value>;
 
 // Data passed (as pointer) to ThreadSafeFunctionEx::[Non]BlockingCall
-using DataType = Promise::Deferred;
+using Data = Promise::Deferred;
 
 // CallJs callback function
 static void CallJs(Napi::Env env, Napi::Function /*jsCallback*/,
-                   Context *context, DataType *data) {
+                   Context *context, Data *data) {
   if (env != nullptr) {
     if (data != nullptr) {
       data->Resolve(context->Value());
@@ -102,7 +112,7 @@ static void CallJs(Napi::Env env, Napi::Function /*jsCallback*/,
 }
 
 // Full type of our ThreadSafeFunctionEx
-using TSFN = ThreadSafeFunctionEx<Context, DataType, CallJs>;
+using TSFN = ThreadSafeFunctionEx<Context, Data, CallJs>;
 
 // A JS-accessible wrap that holds a TSFN.
 class TSFNWrap : public ObjectWrap<TSFNWrap> {
@@ -119,36 +129,32 @@ public:
     locals.Set("TSFNWrap", func);
   }
 
-  TSFNWrap(const CallbackInfo &info)
-      : ObjectWrap<TSFNWrap>(info),
-        _deferred(Promise::Deferred::New(info.Env())) {
+  TSFNWrap(const CallbackInfo &info) : ObjectWrap<TSFNWrap>(info) {
     Napi::Env env = info.Env();
 
     Context *context = new Context(Persistent(info[0]));
 
-    _tsfn = TSFN::New(
-        info.Env(), // napi_env env,
-        Function::New(
-            env,
-            [](const CallbackInfo & /*info*/) {}), // const Function& callback,
-        Value(),                                   // const Object& resource,
-        "Test",  // ResourceString resourceName,
-        1,       // size_t maxQueueSize,
-        1,       // size_t initialThreadCount,
-        context, // ContextType* context,
-
-        [this](Napi::Env env, void *,
-               Context *ctx) { // Finalizer finalizeCallback,
-          _deferred.Resolve(env.Undefined());
-          delete ctx;
-        },
-        static_cast<void *>(nullptr) // FinalizerDataType* data,
-    );
+    _tsfn = TSFN::New(info.Env(), // napi_env env,
+                      Function::New(env,
+                                    [](const CallbackInfo & /*info*/) {
+                                    }), // const Function& callback,
+                      Value(),          // const Object& resource,
+                      "Test",           // ResourceString resourceName,
+                      0,                // size_t maxQueueSize,
+                      1,                // size_t initialThreadCount,
+                      context,          // Context* context,
+                      [this](Napi::Env env, void *,
+                             Context *ctx) { // Finalizer finalizeCallback,
+                        if (_deferred) {
+                          _deferred->Resolve(Boolean::New(env, true));
+                          _deferred.release();
+                        }
+                      });
   }
 
   Napi::Value GetContextByCall(const CallbackInfo &info) {
     Napi::Env env = info.Env();
-    auto *callData = new DataType(env);
+    auto *callData = new Data(env);
     _tsfn.NonBlockingCall(callData);
     return callData->Promise();
   };
@@ -157,14 +163,19 @@ public:
     return _tsfn.GetContext()->Value();
   };
 
-  Napi::Value Release(const CallbackInfo &) {
+  Napi::Value Release(const CallbackInfo &info) {
+    if (_deferred) {
+      return _deferred->Promise();
+    }
+    auto env = info.Env();
+    _deferred.reset(new Promise::Deferred(Promise::Deferred::New(env)));
     _tsfn.Release();
-    return _deferred.Promise();
+    return _deferred->Promise();
   };
 
 private:
   TSFN _tsfn;
-  Promise::Deferred _deferred;
+  std::unique_ptr<Promise::Deferred> _deferred;
 };
 } // namespace context
 
@@ -173,14 +184,14 @@ namespace empty {
 
 using Context = void;
 
-struct DataType {
+struct Data {
   Promise::Deferred deferred;
   bool reject;
 };
 
 // CallJs callback function
 static void CallJs(Napi::Env env, Function jsCallback, Context * /*context*/,
-                   DataType *data) {
+                   Data *data) {
   if (env != nullptr) {
     if (data != nullptr) {
       if (data->reject) {
@@ -196,7 +207,7 @@ static void CallJs(Napi::Env env, Function jsCallback, Context * /*context*/,
 }
 
 // Full type of our ThreadSafeFunctionEx
-using TSFN = ThreadSafeFunctionEx<void, DataType, CallJs>;
+using TSFN = ThreadSafeFunctionEx<void, Data, CallJs>;
 
 // A JS-accessible wrap that holds a TSFN.
 class TSFNWrap : public ObjectWrap<TSFNWrap> {
@@ -212,20 +223,34 @@ public:
     locals.Set("TSFNWrap", func);
   }
 
-  TSFNWrap(const CallbackInfo &info)
-      : ObjectWrap<TSFNWrap>(info),
-        _deferred(Promise::Deferred::New(info.Env())) {
+  TSFNWrap(const CallbackInfo &info) : ObjectWrap<TSFNWrap>(info) {
 
     auto env = info.Env();
     _tsfn = TSFN::New(env,    // napi_env env,
                       "Test", // ResourceString resourceName,
                       0,      // size_t maxQueueSize,
-                      1       // size_t initialThreadCount
-    );
+                      1,      // size_t initialThreadCount,
+                      nullptr,
+                      [this](Napi::Env env, void *,
+                             Context *ctx) { // Finalizer finalizeCallback,
+                        if (_deferred) {
+                          _deferred->Resolve(Boolean::New(env, true));
+                          _deferred.release();
+                        }
+                      });
   }
-  Napi::Value Release(const CallbackInfo &) {
+
+  Napi::Value Release(const CallbackInfo &info) {
+    // Since this is actually a SINGLE-THREADED test, we don't have to worry
+    // about race conditions on accessing `_deferred`.
+    if (_deferred) {
+      return _deferred->Promise();
+    }
+
+    auto env = info.Env();
+    _deferred.reset(new Promise::Deferred(Promise::Deferred::New(env)));
     _tsfn.Release();
-    return _deferred.Promise();
+    return _deferred->Promise();
   };
 
   Napi::Value Call(const CallbackInfo &info) {
@@ -236,14 +261,14 @@ public:
     }
 
     auto *data =
-        new DataType{Promise::Deferred::New(info.Env()), info[0].ToBoolean()};
+        new Data{Promise::Deferred::New(info.Env()), info[0].ToBoolean()};
     _tsfn.NonBlockingCall(data);
     return data->deferred.Promise();
   };
 
 private:
   TSFN _tsfn;
-  Promise::Deferred _deferred;
+  std::unique_ptr<Promise::Deferred> _deferred;
 };
 
 #endif
@@ -251,7 +276,7 @@ private:
 
 namespace existing {
 
-struct DataType {
+struct Data {
   Promise::Deferred deferred;
   bool reject;
 };
@@ -260,7 +285,7 @@ struct DataType {
 // _NOT_ used by `Napi::ThreadSafeFunctionEx<>`.
 static void CallJs(napi_env env, napi_value jsCallback, void * /*context*/,
                    void *data) {
-  DataType *casted = static_cast<DataType *>(data);
+  Data *casted = static_cast<Data *>(data);
   if (env != nullptr) {
     if (data != nullptr) {
       napi_value undefined;
@@ -278,8 +303,16 @@ static void CallJs(napi_env env, napi_value jsCallback, void * /*context*/,
   }
 }
 
+// This test creates a native napi_threadsafe_function itself, whose `context`
+// parameter is the `TSFNWrap` object itself. We forward-declare, so we can use
+// it as an argument inside `ThreadSafeFunctionEx<>`. This also allows us to
+// statically get the correct type when using `tsfn.GetContext()`. The converse
+// is true: if the Context type does _not_ match that provided to the underlying
+// napi_create_threadsafe_function, then the static type will be incorrect.
+class TSFNWrap;
+
 // Full type of our ThreadSafeFunctionEx
-using TSFN = ThreadSafeFunctionEx<void, DataType>;
+using TSFN = ThreadSafeFunctionEx<TSFNWrap, Data>;
 
 // A JS-accessible wrap that holds a TSFN.
 class TSFNWrap : public ObjectWrap<TSFNWrap> {
@@ -294,9 +327,7 @@ public:
     locals.Set("TSFNWrap", func);
   }
 
-  TSFNWrap(const CallbackInfo &info)
-      : ObjectWrap<TSFNWrap>(info),
-        _deferred(Promise::Deferred::New(info.Env())) {
+  TSFNWrap(const CallbackInfo &info) : ObjectWrap<TSFNWrap>(info) {
 
     auto env = info.Env();
 #if NAPI_VERSION == 4
@@ -314,7 +345,7 @@ public:
     napi_threadsafe_function napi_tsfn;
     auto status = napi_create_threadsafe_function(
         info.Env(), nullptr, nullptr, String::From(info.Env(), "Test"), 0, 1,
-        nullptr, nullptr, nullptr, CallJs, &napi_tsfn);
+        nullptr, Finalizer, this, CallJs, &napi_tsfn);
     if (status != napi_ok) {
       NAPI_THROW_IF_FAILED(env, status);
     }
@@ -322,21 +353,39 @@ public:
 #endif
   }
 
-  Napi::Value Release(const CallbackInfo &) {
+  Napi::Value Release(const CallbackInfo &info) {
+    if (_deferred) {
+      return _deferred->Promise();
+    }
+    auto env = info.Env();
+    _deferred.reset(new Promise::Deferred(Promise::Deferred::New(env)));
     _tsfn.Release();
-    return _deferred.Promise();
+    return _deferred->Promise();
   };
 
   Napi::Value Call(const CallbackInfo &info) {
     auto *data =
-        new DataType{Promise::Deferred::New(info.Env()), info[0].ToBoolean()};
+        new Data{Promise::Deferred::New(info.Env()), info[0].ToBoolean()};
     _tsfn.NonBlockingCall(data);
     return data->deferred.Promise();
   };
 
 private:
   TSFN _tsfn;
-  Promise::Deferred _deferred;
+  std::unique_ptr<Promise::Deferred> _deferred;
+
+  static void Finalizer(napi_env env, void * /*data*/, void *ctx) {
+    TSFNWrap *tsfn = static_cast<TSFNWrap *>(ctx);
+    tsfn->Finalizer(env);
+  }
+
+  void Finalizer(napi_env e) {
+    if (_deferred) {
+      _deferred->Resolve(Boolean::New(e, true));
+      _deferred.release();
+    }
+    // Finalizer finalizeCallback,
+  }
 };
 
 } // namespace existing
@@ -359,8 +408,7 @@ public:
     locals.Set("TSFNWrap", func);
   }
 
-  TSFNWrap(const CallbackInfo &info)
-      : ObjectWrap<TSFNWrap>(info) {
+  TSFNWrap(const CallbackInfo &info) : ObjectWrap<TSFNWrap>(info) {
 
     auto env = info.Env();
 #if NAPI_VERSION == 4
@@ -386,7 +434,7 @@ public:
   // to know when the underlying ThreadSafeFunction has been finalized.
   Napi::Value Release(const CallbackInfo &info) {
     _tsfn.Release();
-    return info.Env().Undefined();
+    return String::New(info.Env(), "TSFN may not have finalized.");
   };
 
   Napi::Value Call(const CallbackInfo &info) {
@@ -404,9 +452,9 @@ Object InitThreadSafeFunctionExBasic(Env env) {
 
 // A list of v4+ enables spec namespaces.
 #define V4_EXPORTS(V)                                                          \
+  V(call)                                                                      \
   V(simple)                                                                    \
   V(existing)                                                                  \
-  V(call)                                                                      \
   V(context)
 
 // A list of v5+ enables spec namespaces.

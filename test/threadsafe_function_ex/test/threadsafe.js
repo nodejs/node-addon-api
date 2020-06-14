@@ -5,13 +5,13 @@ const assert = require('assert');
 const common = require('../../common');
 
 module.exports = run()
-  .then(() => { console.log(`Finished executing tests in .${__filename.replace(process.cwd(),'')}`); })
   .catch((e) => {
     console.error(`Test failed!`, e);
     process.exit(1);
   });
 
 async function run() {
+  console.log(`Running tests in .${__filename.replace(process.cwd(),'')}`);
   await test(require(`../../build/${buildType}/binding.node`));
   await test(require(`../../build/${buildType}/binding_noexcept.node`));
 }

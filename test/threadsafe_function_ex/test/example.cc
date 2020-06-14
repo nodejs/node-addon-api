@@ -1,6 +1,3 @@
-#undef NAPI_CPP_EXCEPTIONS
-#define NAPI_DISABLE_CPP_EXCEPTIONS
-
 /**
  * This test is programmatically represents the example shown in
  * `doc/threadsafe_function_ex.md`

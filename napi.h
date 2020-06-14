@@ -2043,7 +2043,9 @@ namespace Napi {
   };
 
   #if (NAPI_VERSION > 3)
-  template <typename ContextType = void, typename DataType = void,
+  // A ThreadSafeFunctionEx by default has no context (nullptr) and can accept
+  // any type (void) to its CallJs.
+  template <typename ContextType = std::nullptr_t, typename DataType = void,
             void (*CallJs)(Napi::Env, Napi::Function, ContextType *,
                            DataType *) = nullptr>
   class ThreadSafeFunctionEx {
@@ -2058,7 +2060,8 @@ namespace Napi {
     // This API may only be called from the main thread.
     // Helper function that returns nullptr if running N-API 5+, otherwise a
     // non-empty, no-op Function. This provides the ability to specify at
-    // compile-time a callback parameter to `New` that safely does no action.
+    // compile-time a callback parameter to `New` that safely does no action
+    // when targeting _any_ N-API version.
     static DefaultFunctionType DefaultFunctionFactory(Napi::Env env);
 
 #if NAPI_VERSION > 4
