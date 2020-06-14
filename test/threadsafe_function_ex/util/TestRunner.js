@@ -56,6 +56,7 @@ class TestRunner {
       // Run tests in both except and noexcept
       await this.run(false);
       await this.run(true);
+      console.log("ALL DONE");
     } catch (ex) {
       console.error(`Test failed!`, ex);
       process.exit(1);
@@ -95,7 +96,7 @@ class TestRunner {
             const [label, time, isNoExcept, nsName, returnValue] = state;
             const except = () => pad(isNoExcept ? '[noexcept]' : '', 12);
             const timeStr = () => time == null ? '...' : `${time}${typeof time === 'number' ? 'ms' : ''}`;
-            return `${pad(nsName, 10)} ${except()}|   ${pad(timeStr(), 8)}| ${pad(label, 15)}${returnValue === undefined ? '' : `(return: ${returnValue})`}`;
+            return `${pad(nsName, 10)} ${except()}|   ${pad(timeStr(), 8)}| ${pad(label, 15)}${returnValue === undefined ? '' : `(return: ${JSON.stringify(returnValue)})`}`;
           };
 
           /**
