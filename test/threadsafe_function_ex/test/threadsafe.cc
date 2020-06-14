@@ -1,6 +1,7 @@
 #include <chrono>
 #include <thread>
 #include "napi.h"
+#include <node.h>
 
 #if (NAPI_VERSION > 3)
 

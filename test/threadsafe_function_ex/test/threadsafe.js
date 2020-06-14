@@ -2,10 +2,19 @@
 
 const buildType = process.config.target_defaults.default_configuration;
 const assert = require('assert');
-const common = require('../common');
+const common = require('../../common');
 
-test(require(`../build/${buildType}/binding.node`));
-test(require(`../build/${buildType}/binding_noexcept.node`));
+module.exports = run()
+  .then(() => { console.log(`Finished executing tests in .${__filename.replace(process.cwd(),'')}`); })
+  .catch((e) => {
+    console.error(`Test failed!`, e);
+    process.exit(1);
+  });
+
+async function run() {
+  await test(require(`../../build/${buildType}/binding.node`));
+  await test(require(`../../build/${buildType}/binding_noexcept.node`));
+}
 
 /**
  * This spec replicates the non-`Ex` multi-threaded spec using the `Ex` API.
@@ -46,7 +55,7 @@ function test(binding) {
     });
   }
 
-  new Promise(function testWithoutJSMarshaller(resolve) {
+  return new Promise(function testWithoutJSMarshaller(resolve) {
     let callCount = 0;
     binding.threadsafe_function_ex_threadsafe.startThreadNoNative(function testCallback() {
       callCount++;
