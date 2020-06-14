@@ -1,6 +1,6 @@
-#include <array>
-#include "napi.h"
 #include "../util/util.h"
+#include "napi.h"
+#include <array>
 
 #if (NAPI_VERSION > 3)
 
@@ -60,12 +60,12 @@ public:
 
   Napi::Value Call(const CallbackInfo &info) {
     Napi::Env env = info.Env();
-    DataType *data = new DataType{Napi::Reference<Napi::Value>(Persistent(info[0])),
-                          Promise::Deferred::New(env)};
+    DataType *data =
+        new DataType{Napi::Reference<Napi::Value>(Persistent(info[0])),
+                     Promise::Deferred::New(env)};
     _tsfn.NonBlockingCall(data);
     return data->deferred.Promise();
   };
-
 };
 
 } // namespace call
@@ -145,18 +145,17 @@ using ContextType = std::nullptr_t;
 // Data passed (as pointer) to [Non]BlockingCall
 struct DataType {
   Promise::Deferred deferred;
-  bool reject;
 };
 
 // CallJs callback function
-static void CallJs(Napi::Env env, Function jsCallback, ContextType * /*context*/,
-                   DataType *data) {
+static void CallJs(Napi::Env env, Function jsCallback,
+                   ContextType * /*context*/, DataType *data) {
   if (env != nullptr) {
     if (data != nullptr) {
-      if (data->reject) {
-        data->deferred.Reject(env.Undefined());
+      if (jsCallback.IsEmpty()) {
+        data->deferred.Resolve(Boolean::New(env, true));
       } else {
-        data->deferred.Resolve(env.Undefined());
+        data->deferred.Reject(String::New(env, "jsCallback is not empty"));
       }
     }
   }
@@ -193,14 +192,7 @@ public:
   }
 
   Napi::Value Call(const CallbackInfo &info) {
-    if (info.Length() == 0 || !info[0].IsBoolean()) {
-      NAPI_THROW(
-          Napi::TypeError::New(info.Env(), "Expected argument 0 to be boolean"),
-          Value());
-    }
-
-    auto *data =
-        new DataType{Promise::Deferred::New(info.Env()), info[0].ToBoolean()};
+    auto data = new DataType{Promise::Deferred::New(info.Env())};
     _tsfn.NonBlockingCall(data);
     return data->deferred.Promise();
   };
@@ -323,8 +315,8 @@ namespace simple {
 
 using ContextType = std::nullptr_t;
 
-// Full type of our ThreadSafeFunctionEx. We don't specify the `ContextType` here
-// (even though the _default_ for the type argument is `std::nullptr_t`) to
+// Full type of our ThreadSafeFunctionEx. We don't specify the `ContextType`
+// here (even though the _default_ for the type argument is `std::nullptr_t`) to
 // demonstrate construction with no type arguments.
 using TSFN = ThreadSafeFunctionEx<>;
 

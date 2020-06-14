@@ -54,22 +54,13 @@ class BasicTest extends TestRunner {
     * that handles all of its JavaScript processing on the callJs instead of the
     * callback.
     * - Creates a threadsafe function with no JavaScript context or callback.
-    * - Makes two calls, waiting for each, and expecting the first to resolve
-    *   and the second to reject.
+    * - Makes one call, waiting for completion. The internal `CallJs` resolves the call if jsCallback is empty, otherwise rejects.
     */
   async empty({ TSFNWrap }) {
     debugger;
     if (typeof TSFNWrap === 'function') {
       const tsfn = new TSFNWrap();
-      await tsfn.call(false /* reject */);
-      let caught = false;
-      try {
-        await tsfn.call(true /* reject */);
-      } catch (ex) {
-        caught = true;
-      }
-
-      assert.ok(caught, 'The promise rejection was not caught');
+      await tsfn.call();
       return await tsfn.release();
     }
     return true;
