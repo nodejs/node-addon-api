@@ -56,7 +56,6 @@ class TestRunner {
       // Run tests in both except and noexcept
       await this.run(false);
       await this.run(true);
-      console.log("ALL DONE");
     } catch (ex) {
       console.error(`Test failed!`, ex);
       process.exit(1);

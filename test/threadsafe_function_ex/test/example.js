@@ -8,18 +8,31 @@ const { TestRunner } = require('../util/TestRunner');
 class ExampleTest extends TestRunner {
 
   async example({ TSFNWrap }) {
-    const ctx = {};
-    const tsfn = new TSFNWrap(ctx);
-    const run = async (i) => { 
-      const result = tsfn.start({threads:[1]});
-      await result;
-      return await tsfn.release();
-    };
-    const results = [ await run(1) ];
-    results.push( await run(2) );
-    return results;
-    // return await Promise.all( [ run(1), run(2) ] );
-    // await run(2);
+    const tsfn = new TSFNWrap();
+
+    const threads = [1]; //, 2, 2, 5, 12];
+    const started = await tsfn.start({ threads, logThread: true });
+
+    /**
+     * Calculate the expected results.
+     */
+    const expected = threads.reduce((p, threadCallCount, threadId) => (
+      ++threadId,
+      p[0] += threadCallCount,
+      p[1] += threadCallCount * threadId ** 2,
+      p
+    ), [0, 0]);
+
+    if (started) {
+      const released = await tsfn.release();
+      const [callCountActual, aggregateActual] = tsfn.callCount();
+      const [callCountExpected, aggregateExpected] = expected;
+      assert(callCountActual == callCountExpected, `The number of calls do not match: actual = ${callCountActual}, expected = ${callCountExpected}`);
+      assert(aggregateActual == aggregateExpected, `The aggregate of calls do not match: actual = ${aggregateActual}, expected = ${aggregateExpected}`);
+      return expected;
+    } else {
+      throw new Error('The TSFN failed to start');
+    }
   }
 
 }

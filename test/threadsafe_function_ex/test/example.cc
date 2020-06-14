@@ -43,17 +43,22 @@ class TSFNWrap;
 // Context of the TSFN.
 using Context = TSFNWrap;
 
-// Data passed (as pointer) to [Non]BlockingCall
-using DataType = std::unique_ptr<std::promise<int>>;
+struct Data {
+  // Data passed (as pointer) to [Non]BlockingCall
+  std::promise<int> promise;
+  uint32_t base;
+};
+using DataType = std::unique_ptr<Data>;
 
 // CallJs callback function
 static void CallJs(Napi::Env env, Napi::Function /*jsCallback*/,
-                   Context *context, DataType *data) {
-  if (data != nullptr) {
+                   Context *context, DataType *dataPtr) {
+  if (dataPtr != nullptr) {
+    auto &data = *dataPtr;
     if (env != nullptr) {
-      (*data)->set_value(clock());
+      data->promise.set_value(data->base * data->base);
     } else {
-      (*data)->set_exception(std::make_exception_ptr(
+      data->promise.set_exception(std::make_exception_ptr(
           std::runtime_error("TSFN has been finalized.")));
     }
   }
@@ -92,42 +97,54 @@ public:
     }
   }
 
-  struct FinalizerDataType {
+  struct FinalizerData {
     std::vector<std::thread> threads;
     std::unique_ptr<Promise::Deferred> deferred;
   };
 
   // The finalizer data is shared, because we want to join the threads if our
   // TSFNWrap object gets garbage-collected and there are still active threads.
-  using SharedFinalizerDataType = std::shared_ptr<FinalizerDataType>;
+  using FinalizerDataType = std::shared_ptr<FinalizerData>;
 
+#define THREADLOG(X) if (context->logThread) {\
+std::cout << X;\
+}
   static void threadEntry(size_t threadId, TSFN tsfn, uint32_t callCount,
-                          bool logThread) {
+                          Context *context) {
     using namespace std::chrono_literals;
+
+    THREADLOG("Thread " << threadId << " starting...\n")
+
     for (auto i = 0U; i < callCount; ++i) {
-      auto promise = std::make_unique<std::promise<int>>();
-      tsfn.NonBlockingCall(&promise);
-      auto future = promise->get_future();
+      auto data = std::make_unique<Data>();
+      data->base = threadId + 1;
+      THREADLOG("Thread " << threadId << " making call, base = " << data->base << "\n")
+
+      tsfn.NonBlockingCall(&data);
+      auto future = data->promise.get_future();
       auto result = future.get();
-      if (logThread) {
-        std::cout << "Thread " << threadId << " got result " << result << "\n";
-      }
+      context->callSucceeded(result);
+      THREADLOG("Thread " << threadId << " got result: " << result << "\n")
     }
-    if (logThread) {
-      std::cout << "Thread " << threadId << "finished\n";
-    }
+
+    THREADLOG("Thread " << threadId << " finished.\n\n")
     tsfn.Release();
   }
+#undef THREADLOG
 
-  static std::array<ClassPropertyDescriptor<TSFNWrap>, 3> InstanceMethods() {
-    return {InstanceMethod("call", &TSFNWrap::Call),
+  static std::array<ClassPropertyDescriptor<TSFNWrap>, 4> InstanceMethods() {
+    return {InstanceMethod("getContext", &TSFNWrap::GetContext),
             InstanceMethod("start", &TSFNWrap::Start),
+            InstanceMethod("callCount", &TSFNWrap::CallCount),
             InstanceMethod("release", &TSFNWrap::Release)};
   }
 
   bool cppExceptions = false;
   bool logThread;
-  std::shared_ptr<FinalizerDataType> finalizerData;
+  std::atomic_uint succeededCalls;
+  std::atomic_int aggregate;
+
+  FinalizerDataType finalizerData;
 
   Napi::Value Start(const CallbackInfo &info) {
     Napi::Env env = info.Env();
@@ -143,7 +160,7 @@ public:
     // The JS-provided callback to execute for each call (if provided)
     Function callback;
 
-    finalizerData = std::make_shared<FinalizerDataType>();
+    finalizerData = std::make_shared<FinalizerData>();
 
     logThread = DefaultOptions.logThread;
     bool logCall = DefaultOptions.logCall;
@@ -217,8 +234,10 @@ public:
 
     const auto threadCount = callCounts.size();
 
-    auto *finalizerDataPtr = new SharedFinalizerDataType(finalizerData);
+    auto *finalizerDataPtr = new FinalizerDataType(finalizerData);
 
+    succeededCalls = 0;
+    aggregate = 0;
     _tsfn = TSFN::New(
         env,                               // napi_env env,
         TSFN::DefaultFunctionFactory(env), // const Function& callback,
@@ -232,8 +251,8 @@ public:
     );
 
     for (auto threadId = 0U; threadId < threadCount; ++threadId) {
-      finalizerData->threads.push_back(std::thread(
-          threadEntry, threadId, _tsfn, callCounts[threadId], logThread));
+      finalizerData->threads.push_back(std::thread(threadEntry, threadId, _tsfn,
+                                                   callCounts[threadId], this));
     }
 
     return String::New(env, "started");
@@ -241,7 +260,7 @@ public:
 
   // TSFN finalizer. Joins the threads and resolves the Promise returned by
   // `Release()` above.
-  static void Finalizer(Napi::Env env, SharedFinalizerDataType *finalizeData,
+  static void Finalizer(Napi::Env env, FinalizerDataType *finalizeData,
                         Context *ctx) {
 
     if (ctx->logThread) {
@@ -254,7 +273,7 @@ public:
     }
     ctx->clearTSFN();
     if (ctx->logThread) {
-      std::cout << "Finished\n";
+      std::cout << "Finished finalizing threads.\n";
     }
 
     (*finalizeData)->deferred->Resolve(Boolean::New(env, true));
@@ -265,26 +284,33 @@ public:
     if (finalizerData->deferred) {
       return finalizerData->deferred->Promise();
     }
-    // return finalizerData->deferred.Promise();
-    auto env = info.Env();
     finalizerData->deferred.reset(
-        new Promise::Deferred(Promise::Deferred::New(env)));
+        new Promise::Deferred(Promise::Deferred::New(info.Env())));
     _tsfn.Release();
     return finalizerData->deferred->Promise();
   };
 
-  Napi::Value Call(const CallbackInfo &info) {
-    // auto *callData = new DataType(info.Env());
-    // _tsfn.NonBlockingCall(callData); return callData->Promise();
-    return info.Env().Undefined();
+  Napi::Value CallCount(const CallbackInfo &info) {
+    Napi::Env env(info.Env());
+
+    auto results = Array::New(env, 2);
+    results.Set("0", Number::New(env, succeededCalls));
+    results.Set("1", Number::New(env, aggregate));
+    return results;
   };
 
   Napi::Value GetContext(const CallbackInfo &) {
     return _tsfn.GetContext()->Value();
   };
 
-  // This does not run on the node thread.
+  // This method does not run on the Node thread.
   void clearTSFN() { _tsfn = TSFN(); }
+
+  // This method does not run on the Node thread.
+  void callSucceeded(int result) {
+    succeededCalls++;
+    aggregate += result;
+  }
 };
 } // namespace example
 
