@@ -54,8 +54,8 @@ public:
   }
 
   static std::array<ClassPropertyDescriptor<TSFNWrap>, 2> InstanceMethods() {
-    return {InstanceMethod("release", &TSFNWrap::Release),
-            InstanceMethod("call", &TSFNWrap::Call)};
+    return {{InstanceMethod("release", &TSFNWrap::Release),
+             InstanceMethod("call", &TSFNWrap::Call)}};
   }
 
   Napi::Value Call(const CallbackInfo &info) {
@@ -105,23 +105,23 @@ public:
 
     ContextType *context = new ContextType(Persistent(info[0]));
 
-    _tsfn = TSFN::New(
-        env,                               // napi_env env,
-        TSFN::DefaultFunctionFactory(env), // const Function& callback,
-        Value(),                           // const Object& resource,
-        "Test",                            // ResourceString resourceName,
-        0,                                 // size_t maxQueueSize,
-        1,                                 // size_t initialThreadCount,
-        context,                           // ContextType* context,
-        base::Finalizer,                   // Finalizer finalizer
-        &_deferred                         // FinalizerDataType* data
-    );
+    _tsfn =
+        TSFN::New(env,                             // napi_env env,
+                  TSFN::EmptyFunctionFactory(env), // const Function& callback,
+                  Value(),                         // const Object& resource,
+                  "Test",          // ResourceString resourceName,
+                  0,               // size_t maxQueueSize,
+                  1,               // size_t initialThreadCount,
+                  context,         // ContextType* context,
+                  base::Finalizer, // Finalizer finalizer
+                  &_deferred       // FinalizerDataType* data
+        );
   }
 
   static std::array<ClassPropertyDescriptor<TSFNWrap>, 3> InstanceMethods() {
-    return {InstanceMethod("call", &TSFNWrap::Call),
-            InstanceMethod("getContext", &TSFNWrap::GetContext),
-            InstanceMethod("release", &TSFNWrap::Release)};
+    return {{InstanceMethod("call", &TSFNWrap::Call),
+             InstanceMethod("getContext", &TSFNWrap::GetContext),
+             InstanceMethod("release", &TSFNWrap::Release)}};
   }
 
   Napi::Value Call(const CallbackInfo &info) {
@@ -187,8 +187,8 @@ public:
   }
 
   static std::array<ClassPropertyDescriptor<TSFNWrap>, 2> InstanceMethods() {
-    return {InstanceMethod("release", &TSFNWrap::Release),
-            InstanceMethod("call", &TSFNWrap::Call)};
+    return {{InstanceMethod("release", &TSFNWrap::Release),
+             InstanceMethod("call", &TSFNWrap::Call)}};
   }
 
   Napi::Value Call(const CallbackInfo &info) {
@@ -212,14 +212,17 @@ struct DataType {
 // CallJs callback function provided to `napi_create_threadsafe_function`. It is
 // _NOT_ used by `Napi::ThreadSafeFunctionEx<>`, which is why these arguments
 // are napi_*.
-static void CallJs(napi_env env, napi_value jsCallback, void * /*context*/,
+static void CallJs(napi_env env, napi_value /*jsCallback*/, void * /*context*/,
                    void *data) {
   DataType *casted = static_cast<DataType *>(data);
   if (env != nullptr) {
     if (data != nullptr) {
       napi_value undefined;
       napi_status status = napi_get_undefined(env, &undefined);
-      NAPI_THROW_IF_FAILED(env, status);
+      if (status != napi_ok) {
+        NAPI_THROW_VOID(
+            Error::New(env, "Could not get undefined from environment"));
+      }
       if (casted->reject) {
         casted->deferred.Reject(undefined);
       } else {
@@ -257,14 +260,14 @@ public:
     napi_threadsafe_function napi_tsfn;
 
     // A threadsafe function on N-API 4 still requires a callback function, so
-    // this uses the `DefaultFunctionFactory` helper method to return a no-op
+    // this uses the `EmptyFunctionFactory` helper method to return a no-op
     // Function.
     auto status = napi_create_threadsafe_function(
-        info.Env(), TSFN::DefaultFunctionFactory(env), nullptr,
+        info.Env(), TSFN::EmptyFunctionFactory(env), nullptr,
         String::From(info.Env(), "Test"), 0, 1, nullptr, nullptr, nullptr,
         CallJs, &napi_tsfn);
     if (status != napi_ok) {
-      NAPI_THROW_IF_FAILED(env, status);
+      NAPI_THROW_VOID(Error::New(env, "Could not create TSFN."));
     }
     _tsfn = TSFN(napi_tsfn);
 #else
@@ -276,15 +279,16 @@ public:
         info.Env(), nullptr, nullptr, String::From(info.Env(), "Test"), 0, 1,
         nullptr, Finalizer, this, CallJs, &napi_tsfn);
     if (status != napi_ok) {
-      NAPI_THROW_IF_FAILED(env, status);
+      NAPI_THROW_VOID(
+          Error::New(env, "Could not get undefined from environment"));
     }
     _tsfn = TSFN(napi_tsfn);
 #endif
   }
 
   static std::array<ClassPropertyDescriptor<TSFNWrap>, 2> InstanceMethods() {
-    return {InstanceMethod("release", &TSFNWrap::Release),
-            InstanceMethod("call", &TSFNWrap::Call)};
+    return {{InstanceMethod("release", &TSFNWrap::Release),
+             InstanceMethod("call", &TSFNWrap::Call)}};
   }
 
   Napi::Value Call(const CallbackInfo &info) {
@@ -333,7 +337,7 @@ public:
     // A threadsafe function on N-API 4 still requires a callback function.
     _tsfn = TSFN::New(
         env, // napi_env env,
-        TSFN::DefaultFunctionFactory(
+        TSFN::EmptyFunctionFactory(
             env), // N-API 5+: nullptr; else: const Function& callback,
         "Test",   // ResourceString resourceName,
         1,        // size_t maxQueueSize,
@@ -349,8 +353,8 @@ public:
   }
 
   static std::array<ClassPropertyDescriptor<TSFNWrap>, 2> InstanceMethods() {
-    return {InstanceMethod("release", &TSFNWrap::Release),
-            InstanceMethod("call", &TSFNWrap::Call)};
+    return {{InstanceMethod("release", &TSFNWrap::Release),
+             InstanceMethod("call", &TSFNWrap::Call)}};
   }
 
   // Since this test spec has no CALLBACK, CONTEXT, or FINALIZER. We have no way

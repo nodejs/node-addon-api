@@ -41,7 +41,7 @@ public:
   // TSFN finalizer. Resolves the Promise returned by `Release()` above.
   static void Finalizer(Napi::Env env,
                         std::unique_ptr<Promise::Deferred> *deferred,
-                        Context *ctx) {
+                        Context * /*ctx*/) {
     if (deferred->get()) {
       (*deferred)->Resolve(Boolean::New(env, true));
       deferred->release();

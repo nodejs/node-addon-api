@@ -43,20 +43,40 @@ class TSFNWrap;
 // Context of the TSFN.
 using Context = TSFNWrap;
 
+// Data passed (as pointer) to [Non]BlockingCall
 struct Data {
-  // Data passed (as pointer) to [Non]BlockingCall
   std::promise<int> promise;
+  uint32_t threadId;
+  bool logCall;
   uint32_t base;
 };
 using DataType = std::unique_ptr<Data>;
 
 // CallJs callback function
-static void CallJs(Napi::Env env, Napi::Function /*jsCallback*/,
-                   Context *context, DataType *dataPtr) {
+static void CallJs(Napi::Env env, Napi::Function jsCallback,
+                   Context * /*context*/, DataType *dataPtr) {
   if (dataPtr != nullptr) {
     auto &data = *dataPtr;
     if (env != nullptr) {
-      data->promise.set_value(data->base * data->base);
+      auto calculated = data->base * data->base;
+      if (!jsCallback.IsEmpty()) {
+        auto value = jsCallback.Call({Number::New(env, data->threadId), Number::New(env, calculated)});
+        if (env.IsExceptionPending()) {
+          const auto &error = env.GetAndClearPendingException();
+          data->promise.set_exception(
+              std::make_exception_ptr(std::runtime_error(error.Message())));
+        } else if (value.IsNumber()) {
+          calculated = value.ToNumber();
+        }
+      }
+      if (data->logCall) {
+        std::string message("Thread " + std::to_string(data->threadId) +
+                            " CallJs resolving std::promise");
+        auto console = env.Global().Get("console").As<Object>();
+        console.Get("log").As<Function>().Call(console,
+                                               {String::New(env, message)});
+      }
+      data->promise.set_value(calculated);
     } else {
       data->promise.set_exception(std::make_exception_ptr(
           std::runtime_error("TSFN has been finalized.")));
@@ -106,9 +126,10 @@ public:
   // TSFNWrap object gets garbage-collected and there are still active threads.
   using FinalizerDataType = std::shared_ptr<FinalizerData>;
 
-#define THREADLOG(X) if (context->logThread) {\
-std::cout << X;\
-}
+#define THREADLOG(X)                                                           \
+  if (context->logThread) {                                                    \
+    std::cout << X;                                                            \
+  }
   static void threadEntry(size_t threadId, TSFN tsfn, uint32_t callCount,
                           Context *context) {
     using namespace std::chrono_literals;
@@ -118,7 +139,10 @@ std::cout << X;\
     for (auto i = 0U; i < callCount; ++i) {
       auto data = std::make_unique<Data>();
       data->base = threadId + 1;
-      THREADLOG("Thread " << threadId << " making call, base = " << data->base << "\n")
+      data->threadId = threadId;
+      data->logCall = context->logCall;
+      THREADLOG("Thread " << threadId << " making call, base = " << data->base
+                          << "\n")
 
       tsfn.NonBlockingCall(&data);
       auto future = data->promise.get_future();
@@ -133,14 +157,15 @@ std::cout << X;\
 #undef THREADLOG
 
   static std::array<ClassPropertyDescriptor<TSFNWrap>, 4> InstanceMethods() {
-    return {InstanceMethod("getContext", &TSFNWrap::GetContext),
-            InstanceMethod("start", &TSFNWrap::Start),
-            InstanceMethod("callCount", &TSFNWrap::CallCount),
-            InstanceMethod("release", &TSFNWrap::Release)};
+    return {{InstanceMethod("getContext", &TSFNWrap::GetContext),
+             InstanceMethod("start", &TSFNWrap::Start),
+             InstanceMethod("callCount", &TSFNWrap::CallCount),
+             InstanceMethod("release", &TSFNWrap::Release)}};
   }
 
   bool cppExceptions = false;
   bool logThread;
+  bool logCall;
   std::atomic_uint succeededCalls;
   std::atomic_int aggregate;
 
@@ -163,7 +188,6 @@ std::cout << X;\
     finalizerData = std::make_shared<FinalizerData>();
 
     logThread = DefaultOptions.logThread;
-    bool logCall = DefaultOptions.logCall;
 
     if (info.Length() > 0 && info[0].IsObject()) {
       auto arg0 = info[0].ToObject();
@@ -239,11 +263,11 @@ std::cout << X;\
     succeededCalls = 0;
     aggregate = 0;
     _tsfn = TSFN::New(
-        env,                               // napi_env env,
-        TSFN::DefaultFunctionFactory(env), // const Function& callback,
-        Value(),                           // const Object& resource,
-        "Test",                            // ResourceString resourceName,
-        0,                                 // size_t maxQueueSize,
+        env,                                  // napi_env env,
+        TSFN::FunctionOrEmpty(env, callback), // const Function& callback,
+        Value(),                              // const Object& resource,
+        "Test",                               // ResourceString resourceName,
+        0,                                    // size_t maxQueueSize,
         threadCount + 1, // size_t initialThreadCount, +1 for Node thread
         this,            // Context* context,
         Finalizer,       // Finalizer finalizer
@@ -255,7 +279,7 @@ std::cout << X;\
                                                    callCounts[threadId], this));
     }
 
-    return String::New(env, "started");
+    return Number::New(env, threadCount);
   };
 
   // TSFN finalizer. Joins the threads and resolves the Promise returned by

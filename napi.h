@@ -2051,17 +2051,20 @@ namespace Napi {
   class ThreadSafeFunctionEx {
 
   public:
-#if NAPI_VERSION > 4
-    using DefaultFunctionType = std::nullptr_t;
-#else
-    using DefaultFunctionType = const Napi::Function;
-#endif
+
     // This API may only be called from the main thread.
     // Helper function that returns nullptr if running N-API 5+, otherwise a
     // non-empty, no-op Function. This provides the ability to specify at
     // compile-time a callback parameter to `New` that safely does no action
     // when targeting _any_ N-API version.
-    static DefaultFunctionType DefaultFunctionFactory(Napi::Env env);
+#if NAPI_VERSION > 4
+    static std::nullptr_t EmptyFunctionFactory(Napi::Env env);
+#else
+    static Napi::Function EmptyFunctionFactory(Napi::Env env);
+#endif
+    static Napi::Function FunctionOrEmpty(Napi::Env env, Napi::Function& callback);
+
+
 
 
 #if NAPI_VERSION > 4
