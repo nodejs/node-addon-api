@@ -213,6 +213,14 @@ static inline CallJsWrapper(napi_env env, napi_value jsCallback, void * /*contex
     Function(env, jsCallback).Call(0, nullptr);
   }
 }
+
+template <typename CallbackType>
+typename ThreadSafeFunctionEx<>::DefaultFunctionType
+DefaultCallbackWrapper(
+    napi_env env, CallbackType cb) {
+  return ThreadSafeFunctionEx<>::DefaultFunctionFactory(env);
+}
+
 #endif
 
 template <typename Getter, typename Setter>
@@ -4342,28 +4350,6 @@ ThreadSafeFunctionEx<ContextType, DataType, CallJs>::New(
   return tsfn;
 }
 
-// static, with Callback [nullptr] Resource [missing] Finalizer [missing]
-template <typename ContextType, typename DataType,
-          void (*CallJs)(Napi::Env, Napi::Function, ContextType *, DataType *)>
-template <typename ResourceString>
-inline ThreadSafeFunctionEx<ContextType, DataType, CallJs>
-ThreadSafeFunctionEx<ContextType, DataType, CallJs>::New(
-    napi_env env, std::nullptr_t callback, ResourceString resourceName, size_t maxQueueSize,
-    size_t initialThreadCount, ContextType *context) {
-  ThreadSafeFunctionEx<ContextType, DataType, CallJs> tsfn;
-
-  napi_status status = napi_create_threadsafe_function(
-      env, nullptr, nullptr, String::From(env, resourceName), maxQueueSize,
-      initialThreadCount, nullptr, nullptr, context,
-      CallJsInternal, &tsfn._tsfn);
-  if (status != napi_ok) {
-    NAPI_THROW_IF_FAILED(env, status,
-                         ThreadSafeFunctionEx<ContextType, DataType, CallJs>());
-  }
-
-  return tsfn;
-}
-
 // static, with Callback [missing] Resource [passed] Finalizer [missing]
 template <typename ContextType, typename DataType,
           void (*CallJs)(Napi::Env, Napi::Function, ContextType *, DataType *)>
@@ -4371,28 +4357,6 @@ template <typename ResourceString>
 inline ThreadSafeFunctionEx<ContextType, DataType, CallJs>
 ThreadSafeFunctionEx<ContextType, DataType, CallJs>::New(
     napi_env env, const Object &resource, ResourceString resourceName,
-    size_t maxQueueSize, size_t initialThreadCount, ContextType *context) {
-  ThreadSafeFunctionEx<ContextType, DataType, CallJs> tsfn;
-
-  napi_status status = napi_create_threadsafe_function(
-      env, nullptr, resource, String::From(env, resourceName), maxQueueSize,
-      initialThreadCount, nullptr, nullptr, context, CallJsInternal,
-      &tsfn._tsfn);
-  if (status != napi_ok) {
-    NAPI_THROW_IF_FAILED(env, status,
-                         ThreadSafeFunctionEx<ContextType, DataType, CallJs>());
-  }
-
-  return tsfn;
-}
-
-// static, with Callback [nullptr] Resource [passed] Finalizer [missing]
-template <typename ContextType, typename DataType,
-          void (*CallJs)(Napi::Env, Napi::Function, ContextType *, DataType *)>
-template <typename ResourceString>
-inline ThreadSafeFunctionEx<ContextType, DataType, CallJs>
-ThreadSafeFunctionEx<ContextType, DataType, CallJs>::New(
-    napi_env env, std::nullptr_t callback, const Object &resource, ResourceString resourceName,
     size_t maxQueueSize, size_t initialThreadCount, ContextType *context) {
   ThreadSafeFunctionEx<ContextType, DataType, CallJs> tsfn;
 
@@ -4438,36 +4402,6 @@ ThreadSafeFunctionEx<ContextType, DataType, CallJs>::New(
   return tsfn;
 }
 
-// static, with Callback [nullptr] Resource [missing] Finalizer [passed]
-template <typename ContextType, typename DataType,
-          void (*CallJs)(Napi::Env, Napi::Function, ContextType *, DataType *)>
-template <typename ResourceString, typename Finalizer,
-          typename FinalizerDataType>
-inline ThreadSafeFunctionEx<ContextType, DataType, CallJs>
-ThreadSafeFunctionEx<ContextType, DataType, CallJs>::New(
-    napi_env env, std::nullptr_t callback, ResourceString resourceName, size_t maxQueueSize,
-    size_t initialThreadCount, ContextType *context, Finalizer finalizeCallback,
-    FinalizerDataType *data) {
-  ThreadSafeFunctionEx<ContextType, DataType, CallJs> tsfn;
-
-  auto *finalizeData = new details::ThreadSafeFinalize<ContextType, Finalizer,
-                                                       FinalizerDataType>(
-      {data, finalizeCallback});
-  napi_status status = napi_create_threadsafe_function(
-      env, nullptr, nullptr, String::From(env, resourceName), maxQueueSize,
-      initialThreadCount, finalizeData,
-      details::ThreadSafeFinalize<ContextType, Finalizer, FinalizerDataType>::
-          FinalizeFinalizeWrapperWithDataAndContext,
-      context, CallJsInternal, &tsfn._tsfn);
-  if (status != napi_ok) {
-    delete finalizeData;
-    NAPI_THROW_IF_FAILED(env, status,
-                         ThreadSafeFunctionEx<ContextType, DataType, CallJs>());
-  }
-
-  return tsfn;
-}
-
 // static, with Callback [missing] Resource [passed] Finalizer [passed]
 template <typename ContextType, typename DataType,
           void (*CallJs)(Napi::Env, Napi::Function, ContextType *, DataType *)>
@@ -4476,36 +4410,6 @@ template <typename ResourceString, typename Finalizer,
 inline ThreadSafeFunctionEx<ContextType, DataType, CallJs>
 ThreadSafeFunctionEx<ContextType, DataType, CallJs>::New(
     napi_env env, const Object &resource, ResourceString resourceName,
-    size_t maxQueueSize, size_t initialThreadCount, ContextType *context,
-    Finalizer finalizeCallback, FinalizerDataType *data) {
-  ThreadSafeFunctionEx<ContextType, DataType, CallJs> tsfn;
-
-  auto *finalizeData = new details::ThreadSafeFinalize<ContextType, Finalizer,
-                                                       FinalizerDataType>(
-      {data, finalizeCallback});
-  napi_status status = napi_create_threadsafe_function(
-      env, nullptr, resource, String::From(env, resourceName), maxQueueSize,
-      initialThreadCount, finalizeData,
-      details::ThreadSafeFinalize<ContextType, Finalizer, FinalizerDataType>::
-          FinalizeFinalizeWrapperWithDataAndContext,
-      context, CallJsInternal, &tsfn._tsfn);
-  if (status != napi_ok) {
-    delete finalizeData;
-    NAPI_THROW_IF_FAILED(env, status,
-                         ThreadSafeFunctionEx<ContextType, DataType, CallJs>());
-  }
-
-  return tsfn;
-}
-
-// static, with Callback [nullptr] Resource [passed] Finalizer [passed]
-template <typename ContextType, typename DataType,
-          void (*CallJs)(Napi::Env, Napi::Function, ContextType *, DataType *)>
-template <typename ResourceString, typename Finalizer,
-          typename FinalizerDataType>
-inline ThreadSafeFunctionEx<ContextType, DataType, CallJs>
-ThreadSafeFunctionEx<ContextType, DataType, CallJs>::New(
-    napi_env env, std::nullptr_t callback, const Object &resource, ResourceString resourceName,
     size_t maxQueueSize, size_t initialThreadCount, ContextType *context,
     Finalizer finalizeCallback, FinalizerDataType *data) {
   ThreadSafeFunctionEx<ContextType, DataType, CallJs> tsfn;
@@ -4607,11 +4511,11 @@ ThreadSafeFunctionEx<ContextType, DataType, CallJs>::New(
 // static, with: Callback [passed] Resource [passed] Finalizer [passed]
 template <typename ContextType, typename DataType,
           void (*CallJs)(Napi::Env, Napi::Function, ContextType *, DataType *)>
-template <typename ResourceString, typename Finalizer,
+template <typename CallbackType, typename ResourceString, typename Finalizer,
           typename FinalizerDataType>
 inline ThreadSafeFunctionEx<ContextType, DataType, CallJs>
 ThreadSafeFunctionEx<ContextType, DataType, CallJs>::New(
-    napi_env env, const Function &callback, const Object &resource,
+    napi_env env, CallbackType callback, const Object &resource,
     ResourceString resourceName, size_t maxQueueSize, size_t initialThreadCount,
     ContextType *context, Finalizer finalizeCallback, FinalizerDataType *data) {
   ThreadSafeFunctionEx<ContextType, DataType, CallJs> tsfn;
@@ -4620,7 +4524,7 @@ ThreadSafeFunctionEx<ContextType, DataType, CallJs>::New(
                                                        FinalizerDataType>(
       {data, finalizeCallback});
   napi_status status = napi_create_threadsafe_function(
-      env, callback, resource, String::From(env, resourceName), maxQueueSize,
+      env, details::DefaultCallbackWrapper<CallbackType>(env, callback), resource, String::From(env, resourceName), maxQueueSize,
       initialThreadCount, finalizeData,
       details::ThreadSafeFinalize<ContextType, Finalizer, FinalizerDataType>::
           FinalizeFinalizeWrapperWithDataAndContext,
@@ -4742,6 +4646,7 @@ ThreadSafeFunctionEx<ContextType, DataType, CallJs>::DefaultFunctionFactory(
   return Function::New(env, [](const CallbackInfo &cb) {});
 #endif
 }
+
 
 ////////////////////////////////////////////////////////////////////////////////
 // ThreadSafeFunction class

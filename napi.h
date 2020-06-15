@@ -2049,20 +2049,20 @@ namespace Napi {
             void (*CallJs)(Napi::Env, Napi::Function, ContextType *,
                            DataType *) = nullptr>
   class ThreadSafeFunctionEx {
-  private:
+
+  public:
 #if NAPI_VERSION > 4
     using DefaultFunctionType = std::nullptr_t;
 #else
     using DefaultFunctionType = const Napi::Function;
 #endif
-
-  public:
     // This API may only be called from the main thread.
     // Helper function that returns nullptr if running N-API 5+, otherwise a
     // non-empty, no-op Function. This provides the ability to specify at
     // compile-time a callback parameter to `New` that safely does no action
     // when targeting _any_ N-API version.
     static DefaultFunctionType DefaultFunctionFactory(Napi::Env env);
+
 
 #if NAPI_VERSION > 4
     // This API may only be called from the main thread.
@@ -2074,14 +2074,6 @@ namespace Napi {
         size_t initialThreadCount, ContextType *context = nullptr);
 
     // This API may only be called from the main thread.
-    //   Callback [nullptr] Resource [missing] Finalizer [missing]
-    template <typename ResourceString>
-    static ThreadSafeFunctionEx<ContextType, DataType, CallJs>
-    New(napi_env env, std::nullptr_t callback, ResourceString resourceName,
-        size_t maxQueueSize, size_t initialThreadCount,
-        ContextType *context = nullptr);
-
-    // This API may only be called from the main thread.
     // Creates a new threadsafe function with:
     //   Callback [missing] Resource [passed] Finalizer [missing]
     template <typename ResourceString>
@@ -2089,15 +2081,6 @@ namespace Napi {
     New(napi_env env, const Object &resource, ResourceString resourceName,
         size_t maxQueueSize, size_t initialThreadCount,
         ContextType *context = nullptr);
-
-    // This API may only be called from the main thread.
-    // Creates a new threadsafe function with:
-    //   Callback [nullptr] Resource [passed] Finalizer [missing]
-    template <typename ResourceString>
-    static ThreadSafeFunctionEx<ContextType, DataType, CallJs>
-    New(napi_env env, std::nullptr_t callback, const Object &resource,
-        ResourceString resourceName, size_t maxQueueSize,
-        size_t initialThreadCount, ContextType *context = nullptr);
 
     // This API may only be called from the main thread.
     // Creates a new threadsafe function with:
@@ -2111,33 +2094,12 @@ namespace Napi {
 
     // This API may only be called from the main thread.
     // Creates a new threadsafe function with:
-    //   Callback [nullptr] Resource [missing] Finalizer [passed]
-    template <typename ResourceString, typename Finalizer,
-              typename FinalizerDataType = void>
-    static ThreadSafeFunctionEx<ContextType, DataType, CallJs>
-    New(napi_env env, std::nullptr_t callback, ResourceString resourceName,
-        size_t maxQueueSize, size_t initialThreadCount, ContextType *context,
-        Finalizer finalizeCallback, FinalizerDataType *data = nullptr);
-
-    // This API may only be called from the main thread.
-    // Creates a new threadsafe function with:
     //   Callback [missing] Resource [passed] Finalizer [passed]
     template <typename ResourceString, typename Finalizer,
               typename FinalizerDataType = void>
     static ThreadSafeFunctionEx<ContextType, DataType, CallJs>
     New(napi_env env, const Object &resource, ResourceString resourceName,
         size_t maxQueueSize, size_t initialThreadCount, ContextType *context,
-        Finalizer finalizeCallback, FinalizerDataType *data = nullptr);
-
-    // This API may only be called from the main thread.
-    // Creates a new threadsafe function with:
-    //   Callback [nullptr] Resource [passed] Finalizer [passed]
-    template <typename ResourceString, typename Finalizer,
-              typename FinalizerDataType = void>
-    static ThreadSafeFunctionEx<ContextType, DataType, CallJs>
-    New(napi_env env, std::nullptr_t callback, const Object &resource,
-        ResourceString resourceName, size_t maxQueueSize,
-        size_t initialThreadCount, ContextType *context,
         Finalizer finalizeCallback, FinalizerDataType *data = nullptr);
 #endif
 
@@ -2172,10 +2134,10 @@ namespace Napi {
     // This API may only be called from the main thread.
     // Creates a new threadsafe function with:
     //   Callback [passed] Resource [passed] Finalizer [passed]
-    template <typename ResourceString, typename Finalizer,
-              typename FinalizerDataType = void>
+    template <typename CallbackType, typename ResourceString, typename Finalizer,
+          typename FinalizerDataType>
     static ThreadSafeFunctionEx<ContextType, DataType, CallJs>
-    New(napi_env env, const Function &callback, const Object &resource,
+    New(napi_env env, CallbackType callback, const Object &resource,
         ResourceString resourceName, size_t maxQueueSize,
         size_t initialThreadCount, ContextType *context,
         Finalizer finalizeCallback, FinalizerDataType *data = nullptr);
