@@ -55,8 +55,8 @@ to ideas specified in the **ECMA262 Language Specification**.
 
 <a name="setup"></a>
 
-node-addon-api is based on [N-API](https://nodejs.org/api/n-api.html) and supports using different N-API versions. 
-This allows addons built with it to run with Node.js versions which support the targeted N-API version. 
+node-addon-api is based on [N-API](https://nodejs.org/api/n-api.html) and supports using different N-API versions.
+This allows addons built with it to run with Node.js versions which support the targeted N-API version.
 **However** the node-addon-api support model is to support only the active LTS Node.js versions. This means that
 every year there will be a new major which drops support for the Node.js LTS version which has gone out of service.
 
@@ -116,7 +116,9 @@ The following is the documentation for node-addon-api.
     - [AsyncWorker](doc/async_worker.md)
     - [AsyncContext](doc/async_context.md)
     - [AsyncWorker Variants](doc/async_worker_variants.md)
- - [Thread-safe Functions](doc/threadsafe_function.md)
+ - [Thread-safe Functions](doc/threadsafe.md)
+    - [ThreadSafeFunction](doc/threadsafe_function.md)
+    - [ThreadSafeFunctionEx](doc/threadsafe_function_ex.md)
  - [Promises](doc/promises.md)
  - [Version management](doc/version_management.md)
 

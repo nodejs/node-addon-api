@@ -1,7 +1,20 @@
-# ThreadSafeFunction
+# TODO
+- Document new N-API 5+ only methods
+- Continue with examples
 
-The `Napi::ThreadSafeFunction` type provides APIs for threads to communicate
-with the addon's main thread to invoke JavaScript functions on their behalf.
+# ThreadSafeFunctionEx
+
+The `Napi::ThreadSafeFunctionEx` type provides APIs for threads to communicate
+with the addon's main thread to invoke JavaScript functions on their behalf. The
+type is a three-argument templated class, each argument representing the type
+of:
+- `ContextType = std::nullptr_t`: The threadsafe function's context. By default,
+  a TSFN has no context.
+- `DataType = void*`: The data to use in the native callback. By default, a TSFN
+  can accept *any* data type.
+- `Callback = void*(Napi::Env, Napi::Function, ContextType*, DataType*)`: The
+  callback to run for each item added to the queue.
+
 Documentation can be found for an [overview of the API](threadsafe.md), as well
 as [differences between the two thread-safe function
 APIs](threadsafe.md#implementation-differences).
@@ -10,33 +23,59 @@ APIs](threadsafe.md#implementation-differences).
 
 ### Constructor
 
-Creates a new empty instance of `Napi::ThreadSafeFunction`.
+Creates a new empty instance of `Napi::ThreadSafeFunctionEx`.
 
 ```cpp
-Napi::Function::ThreadSafeFunction();
+Napi::Function::ThreadSafeFunctionEx<ContextType, DataType, Callback>::ThreadSafeFunctionEx();
 ```
 
 ### Constructor
 
-Creates a new instance of the `Napi::ThreadSafeFunction` object.
+Creates a new instance of the `Napi::ThreadSafeFunctionEx` object.
 
 ```cpp
-Napi::ThreadSafeFunction::ThreadSafeFunction(napi_threadsafe_function tsfn);
+Napi::ThreadSafeFunctionEx<ContextType, DataType, Callback>::ThreadSafeFunctionEx(napi_threadsafe_function tsfn);
 ```
 
 - `tsfn`: The `napi_threadsafe_function` which is a handle for an existing
   thread-safe function.
 
-Returns a non-empty `Napi::ThreadSafeFunction` instance. When using this
-constructor, only use the `Blocking(void*)` / `NonBlocking(void*)` overloads;
-the `Callback` and templated `data*` overloads should _not_ be used. See below
-for additional details.
+Returns a non-empty `Napi::ThreadSafeFunctionEx` instance.
 
 ### New
 
-Creates a new instance of the `Napi::ThreadSafeFunction` object. The `New`
-function has several overloads for the various optional parameters: skip the
-optional parameter for that specific overload.
+Creates a new instance of the `Napi::ThreadSafeFunctionEx` object.
+
+```cpp
+New(napi_env env,
+    const Function& callback,
+    const Object& resource,
+    ResourceString resourceName,
+    size_t maxQueueSize,
+    size_t initialThreadCount,
+    ContextType* context = nullptr);
+```
+
+- `env`: The `napi_env` environment in which to construct the
+  `Napi::ThreadSafeFunction` object.
+- `callback`: The `Function` to call from another thread.
+- `resource`: An object associated with the async work that will be passed to
+  possible async_hooks init hooks.
+- `resourceName`: A JavaScript string to provide an identifier for the kind of
+  resource that is being provided for diagnostic information exposed by the
+  async_hooks API.
+- `maxQueueSize`: Maximum size of the queue. `0` for no limit.
+- `initialThreadCount`: The initial number of threads, including the main
+  thread, which will be making use of this function.
+- `[optional] context`: Data to attach to the resulting `ThreadSafeFunction`.
+  Can be retreived via `GetContext()`.
+
+Returns a non-empty `Napi::ThreadSafeFunction` instance.
+
+### New
+
+Creates a new instance of the `Napi::ThreadSafeFunctionEx` object with a
+finalizer that runs when the object is being destroyed.
 
 ```cpp
 New(napi_env env,
@@ -47,14 +86,14 @@ New(napi_env env,
     size_t initialThreadCount,
     ContextType* context,
     Finalizer finalizeCallback,
-    FinalizerDataType* data);
+    FinalizerDataType* data = nullptr);
 ```
 
 - `env`: The `napi_env` environment in which to construct the
   `Napi::ThreadSafeFunction` object.
 - `callback`: The `Function` to call from another thread.
-- `[optional] resource`: An object associated with the async work that will be
-  passed to possible async_hooks init hooks.
+- `resource`: An object associated with the async work that will be passed to
+  possible async_hooks init hooks.
 - `resourceName`: A JavaScript string to provide an identifier for the kind of
   resource that is being provided for diagnostic information exposed by the
   async_hooks API.
@@ -63,18 +102,18 @@ New(napi_env env,
   thread, which will be making use of this function.
 - `[optional] context`: Data to attach to the resulting `ThreadSafeFunction`.
   Can be retreived via `GetContext()`.
-- `[optional] finalizeCallback`: Function to call when the `ThreadSafeFunction`
-  is being destroyed.  This callback will be invoked on the main thread when the
+- `finalizeCallback`: Function to call when the `ThreadSafeFunctionEx` is being
+  destroyed.  This callback will be invoked on the main thread when the
   thread-safe function is about to be destroyed. It receives the context and the
   finalize data given during construction (if given), and provides an
   opportunity for cleaning up after the threads e.g. by calling
   `uv_thread_join()`. It is important that, aside from the main loop thread,
   there be no threads left using the thread-safe function after the finalize
   callback completes. Must implement `void operator()(Env env, DataType* data,
-  Context* hint)`, skipping `data` or `hint` if they are not provided.
+  ContextType* hint)`.
 - `[optional] data`: Data to be passed to `finalizeCallback`.
 
-Returns a non-empty `Napi::ThreadSafeFunction` instance.
+Returns a non-empty `Napi::ThreadSafeFunctionEx` instance.
 
 ### Acquire
 
@@ -82,14 +121,14 @@ Add a thread to this thread-safe function object, indicating that a new thread
 will start making use of the thread-safe function.
 
 ```cpp
-napi_status Napi::ThreadSafeFunction::Acquire()
+napi_status Napi::ThreadSafeFunctionEx<ContextType, DataType, Callback>::Acquire()
 ```
 
 Returns one of:
-- `napi_ok`: The thread has successfully acquired the thread-safe function
-for its use.
+- `napi_ok`: The thread has successfully acquired the thread-safe function for
+  its use.
 - `napi_closing`: The thread-safe function has been marked as closing via a
-previous call to `Abort()`.
+  previous call to `Abort()`.
 
 ### Release
 
@@ -99,14 +138,14 @@ thread-safe function. Using any thread-safe APIs after having called this API
 has undefined results in the current thread, as it may have been destroyed.
 
 ```cpp
-napi_status Napi::ThreadSafeFunction::Release()
+napi_status Napi::ThreadSafeFunctionEx<ContextType, DataType, Callback>::Release()
 ```
 
 Returns one of:
 - `napi_ok`: The thread-safe function has been successfully released.
 - `napi_invalid_arg`: The thread-safe function's thread-count is zero.
-- `napi_generic_failure`: A generic error occurred when attemping to release
-the thread-safe function.
+- `napi_generic_failure`: A generic error occurred when attemping to release the
+  thread-safe function.
 
 ### Abort
 
@@ -121,14 +160,14 @@ make no further use of the thread-safe function because it is no longer
 guaranteed to be allocated.
 
 ```cpp
-napi_status Napi::ThreadSafeFunction::Abort()
+napi_status Napi::ThreadSafeFunctionEx<ContextType, DataType, Callback>::Abort()
 ```
 
 Returns one of:
 - `napi_ok`: The thread-safe function has been successfully aborted.
 - `napi_invalid_arg`: The thread-safe function's thread-count is zero.
-- `napi_generic_failure`: A generic error occurred when attemping to abort
-the thread-safe function.
+- `napi_generic_failure`: A generic error occurred when attemping to abort the
+  thread-safe function.
 
 ### BlockingCall / NonBlockingCall
 
@@ -139,20 +178,14 @@ Calls the Javascript function in either a blocking or non-blocking fashion.
 - `NonBlockingCall()`: will return `napi_queue_full` if the queue was full,
   preventing data from being successfully added to the queue.
 
-There are several overloaded implementations of `BlockingCall()` and
-`NonBlockingCall()` for use with optional parameters: skip the optional
-parameter for that specific overload.
-
-**These specific function overloads should only be used on a `ThreadSafeFunction`
-created via `ThreadSafeFunction::New`.**
-
 ```cpp
-napi_status Napi::ThreadSafeFunction::BlockingCall(DataType* data, Callback callback) const
+napi_status Napi::ThreadSafeFunctionEx<ContextType, DataType, Callback>::BlockingCall(DataType* data = nullptr) const
 
-napi_status Napi::ThreadSafeFunction::NonBlockingCall(DataType* data, Callback callback) const
+napi_status Napi::ThreadSafeFunctionEx<ContextType, DataType, Callback>::NonBlockingCall(DataType* data = nullptr) const
 ```
 
-- `[optional] data`: Data to pass to `callback`.
+- `[optional] data`: Data to pass to the callback which was passed to
+  `ThreadSafeFunctionEx::New()`.
 - `[optional] callback`: C++ function that is invoked on the main thread. The
   callback receives the `ThreadSafeFunction`'s JavaScript callback function to
   call as an `Napi::Function` in its parameters and the `DataType*` data pointer
@@ -160,17 +193,6 @@ napi_status Napi::ThreadSafeFunction::NonBlockingCall(DataType* data, Callback c
   jsCallback, DataType* data)`, skipping `data` if not provided. It is not
   necessary to call into JavaScript via `MakeCallback()` because N-API runs
   `callback` in a context appropriate for callbacks.
-
-**These specific function overloads should only be used on a `ThreadSafeFunction`
-created via `ThreadSafeFunction(napi_threadsafe_function)`.**
-
-```cpp
-napi_status Napi::ThreadSafeFunction::BlockingCall(void* data) const
-
-napi_status Napi::ThreadSafeFunction::NonBlockingCall(void* data) const
-```
-- `data`: Data to pass to `call_js_cb` specified when creating the thread-safe
-  function via `napi_create_threadsafe_function`.
 
 Returns one of:
 - `napi_ok`: The call was successfully added to the queue.
@@ -192,7 +214,14 @@ Returns one of:
 using namespace Napi;
 
 std::thread nativeThread;
-ThreadSafeFunction tsfn;
+
+struct ContextType {
+  int threadId;
+};
+
+using DataType = int;
+
+using ThreadSafeFunctionEx = tsfn;
 
 Value Start( const CallbackInfo& info )
 {
