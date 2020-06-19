@@ -78,6 +78,66 @@ static void FourArgFunction(const Napi::CallbackInfo& info) {
   Napi::Value argv3 = info[3]; (void) argv3;
 }
 
+#if NAPI_VERSION > 5
+class FunctionArgsBenchmark : public Napi::Addon<FunctionArgsBenchmark> {
+ public:
+  FunctionArgsBenchmark(Napi::Env env, Napi::Object exports) {
+    DefineAddon(exports, {
+      InstanceValue("addon", DefineProperties(Napi::Object::New(env), {
+        InstanceMethod("noArgFunction", &FunctionArgsBenchmark::NoArgFunction),
+        InstanceMethod("oneArgFunction",
+                       &FunctionArgsBenchmark::OneArgFunction),
+        InstanceMethod("twoArgFunction",
+                       &FunctionArgsBenchmark::TwoArgFunction),
+        InstanceMethod("threeArgFunction",
+                       &FunctionArgsBenchmark::ThreeArgFunction),
+        InstanceMethod("fourArgFunction",
+                       &FunctionArgsBenchmark::FourArgFunction),
+      }), napi_enumerable),
+      InstanceValue("addon_templated",
+        DefineProperties(Napi::Object::New(env), {
+          InstanceMethod<&FunctionArgsBenchmark::NoArgFunction>(
+                                                            "noArgFunction"),
+          InstanceMethod<&FunctionArgsBenchmark::OneArgFunction>(
+                                                            "oneArgFunction"),
+          InstanceMethod<&FunctionArgsBenchmark::TwoArgFunction>(
+                                                            "twoArgFunction"),
+          InstanceMethod<&FunctionArgsBenchmark::ThreeArgFunction>(
+                                                            "threeArgFunction"),
+          InstanceMethod<&FunctionArgsBenchmark::FourArgFunction>(
+                                                            "fourArgFunction"),
+        }), napi_enumerable),
+    });
+  }
+ private:
+  void NoArgFunction(const Napi::CallbackInfo& info) {
+    (void) info;
+  }
+
+  void OneArgFunction(const Napi::CallbackInfo& info) {
+    Napi::Value argv0 = info[0]; (void) argv0;
+  }
+
+  void TwoArgFunction(const Napi::CallbackInfo& info) {
+    Napi::Value argv0 = info[0]; (void) argv0;
+    Napi::Value argv1 = info[1]; (void) argv1;
+  }
+
+  void ThreeArgFunction(const Napi::CallbackInfo& info) {
+    Napi::Value argv0 = info[0]; (void) argv0;
+    Napi::Value argv1 = info[1]; (void) argv1;
+    Napi::Value argv2 = info[2]; (void) argv2;
+  }
+
+  void FourArgFunction(const Napi::CallbackInfo& info) {
+    Napi::Value argv0 = info[0]; (void) argv0;
+    Napi::Value argv1 = info[1]; (void) argv1;
+    Napi::Value argv2 = info[2]; (void) argv2;
+    Napi::Value argv3 = info[3]; (void) argv3;
+  }
+};
+#endif  // NAPI_VERSION > 5
+
 static Napi::Object Init(Napi::Env env, Napi::Object exports) {
   napi_value no_arg_function, one_arg_function, two_arg_function,
       three_arg_function, four_arg_function;
@@ -146,6 +206,10 @@ static Napi::Object Init(Napi::Env env, Napi::Object exports) {
   templated["threeArgFunction"] = Napi::Function::New<ThreeArgFunction>(env);
   templated["fourArgFunction"] = Napi::Function::New<FourArgFunction>(env);
   exports["templated"] = templated;
+
+#if NAPI_VERSION > 5
+  FunctionArgsBenchmark::Init(env, exports);
+#endif  // NAPI_VERSION > 5
 
   return exports;
 }

@@ -77,6 +77,7 @@ The oldest Node.js version supported by the current version of node-addon-api is
 
 The following is the documentation for node-addon-api.
 
+ - [Addon Structure](doc/addon.md)
  - [Basic Types](doc/basic_types.md)
     - [Array](doc/basic_types.md#array)
     - [Symbol](doc/symbol.md)
