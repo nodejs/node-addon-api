@@ -2,6 +2,7 @@
   'target_defaults': {
     'includes': ['../common.gypi'],
     'sources': [
+        'addon.cc',
         'addon_data.cc',
         'arraybuffer.cc',
         'asynccontext.cc',
