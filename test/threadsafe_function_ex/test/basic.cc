@@ -212,21 +212,20 @@ struct DataType {
 // CallJs callback function provided to `napi_create_threadsafe_function`. It is
 // _NOT_ used by `Napi::ThreadSafeFunctionEx<>`, which is why these arguments
 // are napi_*.
-static void CallJs(napi_env env, napi_value /*jsCallback*/, void * /*context*/,
+static void CallJs(napi_env env, napi_value jsCallback, void * /*context*/,
                    void *data) {
   DataType *casted = static_cast<DataType *>(data);
   if (env != nullptr) {
+    if (jsCallback != nullptr) {
+      Function(env, jsCallback).Call(0, nullptr);
+    }
     if (data != nullptr) {
-      napi_value undefined;
-      napi_status status = napi_get_undefined(env, &undefined);
-      if (status != napi_ok) {
-        NAPI_THROW_VOID(
-            Error::New(env, "Could not get undefined from environment"));
-      }
       if (casted->reject) {
-        casted->deferred.Reject(undefined);
+        casted->deferred.Reject(
+            String::New(env, "The CallJs has rejected the promise"));
       } else {
-        casted->deferred.Resolve(undefined);
+        casted->deferred.Resolve(
+            String::New(env, "The CallJs has resolved the promise"));
       }
     }
   }
@@ -256,34 +255,24 @@ public:
   TSFNWrap(const CallbackInfo &info) : base(info) {
 
     auto env = info.Env();
-#if NAPI_VERSION == 4
+
+    if (info.Length() < 1 || !info[0].IsFunction()) {
+      NAPI_THROW_VOID(Napi::TypeError::New(
+          env, "Invalid arguments: Expected arg0 = function"));
+    }
+
     napi_threadsafe_function napi_tsfn;
 
     // A threadsafe function on N-API 4 still requires a callback function, so
     // this uses the `EmptyFunctionFactory` helper method to return a no-op
-    // Function.
+    // Function on N-API 5+.
     auto status = napi_create_threadsafe_function(
-        info.Env(), TSFN::EmptyFunctionFactory(env), nullptr,
-        String::From(info.Env(), "Test"), 0, 1, nullptr, nullptr, nullptr,
-        CallJs, &napi_tsfn);
+        info.Env(), info[0], nullptr, String::From(info.Env(), "Test"), 0, 1,
+        nullptr, Finalizer, this, CallJs, &napi_tsfn);
     if (status != napi_ok) {
       NAPI_THROW_VOID(Error::New(env, "Could not create TSFN."));
     }
     _tsfn = TSFN(napi_tsfn);
-#else
-    napi_threadsafe_function napi_tsfn;
-
-    // A threadsafe function may be `nullptr` on N-API 5+ as long as a `CallJS`
-    // is present.
-    auto status = napi_create_threadsafe_function(
-        info.Env(), nullptr, nullptr, String::From(info.Env(), "Test"), 0, 1,
-        nullptr, Finalizer, this, CallJs, &napi_tsfn);
-    if (status != napi_ok) {
-      NAPI_THROW_VOID(
-          Error::New(env, "Could not get undefined from environment"));
-    }
-    _tsfn = TSFN(napi_tsfn);
-#endif
   }
 
   static std::array<ClassPropertyDescriptor<TSFNWrap>, 2> InstanceMethods() {
@@ -292,10 +281,50 @@ public:
   }
 
   Napi::Value Call(const CallbackInfo &info) {
-    auto *data =
-        new DataType{Promise::Deferred::New(info.Env()), info[0].ToBoolean()};
-    _tsfn.NonBlockingCall(data);
-    return data->deferred.Promise();
+    Napi::Env env = info.Env();
+    if (info.Length() < 1) {
+      NAPI_THROW(Napi::TypeError::New(
+                     env, "Invalid arguments: Expected arg0 = number [0,5]"),
+                 Value());
+    }
+    auto arg0 = info[0];
+    if (!arg0.IsNumber()) {
+      NAPI_THROW(Napi::TypeError::New(
+                     env, "Invalid arguments: Expected arg0 = number [0,5]"),
+                 Value());
+    }
+    auto mode = info[0].ToNumber().Int32Value();
+    switch (mode) {
+    // Use node-addon-api to send a call that either resolves or rejects the
+    // promise in the data.
+    case 0:
+    case 1: {
+      auto *data = new DataType{Promise::Deferred::New(env), mode == 1};
+      _tsfn.NonBlockingCall(data);
+      return data->deferred.Promise();
+    }
+    // Use node-addon-api to send a call with no data
+    case 2: {
+      _tsfn.NonBlockingCall();
+      return Boolean::New(env, true);
+    }
+    // Use napi to send a call that either resolves or rejects the promise in
+    // the data.
+    case 3:
+    case 4: {
+      auto *data = new DataType{Promise::Deferred::New(env), mode == 4};
+      napi_call_threadsafe_function(_tsfn, data, napi_tsfn_nonblocking);
+      return data->deferred.Promise();
+    }
+    // Use napi to send a call with no data
+    case 5: {
+      napi_call_threadsafe_function(_tsfn, nullptr, napi_tsfn_nonblocking);
+      return Boolean::New(env, true);
+    }
+    }
+    NAPI_THROW(Napi::TypeError::New(
+                   env, "Invalid arguments: Expected arg0 = number [0,5]"),
+               Value());
   };
 
 private:

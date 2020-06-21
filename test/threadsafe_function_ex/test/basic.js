@@ -37,7 +37,7 @@ class BasicTest extends TestRunner {
    *   the test.
    * - Asserts the contexts are the same as the context passed during threadsafe
    *   function construction in two places:
-   *    - (A) Makes one call, and waits for call to complete. 
+   *    - (A) Makes one call, and waits for call to complete.
    *    - (B) Asserts that the context returns from the API's `GetContext()`
    */
   async context({ TSFNWrap }) {
@@ -54,16 +54,89 @@ class BasicTest extends TestRunner {
     * that handles all of its JavaScript processing on the callJs instead of the
     * callback.
     * - Creates a threadsafe function with no JavaScript context or callback.
-    * - Makes one call, waiting for completion. The internal `CallJs` resolves the call if jsCallback is empty, otherwise rejects.
+    * - Makes one call, waiting for completion. The internal `CallJs` resolves
+    *   the call if jsCallback is empty, otherwise rejects.
     */
   async empty({ TSFNWrap }) {
-    debugger;
     if (typeof TSFNWrap === 'function') {
       const tsfn = new TSFNWrap();
       await tsfn.call();
       return await tsfn.release();
     }
     return true;
+  }
+
+  /**
+   * A `ThreadSafeFunctionEx` can be constructed with an existing
+   * napi_threadsafe_function.
+   * - Creates a native napi_threadsafe_function with no context, using the
+   *   jsCallback passed from this test.
+   * - Makes six calls:
+   *   - Use node-addon-api's `NonBlockingCall` *OR* napi's
+   *     `napi_call_threadsafe_function` _cross_
+   *     - With data that resolves *OR rejects on CallJs
+   *     - With no data that rejects on CallJs
+   * - Releases the TSFN.
+   */
+  async existing({ TSFNWrap }) {
+
+    /**
+     * Called by the TSFN's jsCallback below.
+     * @type {function|undefined}
+     */
+    let currentCallback = undefined;
+
+    const tsfn = new TSFNWrap(function () {
+      if (typeof currentCallback === 'function') {
+        currentCallback.apply(undefined, arguments);
+      }
+    });
+    /**
+     * The input argument to `tsfn.call()`: 0-2:
+     * ThreadSafeFunctionEx.NonBlockingCall(data) with...
+     *    - 0: data, resolve promise in CallJs
+     *    - 1: data, reject promise in CallJs
+     *    - 2: data = nullptr 3-5: napi_call_threadsafe_function(data,
+     *      napi_tsfn_nonblocking) with...
+     *    - 3: data, resolve promise in CallJs
+     *    - 4: data, reject promise in CallJs
+     *    - 5: data = nullptr
+     * @type {[0,1,2,3,4,5]}
+     */
+    const input = [0, 1, 2, 3, 4, 5];
+
+    let caught = false;
+
+    while (input.length) {
+      // Perform a call that resolves
+      await tsfn.call(input.shift());
+
+      // Perform a call that rejects
+      caught = false;
+      try {
+        await tsfn.call(input.shift());
+      } catch (e) {
+        caught = true;
+      } finally {
+        assert(caught, "The rejection was not caught");
+      }
+
+      // Perform a call with no data
+      caught = false;
+      await new Promise((resolve, reject) => {
+        currentCallback = () => {
+          resolve();
+          reject = undefined;
+        };
+        tsfn.call(input.shift());
+        setTimeout(() => {
+          if (reject) {
+            reject(new Error("tsfn.call() timed out"));
+          }
+        }, 0);
+      });
+    }
+    return await tsfn.release();
   }
 
   /**

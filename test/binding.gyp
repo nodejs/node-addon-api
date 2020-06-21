@@ -2,6 +2,9 @@
   'target_defaults': {
     'includes': ['../common.gypi'],
     'sources': [
+        'threadsafe_function_ex/test/basic.cc',
+        'threadsafe_function_ex/test/example.cc',
+        'threadsafe_function_ex/test/threadsafe.cc',
         'addon_data.cc',
         'arraybuffer.cc',
         'asynccontext.cc',
@@ -35,9 +38,7 @@
         'object/set_property.cc',
         'promise.cc',
         'run_script.cc',
-        'threadsafe_function_ex/test/basic.cc',
-        'threadsafe_function_ex/test/example.cc',
-        'threadsafe_function_ex/test/threadsafe.cc',
+
         'threadsafe_function/threadsafe_function_ctx.cc',
         'threadsafe_function/threadsafe_function_existing_tsfn.cc',
         'threadsafe_function/threadsafe_function_ptr.cc',

@@ -69,14 +69,14 @@ situational **memory leaks**:
   callback on the heap for every call to `[Non]BlockingCall()`.
 - In acting in this "middle-man" fashion, the API will call the underlying "make
   call" N-API method on this packaged item. If the API has determined the
-  threadsafe function is no longer accessible (eg. all threads have Released yet
+  thread-safe function is no longer accessible (eg. all threads have released yet
   there are still items on the queue), **the callback passed to
   [Non]BlockingCall will not execute**. This means it is impossible to perform
   clean-up for calls that never execute their `CallJs` callback. **This may lead
   to memory leaks** if you are dynamically allocating memory.
-- The `CallJs` does not receive the threadsafe function's context as a
+- The `CallJs` does not receive the thread-safe function's context as a
   parameter. In order for the callback to access the context, it must have a
-  reference to either (1) the context directly, or (2) the threadsafe function
+  reference to either (1) the context directly, or (2) the thread-safe function
   to call `GetContext()`. Furthermore, the `GetContext()` method is not
   _type-safe_, as the method returns an object that can be "any-casted", instead
   of having a static type.
@@ -94,7 +94,7 @@ with just a switch of the `NAPI_VERSION` compile-time constant.
 
 The removal of the dynamic call functionality has the additional side effects:
 - The API does _not_ act as a "middle-man" compared to the non-`Ex`. Once Node
-  finalizes the threadsafe function, the `CallJs` callback will execute with an
+  finalizes the thread-safe function, the `CallJs` callback will execute with an
   empty `Napi::Env` for any remaining items on the queue. This provides the the
   ability to handle any necessary clean up of the item's data.
 - The callback _does_ receive the context as a parameter, so a call to

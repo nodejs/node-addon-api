@@ -4,9 +4,6 @@ const assert = require('assert');
 const { basename, extname } = require('path');
 const buildType = process.config.target_defaults.default_configuration;
 
-// If you pass certain test names as argv, run those only.
-const cmdlineTests = process.argv.length > 2 ? process.argv.slice(2) : null;
-
 const pad = (what, targetLength = 20, padString = ' ', padLeft) => {
   const padder = (pad, str) => {
     if (typeof str === 'undefined')
@@ -21,6 +18,12 @@ const pad = (what, targetLength = 20, padString = ' ', padLeft) => {
 }
 
 /**
+ * If `true`, always show results as interactive. See constructor for more
+ * information.
+*/
+const SHOW_OUTPUT = false;
+
+/**
  * Test runner helper class. Each static method's name corresponds to the
  * namespace the test as defined in the native addon. Each test specifics are
  * documented on the individual method. The async test handler runs
@@ -28,12 +31,6 @@ const pad = (what, targetLength = 20, padString = ' ', padLeft) => {
  * finalizer. Otherwise, the test runner will assume the test completed.
  */
 class TestRunner {
-
-  /**
-   * If `true`, always show results as interactive. See constructor for more
-   * information.
-  */
-  static SHOW_OUTPUT = false;
 
   /**
    * @param {string} bindingKey The key to use when accessing the binding.
@@ -46,7 +43,7 @@ class TestRunner {
   constructor(bindingKey, filename) {
     this.bindingKey = bindingKey;
     this.filename = filename;
-    this.interactive = TestRunner.SHOW_OUTPUT || filename === require.main.filename;
+    this.interactive = SHOW_OUTPUT || filename === require.main.filename;
     this.specName = `${this.bindingKey}/${basename(this.filename, extname(this.filename))}`;
   }
 
@@ -84,8 +81,6 @@ class TestRunner {
         // Interactive mode prints start and end messages
         if (this.interactive) {
 
-
-
           /** @typedef {[string, string | null | number, boolean, string, any]} State [label, time, isNoExcept, nsName, returnValue] */
 
           /** @type {State} */
@@ -114,31 +109,25 @@ class TestRunner {
             this.log(stateLine());
           };
 
-          const runTest = (cmdlineTests == null || cmdlineTests.indexOf(nsName) > -1);
-
-          if (ns && typeof runner[nsName] === 'function' && runTest) {
+          if (ns && typeof runner[nsName] === 'function') {
             setState('Running test', null, isNoExcept, nsName, undefined);
             const start = Date.now();
             const returnValue = await runner[nsName](ns);
-            await this.dummy();
             setState('Finished test', Date.now() - start, isNoExcept, nsName, returnValue);
           } else {
             setState('Skipping test', '-', isNoExcept, nsName, undefined);
           }
-        } else {
+        } else if (ns) {
           console.log(`Running test '${this.specName}/${nsName}' ${isNoExcept ? '[noexcept]' : ''}`);
           await runner[nsName](ns);
-          await this.dummy();
         }
       }
     }
   }
 
-  dummy() { return new Promise(resolve => setTimeout(resolve, 50)); }
-
   /**
    * Print to console only when using interactive mode.
-   * 
+   *
    * @param {boolean} newLine If true, end with a new line.
    * @param {any[]} what What to print
    */
@@ -158,7 +147,6 @@ class TestRunner {
   log(...what) {
     this.print(true, ...what);
   }
-
 }
 
 module.exports = {

@@ -1,19 +1,17 @@
-# TODO
-- Document new N-API 5+ only methods
-- Continue with examples
-
 # ThreadSafeFunctionEx
 
 The `Napi::ThreadSafeFunctionEx` type provides APIs for threads to communicate
 with the addon's main thread to invoke JavaScript functions on their behalf. The
 type is a three-argument templated class, each argument representing the type
 of:
-- `ContextType = std::nullptr_t`: The threadsafe function's context. By default,
+- `ContextType = std::nullptr_t`: The thread-safe function's context. By default,
   a TSFN has no context.
 - `DataType = void*`: The data to use in the native callback. By default, a TSFN
   can accept *any* data type.
-- `Callback = void*(Napi::Env, Napi::Function, ContextType*, DataType*)`: The
-  callback to run for each item added to the queue.
+- `Callback = void*(Napi::Env, Napi::Function jsCallback, ContextType*,
+  DataType*)`: The callback to run for each item added to the queue. If no
+  `Callback` is given, the API will call the function `jsCallback` with no
+  arguments.
 
 Documentation can be found for an [overview of the API](threadsafe.md), as well
 as [differences between the two thread-safe function
@@ -40,46 +38,20 @@ Napi::ThreadSafeFunctionEx<ContextType, DataType, Callback>::ThreadSafeFunctionE
 - `tsfn`: The `napi_threadsafe_function` which is a handle for an existing
   thread-safe function.
 
-Returns a non-empty `Napi::ThreadSafeFunctionEx` instance.
+Returns a non-empty `Napi::ThreadSafeFunctionEx` instance. To ensure the API
+statically handles the correct return type for `GetContext()` and
+`[Non]BlockingCall()`, pass the proper type arguments to
+`Napi::ThreadSafeFunctionEx`.
 
 ### New
 
-Creates a new instance of the `Napi::ThreadSafeFunctionEx` object.
+Creates a new instance of the `Napi::ThreadSafeFunctionEx` object. The `New`
+function has several overloads for the various optional parameters: skip the
+optional parameter for that specific overload.
 
 ```cpp
 New(napi_env env,
-    const Function& callback,
-    const Object& resource,
-    ResourceString resourceName,
-    size_t maxQueueSize,
-    size_t initialThreadCount,
-    ContextType* context = nullptr);
-```
-
-- `env`: The `napi_env` environment in which to construct the
-  `Napi::ThreadSafeFunction` object.
-- `callback`: The `Function` to call from another thread.
-- `resource`: An object associated with the async work that will be passed to
-  possible async_hooks init hooks.
-- `resourceName`: A JavaScript string to provide an identifier for the kind of
-  resource that is being provided for diagnostic information exposed by the
-  async_hooks API.
-- `maxQueueSize`: Maximum size of the queue. `0` for no limit.
-- `initialThreadCount`: The initial number of threads, including the main
-  thread, which will be making use of this function.
-- `[optional] context`: Data to attach to the resulting `ThreadSafeFunction`.
-  Can be retreived via `GetContext()`.
-
-Returns a non-empty `Napi::ThreadSafeFunction` instance.
-
-### New
-
-Creates a new instance of the `Napi::ThreadSafeFunctionEx` object with a
-finalizer that runs when the object is being destroyed.
-
-```cpp
-New(napi_env env,
-    const Function& callback,
+    CallbackType callback,
     const Object& resource,
     ResourceString resourceName,
     size_t maxQueueSize,
@@ -91,9 +63,9 @@ New(napi_env env,
 
 - `env`: The `napi_env` environment in which to construct the
   `Napi::ThreadSafeFunction` object.
-- `callback`: The `Function` to call from another thread.
-- `resource`: An object associated with the async work that will be passed to
-  possible async_hooks init hooks.
+- `[optional] callback`: The `Function` to call from another thread.
+- `[optional] resource`: An object associated with the async work that will be
+  passed to possible async_hooks init hooks.
 - `resourceName`: A JavaScript string to provide an identifier for the kind of
   resource that is being provided for diagnostic information exposed by the
   async_hooks API.
@@ -102,18 +74,30 @@ New(napi_env env,
   thread, which will be making use of this function.
 - `[optional] context`: Data to attach to the resulting `ThreadSafeFunction`.
   Can be retreived via `GetContext()`.
-- `finalizeCallback`: Function to call when the `ThreadSafeFunctionEx` is being
-  destroyed.  This callback will be invoked on the main thread when the
-  thread-safe function is about to be destroyed. It receives the context and the
-  finalize data given during construction (if given), and provides an
-  opportunity for cleaning up after the threads e.g. by calling
-  `uv_thread_join()`. It is important that, aside from the main loop thread,
-  there be no threads left using the thread-safe function after the finalize
-  callback completes. Must implement `void operator()(Env env, DataType* data,
-  ContextType* hint)`.
+- `[optional] finalizeCallback`: Function to call when the
+  `ThreadSafeFunctionEx` is being destroyed.  This callback will be invoked on
+  the main thread when the thread-safe function is about to be destroyed. It
+  receives the context and the finalize data given during construction (if
+  given), and provides an opportunity for cleaning up after the threads e.g. by
+  calling `uv_thread_join()`. It is important that, aside from the main loop
+  thread, there be no threads left using the thread-safe function after the
+  finalize callback completes. Must implement `void operator()(Env env,
+  DataType* data, ContextType* hint)`.
 - `[optional] data`: Data to be passed to `finalizeCallback`.
 
 Returns a non-empty `Napi::ThreadSafeFunctionEx` instance.
+
+Depending on the targetted `NAPI_VERSION`, the API has different implementations
+for `CallbackType callback`.
+
+When targetting version 4, `CallbackType` is:
+- `const Function&`
+- skipped, in which case the API creates a new no-op `Function`
+
+When targetting version 5+, `CallbackType` is:
+- `const Function&`
+- `std::nullptr_t`
+- skipped, in which case the API passes `std::nullptr`
 
 ### Acquire
 
@@ -206,113 +190,54 @@ Returns one of:
 
 ## Example
 
-```cpp
-#include <chrono>
-#include <thread>
-#include <napi.h>
+For an in-line documented example, please see the ThreadSafeFunctionEx CI tests hosted here.
+- [test/threadsafe_function_ex/test/example.js](../test/threadsafe_function_ex/test/example.js)
+- [test/threadsafe_function_ex/test/example.cc](../test/threadsafe_function_ex/test/example.cc)
 
-using namespace Napi;
+The example will create multiple set of threads. Each thread calls into
+JavaScript with a numeric `base` value (deterministically calculated by the
+thread id), with Node returning either a `number` or `Promise<number>` that
+resolves to `base * base`.
 
-std::thread nativeThread;
-
-struct ContextType {
-  int threadId;
-};
-
-using DataType = int;
-
-using ThreadSafeFunctionEx = tsfn;
-
-Value Start( const CallbackInfo& info )
-{
-  Napi::Env env = info.Env();
-
-  if ( info.Length() < 2 )
-  {
-    throw TypeError::New( env, "Expected two arguments" );
-  }
-  else if ( !info[0].IsFunction() )
-  {
-    throw TypeError::New( env, "Expected first arg to be function" );
-  }
-  else if ( !info[1].IsNumber() )
-  {
-    throw TypeError::New( env, "Expected second arg to be number" );
-  }
-
-  int count = info[1].As<Number>().Int32Value();
-
-  // Create a ThreadSafeFunction
-  tsfn = ThreadSafeFunction::New(
-      env,
-      info[0].As<Function>(),  // JavaScript function called asynchronously
-      "Resource Name",         // Name
-      0,                       // Unlimited queue
-      1,                       // Only one thread will use this initially
-      []( Napi::Env ) {        // Finalizer used to clean threads up
-        nativeThread.join();
-      } );
-
-  // Create a native thread
-  nativeThread = std::thread( [count] {
-    auto callback = []( Napi::Env env, Function jsCallback, int* value ) {
-      // Transform native data into JS data, passing it to the provided
-      // `jsCallback` -- the TSFN's JavaScript function.
-      jsCallback.Call( {Number::New( env, *value )} );
-
-      // We're finished with the data.
-      delete value;
-    };
-
-    for ( int i = 0; i < count; i++ )
-    {
-      // Create new data
-      int* value = new int( clock() );
-
-      // Perform a blocking call
-      napi_status status = tsfn.BlockingCall( value, callback );
-      if ( status != napi_ok )
-      {
-        // Handle error
-        break;
-      }
-
-      std::this_thread::sleep_for( std::chrono::seconds( 1 ) );
-    }
-
-    // Release the thread-safe function
-    tsfn.Release();
-  } );
-
-  return Boolean::New(env, true);
-}
-
-Napi::Object Init( Napi::Env env, Object exports )
-{
-  exports.Set( "start", Function::New( env, Start ) );
-  return exports;
-}
-
-NODE_API_MODULE( clock, Init )
-```
-
-The above code can be used from JavaScript as follows:
-
-```js
-const { start } = require('bindings')('clock');
-
-start(function () {
-    console.log("JavaScript callback called with arguments", Array.from(arguments));
-}, 5);
-```
-
-When executed, the output will show the value of `clock()` five times at one
-second intervals:
+From the root of the `node-addon-api` repository:
 
 ```
-JavaScript callback called with arguments [ 84745 ]
-JavaScript callback called with arguments [ 103211 ]
-JavaScript callback called with arguments [ 104516 ]
-JavaScript callback called with arguments [ 105104 ]
-JavaScript callback called with arguments [ 105691 ]
+Usage: node ./test/threadsafe_function_ex/test/example.js [options]
+
+      -c, --calls <calls>                   The number of calls each thread should make (number[]).
+      -a, --acquire [factor]                Acquire a new set of `factor` call threads, using the
+                                            same `calls` definition.
+      -d, --call-delay <call-delays>        The delay on callback resolution that each thread should
+                                            have (number[]). This is achieved via a delayed Promise
+                                            resolution in the JavaScript callback provided to the
+                                            TSFN. Using large delays here will cause all threads to
+                                            bottle-neck.
+      -D, --thread-delay <thread-delays>    The delay that each thread should have prior to making a
+                                            call (number[]). Using large delays here will cause the
+                                            individual thread to bottle-neck.
+      -l, --log-call                        Display console.log-based logging messages.
+      -L, --log-thread                      Display std::cout-based logging messages.
+      -n, --no-callback                     Do not use a JavaScript callback.
+      -e, --callback-error [thread[.call]]  Cause an error to occur in the JavaScript callback for
+                                            the given thread's call (if provided; first thread's
+                                            first call otherwise).
+
+  When not provided:
+      - <calls> defaults to [1,2,3,4,5]
+      - [factor] defaults to 1
+      - <call-delays> defaults to [400,200,100,50,0]
+      - <thread-delays> defaults to [400,200,100,50,0]
+
+
+Examples:
+
+      -c [1,2,3] -l -L
+
+          Creates three threads that makes one, two, and three calls each, respectively.
+
+      -c [5,5] -d [5000,5000] -D [0,0] -l -L
+
+          Creates two threads that make five calls each. In this scenario, the threads will be
+          blocked primarily on waiting for the callback to resolve, as each thread's call takes
+          5000 milliseconds.
 ```
