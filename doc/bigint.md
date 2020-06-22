@@ -79,7 +79,7 @@ Returns the number of words needed to store this `BigInt` value.
 ### ToWords
 
 ```cpp
-void Napi::BigInt::ToWords(size_t* word_count, int* sign_bit, uint64_t* words);
+void Napi::BigInt::ToWords(int* sign_bit, size_t* word_count, uint64_t* words);
 ```
 
  - `[out] sign_bit`: Integer representing if the JavaScript `BigInt` is positive
