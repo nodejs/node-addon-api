@@ -1735,6 +1735,8 @@ namespace Napi {
       StaticAccessorCallbackData;
     typedef AccessorCallbackData<InstanceGetterCallback, InstanceSetterCallback>
       InstanceAccessorCallbackData;
+
+    bool _construction_failed = true;
   };
 
   class HandleScope {

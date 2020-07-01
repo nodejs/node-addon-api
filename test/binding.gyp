@@ -44,6 +44,8 @@
         'threadsafe_function/threadsafe_function.cc',
         'typedarray.cc',
         'objectwrap.cc',
+        'objectwrap_constructor_exception.cc',
+        'objectwrap-removewrap.cc',
         'objectreference.cc',
         'version_management.cc',
         'thunking_manual.cc',

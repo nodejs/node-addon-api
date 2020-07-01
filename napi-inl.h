@@ -10,6 +10,7 @@
 // Note: Do not include this file directly! Include "napi.h" instead.
 
 #include <algorithm>
+#include <atomic>
 #include <cstring>
 #include <mutex>
 #include <type_traits>
@@ -18,6 +19,8 @@ namespace Napi {
 
 // Helpers to handle functions exposed from C++.
 namespace details {
+
+extern std::atomic_bool needs_objectwrap_destructor_fix;
 
 // Attach a data item to an object and delete it when the object gets
 // garbage-collected.
@@ -251,11 +254,16 @@ struct AccessorCallbackData {
 // Module registration
 ////////////////////////////////////////////////////////////////////////////////
 
-#define NODE_API_MODULE(modname, regfunc)                 \
-  napi_value __napi_ ## regfunc(napi_env env,             \
-                                napi_value exports) {     \
-    return Napi::RegisterModule(env, exports, regfunc);   \
-  }                                                       \
+#define NODE_API_MODULE(modname, regfunc)                      \
+  namespace Napi {                                             \
+    namespace details {                                        \
+      std::atomic_bool needs_objectwrap_destructor_fix(false); \
+    }                                                          \
+  }                                                            \
+  napi_value __napi_ ## regfunc(napi_env env,                  \
+                                napi_value exports) {          \
+    return Napi::RegisterModule(env, exports, regfunc);        \
+  }                                                            \
   NAPI_MODULE(modname, __napi_ ## regfunc)
 
 // Adapt the NAPI_MODULE registration function:
@@ -264,6 +272,12 @@ struct AccessorCallbackData {
 inline napi_value RegisterModule(napi_env env,
                                  napi_value exports,
                                  ModuleRegisterCallback registerCallback) {
+  const napi_node_version* nver = Napi::VersionManagement::GetNodeVersion(env);
+  Napi::details::needs_objectwrap_destructor_fix =
+    (nver->major < 10 ||
+      (nver->major == 10 && nver->minor < 15) ||
+      (nver->major == 10 && nver->minor == 15 && nver->patch < 3));
+
   return details::WrapCallback([&] {
     return napi_value(registerCallback(Napi::Env(env),
                                        Napi::Object(env, exports)));
@@ -2968,16 +2982,36 @@ inline ObjectWrap<T>::ObjectWrap(const Napi::CallbackInfo& callbackInfo) {
   napi_value wrapper = callbackInfo.This();
   napi_status status;
   napi_ref ref;
-  T* instance = static_cast<T*>(this);
-  status = napi_wrap(env, wrapper, instance, FinalizeCallback, nullptr, &ref);
+  status = napi_wrap(env, wrapper, this, FinalizeCallback, nullptr, &ref);
   NAPI_THROW_IF_FAILED_VOID(env, status);
 
-  Reference<Object>* instanceRef = instance;
+  Reference<Object>* instanceRef = this;
   *instanceRef = Reference<Object>(env, ref);
 }
 
-template<typename T>
-inline ObjectWrap<T>::~ObjectWrap() {}
+template <typename T>
+inline ObjectWrap<T>::~ObjectWrap() {
+  // If the JS object still exists at this point, remove the finalizer added
+  // through `napi_wrap()`.
+  if (!IsEmpty()) {
+    Object object = Value();
+    // It is not valid to call `napi_remove_wrap()` with an empty `object`.
+    // This happens e.g. during garbage collection.
+    if (!object.IsEmpty() && _construction_failed) {
+      napi_remove_wrap(Env(), object, nullptr);
+
+      if (Napi::details::needs_objectwrap_destructor_fix) {
+        // If construction failed we delete the reference via
+        // `napi_remove_wrap()`, not via `napi_delete_reference()` in the
+        // `Reference<Object>` destructor. This will prevent the
+        // `Reference<Object>` destructor from doing a double delete of this
+        // reference.
+        _ref = nullptr;
+        _env = nullptr;
+      }
+    }
+  }
+}
 
 template<typename T>
 inline T* ObjectWrap<T>::Unwrap(Object wrapper) {
@@ -3369,10 +3403,21 @@ inline napi_value ObjectWrap<T>::ConstructorCallbackWrapper(
     return nullptr;
   }
 
-  T* instance;
   napi_value wrapper = details::WrapCallback([&] {
     CallbackInfo callbackInfo(env, info);
-    instance = new T(callbackInfo);
+    T* instance = new T(callbackInfo);
+#ifdef NAPI_CPP_EXCEPTIONS
+    instance->_construction_failed = false;
+#else
+    if (callbackInfo.Env().IsExceptionPending()) {
+      // We need to clear the exception so that removing the wrap might work.
+      Error e = callbackInfo.Env().GetAndClearPendingException();
+      delete instance;
+      e.ThrowAsJavaScriptException();
+    } else {
+      instance->_construction_failed = false;
+    }
+# endif  // NAPI_CPP_EXCEPTIONS
     return callbackInfo.This();
   });
 
@@ -3497,7 +3542,7 @@ inline napi_value ObjectWrap<T>::InstanceSetterCallbackWrapper(
 
 template <typename T>
 inline void ObjectWrap<T>::FinalizeCallback(napi_env env, void* data, void* /*hint*/) {
-  T* instance = reinterpret_cast<T*>(data);
+  ObjectWrap<T>* instance = static_cast<ObjectWrap<T>*>(data);
   instance->Finalize(Napi::Env(env));
   delete instance;
 }

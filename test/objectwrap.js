@@ -222,6 +222,9 @@ const test = (binding) => {
   // `Test` is needed for accessing exposed symbols
   testObj(new Test(), Test);
   testClass(Test);
+
+  // Make sure the C++ object can be garbage collected without issues.
+  setImmediate(global.gc);
 }
 
 test(require(`./build/${buildType}/binding.node`));
