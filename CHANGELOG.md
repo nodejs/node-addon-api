@@ -1,5 +1,29 @@
 # node-addon-api Changelog
 
+## 2020-07-01 Version 2.0.2, @NickNaso
+
+### Notable changes:
+
+#### API
+
+- `Napi::ObjectWrap`: avoid double-free on old Node.js.
+- `Napi::ObjectWrap`: remove wrap only on failure.
+- `Napi::ObjectWrap`: gracefully handle constructor exceptions
+- `Napi::ObjectWrap`: call `napi_remove_wrap()` in destructor.
+
+#### TEST
+
+- Updated `Napi::BigInt` test for recent change in core.
+
+### Commmits
+
+* [[`5abf60257d`](https://github.com/nodejs/node-addon-api/commit/5abf60257d)] - Merge pull request #723 from gabrielschulhof/backport-4e885069-pr-475 (Nicola Del Gobbo)
+* [[`470f130666`](https://github.com/nodejs/node-addon-api/commit/470f130666)] - **objectwrap**: avoid double-free on old Node.js (Gabriel Schulhof)
+* [[`81e2eac7ba`](https://github.com/nodejs/node-addon-api/commit/81e2eac7ba)] - **test**: update BigInt test for recent change in core (Michael Dawson) [#649](https://github.com/nodejs/node-addon-api/pull/649)
+* [[`204f07252c`](https://github.com/nodejs/node-addon-api/commit/204f07252c)] - **objectwrap**: remove wrap only on failure (Gabriel Schulhof)
+* [[`a552a384dd`](https://github.com/nodejs/node-addon-api/commit/a552a384dd)] - **src**: call `napi\_remove\_wrap()` in `ObjectWrap` dtor (Anna Henningsen) [#475](https://github.com/nodejs/node-addon-api/pull/475)
+* [[`1a51067438`](https://github.com/nodejs/node-addon-api/commit/1a51067438)] - **objectwrap**: gracefully handle constructor exceptions (Gabriel Schulhof)
+
 ## 2020-06-02 Version 2.0.1, @NickNaso
 
 ### Notable changes:
