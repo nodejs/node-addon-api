@@ -1,8 +1,10 @@
 const path = require('path');
 
+const include = path.relative('.', __dirname);
+
 module.exports = {
-  include: `"${__dirname}"`,
-  gyp: path.join(__dirname, 'node_api.gyp:nothing'),
+  include: include,
+  gyp: path.join(include, 'node_api.gyp:nothing'),
   isNodeApiBuiltin: true,
   needsFlag: false
 };
