@@ -51,6 +51,19 @@ Value GetFinalizeCount(const CallbackInfo& info) {
    return Number::New(info.Env(), finalizeCount);
 }
 
+Value CreateExternalWithFinalizeException(const CallbackInfo& info) {
+  return External<int>::New(info.Env(), new int(1),
+    [](Env env, int* data) {
+      Error error = Error::New(env, "Finalizer exception");
+      delete data;
+#ifdef NAPI_CPP_EXCEPTIONS
+      throw error;
+#else
+      error.ThrowAsJavaScriptException();
+#endif
+    });
+}
+
 } // end anonymous namespace
 
 Object InitExternal(Env env) {
@@ -58,6 +71,8 @@ Object InitExternal(Env env) {
 
   exports["createExternal"] = Function::New(env, CreateExternal);
   exports["createExternalWithFinalize"] = Function::New(env, CreateExternalWithFinalize);
+  exports["createExternalWithFinalizeException"] =
+      Function::New(env, CreateExternalWithFinalizeException);
   exports["createExternalWithFinalizeHint"] = Function::New(env, CreateExternalWithFinalizeHint);
   exports["checkExternal"] = Function::New(env, CheckExternal);
   exports["getFinalizeCount"] = Function::New(env, GetFinalizeCount);
