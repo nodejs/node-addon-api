@@ -138,7 +138,7 @@ struct FinalizeData {
   Hint* hint;
 };
 
-#if (NAPI_VERSION > 3)
+#if (NAPI_VERSION > 3 && !defined(__wasm32__))
 template <typename ContextType=void,
           typename Finalizer=std::function<void(Env, void*, ContextType*)>,
           typename FinalizerDataType=void>
@@ -234,8 +234,8 @@ napi_value DefaultCallbackWrapper(napi_env env, Napi::Function cb) {
   }
   return cb;
 }
-#endif
-#endif
+#endif  // NAPI_VERSION > 4
+#endif  // NAPI_VERSION > 3 && !defined(__wasm32__)
 
 template <typename Getter, typename Setter>
 struct AccessorCallbackData {
@@ -1779,8 +1779,14 @@ inline TypedArrayOf<T>::TypedArrayOf() : TypedArray(), _data(nullptr) {
 template <typename T>
 inline TypedArrayOf<T>::TypedArrayOf(napi_env env, napi_value value)
   : TypedArray(env, value), _data(nullptr) {
-  napi_status status = napi_get_typedarray_info(
-    _env, _value, &_type, &_length, reinterpret_cast<void**>(&_data), nullptr, nullptr);
+  napi_status status = napi_ok;
+  if (value != nullptr) {
+    status = napi_get_typedarray_info(
+      _env, _value, &_type, &_length, reinterpret_cast<void**>(&_data), nullptr, nullptr);
+  } else {
+    _type = TypedArrayTypeForPrimitiveType<T>();
+    _length = 0;
+  }
   NAPI_THROW_IF_FAILED_VOID(_env, status);
 }
 
@@ -3185,10 +3191,11 @@ inline ObjectWrap<T>::ObjectWrap(const Napi::CallbackInfo& callbackInfo) {
   napi_value wrapper = callbackInfo.This();
   napi_status status;
   napi_ref ref;
-  status = napi_wrap(env, wrapper, this, FinalizeCallback, nullptr, &ref);
+  T* instance = static_cast<T*>(this);
+  status = napi_wrap(env, wrapper, instance, FinalizeCallback, nullptr, &ref);
   NAPI_THROW_IF_FAILED_VOID(env, status);
 
-  Reference<Object>* instanceRef = this;
+  Reference<Object>* instanceRef = instance;
   *instanceRef = Reference<Object>(env, ref);
 }
 
@@ -3911,7 +3918,7 @@ inline napi_value ObjectWrap<T>::InstanceSetterCallbackWrapper(
 
 template <typename T>
 inline void ObjectWrap<T>::FinalizeCallback(napi_env env, void* data, void* /*hint*/) {
-  ObjectWrap<T>* instance = static_cast<ObjectWrap<T>*>(data);
+  T* instance = static_cast<T*>(data);
   instance->Finalize(Napi::Env(env));
   delete instance;
 }
@@ -4334,7 +4341,7 @@ inline void AsyncWorker::OnWorkComplete(Napi::Env /*env*/, napi_status status) {
   }
 }
 
-#if (NAPI_VERSION > 3)
+#if (NAPI_VERSION > 3 && !defined(__wasm32__))
 ////////////////////////////////////////////////////////////////////////////////
 // ThreadSafeFunctionEx<ContextType,DataType,CallJs> class
 ////////////////////////////////////////////////////////////////////////////////
@@ -5358,7 +5365,7 @@ template<class T>
 inline void AsyncProgressQueueWorker<T>::ExecutionProgress::Send(const T* data, size_t count) const {
   _worker->SendProgress_(data, count);
 }
-#endif
+#endif  // NAPI_VERSION > 3 && !defined(__wasm32__)
 
 ////////////////////////////////////////////////////////////////////////////////
 // Memory Management class

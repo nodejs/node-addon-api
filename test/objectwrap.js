@@ -108,11 +108,15 @@ const test = (binding) => {
         keys.push(key);
       }
 
-      assert(keys.length = 4);
-      assert(obj.testGetSet);
-      assert(obj.testGetter);
-      assert(obj.testValue);
-      assert(obj.testMethod);
+      assert(keys.length == 6);
+      // on prototype
+      assert(keys.includes("testGetSet"));
+      assert(keys.includes("testGetter"));
+      assert(keys.includes("testValue"));
+      assert(keys.includes("testMethod"));
+      // on object only
+      assert(keys.includes("ownProperty"));
+      assert(keys.includes("ownPropertyT"));
     }
   };
 

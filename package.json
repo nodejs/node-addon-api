@@ -60,6 +60,10 @@
       "url": "https://github.com/corymickelson"
     },
     {
+      "name": "Daniel Bevenius",
+      "url": "https://github.com/danbev"
+    },
+    {
       "name": "David Halls",
       "url": "https://github.com/davedoesdev"
     },
@@ -108,6 +112,10 @@
       "url": "https://github.com/jasongin"
     },
     {
+      "name": "Jeroen Janssen",
+      "url": "https://github.com/japj"
+    },
+    {
       "name": "Jim Schlight",
       "url": "https://github.com/jschlight"
     },
@@ -118,6 +126,10 @@
     {
       "name": "joshgarde",
       "url": "https://github.com/joshgarde"
+    },
+    {
+      "name": "Kasumi Hanazuki",
+      "url": "https://github.com/hanazuki"
     },
     {
       "name": "Kelvin",
@@ -138,6 +150,10 @@
     {
       "name": "legendecas",
       "url": "https://github.com/legendecas"
+    },
+    {
+      "name": "Lovell Fuller",
+      "url": "https://github.com/lovell"
     },
     {
       "name": "Luciano Martorella",
@@ -272,5 +288,5 @@
     "dev:incremental": "node test",
     "doc": "doxygen doc/Doxyfile"
   },
-  "version": "3.0.0"
+  "version": "3.0.1"
 }

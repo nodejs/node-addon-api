@@ -1,5 +1,40 @@
 # node-addon-api Changelog
 
+## 2020-07-13 Version 3.0.1, @NickNaso
+
+### Notable changes:
+
+#### API
+
+- Fixed the usage of `Napi::Reference` with `Napi::TypedArray`.
+- Fixed `Napi::ObjectWrap` inheritance.
+
+#### Documentation
+
+- Updated the example for `Napi::ObjectWrap`.
+- Added documentation for instance data APIs.
+- Some minor corrections all over the documentation.
+
+#### TEST
+
+- Fixed test for `Napi::ArrayBuffer` and `Napi::Buffer`.
+- Some minor corrections all over the test suite.
+
+### Commits
+
+* [[`40c7926342`](https://github.com/nodejs/node-addon-api/commit/40c7926342)] - **build**: ensure paths with spaces can be used (Lovell Fuller) [#757](https://github.com/nodejs/node-addon-api/pull/757)
+* [[`ef16dfb4a2`](https://github.com/nodejs/node-addon-api/commit/ef16dfb4a2)] - **doc**: update ObjectWrap example (Gabriel Schulhof) [#754](https://github.com/nodejs/node-addon-api/pull/754)
+* [[`48f6762bf6`](https://github.com/nodejs/node-addon-api/commit/48f6762bf6)] - **src**: add \_\_wasm32\_\_ guards (Gus Caplan)
+* [[`bd2c5ec502`](https://github.com/nodejs/node-addon-api/commit/bd2c5ec502)] - Fixes issue 745. (#748) (Nicola Del Gobbo)
+* [[`4c01af2d87`](https://github.com/nodejs/node-addon-api/commit/4c01af2d87)] - Fix typo in CHANGELOG (#715) (Kasumi Hanazuki)
+* [[`36e1af96d5`](https://github.com/nodejs/node-addon-api/commit/36e1af96d5)] - **src**: fix use of Reference with typed arrays (Michael Dawson) [#726](https://github.com/nodejs/node-addon-api/pull/726)
+* [[`d463f02bc7`](https://github.com/nodejs/node-addon-api/commit/d463f02bc7)] - **src**: fix testEnumerables on ObjectWrap (Ferdinand Holzer) [#736](https://github.com/nodejs/node-addon-api/pull/736)
+* [[`ba7ad37d44`](https://github.com/nodejs/node-addon-api/commit/ba7ad37d44)] - **src**: fix ObjectWrap inheritance (David Halls) [#732](https://github.com/nodejs/node-addon-api/pull/732)
+* [[`31504c862b`](https://github.com/nodejs/node-addon-api/commit/31504c862b)] - **doc**: fix minor typo in object\_wrap.md (#741) (Daniel Bevenius) [#741](https://github.com/nodejs/node-addon-api/pull/741)
+* [[`beccf2145d`](https://github.com/nodejs/node-addon-api/commit/beccf2145d)] - **test**: fix up delays for array buffer test (Michael Dawson) [#737](https://github.com/nodejs/node-addon-api/pull/737)
+* [[`45cb1d9748`](https://github.com/nodejs/node-addon-api/commit/45cb1d9748)] - Correct AsyncProgressWorker link in README (#716) (Jeroen Janssen)
+* [[`381c0da60c`](https://github.com/nodejs/node-addon-api/commit/381c0da60c)] - **doc**: add instance data APIs (Gabriel Schulhof) [#708](https://github.com/nodejs/node-addon-api/pull/708)
+
 ## 2020-04-30 Version 3.0.0, @NickNaso
 
 ### Notable changes:
@@ -14,14 +49,14 @@
 - Added `Env::RunScript` method to run JavaScript code contained in a string.
 - Added templated version of `Napi::Function`.
 - Added benchmarking framework.
-- Added support for natove addon instance data.
+- Added support for native addon instance data.
 - Added `Napi::AsyncProgressQueueWorker` api.
 - Changed the guards to `NAPI_VERSION > 5`.
 - Removed N-API implementation (v6.x and v8.x support).
 - `Napi::AsyncWorker::OnWorkComplete` and `Napi::AsyncWorker::OnExecute` methods
 are override-able.
 - Removed erroneous finalizer cleanup in `Napi::ThreadSafeFunction`.
-- Disabled cahcing in `Napi::ArrayBuffer`.
+- Disabled caching in `Napi::ArrayBuffer`.
 - Explicitly disallow assign and copy operator.
 - Some minor corrections and improvements.
 

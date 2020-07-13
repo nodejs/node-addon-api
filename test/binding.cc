@@ -56,7 +56,9 @@ Object InitTypedArray(Env env);
 Object InitObjectWrap(Env env);
 Object InitObjectWrapConstructorException(Env env);
 Object InitObjectWrapRemoveWrap(Env env);
+Object InitObjectWrapMultipleInheritance(Env env);
 Object InitObjectReference(Env env);
+Object InitReference(Env env);
 Object InitVersionManagement(Env env);
 Object InitThunkingManual(Env env);
 
@@ -117,7 +119,9 @@ Object Init(Env env, Object exports) {
   exports.Set("objectwrapConstructorException",
       InitObjectWrapConstructorException(env));
   exports.Set("objectwrap_removewrap", InitObjectWrapRemoveWrap(env));
+  exports.Set("objectwrap_multiple_inheritance", InitObjectWrapMultipleInheritance(env));
   exports.Set("objectreference", InitObjectReference(env));
+  exports.Set("reference", InitReference(env));
   exports.Set("version_management", InitVersionManagement(env));
   exports.Set("thunking_manual", InitThunkingManual(env));
   return exports;
