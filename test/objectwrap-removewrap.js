@@ -8,18 +8,25 @@ if (process.argv[2] === 'child') {
 const buildType = process.config.target_defaults.default_configuration;
 const assert = require('assert');
 const { spawnSync } = require('child_process');
+const testUtil = require('./testUtil');
 
-const test = (bindingName) => {
-  const binding = require(bindingName);
-  const Test = binding.objectwrap_removewrap.Test;
-  const getDtorCalled = binding.objectwrap_removewrap.getDtorCalled;
+async function test(bindingName) {
+  await testUtil.runGCTests([
+    'objectwrap removewrap test',
+    () => {
+      const binding = require(bindingName);
+      const Test = binding.objectwrap_removewrap.Test;
+      const getDtorCalled = binding.objectwrap_removewrap.getDtorCalled;
 
-  assert.strictEqual(getDtorCalled(), 0);
-  assert.throws(() => {
-    new Test();
-  });
-  assert.strictEqual(getDtorCalled(), 1);
-  global.gc();  // Does not crash.
+      assert.strictEqual(getDtorCalled(), 0);
+      assert.throws(() => {
+        new Test();
+      });
+      assert.strictEqual(getDtorCalled(), 1);
+    },
+    // Test that gc does not crash.
+    () => {}
+  ]);
 
   // Start a child process that creates a single wrapped instance to ensure that
   // it is properly freed at its exit. It must not segfault.
@@ -31,5 +38,5 @@ const test = (bindingName) => {
   assert.strictEqual(child.status, 0);
 }
 
-test(`./build/${buildType}/binding.node`);
-test(`./build/${buildType}/binding_noexcept.node`);
+module.exports = test(`./build/${buildType}/binding.node`)
+  .then(() => test(`./build/${buildType}/binding_noexcept.node`));

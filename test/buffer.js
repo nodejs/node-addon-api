@@ -4,11 +4,11 @@ const assert = require('assert');
 const testUtil = require('./testUtil');
 const safeBuffer = require('safe-buffer');
 
-test(require(`./build/${buildType}/binding.node`));
-test(require(`./build/${buildType}/binding_noexcept.node`));
+module.exports = test(require(`./build/${buildType}/binding.node`))
+  .then(() => test(require(`./build/${buildType}/binding_noexcept.node`)));
 
-function test(binding) {
-  testUtil.runGCTests([
+async function test(binding) {
+  await testUtil.runGCTests([
     'Internal Buffer',
     () => {
       const test = binding.buffer.createBuffer();

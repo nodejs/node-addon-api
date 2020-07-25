@@ -91,17 +91,21 @@ if (napiVersion < 6) {
 }
 
 if (typeof global.gc === 'function') {
+  (async function() {
   console.log(`Testing with N-API Version '${napiVersion}'.`);
 
   console.log('Starting test suite\n');
 
   // Requiring each module runs tests in the module.
-  testModules.forEach(name => {
+  for (const name of testModules) {
     console.log(`Running test '${name}'`);
-    require('./' + name);
-  });
+    await require('./' + name);
+  };
 
   console.log('\nAll tests passed!');
+  })().catch((error) => {
+    console.log(error);
+  });
 } else {
   // Construct the correct (version-dependent) command-line args.
   let args = ['--expose-gc', '--no-concurrent-array-buffer-freeing'];

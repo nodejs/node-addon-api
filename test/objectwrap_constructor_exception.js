@@ -1,12 +1,19 @@
 'use strict';
 const buildType = process.config.target_defaults.default_configuration;
 const assert = require('assert');
+const testUtil = require('./testUtil');
 
-const test = (binding) => {
-  const { ConstructorExceptionTest } = binding.objectwrapConstructorException;
-  assert.throws(() => (new ConstructorExceptionTest()), /an exception/);
-  global.gc();
+async function test(binding) {
+  await testUtil.runGCTests([
+    'objectwrap constructor exception',
+    () => {
+      const { ConstructorExceptionTest } = binding.objectwrapConstructorException;
+      assert.throws(() => (new ConstructorExceptionTest()), /an exception/);
+    },
+    // Do on gc before returning.
+    () => {}
+  ]);
 }
 
-test(require(`./build/${buildType}/binding.node`));
-test(require(`./build/${buildType}/binding_noexcept.node`));
+module.exports = test(require(`./build/${buildType}/binding.node`))
+  .then(() => test(require(`./build/${buildType}/binding_noexcept.node`)));

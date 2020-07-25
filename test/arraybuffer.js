@@ -3,11 +3,11 @@ const buildType = process.config.target_defaults.default_configuration;
 const assert = require('assert');
 const testUtil = require('./testUtil');
 
-test(require(`./build/${buildType}/binding.node`));
-test(require(`./build/${buildType}/binding_noexcept.node`));
+module.exports = test(require(`./build/${buildType}/binding.node`))
+  .then(() => test(require(`./build/${buildType}/binding_noexcept.node`)));
 
-function test(binding) {
-  testUtil.runGCTests([
+async function test(binding) {
+  await testUtil.runGCTests([
     'Internal ArrayBuffer',
     () => {
       const test = binding.arraybuffer.createBuffer();
@@ -25,10 +25,8 @@ function test(binding) {
       assert.ok(test instanceof ArrayBuffer);
       assert.strictEqual(0, binding.arraybuffer.getFinalizeCount());
     },
-    () => {
-      global.gc();
-      assert.strictEqual(0, binding.arraybuffer.getFinalizeCount());
-    },
+
+    () => assert.strictEqual(0, binding.arraybuffer.getFinalizeCount()),
 
     'External ArrayBuffer with finalizer',
     () => {
@@ -37,12 +35,8 @@ function test(binding) {
       assert.ok(test instanceof ArrayBuffer);
       assert.strictEqual(0, binding.arraybuffer.getFinalizeCount());
     },
-    () => {
-      global.gc();
-    },
-    () => {
-      assert.strictEqual(1, binding.arraybuffer.getFinalizeCount());
-    },
+
+    () => assert.strictEqual(1, binding.arraybuffer.getFinalizeCount()),
 
     'External ArrayBuffer with finalizer hint',
     () => {
@@ -51,12 +45,8 @@ function test(binding) {
       assert.ok(test instanceof ArrayBuffer);
       assert.strictEqual(0, binding.arraybuffer.getFinalizeCount());
     },
-    () => {
-      global.gc();
-    },
-    () => {
-      assert.strictEqual(1, binding.arraybuffer.getFinalizeCount());
-    },
+
+    () => assert.strictEqual(1, binding.arraybuffer.getFinalizeCount()),
 
     'ArrayBuffer with constructor',
     () => {

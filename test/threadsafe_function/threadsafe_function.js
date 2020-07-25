@@ -4,8 +4,8 @@ const buildType = process.config.target_defaults.default_configuration;
 const assert = require('assert');
 const common = require('../common');
 
-test(require(`../build/${buildType}/binding.node`));
-test(require(`../build/${buildType}/binding_noexcept.node`));
+module.exports = test(require(`../build/${buildType}/binding.node`))
+  .then(() => test(require(`../build/${buildType}/binding_noexcept.node`)));
 
 function test(binding) {
   const expectedArray = (function(arrayLength) {
@@ -43,7 +43,7 @@ function test(binding) {
     });
   }
 
-  new Promise(function testWithoutJSMarshaller(resolve) {
+  return new Promise(function testWithoutJSMarshaller(resolve) {
     let callCount = 0;
     binding.threadsafe_function.startThreadNoNative(function testCallback() {
       callCount++;

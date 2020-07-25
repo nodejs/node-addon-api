@@ -3,11 +3,11 @@ const buildType = process.config.target_defaults.default_configuration;
 const assert = require('assert');
 const testUtil = require('./testUtil');
 
-test(require(`./build/${buildType}/binding.node`));
-test(require(`./build/${buildType}/binding_noexcept.node`));
+module.exports = test(require(`./build/${buildType}/binding.node`))
+  .then(() => test(require(`./build/${buildType}/binding_noexcept.node`)));
 
-function test(binding) {
-  testUtil.runGCTests([
+async function test(binding) {
+  await testUtil.runGCTests([
     'External without finalizer',
     () => {
       const test = binding.external.createExternal();
