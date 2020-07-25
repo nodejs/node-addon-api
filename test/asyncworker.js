@@ -17,8 +17,8 @@ function checkAsyncHooks() {
   return false;
 }
 
-test(require(`./build/${buildType}/binding.node`));
-test(require(`./build/${buildType}/binding_noexcept.node`));
+module.exports = test(require(`./build/${buildType}/binding.node`))
+  .then(() => test(require(`./build/${buildType}/binding_noexcept.node`)));
 
 function installAsyncHooksForTest() {
   return new Promise((resolve, reject) => {
@@ -52,41 +52,54 @@ function installAsyncHooksForTest() {
   });
 }
 
-function test(binding) {
+async function test(binding) {
   if (!checkAsyncHooks()) {
-    binding.asyncworker.doWork(true, {}, function (e) {
-      assert.strictEqual(typeof e, 'undefined');
-      assert.strictEqual(typeof this, 'object');
-      assert.strictEqual(this.data, 'test data');
-    }, 'test data');
+    await new Promise((resolve) => {
+      binding.asyncworker.doWork(true, {}, function (e) {
+        assert.strictEqual(typeof e, 'undefined');
+        assert.strictEqual(typeof this, 'object');
+        assert.strictEqual(this.data, 'test data');
+        resolve();
+      }, 'test data');
+    });
 
-    binding.asyncworker.doWork(false, {}, function (e) {
-      assert.ok(e instanceof Error);
-      assert.strictEqual(e.message, 'test error');
-      assert.strictEqual(typeof this, 'object');
-      assert.strictEqual(this.data, 'test data');
-    }, 'test data');
+    await new Promise((resolve) => {
+      binding.asyncworker.doWork(false, {}, function (e) {
+        assert.ok(e instanceof Error);
+        assert.strictEqual(e.message, 'test error');
+        assert.strictEqual(typeof this, 'object');
+        assert.strictEqual(this.data, 'test data');
+        resolve();
+      }, 'test data');
+    });
 
-    binding.asyncworker.doWorkWithResult(true, {}, function (succeed, succeedString) {
-      assert(arguments.length == 2);
-      assert(succeed);
-      assert(succeedString == "ok");
-      assert.strictEqual(typeof this, 'object');
-      assert.strictEqual(this.data, 'test data');
-    }, 'test data');
+    await new Promise((resolve) => {
+      binding.asyncworker.doWorkWithResult(true, {}, function (succeed, succeedString) {
+        assert(arguments.length == 2);
+        assert(succeed);
+        assert(succeedString == "ok");
+        assert.strictEqual(typeof this, 'object');
+        assert.strictEqual(this.data, 'test data');
+        resolve();
+      }, 'test data');
+    });
+
     return;
   }
 
   {
     const hooks = installAsyncHooksForTest();
     const triggerAsyncId = async_hooks.executionAsyncId();
-    binding.asyncworker.doWork(true, { foo: 'foo' }, function (e) {
-      assert.strictEqual(typeof e, 'undefined');
-      assert.strictEqual(typeof this, 'object');
-      assert.strictEqual(this.data, 'test data');
-    }, 'test data');
+    await new Promise((resolve) => {
+      binding.asyncworker.doWork(true, { foo: 'foo' }, function (e) {
+        assert.strictEqual(typeof e, 'undefined');
+        assert.strictEqual(typeof this, 'object');
+        assert.strictEqual(this.data, 'test data');
+        resolve();
+      }, 'test data');
+    });
 
-    hooks.then(actual => {
+    await hooks.then(actual => {
       assert.deepStrictEqual(actual, [
         { eventName: 'init',
           type: 'TestResource',
@@ -102,15 +115,19 @@ function test(binding) {
   {
     const hooks = installAsyncHooksForTest();
     const triggerAsyncId = async_hooks.executionAsyncId();
-    binding.asyncworker.doWorkWithResult(true, { foo: 'foo' }, function (succeed, succeedString) {
-      assert(arguments.length == 2);
-      assert(succeed);
-      assert(succeedString == "ok");
-      assert.strictEqual(typeof this, 'object');
-      assert.strictEqual(this.data, 'test data');
-    }, 'test data');
+    await new Promise((resolve) => {
+      binding.asyncworker.doWorkWithResult(true, { foo: 'foo' },
+        function (succeed, succeedString) {
+          assert(arguments.length == 2);
+          assert(succeed);
+          assert(succeedString == "ok");
+          assert.strictEqual(typeof this, 'object');
+          assert.strictEqual(this.data, 'test data');
+          resolve();
+        }, 'test data');
+    });
 
-    hooks.then(actual => {
+    await hooks.then(actual => {
       assert.deepStrictEqual(actual, [
         { eventName: 'init',
           type: 'TestResource',
@@ -126,15 +143,17 @@ function test(binding) {
   {
     const hooks = installAsyncHooksForTest();
     const triggerAsyncId = async_hooks.executionAsyncId();
+    await new Promise((resolve) => {
+      binding.asyncworker.doWork(false, { foo: 'foo' }, function (e) {
+        assert.ok(e instanceof Error);
+        assert.strictEqual(e.message, 'test error');
+        assert.strictEqual(typeof this, 'object');
+        assert.strictEqual(this.data, 'test data');
+        resolve();
+      }, 'test data');
+    });
 
-    binding.asyncworker.doWork(false, { foo: 'foo' }, function (e) {
-      assert.ok(e instanceof Error);
-      assert.strictEqual(e.message, 'test error');
-      assert.strictEqual(typeof this, 'object');
-      assert.strictEqual(this.data, 'test data');
-    }, 'test data');
-
-    hooks.then(actual => {
+    await hooks.then(actual => {
       assert.deepStrictEqual(actual, [
         { eventName: 'init',
           type: 'TestResource',

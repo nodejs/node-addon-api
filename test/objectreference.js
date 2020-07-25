@@ -14,8 +14,8 @@ const buildType = process.config.target_defaults.default_configuration;
 const assert = require('assert');
 const testUtil = require('./testUtil');
 
-test(require(`./build/${buildType}/binding.node`));
-test(require(`./build/${buildType}/binding_noexcept.node`));
+module.exports = test(require(`./build/${buildType}/binding.node`))
+  .then(() => test(require(`./build/${buildType}/binding_noexcept.node`)));
 
 function test(binding) {
   function testCastedEqual(testToCompare) {
@@ -29,7 +29,7 @@ function test(binding) {
     }
   }
 
-  testUtil.runGCTests([
+  return testUtil.runGCTests([
     'Weak Casted Array',
     () => {
       binding.objectreference.setCastedObjects();
