@@ -7,8 +7,8 @@ const safeBuffer = require('safe-buffer');
 module.exports = test(require(`./build/${buildType}/binding.node`))
   .then(() => test(require(`./build/${buildType}/binding_noexcept.node`)));
 
-async function test(binding) {
-  await testUtil.runGCTests([
+function test(binding) {
+  return testUtil.runGCTests([
     'Internal Buffer',
     () => {
       const test = binding.buffer.createBuffer();

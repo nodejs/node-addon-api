@@ -11,23 +11,20 @@ function createWeakRef(binding, bindingToTest) {
   return binding.object[bindingToTest]({});
 }
 
-async function test(binding) {
+function test(binding) {
   let obj1;
   let obj2;
-  await testUtil.runGCTests([
+  return testUtil.runGCTests([
     'addFinalizer',
     () => {
       obj1 = createWeakRef(binding, 'addFinalizer');
     },
-    () => {
-      assert.deepStrictEqual(obj1, { finalizerCalled: true });
-    },
+    () => assert.deepStrictEqual(obj1, { finalizerCalled: true }),
+
     'addFinalizerWithHint',
     () => {
       obj2 = createWeakRef(binding, 'addFinalizerWithHint');
     },
-    () => {
-      assert.deepStrictEqual(obj2, { finalizerCalledWithCorrectHint: true });
-    }
+    () => assert.deepStrictEqual(obj2, { finalizerCalledWithCorrectHint: true })
   ]);
 }

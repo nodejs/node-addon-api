@@ -6,8 +6,8 @@ const testUtil = require('./testUtil');
 module.exports = test(require(`./build/${buildType}/binding.node`))
   .then(() => test(require(`./build/${buildType}/binding_noexcept.node`)));
 
-async function test(binding) {
-  await testUtil.runGCTests([
+function test(binding) {
+  return testUtil.runGCTests([
     'External without finalizer',
     () => {
       const test = binding.external.createExternal();

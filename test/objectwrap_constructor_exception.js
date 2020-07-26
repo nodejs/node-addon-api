@@ -3,8 +3,8 @@ const buildType = process.config.target_defaults.default_configuration;
 const assert = require('assert');
 const testUtil = require('./testUtil');
 
-async function test(binding) {
-  await testUtil.runGCTests([
+function test(binding) {
+  return testUtil.runGCTests([
     'objectwrap constructor exception',
     () => {
       const { ConstructorExceptionTest } = binding.objectwrapConstructorException;

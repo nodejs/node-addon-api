@@ -105,6 +105,7 @@ if (typeof global.gc === 'function') {
   console.log('\nAll tests passed!');
   })().catch((error) => {
     console.log(error);
+    process.exit(1);
   });
 } else {
   // Construct the correct (version-dependent) command-line args.

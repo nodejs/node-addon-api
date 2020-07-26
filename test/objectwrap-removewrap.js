@@ -10,8 +10,8 @@ const assert = require('assert');
 const { spawnSync } = require('child_process');
 const testUtil = require('./testUtil');
 
-async function test(bindingName) {
-  await testUtil.runGCTests([
+function test(bindingName) {
+  return testUtil.runGCTests([
     'objectwrap removewrap test',
     () => {
       const binding = require(bindingName);

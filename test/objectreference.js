@@ -17,7 +17,7 @@ const testUtil = require('./testUtil');
 module.exports = test(require(`./build/${buildType}/binding.node`))
   .then(() => test(require(`./build/${buildType}/binding_noexcept.node`)));
 
-async function test(binding) {
+function test(binding) {
   function testCastedEqual(testToCompare) {
     var compare_test = ["hello", "world", "!"];
     if (testToCompare instanceof Array) {
@@ -29,7 +29,7 @@ async function test(binding) {
     }
   }
 
-  await testUtil.runGCTests([
+  return testUtil.runGCTests([
     'Weak Casted Array',
     () => {
       binding.objectreference.setCastedObjects();
