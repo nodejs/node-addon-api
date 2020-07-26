@@ -33,7 +33,7 @@ function success(binding) {
 }
 
 function fail(binding) {
-  return new Promise((resolve, reject) => {
+  return new Promise((resolve) => {
     binding.doWork(-1,
       common.mustCall((err) => {
         assert.throws(() => { throw err }, /test error/)
