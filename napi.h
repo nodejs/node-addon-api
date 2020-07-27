@@ -1647,6 +1647,122 @@ namespace Napi {
     napi_property_descriptor _desc;
   };
 
+  template <typename T, typename TCallback>
+  struct MethodCallbackData {
+    TCallback callback;
+    void* data;
+  };
+
+  template <typename T, typename TGetterCallback, typename TSetterCallback>
+  struct AccessorCallbackData {
+    TGetterCallback getterCallback;
+    TSetterCallback setterCallback;
+    void* data;
+  };
+
+  template <typename T>
+  class InstanceWrap {
+   public:
+
+    typedef void (T::*InstanceVoidMethodCallback)(const CallbackInfo& info);
+    typedef Napi::Value (T::*InstanceMethodCallback)(const CallbackInfo& info);
+    typedef Napi::Value (T::*InstanceGetterCallback)(const CallbackInfo& info);
+    typedef void (T::*InstanceSetterCallback)(const CallbackInfo& info, const Napi::Value& value);
+
+    typedef ClassPropertyDescriptor<T> PropertyDescriptor;
+
+    static PropertyDescriptor InstanceMethod(const char* utf8name,
+                                             InstanceVoidMethodCallback method,
+                                             napi_property_attributes attributes = napi_default,
+                                             void* data = nullptr);
+    static PropertyDescriptor InstanceMethod(const char* utf8name,
+                                             InstanceMethodCallback method,
+                                             napi_property_attributes attributes = napi_default,
+                                             void* data = nullptr);
+    static PropertyDescriptor InstanceMethod(Symbol name,
+                                             InstanceVoidMethodCallback method,
+                                             napi_property_attributes attributes = napi_default,
+                                             void* data = nullptr);
+    static PropertyDescriptor InstanceMethod(Symbol name,
+                                             InstanceMethodCallback method,
+                                             napi_property_attributes attributes = napi_default,
+                                             void* data = nullptr);
+    template <InstanceVoidMethodCallback method>
+    static PropertyDescriptor InstanceMethod(const char* utf8name,
+                                             napi_property_attributes attributes = napi_default,
+                                             void* data = nullptr);
+    template <InstanceMethodCallback method>
+    static PropertyDescriptor InstanceMethod(const char* utf8name,
+                                             napi_property_attributes attributes = napi_default,
+                                             void* data = nullptr);
+    template <InstanceVoidMethodCallback method>
+    static PropertyDescriptor InstanceMethod(Symbol name,
+                                             napi_property_attributes attributes = napi_default,
+                                             void* data = nullptr);
+    template <InstanceMethodCallback method>
+    static PropertyDescriptor InstanceMethod(Symbol name,
+                                             napi_property_attributes attributes = napi_default,
+                                             void* data = nullptr);
+    static PropertyDescriptor InstanceAccessor(const char* utf8name,
+                                               InstanceGetterCallback getter,
+                                               InstanceSetterCallback setter,
+                                               napi_property_attributes attributes = napi_default,
+                                               void* data = nullptr);
+    static PropertyDescriptor InstanceAccessor(Symbol name,
+                                               InstanceGetterCallback getter,
+                                               InstanceSetterCallback setter,
+                                               napi_property_attributes attributes = napi_default,
+                                               void* data = nullptr);
+    template <InstanceGetterCallback getter, InstanceSetterCallback setter=nullptr>
+    static PropertyDescriptor InstanceAccessor(const char* utf8name,
+                                               napi_property_attributes attributes = napi_default,
+                                               void* data = nullptr);
+    template <InstanceGetterCallback getter, InstanceSetterCallback setter=nullptr>
+    static PropertyDescriptor InstanceAccessor(Symbol name,
+                                               napi_property_attributes attributes = napi_default,
+                                               void* data = nullptr);
+    static PropertyDescriptor InstanceValue(const char* utf8name,
+                                            Napi::Value value,
+                                            napi_property_attributes attributes = napi_default);
+    static PropertyDescriptor InstanceValue(Symbol name,
+                                            Napi::Value value,
+                                            napi_property_attributes attributes = napi_default);
+
+   protected:
+    static void AttachPropData(napi_env env, napi_value value, const napi_property_descriptor* prop);
+
+   private:
+    using This = InstanceWrap<T>;
+
+    typedef MethodCallbackData<T, InstanceVoidMethodCallback> InstanceVoidMethodCallbackData;
+    typedef MethodCallbackData<T, InstanceMethodCallback> InstanceMethodCallbackData;
+    typedef AccessorCallbackData<T,
+                                 InstanceGetterCallback,
+                                 InstanceSetterCallback> InstanceAccessorCallbackData;
+
+    static napi_value InstanceVoidMethodCallbackWrapper(napi_env env, napi_callback_info info);
+    static napi_value InstanceMethodCallbackWrapper(napi_env env, napi_callback_info info);
+    static napi_value InstanceGetterCallbackWrapper(napi_env env, napi_callback_info info);
+    static napi_value InstanceSetterCallbackWrapper(napi_env env, napi_callback_info info);
+
+    template <InstanceSetterCallback method>
+    static napi_value WrappedMethod(napi_env env, napi_callback_info info) noexcept;
+
+    template <InstanceGetterCallback getter> struct GetterTag {};
+    template <InstanceSetterCallback setter> struct SetterTag {};
+
+    template <InstanceVoidMethodCallback method>
+    static napi_value WrappedMethod(napi_env env, napi_callback_info info) noexcept;
+    template <InstanceMethodCallback method>
+    static napi_value WrappedMethod(napi_env env, napi_callback_info info) noexcept;
+    template <InstanceGetterCallback getter>
+    static napi_callback WrapGetter(GetterTag<getter>) noexcept { return &This::WrappedMethod<getter>; }
+    static napi_callback WrapGetter(GetterTag<nullptr>) noexcept { return nullptr; }
+    template <InstanceSetterCallback setter>
+    static napi_callback WrapSetter(SetterTag<setter>) noexcept { return &This::WrappedMethod<setter>; }
+    static napi_callback WrapSetter(SetterTag<nullptr>) noexcept { return nullptr; }
+  };
+
   /// Base class to be extended by C++ classes exposed to JavaScript; each C++ class instance gets
   /// "wrapped" by a JavaScript object that is managed by this class.
   ///
@@ -1673,7 +1789,7 @@ namespace Napi {
   ///         Napi::Value DoSomething(const Napi::CallbackInfo& info);
   ///     }
   template <typename T>
-  class ObjectWrap : public Reference<Object> {
+  class ObjectWrap : public InstanceWrap<T>, public Reference<Object> {
   public:
     ObjectWrap(const CallbackInfo& callbackInfo);
     virtual ~ObjectWrap();
@@ -1685,10 +1801,6 @@ namespace Napi {
     typedef Napi::Value (*StaticMethodCallback)(const CallbackInfo& info);
     typedef Napi::Value (*StaticGetterCallback)(const CallbackInfo& info);
     typedef void (*StaticSetterCallback)(const CallbackInfo& info, const Napi::Value& value);
-    typedef void (T::*InstanceVoidMethodCallback)(const CallbackInfo& info);
-    typedef Napi::Value (T::*InstanceMethodCallback)(const CallbackInfo& info);
-    typedef Napi::Value (T::*InstanceGetterCallback)(const CallbackInfo& info);
-    typedef void (T::*InstanceSetterCallback)(const CallbackInfo& info, const Napi::Value& value);
 
     typedef ClassPropertyDescriptor<T> PropertyDescriptor;
 
@@ -1750,68 +1862,12 @@ namespace Napi {
     static PropertyDescriptor StaticAccessor(Symbol name,
                                              napi_property_attributes attributes = napi_default,
                                              void* data = nullptr);
-    static PropertyDescriptor InstanceMethod(const char* utf8name,
-                                             InstanceVoidMethodCallback method,
-                                             napi_property_attributes attributes = napi_default,
-                                             void* data = nullptr);
-    static PropertyDescriptor InstanceMethod(const char* utf8name,
-                                             InstanceMethodCallback method,
-                                             napi_property_attributes attributes = napi_default,
-                                             void* data = nullptr);
-    static PropertyDescriptor InstanceMethod(Symbol name,
-                                             InstanceVoidMethodCallback method,
-                                             napi_property_attributes attributes = napi_default,
-                                             void* data = nullptr);
-    static PropertyDescriptor InstanceMethod(Symbol name,
-                                             InstanceMethodCallback method,
-                                             napi_property_attributes attributes = napi_default,
-                                             void* data = nullptr);
-    template <InstanceVoidMethodCallback method>
-    static PropertyDescriptor InstanceMethod(const char* utf8name,
-                                             napi_property_attributes attributes = napi_default,
-                                             void* data = nullptr);
-    template <InstanceMethodCallback method>
-    static PropertyDescriptor InstanceMethod(const char* utf8name,
-                                             napi_property_attributes attributes = napi_default,
-                                             void* data = nullptr);
-    template <InstanceVoidMethodCallback method>
-    static PropertyDescriptor InstanceMethod(Symbol name,
-                                             napi_property_attributes attributes = napi_default,
-                                             void* data = nullptr);
-    template <InstanceMethodCallback method>
-    static PropertyDescriptor InstanceMethod(Symbol name,
-                                             napi_property_attributes attributes = napi_default,
-                                             void* data = nullptr);
-    static PropertyDescriptor InstanceAccessor(const char* utf8name,
-                                               InstanceGetterCallback getter,
-                                               InstanceSetterCallback setter,
-                                               napi_property_attributes attributes = napi_default,
-                                               void* data = nullptr);
-    static PropertyDescriptor InstanceAccessor(Symbol name,
-                                               InstanceGetterCallback getter,
-                                               InstanceSetterCallback setter,
-                                               napi_property_attributes attributes = napi_default,
-                                               void* data = nullptr);
-    template <InstanceGetterCallback getter, InstanceSetterCallback setter=nullptr>
-    static PropertyDescriptor InstanceAccessor(const char* utf8name,
-                                               napi_property_attributes attributes = napi_default,
-                                               void* data = nullptr);
-    template <InstanceGetterCallback getter, InstanceSetterCallback setter=nullptr>
-    static PropertyDescriptor InstanceAccessor(Symbol name,
-                                               napi_property_attributes attributes = napi_default,
-                                               void* data = nullptr);
     static PropertyDescriptor StaticValue(const char* utf8name,
                                           Napi::Value value,
                                           napi_property_attributes attributes = napi_default);
     static PropertyDescriptor StaticValue(Symbol name,
                                           Napi::Value value,
                                           napi_property_attributes attributes = napi_default);
-    static PropertyDescriptor InstanceValue(const char* utf8name,
-                                            Napi::Value value,
-                                            napi_property_attributes attributes = napi_default);
-    static PropertyDescriptor InstanceValue(Symbol name,
-                                            Napi::Value value,
-                                            napi_property_attributes attributes = napi_default);
     virtual void Finalize(Napi::Env env);
 
   private:
@@ -1822,10 +1878,6 @@ namespace Napi {
     static napi_value StaticMethodCallbackWrapper(napi_env env, napi_callback_info info);
     static napi_value StaticGetterCallbackWrapper(napi_env env, napi_callback_info info);
     static napi_value StaticSetterCallbackWrapper(napi_env env, napi_callback_info info);
-    static napi_value InstanceVoidMethodCallbackWrapper(napi_env env, napi_callback_info info);
-    static napi_value InstanceMethodCallbackWrapper(napi_env env, napi_callback_info info);
-    static napi_value InstanceGetterCallbackWrapper(napi_env env, napi_callback_info info);
-    static napi_value InstanceSetterCallbackWrapper(napi_env env, napi_callback_info info);
     static void FinalizeCallback(napi_env env, void* data, void* hint);
     static Function DefineClass(Napi::Env env,
                                 const char* utf8name,
@@ -1833,26 +1885,12 @@ namespace Napi {
                                 const napi_property_descriptor* props,
                                 void* data = nullptr);
 
-    template <typename TCallback>
-    struct MethodCallbackData {
-      TCallback callback;
-      void* data;
-    };
-    typedef MethodCallbackData<StaticVoidMethodCallback> StaticVoidMethodCallbackData;
-    typedef MethodCallbackData<StaticMethodCallback> StaticMethodCallbackData;
-    typedef MethodCallbackData<InstanceVoidMethodCallback> InstanceVoidMethodCallbackData;
-    typedef MethodCallbackData<InstanceMethodCallback> InstanceMethodCallbackData;
+    typedef MethodCallbackData<T, StaticVoidMethodCallback> StaticVoidMethodCallbackData;
+    typedef MethodCallbackData<T, StaticMethodCallback> StaticMethodCallbackData;
 
-    template <typename TGetterCallback, typename TSetterCallback>
-    struct AccessorCallbackData {
-      TGetterCallback getterCallback;
-      TSetterCallback setterCallback;
-      void* data;
-    };
-    typedef AccessorCallbackData<StaticGetterCallback, StaticSetterCallback>
-      StaticAccessorCallbackData;
-    typedef AccessorCallbackData<InstanceGetterCallback, InstanceSetterCallback>
-      InstanceAccessorCallbackData;
+    typedef AccessorCallbackData<T,
+                                 StaticGetterCallback,
+                                 StaticSetterCallback> StaticAccessorCallbackData;
 
     template <StaticVoidMethodCallback method>
     static napi_value WrappedMethod(napi_env env, napi_callback_info info) noexcept;
@@ -1860,22 +1898,11 @@ namespace Napi {
     template <StaticMethodCallback method>
     static napi_value WrappedMethod(napi_env env, napi_callback_info info) noexcept;
 
-    template <InstanceVoidMethodCallback method>
-    static napi_value WrappedMethod(napi_env env, napi_callback_info info) noexcept;
-
-    template <InstanceMethodCallback method>
-    static napi_value WrappedMethod(napi_env env, napi_callback_info info) noexcept;
-
     template <StaticSetterCallback method>
     static napi_value WrappedMethod(napi_env env, napi_callback_info info) noexcept;
 
-    template <InstanceSetterCallback method>
-    static napi_value WrappedMethod(napi_env env, napi_callback_info info) noexcept;
-
-    template <StaticGetterCallback   getter> struct StaticGetterTag {};
-    template <StaticSetterCallback   setter> struct StaticSetterTag {};
-    template <InstanceGetterCallback getter> struct GetterTag {};
-    template <InstanceSetterCallback setter> struct SetterTag {};
+    template <StaticGetterCallback getter> struct StaticGetterTag {};
+    template <StaticSetterCallback setter> struct StaticSetterTag {};
 
     template <StaticGetterCallback getter>
     static napi_callback WrapStaticGetter(StaticGetterTag<getter>) noexcept { return &This::WrappedMethod<getter>; }
@@ -1884,14 +1911,6 @@ namespace Napi {
     template <StaticSetterCallback setter>
     static napi_callback WrapStaticSetter(StaticSetterTag<setter>) noexcept { return &This::WrappedMethod<setter>; }
     static napi_callback WrapStaticSetter(StaticSetterTag<nullptr>) noexcept { return nullptr; }
-
-    template <InstanceGetterCallback getter>
-    static napi_callback WrapGetter(GetterTag<getter>) noexcept { return &This::WrappedMethod<getter>; }
-    static napi_callback WrapGetter(GetterTag<nullptr>) noexcept { return nullptr; }
-
-    template <InstanceSetterCallback setter>
-    static napi_callback WrapSetter(SetterTag<setter>) noexcept { return &This::WrappedMethod<setter>; }
-    static napi_callback WrapSetter(SetterTag<nullptr>) noexcept { return nullptr; }
 
     bool _construction_failed = true;
   };
@@ -2564,6 +2583,25 @@ namespace Napi {
       static uint32_t GetNapiVersion(Env env);
       static const napi_node_version* GetNodeVersion(Env env);
   };
+
+#if NAPI_VERSION > 5
+  template <typename T>
+  class Addon : public InstanceWrap<T> {
+   public:
+    static inline Object Init(Env env, Object exports);
+    static T* Unwrap(Object wrapper);
+
+   protected:
+    typedef ClassPropertyDescriptor<T> AddonProp;
+    void DefineAddon(Object exports,
+                     const std::initializer_list<AddonProp>& props);
+    Napi::Object DefineProperties(Object object,
+                                 const std::initializer_list<AddonProp>& props);
+
+   private:
+    Object entry_point_;
+  };
+#endif  // NAPI_VERSION > 5
 
 } // namespace Napi
 

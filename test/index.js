@@ -8,6 +8,7 @@ process.config.target_defaults.default_configuration =
 // FIXME: We might need a way to load test modules automatically without
 // explicit declaration as follows.
 let testModules = [
+  'addon',
   'addon_data',
   'arraybuffer',
   'asynccontext',
@@ -87,9 +88,10 @@ if (napiVersion < 5) {
 }
 
 if (napiVersion < 6) {
+  testModules.splice(testModules.indexOf('addon'), 1);
+  testModules.splice(testModules.indexOf('addon_data'), 1);
   testModules.splice(testModules.indexOf('bigint'), 1);
   testModules.splice(testModules.indexOf('typedarray-bigint'), 1);
-  testModules.splice(testModules.indexOf('addon_data'), 1);
 }
 
 async function run() {
