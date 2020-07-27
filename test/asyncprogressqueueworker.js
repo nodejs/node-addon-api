@@ -10,7 +10,6 @@ module.exports = test(require(`./build/${buildType}/binding.node`))
 async function test({ asyncprogressqueueworker }) {
   await success(asyncprogressqueueworker);
   await fail(asyncprogressqueueworker);
-  await cancel(asyncprogressqueueworker);
 }
 
 function success(binding) {
@@ -45,26 +44,5 @@ function fail(binding) {
       common.mustNotCall()
     );
     binding.queueWork(worker);
-  });
-}
-
-function cancel(binding) {
-  return new Promise((resolve, reject) => {
-    // make sure the work we are going to cancel will not be
-    // able to start by using all the threads in the pool.
-    for (let i = 0; i < os.cpus().length; ++i) {
-      const worker = binding.createWork(-1, () => {}, () => {});
-      binding.queueWork(worker);
-    }
-    const worker = binding.createWork(-1,
-      () => {
-        assert.fail('unexpected callback');
-      },
-      () => {
-        assert.fail('unexpected progress report');
-      }
-    );
-    binding.cancelWork(worker);
-    resolve();
   });
 }
