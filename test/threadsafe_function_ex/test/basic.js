@@ -133,7 +133,7 @@ class BasicTest extends TestRunner {
           if (reject) {
             reject(new Error("tsfn.call() timed out"));
           }
-        }, 0);
+        }, 1000);
       });
     }
     return await tsfn.release();
