@@ -1623,10 +1623,6 @@ namespace Napi {
     operator const napi_property_descriptor&() const;
 
   private:
-    template <GetterCallback Getter>
-    static napi_value GetterCallbackWrapper(napi_env env, napi_callback_info info);
-    template <SetterCallback Setter>
-    static napi_value SetterCallbackWrapper(napi_env env, napi_callback_info info);
     napi_property_descriptor _desc;
   };
 
@@ -1748,16 +1744,8 @@ namespace Napi {
     template <InstanceSetterCallback method>
     static napi_value WrappedMethod(napi_env env, napi_callback_info info) noexcept;
 
-    template <InstanceGetterCallback getter> struct GetterTag {};
     template <InstanceSetterCallback setter> struct SetterTag {};
 
-    template <InstanceVoidMethodCallback method>
-    static napi_value WrappedMethod(napi_env env, napi_callback_info info) noexcept;
-    template <InstanceMethodCallback method>
-    static napi_value WrappedMethod(napi_env env, napi_callback_info info) noexcept;
-    template <InstanceGetterCallback getter>
-    static napi_callback WrapGetter(GetterTag<getter>) noexcept { return &This::WrappedMethod<getter>; }
-    static napi_callback WrapGetter(GetterTag<nullptr>) noexcept { return nullptr; }
     template <InstanceSetterCallback setter>
     static napi_callback WrapSetter(SetterTag<setter>) noexcept { return &This::WrappedMethod<setter>; }
     static napi_callback WrapSetter(SetterTag<nullptr>) noexcept { return nullptr; }
@@ -1892,21 +1880,10 @@ namespace Napi {
                                  StaticGetterCallback,
                                  StaticSetterCallback> StaticAccessorCallbackData;
 
-    template <StaticVoidMethodCallback method>
-    static napi_value WrappedMethod(napi_env env, napi_callback_info info) noexcept;
-
-    template <StaticMethodCallback method>
-    static napi_value WrappedMethod(napi_env env, napi_callback_info info) noexcept;
-
     template <StaticSetterCallback method>
     static napi_value WrappedMethod(napi_env env, napi_callback_info info) noexcept;
 
-    template <StaticGetterCallback getter> struct StaticGetterTag {};
     template <StaticSetterCallback setter> struct StaticSetterTag {};
-
-    template <StaticGetterCallback getter>
-    static napi_callback WrapStaticGetter(StaticGetterTag<getter>) noexcept { return &This::WrappedMethod<getter>; }
-    static napi_callback WrapStaticGetter(StaticGetterTag<nullptr>) noexcept { return nullptr; }
 
     template <StaticSetterCallback setter>
     static napi_callback WrapStaticSetter(StaticSetterTag<setter>) noexcept { return &This::WrappedMethod<setter>; }
