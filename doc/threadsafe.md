@@ -99,14 +99,14 @@ The removal of the dynamic call functionality has the following implications:
   ability to handle any necessary cleanup of the item's data.
 - The callback _does_ receive the context as a parameter, so a call to
   `GetContext()` is _not_ necessary. This context type is specified as the
-  **first type argument** specified to `::New`, ensuring type safety.
+  **first template argument** specified to `::New`, ensuring type safety.
 - The `New()` constructor accepts the `CallJs` callback as the **second type
   argument**. The callback must be statically defined for the API to access it.
   This affords the ability to statically pass the context as the correct type
   across all methods.
 - Only one C++ data type may be specified to every call to `[Non]BlockingCall()`
-  -- the **third type argument** specified to `::New`. Any "dynamic call data"
-  must be implemented by the user.
+  -- the **third template argument** specified to `::New`. Any "dynamic call
+  data" must be implemented by the user.
 
 
 ### Usage Suggestions

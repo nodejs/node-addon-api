@@ -140,7 +140,7 @@ class BasicTest extends TestRunner {
   }
 
   /**
-   * A `ThreadSafeFunctionEx<>` can be constructed with no type arguments.
+   * A `ThreadSafeFunctionEx<>` can be constructed with no template arguments.
    * - Creates a threadsafe function with no context or callback or callJs.
    * - The node-addon-api 'no callback' feature is implemented by passing either
    *   a no-op `Function` on N-API 4 or `std::nullptr` on N-API 5+ to the

@@ -40,7 +40,7 @@ Napi::ThreadSafeFunctionEx<ContextType, DataType, Callback>::ThreadSafeFunctionE
 
 Returns a non-empty `Napi::ThreadSafeFunctionEx` instance. To ensure the API
 statically handles the correct return type for `GetContext()` and
-`[Non]BlockingCall()`, pass the proper type arguments to
+`[Non]BlockingCall()`, pass the proper template arguments to
 `Napi::ThreadSafeFunctionEx`.
 
 ### New
@@ -90,14 +90,15 @@ Returns a non-empty `Napi::ThreadSafeFunctionEx` instance.
 Depending on the targetted `NAPI_VERSION`, the API has different implementations
 for `CallbackType callback`.
 
-When targetting version 4, `CallbackType` is:
-- `const Function&`
-- skipped, in which case the API creates a new no-op `Function`
+When targetting version 4, `callback` may be:
+- of type `const Function&`
+- not provided as an parameter, in which case the API creates a new no-op
+`Function`
 
-When targetting version 5+, `CallbackType` is:
-- `const Function&`
-- `std::nullptr_t`
-- skipped, in which case the API passes `std::nullptr`
+When targetting version 5+, `callback` may be:
+- of type `const Function&`
+- of type `std::nullptr_t`
+- not provided as an parameter, in which case the API passes `std::nullptr`
 
 ### Acquire
 
@@ -170,13 +171,6 @@ napi_status Napi::ThreadSafeFunctionEx<ContextType, DataType, Callback>::NonBloc
 
 - `[optional] data`: Data to pass to the callback which was passed to
   `ThreadSafeFunctionEx::New()`.
-- `[optional] callback`: C++ function that is invoked on the main thread. The
-  callback receives the `ThreadSafeFunction`'s JavaScript callback function to
-  call as an `Napi::Function` in its parameters and the `DataType*` data pointer
-  (if provided). Must implement `void operator()(Napi::Env env, Function
-  jsCallback, DataType* data)`, skipping `data` if not provided. It is not
-  necessary to call into JavaScript via `MakeCallback()` because N-API runs
-  `callback` in a context appropriate for callbacks.
 
 Returns one of:
 - `napi_ok`: The call was successfully added to the queue.

@@ -4399,7 +4399,7 @@ inline void AsyncWorker::OnWorkComplete(Napi::Env /*env*/, napi_status status) {
 // ThreadSafeFunctionEx<ContextType,DataType,CallJs> class
 ////////////////////////////////////////////////////////////////////////////////
 
-// Starting with NAPI 4, the JavaScript function `func` parameter of
+// Starting with NAPI 5, the JavaScript function `func` parameter of
 // `napi_create_threadsafe_function` is optional.
 #if NAPI_VERSION > 4
 // static, with Callback [missing] Resource [missing] Finalizer [missing]

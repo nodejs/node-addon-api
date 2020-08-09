@@ -263,9 +263,6 @@ public:
 
     napi_threadsafe_function napi_tsfn;
 
-    // A threadsafe function on N-API 4 still requires a callback function, so
-    // this uses the `EmptyFunctionFactory` helper method to return a no-op
-    // Function on N-API 5+.
     auto status = napi_create_threadsafe_function(
         info.Env(), info[0], nullptr, String::From(info.Env(), "Test"), 0, 1,
         nullptr, Finalizer, this, CallJs, &napi_tsfn);
@@ -349,8 +346,8 @@ namespace simple {
 using ContextType = std::nullptr_t;
 
 // Full type of our ThreadSafeFunctionEx. We don't specify the `ContextType`
-// here (even though the _default_ for the type argument is `std::nullptr_t`) to
-// demonstrate construction with no type arguments.
+// here (even though the _default_ for the template argument is
+// `std::nullptr_t`) to demonstrate construction with no template arguments.
 using TSFN = ThreadSafeFunctionEx<>;
 
 class TSFNWrap;
@@ -363,7 +360,9 @@ public:
 
     auto env = info.Env();
 #if NAPI_VERSION == 4
-    // A threadsafe function on N-API 4 still requires a callback function.
+    // A threadsafe function on N-API 4 still requires a callback function, so
+    // this uses the `EmptyFunctionFactory` helper method to return a no-op
+    // Function on N-API 4.
     _tsfn = TSFN::New(
         env, // napi_env env,
         TSFN::EmptyFunctionFactory(
