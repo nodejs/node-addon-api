@@ -29,10 +29,8 @@ const buildType = process.config.target_defaults.default_configuration;
 const THREAD_COUNT = 5;
 const EXPECTED_SUM = (THREAD_COUNT - 1) * (THREAD_COUNT) / 2;
 
-module.exports = Promise.all([
-  test(require(`../build/${buildType}/binding.node`)),
-  test(require(`../build/${buildType}/binding_noexcept.node`))
-]);
+module.exports = test(require(`../build/${buildType}/binding.node`))
+  .then(() => test(require(`../build/${buildType}/binding_noexcept.node`)));
 
 /** @param {number[]} N */
 const sum = (N) => N.reduce((sum, n) => sum + n, 0);
@@ -57,9 +55,7 @@ function test(binding) {
     assert.equal(sum(calls), EXPECTED_SUM);
   }
 
-  return Promise.all([
-    check(binding.threadsafe_function_sum.testDelayedTSFN),
-    check(binding.threadsafe_function_sum.testWithTSFN),
-    checkAcquire()
-  ]);
+  return check(binding.threadsafe_function_sum.testDelayedTSFN)
+    .then(() => check(binding.threadsafe_function_sum.testWithTSFN))
+    .then(() => checkAcquire());
 }

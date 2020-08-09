@@ -15,8 +15,8 @@ const isMainProcess = process.argv[1] != __filename;
  */
 
 if (isMainProcess) {
-  test(`../build/${buildType}/binding.node`);
-  test(`../build/${buildType}/binding_noexcept.node`);
+  module.exports = test(`../build/${buildType}/binding.node`)
+    .then(() => test(`../build/${buildType}/binding_noexcept.node`));
 } else {
   test(process.argv[2]);
 }
@@ -24,27 +24,29 @@ if (isMainProcess) {
 function test(bindingFile) {
   if (isMainProcess) {
     // Main process
-    const child = require('../napi_child').spawn(process.argv[0], [ '--expose-gc', __filename, bindingFile ], {
-      stdio: 'inherit',
+    return new Promise((resolve, reject) => {
+      const child = require('../napi_child').spawn(process.argv[0], [
+        '--expose-gc', __filename, bindingFile
+      ], { stdio: 'inherit' });
+
+      let timeout = setTimeout( function() {
+        child.kill();
+        timeout = 0;
+        reject(new Error("Expected child to die"));
+      }, 5000);
+
+      child.on("error", (err) => {
+        clearTimeout(timeout);
+        timeout = 0;
+        reject(new Error(err));
+      })
+
+      child.on("close", (code) => {
+        if (timeout) clearTimeout(timeout);
+        assert.strictEqual(code, 0, "Expected return value 0");
+        resolve();
+      });
     });
-
-    let timeout = setTimeout( function() {
-      child.kill();
-      timeout = 0;
-      throw new Error("Expected child to die");
-    }, 5000);
-
-    child.on("error", (err) => {
-      clearTimeout(timeout);
-      timeout = 0;
-      throw new Error(err);
-    })
-
-    child.on("close", (code) => {
-      if (timeout) clearTimeout(timeout);
-      assert(!code, "Expected return value 0");
-    });
-
   } else {
     // Child process
     const binding = require(bindingFile);

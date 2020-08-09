@@ -43,7 +43,6 @@ let testModules = [
   'object/set_property',
   'promise',
   'run_script',
-  'threadsafe_function_ex',
   'threadsafe_function/threadsafe_function_ctx',
   'threadsafe_function/threadsafe_function_existing_tsfn',
   'threadsafe_function/threadsafe_function_ptr',
@@ -78,9 +77,6 @@ if (napiVersion < 4) {
   testModules.splice(testModules.indexOf('threadsafe_function/threadsafe_function_sum'), 1);
   testModules.splice(testModules.indexOf('threadsafe_function/threadsafe_function_unref'), 1);
   testModules.splice(testModules.indexOf('threadsafe_function/threadsafe_function'), 1);
-  testModules.splice(testModules.indexOf('threadsafe_function_ex/basic'), 1);
-  testModules.splice(testModules.indexOf('threadsafe_function_ex/example'), 1);
-  testModules.splice(testModules.indexOf('threadsafe_function_ex/threadsafe'), 1);
 }
 
 if (napiVersion < 5) {
@@ -94,41 +90,40 @@ if (napiVersion < 6) {
   testModules.splice(testModules.indexOf('typedarray-bigint'), 1);
 }
 
-async function run() {
-  if (typeof global.gc === 'function') {
-    console.log(`Testing with N-API Version '${napiVersion}'.`);
+if (typeof global.gc === 'function') {
+  (async function() {
+  console.log(`Testing with N-API Version '${napiVersion}'.`);
 
-    console.log('Starting test suite\n');
+  console.log('Starting test suite\n');
 
-    // Requiring each module runs tests in the module.
-    testModules.forEach(name => {
-      console.log(`Running test '${name}'`);
-      require('./' + name);
-    });
+  // Requiring each module runs tests in the module.
+  for (const name of testModules) {
+    console.log(`Running test '${name}'`);
+    await require('./' + name);
+  };
 
-    console.log('\nAll tests passed!');
-  } else {
-    // Construct the correct (version-dependent) command-line args.
-    let args = ['--expose-gc', '--no-concurrent-array-buffer-freeing'];
-    if (majorNodeVersion >= 14) {
-      args.push('--no-concurrent-array-buffer-sweeping');
-    }
-    args.push(__filename);
-
-    const child = require('./napi_child').spawnSync(process.argv[0], args, {
-      stdio: 'inherit',
-    });
-
-    if (child.signal) {
-      console.error(`Tests aborted with ${child.signal}`);
-      process.exitCode = 1;
-    } else {
-      process.exitCode = child.status;
-    }
-    process.exit(process.exitCode);
+  console.log('\nAll tests passed!');
+  })().catch((error) => {
+    console.log(error);
+    process.exit(1);
+  });
+} else {
+  // Construct the correct (version-dependent) command-line args.
+  let args = ['--expose-gc', '--no-concurrent-array-buffer-freeing'];
+  if (majorNodeVersion >= 14) {
+    args.push('--no-concurrent-array-buffer-sweeping');
   }
+  args.push(__filename);
+
+  const child = require('./napi_child').spawnSync(process.argv[0], args, {
+    stdio: 'inherit',
+  });
+
+  if (child.signal) {
+    console.error(`Tests aborted with ${child.signal}`);
+    process.exitCode = 1;
+  } else {
+    process.exitCode = child.status;
+  }
+  process.exit(process.exitCode);
 }
-
-run()
-  .catch(e => (console.error(e), process.exit(1)));
-

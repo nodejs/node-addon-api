@@ -83,6 +83,24 @@ inline napi_value WrapCallback(Callable callback) {
 #endif // NAPI_CPP_EXCEPTIONS
 }
 
+// For use in JS to C++ void callback wrappers to catch any Napi::Error
+// exceptions and rethrow them as JavaScript exceptions before returning from the
+// callback.
+template <typename Callable>
+inline void WrapVoidCallback(Callable callback) {
+#ifdef NAPI_CPP_EXCEPTIONS
+  try {
+    callback();
+  } catch (const Error& e) {
+    e.ThrowAsJavaScriptException();
+  }
+#else // NAPI_CPP_EXCEPTIONS
+  // When C++ exceptions are disabled, errors are immediately thrown as JS
+  // exceptions, so there is no need to catch and rethrow them here.
+  callback();
+#endif // NAPI_CPP_EXCEPTIONS
+}
+
 template <typename Callable, typename Return>
 struct CallbackData {
   static inline
@@ -121,17 +139,21 @@ struct CallbackData<Callable, void> {
 template <typename T, typename Finalizer, typename Hint = void>
 struct FinalizeData {
   static inline
-  void Wrapper(napi_env env, void* data, void* finalizeHint) {
-    FinalizeData* finalizeData = static_cast<FinalizeData*>(finalizeHint);
-    finalizeData->callback(Env(env), static_cast<T*>(data));
-    delete finalizeData;
+  void Wrapper(napi_env env, void* data, void* finalizeHint) noexcept {
+    WrapVoidCallback([&] {
+      FinalizeData* finalizeData = static_cast<FinalizeData*>(finalizeHint);
+      finalizeData->callback(Env(env), static_cast<T*>(data));
+      delete finalizeData;
+    });
   }
 
   static inline
-  void WrapperWithHint(napi_env env, void* data, void* finalizeHint) {
-    FinalizeData* finalizeData = static_cast<FinalizeData*>(finalizeHint);
-    finalizeData->callback(Env(env), static_cast<T*>(data), finalizeData->hint);
-    delete finalizeData;
+  void WrapperWithHint(napi_env env, void* data, void* finalizeHint) noexcept {
+    WrapVoidCallback([&] {
+      FinalizeData* finalizeData = static_cast<FinalizeData*>(finalizeHint);
+      finalizeData->callback(Env(env), static_cast<T*>(data), finalizeData->hint);
+      delete finalizeData;
+    });
   }
 
   Finalizer callback;
