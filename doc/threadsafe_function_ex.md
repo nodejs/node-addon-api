@@ -8,7 +8,7 @@ of:
   a TSFN has no context.
 - `DataType = void*`: The data to use in the native callback. By default, a TSFN
   can accept *any* data type.
-- `Callback = void*(Napi::Env, Napi::Function jsCallback, ContextType*,
+- `Callback = void(*)(Napi::Env, Napi::Function jsCallback, ContextType*,
   DataType*)`: The callback to run for each item added to the queue. If no
   `Callback` is given, the API will call the function `jsCallback` with no
   arguments.
@@ -73,7 +73,7 @@ New(napi_env env,
 - `initialThreadCount`: The initial number of threads, including the main
   thread, which will be making use of this function.
 - `[optional] context`: Data to attach to the resulting `ThreadSafeFunction`.
-  Can be retreived via `GetContext()`.
+  It can be retreived via `GetContext()`.
 - `[optional] finalizeCallback`: Function to call when the
   `ThreadSafeFunctionEx` is being destroyed.  This callback will be invoked on
   the main thread when the thread-safe function is about to be destroyed. It

@@ -62,7 +62,7 @@ New(napi_env env,
 - `initialThreadCount`: The initial number of threads, including the main
   thread, which will be making use of this function.
 - `[optional] context`: Data to attach to the resulting `ThreadSafeFunction`.
-  Can be retreived via `GetContext()`.
+  It can be retreived by calling `GetContext()`.
 - `[optional] finalizeCallback`: Function to call when the `ThreadSafeFunction`
   is being destroyed.  This callback will be invoked on the main thread when the
   thread-safe function is about to be destroyed. It receives the context and the

@@ -14,7 +14,7 @@ easy way to do this. These APIs provide two types --
 [`Napi::ThreadSafeFunctionEx`](threadsafe_function_ex.md) -- as well as APIs to
 create, destroy, and call objects of this type. The differences between the two
 are subtle and are [highlighted below](#implementation-differences). Regardless
-of which type you choose, the API between the two are similar.
+of which type you choose, the APIs between the two are similar.
 
 `Napi::ThreadSafeFunction[Ex]::New()` creates a persistent reference that holds
 a JavaScript function which can be called from multiple threads. The calls
@@ -44,11 +44,11 @@ reaches zero, no further threads can start making use of it by calling
 
 The choice between `Napi::ThreadSafeFunction` and `Napi::ThreadSafeFunctionEx`
 depends largely on how you plan to execute your native C++ code (the "callback")
-on the Node thread.
+on the Node.js thread.
 
 ### [`Napi::ThreadSafeFunction`](threadsafe_function.md)
 
-This API is designed without N-API 5 native support for [optional JavaScript
+This API is designed without N-API 5 native support for [the optional JavaScript
   function callback feature](https://github.com/nodejs/node/commit/53297e66cb).
   `::New` methods that do not have a `Function` parameter will construct a
   _new_, no-op `Function` on the environment to pass to the underlying N-API
@@ -62,12 +62,12 @@ This API has some dynamic functionality, in that:
 - Different C++ data types may be passed with each call of `[Non]BlockingCall()`
   to match the specific data type as specified in the `CallJs` callback.
 
-However, this functionality comes with some **additional overhead** and
+Note that this functionality comes with some **additional overhead** and
 situational **memory leaks**:
-- The API acts as a "middle-man" between the underlying
+- The API acts as a "broker" between the underlying
   `napi_threadsafe_function`, and dynamically constructs a wrapper for your
   callback on the heap for every call to `[Non]BlockingCall()`.
-- In acting in this "middle-man" fashion, the API will call the underlying "make
+- In acting in this "broker" fashion, the API will call the underlying "make
   call" N-API method on this packaged item. If the API has determined the
   thread-safe function is no longer accessible (eg. all threads have released yet
   there are still items on the queue), **the callback passed to
@@ -88,15 +88,15 @@ drawbacks listed above. The API is designed with N-API 5's support of an
 optional function callback. The API will correctly allow developers to pass
 `std::nullptr` instead of a `const Function&` for the callback function
 specified in `::New`. It also provides helper APIs to _target_ N-API 4 and
-construct a no-op `Function` **or** to target N-API 5 and "construct" an
+construct a no-op `Function` **or** to target N-API 5 and "construct" a
 `std::nullptr` callback. This allows a single codebase to use the same APIs,
 with just a switch of the `NAPI_VERSION` compile-time constant.
 
-The removal of the dynamic call functionality has the additional side effects:
-- The API does _not_ act as a "middle-man" compared to the non-`Ex`. Once Node
+The removal of the dynamic call functionality has the following implications:
+- The API does _not_ act as a "broker" compared to the non-`Ex`. Once Node.js
   finalizes the thread-safe function, the `CallJs` callback will execute with an
-  empty `Napi::Env` for any remaining items on the queue. This provides the the
-  ability to handle any necessary clean up of the item's data.
+  empty `Napi::Env` for any remaining items on the queue. This provides the
+  ability to handle any necessary cleanup of the item's data.
 - The callback _does_ receive the context as a parameter, so a call to
   `GetContext()` is _not_ necessary. This context type is specified as the
   **first type argument** specified to `::New`, ensuring type safety.
