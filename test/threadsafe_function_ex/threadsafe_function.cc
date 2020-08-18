@@ -174,7 +174,7 @@ static Value StartThreadNoNative(const CallbackInfo& info) {
   return StartThreadInternal(info, ThreadSafeFunctionInfo::DEFAULT);
 }
 
-Object InitThreadSafeFunctionExThreadSafe(Env env) {
+Object InitThreadSafeFunctionEx(Env env) {
   for (size_t index = 0; index < ARRAY_LENGTH; index++) {
     ints[index] = index;
   }

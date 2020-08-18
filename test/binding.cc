@@ -49,9 +49,12 @@ Object InitThreadSafeFunctionPtr(Env env);
 Object InitThreadSafeFunctionSum(Env env);
 Object InitThreadSafeFunctionUnref(Env env);
 Object InitThreadSafeFunction(Env env);
-Object InitThreadSafeFunctionExBasic(Env env);
-Object InitThreadSafeFunctionExExample(Env env);
-Object InitThreadSafeFunctionExThreadSafe(Env env);
+Object InitThreadSafeFunctionExCtx(Env env);
+Object InitThreadSafeFunctionExExistingTsfn(Env env);
+Object InitThreadSafeFunctionExPtr(Env env);
+Object InitThreadSafeFunctionExSum(Env env);
+Object InitThreadSafeFunctionExUnref(Env env);
+Object InitThreadSafeFunctionEx(Env env);
 #endif
 Object InitTypedArray(Env env);
 Object InitObjectWrap(Env env);
@@ -111,10 +114,13 @@ Object Init(Env env, Object exports) {
   exports.Set("threadsafe_function_ptr", InitThreadSafeFunctionPtr(env));
   exports.Set("threadsafe_function_sum", InitThreadSafeFunctionSum(env));
   exports.Set("threadsafe_function_unref", InitThreadSafeFunctionUnref(env));
-  exports.Set("threadsafe_function", InitThreadSafeFunction(env));
-  exports.Set("threadsafe_function_ex_basic", InitThreadSafeFunctionExBasic(env));
-  exports.Set("threadsafe_function_ex_example", InitThreadSafeFunctionExExample(env));
-  exports.Set("threadsafe_function_ex_threadsafe", InitThreadSafeFunctionExThreadSafe(env));
+  exports.Set("threadsafe_function", InitThreadSafeFunctionEx(env));
+  exports.Set("threadsafe_function_ex_ctx", InitThreadSafeFunctionExCtx(env));
+  exports.Set("threadsafe_function_ex_existing_tsfn", InitThreadSafeFunctionExExistingTsfn(env));
+  exports.Set("threadsafe_function_ex_ptr", InitThreadSafeFunctionExPtr(env));
+  exports.Set("threadsafe_function_ex_sum", InitThreadSafeFunctionExSum(env));
+  exports.Set("threadsafe_function_ex_unref", InitThreadSafeFunctionExUnref(env));
+  exports.Set("threadsafe_function_ex", InitThreadSafeFunctionEx(env));
 #endif
   exports.Set("typedarray", InitTypedArray(env));
   exports.Set("objectwrap", InitObjectWrap(env));

@@ -1,3 +1,0 @@
-# Napi::ThreadSafeFunctionEx tests
-
-TODO

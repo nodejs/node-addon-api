@@ -82,7 +82,7 @@ New(napi_env env,
   calling `uv_thread_join()`. It is important that, aside from the main loop
   thread, there be no threads left using the thread-safe function after the
   finalize callback completes. Must implement `void operator()(Env env,
-  DataType* data, ContextType* hint)`.
+  FinalizerDataType* data, ContextType* hint)`.
 - `[optional] data`: Data to be passed to `finalizeCallback`.
 
 Returns a non-empty `Napi::ThreadSafeFunctionEx` instance.
@@ -182,56 +182,109 @@ Returns one of:
 - `napi_generic_failure`: A generic error occurred when attemping to add to the
   queue.
 
+
 ## Example
 
-For an in-line documented example, please see the ThreadSafeFunctionEx CI tests hosted here.
-- [test/threadsafe_function_ex/test/example.js](../test/threadsafe_function_ex/test/example.js)
-- [test/threadsafe_function_ex/test/example.cc](../test/threadsafe_function_ex/test/example.cc)
+```cpp
+#include <chrono>
+#include <thread>
+#include <napi.h>
 
-The example will create multiple set of threads. Each thread calls into
-JavaScript with a numeric `base` value (deterministically calculated by the
-thread id), with Node returning either a `number` or `Promise<number>` that
-resolves to `base * base`.
+using namespace Napi;
 
-From the root of the `node-addon-api` repository:
+std::thread nativeThread;
+ThreadSafeFunction tsfn;
+
+Value Start( const CallbackInfo& info )
+{
+  Napi::Env env = info.Env();
+
+  if ( info.Length() < 2 )
+  {
+    throw TypeError::New( env, "Expected two arguments" );
+  }
+  else if ( !info[0].IsFunction() )
+  {
+    throw TypeError::New( env, "Expected first arg to be function" );
+  }
+  else if ( !info[1].IsNumber() )
+  {
+    throw TypeError::New( env, "Expected second arg to be number" );
+  }
+
+  int count = info[1].As<Number>().Int32Value();
+
+  // Create a ThreadSafeFunction
+  tsfn = ThreadSafeFunction::New(
+      env,
+      info[0].As<Function>(),  // JavaScript function called asynchronously
+      "Resource Name",         // Name
+      0,                       // Unlimited queue
+      1,                       // Only one thread will use this initially
+      []( Napi::Env ) {        // Finalizer used to clean threads up
+        nativeThread.join();
+      } );
+
+  // Create a native thread
+  nativeThread = std::thread( [count] {
+    auto callback = []( Napi::Env env, Function jsCallback, int* value ) {
+      // Transform native data into JS data, passing it to the provided
+      // `jsCallback` -- the TSFN's JavaScript function.
+      jsCallback.Call( {Number::New( env, *value )} );
+
+      // We're finished with the data.
+      delete value;
+    };
+
+    for ( int i = 0; i < count; i++ )
+    {
+      // Create new data
+      int* value = new int( clock() );
+
+      // Perform a blocking call
+      napi_status status = tsfn.BlockingCall( value, callback );
+      if ( status != napi_ok )
+      {
+        // Handle error
+        break;
+      }
+
+      std::this_thread::sleep_for( std::chrono::seconds( 1 ) );
+    }
+
+    // Release the thread-safe function
+    tsfn.Release();
+  } );
+
+  return Boolean::New(env, true);
+}
+
+Napi::Object Init( Napi::Env env, Object exports )
+{
+  exports.Set( "start", Function::New( env, Start ) );
+  return exports;
+}
+
+NODE_API_MODULE( clock, Init )
+```
+
+The above code can be used from JavaScript as follows:
+
+```js
+const { start } = require('bindings')('clock');
+
+start(function () {
+    console.log("JavaScript callback called with arguments", Array.from(arguments));
+}, 5);
+```
+
+When executed, the output will show the value of `clock()` five times at one
+second intervals:
 
 ```
-Usage: node ./test/threadsafe_function_ex/test/example.js [options]
-
-      -c, --calls <calls>                   The number of calls each thread should make (number[]).
-      -a, --acquire [factor]                Acquire a new set of `factor` call threads, using the
-                                            same `calls` definition.
-      -d, --call-delay <call-delays>        The delay on callback resolution that each thread should
-                                            have (number[]). This is achieved via a delayed Promise
-                                            resolution in the JavaScript callback provided to the
-                                            TSFN. Using large delays here will cause all threads to
-                                            bottle-neck.
-      -D, --thread-delay <thread-delays>    The delay that each thread should have prior to making a
-                                            call (number[]). Using large delays here will cause the
-                                            individual thread to bottle-neck.
-      -l, --log-call                        Display console.log-based logging messages.
-      -L, --log-thread                      Display std::cout-based logging messages.
-      -n, --no-callback                     Do not use a JavaScript callback.
-      -e, --callback-error [thread[.call]]  Cause an error to occur in the JavaScript callback for
-                                            the given thread's call (if provided; first thread's
-                                            first call otherwise).
-
-  When not provided:
-      - <calls> defaults to [1,2,3,4,5]
-      - [factor] defaults to 1
-      - <call-delays> defaults to [400,200,100,50,0]
-      - <thread-delays> defaults to [400,200,100,50,0]
-
-
-Examples:
-
-      -c [1,2,3] -l -L
-
-          Creates three threads that makes one, two, and three calls each, respectively.
-
-      -c [5,5] -d [5000,5000] -D [0,0] -l -L
-
-          Creates two threads that make five calls each. In this scenario, the threads will be
-          blocked primarily on waiting for the callback to resolve, as each thread's call takes
-          5000 milliseconds.
+JavaScript callback called with arguments [ 84745 ]
+JavaScript callback called with arguments [ 103211 ]
+JavaScript callback called with arguments [ 104516 ]
+JavaScript callback called with arguments [ 105104 ]
+JavaScript callback called with arguments [ 105691 ]
 ```
