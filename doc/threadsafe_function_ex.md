@@ -92,13 +92,13 @@ for `CallbackType callback`.
 
 When targetting version 4, `callback` may be:
 - of type `const Function&`
-- not provided as an parameter, in which case the API creates a new no-op
+- not provided as a parameter, in which case the API creates a new no-op
 `Function`
 
 When targetting version 5+, `callback` may be:
 - of type `const Function&`
 - of type `std::nullptr_t`
-- not provided as an parameter, in which case the API passes `std::nullptr`
+- not provided as a parameter, in which case the API passes `std::nullptr`
 
 ### Acquire
 

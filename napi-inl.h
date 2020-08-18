@@ -13,7 +13,6 @@
 #include <cstring>
 #include <mutex>
 #include <type_traits>
-#include <csignal>
 
 namespace Napi {
 
