@@ -4730,6 +4730,7 @@ inline void AsyncProgressWorkerBase<DataType>::OnAsyncWorkProgress(Napi::Env /* 
                                 void* data) {
   ThreadSafeData* tsd = static_cast<ThreadSafeData*>(data);
   tsd->asyncprogressworker()->OnWorkProgress(tsd->data());
+  delete tsd;
 }
 
 template <typename DataType>
