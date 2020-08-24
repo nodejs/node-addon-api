@@ -37,6 +37,10 @@ APIs exposed by node-addon-api are generally used to create and
 manipulate JavaScript values. Concepts and operations generally map
 to ideas specified in the **ECMA262 Language Specification**.
 
+The [N-API Resource](http://nodejs.github.io/node-addon-examples/) offers an 
+excellent orientation and tips for developers just getting started with N-API 
+and node-addon-api.
+
 - **[Setup](#setup)**
 - **[API Documentation](#api)**
 - **[Examples](#examples)**
