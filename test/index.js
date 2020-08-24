@@ -91,6 +91,10 @@ if (napiVersion < 6) {
   testModules.splice(testModules.indexOf('typedarray-bigint'), 1);
 }
 
+if (majorNodeVersion < 12) {
+  testModules.splice(testModules.indexOf('objectwrap_worker_thread'), 1);
+}
+
 if (typeof global.gc === 'function') {
   (async function() {
   console.log(`Testing with N-API Version '${napiVersion}'.`);
