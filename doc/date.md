@@ -1,8 +1,8 @@
 # Date
 
 `Napi::Date` class is a representation of the JavaScript `Date` object. The
-`Napi::Date` class inherits its behavior from `Napi::Value` class
-(for more info see [`Napi::Value`](value.md))
+`Napi::Date` class inherits its behavior from the `Napi::Value` class
+(for more info see [`Napi::Value`](value.md)).
 
 ## Methods
 

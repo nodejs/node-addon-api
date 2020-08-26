@@ -1,5 +1,7 @@
 # TypedArray
 
+Class `Napi::TypedArray` inherits from class [`Napi::Object`][].
+
 The `Napi::TypedArray` class corresponds to the
 [JavaScript `TypedArray`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/TypedArray)
 class.
@@ -72,3 +74,5 @@ size_t Napi::TypedArray::ByteLength() const;
 ```
 
 Returns the length of the array, in bytes.
+
+[`Napi::Object`]: ./object.md

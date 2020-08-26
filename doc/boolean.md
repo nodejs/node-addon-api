@@ -1,5 +1,7 @@
 # Boolean
 
+Class `Napi::Boolean` inherits from class [`Napi::Value`][].
+
 `Napi::Boolean` class is a representation of the JavaScript `Boolean` object. The
 `Napi::Boolean` class inherits its behavior from the `Napi::Value` class
 (for more info see: [`Napi::Value`](value.md)).
@@ -62,3 +64,5 @@ Napi::Boolean::operator bool() const;
 ```
 
 Returns the boolean primitive type of the corresponding `Napi::Boolean` object.
+
+[`Napi::Value`]: ./value.md
