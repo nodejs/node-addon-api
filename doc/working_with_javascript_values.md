@@ -1,7 +1,7 @@
 # Working with JavaScript Values
 
 `node-addon-api` provides a set of classes that allow to create and manage
-JavaScript object:
+JavaScript objects:
 
 - [Function](function.md)
   - [FunctionReference](function_reference.md)

@@ -1,5 +1,7 @@
 # External (template)
 
+Class `Napi::External<T>` inherits from class [`Napi::Value`][].
+
 The `Napi::External` template class implements the ability to create a `Napi::Value` object with arbitrary C++ data. It is the user's responsibility to manage the memory for the arbitrary C++ data.
 
 `Napi::External` objects can be created with an optional Finalizer function and optional Hint value. The Finalizer function, if specified, is called when your `Napi::External` object is released by Node's garbage collector. It gives your code the opportunity to free any dynamically created data. If you specify a Hint value, it is passed to your Finalizer function.
@@ -57,3 +59,5 @@ T* Napi::External::Data() const;
 ```
 
 Returns a pointer to the arbitrary C++ data held by the `Napi::External` object.
+
+[`Napi::Value`]: ./value.md

@@ -1,5 +1,7 @@
 # Promise
 
+Class `Napi::Promise` inherits from class [`Napi::Object`][].
+
 The `Napi::Promise` class, along with its `Napi::Promise::Deferred` class, implement the ability to create, resolve, and reject Promise objects.
 
 The basic approach is to create a `Napi::Promise::Deferred` object and return to your caller the value returned by the `Napi::Promise::Deferred::Promise` method. For example:
@@ -72,3 +74,6 @@ void Napi::Promise::Deferred::Reject(napi_value value) const;
 Rejects the Promise object held by the `Napi::Promise::Deferred` object.
 
 * `[in] value`: The N-API primitive value with which to reject the `Napi::Promise`.
+
+
+[`Napi::Object`]: ./object.md

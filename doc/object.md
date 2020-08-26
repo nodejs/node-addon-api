@@ -1,8 +1,10 @@
 # Object
 
+Class `Napi::Object` inherits from class [`Napi::Value`][].
+
 The `Napi::Object` class corresponds to a JavaScript object. It is extended by the following node-addon-api classes that you may use when working with more specific types:
 
-- [`Napi::Value`](value.md) which is extended by [`Napi::Array`](basic_types.md#array)
+- [`Napi::Array`](array.md)
 - [`Napi::ArrayBuffer`](array_buffer.md)
 - [`Napi::Buffer<T>`](buffer.md)
 - [`Napi::Function`](function.md)
@@ -192,7 +194,7 @@ where `data` and `hint` are the pointers that were passed into the call to `AddF
 Napi::Array Napi::Object::GetPropertyNames() const;
 ```
 
-Returns the names of the enumerable properties of the object as a [`Napi::Array`](basic_types.md#array) of strings.
+Returns the names of the enumerable properties of the object as a [`Napi::Array`](array.md) of strings.
 The properties whose key is a `Symbol` will not be included.
 
 ### HasOwnProperty()
@@ -273,3 +275,5 @@ Napi::Value Napi::Object::operator[] (uint32_t index) const;
 - `[in] index`: Element index.
 
 Returns an indexed property or array element as a [`Napi::Value`](value.md).
+
+[`Napi::Value`]: ./value.md
