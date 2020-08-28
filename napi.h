@@ -8,6 +8,10 @@
 #include <mutex>
 #include <string>
 #include <vector>
+#include <future>
+#include <utility>
+#include <optional>
+#include <stdexcept>
 
 // VS2015 RTM has bugs with constexpr, so require min of VS2015 Update 3 (known good version)
 #if !defined(_MSC_VER) || _MSC_FULL_VER >= 190024210
@@ -2402,6 +2406,74 @@ namespace Napi {
      void SendProgress_(const T* data, size_t count);
   };
   #endif  // NAPI_VERSION > 3 && !defined(__wasm32__)
+
+
+template<typename T>
+class GenericCallbackWrapper {
+public:
+    using result_t = T;
+    using callback_t = std::function<void(std::future<T>)>;
+    using conversion_function_t = std::function<Napi::Value(const Napi::Env &, std::future<T> &&)>;
+
+    GenericCallbackWrapper(const Napi::Promise::Deferred &deferred, conversion_function_t conversion_function)
+            : internal_(std::make_shared<internal>(deferred, conversion_function)) {
+        internal_->set_up();
+    }
+
+    callback_t get_native_callback() {
+        return internal_->get_native_callback();
+    }
+
+private:
+    struct internal : std::enable_shared_from_this<internal> {
+        Napi::Promise::Deferred deferred_;
+        Napi::ThreadSafeFunction function_;
+        std::optional<std::future<T>> result_;
+        conversion_function_t conversion_function_;
+
+        internal(const Napi::Promise::Deferred &deferred,
+                 conversion_function_t conversion_function) : deferred_(deferred),
+                                                              conversion_function_(conversion_function) {}
+
+        void set_up() {
+            auto resolver = Napi::Function::New(deferred_.Env(), [me = this->shared_from_this()]
+                    (const auto &info) -> Napi::Value {
+                if (info.Env() != me->deferred_.Env())
+                    throw std::logic_error("generic_callback_wrapper: Napi Environments not equal");
+                me->set_deferred();
+                return info.Env().Undefined();
+            });
+            function_ = Napi::ThreadSafeFunction::New(deferred_.Env(), resolver, "Generic callback wrapepr", 0, 1);
+        }
+
+        void set_deferred() {
+            try {
+                auto value = std::invoke(conversion_function_, deferred_.Env(), std::move(result_.value()));
+                deferred_.Resolve(value);
+            } catch (std::exception &e) {
+                deferred_.Reject(Napi::Error::New(deferred_.Env(), e.what()).Value());
+            } catch (...) {
+                deferred_.Reject(Napi::Error::New(deferred_.Env()).Value());
+            }
+        }
+
+
+        callback_t get_native_callback() {
+            return [me = this->shared_from_this()](auto &&future) {
+                me->native_callback(std::move(future));;
+            };
+        }
+
+        void native_callback(std::future<T> &&future) {
+            this->result_ = std::move(future);
+            this->function_.BlockingCall();
+            function_.Release();
+        }
+    };
+
+    std::shared_ptr<internal> internal_;
+
+};
 
   // Memory management.
   class MemoryManagement {

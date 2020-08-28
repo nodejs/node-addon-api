@@ -30,6 +30,7 @@ let testModules = [
   'error',
   'external',
   'function',
+  'generic_callback_wrapper',
   'handlescope',
   'memory_management',
   'name',

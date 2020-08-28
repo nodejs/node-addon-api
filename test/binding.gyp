@@ -24,6 +24,7 @@
         'error.cc',
         'external.cc',
         'function.cc',
+        'generic_callback_wrapper.cc',
         'handlescope.cc',
         'memory_management.cc',
         'name.cc',
@@ -61,10 +62,12 @@
   'targets': [
     {
       'target_name': 'binding',
+      'cflags_cc': ['-std=c++17'],
       'includes': ['../except.gypi']
     },
     {
       'target_name': 'binding_noexcept',
+      'cflags_cc': ['-std=c++17'],
       'includes': ['../noexcept.gypi']
     },
   ],
