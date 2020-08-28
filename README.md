@@ -37,6 +37,10 @@ APIs exposed by node-addon-api are generally used to create and
 manipulate JavaScript values. Concepts and operations generally map
 to ideas specified in the **ECMA262 Language Specification**.
 
+The [N-API Resource](http://nodejs.github.io/node-addon-examples/) offers an 
+excellent orientation and tips for developers just getting started with N-API 
+and node-addon-api.
+
 - **[Setup](#setup)**
 - **[API Documentation](#api)**
 - **[Examples](#examples)**
@@ -47,7 +51,7 @@ to ideas specified in the **ECMA262 Language Specification**.
 - **[Contributors](#contributors)**
 - **[License](#license)**
 
-## **Current version: 3.0.0**
+## **Current version: 3.0.1**
 
 (See [CHANGELOG.md](CHANGELOG.md) for complete Changelog)
 
@@ -55,8 +59,8 @@ to ideas specified in the **ECMA262 Language Specification**.
 
 <a name="setup"></a>
 
-node-addon-api is based on [N-API](https://nodejs.org/api/n-api.html) and supports using different N-API versions. 
-This allows addons built with it to run with Node.js versions which support the targeted N-API version. 
+node-addon-api is based on [N-API](https://nodejs.org/api/n-api.html) and supports using different N-API versions.
+This allows addons built with it to run with Node.js versions which support the targeted N-API version.
 **However** the node-addon-api support model is to support only the active LTS Node.js versions. This means that
 every year there will be a new major which drops support for the Node.js LTS version which has gone out of service.
 
@@ -77,6 +81,7 @@ The oldest Node.js version supported by the current version of node-addon-api is
 
 The following is the documentation for node-addon-api.
 
+ - [Addon Structure](doc/addon.md)
  - [Basic Types](doc/basic_types.md)
     - [Array](doc/basic_types.md#array)
     - [Symbol](doc/symbol.md)

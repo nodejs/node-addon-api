@@ -26,6 +26,33 @@ static void Setter(const Napi::CallbackInfo& info) {
   (void) info[0];
 }
 
+#if NAPI_VERSION > 5
+class PropDescBenchmark : public Napi::Addon<PropDescBenchmark> {
+ public:
+  PropDescBenchmark(Napi::Env, Napi::Object exports) {
+    DefineAddon(exports, {
+      InstanceAccessor("addon",
+                       &PropDescBenchmark::Getter,
+                       &PropDescBenchmark::Setter,
+                       napi_enumerable),
+      InstanceAccessor<&PropDescBenchmark::Getter,
+                       &PropDescBenchmark::Setter>("addon_templated",
+                                                   napi_enumerable),
+    });
+  }
+
+ private:
+  Napi::Value Getter(const Napi::CallbackInfo& info) {
+    return Napi::Number::New(info.Env(), 42);
+  }
+
+  void Setter(const Napi::CallbackInfo& info, const Napi::Value& val) {
+    (void) info[0];
+    (void) val;
+  }
+};
+#endif  // NAPI_VERSION > 5
+
 static Napi::Object Init(Napi::Env env, Napi::Object exports) {
   napi_status status;
   napi_property_descriptor core_prop = {
@@ -53,6 +80,10 @@ static Napi::Object Init(Napi::Env env, Napi::Object exports) {
   exports.DefineProperty(
       Napi::PropertyDescriptor::Accessor<Getter, Setter>("templated",
                                                          napi_enumerable));
+
+#if NAPI_VERSION > 5
+  PropDescBenchmark::Init(env, exports);
+#endif  // NAPI_VERSION > 5
 
   return exports;
 }

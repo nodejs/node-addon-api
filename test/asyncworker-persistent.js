@@ -21,7 +21,7 @@ function test(binding, succeed) {
     }));
 }
 
-test(binding.persistentasyncworker, false)
+module.exports = test(binding.persistentasyncworker, false)
   .then(() => test(binding.persistentasyncworker, true))
   .then(() => test(noexceptBinding.persistentasyncworker, false))
   .then(() => test(noexceptBinding.persistentasyncworker, true));

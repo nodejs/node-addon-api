@@ -1,24 +1,13 @@
 environment:
   # https://github.com/jasongin/nvs/blob/master/doc/CI.md
   NVS_VERSION: 1.4.2
-  fast_finish: true
   matrix:
-    - NODEJS_VERSION: node/4
-    - NODEJS_VERSION: node/6
-    - NODEJS_VERSION: node/8
-    - NODEJS_VERSION: node/9
     - NODEJS_VERSION: node/10
-    - NODEJS_VERSION: chakracore/8
-    - NODEJS_VERSION: chakracore/10
+    - NODEJS_VERSION: node/12
+    - NODEJS_VERSION: node/14
     - NODEJS_VERSION: nightly
-    - NODEJS_VERSION: chakracore-nightly
 
-matrix:
-  fast_finish: true
-  allow_failures:
-    - NODEJS_VERSION: nightly
-    - NODEJS_VERSION: chakracore-nightly
-
+os: Visual Studio 2017
 platform:
   - x86
   - x64
