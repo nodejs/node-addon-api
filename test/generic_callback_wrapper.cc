@@ -9,9 +9,12 @@
 
 #if (NAPI_VERSION > 3)
 
+#ifdef NAPI_CPP_EXCEPTIONS
+
 namespace {
 
 using value_t = std::uint32_t;
+
 
 value_t Pow3WithThrowAt42(value_t input) {
     if (input == 42u) {
@@ -19,6 +22,7 @@ value_t Pow3WithThrowAt42(value_t input) {
     }
     return input * input * input;
 }
+
 
 Napi::Object ConvertPow3InputWithErrorValue(const Napi::Env &env,
                           std::future<value_t> &&value_future) {
@@ -62,5 +66,13 @@ Napi::Object InitGenericCallbackWrapper(Napi::Env env) {
 
   return exports;
 }
+
+#else
+
+Napi::Object InitGenericCallbackWrapper(Napi::Env env) {
+  return Napi::Object::New(env);
+}
+
+#endif
 
 #endif

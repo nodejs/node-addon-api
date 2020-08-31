@@ -2407,7 +2407,7 @@ namespace Napi {
   };
   #endif  // NAPI_VERSION > 3 && !defined(__wasm32__)
 
-
+#ifdef NAPI_CPP_EXCEPTIONS
 template<typename T>
 class GenericCallbackWrapper {
 public:
@@ -2474,6 +2474,8 @@ private:
     std::shared_ptr<internal> internal_;
 
 };
+
+#endif
 
   // Memory management.
   class MemoryManagement {
