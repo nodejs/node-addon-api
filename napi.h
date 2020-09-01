@@ -2447,7 +2447,7 @@ private:
 
         void set_deferred() {
             try {
-                auto value = std::invoke(conversion_function_, deferred_.Env(), std::move(result_));
+                auto value = conversion_function_( deferred_.Env(), std::move(result_));
                 deferred_.Resolve(value);
             } catch (std::exception &e) {
                 deferred_.Reject(Napi::Error::New(deferred_.Env(), e.what()).Value());
