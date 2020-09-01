@@ -62,12 +62,10 @@
   'targets': [
     {
       'target_name': 'binding',
-      'cflags_cc': ['-std=c++17'],
       'includes': ['../except.gypi']
     },
     {
       'target_name': 'binding_noexcept',
-      'cflags_cc': ['-std=c++17'],
       'includes': ['../noexcept.gypi']
     },
   ],
