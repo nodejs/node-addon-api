@@ -10,7 +10,6 @@
 #include <vector>
 #include <future>
 #include <utility>
-#include <optional>
 #include <stdexcept>
 
 // VS2015 RTM has bugs with constexpr, so require min of VS2015 Update 3 (known good version)
@@ -2428,7 +2427,7 @@ private:
     struct internal : std::enable_shared_from_this<internal> {
         Napi::Promise::Deferred deferred_;
         Napi::ThreadSafeFunction function_;
-        std::optional<std::future<T>> result_;
+        std::future<T> result_;
         conversion_function_t conversion_function_;
 
         internal(const Napi::Promise::Deferred &deferred,
@@ -2448,7 +2447,7 @@ private:
 
         void set_deferred() {
             try {
-                auto value = std::invoke(conversion_function_, deferred_.Env(), std::move(result_.value()));
+                auto value = std::invoke(conversion_function_, deferred_.Env(), std::move(result_));
                 deferred_.Resolve(value);
             } catch (std::exception &e) {
                 deferred_.Reject(Napi::Error::New(deferred_.Env(), e.what()).Value());

@@ -121,6 +121,7 @@ The following is the documentation for node-addon-api.
     - [AsyncWorker](doc/async_worker.md)
     - [AsyncContext](doc/async_context.md)
     - [AsyncWorker Variants](doc/async_worker_variants.md)
+    - [GenericCallbackWrapper](doc/generic_callback_wrapper.md)
  - [Thread-safe Functions](doc/threadsafe_function.md)
  - [Promises](doc/promises.md)
  - [Version management](doc/version_management.md)
