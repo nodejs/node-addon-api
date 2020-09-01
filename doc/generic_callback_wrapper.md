@@ -1,4 +1,4 @@
-#GenericCallbackWrapper
+# GenericCallbackWrapper
 
 `Napi::GenericCallbackWrapper<T>` is a class with one template parameter `T`, 
 which is intended to allow you to return `T` from a C++ function running arbitrary async i.e. concurrency 
@@ -12,7 +12,7 @@ can be called later from any custom thread, in order to resolve/reject the promi
 Life time handling included. That means that the wrapper is internally reference counted and don't need to be stored, 
 the function object you get from `get_native_callback` will ensure the lifetime.
 
-##Self managed thread example
+## Self managed thread example
 
 ```cpp
 value_t InsertYourNativeFunctionHere(value_t input) {
@@ -50,7 +50,7 @@ Napi::Value JSFrontingNativeFunction(const Napi::CallbackInfo& info){
 }
 ```
 
-##Boost ASIO
+## Boost ASIO
 As in the mentioned example above, all you have to do is to replace the thread generation with 
 either `boost::asio::dispatch` or `boost::asio::post` like:
 
