@@ -15,14 +15,12 @@ namespace {
 
 using value_t = std::uint32_t;
 
-
 value_t Pow3WithThrowAt42(value_t input) {
     if (input == 42u) {
         throw std::runtime_error("Throwing on 42");
     }
     return input * input * input;
 }
-
 
 Napi::Object ConvertPow3InputWithErrorValue(const Napi::Env &env,
                           std::future<value_t> &&value_future) {
@@ -35,25 +33,37 @@ Napi::Object ConvertPow3InputWithErrorValue(const Napi::Env &env,
     return value;
 }
 
-void thread_main(value_t value, Napi::GenericCallbackWrapper<value_t>&& wrapper) {
+void start_task(value_t input, std::function<void(std::future<value_t>)> completion_handler) {
     std::packaged_task<value_t()> task
-    {std::bind(&Pow3WithThrowAt42, value)};
+    {std::bind(&Pow3WithThrowAt42, input)};
 
-    auto t = std::thread([task = std::move(task), wrapper = std::move(wrapper)]() mutable {
+    auto t = std::thread([task = std::move(task), completion_handler]() mutable {
         task();
-        wrapper.get_native_callback()(task.get_future());
+        completion_handler(task.get_future());
     });
     t.detach();
 }
 
 
-Napi::Value TestWithValuePow3(const Napi::CallbackInfo& info){
+Napi::Value TestPow3ErrorValue(const Napi::CallbackInfo& info){
     Napi::Promise::Deferred deferred = Napi::Promise::Deferred::New(info.Env());
 
     auto wrapper = Napi::GenericCallbackWrapper<value_t>
             (deferred, &ConvertPow3InputWithErrorValue);
 
-    thread_main(info[0].As<Napi::Number>().Uint32Value(), std::move(wrapper));
+    start_task(info[0].As<Napi::Number>().Uint32Value(), wrapper.get_native_callback());
+    return deferred.Promise();
+}
+
+Napi::Value TestPow3Throwing(const Napi::CallbackInfo& info){
+    Napi::Promise::Deferred deferred = Napi::Promise::Deferred::New(info.Env());
+
+    auto wrapper = Napi::GenericCallbackWrapper<value_t>
+            (deferred,[](const auto &env, auto &&future) -> Napi::Value {
+                return Napi::Number::New(env, future.get());
+            });
+
+    start_task(info[0].As<Napi::Number>().Uint32Value(), wrapper.get_native_callback());
     return deferred.Promise();
 }
 
@@ -62,7 +72,8 @@ Napi::Value TestWithValuePow3(const Napi::CallbackInfo& info){
 Napi::Object InitGenericCallbackWrapper(Napi::Env env) {
   using namespace Napi;
   Object exports = Object::New(env);
-  exports["TestWithValuePow3"] = Function::New(env, TestWithValuePow3);
+  exports["TestPow3ErrorValue"] = Function::New(env, TestPow3ErrorValue);
+  exports["TestPow3Throwing"] = Function::New(env, TestPow3Throwing);
 
   return exports;
 }
