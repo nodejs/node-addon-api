@@ -2410,7 +2410,7 @@ namespace Napi {
 template<typename T>
 class GenericCallbackWrapper {
 public:
-    using result_t = T;
+    using result_t [[maybe_unused]] = T;
     using callback_t = std::function<void(std::future<T>)>;
     using conversion_function_t = std::function<Napi::Value(const Napi::Env &, std::future<T> &&)>;
 
@@ -2459,12 +2459,12 @@ private:
 
         callback_t get_native_callback() {
             return [me = this->shared_from_this()](auto &&future) {
-                me->native_callback(std::move(future));;
+                me->native_callback(std::forward<decltype(future)>(future));;
             };
         }
 
         void native_callback(std::future<T> &&future) {
-            this->result_ = std::move(future);
+            this->result_ = std::forward<decltype(future)>(future);
             this->function_.BlockingCall();
             function_.Release();
         }
