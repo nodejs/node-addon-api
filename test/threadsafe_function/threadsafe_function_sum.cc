@@ -22,6 +22,10 @@ struct TestData {
   std::vector<std::thread> threads = {};
 
   ThreadSafeFunction tsfn = ThreadSafeFunction();
+
+  // These variables are only accessed from the main thread.
+  bool mainWantsRelease = false;
+  size_t expected_calls = 0;
 };
 
 void FinalizerCallback(Napi::Env env, TestData* finalizeData){
@@ -142,10 +146,27 @@ static Value TestDelayedTSFN(const CallbackInfo &info) {
   return testData->deferred.Promise();
 }
 
+void AcquireFinalizerCallback(Napi::Env env,
+                              TestData* finalizeData,
+                              TestData* context) {
+  (void) context;
+  for (size_t i = 0; i < finalizeData->threads.size(); ++i) {
+    finalizeData->threads[i].join();
+  }
+  finalizeData->deferred.Resolve(Boolean::New(env, true));
+  delete finalizeData;
+}
+
 void entryAcquire(ThreadSafeFunction tsfn, int threadId) {
   tsfn.Acquire();
+  TestData* testData = tsfn.GetContext();
   std::this_thread::sleep_for(std::chrono::milliseconds(std::rand() % 100 + 1));
   tsfn.BlockingCall( [=](Napi::Env env, Function callback) {
+    // This lambda runs on the main thread so it's OK to access the variables
+    // `expected_calls` and `mainWantsRelease`.
+    testData->expected_calls--;
+    if (testData->expected_calls == 0 && testData->mainWantsRelease)
+      testData->tsfn.Release();
     callback.Call( { Number::New(env, static_cast<double>(threadId))});
   });
   tsfn.Release();
@@ -153,6 +174,11 @@ void entryAcquire(ThreadSafeFunction tsfn, int threadId) {
 
 static Value CreateThread(const CallbackInfo& info) {
   TestData* testData = static_cast<TestData*>(info.Data());
+  // Counting expected calls like this only works because on the JS side this
+  // binding is called from a synchronous loop. This means the main loop has no
+  // chance to run the tsfn JS callback before we've counted how many threads
+  // the JS intends to create.
+  testData->expected_calls++;
   ThreadSafeFunction tsfn = testData->tsfn;
   int threadId = testData->threads.size();
   // A copy of the ThreadSafeFunction will go to the thread entry point
@@ -162,8 +188,7 @@ static Value CreateThread(const CallbackInfo& info) {
 
 static Value StopThreads(const CallbackInfo& info) {
   TestData* testData = static_cast<TestData*>(info.Data());
-  ThreadSafeFunction tsfn = testData->tsfn;
-  tsfn.Release();
+  testData->mainWantsRelease = true;
   return info.Env().Undefined();
 }
 
@@ -176,8 +201,9 @@ static Value TestAcquire(const CallbackInfo& info) {
   TestData *testData = new TestData(Promise::Deferred::New(info.Env()));
 
   testData->tsfn = ThreadSafeFunction::New(
-      env, cb, "Test", 0, 1,
-      std::function<decltype(FinalizerCallback)>(FinalizerCallback), testData);
+    env, cb, "Test", 0, 1, testData,
+    std::function<decltype(AcquireFinalizerCallback)>(AcquireFinalizerCallback),
+    testData);
 
   Object result = Object::New(env);
   result["createThread"] = Function::New( env, CreateThread, "createThread", testData);

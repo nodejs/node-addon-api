@@ -1,8 +1,9 @@
 'use strict';
 const buildType = process.config.target_defaults.default_configuration;
 const assert = require('assert');
+const testUtil = require('./testUtil');
 
-const test = (binding) => {
+async function test(binding) {
   const Test = binding.objectwrap.Test;
 
   const testValue = (obj, clazz) => {
@@ -237,22 +238,20 @@ const test = (binding) => {
     }
   };
 
-  const testFinalize = (clazz) => {
-
+  async function testFinalize(clazz) {
     let finalizeCalled = false;
-    const finalizeCb = function(called) {
-      finalizeCalled = called;
-    };
+    await testUtil.runGCTests([
+      'test finalize',
+      () => {
+        const finalizeCb = function(called) {
+          finalizeCalled = called;
+        };
 
-    //Scope Test instance so that it can be gc'd.
-    (function() {
-      new Test(finalizeCb);
-    })();
-
-    global.gc();
-
-    assert.strictEqual(finalizeCalled, true);
-
+        //Scope Test instance so that it can be gc'd.
+        (() => { new Test(finalizeCb); })();
+      },
+      () => assert.strictEqual(finalizeCalled, true)
+    ]);
   };
 
   const testObj = (obj, clazz) => {
@@ -265,22 +264,22 @@ const test = (binding) => {
     testConventions(obj, clazz);
   }
 
-  const testClass = (clazz) => {
+  async function testClass(clazz) {
     testStaticValue(clazz);
     testStaticAccessor(clazz);
     testStaticMethod(clazz);
 
     testStaticEnumerables(clazz);
-    testFinalize(clazz);
+    await testFinalize(clazz);
   };
 
   // `Test` is needed for accessing exposed symbols
   testObj(new Test(), Test);
-  testClass(Test);
+  await testClass(Test);
 
   // Make sure the C++ object can be garbage collected without issues.
-  setImmediate(global.gc);
+  await testUtil.runGCTests(['one last gc', () => {}, () => {}]);
 }
 
-test(require(`./build/${buildType}/binding.node`));
-test(require(`./build/${buildType}/binding_noexcept.node`));
+module.exports = test(require(`./build/${buildType}/binding.node`))
+  .then(() => test(require(`./build/${buildType}/binding_noexcept.node`)));

@@ -3,10 +3,8 @@
 const assert = require('assert');
 const buildType = process.config.target_defaults.default_configuration;
 
-module.exports = Promise.all[
-  test(require(`../build/${buildType}/binding.node`)),
-  test(require(`../build/${buildType}/binding_noexcept.node`))
-];
+module.exports = test(require(`../build/${buildType}/binding.node`))
+  .then(() => test(require(`../build/${buildType}/binding_noexcept.node`)));
 
 async function test(binding) {
   const ctx = { };

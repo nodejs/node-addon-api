@@ -37,14 +37,6 @@ public:
     worker->Queue();
   }
 
-  static void CancelWork(const CallbackInfo& info) {
-    auto wrap = info[0].As<Napi::External<TestWorker>>();
-    auto worker = wrap.Data();
-    // We cannot cancel a worker if it got started. So we have to do a quick cancel.
-    worker->Queue();
-    worker->Cancel();
-  }
-
 protected:
   void Execute(const ExecutionProgress& progress) override {
     using namespace std::chrono_literals;
@@ -89,7 +81,6 @@ Object InitAsyncProgressQueueWorker(Env env) {
   Object exports = Object::New(env);
   exports["createWork"] = Function::New(env, TestWorker::CreateWork);
   exports["queueWork"] = Function::New(env, TestWorker::QueueWork);
-  exports["cancelWork"] = Function::New(env, TestWorker::CancelWork);
   return exports;
 }
 

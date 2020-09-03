@@ -8,6 +8,7 @@ process.config.target_defaults.default_configuration =
 // FIXME: We might need a way to load test modules automatically without
 // explicit declaration as follows.
 let testModules = [
+  'addon',
   'addon_data',
   'arraybuffer',
   'asynccontext',
@@ -54,6 +55,7 @@ let testModules = [
   'objectwrap_constructor_exception',
   'objectwrap-removewrap',
   'objectwrap_multiple_inheritance',
+  'objectwrap_worker_thread',
   'objectreference',
   'reference',
   'version_management'
@@ -83,23 +85,33 @@ if (napiVersion < 5) {
 }
 
 if (napiVersion < 6) {
+  testModules.splice(testModules.indexOf('addon'), 1);
+  testModules.splice(testModules.indexOf('addon_data'), 1);
   testModules.splice(testModules.indexOf('bigint'), 1);
   testModules.splice(testModules.indexOf('typedarray-bigint'), 1);
-  testModules.splice(testModules.indexOf('addon_data'), 1);
+}
+
+if (majorNodeVersion < 12) {
+  testModules.splice(testModules.indexOf('objectwrap_worker_thread'), 1);
 }
 
 if (typeof global.gc === 'function') {
+  (async function() {
   console.log(`Testing with N-API Version '${napiVersion}'.`);
 
   console.log('Starting test suite\n');
 
   // Requiring each module runs tests in the module.
-  testModules.forEach(name => {
+  for (const name of testModules) {
     console.log(`Running test '${name}'`);
-    require('./' + name);
-  });
+    await require('./' + name);
+  };
 
   console.log('\nAll tests passed!');
+  })().catch((error) => {
+    console.log(error);
+    process.exit(1);
+  });
 } else {
   // Construct the correct (version-dependent) command-line args.
   let args = ['--expose-gc', '--no-concurrent-array-buffer-freeing'];

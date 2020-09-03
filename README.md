@@ -37,6 +37,10 @@ APIs exposed by node-addon-api are generally used to create and
 manipulate JavaScript values. Concepts and operations generally map
 to ideas specified in the **ECMA262 Language Specification**.
 
+The [N-API Resource](http://nodejs.github.io/node-addon-examples/) offers an 
+excellent orientation and tips for developers just getting started with N-API 
+and node-addon-api.
+
 - **[Setup](#setup)**
 - **[API Documentation](#api)**
 - **[Examples](#examples)**
@@ -77,6 +81,7 @@ The oldest Node.js version supported by the current version of node-addon-api is
 
 The following is the documentation for node-addon-api.
 
+ - [Addon Structure](doc/addon.md)
  - [Basic Types](doc/basic_types.md)
     - [Array](doc/basic_types.md#array)
     - [Symbol](doc/symbol.md)
