@@ -4,10 +4,10 @@ const buildType = process.config.target_defaults.default_configuration;
 const assert = require('assert');
 const common = require('../common');
 
-module.exports = async function() {
+module.exports = (async function() {
   await test(require(`../build/${buildType}/binding.node`));
   await test(require(`../build/${buildType}/binding_noexcept.node`));
-};
+})();
 
 async function test(binding) {
   const expectedArray = (function(arrayLength) {
