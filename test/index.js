@@ -31,6 +31,7 @@ let testModules = [
   'external',
   'function',
   'generic_callback_wrapper',
+  'generic_subscription_wrapper',
   'handlescope',
   'memory_management',
   'name',

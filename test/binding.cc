@@ -50,6 +50,7 @@ Object InitThreadSafeFunctionSum(Env env);
 Object InitThreadSafeFunctionUnref(Env env);
 Object InitThreadSafeFunction(Env env);
 Object InitGenericCallbackWrapper(Env env);
+Object InitGenericSubscriptionWrapper(Env env);
 #endif
 Object InitTypedArray(Env env);
 Object InitObjectWrap(Env env);

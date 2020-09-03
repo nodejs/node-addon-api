@@ -25,6 +25,7 @@
         'external.cc',
         'function.cc',
         'generic_callback_wrapper.cc',
+        'generic_subscription_wrapper.cc',
         'handlescope.cc',
         'memory_management.cc',
         'name.cc',

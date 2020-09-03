@@ -2474,6 +2474,98 @@ private:
 
 };
 
+template<typename T>
+class GenericSubscriptionWrapper {
+public:
+    using js_callback_t = Napi::Function;
+    using callback_t = std::function<void(std::shared_future<T>)>;
+    using conversion_function_t = std::function<Napi::Value(const Napi::Env &, const std::shared_future<T> &)>;
+    using unsubscribe_function_t = std::function<void(void)>;
+
+    GenericSubscriptionWrapper(const Napi::Promise::Deferred &deferred,
+                                 conversion_function_t conversion_function, js_callback_t js_function)
+            : internal_(std::make_shared<internal>(deferred, conversion_function, js_function)) {
+        internal_->set_up();
+    }
+
+    template<typename F>
+    void set_unsubscription_function(F&& unsubscribe_function) {
+        internal_->unsubscribe_function_ = std::forward<F>(unsubscribe_function);
+    }
+
+    callback_t get_native_callback() {
+        return internal_->get_native_callback();
+    }
+
+
+private:
+    struct internal : std::enable_shared_from_this<internal> {
+        Napi::Promise::Deferred deferred_;
+        Napi::ThreadSafeFunction function_;
+        Napi::Reference<Napi::Function> js_function_;
+        Napi::Function conversion_wrapper_;
+        conversion_function_t conversion_function_;
+        std::shared_future<T> result_;
+        unsubscribe_function_t unsubscribe_function_;
+
+        internal(const Napi::Promise::Deferred &deferred,
+                 conversion_function_t conversion_function, js_callback_t js_function) :
+                deferred_(deferred), conversion_function_(conversion_function),
+                js_function_(Napi::Persistent(js_function)) {}
+
+        void set_up() {
+            conversion_wrapper_ = Napi::Function::New(deferred_.Env(), [me = this->shared_from_this()]
+                    (const auto &info) -> Napi::Value {
+                if (info.Env() != me->deferred_.Env())
+                    throw std::logic_error("generic_callback_wrapper: Napi Environments not equal");
+
+                me->set_deferred();
+
+                return info.Env().Undefined();
+            });
+            function_ = Napi::ThreadSafeFunction::New(deferred_.Env(), conversion_wrapper_,
+                                                      "Generic subscription wrapper", 1, 1);
+
+            auto unsubscribe_call = Napi::Function::New(deferred_.Env(),
+                                                        [me = this->shared_from_this()](const auto &info) {
+                                                            me->unsubscribe_function_();
+                                                            me->tear_down();
+                                                        });
+            deferred_.Resolve(unsubscribe_call);
+        }
+
+        void tear_down() {
+            function_.Release();
+        }
+
+        callback_t get_native_callback() {
+            return [me = this->shared_from_this()](auto &&future) {
+                me->native_callback(std::forward<decltype(future)>(future));
+            };
+        }
+
+        void native_callback(std::shared_future<T> &&future) {
+            result_ = std::forward<decltype(future)>(future);
+            this->function_.BlockingCall();
+        }
+
+        void set_deferred() {
+            Napi::Value value;
+            try {
+                value = conversion_function_( deferred_.Env(), std::move(result_));
+            } catch (Napi::Error &e) {
+                value = e.Value();
+            } catch (std::exception &e) {
+                value = Napi::Error::New(deferred_.Env(), e.what()).Value();
+            } catch (...) {
+                value = Napi::Error::New(deferred_.Env()).Value();
+            }
+            js_function_.Value().Call({value});
+        }
+    };
+    std::shared_ptr<internal> internal_;
+};
+
 #endif
 
   // Memory management.
