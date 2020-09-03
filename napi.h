@@ -2410,7 +2410,7 @@ namespace Napi {
 template<typename T>
 class GenericCallbackWrapper {
 public:
-    using result_t [[maybe_unused]] = T;
+    using result_t = T;
     using callback_t = std::function<void(std::future<T>)>;
     using conversion_function_t = std::function<Napi::Value(const Napi::Env &, std::future<T> &&)>;
 
