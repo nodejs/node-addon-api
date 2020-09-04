@@ -252,6 +252,7 @@
   "description": "Node.js API (N-API)",
   "devDependencies": {
     "benchmark": "^2.1.4",
+    "fs-extra": "^9.0.1",
     "bindings": "^1.5.0",
     "safe-buffer": "^5.1.1"
   },
