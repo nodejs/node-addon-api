@@ -8,6 +8,7 @@ process.config.target_defaults.default_configuration =
 // FIXME: We might need a way to load test modules automatically without
 // explicit declaration as follows.
 let testModules = [
+  'addon_build',
   'addon',
   'addon_data',
   'arraybuffer',
