@@ -5,7 +5,7 @@
   "private": true,
   "scripts": {},
   "dependencies": {
-    "node-addon-api": "file:../../../"
+    "node-addon-api": "file:../../../../"
   },
   "gypfile": true
 }

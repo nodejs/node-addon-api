@@ -1,7 +1,7 @@
 {
   'target_defaults': {
     'include_dirs': [
-        "<!@(node -p \"require('node-addon-api').include_dir\")"
+        "<!(node -p \"require('node-addon-api').include_dir\")"
     ],
     'variables': {
       'NAPI_VERSION%': "<!(node -p \"process.versions.napi\")",
