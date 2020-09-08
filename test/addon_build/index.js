@@ -27,9 +27,13 @@ async function test(addon) {
     cwd: path.join(ADDONS_FOLDER, addon)
   })
   console.log(`   >Runting test for: '${addon}'`);
-  assert.strictEqual(stderr, '');
-  assert.ok(stderr.length === 0);
-  assert.ok(stdout.length > 0);
+  // Disabled the checks on stderr and stdout because of this issuue on npm:
+  // Stop using process.umask(): https://github.com/npm/cli/issues/1103
+  // We should enable the following checks again after the resolution of 
+  // the reported issue.
+  // assert.strictEqual(stderr, '');
+  // assert.ok(stderr.length === 0);
+  // assert.ok(stdout.length > 0);
   const binding = require(`${ADDONS_FOLDER}/${addon}`);
   assert.strictEqual(binding.except.echo('except'), 'except');
   assert.strictEqual(binding.except.echo(101), 101);
