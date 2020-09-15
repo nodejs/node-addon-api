@@ -403,3 +403,6 @@ name of the property.
 
 Returns a `Napi::ClassPropertyDescriptor<T>` object that represents an instance
 value property of an add-on.
+
+[`Napi::Addon<T>`]: ./addon.md
+[`Napi::ObjectWrap<T>`]: ./object_wrap.md

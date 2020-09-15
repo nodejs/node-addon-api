@@ -6,10 +6,10 @@ Arrays are native representations of JavaScript Arrays. `Napi::Array` is a wrapp
 around `napi_value` representing a JavaScript Array.
 
 [`Napi::TypedArray`][] and [`Napi::ArrayBuffer`][] correspond to JavaScript data
-types such as [`Int32Array`][] and [`ArrayBuffer`][], respectively, that can be
-used for transferring large amounts of data from JavaScript to the native side.
-An example illustrating the use of a JavaScript-provided `ArrayBuffer` in native
-code is available [here](https://github.com/nodejs/node-addon-examples/tree/master/array_buffer_to_native/node-addon-api).
+types such as [`Napi::Int32Array`][] and [`Napi::ArrayBuffer`][], respectively,
+that can be used for transferring large amounts of data from JavaScript to the
+native side. An example illustrating the use of a JavaScript-provided
+`ArrayBuffer` in native code is available [here](https://github.com/nodejs/node-addon-examples/tree/master/array_buffer_to_native/node-addon-api).
 
 ## Constructor
 ```cpp
@@ -75,4 +75,7 @@ If an error occurs, a `Napi::Error` will get thrown. If C++ exceptions are not
 being used, callers should check the result of `Env::IsExceptionPending` before
 attempting to use the returned value.
 
+[`Napi::ArrayBuffer`]: ./array_buffer.md
+[`Napi::Int32Array`]: ./typed_array_of.md
 [`Napi::Object`]: ./object.md
+[`Napi::TypedArray`]: ./typed_array.md
