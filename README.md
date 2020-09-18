@@ -51,7 +51,7 @@ and node-addon-api.
 - **[Contributors](#contributors)**
 - **[License](#license)**
 
-## **Current version: 3.0.1**
+## **Current version: 3.0.2**
 
 (See [CHANGELOG.md](CHANGELOG.md) for complete Changelog)
 

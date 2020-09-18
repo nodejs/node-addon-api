@@ -140,6 +140,10 @@
       "url": "https://github.com/KevinEady"
     },
     {
+      "name": "Koki Nishihara",
+      "url": "https://github.com/Nishikoh"
+    },
+    {
       "name": "Konstantin Tarkus",
       "url": "https://github.com/koistya"
     },
@@ -196,6 +200,10 @@
       "url": "https://github.com/anurbol"
     },
     {
+      "name": "pacop",
+      "url": "https://github.com/pacop"
+    },
+    {
       "name": "Philipp Renoth",
       "url": "https://github.com/DaAitch"
     },
@@ -238,6 +246,10 @@
     {
       "name": "Tux3",
       "url": "https://github.com/tux3"
+    },
+    {
+      "name": "Vlad Velmisov",
+      "url": "https://github.com/Velmisov"
     },
     {
       "name": "Yohei Kishimoto",
@@ -290,5 +302,5 @@
     "dev:incremental": "node test",
     "doc": "doxygen doc/Doxyfile"
   },
-  "version": "3.0.1"
+  "version": "3.0.2"
 }
