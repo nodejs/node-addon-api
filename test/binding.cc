@@ -112,6 +112,7 @@ Object Init(Env env, Object exports) {
   exports.Set("threadsafe_function_unref", InitThreadSafeFunctionUnref(env));
   exports.Set("threadsafe_function", InitThreadSafeFunction(env));
   exports.Set("generic_callback_wrapper", InitGenericCallbackWrapper(env));
+  exports.Set("generic_subscription_wrapper", InitGenericSubscriptionWrapper(env));
 #endif
   exports.Set("typedarray", InitTypedArray(env));
   exports.Set("objectwrap", InitObjectWrap(env));

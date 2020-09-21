@@ -13,13 +13,18 @@
 
 namespace {
 
+Napi::Value SubScribeFor10Calls(const Napi::CallbackInfo&) {
+
+    return {};
+}
+
 
 }
 
 Napi::Object InitGenericSubscriptionWrapper(Napi::Env env) {
     using namespace Napi;
     Object exports = Object::New(env);
-
+    exports["SubScribeFor10Calls"] = Function::New(env, SubScribeFor10Calls);
 
     return exports;
 }
