@@ -2501,10 +2501,10 @@ public:
 private:
     struct internal : std::enable_shared_from_this<internal> {
         Napi::Promise::Deferred deferred_;
-        Napi::ThreadSafeFunction function_;
-        Napi::Reference<Napi::Function> js_function_;
-        Napi::Function conversion_wrapper_;
         conversion_function_t conversion_function_;
+        Napi::Reference<Napi::Function> js_function_;
+        Napi::ThreadSafeFunction function_;
+        Napi::Function conversion_wrapper_;
         std::shared_future<T> result_;
         unsubscribe_function_t unsubscribe_function_;
 
@@ -2527,7 +2527,7 @@ private:
                                                       "Generic subscription wrapper", 1, 1);
 
             auto unsubscribe_call = Napi::Function::New(deferred_.Env(),
-                                                        [me = this->shared_from_this()](const auto &info) {
+                                                        [me = this->shared_from_this()](const auto &) {
                                                             me->unsubscribe_function_();
                                                             me->tear_down();
                                                         });
