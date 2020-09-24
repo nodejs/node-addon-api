@@ -10,12 +10,14 @@ async function testNormal10TimesCallAndUnsubscribe(bindingFunction) {
             this.countsLeft = 10;
             this.callCounter = 0;
             this.finish = finish;
+            this.checkSum = 0;
         }
         iteration(input) {
             ++this.callCounter;
             if (--this.countsLeft === 0) {
                 this.finish();
             }
+            this.checkSum += input;
         }
     }
 
@@ -28,10 +30,10 @@ async function testNormal10TimesCallAndUnsubscribe(bindingFunction) {
     });
 
     await p;
+    assert.equal(handler.callCounter, 10);
+    assert.equal(handler.checkSum, 45);
     await unsub.then(u => (u()));
 
-
-    assert.equal(handler.callCounter, 10);
 }
 
 async function test(binding) {
