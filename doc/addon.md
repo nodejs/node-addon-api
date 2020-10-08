@@ -41,7 +41,7 @@ class ExampleAddon : public Napi::Addon<ExampleAddon> {
 
       // We can also attach plain objects to `exports`, and instance methods as
       // properties of those sub-objects.
-      InstanceValue("subObject", DefineProperties(Napi::Object::New(), {
+      InstanceValue("subObject", DefineProperties(Napi::Object::New(env), {
         InstanceMethod("decrement", &ExampleAddon::Decrement)
       }))
     });
