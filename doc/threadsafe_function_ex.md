@@ -7,7 +7,7 @@ of:
 - `ContextType = std::nullptr_t`: The thread-safe function's context. By default,
   a TSFN has no context.
 - `DataType = void*`: The data to use in the native callback. By default, a TSFN
-  can accept *any* data type.
+  can accept any data type.
 - `Callback = void(*)(Napi::Env, Napi::Function jsCallback, ContextType*,
   DataType*)`: The callback to run for each item added to the queue. If no
   `Callback` is given, the API will call the function `jsCallback` with no
@@ -102,7 +102,7 @@ When targetting version 5+, `callback` may be:
 
 ### Acquire
 
-Add a thread to this thread-safe function object, indicating that a new thread
+Adds a thread to this thread-safe function object, indicating that a new thread
 will start making use of the thread-safe function.
 
 ```cpp
@@ -117,10 +117,10 @@ Returns one of:
 
 ### Release
 
-Indicate that an existing thread will stop making use of the thread-safe
+Indicates that an existing thread will stop making use of the thread-safe
 function. A thread should call this API when it stops making use of this
 thread-safe function. Using any thread-safe APIs after having called this API
-has undefined results in the current thread, as it may have been destroyed.
+has undefined results in the current thread, as the thread-safe function may have been destroyed.
 
 ```cpp
 napi_status Napi::ThreadSafeFunctionEx<ContextType, DataType, Callback>::Release()
@@ -134,7 +134,7 @@ Returns one of:
 
 ### Abort
 
-"Abort" the thread-safe function. This will cause all subsequent APIs associated
+"Aborts" the thread-safe function. This will cause all subsequent APIs associated
 with the thread-safe function except `Release()` to return `napi_closing` even
 before its reference count reaches zero. In particular, `BlockingCall` and
 `NonBlockingCall()` will return `napi_closing`, thus informing the threads that
@@ -173,11 +173,10 @@ napi_status Napi::ThreadSafeFunctionEx<ContextType, DataType, Callback>::NonBloc
   `ThreadSafeFunctionEx::New()`.
 
 Returns one of:
-- `napi_ok`: The call was successfully added to the queue.
+- `napi_ok`: `data` was successfully added to the queue.
 - `napi_queue_full`: The queue was full when trying to call in a non-blocking
   method.
-- `napi_closing`: The thread-safe function is aborted and cannot accept more
-  calls.
+- `napi_closing`: The thread-safe function is aborted and no further calls can be made.
 - `napi_invalid_arg`: The thread-safe function is closed.
 - `napi_generic_failure`: A generic error occurred when attemping to add to the
   queue.
