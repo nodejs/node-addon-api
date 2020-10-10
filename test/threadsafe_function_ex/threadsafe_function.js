@@ -4,13 +4,13 @@ const buildType = process.config.target_defaults.default_configuration;
 const assert = require('assert');
 const common = require('../common');
 
-module.exports = (async function() {
+module.exports = (async function () {
   await test(require(`../build/${buildType}/binding.node`));
   await test(require(`../build/${buildType}/binding_noexcept.node`));
 })();
 
 async function test(binding) {
-  const expectedArray = (function(arrayLength) {
+  const expectedArray = (function (arrayLength) {
     const result = [];
     for (let index = 0; index < arrayLength; index++) {
       result.push(arrayLength - 1 - index);
@@ -60,7 +60,7 @@ async function test(binding) {
         });
       }
     }, false /* abort */, false /* launchSecondary */,
-    binding.threadsafe_function_ex.MAX_QUEUE_SIZE);
+      binding.threadsafe_function_ex.MAX_QUEUE_SIZE);
   });
 
   // Start the thread in blocking mode, and assert that all values are passed.

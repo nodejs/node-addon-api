@@ -120,7 +120,8 @@ Returns one of:
 Indicates that an existing thread will stop making use of the thread-safe
 function. A thread should call this API when it stops making use of this
 thread-safe function. Using any thread-safe APIs after having called this API
-has undefined results in the current thread, as the thread-safe function may have been destroyed.
+has undefined results in the current thread, as the thread-safe function may
+have been destroyed.
 
 ```cpp
 napi_status Napi::ThreadSafeFunctionEx<ContextType, DataType, Callback>::Release()
@@ -176,7 +177,8 @@ Returns one of:
 - `napi_ok`: `data` was successfully added to the queue.
 - `napi_queue_full`: The queue was full when trying to call in a non-blocking
   method.
-- `napi_closing`: The thread-safe function is aborted and no further calls can be made.
+- `napi_closing`: The thread-safe function is aborted and no further calls can
+  be made.
 - `napi_invalid_arg`: The thread-safe function is closed.
 - `napi_generic_failure`: A generic error occurred when attemping to add to the
   queue.
@@ -186,110 +188,99 @@ Returns one of:
 
 ```cpp
 #include <chrono>
-#include <thread>
 #include <napi.h>
+#include <thread>
 
 using namespace Napi;
 
 using Context = Reference<Value>;
 using DataType = int;
-void CallJs( Napi::Env env, Function callback, Context* context, DataType* data );
+void CallJs(Napi::Env env, Function callback, Context *context, DataType *data);
 using TSFN = ThreadSafeFunctionEx<Context, DataType, CallJs>;
 using FinalizerDataType = void;
 
 std::thread nativeThread;
 TSFN tsfn;
 
-Value Start( const CallbackInfo& info )
-{
+Value Start(const CallbackInfo &info) {
   Napi::Env env = info.Env();
 
-  if ( info.Length() < 2 )
-  {
-    throw TypeError::New( env, "Expected two arguments" );
-  }
-  else if ( !info[0].IsFunction() )
-  {
-    throw TypeError::New( env, "Expected first arg to be function" );
-  }
-  else if ( !info[1].IsNumber() )
-  {
-    throw TypeError::New( env, "Expected second arg to be number" );
+  if (info.Length() < 2) {
+    throw TypeError::New(env, "Expected two arguments");
+  } else if (!info[0].IsFunction()) {
+    throw TypeError::New(env, "Expected first arg to be function");
+  } else if (!info[1].IsNumber()) {
+    throw TypeError::New(env, "Expected second arg to be number");
   }
 
   int count = info[1].As<Number>().Int32Value();
 
   // Create a new context set to the the receiver (ie, `this`) of the function
   // call
-  Context* context = new Reference<Value>( Persistent( info.This() ) );
+  Context *context = new Reference<Value>(Persistent(info.This()));
 
   // Create a ThreadSafeFunction
-  tsfn = TSFN::New( env,
-                    info[0].As<Function>(),  // JavaScript function called asynchronously
-                    "Resource Name",         // Name
-                    0,                       // Unlimited queue
-                    1,                       // Only one thread will use this initially
-                    context,
-                    []( Napi::Env, FinalizerDataType*,
-                        Context* ctx ) {  // Finalizer used to clean threads up
-                      nativeThread.join();
-                      delete ctx;
-                    } );
+  tsfn = TSFN::New(
+      env,
+      info[0].As<Function>(), // JavaScript function called asynchronously
+      "Resource Name",        // Name
+      0,                      // Unlimited queue
+      1,                      // Only one thread will use this initially
+      context,
+      [](Napi::Env, FinalizerDataType *,
+         Context *ctx) { // Finalizer used to clean threads up
+        nativeThread.join();
+        delete ctx;
+      });
 
   // Create a native thread
-  nativeThread = std::thread( [count] {
-    for ( int i = 0; i < count; i++ )
-    {
+  nativeThread = std::thread([count] {
+    for (int i = 0; i < count; i++) {
       // Create new data
-      int* value = new int( clock() );
+      int *value = new int(clock());
 
       // Perform a blocking call
-      napi_status status = tsfn.BlockingCall( value );
-      if ( status != napi_ok )
-      {
+      napi_status status = tsfn.BlockingCall(value);
+      if (status != napi_ok) {
         // Handle error
         break;
       }
 
-      std::this_thread::sleep_for( std::chrono::seconds( 1 ) );
+      std::this_thread::sleep_for(std::chrono::seconds(1));
     }
 
     // Release the thread-safe function
     tsfn.Release();
-  } );
+  });
 
-  return Boolean::New( env, true );
+  return Boolean::New(env, true);
 }
 
 // Transform native data into JS data, passing it to the provided
 // `callback` -- the TSFN's JavaScript function.
-void CallJs( Napi::Env env, Function callback, Context* context, DataType* data )
-{
+void CallJs(Napi::Env env, Function callback, Context *context,
+            DataType *data) {
   // Is the JavaScript environment still available to call into, eg. the TSFN is
   // not aborted
-  if ( env != nullptr )
-  {
+  if (env != nullptr) {
     // On N-API 5+, the `callback` parameter is optional; however, this example
     // does ensure a callback is provided.
-    if ( callback != nullptr )
-    {
-      callback.Call( context->Value(), {Number::New( env, *data )} );
+    if (callback != nullptr) {
+      callback.Call(context->Value(), {Number::New(env, *data)});
     }
   }
-  if ( data != nullptr )
-  {
+  if (data != nullptr) {
     // We're finished with the data.
     delete data;
   }
 }
 
-Napi::Object Init( Napi::Env env, Object exports )
-{
-  exports.Set( "start", Function::New( env, Start ) );
+Napi::Object Init(Napi::Env env, Object exports) {
+  exports.Set("start", Function::New(env, Start));
   return exports;
 }
 
-NODE_API_MODULE( clock, Init )
+NODE_API_MODULE(clock, Init)
 ```
 
 The above code can be used from JavaScript as follows:
@@ -304,7 +295,7 @@ start.call(new Date(), function (clock) {
 ```
 
 When executed, the output will show the value of `clock()` five times at one
-second intervals, prefixed with the TSFN's context -- `start`'s receiver (ie, 
+second intervals, prefixed with the TSFN's context -- `start`'s receiver (ie,
 `new Date()`):
 
 ```

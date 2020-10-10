@@ -93,10 +93,11 @@ construct a no-op `Function` **or** to target N-API 5 and "construct" a
 with just a switch of the `NAPI_VERSION` compile-time constant.
 
 The removal of the dynamic call functionality has the following implications:
-- The API does _not_ act as a "broker" compared to the non-`Ex`. Once Node.js
-  finalizes the thread-safe function, the `CallJs` callback will execute with an
-  empty `Napi::Env` for any remaining items on the queue. This provides the
-  ability to handle any necessary cleanup of the item's data.
+- The API does _not_ act as a "broker" compared to the
+  `Napi::ThreadSafeFunction`. Once Node.js finalizes the thread-safe function,
+  the `CallJs` callback will execute with an empty `Napi::Env` for any remaining
+  items on the queue. This provides the ability to handle any necessary cleanup
+  of the item's data.
 - The callback _does_ receive the context as a parameter, so a call to
   `GetContext()` is _not_ necessary. This context type is specified as the
   **first template argument** specified to `::New`, ensuring type safety.
