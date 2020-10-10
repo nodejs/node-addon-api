@@ -1,6 +1,6 @@
 {
   'variables': {
-    'NAPI_VERSION%': "<!(node -p \"process.env['NAPI_VERSION'] || process.versions.napi\")",
+    'NAPI_VERSION%': "<!(node -p \"process.versions.napi\")",
     'disable_deprecated': "<!(node -p \"process.env['npm_config_disable_deprecated']\")"
   },
   'conditions': [
@@ -15,7 +15,7 @@
       }
     }]
   ],
-  'include_dirs': ["<!@(node -p \"require('../').include\")"],
+  'include_dirs': ["<!(node -p \"require('../').include_dir\")"],
   'cflags': [ '-Werror', '-Wall', '-Wextra', '-Wpedantic', '-Wunused-parameter' ],
   'cflags_cc': [ '-Werror', '-Wall', '-Wextra', '-Wpedantic', '-Wunused-parameter' ]
 }
