@@ -43,7 +43,7 @@ class ExampleAddon : public Napi::Addon<ExampleAddon> {
       // properties of those sub-objects.
       InstanceValue("subObject", DefineProperties(Napi::Object::New(env), {
         InstanceMethod("decrement", &ExampleAddon::Decrement)
-      }))
+      }), napi_enumerable)
     });
   }
  private:
@@ -80,7 +80,7 @@ The above code can be used from JavaScript as follows:
 const exampleAddon = require('bindings')('example_addon');
 console.log(exampleAddon.increment()); // prints 43
 console.log(exampleAddon.increment()); // prints 44
-consnole.log(exampleAddon.subObject.decrement()); // prints 43
+console.log(exampleAddon.subObject.decrement()); // prints 43
 ```
 
 When Node.js loads an instance of the add-on, a new instance of the class is
