@@ -267,6 +267,7 @@
     "bindings": "^1.5.0",
     "clang-format": "^1.4.0",
     "fs-extra": "^9.0.1",
+    "pre-commit": "^1.2.2",
     "safe-buffer": "^5.1.1"
   },
   "directories": {},
@@ -305,5 +306,6 @@
     "lint": "node scripts/clang-format.js",
     "lint:fix": "git-clang-format"
   },
+  "pre-commit": "lint",
   "version": "3.0.2"
 }
