@@ -117,4 +117,4 @@ Returns a pointer to a null-terminated string that is used to identify the
 exception. This method can be used only if the exception mechanism is enabled.
 
 [`Napi::ObjectReference`]: ./object_reference.md
-[`std::exception`]: http://cplusplus.com/reference/exception/exception/
+[`std::exception`]: https://cplusplus.com/reference/exception/exception/
