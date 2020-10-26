@@ -102,7 +102,7 @@ New(napi_env env,
   there be no threads left using the thread-safe function after the finalize
   callback completes. Must implement `void operator()(Env env, DataType* data,
   Context* hint)`, skipping `data` or `hint` if they are not provided.
-  Can be retreived via `GetContext()`.
+  Can be retrieved via `GetContext()`.
 - `[optional] data`: Data to be passed to `finalizeCallback`.
 
 Returns a non-empty `Napi::ThreadSafeFunction` instance.
@@ -158,7 +158,7 @@ napi_status Napi::ThreadSafeFunction::Abort()
 Returns one of:
 - `napi_ok`: The thread-safe function has been successfully aborted.
 - `napi_invalid_arg`: The thread-safe function's thread-count is zero.
-- `napi_generic_failure`: A generic error occurred when attemping to abort
+- `napi_generic_failure`: A generic error occurred when attempting to abort
 the thread-safe function.
 
 ### BlockingCall / NonBlockingCall
@@ -210,7 +210,7 @@ Returns one of:
 - `napi_closing`: The thread-safe function is aborted and cannot accept more
   calls.
 - `napi_invalid_arg`: The thread-safe function is closed.
-- `napi_generic_failure`: A generic error occurred when attemping to add to the
+- `napi_generic_failure`: A generic error occurred when attempting to add to the
   queue.
 
 ## Example

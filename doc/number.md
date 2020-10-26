@@ -16,7 +16,7 @@ Napi::Number();
 
 Returns a new _empty_ `Napi::Number` object.
 
-### Contructor
+### Constructor
 
 Creates a new instance of a `Napi::Number` object.
 

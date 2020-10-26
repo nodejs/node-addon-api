@@ -18,7 +18,7 @@ Napi::Boolean::Boolean();
 
 Returns a new _empty_  `Napi::Boolean` object.
 
-### Contructor
+### Constructor
 
 Creates a new instance of the `Napi::Boolean` object.
 

@@ -20,8 +20,8 @@ Returns the highest N-API version supported by Node.js runtime.
 
 ### GetNodeVersion
 
-Retrives information about Node.js version present on the system. All the
-information is stored in the `napi_node_version` structrue that is defined as
+Retrieves information about Node.js version present on the system. All the
+information is stored in the `napi_node_version` structure that is defined as
 shown below:
 
 ```cpp

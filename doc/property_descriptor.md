@@ -1,6 +1,6 @@
 # Property Descriptor
 
-A [`Napi::Object`](object.md) can be assigned properites via its [`DefineProperty`](object.md#defineproperty) and [`DefineProperties`](object.md#defineproperties) functions, which take PropertyDescrptor(s) as their parameters. The `Napi::PropertyDescriptor` can contain either values or functions, which are then assigned to the `Napi::Object`. Note that a single instance of a `Napi::PropertyDescriptor` class can only contain either one value, or at most two functions. PropertyDescriptors can only be created through the class methods [`Accessor`](#accessor), [`Function`](#function), or [`Value`](#value), each of which return a new static instance of a `Napi::PropertyDescriptor`.
+A [`Napi::Object`](object.md) can be assigned properties via its [`DefineProperty`](object.md#defineproperty) and [`DefineProperties`](object.md#defineproperties) functions, which take PropertyDescriptor(s) as their parameters. The `Napi::PropertyDescriptor` can contain either values or functions, which are then assigned to the `Napi::Object`. Note that a single instance of a `Napi::PropertyDescriptor` class can only contain either one value, or at most two functions. PropertyDescriptors can only be created through the class methods [`Accessor`](#accessor), [`Function`](#function), or [`Value`](#value), each of which return a new static instance of a `Napi::PropertyDescriptor`.
 
 ## Example
 
@@ -150,7 +150,7 @@ static Napi::PropertyDescriptor Napi::PropertyDescriptor::Accessor (
                 void *data = nullptr);
 ```
 
-* `[in] env`: The environemnt in which to create this accessor.
+* `[in] env`: The environment in which to create this accessor.
 * `[in] object`: The object on which the accessor will be defined.
 * `[in] name`: The name used for the getter function.
 * `[in] getter`: A getter function.
@@ -199,7 +199,7 @@ static Napi::PropertyDescriptor Napi::PropertyDescriptor::Accessor (
                 void *data = nullptr);
 ```
 
-* `[in] env`: The environemnt in which to create this accessor.
+* `[in] env`: The environment in which to create this accessor.
 * `[in] object`: The object on which the accessor will be defined.
 * `[in] name`: The name of the getter and setter function.
 * `[in] getter`: The getter function.
