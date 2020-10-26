@@ -8,7 +8,7 @@ For more general information on references, please consult [`Napi::Reference`](r
 ```cpp
 #include <napi.h>
 
-using namescape Napi;
+using namespace Napi;
 
 void Init(Env env) {
 
