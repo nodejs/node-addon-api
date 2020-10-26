@@ -43,7 +43,7 @@ Napi::Object Example::Init(Napi::Env env, Napi::Object exports) {
 
     Napi::FunctionReference* constructor = new Napi::FunctionReference();
 
-    // Create a peristent reference to the class constructor. This will allow
+    // Create a persistent reference to the class constructor. This will allow
     // a function called on a class prototype and a function
     // called on instance of a class to be distinguished from each other.
     *constructor = Napi::Persistent(func);

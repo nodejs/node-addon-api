@@ -34,7 +34,7 @@ The `Napi::Addon<T>` class can be used together with the `NODE_API_ADDON()` and
 class ExampleAddon : public Napi::Addon<ExampleAddon> {
  public:
   ExampleAddon(Napi::Env env, Napi::Object exports) {
-    // In the constructor we declare the functions the add-on makes avaialable
+    // In the constructor we declare the functions the add-on makes available
     // to JavaScript.
     DefineAddon(exports, {
       InstanceMethod("increment", &ExampleAddon::Increment),
