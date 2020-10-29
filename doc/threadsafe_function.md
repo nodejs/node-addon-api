@@ -106,7 +106,7 @@ napi_status Napi::ThreadSafeFunction::Release()
 Returns one of:
 - `napi_ok`: The thread-safe function has been successfully released.
 - `napi_invalid_arg`: The thread-safe function's thread-count is zero.
-- `napi_generic_failure`: A generic error occurred when attemping to release
+- `napi_generic_failure`: A generic error occurred when attempting to release
 the thread-safe function.
 
 ### Abort
