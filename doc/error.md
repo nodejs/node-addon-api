@@ -1,5 +1,7 @@
 # Error
 
+Class `Napi::Error` inherits from class [`Napi::ObjectReference`][] and class [`std::exception`][].
+
 The `Napi::Error` class is a representation of the JavaScript `Error` object that is thrown
 when runtime errors occur. The Error object can also be used as a base object for
 user-defined exceptions.
@@ -113,3 +115,6 @@ const char* Napi::Error::what() const NAPI_NOEXCEPT override;
 
 Returns a pointer to a null-terminated string that is used to identify the
 exception. This method can be used only if the exception mechanism is enabled.
+
+[`Napi::ObjectReference`]: ./object_reference.md
+[`std::exception`]: http://cplusplus.com/reference/exception/exception/

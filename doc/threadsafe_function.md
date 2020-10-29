@@ -61,8 +61,8 @@ New(napi_env env,
 - `maxQueueSize`: Maximum size of the queue. `0` for no limit.
 - `initialThreadCount`: The initial number of threads, including the main
   thread, which will be making use of this function.
-- `[optional] context`: Data to attach to the resulting `ThreadSafeFunction`.
-  It can be retreived by calling `GetContext()`.
+- `[optional] context`: Data to attach to the resulting `ThreadSafeFunction`. It
+  can be retreived by calling `GetContext()`.
 - `[optional] finalizeCallback`: Function to call when the `ThreadSafeFunction`
   is being destroyed.  This callback will be invoked on the main thread when the
   thread-safe function is about to be destroyed. It receives the context and the
@@ -71,7 +71,8 @@ New(napi_env env,
   `uv_thread_join()`. It is important that, aside from the main loop thread,
   there be no threads left using the thread-safe function after the finalize
   callback completes. Must implement `void operator()(Env env, DataType* data,
-  ContextType* hint)`, skipping `data` or `hint` if they are not provided.
+  ContextType* hint)`, skipping `data` or `hint` if they are not provided. Can
+  be retrieved via `GetContext()`.
 - `[optional] data`: Data to be passed to `finalizeCallback`.
 
 Returns a non-empty `Napi::ThreadSafeFunction` instance.
@@ -127,7 +128,7 @@ napi_status Napi::ThreadSafeFunction::Abort()
 Returns one of:
 - `napi_ok`: The thread-safe function has been successfully aborted.
 - `napi_invalid_arg`: The thread-safe function's thread-count is zero.
-- `napi_generic_failure`: A generic error occurred when attemping to abort
+- `napi_generic_failure`: A generic error occurred when attempting to abort
 the thread-safe function.
 
 ### BlockingCall / NonBlockingCall
@@ -179,7 +180,7 @@ Returns one of:
 - `napi_closing`: The thread-safe function is aborted and cannot accept more
   calls.
 - `napi_invalid_arg`: The thread-safe function is closed.
-- `napi_generic_failure`: A generic error occurred when attemping to add to the
+- `napi_generic_failure`: A generic error occurred when attempting to add to the
   queue.
 
 ## Example

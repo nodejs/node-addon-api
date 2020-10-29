@@ -54,7 +54,7 @@ Napi::HandleScope::~HandleScope();
 
 Deletes the `Napi::HandleScope` instance and allows any objects/handles created
 in the scope to be collected by the garbage collector.  There is no
-guarantee as to when the gargbage collector will do this.
+guarantee as to when the garbage collector will do this.
 
 ### Env
 

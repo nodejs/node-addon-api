@@ -135,6 +135,48 @@ struct CallbackData<Callable, void> {
   void* data;
 };
 
+template <void (*Callback)(const CallbackInfo& info)>
+static napi_value
+TemplatedVoidCallback(napi_env env, napi_callback_info info) NAPI_NOEXCEPT {
+  return details::WrapCallback([&] {
+    CallbackInfo cbInfo(env, info);
+    Callback(cbInfo);
+    return nullptr;
+  });
+}
+
+template <Napi::Value (*Callback)(const CallbackInfo& info)>
+static napi_value
+TemplatedCallback(napi_env env, napi_callback_info info) NAPI_NOEXCEPT {
+  return details::WrapCallback([&] {
+    CallbackInfo cbInfo(env, info);
+    return Callback(cbInfo);
+  });
+}
+
+template <typename T,
+          Napi::Value (T::*UnwrapCallback)(const CallbackInfo& info)>
+static napi_value
+TemplatedInstanceCallback(napi_env env, napi_callback_info info) NAPI_NOEXCEPT {
+  return details::WrapCallback([&] {
+    CallbackInfo cbInfo(env, info);
+    T* instance = T::Unwrap(cbInfo.This().As<Object>());
+    return (instance->*UnwrapCallback)(cbInfo);
+  });
+}
+
+template <typename T, void (T::*UnwrapCallback)(const CallbackInfo& info)>
+static napi_value
+TemplatedInstanceVoidCallback(napi_env env,
+                              napi_callback_info info) NAPI_NOEXCEPT {
+  return details::WrapCallback([&] {
+    CallbackInfo cbInfo(env, info);
+    T* instance = T::Unwrap(cbInfo.This().As<Object>());
+    (instance->*UnwrapCallback)(cbInfo);
+    return nullptr;
+  });
+}
+
 template <typename T, typename Finalizer, typename Hint = void>
 struct FinalizeData {
   static inline
@@ -1883,15 +1925,12 @@ CreateFunction(napi_env env,
 template <Function::VoidCallback cb>
 inline Function Function::New(napi_env env, const char* utf8name, void* data) {
   napi_value result = nullptr;
-  napi_status status = napi_create_function(
-      env, utf8name, NAPI_AUTO_LENGTH,
-      [](napi_env env, napi_callback_info info) {
-        CallbackInfo callbackInfo(env, info);
-        return details::WrapCallback([&] {
-          cb(callbackInfo);
-          return nullptr;
-        });
-      }, data, &result);
+  napi_status status = napi_create_function(env,
+                                            utf8name,
+                                            NAPI_AUTO_LENGTH,
+                                            details::TemplatedVoidCallback<cb>,
+                                            data,
+                                            &result);
   NAPI_THROW_IF_FAILED(env, status, Function());
   return Function(env, result);
 }
@@ -1899,14 +1938,12 @@ inline Function Function::New(napi_env env, const char* utf8name, void* data) {
 template <Function::Callback cb>
 inline Function Function::New(napi_env env, const char* utf8name, void* data) {
   napi_value result = nullptr;
-  napi_status status = napi_create_function(
-      env, utf8name, NAPI_AUTO_LENGTH,
-      [](napi_env env, napi_callback_info info) {
-        CallbackInfo callbackInfo(env, info);
-        return details::WrapCallback([&] {
-          return cb(callbackInfo);
-        });
-      }, data, &result);
+  napi_status status = napi_create_function(env,
+                                            utf8name,
+                                            NAPI_AUTO_LENGTH,
+                                            details::TemplatedCallback<cb>,
+                                            data,
+                                            &result);
   NAPI_THROW_IF_FAILED(env, status, Function());
   return Function(env, result);
 }
@@ -2897,7 +2934,7 @@ PropertyDescriptor::Accessor(const char* utf8name,
   napi_property_descriptor desc = napi_property_descriptor();
 
   desc.utf8name = utf8name;
-  desc.getter = &GetterCallbackWrapper<Getter>;
+  desc.getter = details::TemplatedCallback<Getter>;
   desc.attributes = attributes;
   desc.data = data;
 
@@ -2920,7 +2957,7 @@ PropertyDescriptor::Accessor(Name name,
   napi_property_descriptor desc = napi_property_descriptor();
 
   desc.name = name;
-  desc.getter = &GetterCallbackWrapper<Getter>;
+  desc.getter = details::TemplatedCallback<Getter>;
   desc.attributes = attributes;
   desc.data = data;
 
@@ -2938,8 +2975,8 @@ PropertyDescriptor::Accessor(const char* utf8name,
   napi_property_descriptor desc = napi_property_descriptor();
 
   desc.utf8name = utf8name;
-  desc.getter = &GetterCallbackWrapper<Getter>;
-  desc.setter = &SetterCallbackWrapper<Setter>;
+  desc.getter = details::TemplatedCallback<Getter>;
+  desc.setter = details::TemplatedVoidCallback<Setter>;
   desc.attributes = attributes;
   desc.data = data;
 
@@ -2966,29 +3003,12 @@ PropertyDescriptor::Accessor(Name name,
   napi_property_descriptor desc = napi_property_descriptor();
 
   desc.name = name;
-  desc.getter = &GetterCallbackWrapper<Getter>;
-  desc.setter = &SetterCallbackWrapper<Setter>;
+  desc.getter = details::TemplatedCallback<Getter>;
+  desc.setter = details::TemplatedVoidCallback<Setter>;
   desc.attributes = attributes;
   desc.data = data;
 
   return desc;
-}
-
-template <typename PropertyDescriptor::GetterCallback Getter>
-napi_value
-PropertyDescriptor::GetterCallbackWrapper(napi_env env,
-                                          napi_callback_info info) {
-  CallbackInfo cbInfo(env, info);
-  return Getter(cbInfo);
-}
-
-template <typename PropertyDescriptor::SetterCallback Setter>
-napi_value
-PropertyDescriptor::SetterCallbackWrapper(napi_env env,
-                                          napi_callback_info info) {
-  CallbackInfo cbInfo(env, info);
-  Setter(cbInfo);
-  return nullptr;
 }
 
 template <typename Getter>
@@ -3321,7 +3341,7 @@ inline ClassPropertyDescriptor<T> InstanceWrap<T>::InstanceMethod(
     void* data) {
   napi_property_descriptor desc = napi_property_descriptor();
   desc.utf8name = utf8name;
-  desc.method = &InstanceWrap<T>::WrappedMethod<method>;
+  desc.method = details::TemplatedInstanceVoidCallback<T, method>;
   desc.data = data;
   desc.attributes = attributes;
   return desc;
@@ -3335,7 +3355,7 @@ inline ClassPropertyDescriptor<T> InstanceWrap<T>::InstanceMethod(
     void* data) {
   napi_property_descriptor desc = napi_property_descriptor();
   desc.utf8name = utf8name;
-  desc.method = &InstanceWrap<T>::WrappedMethod<method>;
+  desc.method = details::TemplatedInstanceCallback<T, method>;
   desc.data = data;
   desc.attributes = attributes;
   return desc;
@@ -3349,7 +3369,7 @@ inline ClassPropertyDescriptor<T> InstanceWrap<T>::InstanceMethod(
     void* data) {
   napi_property_descriptor desc = napi_property_descriptor();
   desc.name = name;
-  desc.method = &InstanceWrap<T>::WrappedMethod<method>;
+  desc.method = details::TemplatedInstanceVoidCallback<T, method>;
   desc.data = data;
   desc.attributes = attributes;
   return desc;
@@ -3363,7 +3383,7 @@ inline ClassPropertyDescriptor<T> InstanceWrap<T>::InstanceMethod(
     void* data) {
   napi_property_descriptor desc = napi_property_descriptor();
   desc.name = name;
-  desc.method = &InstanceWrap<T>::WrappedMethod<method>;
+  desc.method = details::TemplatedInstanceCallback<T, method>;
   desc.data = data;
   desc.attributes = attributes;
   return desc;
@@ -3416,7 +3436,7 @@ inline ClassPropertyDescriptor<T> InstanceWrap<T>::InstanceAccessor(
     void* data) {
   napi_property_descriptor desc = napi_property_descriptor();
   desc.utf8name = utf8name;
-  desc.getter = This::WrapGetter(This::GetterTag<getter>());
+  desc.getter = details::TemplatedInstanceCallback<T, getter>;
   desc.setter = This::WrapSetter(This::SetterTag<setter>());
   desc.data = data;
   desc.attributes = attributes;
@@ -3432,7 +3452,7 @@ inline ClassPropertyDescriptor<T> InstanceWrap<T>::InstanceAccessor(
     void* data) {
   napi_property_descriptor desc = napi_property_descriptor();
   desc.name = name;
-  desc.getter = This::WrapGetter(This::GetterTag<getter>());
+  desc.getter = details::TemplatedInstanceCallback<T, getter>;
   desc.setter = This::WrapSetter(This::SetterTag<setter>());
   desc.data = data;
   desc.attributes = attributes;
@@ -3522,27 +3542,6 @@ inline napi_value InstanceWrap<T>::InstanceSetterCallbackWrapper(
     auto cb = callbackData->setterCallback;
     (instance->*cb)(callbackInfo, callbackInfo[0]);
     return nullptr;
-  });
-}
-
-template <typename T>
-template <typename InstanceWrap<T>::InstanceVoidMethodCallback method>
-inline napi_value InstanceWrap<T>::WrappedMethod(napi_env env, napi_callback_info info) noexcept {
-  return details::WrapCallback([&] {
-    const CallbackInfo cbInfo(env, info);
-    T* instance = T::Unwrap(cbInfo.This().As<Object>());
-    (instance->*method)(cbInfo);
-    return nullptr;
-  });
-}
-
-template <typename T>
-template <typename InstanceWrap<T>::InstanceMethodCallback method>
-inline napi_value InstanceWrap<T>::WrappedMethod(napi_env env, napi_callback_info info) noexcept {
-  return details::WrapCallback([&] {
-    const CallbackInfo cbInfo(env, info);
-    T* instance = T::Unwrap(cbInfo.This().As<Object>());
-    return (instance->*method)(cbInfo);
   });
 }
 
@@ -3770,7 +3769,7 @@ inline ClassPropertyDescriptor<T> ObjectWrap<T>::StaticMethod(
     void* data) {
   napi_property_descriptor desc = napi_property_descriptor();
   desc.utf8name = utf8name;
-  desc.method = &ObjectWrap<T>::WrappedMethod<method>;
+  desc.method = details::TemplatedVoidCallback<method>;
   desc.data = data;
   desc.attributes = static_cast<napi_property_attributes>(attributes | napi_static);
   return desc;
@@ -3784,7 +3783,7 @@ inline ClassPropertyDescriptor<T> ObjectWrap<T>::StaticMethod(
     void* data) {
   napi_property_descriptor desc = napi_property_descriptor();
   desc.name = name;
-  desc.method = &ObjectWrap<T>::WrappedMethod<method>;
+  desc.method = details::TemplatedVoidCallback<method>;
   desc.data = data;
   desc.attributes = static_cast<napi_property_attributes>(attributes | napi_static);
   return desc;
@@ -3798,7 +3797,7 @@ inline ClassPropertyDescriptor<T> ObjectWrap<T>::StaticMethod(
     void* data) {
   napi_property_descriptor desc = napi_property_descriptor();
   desc.utf8name = utf8name;
-  desc.method = &ObjectWrap<T>::WrappedMethod<method>;
+  desc.method = details::TemplatedCallback<method>;
   desc.data = data;
   desc.attributes = static_cast<napi_property_attributes>(attributes | napi_static);
   return desc;
@@ -3812,7 +3811,7 @@ inline ClassPropertyDescriptor<T> ObjectWrap<T>::StaticMethod(
     void* data) {
   napi_property_descriptor desc = napi_property_descriptor();
   desc.name = name;
-  desc.method = &ObjectWrap<T>::WrappedMethod<method>;
+  desc.method = details::TemplatedCallback<method>;
   desc.data = data;
   desc.attributes = static_cast<napi_property_attributes>(attributes | napi_static);
   return desc;
@@ -3865,7 +3864,7 @@ inline ClassPropertyDescriptor<T> ObjectWrap<T>::StaticAccessor(
     void* data) {
   napi_property_descriptor desc = napi_property_descriptor();
   desc.utf8name = utf8name;
-  desc.getter = This::WrapStaticGetter(This::StaticGetterTag<getter>());
+  desc.getter = details::TemplatedCallback<getter>;
   desc.setter = This::WrapStaticSetter(This::StaticSetterTag<setter>());
   desc.data = data;
   desc.attributes = static_cast<napi_property_attributes>(attributes | napi_static);
@@ -3881,7 +3880,7 @@ inline ClassPropertyDescriptor<T> ObjectWrap<T>::StaticAccessor(
     void* data) {
   napi_property_descriptor desc = napi_property_descriptor();
   desc.name = name;
-  desc.getter = This::WrapStaticGetter(This::StaticGetterTag<getter>());
+  desc.getter = details::TemplatedCallback<getter>;
   desc.setter = This::WrapStaticSetter(This::StaticSetterTag<setter>());
   desc.data = data;
   desc.attributes = static_cast<napi_property_attributes>(attributes | napi_static);
@@ -4005,23 +4004,6 @@ inline void ObjectWrap<T>::FinalizeCallback(napi_env env, void* data, void* /*hi
   T* instance = static_cast<T*>(data);
   instance->Finalize(Napi::Env(env));
   delete instance;
-}
-
-template <typename T>
-template <typename ObjectWrap<T>::StaticVoidMethodCallback method>
-inline napi_value ObjectWrap<T>::WrappedMethod(napi_env env, napi_callback_info info) noexcept {
-  return details::WrapCallback([&] {
-    method(CallbackInfo(env, info));
-    return nullptr;
-  });
-}
-
-template <typename T>
-template <typename ObjectWrap<T>::StaticMethodCallback method>
-inline napi_value ObjectWrap<T>::WrappedMethod(napi_env env, napi_callback_info info) noexcept {
-  return details::WrapCallback([&] {
-    return method(CallbackInfo(env, info));
-  });
 }
 
 template <typename T>
@@ -5143,6 +5125,7 @@ inline void AsyncProgressWorkerBase<DataType>::OnAsyncWorkProgress(Napi::Env /* 
                                 void* data) {
   ThreadSafeData* tsd = static_cast<ThreadSafeData*>(data);
   tsd->asyncprogressworker()->OnWorkProgress(tsd->data());
+  delete tsd;
 }
 
 template <typename DataType>

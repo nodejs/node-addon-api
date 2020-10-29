@@ -8,6 +8,7 @@ process.config.target_defaults.default_configuration =
 // FIXME: We might need a way to load test modules automatically without
 // explicit declaration as follows.
 let testModules = [
+  'addon_build',
   'addon',
   'addon_data',
   'arraybuffer',
@@ -61,6 +62,7 @@ let testModules = [
   'objectwrap_constructor_exception',
   'objectwrap-removewrap',
   'objectwrap_multiple_inheritance',
+  'objectwrap_worker_thread',
   'objectreference',
   'reference',
   'version_management'
@@ -94,6 +96,10 @@ if (napiVersion < 6) {
   testModules.splice(testModules.indexOf('addon_data'), 1);
   testModules.splice(testModules.indexOf('bigint'), 1);
   testModules.splice(testModules.indexOf('typedarray-bigint'), 1);
+}
+
+if (majorNodeVersion < 12) {
+  testModules.splice(testModules.indexOf('objectwrap_worker_thread'), 1);
 }
 
 if (typeof global.gc === 'function') {

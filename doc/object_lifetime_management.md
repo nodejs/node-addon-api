@@ -60,7 +60,7 @@ a native method must be deleted before returning from that method. Since
 deletion, however, care must be taken to create the scope in the right
 place such that you achieve the desired lifetime.
 
-Taking the earlier example, creating a `Napi::HandleScope` in the innner loop
+Taking the earlier example, creating a `Napi::HandleScope` in the inner loop
 would ensure that at most a single new value is held alive throughout the
 execution of the loop:
 

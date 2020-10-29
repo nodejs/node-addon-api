@@ -73,7 +73,7 @@ void MakeCallbackWithAsyncContext(const Napi::CallbackInfo& info) {
   Napi::Function callback = info[0].As<Napi::Function>();
   Napi::Object resource = info[1].As<Napi::Object>();
 
-  // Creat a new async context instance.
+  // Create a new async context instance.
   Napi::AsyncContext context(info.Env(), "async_context_test", resource);
 
   // Invoke the callback with the async context instance.

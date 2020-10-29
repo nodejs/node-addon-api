@@ -1,5 +1,7 @@
 # Symbol
 
+Class `Napi::Symbol` inherits from class [`Napi::Name`][].
+
 ## Methods
 
 ### Constructor
@@ -42,3 +44,5 @@ static Napi::Symbol Napi::Symbol::WellKnown(napi_env env, const std::string& nam
 
 Returns a `Napi::Symbol` representing a well-known `Symbol` from the
 `Symbol` registry.
+
+[`Napi::Name`]: ./name.md

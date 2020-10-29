@@ -1,5 +1,7 @@
 # TypedArrayOf
 
+Class `Napi::TypedArrayOf<T>` inherits from class [`Napi::TypedArray`][].
+
 The `Napi::TypedArrayOf` class corresponds to the various
 [JavaScript `TypedArray`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/TypedArray)
 classes.
@@ -131,3 +133,5 @@ const T* Napi::TypedArrayOf::Data() const
 
 Returns a pointer into the backing `Napi::ArrayBuffer` which is offset to point to the
 start of the array.
+
+[`Napi::TypedArray`]: ./typed_array.md

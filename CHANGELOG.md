@@ -1,5 +1,50 @@
 # node-addon-api Changelog
 
+## 2020-09-18 Version 3.0.2, @NickNaso
+
+### Notable changes:
+
+#### API
+
+- Introduced `include_dir` for use with **gyp** in a scalar context.
+- Added `Napi::Addon` to help handle the loading of a native add-on into 
+multiple threads and or multiple times in the same thread.
+- Concentrate callbacks provided to core N-API.
+- Make sure wrapcallback is used.
+
+#### Documentation
+
+- Added documentation for `Napi::Addon`.
+- Added documentation that reports the full class hierarchy.
+- Added link to N-API tutorial website.
+- Some minor corrections all over the documentation.
+
+#### TEST
+
+- Added tests to check the build process.
+- Refactored test for threasfafe function using async/await.
+- Converted tests that gc into async functions that await 10 ticks after
+each gc.
+- Some minor corrections all over the test suite.
+
+### Commits
+
+* [[`51e25f7c39`](https://github.com/nodejs/node-addon-api/commit/51e25f7c39)] - **doc**: remove a file (#815) (Gabriel Schulhof)
+* [[`8c9f1809a2`](https://github.com/nodejs/node-addon-api/commit/8c9f1809a2)] - **doc**: add inheritance links and other changes (Gabriel Schulhof) [#798](https://github.com/nodejs/node-addon-api/pull/798)
+* [[`6562e6b0ab`](https://github.com/nodejs/node-addon-api/commit/6562e6b0ab)] - **test**: added tests to check the build process (NickNaso) [#808](https://github.com/nodejs/node-addon-api/pull/808)
+* [[`a13b36c96e`](https://github.com/nodejs/node-addon-api/commit/a13b36c96e)] - **test**: fix the threasfafe function test (NickNaso) [#807](https://github.com/nodejs/node-addon-api/pull/807)
+* [[`f27623ff61`](https://github.com/nodejs/node-addon-api/commit/f27623ff61)] - **build**: introduce include\_dir (Lovell Fuller) [#766](https://github.com/nodejs/node-addon-api/pull/766)
+* [[`9aceea71fc`](https://github.com/nodejs/node-addon-api/commit/9aceea71fc)] - **src**: concentrate callbacks provided to core N-API (Gabriel Schulhof) [#786](https://github.com/nodejs/node-addon-api/pull/786)
+* [[`2bc45bbffd`](https://github.com/nodejs/node-addon-api/commit/2bc45bbffd)] - **test**: refactor test to use async/await (Velmisov) [#787](https://github.com/nodejs/node-addon-api/pull/787)
+* [[`518cfdcdc1`](https://github.com/nodejs/node-addon-api/commit/518cfdcdc1)] - **test**: test ObjectWrap destructor - no HandleScope (David Halls) [#729](https://github.com/nodejs/node-addon-api/pull/729)
+* [[`c2cbbd9191`](https://github.com/nodejs/node-addon-api/commit/c2cbbd9191)] - **doc**: add link to n-api tutorial website (#794) (Jim Schlight) [#794](https://github.com/nodejs/node-addon-api/pull/794)
+* [[`1c2a8d59b5`](https://github.com/nodejs/node-addon-api/commit/1c2a8d59b5)] - **doc**: Added required return to example (#793) (pacop) [#793](https://github.com/nodejs/node-addon-api/pull/793)
+* [[`cec2c76941`](https://github.com/nodejs/node-addon-api/commit/cec2c76941)] - **src**: wrap finalizer callback (Gabriel Schulhof) [#762](https://github.com/nodejs/node-addon-api/pull/762)
+* [[`4ce40d22a6`](https://github.com/nodejs/node-addon-api/commit/4ce40d22a6)] - **test**: use assert.strictEqual() (Koki Nishihara) [#777](https://github.com/nodejs/node-addon-api/pull/777)
+* [[`461e3640c6`](https://github.com/nodejs/node-addon-api/commit/461e3640c6)] - **test**: string tests together (Gabriel Schulhof) [#773](https://github.com/nodejs/node-addon-api/pull/773)
+* [[`5af645f649`](https://github.com/nodejs/node-addon-api/commit/5af645f649)] - **src**: add Addon\<T\> class (Gabriel Schulhof) [#749](https://github.com/nodejs/node-addon-api/pull/749)
+* [[`6148fb4bcc`](https://github.com/nodejs/node-addon-api/commit/6148fb4bcc)] - Synchronise Node.js versions in Appveyor Windows CI with Travis (#768) (Lovell Fuller)
+
 ## 2020-07-13 Version 3.0.1, @NickNaso
 
 ### Notable changes:

@@ -73,7 +73,7 @@ Napi::Object Napi::FunctionReference::New(const std::initializer_list<napi_value
 ```
 
 - `[in] args`: Initializer list of JavaScript values as `napi_value` representing
-the arguments of the contructor function.
+the arguments of the constructor function.
 
 Returns a new JavaScript object.
 

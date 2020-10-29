@@ -1,5 +1,7 @@
 # String
 
+Class `Napi::String` inherits from class [`Napi::Name`][].
+
 ## Constructor
 
 ```cpp
@@ -87,3 +89,5 @@ std::u16string Napi::String::Utf16Value() const;
 ```
 
 Returns a UTF-16 encoded C++ string.
+
+[`Napi::Name`]: ./name.md

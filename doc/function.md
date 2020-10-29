@@ -30,6 +30,7 @@ Value Fn(const CallbackInfo& info) {
 
 Object Init(Env env, Object exports) {
   exports.Set(String::New(env, "fn"), Function::New<Fn>(env));
+  return exports;
 }
 
 NODE_API_MODULE(NODE_GYP_MODULE_NAME, Init)
@@ -217,7 +218,7 @@ Napi::Object Napi::Function::New(const std::initializer_list<napi_value>& args) 
 ```
 
 - `[in] args`: Initializer list of JavaScript values as `napi_value` representing
-the arguments of the contructor function.
+the arguments of the constructor function.
 
 Returns a new JavaScript object.
 
@@ -244,7 +245,7 @@ object.
 Napi::Object Napi::Function::New(size_t argc, const napi_value* args) const;
 ```
 
-- `[in] argc`: The number of the arguments passed to the contructor function.
+- `[in] argc`: The number of the arguments passed to the constructor function.
 - `[in] args`: Array of JavaScript values as `napi_value` representing the
 arguments of the constructor function.
 

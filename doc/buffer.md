@@ -1,5 +1,7 @@
 # Buffer
 
+Class `Napi::Buffer` inherits from class [`Napi::Uint8Array`][].
+
 The `Napi::Buffer` class creates a projection of raw data that can be consumed by
 script.
 
@@ -138,3 +140,5 @@ size_t Napi::Buffer::Length() const;
 ```
 
 Returns the number of `T` elements in the external data.
+
+[`Napi::Uint8Array`]: ./typed_array_of.md

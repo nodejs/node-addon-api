@@ -37,6 +37,10 @@ APIs exposed by node-addon-api are generally used to create and
 manipulate JavaScript values. Concepts and operations generally map
 to ideas specified in the **ECMA262 Language Specification**.
 
+The [N-API Resource](http://nodejs.github.io/node-addon-examples/) offers an 
+excellent orientation and tips for developers just getting started with N-API 
+and node-addon-api.
+
 - **[Setup](#setup)**
 - **[API Documentation](#api)**
 - **[Examples](#examples)**
@@ -47,7 +51,7 @@ to ideas specified in the **ECMA262 Language Specification**.
 - **[Contributors](#contributors)**
 - **[License](#license)**
 
-## **Current version: 3.0.1**
+## **Current version: 3.0.2**
 
 (See [CHANGELOG.md](CHANGELOG.md) for complete Changelog)
 
@@ -77,32 +81,25 @@ The oldest Node.js version supported by the current version of node-addon-api is
 
 The following is the documentation for node-addon-api.
 
+ - [Full Class Hierarchy](doc/hierarchy.md)
  - [Addon Structure](doc/addon.md)
- - [Basic Types](doc/basic_types.md)
-    - [Array](doc/basic_types.md#array)
-    - [Symbol](doc/symbol.md)
-    - [String](doc/string.md)
-    - [Name](doc/basic_types.md#name)
-    - [Number](doc/number.md)
-    - [Date](doc/date.md)
-    - [BigInt](doc/bigint.md)
-    - [Boolean](doc/boolean.md)
+ - Data Types:
     - [Env](doc/env.md)
-    - [Value](doc/value.md)
     - [CallbackInfo](doc/callbackinfo.md)
     - [Reference](doc/reference.md)
-    - [External](doc/external.md)
-    - [Object](doc/object.md)
-        - [ObjectReference](doc/object_reference.md)
-        - [PropertyDescriptor](doc/property_descriptor.md)
- - [Error Handling](doc/error_handling.md)
-    - [Error](doc/error.md)
-    - [TypeError](doc/type_error.md)
-    - [RangeError](doc/range_error.md)
- - [Object Lifetime Management](doc/object_lifetime_management.md)
-    - [HandleScope](doc/handle_scope.md)
-    - [EscapableHandleScope](doc/escapable_handle_scope.md)
- - [Working with JavaScript Values](doc/working_with_javascript_values.md)
+    - [Value](doc/value.md)
+        - [Name](doc/name.md)
+            - [Symbol](doc/symbol.md)
+            - [String](doc/string.md)
+        - [Number](doc/number.md)
+        - [Date](doc/date.md)
+        - [BigInt](doc/bigint.md)
+        - [Boolean](doc/boolean.md)
+        - [External](doc/external.md)
+        - [Object](doc/object.md)
+            - [Array](doc/array.md)
+            - [ObjectReference](doc/object_reference.md)
+    - [PropertyDescriptor](doc/property_descriptor.md)
     - [Function](doc/function.md)
         - [FunctionReference](doc/function_reference.md)
     - [ObjectWrap](doc/object_wrap.md)
@@ -112,6 +109,13 @@ The following is the documentation for node-addon-api.
     - [TypedArray](doc/typed_array.md)
       - [TypedArrayOf](doc/typed_array_of.md)
     - [DataView](doc/dataview.md)
+ - [Error Handling](doc/error_handling.md)
+    - [Error](doc/error.md)
+      - [TypeError](doc/type_error.md)
+      - [RangeError](doc/range_error.md)
+ - [Object Lifetime Management](doc/object_lifetime_management.md)
+    - [HandleScope](doc/handle_scope.md)
+    - [EscapableHandleScope](doc/escapable_handle_scope.md)
  - [Memory Management](doc/memory_management.md)
  - [Async Operations](doc/async_operations.md)
     - [AsyncWorker](doc/async_worker.md)

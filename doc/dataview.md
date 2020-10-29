@@ -1,5 +1,7 @@
 # DataView
 
+Class `Napi::DataView` inherits from class [`Napi::Object`][].
+
 The `Napi::DataView` class corresponds to the
 [JavaScript `DataView`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/DataView)
 class.
@@ -242,3 +244,5 @@ void Napi::DataView::SetUint32(size_t byteOffset, uint32_t value) const;
 
 - `[in] byteOffset`: The offset, in byte, from the start of the view where to read the data.
 - `[in] value`: The value to set.
+
+[`Napi::Object`]: ./object.md

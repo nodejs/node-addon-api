@@ -1,5 +1,7 @@
 # BigInt
 
+Class `Napi::Bigint` inherits from class [`Napi::Value`][].
+
 A JavaScript BigInt value.
 
 ## Methods
@@ -91,3 +93,5 @@ void Napi::BigInt::ToWords(int* sign_bit, size_t* word_count, uint64_t* words);
 
 Returns a single `BigInt` value into a sign bit, 64-bit little-endian array,
 and the number of elements in the array.
+
+[`Napi::Value`]: ./value.md

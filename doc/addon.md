@@ -1,5 +1,7 @@
 # Add-on Structure
 
+Class `Napi::Addon<T>` inherits from class [`Napi::InstanceWrap<T>`][].
+
 Creating add-ons that work correctly when loaded multiple times from the same
 source package into multiple Node.js threads and/or multiple times into the same
 Node.js thread requires that all global data they hold be associated with the
@@ -8,20 +10,20 @@ variables because doing so does not take into account the fact that an add-on
 may be loaded into multiple threads nor that an add-on may be loaded multiple
 times into a single thread.
 
-The `Napi::Addon` class can be used to define an entire add-on. Instances of
-`Napi::Addon` subclasses become instances of the add-on, stored safely by
+The `Napi::Addon<T>` class can be used to define an entire add-on. Instances of
+`Napi::Addon<T>` subclasses become instances of the add-on, stored safely by
 Node.js on its various threads and into its various contexts. Thus, any data
-stored in the instance variables of a `Napi::Addon` subclass instance are stored
-safely by Node.js. Functions exposed to JavaScript using
-`Napi::Addon::InstanceMethod` and/or `Napi::Addon::DefineAddon` are instance
-methods of the `Napi::Addon` subclass and thus have access to data stored inside
-the instance.
+stored in the instance variables of a `Napi::Addon<T>` subclass instance are
+stored safely by Node.js. Functions exposed to JavaScript using
+`Napi::Addon<T>::InstanceMethod` and/or `Napi::Addon<T>::DefineAddon` are
+instance methods of the `Napi::Addon` subclass and thus have access to data
+stored inside the instance.
 
-`Napi::Addon::DefineProperties` may be used to attach `Napi::Addon` subclass
-instance methods to objects other than the one that will be returned to Node.js
-as the add-on instance.
+`Napi::Addon<T>::DefineProperties` may be used to attach `Napi::Addon<T>`
+subclass instance methods to objects other than the one that will be returned to
+Node.js as the add-on instance.
 
-The `Napi::Addon` class can be used together with the `NODE_API_ADDON()` and
+The `Napi::Addon<T>` class can be used together with the `NODE_API_ADDON()` and
 `NODE_API_NAMED_ADDON()` macros to define add-ons.
 
 ## Example
@@ -32,16 +34,16 @@ The `Napi::Addon` class can be used together with the `NODE_API_ADDON()` and
 class ExampleAddon : public Napi::Addon<ExampleAddon> {
  public:
   ExampleAddon(Napi::Env env, Napi::Object exports) {
-    // In the constructor we declare the functions the add-on makes avaialable
+    // In the constructor we declare the functions the add-on makes available
     // to JavaScript.
     DefineAddon(exports, {
       InstanceMethod("increment", &ExampleAddon::Increment),
 
       // We can also attach plain objects to `exports`, and instance methods as
       // properties of those sub-objects.
-      InstanceValue("subObject", DefineProperties(Napi::Object::New(), {
-        InstanceMethod("decrement", &ExampleAddon::Decrement
-      })), napi_enumerable)
+      InstanceValue("subObject", DefineProperties(Napi::Object::New(env), {
+        InstanceMethod("decrement", &ExampleAddon::Decrement)
+      }), napi_enumerable)
     });
   }
  private:
@@ -78,7 +80,7 @@ The above code can be used from JavaScript as follows:
 const exampleAddon = require('bindings')('example_addon');
 console.log(exampleAddon.increment()); // prints 43
 console.log(exampleAddon.increment()); // prints 44
-consnole.log(exampleAddon.subObject.decrement()); // prints 43
+console.log(exampleAddon.subObject.decrement()); // prints 43
 ```
 
 When Node.js loads an instance of the add-on, a new instance of the class is
@@ -122,7 +124,8 @@ pass it to `DefineAddon()` as its first parameter if it wishes to replace the
 Defines an add-on instance with functions, accessors, and/or values.
 
 ```cpp
-void Napi::Addon::DefineAddon(Napi::Object exports,
+template <typename T>
+void Napi::Addon<T>::DefineAddon(Napi::Object exports,
                    const std::initializer_list<PropertyDescriptor>& properties);
 ```
 
@@ -138,8 +141,9 @@ Defines function, accessor, and/or value properties on an object using add-on
 instance methods.
 
 ```cpp
+template <typename T>
 Napi::Object
-Napi::Addon::DefineProperties(Napi::Object object,
+Napi::Addon<T>::DefineProperties(Napi::Object object,
                    const std::initializer_list<PropertyDescriptor>& properties);
 ```
 
@@ -150,369 +154,4 @@ See: [`Class property and descriptor`](class_property_descriptor.md).
 
 Returns `object`.
 
-### InstanceMethod
-
-Creates a property descriptor that represents a method provided by the add-on.
-
-```cpp
-static Napi::PropertyDescriptor
-Napi::Addon::InstanceMethod(const char* utf8name,
-                            InstanceVoidMethodCallback method,
-                            napi_property_attributes attributes = napi_default,
-                            void* data = nullptr);
-```
-
-- `[in] utf8name`: Null-terminated string that represents the name of the method
-provided by the add-on.
-- `[in] method`: The native function that represents a method provided by the
-add-on.
-- `[in] attributes`: The attributes associated with the property. One or more of
-`napi_property_attributes`.
-- `[in] data`: User-provided data passed into the method when it is invoked.
-
-Returns a `Napi::PropertyDescriptor` object that represents a method provided
-by the add-on. The method must be of the form
-
-```cpp
-void MethodName(const Napi::CallbackInfo& info);
-```
-
-### InstanceMethod
-
-Creates a property descriptor that represents a method provided by the add-on.
-
-```cpp
-static Napi::PropertyDescriptor
-Napi::Addon::InstanceMethod(const char* utf8name,
-                            InstanceMethodCallback method,
-                            napi_property_attributes attributes = napi_default,
-                            void* data = nullptr);
-```
-
-- `[in] utf8name`: Null-terminated string that represents the name of the method
-provided by the add-on.
-- `[in] method`: The native function that represents a method provided by the
-add-on.
-- `[in] attributes`: The attributes associated with the property. One or more of
-`napi_property_attributes`.
-- `[in] data`: User-provided data passed into the method when it is invoked.
-
-Returns a `Napi::PropertyDescriptor` object that represents a method provided
-by the add-on. The method must be of the form
-
-```cpp
-Napi::Value MethodName(const Napi::CallbackInfo& info);
-```
-
-### InstanceMethod
-
-Creates a property descriptor that represents a method provided by the add-on.
-
-```cpp
-static Napi::PropertyDescriptor
-Napi::Addon::InstanceMethod(Napi::Symbol name,
-                            InstanceVoidMethodCallback method,
-                            napi_property_attributes attributes = napi_default,
-                            void* data = nullptr);
-```
-
-- `[in] name`: JavaScript symbol that represents the name of the method provided
-by the add-on.
-- `[in] method`: The native function that represents a method provided by the
-add-on.
-- `[in] attributes`: The attributes associated with the property. One or more of
-`napi_property_attributes`.
-- `[in] data`: User-provided data passed into the method when it is invoked.
-
-Returns a `Napi::PropertyDescriptor` object that represents a method provided
-by the add-on. The method must be of the form
-
-```cpp
-void MethodName(const Napi::CallbackInfo& info);
-```
-
-### InstanceMethod
-
-Creates a property descriptor that represents a method provided by the add-on.
-
-```cpp
-static Napi::PropertyDescriptor
-Napi::Addon::InstanceMethod(Napi::Symbol name,
-                            InstanceMethodCallback method,
-                            napi_property_attributes attributes = napi_default,
-                            void* data = nullptr);
-```
-
-- `[in] name`: JavaScript symbol that represents the name of the method provided
-by the add-on.
-- `[in] method`: The native function that represents a method provided by the
-add-on.
-- `[in] attributes`: The attributes associated with the property. One or more of
-`napi_property_attributes`.
-- `[in] data`: User-provided data passed into the method when it is invoked.
-
-Returns a `Napi::PropertyDescriptor` object that represents a method provided
-by the add-on. The method must be of the form
-
-```cpp
-Napi::Value MethodName(const Napi::CallbackInfo& info);
-```
-
-### InstanceMethod
-
-Creates a property descriptor that represents a method provided by the add-on.
-
-```cpp
-template <InstanceVoidMethodCallback method>
-static Napi::PropertyDescriptor
-Napi::Addon::InstanceMethod(const char* utf8name,
-                            napi_property_attributes attributes = napi_default,
-                            void* data = nullptr);
-```
-
-- `[in] method`: The native function that represents a method provided by the
-add-on.
-- `[in] utf8name`: Null-terminated string that represents the name of the method
-provided by the add-on.
-- `[in] attributes`: The attributes associated with the property. One or more of
-`napi_property_attributes`.
-- `[in] data`: User-provided data passed into the method when it is invoked.
-
-Returns a `Napi::PropertyDescriptor` object that represents a method provided
-by the add-on. The method must be of the form
-
-```cpp
-void MethodName(const Napi::CallbackInfo& info);
-```
-
-### InstanceMethod
-
-Creates a property descriptor that represents a method provided by the add-on.
-
-```cpp
-template <InstanceMethodCallback method>
-static Napi::PropertyDescriptor
-Napi::Addon::InstanceMethod(const char* utf8name,
-                            napi_property_attributes attributes = napi_default,
-                            void* data = nullptr);
-```
-
-- `[in] method`: The native function that represents a method provided by the
-add-on.
-- `[in] utf8name`: Null-terminated string that represents the name of the method
-provided by the add-on.
-- `[in] attributes`: The attributes associated with the property. One or more of
-`napi_property_attributes`.
-- `[in] data`: User-provided data passed into the method when it is invoked.
-
-Returns a `Napi::PropertyDescriptor` object that represents a method provided
-by the add-on. The method must be of the form
-
-```cpp
-Napi::Value MethodName(const Napi::CallbackInfo& info);
-```
-
-### InstanceMethod
-
-Creates a property descriptor that represents a method provided by the add-on.
-
-```cpp
-template <InstanceVoidMethodCallback method>
-static Napi::PropertyDescriptor
-Napi::Addon::InstanceMethod(Napi::Symbol name,
-                            napi_property_attributes attributes = napi_default,
-                            void* data = nullptr);
-```
-
-- `[in] method`: The native function that represents a method provided by the
-add-on.
-- `[in] name`: The `Napi::Symbol` object whose value is used to identify the
-instance method for the class.
-- `[in] attributes`: The attributes associated with the property. One or more of
-`napi_property_attributes`.
-- `[in] data`: User-provided data passed into the method when it is invoked.
-
-Returns a `Napi::PropertyDescriptor` object that represents a method provided
-by the add-on. The method must be of the form
-
-```cpp
-void MethodName(const Napi::CallbackInfo& info);
-```
-
-### InstanceMethod
-
-Creates a property descriptor that represents a method provided by the add-on.
-
-```cpp
-template <InstanceMethodCallback method>
-static Napi::PropertyDescriptor
-Napi::Addon::InstanceMethod(Napi::Symbol name,
-                            napi_property_attributes attributes = napi_default,
-                            void* data = nullptr);
-```
-
-- `[in] method`: The native function that represents a method provided by the
-add-on.
-- `[in] name`: The `Napi::Symbol` object whose value is used to identify the
-instance method for the class.
-- `[in] attributes`: The attributes associated with the property. One or more of
-`napi_property_attributes`.
-- `[in] data`: User-provided data passed into the method when it is invoked.
-
-Returns a `Napi::PropertyDescriptor` object that represents a method provided
-by the add-on. The method must be of the form
-
-```cpp
-Napi::Value MethodName(const Napi::CallbackInfo& info);
-```
-
-### InstanceAccessor
-
-Creates a property descriptor that represents an instance accessor property
-provided by the add-on.
-
-```cpp
-static Napi::PropertyDescriptor
-Napi::Addon::InstanceAccessor(const char* utf8name,
-                             InstanceGetterCallback getter,
-                             InstanceSetterCallback setter,
-                             napi_property_attributes attributes = napi_default,
-                             void* data = nullptr);
-```
-
-- `[in] utf8name`: Null-terminated string that represents the name of the method
-provided by the add-on.
-- `[in] getter`: The native function to call when a get access to the property
-is performed.
-- `[in] setter`: The native function to call when a set access to the property
-is performed.
-- `[in] attributes`: The attributes associated with the property. One or more of
-`napi_property_attributes`.
-- `[in] data`: User-provided data passed into the getter or the setter when it
-is invoked.
-
-Returns a `Napi::PropertyDescriptor` object that represents an instance accessor
-property provided by the add-on.
-
-### InstanceAccessor
-
-Creates a property descriptor that represents an instance accessor property
-provided by the add-on.
-
-```cpp
-static Napi::PropertyDescriptor
-Napi::Addon::InstanceAccessor(Symbol name,
-                             InstanceGetterCallback getter,
-                             InstanceSetterCallback setter,
-                             napi_property_attributes attributes = napi_default,
-                             void* data = nullptr);
-```
-
-- `[in] name`: The `Napi::Symbol` object whose value is used to identify the
-instance accessor.
-- `[in] getter`: The native function to call when a get access to the property of
-a JavaScript class is performed.
-- `[in] setter`: The native function to call when a set access to the property of
-a JavaScript class is performed.
-- `[in] attributes`: The attributes associated with the property. One or more of
-`napi_property_attributes`.
-- `[in] data`: User-provided data passed into the getter or the setter when it
-is invoked.
-
-Returns a `Napi::PropertyDescriptor` object that represents an instance accessor
-property provided by the add-on.
-
-### InstanceAccessor
-
-Creates a property descriptor that represents an instance accessor property
-provided by the add-on.
-
-```cpp
-template <InstanceGetterCallback getter, InstanceSetterCallback setter=nullptr>
-static Napi::PropertyDescriptor
-Napi::Addon::InstanceAccessor(const char* utf8name,
-                             napi_property_attributes attributes = napi_default,
-                             void* data = nullptr);
-```
-
-- `[in] getter`: The native function to call when a get access to the property of
-a JavaScript class is performed.
-- `[in] setter`: The native function to call when a set access to the property of
-a JavaScript class is performed.
-- `[in] utf8name`: Null-terminated string that represents the name of the method
-provided by the add-on.
-- `[in] attributes`: The attributes associated with the property. One or more of
-`napi_property_attributes`.
-- `[in] data`: User-provided data passed into the getter or the setter when it
-is invoked.
-
-Returns a `Napi::PropertyDescriptor` object that represents an instance accessor
-property provided by the add-on.
-
-### InstanceAccessor
-
-Creates a property descriptor that represents an instance accessor property
-provided by the add-on.
-
-```cpp
-template <InstanceGetterCallback getter, InstanceSetterCallback setter=nullptr>
-static Napi::PropertyDescriptor
-Napi::Addon::InstanceAccessor(Symbol name,
-                             napi_property_attributes attributes = napi_default,
-                             void* data = nullptr);
-```
-
-- `[in] getter`: The native function to call when a get access to the property of
-a JavaScript class is performed.
-- `[in] setter`: The native function to call when a set access to the property of
-a JavaScript class is performed.
-- `[in] name`: The `Napi::Symbol` object whose value is used to identify the
-instance accessor.
-- `[in] attributes`: The attributes associated with the property. One or more of
-`napi_property_attributes`.
-- `[in] data`: User-provided data passed into the getter or the setter when it
-is invoked.
-
-Returns a `Napi::PropertyDescriptor` object that represents an instance accessor
-property provided by the add-on.
-
-### InstanceValue
-
-Creates property descriptor that represents an instance value property provided
-by the add-on.
-
-```cpp
-static Napi::PropertyDescriptor
-Napi::Addon::InstanceValue(const char* utf8name,
-                           Napi::Value value,
-                           napi_property_attributes attributes = napi_default);
-```
-
-- `[in] utf8name`: Null-terminated string that represents the name of the property.
-- `[in] value`: The value that's retrieved by a get access of the property.
-- `[in] attributes`: The attributes associated with the property. One or more of
-`napi_property_attributes`.
-
-Returns a `Napi::PropertyDescriptor` object that represents an instance value
-property of an add-on.
-
-### InstanceValue
-
-Creates property descriptor that represents an instance value property provided
-by the add-on.
-
-```cpp
-static Napi::PropertyDescriptor
-Napi::Addon::InstanceValue(Symbol name,
-                           Napi::Value value,
-                           napi_property_attributes attributes = napi_default);
-```
-
-- `[in] name`: The `Napi::Symbol` object whose value is used to identify the
-name of the property.
-- `[in] value`: The value that's retrieved by a get access of the property.
-- `[in] attributes`: The attributes associated with the property. One or more of
-`napi_property_attributes`.
-
-Returns a `Napi::PropertyDescriptor` object that represents an instance value
-property of an add-on.
+[`Napi::InstanceWrap<T>`]: ./instance_wrap.md

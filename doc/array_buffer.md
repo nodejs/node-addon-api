@@ -1,5 +1,7 @@
 # ArrayBuffer
 
+Class `Napi::ArrayBuffer` inherits from class [`Napi::Object`][].
+
 The `Napi::ArrayBuffer` class corresponds to the
 [JavaScript `ArrayBuffer`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/ArrayBuffer)
 class.
@@ -127,3 +129,5 @@ void* Napi::ArrayBuffer::Data() const;
 ```
 
 Returns a pointer the wrapped data.
+
+[`Napi::Object`]: ./object.md

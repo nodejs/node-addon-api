@@ -26,7 +26,7 @@ indicating for each addon whether it is an N-API addon.
      ```
 
 The tool accepts the root directory from which to start checking for Node.js
-native addons as a single optional command line parameter. If ommitted it will
+native addons as a single optional command line parameter. If omitted it will
 start checking from the current directory (`.`).
 
 [checker tool]: ../tools/check-napi.js

@@ -40,6 +40,14 @@ public:
     info.This().As<Napi::Object>().DefineProperty(
         Napi::PropertyDescriptor::Accessor<OwnPropertyGetter>("ownPropertyT",
                                                               napi_enumerable, this));
+
+    bufref_ = Napi::Persistent(Napi::Buffer<uint8_t>::New(
+        Env(),
+        static_cast<uint8_t*>(malloc(1)),
+        1,
+        [](Napi::Env, uint8_t* bufaddr) {
+            free(bufaddr);
+        }));
   }
 
   static Napi::Value OwnPropertyGetter(const Napi::CallbackInfo& info) {
@@ -183,6 +191,8 @@ private:
   Napi::FunctionReference finalizeCb_;
 
   static std::string s_staticMethodText;
+
+  Napi::Reference<Napi::Buffer<uint8_t>> bufref_;
 };
 
 std::string Test::s_staticMethodText;

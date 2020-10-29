@@ -395,7 +395,7 @@ class EchoWorker : public AsyncWorker {
 };
 ```
 
-The `EchoWorker`'s contructor calls the base class' constructor to pass in the
+The `EchoWorker`'s constructor calls the base class' constructor to pass in the
 callback that the `Napi::AsyncWorker` base class will store persistently. When
 the work on the `Napi::AsyncWorker::Execute` method is done the
 `Napi::AsyncWorker::OnOk` method is called and the results return back to

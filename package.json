@@ -140,6 +140,10 @@
       "url": "https://github.com/KevinEady"
     },
     {
+      "name": "Koki Nishihara",
+      "url": "https://github.com/Nishikoh"
+    },
+    {
       "name": "Konstantin Tarkus",
       "url": "https://github.com/koistya"
     },
@@ -196,6 +200,10 @@
       "url": "https://github.com/anurbol"
     },
     {
+      "name": "pacop",
+      "url": "https://github.com/pacop"
+    },
+    {
       "name": "Philipp Renoth",
       "url": "https://github.com/DaAitch"
     },
@@ -240,6 +248,10 @@
       "url": "https://github.com/tux3"
     },
     {
+      "name": "Vlad Velmisov",
+      "url": "https://github.com/Velmisov"
+    },
+    {
       "name": "Yohei Kishimoto",
       "url": "https://github.com/morokosi"
     },
@@ -252,6 +264,7 @@
   "description": "Node.js API (N-API)",
   "devDependencies": {
     "benchmark": "^2.1.4",
+    "fs-extra": "^9.0.1",
     "bindings": "^1.5.0",
     "safe-buffer": "^5.1.1"
   },
@@ -289,5 +302,5 @@
     "dev:incremental": "node test",
     "doc": "doxygen doc/Doxyfile"
   },
-  "version": "3.0.1"
+  "version": "3.0.2"
 }
