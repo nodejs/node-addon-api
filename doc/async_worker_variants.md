@@ -244,8 +244,8 @@ Note that `Napi::AsyncProgressWorker::ExecutionProcess::Send` merely guarantees
 **eventual** invocation of `Napi::AsyncProgressWorker::OnProgress`, which means
 multiple send might be coalesced into single invocation of `Napi::AsyncProgressWorker::OnProgress`
 with latest data. If you would like to guarantee that there is one invocation of
-`Napi::AsyncProgressQueueWorker::OnProgress` for every `Send` call, you should use the
-`Napi::AsyncProgressQueueWorker` class instead which is documented further down this page.
+`OnProgress` for every `Send` call, you should use the `Napi::AsyncProgressQueueWorker` 
+class instead which is documented further down this page.
 
 ```cpp
 void Napi::AsyncProgressWorker::ExecutionProcess::Send(const T* data, size_t count) const;
@@ -356,7 +356,7 @@ Object Init(Env env, Object exports)
 }
 
 // Register our native addon
-NODE_API_MODULE(addon, Init)
+NODE_API_MODULE(nativeAddon, Init)
 ```
 
 The implementation of a `Napi::AsyncProgressWorker` can be used by creating a
@@ -368,7 +368,7 @@ method that will queue the created worker for execution.
 Lastly, the following Javascript (ES6+) code would be associated the above example:
 
 ```js
-nativeAddon = require('binding.node');
+const { nativeAddon } = require('binding.node');
 
 const exampleCallback = (errorResponse, okResponse, progressData) => {
     // Use the data accordingly
@@ -511,6 +511,17 @@ Value Echo(const CallbackInfo& info) {
     wk->Queue();
     return info.Env().Undefined();
 }
+
+// Register the native method for JS to access
+Object Init(Env env, Object exports)
+{
+    exports.Set(String::New(env, "echo"), Function::New(env, Echo));
+
+    return exports;
+}
+
+// Register our native addon
+NODE_API_MODULE(nativeAddon, Init)
 ```
 
 The implementation of a `Napi::AsyncProgressQueueWorker` can be used by creating a
@@ -522,7 +533,7 @@ method that will queue the created worker for execution.
 Lastly, the following Javascript (ES6+) code would be associated the above example:
 
 ```js
-nativeAddon = require('binding.node');
+const { nativeAddon } = require('binding.node');
 
 const onErrorCallback = (msg) => {
     // Use the data accordingly
