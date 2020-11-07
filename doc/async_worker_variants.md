@@ -550,7 +550,7 @@ const onProgressCallback = (num) => {
     // ...
 };
 
-// Call our native addon with the paramters of a string and a function
+// Call our native addon with the paramters of a string three callback functions
 nativeAddon.echo("example", onErrorCallback, onOkCallback, onProgressCallback);
 ```
 
