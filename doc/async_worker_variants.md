@@ -243,7 +243,9 @@ be safely released.
 Note that `Napi::AsyncProgressWorker::ExecutionProcess::Send` merely guarantees
 **eventual** invocation of `Napi::AsyncProgressWorker::OnProgress`, which means
 multiple send might be coalesced into single invocation of `Napi::AsyncProgressWorker::OnProgress`
-with latest data.
+with latest data. If you would like to guarantee that there is one invocation of
+`OnProgress` for every `Send` call, you should use the `Napi::AsyncProgressQueueWorker` 
+class instead which is documented further down this page.
 
 ```cpp
 void Napi::AsyncProgressWorker::ExecutionProcess::Send(const T* data, size_t count) const;
@@ -269,7 +271,8 @@ function runs in the background out of the **event loop** thread and at the end
 the `Napi::AsyncProgressWorker::OnOK` or `Napi::AsyncProgressWorker::OnError` function will be
 called and are executed as part of the event loop.
 
-The code below shows a basic example of the `Napi::AsyncProgressWorker` implementation:
+The code below shows a basic example of the `Napi::AsyncProgressWorker` implementation along with an
+example of how the counterpart in Javascript would appear:
 
 ```cpp
 #include <napi.h>
@@ -281,28 +284,38 @@ using namespace Napi;
 
 class EchoWorker : public AsyncProgressWorker<uint32_t> {
     public:
-        EchoWorker(Function& callback, std::string& echo)
-        : AsyncProgressWorker(callback), echo(echo) {}
+        EchoWorker(Function& okCallback, std::string& echo)
+        : AsyncProgressWorker(okCallback), echo(echo) {}
 
         ~EchoWorker() {}
-    // This code will be executed on the worker thread
-    void Execute(const ExecutionProgress& progress) {
-        // Need to simulate cpu heavy task
-        for (uint32_t i = 0; i < 100; ++i) {
-          progress.Send(&i, 1)
-          std::this_thread::sleep_for(std::chrono::seconds(1));
+        
+        // This code will be executed on the worker thread
+        void Execute(const ExecutionProgress& progress) {
+            // Need to simulate cpu heavy task
+            // Note: This Send() call is not guaranteed to trigger an equal
+            // number of OnProgress calls (read documentation above for more info)
+            for (uint32_t i = 0; i < 100; ++i) {
+              progress.Send(&i, 1)
+            }
         }
-    }
+        
+        void OnError(const Error &e) {
+            HandleScope scope(Env());
+            // Pass error onto JS, no data for other parameters
+            Callback().Call({String::New(Env(), e.Message())});
+        }
 
-    void OnOK() {
-        HandleScope scope(Env());
-        Callback().Call({Env().Null(), String::New(Env(), echo)});
-    }
+        void OnOK() {
+            HandleScope scope(Env());
+            // Pass no error, give back original data
+            Callback().Call({Env().Null(), String::New(Env(), echo)});
+        }
 
-    void OnProgress(const uint32_t* data, size_t /* count */) {
-        HandleScope scope(Env());
-        Callback().Call({Env().Null(), Env().Null(), Number::New(Env(), *data)});
-    }
+        void OnProgress(const uint32_t* data, size_t /* count */) {
+            HandleScope scope(Env());
+            // Pass no error, no echo data, but do pass on the progress data
+            Callback().Call({Env().Null(), Env().Null(), Number::New(Env(), *data)});
+        }
 
     private:
         std::string echo;
@@ -327,12 +340,23 @@ using namespace Napi;
 
 Value Echo(const CallbackInfo& info) {
     // We need to validate the arguments here
-    Function cb = info[1].As<Function>();
     std::string in = info[0].As<String>();
+    Function cb = info[1].As<Function>();
     EchoWorker* wk = new EchoWorker(cb, in);
     wk->Queue();
     return info.Env().Undefined();
 }
+
+// Register the native method for JS to access
+Object Init(Env env, Object exports)
+{
+    exports.Set(String::New(env, "echo"), Function::New(env, Echo));
+
+    return exports;
+}
+
+// Register our native addon
+NODE_API_MODULE(nativeAddon, Init)
 ```
 
 The implementation of a `Napi::AsyncProgressWorker` can be used by creating a
@@ -340,6 +364,20 @@ new instance and passing to its constructor the callback to execute when the
 asynchronous task ends and other data needed for the computation. Once created,
 the only other action needed is to call the `Napi::AsyncProgressWorker::Queue`
 method that will queue the created worker for execution.
+
+Lastly, the following Javascript (ES6+) code would be associated the above example:
+
+```js
+const { nativeAddon } = require('binding.node');
+
+const exampleCallback = (errorResponse, okResponse, progressData) => {
+    // Use the data accordingly
+    // ...
+};
+
+// Call our native addon with the paramters of a string and a function
+nativeAddon.echo("example", exampleCallback);
+```
 
 # AsyncProgressQueueWorker
 
@@ -379,7 +417,9 @@ void Napi::AsyncProgressQueueWorker::ExecutionProcess::Send(const T* data, size_
 
 ## Example
 
-The code below shows a basic example of the `Napi::AsyncProgressQueueWorker` implementation:
+The code below show an example of the `Napi::AsyncProgressQueueWorker` implementation, but
+also demonsrates how to use multiple `Napi::Function`'s if you wish to provide multiple
+callback functions for more object oriented code:
 
 ```cpp
 #include <napi.h>
@@ -391,31 +431,55 @@ using namespace Napi;
 
 class EchoWorker : public AsyncProgressQueueWorker<uint32_t> {
     public:
-        EchoWorker(Function& callback, std::string& echo)
-        : AsyncProgressQueueWorker(callback), echo(echo) {}
+        EchoWorker(Function& okCallback, Function& errorCallback, Function& progressCallback, std::string& echo)
+        : AsyncProgressQueueWorker(okCallback), echo(echo) {
+            // Set our function references to use them below
+            this->errorCallback.Reset(errorCallback, 1);
+            this->progressCallback.Reset(progressCallback, 1);
+        }
 
         ~EchoWorker() {}
-    // This code will be executed on the worker thread
-    void Execute(const ExecutionProgress& progress) {
-        // Need to simulate cpu heavy task
-        for (uint32_t i = 0; i < 100; ++i) {
-          progress.Send(&i, 1);
-          std::this_thread::sleep_for(std::chrono::seconds(1));
+        
+        // This code will be executed on the worker thread
+        void Execute(const ExecutionProgress& progress) {
+            // Need to simulate cpu heavy task to demonstrate that
+            // every call to Send() will trigger an OnProgress function call
+            for (uint32_t i = 0; i < 100; ++i) {
+              progress.Send(&i, 1);
+            }
         }
-    }
 
-    void OnOK() {
-        HandleScope scope(Env());
-        Callback().Call({Env().Null(), String::New(Env(), echo)});
-    }
+        void OnOK() {
+            HandleScope scope(Env());
+            // Call our onOkCallback in javascript with the data we were given originally
+            Callback().Call({String::New(Env(), echo)});
+        }
+        
+        void OnError(const Error &e) {
+            HandleScope scope(Env());
+            
+            // We call our callback provided in the constructor with 2 parameters
+            if (!this->errorCallback.IsEmpty()) {
+                // Call our onErrorCallback in javascript with the error message
+                this->errorCallback.Call(Receiver().Value(), {String::New(Env(), e.Message())});
+            }
+        }
 
-    void OnProgress(const uint32_t* data, size_t /* count */) {
-        HandleScope scope(Env());
-        Callback().Call({Env().Null(), Env().Null(), Number::New(Env(), *data)});
-    }
+        void OnProgress(const uint32_t* data, size_t /* count */) {
+            HandleScope scope(Env());
+            
+            if (!this->progressCallback.IsEmpty()) {
+                // Call our onProgressCallback in javascript with each integer from 0 to 99 (inclusive)
+                // as this function is triggered from the above Send() calls
+                this->progressCallback.Call(Receiver().Value(), {Number::New(Env(), *data)});
+            }
+        }
 
     private:
         std::string echo;
+        FunctionReference progressCallback;
+        FunctionReference errorCallback;
+        
 };
 ```
 
@@ -439,12 +503,25 @@ using namespace Napi;
 
 Value Echo(const CallbackInfo& info) {
     // We need to validate the arguments here.
-    Function cb = info[1].As<Function>();
     std::string in = info[0].As<String>();
-    EchoWorker* wk = new EchoWorker(cb, in);
+    Function errorCb = info[1].As<Function>();
+    Function okCb = info[2].As<Function>();
+    Function progressCb = info[3].As<Function>();
+    EchoWorker* wk = new EchoWorker(okCb, errorCb, progressCb, in);
     wk->Queue();
     return info.Env().Undefined();
 }
+
+// Register the native method for JS to access
+Object Init(Env env, Object exports)
+{
+    exports.Set(String::New(env, "echo"), Function::New(env, Echo));
+
+    return exports;
+}
+
+// Register our native addon
+NODE_API_MODULE(nativeAddon, Init)
 ```
 
 The implementation of a `Napi::AsyncProgressQueueWorker` can be used by creating a
@@ -452,5 +529,29 @@ new instance and passing to its constructor the callback to execute when the
 asynchronous task ends and other data needed for the computation. Once created,
 the only other action needed is to call the `Napi::AsyncProgressQueueWorker::Queue`
 method that will queue the created worker for execution.
+
+Lastly, the following Javascript (ES6+) code would be associated the above example:
+
+```js
+const { nativeAddon } = require('binding.node');
+
+const onErrorCallback = (msg) => {
+    // Use the data accordingly
+    // ...
+};
+
+const onOkCallback = (echo) => {
+    // Use the data accordingly
+    // ...
+};
+
+const onProgressCallback = (num) => {
+    // Use the data accordingly
+    // ...
+};
+
+// Call our native addon with the paramters of a string and three callback functions
+nativeAddon.echo("example", onErrorCallback, onOkCallback, onProgressCallback);
+```
 
 [`Napi::AsyncWorker`]: ./async_worker.md
