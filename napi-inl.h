@@ -3977,6 +3977,7 @@ inline napi_value ObjectWrap<T>::StaticSetterCallbackWrapper(
 
 template <typename T>
 inline void ObjectWrap<T>::FinalizeCallback(napi_env env, void* data, void* /*hint*/) {
+  HandleScope scope(env);
   T* instance = static_cast<T*>(data);
   instance->Finalize(Napi::Env(env));
   delete instance;
