@@ -1,7 +1,7 @@
 'use strict';
 
 const { promisify } = require('util');
-const  exec  = promisify(require('child_process').exec);
+const exec = promisify(require('child_process').exec);
 const { copy, remove } = require('fs-extra');
 const path = require('path');
 const assert = require('assert')
@@ -26,8 +26,8 @@ async function test(addon) {
   const { stderr, stdout } = await exec('npm install', {
     cwd: path.join(ADDONS_FOLDER, addon)
   })
-  console.log(`   >Runting test for: '${addon}'`);
-  // Disabled the checks on stderr and stdout because of this issuue on npm:
+  console.log(`   >Running test for: '${addon}'`);
+  // Disabled the checks on stderr and stdout because of this issue on npm:
   // Stop using process.umask(): https://github.com/npm/cli/issues/1103
   // We should enable the following checks again after the resolution of
   // the reported issue.
@@ -40,7 +40,6 @@ async function test(addon) {
   assert.strictEqual(binding.noexcept.echo('noexcept'), 'noexcept');
   assert.strictEqual(binding.noexcept.echo(103), 103);
 }
-
 
 module.exports = (async function() {
   await beforeAll(addons);
