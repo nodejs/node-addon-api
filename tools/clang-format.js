@@ -27,7 +27,8 @@ function main(args) {
   }
 
   const clangFormatOutput = result.stdout.trim();
-  if (clangFormatOutput !== ('no modified files to format') &&
+  if (clangFormatOutput !== '' &&
+      clangFormatOutput !== ('no modified files to format') &&
       clangFormatOutput !== ('clang-format did not modify any files')) {
     console.error(clangFormatOutput);
     const fixCmd = '"npm run lint:fix"';
