@@ -1,5 +1,28 @@
 'use strict';
 
+const majorNodeVersion = process.versions.node.split('.')[0];
+
+if (typeof global.gc !== 'function') {
+  // Construct the correct (version-dependent) command-line args.
+  let args = ['--expose-gc', '--no-concurrent-array-buffer-freeing'];
+  if (majorNodeVersion >= 14) {
+    args.push('--no-concurrent-array-buffer-sweeping');
+  }
+  args.push(__filename);
+
+  const child = require('./napi_child').spawnSync(process.argv[0], args, {
+    stdio: 'inherit',
+  });
+
+  if (child.signal) {
+    console.error(`Tests aborted with ${child.signal}`);
+    process.exitCode = 1;
+  } else {
+    process.exitCode = child.status;
+  }
+  process.exit(process.exitCode);
+}
+
 process.config.target_defaults.default_configuration =
   require('fs')
     .readdirSync(require('path').join(__dirname, 'build'))
@@ -68,7 +91,7 @@ let testModules = [
   'version_management'
 ];
 
-let napiVersion = Number(process.versions.napi)
+let napiVersion = Number(process.versions.napi);
 if (process.env.NAPI_VERSION) {
   // we need this so that we don't try run tests that rely
   // on methods that are not available in the NAPI_VERSION
@@ -76,8 +99,6 @@ if (process.env.NAPI_VERSION) {
   napiVersion = process.env.NAPI_VERSION;
 }
 console.log('napiVersion:' + napiVersion);
-
-const majorNodeVersion = process.versions.node.split('.')[0]
 
 if (napiVersion < 3) {
   testModules.splice(testModules.indexOf('callbackscope'), 1);
@@ -110,40 +131,19 @@ if (majorNodeVersion < 12) {
   testModules.splice(testModules.indexOf('objectwrap_worker_thread'), 1);
 }
 
-if (typeof global.gc === 'function') {
-  (async function() {
-  console.log(`Testing with N-API Version '${napiVersion}'.`);
+(async function() {
+console.log(`Testing with N-API Version '${napiVersion}'.`);
 
-  console.log('Starting test suite\n');
+console.log('Starting test suite\n');
 
-  // Requiring each module runs tests in the module.
-  for (const name of testModules) {
-    console.log(`Running test '${name}'`);
-    await require('./' + name);
-  };
+// Requiring each module runs tests in the module.
+for (const name of testModules) {
+  console.log(`Running test '${name}'`);
+  await require('./' + name);
+};
 
-  console.log('\nAll tests passed!');
-  })().catch((error) => {
-    console.log(error);
-    process.exit(1);
-  });
-} else {
-  // Construct the correct (version-dependent) command-line args.
-  let args = ['--expose-gc', '--no-concurrent-array-buffer-freeing'];
-  if (majorNodeVersion >= 14) {
-    args.push('--no-concurrent-array-buffer-sweeping');
-  }
-  args.push(__filename);
-
-  const child = require('./napi_child').spawnSync(process.argv[0], args, {
-    stdio: 'inherit',
-  });
-
-  if (child.signal) {
-    console.error(`Tests aborted with ${child.signal}`);
-    process.exitCode = 1;
-  } else {
-    process.exitCode = child.status;
-  }
-  process.exit(process.exitCode);
-}
+console.log('\nAll tests passed!');
+})().catch((error) => {
+  console.log(error);
+  process.exit(1);
+});
