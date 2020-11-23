@@ -157,6 +157,15 @@ npm install
 npm test --disable-deprecated
 ```
 
+To run the tests targetting a specific version of N-API run
+```
+npm install
+export NAPI_VERSION=X
+npm test --NAPI_VERSION=X
+```
+
+where X is the version of N-API you want to target.
+
 ### **Debug**
 
 To run the **node-addon-api** tests with `--debug` option:
