@@ -1752,13 +1752,18 @@ namespace Napi {
     static napi_value InstanceSetterCallbackWrapper(napi_env env, napi_callback_info info);
 
     template <InstanceSetterCallback method>
-    static napi_value WrappedMethod(napi_env env, napi_callback_info info) NAPI_NOEXCEPT;
+    static napi_value WrappedMethod(napi_env env, 
+                                    napi_callback_info info) NAPI_NOEXCEPT;
 
     template <InstanceSetterCallback setter> struct SetterTag {};
 
     template <InstanceSetterCallback setter>
-    static napi_callback WrapSetter(SetterTag<setter>) NAPI_NOEXCEPT { return &This::WrappedMethod<setter>; }
-    static napi_callback WrapSetter(SetterTag<nullptr>) NAPI_NOEXCEPT { return nullptr; }
+    static napi_callback WrapSetter(SetterTag<setter>) NAPI_NOEXCEPT { 
+      return &This::WrappedMethod<setter>; 
+    }
+    static napi_callback WrapSetter(SetterTag<nullptr>) NAPI_NOEXCEPT { 
+      return nullptr; 
+    }
   };
 
   /// Base class to be extended by C++ classes exposed to JavaScript; each C++ class instance gets
@@ -1891,13 +1896,20 @@ namespace Napi {
                                  StaticSetterCallback> StaticAccessorCallbackData;
 
     template <StaticSetterCallback method>
-    static napi_value WrappedMethod(napi_env env, napi_callback_info info) NAPI_NOEXCEPT;
+    static napi_value WrappedMethod(napi_env env, 
+                                    napi_callback_info info) NAPI_NOEXCEPT;
 
     template <StaticSetterCallback setter> struct StaticSetterTag {};
 
     template <StaticSetterCallback setter>
-    static napi_callback WrapStaticSetter(StaticSetterTag<setter>) NAPI_NOEXCEPT { return &This::WrappedMethod<setter>; }
-    static napi_callback WrapStaticSetter(StaticSetterTag<nullptr>) NAPI_NOEXCEPT { return nullptr; }
+    static napi_callback WrapStaticSetter(StaticSetterTag<setter>) 
+      NAPI_NOEXCEPT { 
+        return &This::WrappedMethod<setter>; 
+    }
+    static napi_callback WrapStaticSetter(StaticSetterTag<nullptr>) 
+      NAPI_NOEXCEPT { 
+      return nullptr; 
+    }
 
     bool _construction_failed = true;
   };
