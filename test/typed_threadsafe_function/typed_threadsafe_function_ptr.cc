@@ -16,7 +16,7 @@ static Value Test(const CallbackInfo& info) {
   return info.Env().Undefined();
 }
 
-}
+}  // namespace
 
 Object InitTypedThreadSafeFunctionPtr(Env env) {
   Object exports = Object::New(env);

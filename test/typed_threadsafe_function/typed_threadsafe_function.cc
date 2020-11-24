@@ -12,19 +12,17 @@ constexpr size_t MAX_QUEUE_SIZE = 2;
 static std::thread threads[2];
 
 static struct ThreadSafeFunctionInfo {
-  enum CallType {
-    DEFAULT,
-    BLOCKING,
-    NON_BLOCKING
-  } type;
+  enum CallType { DEFAULT, BLOCKING, NON_BLOCKING } type;
   bool abort;
   bool startSecondary;
   FunctionReference jsFinalizeCallback;
   uint32_t maxQueueSize;
 } tsfnInfo;
 
-static void TSFNCallJS(Env env, Function jsCallback,
-                       ThreadSafeFunctionInfo * /* context */, int *data) {
+static void TSFNCallJS(Env env,
+                       Function jsCallback,
+                       ThreadSafeFunctionInfo* /* context */,
+                       int* data) {
   // A null environment signifies the threadsafe function has been finalized.
   if (!(env == nullptr || jsCallback == nullptr)) {
     // If called with no data
@@ -82,24 +80,25 @@ static void DataSourceThread() {
       // chance to abort.
       auto start = std::chrono::high_resolution_clock::now();
       constexpr auto MS_200 = std::chrono::milliseconds(200);
-      for (; std::chrono::high_resolution_clock::now() - start < MS_200;);
+      for (; std::chrono::high_resolution_clock::now() - start < MS_200;)
+        ;
     }
 
     switch (status) {
-    case napi_queue_full:
-      queueWasFull = true;
-      index++;
-      // fall through
+      case napi_queue_full:
+        queueWasFull = true;
+        index++;
+        // fall through
 
-    case napi_ok:
-      continue;
+      case napi_ok:
+        continue;
 
-    case napi_closing:
-      queueWasClosing = true;
-      break;
+      case napi_closing:
+        queueWasClosing = true;
+        break;
 
-    default:
-      Error::Fatal("DataSourceThread", "ThreadSafeFunction.*Call() failed");
+      default:
+        Error::Fatal("DataSourceThread", "ThreadSafeFunction.*Call() failed");
     }
   }
 
@@ -141,14 +140,21 @@ static void JoinTheThreads(Env /* env */,
 }
 
 static Value StartThreadInternal(const CallbackInfo& info,
-    ThreadSafeFunctionInfo::CallType type) {
+                                 ThreadSafeFunctionInfo::CallType type) {
   tsfnInfo.type = type;
   tsfnInfo.abort = info[1].As<Boolean>();
   tsfnInfo.startSecondary = info[2].As<Boolean>();
   tsfnInfo.maxQueueSize = info[3].As<Number>().Uint32Value();
 
-  tsfn = TSFN::New(info.Env(), info[0].As<Function>(), Object::New(info.Env()),
-      "Test", tsfnInfo.maxQueueSize, 2, &tsfnInfo, JoinTheThreads, threads);
+  tsfn = TSFN::New(info.Env(),
+                   info[0].As<Function>(),
+                   Object::New(info.Env()),
+                   "Test",
+                   tsfnInfo.maxQueueSize,
+                   2,
+                   &tsfnInfo,
+                   JoinTheThreads,
+                   threads);
 
   threads[0] = std::thread(DataSourceThread);
 

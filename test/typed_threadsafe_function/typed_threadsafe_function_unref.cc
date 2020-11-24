@@ -17,23 +17,31 @@ static Value TestUnref(const CallbackInfo& info) {
   Function setTimeout = global.Get("setTimeout").As<Function>();
   TSFN* tsfn = new TSFN;
 
-  *tsfn = TSFN::New(info.Env(), cb, resource, "Test", 1, 1, nullptr, [tsfn](Napi::Env /* env */, FinalizerDataType*, ContextType*) {
-    delete tsfn;
-  }, static_cast<FinalizerDataType*>(nullptr));
+  *tsfn = TSFN::New(
+      info.Env(),
+      cb,
+      resource,
+      "Test",
+      1,
+      1,
+      nullptr,
+      [tsfn](Napi::Env /* env */, FinalizerDataType*, ContextType*) {
+        delete tsfn;
+      },
+      static_cast<FinalizerDataType*>(nullptr));
 
   tsfn->BlockingCall();
 
-  setTimeout.Call( global, {
-    Function::New(env, [tsfn](const CallbackInfo& info) {
-      tsfn->Unref(info.Env());
-    }),
-    Number::New(env, 100)
-  });
+  setTimeout.Call(
+      global,
+      {Function::New(
+           env, [tsfn](const CallbackInfo& info) { tsfn->Unref(info.Env()); }),
+       Number::New(env, 100)});
 
   return info.Env().Undefined();
 }
 
-}
+}  // namespace
 
 Object InitTypedThreadSafeFunctionUnref(Env env) {
   Object exports = Object::New(env);
