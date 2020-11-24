@@ -179,8 +179,8 @@ TemplatedInstanceVoidCallback(napi_env env,
 
 template <typename T, typename Finalizer, typename Hint = void>
 struct FinalizeData {
-  static inline void Wrapper(napi_env env, 
-                             void* data, 
+  static inline void Wrapper(napi_env env,
+                             void* data,
                              void* finalizeHint) NAPI_NOEXCEPT {
     WrapVoidCallback([&] {
       FinalizeData* finalizeData = static_cast<FinalizeData*>(finalizeHint);
@@ -189,8 +189,8 @@ struct FinalizeData {
     });
   }
 
-  static inline void WrapperWithHint(napi_env env, 
-                                     void* data, 
+  static inline void WrapperWithHint(napi_env env,
+                                     void* data,
                                      void* finalizeHint) NAPI_NOEXCEPT {
     WrapVoidCallback([&] {
       FinalizeData* finalizeData = static_cast<FinalizeData*>(finalizeHint);
