@@ -822,6 +822,11 @@ namespace Napi {
 
     void* Data();        ///< Gets a pointer to the data buffer.
     size_t ByteLength(); ///< Gets the length of the array buffer in bytes.
+
+#if NAPI_VERSION >= 7
+    bool IsDetached() const;
+    void Detach();
+#endif  // NAPI_VERSION >= 7
   };
 
   /// A JavaScript typed-array value with unknown array type.

@@ -1,4 +1,10 @@
-# Migration Script
+# Tools
+
+## clang-format
+
+The clang-format checking tools is designed to check changed lines of code compared to given git-refs.
+
+## Migration Script
 
 The migration tool is designed to reduce repetitive work in the migration process. However, the script is not aiming to convert every thing for you. There are usually some small fixes and major reconstruction required.
 

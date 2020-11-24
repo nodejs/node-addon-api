@@ -88,4 +88,4 @@
 [`Napi::Uint8Array`]: ./typed_array_of.md
 [`Napi::Value`]: ./value.md
 [`Napi::VersionManagement`]: ./version_management.md
-[`std::exception`]: http://cplusplus.com/reference/exception/exception/
+[`std::exception`]: https://cplusplus.com/reference/exception/exception/

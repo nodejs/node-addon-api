@@ -1568,6 +1568,20 @@ inline size_t ArrayBuffer::ByteLength() {
   return length;
 }
 
+#if NAPI_VERSION >= 7
+inline bool ArrayBuffer::IsDetached() const {
+  bool detached;
+  napi_status status = napi_is_detached_arraybuffer(_env, _value, &detached);
+  NAPI_THROW_IF_FAILED(_env, status, false);
+  return detached;
+}
+
+inline void ArrayBuffer::Detach() {
+  napi_status status = napi_detach_arraybuffer(_env, _value);
+  NAPI_THROW_IF_FAILED_VOID(_env, status);
+}
+#endif  // NAPI_VERSION >= 7
+
 ////////////////////////////////////////////////////////////////////////////////
 // DataView class
 ////////////////////////////////////////////////////////////////////////////////
@@ -4001,6 +4015,7 @@ inline napi_value ObjectWrap<T>::StaticSetterCallbackWrapper(
 
 template <typename T>
 inline void ObjectWrap<T>::FinalizeCallback(napi_env env, void* data, void* /*hint*/) {
+  HandleScope scope(env);
   T* instance = static_cast<T*>(data);
   instance->Finalize(Napi::Env(env));
   delete instance;
