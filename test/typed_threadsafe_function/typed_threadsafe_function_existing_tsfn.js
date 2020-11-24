@@ -8,8 +8,8 @@ module.exports = test(require(`../build/${buildType}/binding.node`))
   .then(() => test(require(`../build/${buildType}/binding_noexcept.node`)));
 
 async function test(binding) {
-  const testCall = binding.threadsafe_function_ex_existing_tsfn.testCall;
-  
+  const testCall = binding.typed_threadsafe_function_existing_tsfn.testCall;
+
   assert.strictEqual(typeof await testCall({ blocking: true,  data: true  }), "number");
   assert.strictEqual(typeof await testCall({ blocking: true,  data: false }), "undefined");
   assert.strictEqual(typeof await testCall({ blocking: false, data: true  }), "number");

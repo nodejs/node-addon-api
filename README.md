@@ -123,7 +123,7 @@ The following is the documentation for node-addon-api.
     - [AsyncWorker Variants](doc/async_worker_variants.md)
  - [Thread-safe Functions](doc/threadsafe.md)
     - [ThreadSafeFunction](doc/threadsafe_function.md)
-    - [ThreadSafeFunctionEx](doc/threadsafe_function_ex.md)
+    - [TypedThreadSafeFunction](doc/typed_threadsafe_function.md)
  - [Promises](doc/promises.md)
  - [Version management](doc/version_management.md)
 

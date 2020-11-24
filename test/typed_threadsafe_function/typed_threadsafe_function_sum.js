@@ -45,7 +45,7 @@ function test(binding) {
 
   async function checkAcquire() {
     const calls = [];
-    const { promise, createThread, stopThreads } = binding.threadsafe_function_ex_sum.testAcquire(Array.prototype.push.bind(calls));
+    const { promise, createThread, stopThreads } = binding.typed_threadsafe_function_sum.testAcquire(Array.prototype.push.bind(calls));
     for (let i = 0; i < THREAD_COUNT; i++) {
       createThread();
     }
@@ -55,7 +55,7 @@ function test(binding) {
     assert.equal(sum(calls), EXPECTED_SUM);
   }
 
-  return check(binding.threadsafe_function_ex_sum.testDelayedTSFN)
-    .then(() => check(binding.threadsafe_function_ex_sum.testWithTSFN))
+  return check(binding.typed_threadsafe_function_sum.testDelayedTSFN)
+    .then(() => check(binding.typed_threadsafe_function_sum.testWithTSFN))
     .then(() => checkAcquire());
 }

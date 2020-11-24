@@ -5,7 +5,7 @@
 using namespace Napi;
 
 using ContextType = Reference<Napi::Value>;
-using TSFN = ThreadSafeFunctionEx<ContextType>;
+using TSFN = TypedThreadSafeFunction<ContextType>;
 
 namespace {
 
@@ -55,7 +55,7 @@ TSFNWrap::TSFNWrap(const CallbackInfo &info) : ObjectWrap<TSFNWrap>(info) {
 
 } // namespace
 
-Object InitThreadSafeFunctionExCtx(Env env) {
+Object InitTypedThreadSafeFunctionCtx(Env env) {
   return TSFNWrap::Init(env, Object::New(env));
 }
 

@@ -11,40 +11,40 @@ communicate with the addon's main thread so that the main thread can invoke the
 JavaScript function on their behalf. The thread-safe function APIs provide an
 easy way to do this. These APIs provide two types --
 [`Napi::ThreadSafeFunction`](threadsafe_function.md) and
-[`Napi::ThreadSafeFunctionEx`](threadsafe_function_ex.md) -- as well as APIs to
-create, destroy, and call objects of this type. The differences between the two
-are subtle and are [highlighted below](#implementation-differences). Regardless
-of which type you choose, the APIs between the two are similar.
+[`Napi::TypedThreadSafeFunction`](typed_threadsafe_function.md) -- as well as
+APIs to create, destroy, and call objects of this type. The differences between
+the two are subtle and are [highlighted below](#implementation-differences).
+Regardless of which type you choose, the APIs between the two are similar.
 
-`Napi::ThreadSafeFunction[Ex]::New()` creates a persistent reference that holds
-a JavaScript function which can be called from multiple threads. The calls
+`Napi::[Typed]ThreadSafeFunction::New()` creates a persistent reference that
+holds a JavaScript function which can be called from multiple threads. The calls
 happen asynchronously. This means that values with which the JavaScript callback
 is to be called will be placed in a queue, and, for each value in the queue, a
 call will eventually be made to the JavaScript function.
 
-`Napi::ThreadSafeFunction[Ex]` objects are destroyed when every thread which
+`Napi::[Typed]ThreadSafeFunction` objects are destroyed when every thread which
 uses the object has called `Release()` or has received a return status of
 `napi_closing` in response to a call to `BlockingCall()` or `NonBlockingCall()`.
-The queue is emptied before the `Napi::ThreadSafeFunction[Ex]` is destroyed. It
-is important that `Release()` be the last API call made in conjunction with a
-given `Napi::ThreadSafeFunction[Ex]`, because after the call completes, there is
-no guarantee that the `Napi::ThreadSafeFunction[Ex]` is still allocated. For the
-same reason it is also important that no more use be made of a thread-safe
-function after receiving a return value of `napi_closing` in response to a call
-to `BlockingCall()` or `NonBlockingCall()`. Data associated with the
-`Napi::ThreadSafeFunction[Ex]` can be freed in its `Finalizer` callback which
-was passed to `ThreadSafeFunction[Ex]::New()`.
+The queue is emptied before the `Napi::[Typed]ThreadSafeFunction` is destroyed.
+It is important that `Release()` be the last API call made in conjunction with a
+given `Napi::[Typed]ThreadSafeFunction`, because after the call completes, there
+is no guarantee that the `Napi::[Typed]ThreadSafeFunction` is still allocated.
+For the same reason it is also important that no more use be made of a
+thread-safe function after receiving a return value of `napi_closing` in
+response to a call to `BlockingCall()` or `NonBlockingCall()`. Data associated
+with the `Napi::[Typed]ThreadSafeFunction` can be freed in its `Finalizer`
+callback which was passed to `[Typed]ThreadSafeFunction::New()`.
 
-Once the number of threads making use of a `Napi::ThreadSafeFunction[Ex]`
+Once the number of threads making use of a `Napi::[Typed]ThreadSafeFunction`
 reaches zero, no further threads can start making use of it by calling
 `Acquire()`. In fact, all subsequent API calls associated with it, except
 `Release()`, will return an error value of `napi_closing`.
 
 ## Implementation Differences
 
-The choice between `Napi::ThreadSafeFunction` and `Napi::ThreadSafeFunctionEx`
-depends largely on how you plan to execute your native C++ code (the "callback")
-on the Node.js thread.
+The choice between `Napi::ThreadSafeFunction` and
+`Napi::TypedThreadSafeFunction` depends largely on how you plan to execute your
+native C++ code (the "callback") on the Node.js thread.
 
 ### [`Napi::ThreadSafeFunction`](threadsafe_function.md)
 
@@ -64,13 +64,13 @@ This API has some dynamic functionality, in that:
 
 Note that this functionality comes with some **additional overhead** and
 situational **memory leaks**:
-- The API acts as a "broker" between the underlying
-  `napi_threadsafe_function`, and dynamically constructs a wrapper for your
-  callback on the heap for every call to `[Non]BlockingCall()`.
+- The API acts as a "broker" between the underlying `napi_threadsafe_function`,
+  and dynamically constructs a wrapper for your callback on the heap for every
+  call to `[Non]BlockingCall()`.
 - In acting in this "broker" fashion, the API will call the underlying "make
   call" N-API method on this packaged item. If the API has determined the
-  thread-safe function is no longer accessible (eg. all threads have released yet
-  there are still items on the queue), **the callback passed to
+  thread-safe function is no longer accessible (eg. all threads have released
+  yet there are still items on the queue), **the callback passed to
   [Non]BlockingCall will not execute**. This means it is impossible to perform
   clean-up for calls that never execute their `CallJs` callback. **This may lead
   to memory leaks** if you are dynamically allocating memory.
@@ -81,9 +81,9 @@ situational **memory leaks**:
   _type-safe_, as the method returns an object that can be "any-casted", instead
   of having a static type.
 
-### [`Napi::ThreadSafeFunctionEx`](threadsafe_function_ex.md)
+### [`Napi::TypedThreadSafeFunction`](typed_threadsafe_function.md)
 
-The `ThreadSafeFunctionEx` class is a new implementation to address the
+The `TypedThreadSafeFunction` class is a new implementation to address the
 drawbacks listed above. The API is designed with N-API 5's support of an
 optional function callback. The API will correctly allow developers to pass
 `std::nullptr` instead of a `const Function&` for the callback function
@@ -112,7 +112,7 @@ The removal of the dynamic call functionality has the following implications:
 
 ### Usage Suggestions
 
-In summary, it may be best to use `Napi::ThreadSafeFunctionEx` if:
+In summary, it may be best to use `Napi::TypedThreadSafeFunction` if:
 
 - static, compile-time support for targeting N-API 4 or 5+ with an optional
   JavaScript callback feature is desired;

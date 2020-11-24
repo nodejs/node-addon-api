@@ -50,6 +50,6 @@ function test(bindingFile) {
   } else {
     // Child process
     const binding = require(bindingFile);
-    binding.threadsafe_function_ex_unref.testUnref({}, () => { });
+    binding.typed_threadsafe_function_unref.testUnref({}, () => { });
   }
 }

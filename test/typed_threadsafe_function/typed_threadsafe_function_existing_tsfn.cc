@@ -21,7 +21,7 @@ struct TestContext {
   };
 };
 
-using TSFN = ThreadSafeFunctionEx<TestContext, double>;
+using TSFN = TypedThreadSafeFunction<TestContext, double>;
 
 void FinalizeCB(napi_env env, void * /*finalizeData */, void *context) {
   TestContext *testContext = static_cast<TestContext *>(context);
@@ -104,7 +104,7 @@ static Value TestCall(const CallbackInfo &info) {
 
 } // namespace
 
-Object InitThreadSafeFunctionExExistingTsfn(Env env) {
+Object InitTypedThreadSafeFunctionExistingTsfn(Env env) {
   Object exports = Object::New(env);
   exports["testCall"] = Function::New(env, TestCall);
 

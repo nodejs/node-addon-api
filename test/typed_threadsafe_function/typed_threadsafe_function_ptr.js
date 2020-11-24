@@ -6,5 +6,5 @@ test(require(`../build/${buildType}/binding.node`));
 test(require(`../build/${buildType}/binding_noexcept.node`));
 
 function test(binding) {
-  binding.threadsafe_function_ex_ptr.test({}, () => {});
+  binding.typed_threadsafe_function_ptr.test({}, () => {});
 }

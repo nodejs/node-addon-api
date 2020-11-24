@@ -6,7 +6,7 @@ using namespace Napi;
 
 namespace {
 
-using TSFN = ThreadSafeFunctionEx<>;
+using TSFN = TypedThreadSafeFunction<>;
 using ContextType = std::nullptr_t;
 using FinalizerDataType = void;
 static Value TestUnref(const CallbackInfo& info) {
@@ -35,7 +35,7 @@ static Value TestUnref(const CallbackInfo& info) {
 
 }
 
-Object InitThreadSafeFunctionExUnref(Env env) {
+Object InitTypedThreadSafeFunctionUnref(Env env) {
   Object exports = Object::New(env);
   exports["testUnref"] = Function::New(env, TestUnref);
   return exports;

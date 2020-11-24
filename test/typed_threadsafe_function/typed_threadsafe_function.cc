@@ -36,7 +36,7 @@ static void TSFNCallJS(Env env, Function jsCallback,
   }
 }
 
-using TSFN = ThreadSafeFunctionEx<ThreadSafeFunctionInfo, int, TSFNCallJS>;
+using TSFN = TypedThreadSafeFunction<ThreadSafeFunctionInfo, int, TSFNCallJS>;
 static TSFN tsfn;
 
 // Thread data to transmit to JS
@@ -174,7 +174,7 @@ static Value StartThreadNoNative(const CallbackInfo& info) {
   return StartThreadInternal(info, ThreadSafeFunctionInfo::DEFAULT);
 }
 
-Object InitThreadSafeFunctionEx(Env env) {
+Object InitTypedThreadSafeFunction(Env env) {
   for (size_t index = 0; index < ARRAY_LENGTH; index++) {
     ints[index] = index;
   }

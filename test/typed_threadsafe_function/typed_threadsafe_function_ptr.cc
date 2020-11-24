@@ -6,7 +6,7 @@ using namespace Napi;
 
 namespace {
 
-using TSFN = ThreadSafeFunctionEx<>;
+using TSFN = TypedThreadSafeFunction<>;
 
 static Value Test(const CallbackInfo& info) {
   Object resource = info[0].As<Object>();
@@ -18,7 +18,7 @@ static Value Test(const CallbackInfo& info) {
 
 }
 
-Object InitThreadSafeFunctionExPtr(Env env) {
+Object InitTypedThreadSafeFunctionPtr(Env env) {
   Object exports = Object::New(env);
   exports["test"] = Function::New(env, Test);
 

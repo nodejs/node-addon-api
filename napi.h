@@ -2244,12 +2244,12 @@ namespace Napi {
     napi_threadsafe_function _tsfn;
   };
 
-  // A ThreadSafeFunctionEx by default has no context (nullptr) and can accept
+  // A TypedThreadSafeFunction by default has no context (nullptr) and can accept
   // any type (void) to its CallJs.
   template <typename ContextType = std::nullptr_t, typename DataType = void,
             void (*CallJs)(Napi::Env, Napi::Function, ContextType *,
                            DataType *) = nullptr>
-  class ThreadSafeFunctionEx {
+  class TypedThreadSafeFunction {
 
   public:
 
@@ -2270,7 +2270,7 @@ namespace Napi {
     // Creates a new threadsafe function with:
     //   Callback [missing] Resource [missing] Finalizer [missing]
     template <typename ResourceString>
-    static ThreadSafeFunctionEx<ContextType, DataType, CallJs>
+    static TypedThreadSafeFunction<ContextType, DataType, CallJs>
     New(napi_env env, ResourceString resourceName, size_t maxQueueSize,
         size_t initialThreadCount, ContextType *context = nullptr);
 
@@ -2278,7 +2278,7 @@ namespace Napi {
     // Creates a new threadsafe function with:
     //   Callback [missing] Resource [passed] Finalizer [missing]
     template <typename ResourceString>
-    static ThreadSafeFunctionEx<ContextType, DataType, CallJs>
+    static TypedThreadSafeFunction<ContextType, DataType, CallJs>
     New(napi_env env, const Object &resource, ResourceString resourceName,
         size_t maxQueueSize, size_t initialThreadCount,
         ContextType *context = nullptr);
@@ -2288,7 +2288,7 @@ namespace Napi {
     //   Callback [missing] Resource [missing] Finalizer [passed]
     template <typename ResourceString, typename Finalizer,
               typename FinalizerDataType = void>
-    static ThreadSafeFunctionEx<ContextType, DataType, CallJs>
+    static TypedThreadSafeFunction<ContextType, DataType, CallJs>
     New(napi_env env, ResourceString resourceName, size_t maxQueueSize,
         size_t initialThreadCount, ContextType *context,
         Finalizer finalizeCallback, FinalizerDataType *data = nullptr);
@@ -2298,7 +2298,7 @@ namespace Napi {
     //   Callback [missing] Resource [passed] Finalizer [passed]
     template <typename ResourceString, typename Finalizer,
               typename FinalizerDataType = void>
-    static ThreadSafeFunctionEx<ContextType, DataType, CallJs>
+    static TypedThreadSafeFunction<ContextType, DataType, CallJs>
     New(napi_env env, const Object &resource, ResourceString resourceName,
         size_t maxQueueSize, size_t initialThreadCount, ContextType *context,
         Finalizer finalizeCallback, FinalizerDataType *data = nullptr);
@@ -2308,7 +2308,7 @@ namespace Napi {
     // Creates a new threadsafe function with:
     //   Callback [passed] Resource [missing] Finalizer [missing]
     template <typename ResourceString>
-    static ThreadSafeFunctionEx<ContextType, DataType, CallJs>
+    static TypedThreadSafeFunction<ContextType, DataType, CallJs>
     New(napi_env env, const Function &callback, ResourceString resourceName,
         size_t maxQueueSize, size_t initialThreadCount,
         ContextType *context = nullptr);
@@ -2317,7 +2317,7 @@ namespace Napi {
     // Creates a new threadsafe function with:
     //   Callback [passed] Resource [passed] Finalizer [missing]
     template <typename ResourceString>
-    static ThreadSafeFunctionEx<ContextType, DataType, CallJs>
+    static TypedThreadSafeFunction<ContextType, DataType, CallJs>
     New(napi_env env, const Function &callback, const Object &resource,
         ResourceString resourceName, size_t maxQueueSize,
         size_t initialThreadCount, ContextType *context = nullptr);
@@ -2327,7 +2327,7 @@ namespace Napi {
     //   Callback [passed] Resource [missing] Finalizer [passed]
     template <typename ResourceString, typename Finalizer,
               typename FinalizerDataType = void>
-    static ThreadSafeFunctionEx<ContextType, DataType, CallJs>
+    static TypedThreadSafeFunction<ContextType, DataType, CallJs>
     New(napi_env env, const Function &callback, ResourceString resourceName,
         size_t maxQueueSize, size_t initialThreadCount, ContextType *context,
         Finalizer finalizeCallback, FinalizerDataType *data = nullptr);
@@ -2337,14 +2337,14 @@ namespace Napi {
     //   Callback [passed] Resource [passed] Finalizer [passed]
     template <typename CallbackType, typename ResourceString, typename Finalizer,
           typename FinalizerDataType>
-    static ThreadSafeFunctionEx<ContextType, DataType, CallJs>
+    static TypedThreadSafeFunction<ContextType, DataType, CallJs>
     New(napi_env env, CallbackType callback, const Object &resource,
         ResourceString resourceName, size_t maxQueueSize,
         size_t initialThreadCount, ContextType *context,
         Finalizer finalizeCallback, FinalizerDataType *data = nullptr);
 
-    ThreadSafeFunctionEx<ContextType, DataType, CallJs>();
-    ThreadSafeFunctionEx<ContextType, DataType, CallJs>(
+    TypedThreadSafeFunction<ContextType, DataType, CallJs>();
+    TypedThreadSafeFunction<ContextType, DataType, CallJs>(
         napi_threadsafe_function tsFunctionValue);
 
     operator napi_threadsafe_function() const;
@@ -2376,7 +2376,7 @@ namespace Napi {
   private:
     template <typename ResourceString, typename Finalizer,
               typename FinalizerDataType>
-    static ThreadSafeFunctionEx<ContextType, DataType, CallJs>
+    static TypedThreadSafeFunction<ContextType, DataType, CallJs>
     New(napi_env env, const Function &callback, const Object &resource,
         ResourceString resourceName, size_t maxQueueSize,
         size_t initialThreadCount, ContextType *context,

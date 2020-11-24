@@ -16,7 +16,7 @@ async function test(binding) {
       result.push(arrayLength - 1 - index);
     }
     return result;
-  })(binding.threadsafe_function_ex.ARRAY_LENGTH);
+  })(binding.typed_threadsafe_function.ARRAY_LENGTH);
 
   function testWithJSMarshaller({
     threadStarter,
@@ -26,11 +26,11 @@ async function test(binding) {
     launchSecondary }) {
     return new Promise((resolve) => {
       const array = [];
-      binding.threadsafe_function_ex[threadStarter](function testCallback(value) {
+      binding.typed_threadsafe_function[threadStarter](function testCallback(value) {
         array.push(value);
         if (array.length === quitAfter) {
           setImmediate(() => {
-            binding.threadsafe_function_ex.stopThread(common.mustCall(() => {
+            binding.typed_threadsafe_function.stopThread(common.mustCall(() => {
               resolve(array);
             }), !!abort);
           });
@@ -47,20 +47,20 @@ async function test(binding) {
 
   await new Promise(function testWithoutJSMarshaller(resolve) {
     let callCount = 0;
-    binding.threadsafe_function_ex.startThreadNoNative(function testCallback() {
+    binding.typed_threadsafe_function.startThreadNoNative(function testCallback() {
       callCount++;
 
       // The default call-into-JS implementation passes no arguments.
       assert.strictEqual(arguments.length, 0);
-      if (callCount === binding.threadsafe_function_ex.ARRAY_LENGTH) {
+      if (callCount === binding.typed_threadsafe_function.ARRAY_LENGTH) {
         setImmediate(() => {
-          binding.threadsafe_function_ex.stopThread(common.mustCall(() => {
+          binding.typed_threadsafe_function.stopThread(common.mustCall(() => {
             resolve();
           }), false);
         });
       }
     }, false /* abort */, false /* launchSecondary */,
-      binding.threadsafe_function_ex.MAX_QUEUE_SIZE);
+      binding.typed_threadsafe_function.MAX_QUEUE_SIZE);
   });
 
   // Start the thread in blocking mode, and assert that all values are passed.
@@ -68,8 +68,8 @@ async function test(binding) {
   assert.deepStrictEqual(
     await testWithJSMarshaller({
       threadStarter: 'startThread',
-      maxQueueSize: binding.threadsafe_function_ex.MAX_QUEUE_SIZE,
-      quitAfter: binding.threadsafe_function_ex.ARRAY_LENGTH
+      maxQueueSize: binding.typed_threadsafe_function.MAX_QUEUE_SIZE,
+      quitAfter: binding.typed_threadsafe_function.ARRAY_LENGTH
     }),
     expectedArray,
   );
@@ -80,7 +80,7 @@ async function test(binding) {
     await testWithJSMarshaller({
       threadStarter: 'startThread',
       maxQueueSize: 0,
-      quitAfter: binding.threadsafe_function_ex.ARRAY_LENGTH
+      quitAfter: binding.typed_threadsafe_function.ARRAY_LENGTH
     }),
     expectedArray,
   );
@@ -90,8 +90,8 @@ async function test(binding) {
   assert.deepStrictEqual(
     await testWithJSMarshaller({
       threadStarter: 'startThreadNonblocking',
-      maxQueueSize: binding.threadsafe_function_ex.MAX_QUEUE_SIZE,
-      quitAfter: binding.threadsafe_function_ex.ARRAY_LENGTH
+      maxQueueSize: binding.typed_threadsafe_function.MAX_QUEUE_SIZE,
+      quitAfter: binding.typed_threadsafe_function.ARRAY_LENGTH
     }),
     expectedArray,
   );
@@ -101,7 +101,7 @@ async function test(binding) {
   assert.deepStrictEqual(
     await testWithJSMarshaller({
       threadStarter: 'startThread',
-      maxQueueSize: binding.threadsafe_function_ex.MAX_QUEUE_SIZE,
+      maxQueueSize: binding.typed_threadsafe_function.MAX_QUEUE_SIZE,
       quitAfter: 1
     }),
     expectedArray,
@@ -124,7 +124,7 @@ async function test(binding) {
   assert.deepStrictEqual(
     await testWithJSMarshaller({
       threadStarter: 'startThreadNonblocking',
-      maxQueueSize: binding.threadsafe_function_ex.MAX_QUEUE_SIZE,
+      maxQueueSize: binding.typed_threadsafe_function.MAX_QUEUE_SIZE,
       quitAfter: 1
     }),
     expectedArray,
@@ -137,7 +137,7 @@ async function test(binding) {
     await testWithJSMarshaller({
       threadStarter: 'startThread',
       quitAfter: 1,
-      maxQueueSize: binding.threadsafe_function_ex.MAX_QUEUE_SIZE,
+      maxQueueSize: binding.typed_threadsafe_function.MAX_QUEUE_SIZE,
       launchSecondary: true
     }),
     expectedArray,
@@ -150,7 +150,7 @@ async function test(binding) {
     await testWithJSMarshaller({
       threadStarter: 'startThreadNonblocking',
       quitAfter: 1,
-      maxQueueSize: binding.threadsafe_function_ex.MAX_QUEUE_SIZE,
+      maxQueueSize: binding.typed_threadsafe_function.MAX_QUEUE_SIZE,
       launchSecondary: true
     }),
     expectedArray,
@@ -162,7 +162,7 @@ async function test(binding) {
     (await testWithJSMarshaller({
       threadStarter: 'startThread',
       quitAfter: 1,
-      maxQueueSize: binding.threadsafe_function_ex.MAX_QUEUE_SIZE,
+      maxQueueSize: binding.typed_threadsafe_function.MAX_QUEUE_SIZE,
       abort: true
     })).indexOf(0),
     -1,
@@ -186,7 +186,7 @@ async function test(binding) {
     (await testWithJSMarshaller({
       threadStarter: 'startThreadNonblocking',
       quitAfter: 1,
-      maxQueueSize: binding.threadsafe_function_ex.MAX_QUEUE_SIZE,
+      maxQueueSize: binding.typed_threadsafe_function.MAX_QUEUE_SIZE,
       abort: true
     })).indexOf(0),
     -1,

@@ -37,10 +37,10 @@ struct TestData {
     delete data;
   }
 
-  ThreadSafeFunctionEx<TestData, double, CallJs> tsfn;
+  TypedThreadSafeFunction<TestData, double, CallJs> tsfn;
 };
 
-using TSFN = ThreadSafeFunctionEx<TestData, double, TestData::CallJs>;
+using TSFN = TypedThreadSafeFunction<TestData, double, TestData::CallJs>;
 
 void FinalizerCallback(Napi::Env env, void *, TestData *finalizeData) {
   for (size_t i = 0; i < finalizeData->threads.size(); ++i) {
@@ -209,7 +209,7 @@ static Value TestAcquire(const CallbackInfo &info) {
 }
 } // namespace
 
-Object InitThreadSafeFunctionExSum(Env env) {
+Object InitTypedThreadSafeFunctionSum(Env env) {
   Object exports = Object::New(env);
   exports["testDelayedTSFN"] = Function::New(env, TestDelayedTSFN);
   exports["testWithTSFN"] = Function::New(env, TestWithTSFN);
