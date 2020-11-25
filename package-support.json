@@ -3,7 +3,7 @@
     {
       "version": "*",
       "target": {
-        "node": "lts"
+        "node": "active"
       },
       "response": {
         "type": "time-permitting",
