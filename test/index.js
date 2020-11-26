@@ -62,7 +62,15 @@ let testModules = [
   'version_management'
 ];
 
-const napiVersion = Number(process.versions.napi)
+let napiVersion = Number(process.versions.napi)
+if (process.env.NAPI_VERSION) {
+  // we need this so that we don't try run tests that rely
+  // on methods that are not available in the NAPI_VERSION
+  // specified
+  napiVersion = process.env.NAPI_VERSION;
+}
+console.log('napiVersion:' + napiVersion);
+
 const majorNodeVersion = process.versions.node.split('.')[0]
 
 if (napiVersion < 3) {
