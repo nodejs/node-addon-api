@@ -33,7 +33,11 @@ function main(args) {
     console.error(clangFormatOutput);
     const fixCmd = '"npm run lint:fix"';
     console.error(`
-      ERROR: please run ${fixCmd} to format changes in your commit`);
+      ERROR: please run ${fixCmd} to format changes in your commit
+        Note that when running the command locally, please keep your local
+        master branch and working branch up to date with nodejs/node-addon-api
+        to exclude un-related complains.
+        Or you can run "env CLANG_FORMAT_START=upstream/master ${fixCmd}".`);
     return 1;
   }
 }
