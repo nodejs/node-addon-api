@@ -48,7 +48,7 @@ and define it as
 This way, the `Napi::ObjectWrap` constructor will be invoked after the object has been instantiated and `Napi::ObjectWrap` can use the `this` pointer to create a reference to the wrapped object.
 
   2. Move your original constructor code into the new constructor. Delete your original constructor.
-  3. In your class initialization function, associate native methods in the following way. The `&` character before methods is required because they are not static methods but instance methods.
+  3. In your class initialization function, associate native methods in the following way.
 ```
 Napi::FunctionReference constructor;
 
