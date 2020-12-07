@@ -1,41 +1,10 @@
 # ThreadSafeFunction
 
-JavaScript functions can normally only be called from a native addon's main
-thread. If an addon creates additional threads, then node-addon-api functions
-that require a `Napi::Env`, `Napi::Value`, or `Napi::Reference` must not be
-called from those threads.
-
-When an addon has additional threads and JavaScript functions need to be invoked
-based on the processing completed by those threads, those threads must
-communicate with the addon's main thread so that the main thread can invoke the
-JavaScript function on their behalf. The thread-safe function APIs provide an
-easy way to do this.
-
-These APIs provide the type `Napi::ThreadSafeFunction` as well as APIs to
-create, destroy, and call objects of this type.
-`Napi::ThreadSafeFunction::New()` creates a persistent reference that holds a
-JavaScript function which can be called from multiple threads. The calls happen
-asynchronously. This means that values with which the JavaScript callback is to
-be called will be placed in a queue, and, for each value in the queue, a call
-will eventually be made to the JavaScript function.
-
-`Napi::ThreadSafeFunction` objects are destroyed when every thread which uses
-the object has called `Release()` or has received a return status of
-`napi_closing` in response to a call to `BlockingCall()` or `NonBlockingCall()`.
-The queue is emptied before the `Napi::ThreadSafeFunction` is destroyed. It is
-important that `Release()` be the last API call made in conjunction with a given
-`Napi::ThreadSafeFunction`, because after the call completes, there is no
-guarantee that the `Napi::ThreadSafeFunction` is still allocated. For the same
-reason it is also important that no more use be made of a thread-safe function
-after receiving a return value of `napi_closing` in response to a call to
-`BlockingCall()` or `NonBlockingCall()`. Data associated with the
-`Napi::ThreadSafeFunction` can be freed in its `Finalizer` callback which was
-passed to `ThreadSafeFunction::New()`.
-
-Once the number of threads making use of a `Napi::ThreadSafeFunction` reaches
-zero, no further threads can start making use of it by calling `Acquire()`. In
-fact, all subsequent API calls associated with it, except `Release()`, will
-return an error value of `napi_closing`.
+The `Napi::ThreadSafeFunction` type provides APIs for threads to communicate
+with the addon's main thread to invoke JavaScript functions on their behalf.
+Documentation can be found for an [overview of the API](threadsafe.md), as well
+as [differences between the two thread-safe function
+APIs](threadsafe.md#implementation-differences).
 
 ## Methods
 
@@ -92,7 +61,8 @@ New(napi_env env,
 - `maxQueueSize`: Maximum size of the queue. `0` for no limit.
 - `initialThreadCount`: The initial number of threads, including the main
   thread, which will be making use of this function.
-- `[optional] context`: Data to attach to the resulting `ThreadSafeFunction`.
+- `[optional] context`: Data to attach to the resulting `ThreadSafeFunction`. It
+  can be retreived by calling `GetContext()`.
 - `[optional] finalizeCallback`: Function to call when the `ThreadSafeFunction`
   is being destroyed.  This callback will be invoked on the main thread when the
   thread-safe function is about to be destroyed. It receives the context and the
@@ -101,8 +71,8 @@ New(napi_env env,
   `uv_thread_join()`. It is important that, aside from the main loop thread,
   there be no threads left using the thread-safe function after the finalize
   callback completes. Must implement `void operator()(Env env, DataType* data,
-  Context* hint)`, skipping `data` or `hint` if they are not provided.
-  Can be retrieved via `GetContext()`.
+  ContextType* hint)`, skipping `data` or `hint` if they are not provided. Can
+  be retrieved via `GetContext()`.
 - `[optional] data`: Data to be passed to `finalizeCallback`.
 
 Returns a non-empty `Napi::ThreadSafeFunction` instance.
@@ -110,7 +80,7 @@ Returns a non-empty `Napi::ThreadSafeFunction` instance.
 ### Acquire
 
 Add a thread to this thread-safe function object, indicating that a new thread
-will start making use of the thread-safe function. 
+will start making use of the thread-safe function.
 
 ```cpp
 napi_status Napi::ThreadSafeFunction::Acquire()
@@ -118,7 +88,7 @@ napi_status Napi::ThreadSafeFunction::Acquire()
 
 Returns one of:
 - `napi_ok`: The thread has successfully acquired the thread-safe function
-for its use. 
+for its use.
 - `napi_closing`: The thread-safe function has been marked as closing via a
 previous call to `Abort()`.
 
@@ -136,7 +106,7 @@ napi_status Napi::ThreadSafeFunction::Release()
 Returns one of:
 - `napi_ok`: The thread-safe function has been successfully released.
 - `napi_invalid_arg`: The thread-safe function's thread-count is zero.
-- `napi_generic_failure`: A generic error occurred when attemping to release
+- `napi_generic_failure`: A generic error occurred when attempting to release
 the thread-safe function.
 
 ### Abort
@@ -258,10 +228,10 @@ Value Start( const CallbackInfo& info )
   // Create a native thread
   nativeThread = std::thread( [count] {
     auto callback = []( Napi::Env env, Function jsCallback, int* value ) {
-      // Transform native data into JS data, passing it to the provided 
+      // Transform native data into JS data, passing it to the provided
       // `jsCallback` -- the TSFN's JavaScript function.
       jsCallback.Call( {Number::New( env, *value )} );
-      
+
       // We're finished with the data.
       delete value;
     };
