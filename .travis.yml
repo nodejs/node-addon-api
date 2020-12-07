@@ -20,7 +20,6 @@ matrix:
   fast_finish: true
   allow_failures:
     - env: NODEJS_VERSION=nightly
-sudo: false
 cache:
   directories:
     - node_modules
