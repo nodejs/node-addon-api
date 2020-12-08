@@ -7,9 +7,9 @@ and exception handling semantics with low overhead.
 There are three options for implementing addons: N-API, nan, or direct
 use of internal V8, libuv and Node.js libraries. Unless there is a need for
 direct access to functionality which is not exposed by N-API as outline
-in [addons.md](https://github.com/nodejs/node/blob/master/doc/api/addons.md#c-addons)
+in [addons.md](https://nodejs.org/dist/latest/docs/api/addons.html)
 in Node.js core, use N-API. Refer to
-[C/C++ addons with N-API](https://github.com/nodejs/node/blob/master/doc/api/n-api.md)
+[C/C++ addons with N-API](https://nodejs.org/dist/latest/docs/api/n-api.html)
 for more information on N-API.
 
 N-API is an ABI stable C interface provided by Node.js for building native
