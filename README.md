@@ -4,6 +4,14 @@ the use of the C based [N-API](https://nodejs.org/dist/latest/docs/api/n-api.htm
 provided by Node.js when using C++. It provides a C++ object model
 and exception handling semantics with low overhead.
 
+There are three options for implementing addons: N-API, nan, or direct
+use of internal V8, libuv and Node.js libraries. Unless there is a need for
+direct access to functionality which is not exposed by N-API as outlined
+in [C/C++ addons](https://nodejs.org/dist/latest/docs/api/addons.html)
+in Node.js core, use N-API. Refer to
+[C/C++ addons with N-API](https://nodejs.org/dist/latest/docs/api/n-api.html)
+for more information on N-API.
+
 N-API is an ABI stable C interface provided by Node.js for building native
 addons. It is independent from the underlying JavaScript runtime (e.g. V8 or ChakraCore)
 and is maintained as part of Node.js itself. It is intended to insulate
