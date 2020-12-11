@@ -304,7 +304,7 @@
     "dev:incremental": "node test",
     "doc": "doxygen doc/Doxyfile",
     "lint": "node tools/clang-format.js",
-    "lint:fix": "git-clang-format"
+    "lint:fix": "git-clang-format '*.h', '*.cc'"
   },
   "pre-commit": "lint",
   "version": "3.0.2",
