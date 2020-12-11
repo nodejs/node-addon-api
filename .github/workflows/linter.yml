@@ -4,6 +4,7 @@ on: [push, pull_request]
 
 jobs:
   lint:
+    if: github.repository == 'nodejs/node-addon-api'
     strategy:
       matrix:
         node-version: [14.x]
