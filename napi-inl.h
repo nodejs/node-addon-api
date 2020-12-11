@@ -5390,6 +5390,17 @@ inline void AsyncProgressWorker<T>::OnWorkProgress(void*) {
     this->_asyncsize = 0;
   }
 
+  /**
+   * The callback of ThreadSafeFunction is not been invoked immediately on the
+   * callback of uv_async_t (uv io poll), rather the callback of TSFN is
+   * invoked on the right next uv idle callback. There are chances that during
+   * the deferring the signal of uv_async_t is been sent again, i.e. potential
+   * not coalesced two calls of the TSFN callback.
+   */
+  if (data == nullptr) {
+    return;
+  }
+
   this->OnProgress(data, size);
   delete[] data;
 }

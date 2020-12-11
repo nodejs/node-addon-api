@@ -33,6 +33,9 @@ function runCallChecks(exitCode) {
 exports.mustCall = function(fn, exact) {
   return _mustCallInner(fn, exact, 'exact');
 };
+exports.mustCallAtLeast = function(fn, minimum) {
+  return _mustCallInner(fn, minimum, 'minimum');
+};
 
 function _mustCallInner(fn, criteria, field) {
   if (typeof fn === 'number') {
