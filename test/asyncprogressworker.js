@@ -9,6 +9,7 @@ module.exports = test(require(`./build/${buildType}/binding.node`))
 async function test({ asyncprogressworker }) {
   await success(asyncprogressworker);
   await fail(asyncprogressworker);
+  await malignTest(asyncprogressworker);
 }
 
 function success(binding) {
@@ -40,6 +41,22 @@ function fail(binding) {
         resolve();
       }),
       common.mustNotCall()
+    );
+  });
+}
+
+function malignTest(binding) {
+  return new Promise((resolve, reject) => {
+    binding.doMalignTest(
+      common.mustCall((err) => {
+        if (err) {
+          return reject(err);
+        }
+        resolve();
+      }),
+      common.mustCallAtLeast((error, reason) => {
+        assert(!error, reason);
+      }, 1)
     );
   });
 }
