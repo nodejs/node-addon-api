@@ -49,7 +49,9 @@ function malignTest(binding) {
   return new Promise((resolve, reject) => {
     binding.doMalignTest(
       common.mustCall((err) => {
-        assert.throws(() => { throw err }, /test error/);
+        if (err) {
+          return reject(err);
+        }
         resolve();
       }),
       common.mustCallAtLeast((error, reason) => {
