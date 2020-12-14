@@ -84,7 +84,6 @@ class MalignWorker : public AsyncProgressWorker<ProgressData> {
       ProgressData data{0};
       progress.Send(&data, 1);
     }
-    _cv.wait(lock);
   }
 
   void OnProgress(const ProgressData* /* data */, size_t count) override {
