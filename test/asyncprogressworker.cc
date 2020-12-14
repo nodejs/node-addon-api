@@ -87,7 +87,7 @@ class MalignWorker : public AsyncProgressWorker<ProgressData> {
     _cv.wait(lock);
   }
 
-  void OnProgress(const ProgressData* data, size_t count) override {
+  void OnProgress(const ProgressData* /* data */, size_t count) override {
     Napi::Env env = Env();
     _test_case_count++;
     bool error = false;
