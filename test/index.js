@@ -5,6 +5,8 @@ process.config.target_defaults.default_configuration =
     .readdirSync(require('path').join(__dirname, 'build'))
     .filter((item) => (item === 'Debug' || item === 'Release'))[0];
 
+const RUN_TEST_CMD = 'run-test';
+
 // FIXME: We might need a way to load test modules automatically without
 // explicit declaration as follows.
 let testModules = [
@@ -75,7 +77,6 @@ if (process.env.NAPI_VERSION) {
   // specified
   napiVersion = process.env.NAPI_VERSION;
 }
-console.log('napiVersion:' + napiVersion);
 
 const majorNodeVersion = process.versions.node.split('.')[0]
 
@@ -110,40 +111,65 @@ if (majorNodeVersion < 12) {
   testModules.splice(testModules.indexOf('objectwrap_worker_thread'), 1);
 }
 
-if (typeof global.gc === 'function') {
-  (async function() {
-  console.log(`Testing with N-API Version '${napiVersion}'.`);
-
-  console.log('Starting test suite\n');
-
-  // Requiring each module runs tests in the module.
-  for (const name of testModules) {
-    console.log(`Running test '${name}'`);
+main(process.argv.slice(2)).catch(err => {
+  console.error(err);
+  process.exit(1);
+});
+async function main(argv) {
+  const cmd = argv[0];
+  if (cmd === RUN_TEST_CMD) {
+    const name = argv[1];
+    if (name == null || name === '') {
+      console.log('command run-test has to be run against a test case name.');
+      return process.exit(1);
+    }
+    // Requiring each module runs tests in the module.
     await require('./' + name);
-  };
+    return;
+  }
 
-  console.log('\nAll tests passed!');
-  })().catch((error) => {
-    console.log(error);
-    process.exit(1);
-  });
-} else {
+  runTestSuiteInBatch(argv);
+}
+
+function runTestSuiteInBatch(argv) {
+  const failFast = argv.includes('--fail-fast');
+  console.log(`Testing with N-API Version '${napiVersion}'.`);
+  console.log('Starting test suite\n');
   // Construct the correct (version-dependent) command-line args.
   let args = ['--expose-gc', '--no-concurrent-array-buffer-freeing'];
   if (majorNodeVersion >= 14) {
     args.push('--no-concurrent-array-buffer-sweeping');
   }
-  args.push(__filename);
+  args.push(__filename, RUN_TEST_CMD);
 
-  const child = require('./napi_child').spawnSync(process.argv[0], args, {
-    stdio: 'inherit',
-  });
+  let failedModules = [];
+  for (const name of testModules) {
+    console.log(`Running test '${name}'`);
+    const child = require('./napi_child').spawnSync(process.execPath, [...args, name], {
+      stdio: 'inherit',
+    });
 
-  if (child.signal) {
-    console.error(`Tests aborted with ${child.signal}`);
-    process.exitCode = 1;
-  } else {
-    process.exitCode = child.status;
+    let failed = false;
+    if (child.signal) {
+      console.error(`Test '${name}' aborted with ${child.signal}`);
+      failed = true;
+    } else if (child.status !== 0) {
+      console.error(`Test '${name}' exited with code ${child.status}`);
+      failed = true;
+    }
+
+    if (failed) {
+      failedModules.push(name);
+    }
+    if (failed && failFast) {
+      process.exit(1);
+    }
   }
-  process.exit(process.exitCode);
+
+  if (failedModules.length === 0) {
+    console.log('\nAll tests passed!');
+  } else {
+    console.log('\nTests failed with: \n  %s', failedModules.join('\n  '));
+    process.exit(1);
+  }
 }
