@@ -1,5 +1,81 @@
 # node-addon-api Changelog
 
+## 2020-12-17 Version 3.1.0, @NickNaso
+
+### Notable changes:
+
+#### API
+
+- Added `Napi::TypedThreadSafeFunction` class that is a new implementation for
+thread-safe functions. 
+- Fixed leak on `Napi::AsyncProgressWorkerBase`.
+- Fixed empty data on `Napi::AsyncProgressWorker::OnProgress` caused by race 
+conditions of `Napi::AsyncProgressWorker`.
+- Added `Napi::ArrayBuffer::Detach()` and `Napi::ArrayBuffer::IsDetached()`.
+- Fixed problem on `Napi::FinalizeCallback` it needs to create a 
+`Napi::HandleScope` when it calls `Napi::ObjectWrap::~ObjectWrap()`.
+
+#### Documentation
+
+- Added documentation for `Napi::TypedThreadSafeFunction`.
+- Removed unsued Doxygen file.
+- Clarified when to use N-API.
+- Added support information.
+- Some minor corrections all over the documentation.
+
+#### TEST
+
+- Added test for `Napi::TypedThreadSafeFunction`.
+- Fixed testing for specific N-API version.
+- Some minor corrections all over the test suite.
+
+### TOOL
+
+- Setup github actions for tests.
+- Added stale action.
+- Removed `sudo` tag from Travis CI.
+- Added clang-format.
+- Added pre-commit package for linting.
+
+### Commits
+
+* [[`ff642c5b85`](https://github.com/nodejs/node-addon-api/commit/ff642c5b85)] - **doc**: fix tsfn docs to reflect true implementation (#860) (Kevin Eady)
+* [[`86feeebf54`](https://github.com/nodejs/node-addon-api/commit/86feeebf54)] - **src**: empty data OnProgress in AsyncProgressWorker (legendecas) [#853](https://github.com/nodejs/node-addon-api/pull/853)
+* [[`a7fb5fb31c`](https://github.com/nodejs/node-addon-api/commit/a7fb5fb31c)] - **action**: add stale action (#856) (Michael Dawson)
+* [[`fd44609885`](https://github.com/nodejs/node-addon-api/commit/fd44609885)] - **chore**: setup github actions for tests (#854) (legendecas) [#854](https://github.com/nodejs/node-addon-api/pull/854)
+* [[`c52ace4813`](https://github.com/nodejs/node-addon-api/commit/c52ace4813)] - **script**: fix complains that js files are not supported on npm run lint:fix (#852) (legendecas)
+* [[`b4a3364ad5`](https://github.com/nodejs/node-addon-api/commit/b4a3364ad5)] - **doc**: remove unused Doxygen file (#851) (Michael Dawson)
+* [[`b810466ae2`](https://github.com/nodejs/node-addon-api/commit/b810466ae2)] - **doc**: clarify when to use N-API (#849) (Michael Dawson)
+* [[`528b9f6832`](https://github.com/nodejs/node-addon-api/commit/528b9f6832)] - **test**: remove sudo from travis (#850) (Michael Dawson)
+* [[`4bb680de4e`](https://github.com/nodejs/node-addon-api/commit/4bb680de4e)] - Remove misleading sentence (#847) (Nikolai Vavilov) [#847](https://github.com/nodejs/node-addon-api/pull/847)
+* [[`48e6b584a3`](https://github.com/nodejs/node-addon-api/commit/48e6b584a3)] - Merge pull request #742 from KevinEady/contexted-tsfn-api-gcc-4 (Gabriel Schulhof)
+* [[`d5e37210cc`](https://github.com/nodejs/node-addon-api/commit/d5e37210cc)] - **tools**: print more instructions on clang-format check failed (#846) (legendecas) [#846](https://github.com/nodejs/node-addon-api/pull/846)
+* [[`d9e11ff2c9`](https://github.com/nodejs/node-addon-api/commit/d9e11ff2c9)] - **doc**: add support info (#843) (Michael Dawson) [#843](https://github.com/nodejs/node-addon-api/pull/843)
+* [[`356e93d69a`](https://github.com/nodejs/node-addon-api/commit/356e93d69a)] - **test**: fixup testing for specific N-API version (#840) (Michael Dawson) [#840](https://github.com/nodejs/node-addon-api/pull/840)
+* [[`5e5b9ce1b7`](https://github.com/nodejs/node-addon-api/commit/5e5b9ce1b7)] - Apply formatting changes (Kevin Eady)
+* [[`559ad8c0c0`](https://github.com/nodejs/node-addon-api/commit/559ad8c0c0)] - Merge remote-tracking branch 'upstream/master' into contexted-tsfn-api-gcc-4 (Kevin Eady)
+* [[`c24c455ced`](https://github.com/nodejs/node-addon-api/commit/c24c455ced)] - Rename to TypedThreadSafeFunction (Kevin Eady)
+* [[`63b43f4125`](https://github.com/nodejs/node-addon-api/commit/63b43f4125)] - **test**: fix buildType bug objectwrap\_worker\_thread (raisinten) [#837](https://github.com/nodejs/node-addon-api/pull/837)
+* [[`6321f2ba1a`](https://github.com/nodejs/node-addon-api/commit/6321f2ba1a)] - **test**: fix typos in addon\_build/index.js (raisinten) [#838](https://github.com/nodejs/node-addon-api/pull/838)
+* [[`59c6a6aeb0`](https://github.com/nodejs/node-addon-api/commit/59c6a6aeb0)] - **fix**: git-clang-format doesn't recognize no changes requested on given files (#835) (legendecas)
+* [[`1427b3ef78`](https://github.com/nodejs/node-addon-api/commit/1427b3ef78)] - **src**: create a HandleScope in FinalizeCallback (blagoev) [#832](https://github.com/nodejs/node-addon-api/pull/832)
+* [[`8fb5820557`](https://github.com/nodejs/node-addon-api/commit/8fb5820557)] - **build**: add incremental clang-format checks (legendecas) [#819](https://github.com/nodejs/node-addon-api/pull/819)
+* [[`2c02d317e5`](https://github.com/nodejs/node-addon-api/commit/2c02d317e5)] - **build**: add pre-commit package for linting (#823) (Kevin Eady)
+* [[`1b52c28eb8`](https://github.com/nodejs/node-addon-api/commit/1b52c28eb8)] - Clean up AsyncProgressWorker documentation (#831) (mastergberry)
+* [[`4abe7cfe30`](https://github.com/nodejs/node-addon-api/commit/4abe7cfe30)] - **test**: rename tsfnex test files (Kevin Eady)
+* [[`c9563caa25`](https://github.com/nodejs/node-addon-api/commit/c9563caa25)] - **src**: add ArrayBuffer::Detach() and ::IsDetached() (Tobias Nießen) [#659](https://github.com/nodejs/node-addon-api/pull/659)
+* [[`c79cabaed2`](https://github.com/nodejs/node-addon-api/commit/c79cabaed2)] - **doc**: avoid directing users to HTTP (#828) (Tobias Nießen)
+* [[`7a13f861ab`](https://github.com/nodejs/node-addon-api/commit/7a13f861ab)] - **doc**: fix additional typo (Kevin Eady)
+* [[`7ec9741dd2`](https://github.com/nodejs/node-addon-api/commit/7ec9741dd2)] - Merge remote-tracking branch 'upstream/master' into contexted-tsfn-api-gcc-4 (Kevin Eady)
+* [[`f5fad239fa`](https://github.com/nodejs/node-addon-api/commit/f5fad239fa)] - Update object\_reference.md (#827) (kidneysolo)
+* [[`35b65712c2`](https://github.com/nodejs/node-addon-api/commit/35b65712c2)] - **Fix**: some typos in documentation (#826) (Helio Frota)
+* [[`8983383000`](https://github.com/nodejs/node-addon-api/commit/8983383000)] - **Fix**: some typos in the document (#825) (Ziqiu Zhao)
+* [[`826e466ef6`](https://github.com/nodejs/node-addon-api/commit/826e466ef6)] - Fixed example in addon.md. (#820) (nempoBu4) [#820](https://github.com/nodejs/node-addon-api/pull/820)
+* [[`b54f5eb788`](https://github.com/nodejs/node-addon-api/commit/b54f5eb788)] - Additional changes from review (Kevin Eady)
+* [[`59f27dac9a`](https://github.com/nodejs/node-addon-api/commit/59f27dac9a)] - Fix common.gypi (Kevin Eady)
+* [[`151a914c99`](https://github.com/nodejs/node-addon-api/commit/151a914c99)] - Apply documentation suggestions from code review (Kevin Eady)
+* [[`ceb27d4949`](https://github.com/nodejs/node-addon-api/commit/ceb27d4949)] - **src**: fix leak in AsyncProgressWorkerBase\<DataType\> (Ferdinand Holzer) [#795](https://github.com/nodejs/node-addon-api/pull/795)
+
 ## 2020-09-18 Version 3.0.2, @NickNaso
 
 ### Notable changes:

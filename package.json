@@ -52,6 +52,10 @@
       "url": "https://github.com/gallafent"
     },
     {
+      "name": "blagoev",
+      "url": "https://github.com/blagoev"
+    },
+    {
       "name": "Bruce A. MacNaughton",
       "url": "https://github.com/bmacnaughton"
     },
@@ -64,6 +68,10 @@
       "url": "https://github.com/danbev"
     },
     {
+      "name": "Darshan Sen",
+      "url": "https://github.com/RaisinTen"
+    },
+    {
       "name": "David Halls",
       "url": "https://github.com/davedoesdev"
     },
@@ -74,6 +82,10 @@
     {
       "name": "Dongjin Na",
       "url": "https://github.com/nadongguri"
+    },
+    {
+      "name": "Ferdinand Holzer",
+      "url": "https://github.com/fholzer"
     },
     {
       "name": "Eric Bickle",
@@ -90,6 +102,10 @@
     {
       "name": "Gus Caplan",
       "url": "https://github.com/devsnek"
+    },
+    {
+      "name": "Helio Frota",
+      "url": "https://github.com/helio-frota"
     },
     {
       "name": "Hitesh Kanwathirtha",
@@ -140,6 +156,10 @@
       "url": "https://github.com/KevinEady"
     },
     {
+      "name": "kidneysolo",
+      "url": "https://github.com/kidneysolo"
+    },
+    {
       "name": "Koki Nishihara",
       "url": "https://github.com/Nishikoh"
     },
@@ -162,6 +182,10 @@
     {
       "name": "Luciano Martorella",
       "url": "https://github.com/lmartorella"
+    },
+    {
+      "name": "mastergberry",
+      "url": "https://github.com/mastergberry"
     },
     {
       "name": "Mathias Küsel",
@@ -188,12 +212,20 @@
       "url": "https://github.com/mcheshkov"
     },
     {
+      "name": "nempoBu4",
+      "url": "https://github.com/nempoBu4"
+    },
+    {
       "name": "Nicola Del Gobbo",
       "url": "https://github.com/NickNaso"
     },
     {
       "name": "Nick Soggin",
       "url": "https://github.com/iSkore"
+    },
+    {
+      "name": "Nikolai Vavilov",
+      "url": "https://github.com/seishun"
     },
     {
       "name": "Nurbol Alpysbayev",
@@ -258,6 +290,10 @@
     {
       "name": "Yulong Wang",
       "url": "https://github.com/fs-eire"
+    },
+    {
+      "name": "Ziqiu Zhao",
+      "url": "https://github.com/ZzqiZQute"
     }
   ],
   "dependencies": {},
@@ -307,6 +343,6 @@
     "lint:fix": "git-clang-format '*.h', '*.cc'"
   },
   "pre-commit": "lint",
-  "version": "3.0.2",
+  "version": "3.1.0",
   "support": true
 }
