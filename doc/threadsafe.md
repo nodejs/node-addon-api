@@ -50,9 +50,6 @@ native C++ code (the "callback") on the Node.js thread.
 
 This API is designed without N-API 5 native support for [the optional JavaScript
   function callback feature](https://github.com/nodejs/node/commit/53297e66cb).
-  `::New` methods that do not have a `Function` parameter will construct a
-  _new_, no-op `Function` on the environment to pass to the underlying N-API
-  call.
 
 This API has some dynamic functionality, in that:
 - The `[Non]BlockingCall()` methods provide a `Napi::Function` parameter as the
