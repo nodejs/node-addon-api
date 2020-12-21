@@ -180,7 +180,7 @@ TemplatedInstanceVoidCallback(napi_env env,
 template <typename T, typename Finalizer, typename Hint = void>
 struct FinalizeData {
   static inline
-  void Wrapper(napi_env env, void* data, void* finalizeHint) noexcept {
+  void Wrapper(napi_env env, void* data, void* finalizeHint) NAPI_NOEXCEPT {
     WrapVoidCallback([&] {
       FinalizeData* finalizeData = static_cast<FinalizeData*>(finalizeHint);
       finalizeData->callback(Env(env), static_cast<T*>(data));
@@ -189,7 +189,7 @@ struct FinalizeData {
   }
 
   static inline
-  void WrapperWithHint(napi_env env, void* data, void* finalizeHint) noexcept {
+  void WrapperWithHint(napi_env env, void* data, void* finalizeHint) NAPI_NOEXCEPT {
     WrapVoidCallback([&] {
       FinalizeData* finalizeData = static_cast<FinalizeData*>(finalizeHint);
       finalizeData->callback(Env(env), static_cast<T*>(data), finalizeData->hint);
@@ -3562,7 +3562,7 @@ inline napi_value InstanceWrap<T>::InstanceSetterCallbackWrapper(
 
 template <typename T>
 template <typename InstanceWrap<T>::InstanceSetterCallback method>
-inline napi_value InstanceWrap<T>::WrappedMethod(napi_env env, napi_callback_info info) noexcept {
+inline napi_value InstanceWrap<T>::WrappedMethod(napi_env env, napi_callback_info info) NAPI_NOEXCEPT {
   return details::WrapCallback([&] {
     const CallbackInfo cbInfo(env, info);
     T* instance = T::Unwrap(cbInfo.This().As<Object>());
@@ -4024,7 +4024,7 @@ inline void ObjectWrap<T>::FinalizeCallback(napi_env env, void* data, void* /*hi
 
 template <typename T>
 template <typename ObjectWrap<T>::StaticSetterCallback method>
-inline napi_value ObjectWrap<T>::WrappedMethod(napi_env env, napi_callback_info info) noexcept {
+inline napi_value ObjectWrap<T>::WrappedMethod(napi_env env, napi_callback_info info) NAPI_NOEXCEPT {
   return details::WrapCallback([&] {
     const CallbackInfo cbInfo(env, info);
     method(cbInfo, cbInfo[0]);
