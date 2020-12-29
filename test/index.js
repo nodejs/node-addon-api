@@ -60,6 +60,7 @@ let testModules = [
   'typedarray-bigint',
   'objectwrap',
   'objectwrap_constructor_exception',
+  'objectwrap_ref',
   'objectwrap-removewrap',
   'objectwrap_multiple_inheritance',
   'objectwrap_worker_thread',
