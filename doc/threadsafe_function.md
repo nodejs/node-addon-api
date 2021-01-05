@@ -83,7 +83,7 @@ Add a thread to this thread-safe function object, indicating that a new thread
 will start making use of the thread-safe function.
 
 ```cpp
-napi_status Napi::ThreadSafeFunction::Acquire()
+napi_status Napi::ThreadSafeFunction::Acquire() const
 ```
 
 Returns one of:
@@ -100,7 +100,7 @@ thread-safe function. Using any thread-safe APIs after having called this API
 has undefined results in the current thread, as it may have been destroyed.
 
 ```cpp
-napi_status Napi::ThreadSafeFunction::Release()
+napi_status Napi::ThreadSafeFunction::Release() const
 ```
 
 Returns one of:
@@ -122,7 +122,7 @@ make no further use of the thread-safe function because it is no longer
 guaranteed to be allocated.
 
 ```cpp
-napi_status Napi::ThreadSafeFunction::Abort()
+napi_status Napi::ThreadSafeFunction::Abort() const
 ```
 
 Returns one of:

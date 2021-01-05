@@ -487,7 +487,7 @@ inline bool Env::IsExceptionPending() const {
   return result;
 }
 
-inline Error Env::GetAndClearPendingException() {
+inline Error Env::GetAndClearPendingException() const {
   napi_value value;
   napi_status status = napi_get_and_clear_last_exception(_env, &value);
   if (status != napi_ok) {
@@ -497,16 +497,16 @@ inline Error Env::GetAndClearPendingException() {
   return Error(_env, value);
 }
 
-inline MaybeOrValue<Value> Env::RunScript(const char* utf8script) {
+inline MaybeOrValue<Value> Env::RunScript(const char* utf8script) const {
   String script = String::New(_env, utf8script);
   return RunScript(script);
 }
 
-inline MaybeOrValue<Value> Env::RunScript(const std::string& utf8script) {
+inline MaybeOrValue<Value> Env::RunScript(const std::string& utf8script) const {
   return RunScript(utf8script.c_str());
 }
 
-inline MaybeOrValue<Value> Env::RunScript(String script) {
+inline MaybeOrValue<Value> Env::RunScript(String script) const {
   napi_value result;
   napi_status status = napi_run_script(_env, script, &result);
   NAPI_RETURN_OR_THROW_IF_FAILED(
@@ -535,7 +535,7 @@ void Env::CleanupHook<Hook, Arg>::WrapperWithArg(void* data) NAPI_NOEXCEPT {
 
 #if NAPI_VERSION > 5
 template <typename T, Env::Finalizer<T> fini>
-inline void Env::SetInstanceData(T* data) {
+inline void Env::SetInstanceData(T* data) const {
   napi_status status =
     napi_set_instance_data(_env, data, [](napi_env env, void* data, void*) {
       fini(env, static_cast<T*>(data));
@@ -546,7 +546,7 @@ inline void Env::SetInstanceData(T* data) {
 template <typename DataType,
           typename HintType,
           Napi::Env::FinalizerWithHint<DataType, HintType> fini>
-inline void Env::SetInstanceData(DataType* data, HintType* hint) {
+inline void Env::SetInstanceData(DataType* data, HintType* hint) const {
   napi_status status =
     napi_set_instance_data(_env, data,
       [](napi_env env, void* data, void* hint) {
@@ -556,7 +556,7 @@ inline void Env::SetInstanceData(DataType* data, HintType* hint) {
 }
 
 template <typename T>
-inline T* Env::GetInstanceData() {
+inline T* Env::GetInstanceData() const {
   void* data = nullptr;
 
   napi_status status = napi_get_instance_data(_env, &data);
@@ -1298,37 +1298,23 @@ inline Object::Object() : Value() {
 inline Object::Object(napi_env env, napi_value value) : Value(env, value) {
 }
 
-inline Object::PropertyLValue<std::string> Object::operator [](const char* utf8name) {
+inline Object::PropertyLValue<std::string> Object::operator[](
+    const char* utf8name) const {
   return PropertyLValue<std::string>(*this, utf8name);
 }
 
-inline Object::PropertyLValue<std::string> Object::operator [](const std::string& utf8name) {
+inline Object::PropertyLValue<std::string> Object::operator[](
+    const std::string& utf8name) const {
   return PropertyLValue<std::string>(*this, utf8name);
 }
 
-inline Object::PropertyLValue<uint32_t> Object::operator [](uint32_t index) {
+inline Object::PropertyLValue<uint32_t> Object::operator[](
+    uint32_t index) const {
   return PropertyLValue<uint32_t>(*this, index);
-}
-
-inline Object::PropertyLValue<Value> Object::operator[](Value index) {
-  return PropertyLValue<Value>(*this, index);
 }
 
 inline Object::PropertyLValue<Value> Object::operator[](Value index) const {
   return PropertyLValue<Value>(*this, index);
-}
-
-inline MaybeOrValue<Value> Object::operator[](const char* utf8name) const {
-  return Get(utf8name);
-}
-
-inline MaybeOrValue<Value> Object::operator[](
-    const std::string& utf8name) const {
-  return Get(utf8name);
-}
-
-inline MaybeOrValue<Value> Object::operator[](uint32_t index) const {
-  return Get(index);
 }
 
 inline MaybeOrValue<bool> Object::Has(napi_value key) const {
@@ -1400,14 +1386,15 @@ inline MaybeOrValue<Value> Object::Get(const std::string& utf8name) const {
 }
 
 template <typename ValueType>
-inline MaybeOrValue<bool> Object::Set(napi_value key, const ValueType& value) {
+inline MaybeOrValue<bool> Object::Set(napi_value key,
+                                      const ValueType& value) const {
   napi_status status =
       napi_set_property(_env, _value, key, Value::From(_env, value));
   NAPI_RETURN_OR_THROW_IF_FAILED(_env, status, status == napi_ok, bool);
 }
 
 template <typename ValueType>
-inline MaybeOrValue<bool> Object::Set(Value key, const ValueType& value) {
+inline MaybeOrValue<bool> Object::Set(Value key, const ValueType& value) const {
   napi_status status =
       napi_set_property(_env, _value, key, Value::From(_env, value));
   NAPI_RETURN_OR_THROW_IF_FAILED(_env, status, status == napi_ok, bool);
@@ -1415,7 +1402,7 @@ inline MaybeOrValue<bool> Object::Set(Value key, const ValueType& value) {
 
 template <typename ValueType>
 inline MaybeOrValue<bool> Object::Set(const char* utf8name,
-                                      const ValueType& value) {
+                                      const ValueType& value) const {
   napi_status status =
       napi_set_named_property(_env, _value, utf8name, Value::From(_env, value));
   NAPI_RETURN_OR_THROW_IF_FAILED(_env, status, status == napi_ok, bool);
@@ -1423,27 +1410,27 @@ inline MaybeOrValue<bool> Object::Set(const char* utf8name,
 
 template <typename ValueType>
 inline MaybeOrValue<bool> Object::Set(const std::string& utf8name,
-                                      const ValueType& value) {
+                                      const ValueType& value) const {
   return Set(utf8name.c_str(), value);
 }
 
-inline MaybeOrValue<bool> Object::Delete(napi_value key) {
+inline MaybeOrValue<bool> Object::Delete(napi_value key) const {
   bool result;
   napi_status status = napi_delete_property(_env, _value, key, &result);
   NAPI_RETURN_OR_THROW_IF_FAILED(_env, status, result, bool);
 }
 
-inline MaybeOrValue<bool> Object::Delete(Value key) {
+inline MaybeOrValue<bool> Object::Delete(Value key) const {
   bool result;
   napi_status status = napi_delete_property(_env, _value, key, &result);
   NAPI_RETURN_OR_THROW_IF_FAILED(_env, status, result, bool);
 }
 
-inline MaybeOrValue<bool> Object::Delete(const char* utf8name) {
+inline MaybeOrValue<bool> Object::Delete(const char* utf8name) const {
   return Delete(String::New(_env, utf8name));
 }
 
-inline MaybeOrValue<bool> Object::Delete(const std::string& utf8name) {
+inline MaybeOrValue<bool> Object::Delete(const std::string& utf8name) const {
   return Delete(String::New(_env, utf8name));
 }
 
@@ -1460,13 +1447,14 @@ inline MaybeOrValue<Value> Object::Get(uint32_t index) const {
 }
 
 template <typename ValueType>
-inline MaybeOrValue<bool> Object::Set(uint32_t index, const ValueType& value) {
+inline MaybeOrValue<bool> Object::Set(uint32_t index,
+                                      const ValueType& value) const {
   napi_status status =
       napi_set_element(_env, _value, index, Value::From(_env, value));
   NAPI_RETURN_OR_THROW_IF_FAILED(_env, status, status == napi_ok, bool);
 }
 
-inline MaybeOrValue<bool> Object::Delete(uint32_t index) {
+inline MaybeOrValue<bool> Object::Delete(uint32_t index) const {
   bool result;
   napi_status status = napi_delete_element(_env, _value, index, &result);
   NAPI_RETURN_OR_THROW_IF_FAILED(_env, status, result, bool);
@@ -1479,21 +1467,21 @@ inline MaybeOrValue<Array> Object::GetPropertyNames() const {
 }
 
 inline MaybeOrValue<bool> Object::DefineProperty(
-    const PropertyDescriptor& property) {
+    const PropertyDescriptor& property) const {
   napi_status status = napi_define_properties(_env, _value, 1,
     reinterpret_cast<const napi_property_descriptor*>(&property));
   NAPI_RETURN_OR_THROW_IF_FAILED(_env, status, status == napi_ok, bool);
 }
 
 inline MaybeOrValue<bool> Object::DefineProperties(
-    const std::initializer_list<PropertyDescriptor>& properties) {
+    const std::initializer_list<PropertyDescriptor>& properties) const {
   napi_status status = napi_define_properties(_env, _value, properties.size(),
     reinterpret_cast<const napi_property_descriptor*>(properties.begin()));
   NAPI_RETURN_OR_THROW_IF_FAILED(_env, status, status == napi_ok, bool);
 }
 
 inline MaybeOrValue<bool> Object::DefineProperties(
-    const std::vector<PropertyDescriptor>& properties) {
+    const std::vector<PropertyDescriptor>& properties) const {
   napi_status status = napi_define_properties(_env, _value, properties.size(),
     reinterpret_cast<const napi_property_descriptor*>(properties.data()));
   NAPI_RETURN_OR_THROW_IF_FAILED(_env, status, status == napi_ok, bool);
@@ -1507,7 +1495,7 @@ inline MaybeOrValue<bool> Object::InstanceOf(
 }
 
 template <typename Finalizer, typename T>
-inline void Object::AddFinalizer(Finalizer finalizeCallback, T* data) {
+inline void Object::AddFinalizer(Finalizer finalizeCallback, T* data) const {
   details::FinalizeData<T, Finalizer>* finalizeData =
       new details::FinalizeData<T, Finalizer>(
           {std::move(finalizeCallback), nullptr});
@@ -1526,7 +1514,7 @@ inline void Object::AddFinalizer(Finalizer finalizeCallback, T* data) {
 template <typename Finalizer, typename T, typename Hint>
 inline void Object::AddFinalizer(Finalizer finalizeCallback,
                                  T* data,
-                                 Hint* finalizeHint) {
+                                 Hint* finalizeHint) const {
   details::FinalizeData<T, Finalizer, Hint>* finalizeData =
       new details::FinalizeData<T, Finalizer, Hint>(
           {std::move(finalizeCallback), finalizeHint});
@@ -1620,12 +1608,12 @@ Object::iterator::operator*() {
 #endif  // NAPI_CPP_EXCEPTIONS
 
 #if NAPI_VERSION >= 8
-inline MaybeOrValue<bool> Object::Freeze() {
+inline MaybeOrValue<bool> Object::Freeze() const {
   napi_status status = napi_object_freeze(_env, _value);
   NAPI_RETURN_OR_THROW_IF_FAILED(_env, status, status == napi_ok, bool);
 }
 
-inline MaybeOrValue<bool> Object::Seal() {
+inline MaybeOrValue<bool> Object::Seal() const {
   napi_status status = napi_object_seal(_env, _value);
   NAPI_RETURN_OR_THROW_IF_FAILED(_env, status, status == napi_ok, bool);
 }
@@ -2966,7 +2954,7 @@ inline T Reference<T>::Value() const {
 }
 
 template <typename T>
-inline uint32_t Reference<T>::Ref() {
+inline uint32_t Reference<T>::Ref() const {
   uint32_t result;
   napi_status status = napi_reference_ref(_env, _ref, &result);
   NAPI_THROW_IF_FAILED(_env, status, 0);
@@ -2974,7 +2962,7 @@ inline uint32_t Reference<T>::Ref() {
 }
 
 template <typename T>
-inline uint32_t Reference<T>::Unref() {
+inline uint32_t Reference<T>::Unref() const {
   uint32_t result;
   napi_status status = napi_reference_unref(_env, _ref, &result);
   NAPI_THROW_IF_FAILED(_env, status, 0);
@@ -3100,61 +3088,61 @@ inline MaybeOrValue<Napi::Value> ObjectReference::Get(
 }
 
 inline MaybeOrValue<bool> ObjectReference::Set(const char* utf8name,
-                                               napi_value value) {
+                                               napi_value value) const {
   HandleScope scope(_env);
   return Value().Set(utf8name, value);
 }
 
 inline MaybeOrValue<bool> ObjectReference::Set(const char* utf8name,
-                                               Napi::Value value) {
+                                               Napi::Value value) const {
   HandleScope scope(_env);
   return Value().Set(utf8name, value);
 }
 
 inline MaybeOrValue<bool> ObjectReference::Set(const char* utf8name,
-                                               const char* utf8value) {
+                                               const char* utf8value) const {
   HandleScope scope(_env);
   return Value().Set(utf8name, utf8value);
 }
 
 inline MaybeOrValue<bool> ObjectReference::Set(const char* utf8name,
-                                               bool boolValue) {
+                                               bool boolValue) const {
   HandleScope scope(_env);
   return Value().Set(utf8name, boolValue);
 }
 
 inline MaybeOrValue<bool> ObjectReference::Set(const char* utf8name,
-                                               double numberValue) {
+                                               double numberValue) const {
   HandleScope scope(_env);
   return Value().Set(utf8name, numberValue);
 }
 
 inline MaybeOrValue<bool> ObjectReference::Set(const std::string& utf8name,
-                                               napi_value value) {
+                                               napi_value value) const {
   HandleScope scope(_env);
   return Value().Set(utf8name, value);
 }
 
 inline MaybeOrValue<bool> ObjectReference::Set(const std::string& utf8name,
-                                               Napi::Value value) {
+                                               Napi::Value value) const {
   HandleScope scope(_env);
   return Value().Set(utf8name, value);
 }
 
 inline MaybeOrValue<bool> ObjectReference::Set(const std::string& utf8name,
-                                               std::string& utf8value) {
+                                               std::string& utf8value) const {
   HandleScope scope(_env);
   return Value().Set(utf8name, utf8value);
 }
 
 inline MaybeOrValue<bool> ObjectReference::Set(const std::string& utf8name,
-                                               bool boolValue) {
+                                               bool boolValue) const {
   HandleScope scope(_env);
   return Value().Set(utf8name, boolValue);
 }
 
 inline MaybeOrValue<bool> ObjectReference::Set(const std::string& utf8name,
-                                               double numberValue) {
+                                               double numberValue) const {
   HandleScope scope(_env);
   return Value().Set(utf8name, numberValue);
 }
@@ -3176,36 +3164,37 @@ inline MaybeOrValue<Napi::Value> ObjectReference::Get(uint32_t index) const {
 }
 
 inline MaybeOrValue<bool> ObjectReference::Set(uint32_t index,
-                                               napi_value value) {
+                                               napi_value value) const {
   HandleScope scope(_env);
   return Value().Set(index, value);
 }
 
 inline MaybeOrValue<bool> ObjectReference::Set(uint32_t index,
-                                               Napi::Value value) {
+                                               Napi::Value value) const {
   HandleScope scope(_env);
   return Value().Set(index, value);
 }
 
 inline MaybeOrValue<bool> ObjectReference::Set(uint32_t index,
-                                               const char* utf8value) {
+                                               const char* utf8value) const {
+  HandleScope scope(_env);
+  return Value().Set(index, utf8value);
+}
+
+inline MaybeOrValue<bool> ObjectReference::Set(
+    uint32_t index, const std::string& utf8value) const {
   HandleScope scope(_env);
   return Value().Set(index, utf8value);
 }
 
 inline MaybeOrValue<bool> ObjectReference::Set(uint32_t index,
-                                               const std::string& utf8value) {
-  HandleScope scope(_env);
-  return Value().Set(index, utf8value);
-}
-
-inline MaybeOrValue<bool> ObjectReference::Set(uint32_t index, bool boolValue) {
+                                               bool boolValue) const {
   HandleScope scope(_env);
   return Value().Set(index, boolValue);
 }
 
 inline MaybeOrValue<bool> ObjectReference::Set(uint32_t index,
-                                               double numberValue) {
+                                               double numberValue) const {
   HandleScope scope(_env);
   return Value().Set(index, numberValue);
 }
@@ -5368,7 +5357,7 @@ template <typename ContextType,
           typename DataType,
           void (*CallJs)(Napi::Env, Napi::Function, ContextType*, DataType*)>
 inline napi_status
-TypedThreadSafeFunction<ContextType, DataType, CallJs>::Release() {
+TypedThreadSafeFunction<ContextType, DataType, CallJs>::Release() const {
   return napi_release_threadsafe_function(_tsfn, napi_tsfn_release);
 }
 
@@ -5376,7 +5365,7 @@ template <typename ContextType,
           typename DataType,
           void (*CallJs)(Napi::Env, Napi::Function, ContextType*, DataType*)>
 inline napi_status
-TypedThreadSafeFunction<ContextType, DataType, CallJs>::Abort() {
+TypedThreadSafeFunction<ContextType, DataType, CallJs>::Abort() const {
   return napi_release_threadsafe_function(_tsfn, napi_tsfn_abort);
 }
 
@@ -5706,11 +5695,11 @@ inline napi_status ThreadSafeFunction::Acquire() const {
   return napi_acquire_threadsafe_function(_tsfn);
 }
 
-inline napi_status ThreadSafeFunction::Release() {
+inline napi_status ThreadSafeFunction::Release() const {
   return napi_release_threadsafe_function(_tsfn, napi_tsfn_release);
 }
 
-inline napi_status ThreadSafeFunction::Abort() {
+inline napi_status ThreadSafeFunction::Abort() const {
   return napi_release_threadsafe_function(_tsfn, napi_tsfn_abort);
 }
 

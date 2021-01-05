@@ -57,7 +57,7 @@ Returns a `bool` indicating if an exception is pending in the environment.
 ### GetAndClearPendingException
 
 ```cpp
-Napi::Error Napi::Env::GetAndClearPendingException();
+Napi::Error Napi::Env::GetAndClearPendingException() const;
 ```
 
 Returns an `Napi::Error` object representing the environment's pending exception, if any.
@@ -65,7 +65,7 @@ Returns an `Napi::Error` object representing the environment's pending exception
 ### RunScript
 
 ```cpp
-Napi::Value Napi::Env::RunScript(____ script);
+Napi::Value Napi::Env::RunScript(____ script) const;
 ```
 - `[in] script`: A string containing JavaScript code to execute.
 
@@ -78,7 +78,7 @@ The `script` can be any of the following types:
 
 ### GetInstanceData
 ```cpp
-template <typename T> T* GetInstanceData();
+template <typename T> T* GetInstanceData() const;
 ```
 
 Returns the instance data that was previously associated with the environment,
@@ -89,7 +89,7 @@ or `nullptr` if none was associated.
 ```cpp
 template <typename T> using Finalizer = void (*)(Env, T*);
 template <typename T, Finalizer<T> fini = Env::DefaultFini<T>>
-void SetInstanceData(T* data);
+void SetInstanceData(T* data) const;
 ```
 
 - `[template] fini`: A function to call when the instance data is to be deleted.
@@ -112,7 +112,7 @@ template <typename DataType,
           typename HintType,
           FinalizerWithHint<DataType, HintType> fini =
             Env::DefaultFiniWithHint<DataType, HintType>>
-void SetInstanceData(DataType* data, HintType* hint);
+void SetInstanceData(DataType* data, HintType* hint) const;
 ```
 
 - `[template] fini`: A function to call when the instance data is to be deleted.

@@ -72,7 +72,7 @@ Creates a new `Napi::Object` value.
 ### Set()
 
 ```cpp
-bool Napi::Object::Set (____ key, ____ value);
+bool Napi::Object::Set (____ key, ____ value) const;
 ```
 - `[in] key`: The name for the property being assigned.
 - `[in] value`: The value being assigned to the property.
@@ -91,7 +91,7 @@ The `value` can be of any type that is accepted by [`Napi::Value::From`][].
 ### Delete()
 
 ```cpp
-bool Napi::Object::Delete(____ key);
+bool Napi::Object::Delete(____ key) const;
 ```
 - `[in] key`: The name of the property to delete.
 
@@ -143,7 +143,7 @@ Note: This is equivalent to the JavaScript instanceof operator.
 ### AddFinalizer()
 ```cpp
 template <typename Finalizer, typename T>
-inline void AddFinalizer(Finalizer finalizeCallback, T* data);
+inline void AddFinalizer(Finalizer finalizeCallback, T* data) const;
 ```
 
 - `[in] finalizeCallback`: The function to call when the object is garbage-collected.
@@ -161,7 +161,7 @@ where `data` is the pointer that was passed into the call to `AddFinalizer()`.
 template <typename Finalizer, typename T, typename Hint>
 inline void AddFinalizer(Finalizer finalizeCallback,
                          T* data,
-                         Hint* finalizeHint);
+                         Hint* finalizeHint) const;
 ```
 
 - `[in] data`: The data to associate with the object.
@@ -184,7 +184,7 @@ The properties whose key is a `Symbol` will not be included.
 
 ### HasOwnProperty()
 ```cpp
-bool Napi::Object::HasOwnProperty(____ key); const
+bool Napi::Object::HasOwnProperty(____ key) const;
 ```
 - `[in] key` The name of the property to check.
 
@@ -200,7 +200,7 @@ The key can be any of the following types:
 ### DefineProperty()
 
 ```cpp
-bool Napi::Object::DefineProperty (const Napi::PropertyDescriptor& property);
+bool Napi::Object::DefineProperty (const Napi::PropertyDescriptor& property) const;
 ```
 - `[in] property`: A [`Napi::PropertyDescriptor`](property_descriptor.md).
 
@@ -209,7 +209,7 @@ Define a property on the object.
 ### DefineProperties()
 
 ```cpp
-bool Napi::Object::DefineProperties (____ properties)
+bool Napi::Object::DefineProperties (____ properties) const;
 ```
 - `[in] properties`: A list of [`Napi::PropertyDescriptor`](property_descriptor.md). Can be one of the following types:
   - const std::initializer_list<Napi::PropertyDescriptor>&
@@ -220,7 +220,7 @@ Defines properties on the object.
 ### Freeze()
 
 ```cpp
-void Napi::Object::Freeze()
+void Napi::Object::Freeze() const;
 ```
 
 The `Napi::Object::Freeze()` method freezes an object. A frozen object can no
@@ -233,7 +233,7 @@ freezing an object also prevents its prototype from being changed.
 ### Seal()
 
 ```cpp
-void Napi::Object::Seal()
+void Napi::Object::Seal() const;
 ```
 
 The `Napi::Object::Seal()` method seals an object, preventing new properties
@@ -244,7 +244,7 @@ writable.
 ### operator\[\]()
 
 ```cpp
-Napi::PropertyLValue<std::string> Napi::Object::operator[] (const char* utf8name);
+Napi::PropertyLValue<std::string> Napi::Object::operator[] (const char* utf8name) const;
 ```
 - `[in] utf8name`: UTF-8 encoded null-terminated property name.
 
@@ -252,7 +252,7 @@ Returns a [`Napi::Object::PropertyLValue`](propertylvalue.md) as the named
 property or sets the named property.
 
 ```cpp
-Napi::PropertyLValue<std::string> Napi::Object::operator[] (const std::string& utf8name);
+Napi::PropertyLValue<std::string> Napi::Object::operator[] (const std::string& utf8name) const;
 ```
 - `[in] utf8name`: UTF-8 encoded property name.
 
@@ -260,33 +260,12 @@ Returns a [`Napi::Object::PropertyLValue`](propertylvalue.md) as the named
 property or sets the named property.
 
 ```cpp
-Napi::PropertyLValue<uint32_t> Napi::Object::operator[] (uint32_t index);
+Napi::PropertyLValue<uint32_t> Napi::Object::operator[] (uint32_t index) const;
 ```
 - `[in] index`: Element index.
 
 Returns a [`Napi::Object::PropertyLValue`](propertylvalue.md) or sets an
 indexed property or array element.
-
-```cpp
-Napi::Value Napi::Object::operator[] (const char* utf8name) const;
-```
-- `[in] utf8name`: UTF-8 encoded null-terminated property name.
-
-Returns the named property as a [`Napi::Value`](value.md).
-
-```cpp
-Napi::Value Napi::Object::operator[] (const std::string& utf8name) const;
-```
-- `[in] utf8name`: UTF-8 encoded property name.
-
-Returns the named property as a [`Napi::Value`](value.md).
-
-```cpp
-Napi::Value Napi::Object::operator[] (uint32_t index) const;
-```
-- `[in] index`: Element index.
-
-Returns an indexed property or array element as a [`Napi::Value`](value.md).
 
 ### begin()
 

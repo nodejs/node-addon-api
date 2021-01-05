@@ -103,7 +103,7 @@ The `value` can be any of the following types:
 ### Get
 
 ```cpp
-Napi::Value Napi::ObjectReference::Get(___ key);
+Napi::Value Napi::ObjectReference::Get(___ key) const;
 ```
 
 * `[in] key`: The name of the property to return the value for.
