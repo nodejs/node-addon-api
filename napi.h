@@ -286,11 +286,11 @@ namespace Napi {
     Value Null() const;
 
     bool IsExceptionPending() const;
-    Error GetAndClearPendingException();
+    Error GetAndClearPendingException() const;
 
-    MaybeOrValue<Value> RunScript(const char* utf8script);
-    MaybeOrValue<Value> RunScript(const std::string& utf8script);
-    MaybeOrValue<Value> RunScript(String script);
+    MaybeOrValue<Value> RunScript(const char* utf8script) const;
+    MaybeOrValue<Value> RunScript(const std::string& utf8script) const;
+    MaybeOrValue<Value> RunScript(String script) const;
 
 #if NAPI_VERSION > 2
     template <typename Hook>
@@ -301,19 +301,20 @@ namespace Napi {
 #endif  // NAPI_VERSION > 2
 
 #if NAPI_VERSION > 5
-    template <typename T> T* GetInstanceData();
+    template <typename T>
+    T* GetInstanceData() const;
 
     template <typename T> using Finalizer = void (*)(Env, T*);
     template <typename T, Finalizer<T> fini = Env::DefaultFini<T>>
-    void SetInstanceData(T* data);
+    void SetInstanceData(T* data) const;
 
     template <typename DataType, typename HintType>
     using FinalizerWithHint = void (*)(Env, DataType*, HintType*);
     template <typename DataType,
               typename HintType,
               FinalizerWithHint<DataType, HintType> fini =
-                Env::DefaultFiniWithHint<DataType, HintType>>
-    void SetInstanceData(DataType* data, HintType* hint);
+                  Env::DefaultFiniWithHint<DataType, HintType>>
+    void SetInstanceData(DataType* data, HintType* hint) const;
 #endif  // NAPI_VERSION > 5
 
   private:
@@ -727,40 +728,22 @@ namespace Napi {
            napi_value value);  ///< Wraps a Node-API value primitive.
 
     /// Gets or sets a named property.
-    PropertyLValue<std::string> operator [](
-      const char* utf8name ///< UTF-8 encoded null-terminated property name
-    );
-
-    /// Gets or sets a named property.
-    PropertyLValue<std::string> operator [](
-      const std::string& utf8name ///< UTF-8 encoded property name
-    );
-
-    /// Gets or sets an indexed property or array element.
-    PropertyLValue<uint32_t> operator [](
-      uint32_t index /// Property / element index
-    );
-
-    /// Gets or sets an indexed property or array element.
-    PropertyLValue<Value> operator[](Value index  /// Property / element index
-    );
-
-    /// Gets or sets an indexed property or array element.
-    PropertyLValue<Value> operator[](Value index  /// Property / element index
-    ) const;
-
-    /// Gets a named property.
-    MaybeOrValue<Value> operator[](
+    PropertyLValue<std::string> operator[](
         const char* utf8name  ///< UTF-8 encoded null-terminated property name
     ) const;
 
-    /// Gets a named property.
-    MaybeOrValue<Value> operator[](
+    /// Gets or sets a named property.
+    PropertyLValue<std::string> operator[](
         const std::string& utf8name  ///< UTF-8 encoded property name
     ) const;
 
-    /// Gets an indexed property or array element.
-    MaybeOrValue<Value> operator[](uint32_t index  ///< Property / element index
+    /// Gets or sets an indexed property or array element.
+    PropertyLValue<uint32_t> operator[](
+        uint32_t index  /// Property / element index
+    ) const;
+
+    /// Gets or sets an indexed property or array element.
+    PropertyLValue<Value> operator[](Value index  /// Property / element index
     ) const;
 
     /// Checks whether a property is present.
@@ -822,44 +805,44 @@ namespace Napi {
     template <typename ValueType>
     MaybeOrValue<bool> Set(napi_value key,         ///< Property key primitive
                            const ValueType& value  ///< Property value primitive
-    );
+    ) const;
 
     /// Sets a property.
     template <typename ValueType>
     MaybeOrValue<bool> Set(Value key,              ///< Property key
                            const ValueType& value  ///< Property value
-    );
+    ) const;
 
     /// Sets a named property.
     template <typename ValueType>
     MaybeOrValue<bool> Set(
         const char* utf8name,  ///< UTF-8 encoded null-terminated property name
-        const ValueType& value);
+        const ValueType& value) const;
 
     /// Sets a named property.
     template <typename ValueType>
     MaybeOrValue<bool> Set(
         const std::string& utf8name,  ///< UTF-8 encoded property name
         const ValueType& value        ///< Property value primitive
-    );
+    ) const;
 
     /// Delete property.
     MaybeOrValue<bool> Delete(napi_value key  ///< Property key primitive
-    );
+    ) const;
 
     /// Delete property.
     MaybeOrValue<bool> Delete(Value key  ///< Property key
-    );
+    ) const;
 
     /// Delete property.
     MaybeOrValue<bool> Delete(
         const char* utf8name  ///< UTF-8 encoded null-terminated property name
-    );
+    ) const;
 
     /// Delete property.
     MaybeOrValue<bool> Delete(
         const std::string& utf8name  ///< UTF-8 encoded property name
-    );
+    ) const;
 
     /// Checks whether an indexed property is present.
     MaybeOrValue<bool> Has(uint32_t index  ///< Property / element index
@@ -873,11 +856,11 @@ namespace Napi {
     template <typename ValueType>
     MaybeOrValue<bool> Set(uint32_t index,         ///< Property / element index
                            const ValueType& value  ///< Property value primitive
-    );
+    ) const;
 
     /// Deletes an indexed property or array element.
     MaybeOrValue<bool> Delete(uint32_t index  ///< Property / element index
-    );
+    ) const;
 
     /// This operation can fail in case of Proxy.[[OwnPropertyKeys]] and
     /// Proxy.[[GetOwnProperty]] calling into JavaScript. See:
@@ -895,7 +878,7 @@ namespace Napi {
     MaybeOrValue<bool> DefineProperty(
         const PropertyDescriptor&
             property  ///< Descriptor for the property to be defined
-    );
+    ) const;
 
     /// Defines properties on the object.
     ///
@@ -905,7 +888,7 @@ namespace Napi {
     MaybeOrValue<bool> DefineProperties(
         const std::initializer_list<PropertyDescriptor>& properties
         ///< List of descriptors for the properties to be defined
-    );
+    ) const;
 
     /// Defines properties on the object.
     ///
@@ -915,7 +898,7 @@ namespace Napi {
     MaybeOrValue<bool> DefineProperties(
         const std::vector<PropertyDescriptor>& properties
         ///< Vector of descriptors for the properties to be defined
-    );
+    ) const;
 
     /// Checks if an object is an instance created by a constructor function.
     ///
@@ -930,12 +913,12 @@ namespace Napi {
     ) const;
 
     template <typename Finalizer, typename T>
-    inline void AddFinalizer(Finalizer finalizeCallback, T* data);
+    inline void AddFinalizer(Finalizer finalizeCallback, T* data) const;
 
     template <typename Finalizer, typename T, typename Hint>
     inline void AddFinalizer(Finalizer finalizeCallback,
                              T* data,
-                             Hint* finalizeHint);
+                             Hint* finalizeHint) const;
 
 #ifdef NAPI_CPP_EXCEPTIONS
     class const_iterator;
@@ -956,12 +939,12 @@ namespace Napi {
     /// JavaScript.
     /// See
     /// https://tc39.es/ecma262/#sec-proxy-object-internal-methods-and-internal-slots-getprototypeof
-    MaybeOrValue<bool> Freeze();
+    MaybeOrValue<bool> Freeze() const;
     /// This operation can fail in case of Proxy.[[GetPrototypeOf]] calling into
     /// JavaScript.
     /// See
     /// https://tc39.es/ecma262/#sec-proxy-object-internal-methods-and-internal-slots-getprototypeof
-    MaybeOrValue<bool> Seal();
+    MaybeOrValue<bool> Seal() const;
 #endif  // NAPI_VERSION >= 8
   };
 
@@ -1462,8 +1445,8 @@ namespace Napi {
     // within a HandleScope so that the value handle gets cleaned up efficiently.
     T Value() const;
 
-    uint32_t Ref();
-    uint32_t Unref();
+    uint32_t Ref() const;
+    uint32_t Unref() const;
     void Reset();
     void Reset(const T& value, uint32_t refcount = 0);
 
@@ -1500,24 +1483,27 @@ namespace Napi {
 
     MaybeOrValue<Napi::Value> Get(const char* utf8name) const;
     MaybeOrValue<Napi::Value> Get(const std::string& utf8name) const;
-    MaybeOrValue<bool> Set(const char* utf8name, napi_value value);
-    MaybeOrValue<bool> Set(const char* utf8name, Napi::Value value);
-    MaybeOrValue<bool> Set(const char* utf8name, const char* utf8value);
-    MaybeOrValue<bool> Set(const char* utf8name, bool boolValue);
-    MaybeOrValue<bool> Set(const char* utf8name, double numberValue);
-    MaybeOrValue<bool> Set(const std::string& utf8name, napi_value value);
-    MaybeOrValue<bool> Set(const std::string& utf8name, Napi::Value value);
-    MaybeOrValue<bool> Set(const std::string& utf8name, std::string& utf8value);
-    MaybeOrValue<bool> Set(const std::string& utf8name, bool boolValue);
-    MaybeOrValue<bool> Set(const std::string& utf8name, double numberValue);
+    MaybeOrValue<bool> Set(const char* utf8name, napi_value value) const;
+    MaybeOrValue<bool> Set(const char* utf8name, Napi::Value value) const;
+    MaybeOrValue<bool> Set(const char* utf8name, const char* utf8value) const;
+    MaybeOrValue<bool> Set(const char* utf8name, bool boolValue) const;
+    MaybeOrValue<bool> Set(const char* utf8name, double numberValue) const;
+    MaybeOrValue<bool> Set(const std::string& utf8name, napi_value value) const;
+    MaybeOrValue<bool> Set(const std::string& utf8name,
+                           Napi::Value value) const;
+    MaybeOrValue<bool> Set(const std::string& utf8name,
+                           std::string& utf8value) const;
+    MaybeOrValue<bool> Set(const std::string& utf8name, bool boolValue) const;
+    MaybeOrValue<bool> Set(const std::string& utf8name,
+                           double numberValue) const;
 
     MaybeOrValue<Napi::Value> Get(uint32_t index) const;
-    MaybeOrValue<bool> Set(uint32_t index, const napi_value value);
-    MaybeOrValue<bool> Set(uint32_t index, const Napi::Value value);
-    MaybeOrValue<bool> Set(uint32_t index, const char* utf8value);
-    MaybeOrValue<bool> Set(uint32_t index, const std::string& utf8value);
-    MaybeOrValue<bool> Set(uint32_t index, bool boolValue);
-    MaybeOrValue<bool> Set(uint32_t index, double numberValue);
+    MaybeOrValue<bool> Set(uint32_t index, const napi_value value) const;
+    MaybeOrValue<bool> Set(uint32_t index, const Napi::Value value) const;
+    MaybeOrValue<bool> Set(uint32_t index, const char* utf8value) const;
+    MaybeOrValue<bool> Set(uint32_t index, const std::string& utf8value) const;
+    MaybeOrValue<bool> Set(uint32_t index, bool boolValue) const;
+    MaybeOrValue<bool> Set(uint32_t index, double numberValue) const;
 
    protected:
     ObjectReference(const ObjectReference&);
@@ -2553,10 +2539,10 @@ namespace Napi {
     napi_status Acquire() const;
 
     // This API may be called from any thread.
-    napi_status Release();
+    napi_status Release() const;
 
     // This API may be called from any thread.
-    napi_status Abort();
+    napi_status Abort() const;
 
     struct ConvertibleContext
     {
@@ -2752,10 +2738,10 @@ namespace Napi {
     napi_status Acquire() const;
 
     // This API may be called from any thread.
-    napi_status Release();
+    napi_status Release() const;
 
     // This API may be called from any thread.
-    napi_status Abort();
+    napi_status Abort() const;
 
     // This API may be called from any thread.
     ContextType* GetContext() const;
