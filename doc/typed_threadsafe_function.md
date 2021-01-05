@@ -124,7 +124,7 @@ has undefined results in the current thread, as the thread-safe function may
 have been destroyed.
 
 ```cpp
-napi_status Napi::TypedThreadSafeFunction<ContextType, DataType, Callback>::Release()
+napi_status Napi::TypedThreadSafeFunction<ContextType, DataType, Callback>::Release() const
 ```
 
 Returns one of:
@@ -146,7 +146,7 @@ function call a thread must make no further use of the thread-safe function
 because it is no longer guaranteed to be allocated.
 
 ```cpp
-napi_status Napi::TypedThreadSafeFunction<ContextType, DataType, Callback>::Abort()
+napi_status Napi::TypedThreadSafeFunction<ContextType, DataType, Callback>::Abort() const
 ```
 
 Returns one of:

@@ -69,7 +69,7 @@ Returns the value held by the `Napi::Reference`.
 ### Ref
 
 ```cpp
-uint32_t Napi::Reference::Ref();
+uint32_t Napi::Reference::Ref() const;
 ```
 
 Increments the reference count for the `Napi::Reference` and returns the resulting reference count. Throws an error if the increment fails.
@@ -77,7 +77,7 @@ Increments the reference count for the `Napi::Reference` and returns the resulti
 ### Unref
 
 ```cpp
-uint32_t Napi::Reference::Unref();
+uint32_t Napi::Reference::Unref() const;
 ```
 
 Decrements the reference count for the `Napi::Reference` and returns the resulting reference count. Throws an error if the decrement fails.
