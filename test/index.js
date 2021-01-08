@@ -23,73 +23,50 @@ if (typeof global.gc !== 'function') {
   process.exit(process.exitCode);
 }
 
-process.config.target_defaults.default_configuration =
-  require('fs')
-    .readdirSync(require('path').join(__dirname, 'build'))
-    .filter((item) => (item === 'Debug' || item === 'Release'))[0];
+const fs = require('fs');
+const path = require('path');
 
-// FIXME: We might need a way to load test modules automatically without
-// explicit declaration as follows.
-let testModules = [
-  'addon_build',
-  'addon',
-  'addon_data',
-  'arraybuffer',
-  'asynccontext',
-  'asyncprogressqueueworker',
-  'asyncprogressworker',
-  'asyncworker',
-  'asyncworker-nocallback',
-  'asyncworker-persistent',
-  'basic_types/array',
-  'basic_types/boolean',
-  'basic_types/number',
-  'basic_types/value',
-  'bigint',
-  'date',
-  'buffer',
-  'callbackscope',
-  'dataview/dataview',
-  'dataview/dataview_read_write',
-  'error',
-  'external',
-  'function',
-  'handlescope',
-  'memory_management',
-  'name',
-  'object/delete_property',
-  'object/finalizer',
-  'object/get_property',
-  'object/has_own_property',
-  'object/has_property',
-  'object/object',
-  'object/object_deprecated',
-  'object/set_property',
-  'promise',
-  'run_script',
-  'threadsafe_function/threadsafe_function_ctx',
-  'threadsafe_function/threadsafe_function_existing_tsfn',
-  'threadsafe_function/threadsafe_function_ptr',
-  'threadsafe_function/threadsafe_function_sum',
-  'threadsafe_function/threadsafe_function_unref',
-  'threadsafe_function/threadsafe_function',
-  'typed_threadsafe_function/typed_threadsafe_function_ctx',
-  'typed_threadsafe_function/typed_threadsafe_function_existing_tsfn',
-  'typed_threadsafe_function/typed_threadsafe_function_ptr',
-  'typed_threadsafe_function/typed_threadsafe_function_sum',
-  'typed_threadsafe_function/typed_threadsafe_function_unref',
-  'typed_threadsafe_function/typed_threadsafe_function',
-  'typedarray',
-  'typedarray-bigint',
-  'objectwrap',
-  'objectwrap_constructor_exception',
-  'objectwrap-removewrap',
-  'objectwrap_multiple_inheritance',
-  'objectwrap_worker_thread',
-  'objectreference',
-  'reference',
-  'version_management'
-];
+let testModules = [];
+
+// TODO(RaisinTen): Update this when the test filenames
+// are changed into test_*.js.
+function loadTestModules(currentDirectory = __dirname, pre = '') {
+  fs.readdirSync(currentDirectory).forEach((file) => {
+    if (currentDirectory === __dirname && (
+          file === 'binding.cc' ||
+          file === 'binding.gyp' ||
+          file === 'build' ||
+          file === 'common' ||
+          file === 'napi_child.js' ||
+          file === 'testUtil.js' ||
+          file === 'thunking_manual.cc' ||
+          file === 'thunking_manual.js' ||
+          file === 'index.js' ||
+          file[0] === '.')) {
+      return;
+    }
+    const absoluteFilepath = path.join(currentDirectory, file);
+    if (fs.statSync(absoluteFilepath).isDirectory()) {
+      if (fs.existsSync(absoluteFilepath + '/index.js')) {
+        testModules.push(pre + file);
+      } else {
+        loadTestModules(absoluteFilepath, pre + file + '/');
+      }
+    } else {
+      const parsedFilepath = path.parse(file);
+      if (parsedFilepath.ext === '.js') {
+        testModules.push(pre + parsedFilepath.name);
+      }
+    }
+  });
+}
+
+loadTestModules();
+
+process.config.target_defaults.default_configuration =
+  fs
+    .readdirSync(path.join(__dirname, 'build'))
+    .filter((item) => (item === 'Debug' || item === 'Release'))[0];
 
 let napiVersion = Number(process.versions.napi);
 if (process.env.NAPI_VERSION) {
