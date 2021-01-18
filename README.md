@@ -208,6 +208,7 @@ See [benchmark/README.md](benchmark/README.md) for more details about running an
 - **[C++ Addons](https://nodejs.org/dist/latest/docs/api/addons.html)**
 - **[N-API](https://nodejs.org/dist/latest/docs/api/n-api.html)**
 - **[N-API - Next Generation Node API for Native Modules](https://youtu.be/-Oniup60Afs)**
+- **[How We Migrated Realm JavaScript From NAN to N-API](https://developer.mongodb.com/article/realm-javascript-nan-to-n-api)**
 
 As node-addon-api's core mission is to expose the plain C N-API as C++
 wrappers, tools that facilitate n-api/node-addon-api providing more
