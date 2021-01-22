@@ -4,7 +4,7 @@ const spawn = require('child_process').spawnSync;
 const path = require('path');
 
 const filesToCheck = ['*.h', '*.cc'];
-const CLANG_FORMAT_START = process.env.CLANG_FORMAT_START || 'master';
+const CLANG_FORMAT_START = process.env.CLANG_FORMAT_START || 'main';
 
 function main(args) {
   let clangFormatPath = path.dirname(require.resolve('clang-format'));
@@ -35,9 +35,9 @@ function main(args) {
     console.error(`
       ERROR: please run ${fixCmd} to format changes in your commit
         Note that when running the command locally, please keep your local
-        master branch and working branch up to date with nodejs/node-addon-api
+        main branch and working branch up to date with nodejs/node-addon-api
         to exclude un-related complains.
-        Or you can run "env CLANG_FORMAT_START=upstream/master ${fixCmd}".`);
+        Or you can run "env CLANG_FORMAT_START=upstream/main ${fixCmd}".`);
     return 1;
   }
 }
