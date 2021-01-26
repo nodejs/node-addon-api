@@ -40,16 +40,16 @@ void CreateMockTestObject(const CallbackInfo& info) {
   globalObject[(uint32_t)15] = 15;
 }
 
-Object InitGlobalObject(Env env) {
-  Object exports = Object::New(env);
-  exports["getPropertyWithInt32"] =
-      Function::New(env, GetPropertyWithInt32AsKey);
-  exports["getPropertyWithNapiValue"] =
-      Function::New(env, GetPropertyWithNapiValueAsKey);
-  exports["getPropertyWithCppString"] =
-      Function::New(env, GetPropertyWithCppStyleStringAsKey);
-  exports["getPropertyWithCString"] =
-      Function::New(env, GetPropertyWithCStyleStringAsKey);
-  exports["createMockTestObject"] = Function::New(env, CreateMockTestObject);
-  return exports;
-}
+// Object InitGlobalObject(Env env) {
+//   Object exports = Object::New(env);
+//   exports["getPropertyWithInt32"] =
+//       Function::New(env, GetPropertyWithInt32AsKey);
+//   exports["getPropertyWithNapiValue"] =
+//       Function::New(env, GetPropertyWithNapiValueAsKey);
+//   exports["getPropertyWithCppString"] =
+//       Function::New(env, GetPropertyWithCppStyleStringAsKey);
+//   exports["getPropertyWithCString"] =
+//       Function::New(env, GetPropertyWithCStyleStringAsKey);
+//   exports["createMockTestObject"] = Function::New(env, CreateMockTestObject);
+//   return exports;
+// }
