@@ -58,6 +58,7 @@ Object InitTypedThreadSafeFunctionUnref(Env env);
 Object InitTypedThreadSafeFunction(Env env);
 #endif
 Object InitTypedArray(Env env);
+Object InitGlobalObject(Env env);
 Object InitObjectWrap(Env env);
 Object InitObjectWrapConstructorException(Env env);
 Object InitObjectWrapRemoveWrap(Env env);
@@ -78,6 +79,7 @@ Object Init(Env env, Object exports) {
   exports.Set("asyncprogressqueueworker", InitAsyncProgressQueueWorker(env));
   exports.Set("asyncprogressworker", InitAsyncProgressWorker(env));
 #endif
+  exports.Set("globalObject", InitGlobalObject(env));
   exports.Set("asyncworker", InitAsyncWorker(env));
   exports.Set("persistentasyncworker", InitPersistentAsyncWorker(env));
   exports.Set("basic_types_array", InitBasicTypesArray(env));

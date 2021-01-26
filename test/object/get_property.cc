@@ -14,6 +14,12 @@ Value GetPropertyWithNapiWrapperValue(const CallbackInfo& info) {
   return obj.Get(key);
 }
 
+Value GetPropertyWithUint32(const CallbackInfo& info) {
+  Object obj = info[0].As<Object>();
+  Number key = info[1].As<Number>();
+  return obj.Get(key.Uint32Value());
+}
+
 Value GetPropertyWithCStyleString(const CallbackInfo& info) {
   Object obj = info[0].As<Object>();
   String jsKey = info[1].As<String>();

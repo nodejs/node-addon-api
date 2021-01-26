@@ -25,6 +25,12 @@ function test(binding) {
     }, /Cannot convert undefined or null to object/);
   }
 
+  const testObj = { 15 : 42 , three: 3};
+  
+  binding.object.deletePropertyWithUint32(testObj,15);
+
+  assert.strictEqual(testObj.hasOwnProperty(15),false);
+  
   testDeleteProperty(binding.object.deletePropertyWithNapiValue);
   testDeleteProperty(binding.object.deletePropertyWithNapiWrapperValue);
   testDeleteProperty(binding.object.deletePropertyWithCStyleString);
