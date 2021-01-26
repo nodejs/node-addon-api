@@ -27,6 +27,7 @@
         'handlescope.cc',
         'memory_management.cc',
         'name.cc',
+        'globalObject/get_property.cc',
         'object/delete_property.cc',
         'object/finalizer.cc',
         'object/get_property.cc',
