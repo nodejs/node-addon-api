@@ -24,6 +24,9 @@ function test(binding) {
     }, /Cannot convert undefined or null to object/);
   }
 
+  const objectWithInt32Key = { 12: 101 };
+  assert.strictEqual(binding.object.hasPropertyWithUint32(objectWithInt32Key,12),true);
+
   testHasProperty(binding.object.hasPropertyWithNapiValue);
   testHasProperty(binding.object.hasPropertyWithNapiWrapperValue);
   testHasProperty(binding.object.hasPropertyWithCStyleString);
