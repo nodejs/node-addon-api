@@ -1,3 +1,14 @@
+NOTE: The default branch has been renamed!
+master is now named main
+
+If you have a local clone, you can update it by running:
+
+```shell
+git branch -m master main
+git fetch origin
+git branch -u origin/main main
+```
+
 # **node-addon-api module**
 This module contains **header-only C++ wrapper classes** which simplify
 the use of the C based [N-API](https://nodejs.org/dist/latest/docs/api/n-api.html)
