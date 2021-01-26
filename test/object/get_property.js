@@ -23,6 +23,10 @@ function test(binding) {
     }, /Cannot convert undefined or null to object/);
   }
 
+  const testObject = { 42: 100 };
+  const property =  binding.object.getPropertyWithUint32(testObject, 42);
+  assert.strictEqual(property,100)
+
   const nativeFunctions = [
     binding.object.getPropertyWithNapiValue,
     binding.object.getPropertyWithNapiWrapperValue,
