@@ -14,20 +14,19 @@ Value GetPropertyWithInt32AsKey(const CallbackInfo& info) {
   return globalObject.Get(key.Uint32Value());
 }
 
-
 Value GetPropertyWithCStyleStringAsKey(const CallbackInfo& info) {
   Object globalObject = info.Env().Global();
   String cStrkey = info[0].As<String>();
   return globalObject.Get(cStrkey.Utf8Value().c_str());
 }
 
-Value GetPropertyWithCppStyleStringAsKey(const CallbackInfo& info){
+Value GetPropertyWithCppStyleStringAsKey(const CallbackInfo& info) {
   Object globalObject = info.Env().Global();
   String cppStrKey = info[0].As<String>();
   return globalObject.Get(cppStrKey.Utf8Value());
 }
 
-void CreateMockTestObject(const CallbackInfo& info){
+void CreateMockTestObject(const CallbackInfo& info) {
   Object globalObject = info.Env().Global();
 
   napi_value napi_key;
