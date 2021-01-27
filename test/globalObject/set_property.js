@@ -36,6 +36,12 @@ function test(binding) {
         }
     }
 
+    function assertErrMessageIsThrown(nativeObjectSetFunction, errMsg) {
+        assert.throws(() => {
+          nativeObjectSetFunction(undefined, 1);    
+        }, errMsg);
+      }
+
     
     setGlobalObjectKeyValue("cKey","cValue",KEY_TYPE.CPP_STR);
     setGlobalObjectKeyValue(1,10,KEY_TYPE.INT_32);
@@ -48,4 +54,8 @@ function test(binding) {
     assert.deepStrictEqual(global["napi_key"],"napi_value");
     assert.deepStrictEqual(global[1],10);
     assert.deepStrictEqual(global["cKey"],"cValue");
+
+    assertErrMessageIsThrown(binding.globalObject.setPropertyWithCppStyleString, 'Error: A string was expected');
+    assertErrMessageIsThrown(binding.globalObject.setPropertyWithCStyleString, 'Error: A string was expected');
+    assertErrMessageIsThrown(binding.globalObject.setPropertyWithInt32, 'Error: A number was expected');
 }
