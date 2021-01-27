@@ -6,7 +6,7 @@ void SetPropertyWithCStyleStringAsKey(const CallbackInfo& info) {
   Object globalObject = info.Env().Global();
   String key = info[0].As<String>();
   Value value = info[1];
-  globalObject.Set(jsKey.Utf8Value().c_str(), value);  
+  globalObject.Set(key.Utf8Value().c_str(), value);
 }
 
 void SetPropertyWithCppStyleStringAsKey(const CallbackInfo& info) {
@@ -29,4 +29,3 @@ void SetPropertyWithNapiValueAsKey(const CallbackInfo& info) {
   Value value = info[1];
   globalObject.Set(static_cast<napi_value>(key), value);
 }
-

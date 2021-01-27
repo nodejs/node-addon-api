@@ -56,5 +56,5 @@ function test(binding) {
 
   assertErrMessageIsThrown(binding.globalObject.getPropertyWithCString, 'Error: A string was expected');
   assertErrMessageIsThrown(binding.globalObject.getPropertyWithCppString, 'Error: A string was expected');
-  assertErrMessageIsThrown(binding.globalObject.getPropertyWithInt32, 'Error: A number was expected')
+  assertErrMessageIsThrown(binding.globalObject.getPropertyWithInt32, 'Error: A number was expected');
 }

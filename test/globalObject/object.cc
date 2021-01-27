@@ -9,15 +9,11 @@ Value GetPropertyWithInt32AsKey(const CallbackInfo& info);
 Value GetPropertyWithNapiValueAsKey(const CallbackInfo& info);
 void CreateMockTestObject(const CallbackInfo& info);
 
-//Wrapper for testing Object::Set() for global Objects
+// Wrapper for testing Object::Set() for global Objects
 Value SetPropertyWithCStyleStringAsKey(const CallbackInfo& info);
 Value SetPropertyWithCppStyleStringAsKey(const CallbackInfo& info);
 Value SetPropertyWithInt32AsKey(const CallbackInfo& info);
 Value SetPropertyWithNapiValueAsKey(const CallbackInfo& info);
-
-//Wrapper for testing Object::Delete() for global Objects
-
-
 
 Object InitGlobalObject(Env env) {
   Object exports = Object::New(env);
@@ -36,7 +32,7 @@ Object InitGlobalObject(Env env) {
   exports["setPropertyWithCppStyleString"] =
       Function::New(env, SetPropertyWithCppStyleStringAsKey);
   exports["setPropertyWithInt32"] =
-      Function::New(env, SetPropertyWithCppStyleStringAsKey);
+      Function::New(env, SetPropertyWithInt32AsKey);
   exports["setPropertyWithNapiValue"] =
       Function::New(env, SetPropertyWithNapiValueAsKey);          
   return exports;
