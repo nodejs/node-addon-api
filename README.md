@@ -1,3 +1,14 @@
+NOTE: The default branch has been renamed!
+master is now named main
+
+If you have a local clone, you can update it by running:
+
+```shell
+git branch -m master main
+git fetch origin
+git branch -u origin/main main
+```
+
 # **node-addon-api module**
 This module contains **header-only C++ wrapper classes** which simplify
 the use of the C based [N-API](https://nodejs.org/dist/latest/docs/api/n-api.html)
@@ -208,6 +219,7 @@ See [benchmark/README.md](benchmark/README.md) for more details about running an
 - **[C++ Addons](https://nodejs.org/dist/latest/docs/api/addons.html)**
 - **[N-API](https://nodejs.org/dist/latest/docs/api/n-api.html)**
 - **[N-API - Next Generation Node API for Native Modules](https://youtu.be/-Oniup60Afs)**
+- **[How We Migrated Realm JavaScript From NAN to N-API](https://developer.mongodb.com/article/realm-javascript-nan-to-n-api)**
 
 As node-addon-api's core mission is to expose the plain C N-API as C++
 wrappers, tools that facilitate n-api/node-addon-api providing more
