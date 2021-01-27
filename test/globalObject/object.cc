@@ -26,7 +26,6 @@ Object InitGlobalObject(Env env) {
   exports["getPropertyWithCString"] =
       Function::New(env, GetPropertyWithCStyleStringAsKey);
   exports["createMockTestObject"] = Function::New(env, CreateMockTestObject);
-  
   exports["setPropertyWithCStyleString"] =
       Function::New(env, SetPropertyWithCStyleStringAsKey);
   exports["setPropertyWithCppStyleString"] =

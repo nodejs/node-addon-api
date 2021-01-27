@@ -20,7 +20,7 @@ void SetPropertyWithInt32AsKey(const CallbackInfo& info) {
   Object globalObject = info.Env().Global();
   Number key = info[0].As<Number>();
   Value value = info[1];
-  globalObject.Set(key.Uint32Value(),value);
+  globalObject.Set(key.Uint32Value(), value);
 }
 
 void SetPropertyWithNapiValueAsKey(const CallbackInfo& info) {
