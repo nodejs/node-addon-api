@@ -40,9 +40,9 @@ Object InitGlobalObject(Env env) {
   exports["setPropertyWithInt32"] =
       Function::New(env, SetPropertyWithInt32AsKey);
   exports["hasPropertyWithCStyleString"] =
-      Function::New(env,HasPropertyWithCStyleStringAsKey);
+      Function::New(env, HasPropertyWithCStyleStringAsKey);
   exports["hasPropertyWithCppStyleString"] =
-      Function::New(env,HasPropertyWithCppStyleStringAsKey);
+      Function::New(env, HasPropertyWithCppStyleStringAsKey);
   exports["hasPropertyWithInt32"] =
       Function::New(env, HasPropertyWithInt32AsKey);   
   exports["hasPropertyWithNapiValueAsKey"] = 
