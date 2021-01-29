@@ -8,6 +8,8 @@ Object InitAddonData(Env env);
 #endif
 Object InitArrayBuffer(Env env);
 Object InitAsyncContext(Env env);
+Object InitArrayOperations(Env env);
+
 #if (NAPI_VERSION > 3)
 Object InitAsyncProgressQueueWorker(Env env);
 Object InitAsyncProgressWorker(Env env);
@@ -39,7 +41,7 @@ Object InitName(Env env);
 Object InitObject(Env env);
 #ifndef NODE_ADDON_API_DISABLE_DEPRECATED
 Object InitObjectDeprecated(Env env);
-#endif // !NODE_ADDON_API_DISABLE_DEPRECATED
+#endif  // !NODE_ADDON_API_DISABLE_DEPRECATED
 Object InitPromise(Env env);
 Object InitRunScript(Env env);
 #if (NAPI_VERSION > 3)
@@ -57,6 +59,7 @@ Object InitTypedThreadSafeFunctionUnref(Env env);
 Object InitTypedThreadSafeFunction(Env env);
 #endif
 Object InitTypedArray(Env env);
+Object InitObjectSortby(Env env);
 Object InitObjectWrap(Env env);
 Object InitObjectWrapConstructorException(Env env);
 Object InitObjectWrapRemoveWrap(Env env);
@@ -73,6 +76,8 @@ Object Init(Env env, Object exports) {
 #endif
   exports.Set("arraybuffer", InitArrayBuffer(env));
   exports.Set("asynccontext", InitAsyncContext(env));
+  exports.Set("arrayoperations", InitArrayOperations(env));
+
 #if (NAPI_VERSION > 3)
   exports.Set("asyncprogressqueueworker", InitAsyncProgressQueueWorker(env));
   exports.Set("asyncprogressworker", InitAsyncProgressWorker(env));
@@ -105,12 +110,13 @@ Object Init(Env env, Object exports) {
   exports.Set("object", InitObject(env));
 #ifndef NODE_ADDON_API_DISABLE_DEPRECATED
   exports.Set("object_deprecated", InitObjectDeprecated(env));
-#endif // !NODE_ADDON_API_DISABLE_DEPRECATED
+#endif  // !NODE_ADDON_API_DISABLE_DEPRECATED
   exports.Set("promise", InitPromise(env));
   exports.Set("run_script", InitRunScript(env));
 #if (NAPI_VERSION > 3)
   exports.Set("threadsafe_function_ctx", InitThreadSafeFunctionCtx(env));
-  exports.Set("threadsafe_function_existing_tsfn", InitThreadSafeFunctionExistingTsfn(env));
+  exports.Set("threadsafe_function_existing_tsfn",
+              InitThreadSafeFunctionExistingTsfn(env));
   exports.Set("threadsafe_function_ptr", InitThreadSafeFunctionPtr(env));
   exports.Set("threadsafe_function_sum", InitThreadSafeFunctionSum(env));
   exports.Set("threadsafe_function_unref", InitThreadSafeFunctionUnref(env));
@@ -128,11 +134,13 @@ Object Init(Env env, Object exports) {
   exports.Set("typed_threadsafe_function", InitTypedThreadSafeFunction(env));
 #endif
   exports.Set("typedarray", InitTypedArray(env));
+  exports.Set("objectsortby", InitObjectSortby(env));
   exports.Set("objectwrap", InitObjectWrap(env));
   exports.Set("objectwrapConstructorException",
-      InitObjectWrapConstructorException(env));
+              InitObjectWrapConstructorException(env));
   exports.Set("objectwrap_removewrap", InitObjectWrapRemoveWrap(env));
-  exports.Set("objectwrap_multiple_inheritance", InitObjectWrapMultipleInheritance(env));
+  exports.Set("objectwrap_multiple_inheritance",
+              InitObjectWrapMultipleInheritance(env));
   exports.Set("objectreference", InitObjectReference(env));
   exports.Set("reference", InitReference(env));
   exports.Set("version_management", InitVersionManagement(env));
