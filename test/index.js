@@ -4,7 +4,7 @@ const majorNodeVersion = process.versions.node.split('.')[0];
 
 if (typeof global.gc !== 'function') {
   // Construct the correct (version-dependent) command-line args.
-  let args = ['--expose-gc', '--no-concurrent-array-buffer-freeing'];
+  let args = ['--expose-gc'];
   if (majorNodeVersion >= 14) {
     args.push('--no-concurrent-array-buffer-sweeping');
   }
