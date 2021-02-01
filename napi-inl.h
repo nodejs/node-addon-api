@@ -345,7 +345,7 @@ struct AccessorCallbackData {
 
 // Register an add-on based on an initializer function.
 #define NODE_API_MODULE(modname, regfunc)                 \
-  napi_value __napi_ ## regfunc(napi_env env,             \
+  static napi_value __napi_ ## regfunc(napi_env env,      \
                                 napi_value exports) {     \
     return Napi::RegisterModule(env, exports, regfunc);   \
   }                                                       \
