@@ -344,12 +344,11 @@ struct AccessorCallbackData {
 ////////////////////////////////////////////////////////////////////////////////
 
 // Register an add-on based on an initializer function.
-#define NODE_API_MODULE(modname, regfunc)                 \
-  static napi_value __napi_ ## regfunc(napi_env env,      \
-                                napi_value exports) {     \
-    return Napi::RegisterModule(env, exports, regfunc);   \
-  }                                                       \
-  NAPI_MODULE(modname, __napi_ ## regfunc)
+#define NODE_API_MODULE(modname, regfunc)                                      \
+  static napi_value __napi_##regfunc(napi_env env, napi_value exports) {       \
+    return Napi::RegisterModule(env, exports, regfunc);                        \
+  }                                                                            \
+  NAPI_MODULE(modname, __napi_##regfunc)
 
 // Register an add-on based on a subclass of `Addon<T>` with a custom Node.js
 // module name.
