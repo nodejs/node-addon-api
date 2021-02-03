@@ -3262,7 +3262,7 @@ inline void InstanceWrap<T>::AttachPropData(napi_env env,
                                        napi_value value,
                                        const napi_property_descriptor* prop) {
   napi_status status;
-  if (prop->method != nullptr && !(prop->attributes & napi_static)) {
+  if (!(prop->attributes & napi_static)) {
     if (prop->method == T::InstanceVoidMethodCallbackWrapper) {
       status = Napi::details::AttachData(env,
                     value,
