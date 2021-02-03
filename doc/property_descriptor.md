@@ -282,5 +282,5 @@ The name of the property can be any of the following types:
 - napi\_writable,
 - napi\_enumerable,
 - napi\_configurable
-For more information on the flags and on napi\_property\_attributes, please read the documentation [here](https://github.com/nodejs/node/blob/master/doc/api/n-api.md#napi_property_attributes).
+For more information on the flags and on napi\_property\_attributes, please read the documentation [here](https://github.com/nodejs/node/blob/HEAD/doc/api/n-api.md#napi_property_attributes).
 

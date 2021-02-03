@@ -51,7 +51,7 @@ If your N-API native add-on uses the optional [**node-addon-api**](https://githu
 
 ## Example
 
-A working example of an N-API native addon built using CMake.js can be found on the [node-addon-examples repository](https://github.com/nodejs/node-addon-examples/tree/master/build_with_cmake#building-n-api-addons-using-cmakejs).
+A working example of an N-API native addon built using CMake.js can be found on the [node-addon-examples repository](https://github.com/nodejs/node-addon-examples/tree/HEAD/build_with_cmake#building-n-api-addons-using-cmakejs).
 
 ## **CMake** Reference
 
