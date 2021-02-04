@@ -1,5 +1,5 @@
 environment:
-  # https://github.com/jasongin/nvs/blob/master/doc/CI.md
+  # https://github.com/jasongin/nvs/blob/HEAD/doc/CI.md
   NVS_VERSION: 1.4.2
   matrix:
     - NODEJS_VERSION: node/10

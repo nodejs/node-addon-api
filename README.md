@@ -152,14 +152,14 @@ The following is the documentation for node-addon-api.
 
 Are you new to **node-addon-api**? Take a look at our **[examples](https://github.com/nodejs/node-addon-examples)**
 
-- **[Hello World](https://github.com/nodejs/node-addon-examples/tree/master/1_hello_world/node-addon-api)**
-- **[Pass arguments to a function](https://github.com/nodejs/node-addon-examples/tree/master/2_function_arguments/node-addon-api)**
-- **[Callbacks](https://github.com/nodejs/node-addon-examples/tree/master/3_callbacks/node-addon-api)**
-- **[Object factory](https://github.com/nodejs/node-addon-examples/tree/master/4_object_factory/node-addon-api)**
-- **[Function factory](https://github.com/nodejs/node-addon-examples/tree/master/5_function_factory/node-addon-api)**
-- **[Wrapping C++ Object](https://github.com/nodejs/node-addon-examples/tree/master/6_object_wrap/node-addon-api)**
-- **[Factory of wrapped object](https://github.com/nodejs/node-addon-examples/tree/master/7_factory_wrap/node-addon-api)**
-- **[Passing wrapped object around](https://github.com/nodejs/node-addon-examples/tree/master/8_passing_wrapped/node-addon-api)**
+- **[Hello World](https://github.com/nodejs/node-addon-examples/tree/HEAD/1_hello_world/node-addon-api)**
+- **[Pass arguments to a function](https://github.com/nodejs/node-addon-examples/tree/HEAD/2_function_arguments/node-addon-api)**
+- **[Callbacks](https://github.com/nodejs/node-addon-examples/tree/HEAD/3_callbacks/node-addon-api)**
+- **[Object factory](https://github.com/nodejs/node-addon-examples/tree/HEAD/4_object_factory/node-addon-api)**
+- **[Function factory](https://github.com/nodejs/node-addon-examples/tree/HEAD/5_function_factory/node-addon-api)**
+- **[Wrapping C++ Object](https://github.com/nodejs/node-addon-examples/tree/HEAD/6_object_wrap/node-addon-api)**
+- **[Factory of wrapped object](https://github.com/nodejs/node-addon-examples/tree/HEAD/7_factory_wrap/node-addon-api)**
+- **[Passing wrapped object around](https://github.com/nodejs/node-addon-examples/tree/HEAD/8_passing_wrapped/node-addon-api)**
 
 <a name="tests"></a>
 
@@ -201,7 +201,7 @@ If you want faster build, you might use the following option:
 npm run-script dev:incremental
 ```
 
-Take a look and get inspired by our **[test suite](https://github.com/nodejs/node-addon-api/tree/master/test)**
+Take a look and get inspired by our **[test suite](https://github.com/nodejs/node-addon-api/tree/HEAD/test)**
 
 ### **Benchmarks**
 
