@@ -2397,12 +2397,38 @@ inline const std::string& Error::Message() const NAPI_NOEXCEPT {
 inline void Error::ThrowAsJavaScriptException() const {
   HandleScope scope(_env);
   if (!IsEmpty()) {
+#ifdef NODE_API_SWALLOW_UNTHROWABLE_EXCEPTIONS
+    bool pendingException = false;
 
+    // check if there is already a pending exception. If so don't try to throw a
+    // new one as that is not allowed/possible
+    napi_status status = napi_is_exception_pending(_env, &pendingException);
+
+    if ((status != napi_ok) ||
+        ((status == napi_ok) && (pendingException == false))) {
+      // We intentionally don't use `NAPI_THROW_*` macros here to ensure
+      // that there is no possible recursion as `ThrowAsJavaScriptException`
+      // is part of `NAPI_THROW_*` macro definition for noexcept.
+
+      status = napi_throw(_env, Value());
+
+      if (status == napi_pending_exception) {
+        // The environment must be terminating as we checked earlier and there
+        // was no pending exception. In this case continuing will result
+        // in a fatal error and there is nothing the author has done incorrectly
+        // in their code that is worth flagging through a fatal error
+        return;
+      }
+    } else {
+      status = napi_pending_exception;
+    }
+#else
     // We intentionally don't use `NAPI_THROW_*` macros here to ensure
     // that there is no possible recursion as `ThrowAsJavaScriptException`
     // is part of `NAPI_THROW_*` macro definition for noexcept.
 
     napi_status status = napi_throw(_env, Value());
+#endif
 
 #ifdef NAPI_CPP_EXCEPTIONS
     if (status != napi_ok) {
