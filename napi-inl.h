@@ -2373,6 +2373,11 @@ inline void Error::ThrowAsJavaScriptException() const {
 
     napi_status status = napi_throw(_env, Value());
 
+    if (status == napi_pending_exception) {
+      // The environment could be terminating.
+      return;
+    }
+
 #ifdef NAPI_CPP_EXCEPTIONS
     if (status != napi_ok) {
       throw Error::New(_env);

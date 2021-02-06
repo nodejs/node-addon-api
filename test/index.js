@@ -106,6 +106,7 @@ if (napiVersion < 6) {
 
 if (majorNodeVersion < 12) {
   testModules.splice(testModules.indexOf('objectwrap_worker_thread'), 1);
+  testModules.splice(testModules.indexOf('error_terminating_environment'), 1);
 }
 
 (async function() {
