@@ -178,7 +178,7 @@ npm install
 npm test --disable-deprecated
 ```
 
-To run the tests targetting a specific version of N-API run
+To run the tests targeting a specific version of N-API run
 ```
 npm install
 export NAPI_VERSION=X
