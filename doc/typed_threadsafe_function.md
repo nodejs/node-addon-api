@@ -87,15 +87,15 @@ New(napi_env env,
 
 Returns a non-empty `Napi::TypedThreadSafeFunction` instance.
 
-Depending on the targetted `NAPI_VERSION`, the API has different implementations
+Depending on the targeted `NAPI_VERSION`, the API has different implementations
 for `CallbackType callback`.
 
-When targetting version 4, `callback` may be:
+When targeting version 4, `callback` may be:
 - of type `const Function&`
 - not provided as a parameter, in which case the API creates a new no-op
   `Function`
 
-When targetting version 5+, `callback` may be:
+When targeting version 5+, `callback` may be:
 - of type `const Function&`
 - of type `std::nullptr_t`
 - not provided as a parameter, in which case the API passes `std::nullptr`
