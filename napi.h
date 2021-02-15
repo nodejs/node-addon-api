@@ -269,8 +269,9 @@ namespace Napi {
 
     napi_valuetype Type() const; ///< Gets the type of the value.
 
-    bool IsUndefined() const;   ///< Tests if a value is an undefined JavaScript value.
     bool IsNull() const;        ///< Tests if a value is a null JavaScript value.
+    bool IsUndefined() const;   ///< Tests if a value is an undefined JavaScript value.
+    bool IsNullOrUndefined() const; ///< Tests if a value is a null or undefined JavaScript value.
     bool IsBoolean() const;     ///< Tests if a value is a JavaScript boolean.
     bool IsNumber() const;      ///< Tests if a value is a JavaScript number.
 #if NAPI_VERSION > 5
