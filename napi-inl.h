@@ -539,7 +539,7 @@ inline bool Value::IsNull() const {
   return Type() == napi_null;
 }
 
-inline bool Value::IsNullOrUndefined() const {
+inline bool Value::IsNullish() const {
   return Type() == napi_undefined || Type() == napi_null;
 }
 

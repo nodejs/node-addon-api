@@ -271,7 +271,7 @@ namespace Napi {
 
     bool IsNull() const;        ///< Tests if a value is a null JavaScript value.
     bool IsUndefined() const;   ///< Tests if a value is an undefined JavaScript value.
-    bool IsNullOrUndefined() const; ///< Tests if a value is a null or undefined JavaScript value.
+    bool IsNullish() const; ///< Tests if a value is a null or undefined JavaScript value.
     bool IsBoolean() const;     ///< Tests if a value is a JavaScript boolean.
     bool IsNumber() const;      ///< Tests if a value is a JavaScript number.
 #if NAPI_VERSION > 5
