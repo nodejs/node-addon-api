@@ -50,7 +50,7 @@ Void Init(Env env) {
 ### PropertyDescriptor::GetterCallback
 
 ```cpp
-typedef Napi::Value (*GetterCallback)(const Napi::CallbackInfo& info);
+using GetterCallback = Napi::Value (*)(const Napi::CallbackInfo& info);
 ```
 
 This is the signature of a getter function to be passed as a template parameter
@@ -59,7 +59,7 @@ to `PropertyDescriptor::Accessor`.
 ### PropertyDescriptor::SetterCallback
 
 ```cpp
-typedef void (*SetterCallback)(const Napi::CallbackInfo& info);
+using SetterCallback = void (*)(const Napi::CallbackInfo& info);
 ```
 
 This is the signature of a setter function to be passed as a template parameter

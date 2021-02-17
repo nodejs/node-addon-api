@@ -1983,8 +1983,8 @@ inline Function Function::New(napi_env env,
                               Callable cb,
                               const char* utf8name,
                               void* data) {
-  typedef decltype(cb(CallbackInfo(nullptr, nullptr))) ReturnType;
-  typedef details::CallbackData<Callable, ReturnType> CbData;
+  using ReturnType = decltype(cb(CallbackInfo(nullptr, nullptr)));
+  using CbData = details::CallbackData<Callable, ReturnType>;
   auto callbackData = new CbData({ cb, data });
 
   napi_value value;
@@ -3035,7 +3035,7 @@ PropertyDescriptor::Accessor(Napi::Env env,
                              Getter getter,
                              napi_property_attributes attributes,
                              void* data) {
-  typedef details::CallbackData<Getter, Napi::Value> CbData;
+  using CbData = details::CallbackData<Getter, Napi::Value>;
   auto callbackData = new CbData({ getter, data });
 
   napi_status status = AttachData(env, object, callbackData);
@@ -3073,7 +3073,7 @@ inline PropertyDescriptor PropertyDescriptor::Accessor(Napi::Env env,
                                                        Getter getter,
                                                        napi_property_attributes attributes,
                                                        void* data) {
-  typedef details::CallbackData<Getter, Napi::Value> CbData;
+  using CbData = details::CallbackData<Getter, Napi::Value>;
   auto callbackData = new CbData({ getter, data });
 
   napi_status status = AttachData(env, object, callbackData);
@@ -3102,7 +3102,7 @@ inline PropertyDescriptor PropertyDescriptor::Accessor(Napi::Env env,
                                                        Setter setter,
                                                        napi_property_attributes attributes,
                                                        void* data) {
-  typedef details::AccessorCallbackData<Getter, Setter> CbData;
+  using CbData = details::AccessorCallbackData<Getter, Setter>;
   auto callbackData = new CbData({ getter, setter, data });
 
   napi_status status = AttachData(env, object, callbackData);
@@ -3142,7 +3142,7 @@ inline PropertyDescriptor PropertyDescriptor::Accessor(Napi::Env env,
                                                        Setter setter,
                                                        napi_property_attributes attributes,
                                                        void* data) {
-  typedef details::AccessorCallbackData<Getter, Setter> CbData;
+  using CbData = details::AccessorCallbackData<Getter, Setter>;
   auto callbackData = new CbData({ getter, setter, data });
 
   napi_status status = AttachData(env, object, callbackData);
