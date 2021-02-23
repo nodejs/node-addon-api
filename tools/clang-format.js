@@ -21,8 +21,8 @@ function main(args) {
     ...filesToCheck
   ], { encoding: 'utf-8' });
 
-  if (result.error) {
-    console.error('Error running git-clang-format:', result.error);
+  if (result.stderr) {
+    console.error('Error running git-clang-format:', result.stderr);
     return 2;
   }
 
