@@ -1345,7 +1345,8 @@ inline bool Object::InstanceOf(const Function& constructor) const {
 template <typename Finalizer, typename T>
 inline void Object::AddFinalizer(Finalizer finalizeCallback, T* data) {
   details::FinalizeData<T, Finalizer>* finalizeData =
-    new details::FinalizeData<T, Finalizer>({ finalizeCallback, nullptr });
+      new details::FinalizeData<T, Finalizer>(
+          {std::move(finalizeCallback), nullptr});
   napi_status status =
       details::AttachData(_env,
                           *this,
@@ -1363,7 +1364,8 @@ inline void Object::AddFinalizer(Finalizer finalizeCallback,
                                  T* data,
                                  Hint* finalizeHint) {
   details::FinalizeData<T, Finalizer, Hint>* finalizeData =
-    new details::FinalizeData<T, Finalizer, Hint>({ finalizeCallback, finalizeHint });
+      new details::FinalizeData<T, Finalizer, Hint>(
+          {std::move(finalizeCallback), finalizeHint});
   napi_status status =
       details::AttachData(_env,
                           *this,
@@ -1395,7 +1397,8 @@ inline External<T> External<T>::New(napi_env env,
                                     Finalizer finalizeCallback) {
   napi_value value;
   details::FinalizeData<T, Finalizer>* finalizeData =
-    new details::FinalizeData<T, Finalizer>({ finalizeCallback, nullptr });
+      new details::FinalizeData<T, Finalizer>(
+          {std::move(finalizeCallback), nullptr});
   napi_status status = napi_create_external(
     env,
     data,
@@ -1417,7 +1420,8 @@ inline External<T> External<T>::New(napi_env env,
                                     Hint* finalizeHint) {
   napi_value value;
   details::FinalizeData<T, Finalizer, Hint>* finalizeData =
-    new details::FinalizeData<T, Finalizer, Hint>({ finalizeCallback, finalizeHint });
+      new details::FinalizeData<T, Finalizer, Hint>(
+          {std::move(finalizeCallback), finalizeHint});
   napi_status status = napi_create_external(
     env,
     data,
@@ -1509,7 +1513,8 @@ inline ArrayBuffer ArrayBuffer::New(napi_env env,
                                     Finalizer finalizeCallback) {
   napi_value value;
   details::FinalizeData<void, Finalizer>* finalizeData =
-    new details::FinalizeData<void, Finalizer>({ finalizeCallback, nullptr });
+      new details::FinalizeData<void, Finalizer>(
+          {std::move(finalizeCallback), nullptr});
   napi_status status = napi_create_external_arraybuffer(
     env,
     externalData,
@@ -1533,7 +1538,8 @@ inline ArrayBuffer ArrayBuffer::New(napi_env env,
                                     Hint* finalizeHint) {
   napi_value value;
   details::FinalizeData<void, Finalizer, Hint>* finalizeData =
-    new details::FinalizeData<void, Finalizer, Hint>({ finalizeCallback, finalizeHint });
+      new details::FinalizeData<void, Finalizer, Hint>(
+          {std::move(finalizeCallback), finalizeHint});
   napi_status status = napi_create_external_arraybuffer(
     env,
     externalData,
@@ -2153,7 +2159,8 @@ inline Buffer<T> Buffer<T>::New(napi_env env,
                                 Finalizer finalizeCallback) {
   napi_value value;
   details::FinalizeData<T, Finalizer>* finalizeData =
-    new details::FinalizeData<T, Finalizer>({ finalizeCallback, nullptr });
+      new details::FinalizeData<T, Finalizer>(
+          {std::move(finalizeCallback), nullptr});
   napi_status status = napi_create_external_buffer(
     env,
     length * sizeof (T),
@@ -2177,7 +2184,8 @@ inline Buffer<T> Buffer<T>::New(napi_env env,
                                 Hint* finalizeHint) {
   napi_value value;
   details::FinalizeData<T, Finalizer, Hint>* finalizeData =
-    new details::FinalizeData<T, Finalizer, Hint>({ finalizeCallback, finalizeHint });
+      new details::FinalizeData<T, Finalizer, Hint>(
+          {std::move(finalizeCallback), finalizeHint});
   napi_status status = napi_create_external_buffer(
     env,
     length * sizeof (T),
