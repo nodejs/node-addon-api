@@ -228,6 +228,12 @@ Value CreateObjectUsingMagic(const CallbackInfo& info) {
   return obj;
 }
 
+Value InstanceOf(const CallbackInfo& info) {
+  Object obj = info[0].As<Object>();
+  Function constructor = info[1].As<Function>();
+  return Boolean::New(info.Env(), obj.InstanceOf(constructor));
+}
+
 Object InitObject(Env env) {
   Object exports = Object::New(env);
 
@@ -264,6 +270,8 @@ Object InitObject(Env env) {
 
   exports["addFinalizer"] = Function::New(env, AddFinalizer);
   exports["addFinalizerWithHint"] = Function::New(env, AddFinalizerWithHint);
+
+  exports["instanceOf"] = Function::New(env, InstanceOf);
 
   return exports;
 }

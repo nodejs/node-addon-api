@@ -137,4 +137,13 @@ function test(binding) {
       circular2: magicObject
     });
   }
+
+  {
+    function Ctor() {};
+
+    assert.strictEqual(binding.object.instanceOf(new Ctor(), Ctor), true);
+    assert.strictEqual(binding.object.instanceOf(new Ctor(), Object), true);
+    assert.strictEqual(binding.object.instanceOf({}, Ctor), false);
+    assert.strictEqual(binding.object.instanceOf(null, Ctor), false);
+  }
 }
