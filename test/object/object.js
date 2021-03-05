@@ -110,9 +110,10 @@ function test(binding) {
   }
 
   {
-    const obj = {'one': 1, 'two': 2, 'three': 3};
+    const testSym = Symbol();
+    const obj = { 'one': 1, 'two': 2, 'three': 3, [testSym]: 4 };
     var arr = binding.object.GetPropertyNames(obj);
-    assert.deepStrictEqual(arr, ['one', 'two', 'three'])
+    assert.deepStrictEqual(arr, ['one', 'two', 'three']);
   }
 
   {
