@@ -103,6 +103,17 @@ function test(binding) {
   testDefineProperties('value');
 
   {
+    assert.strictEqual(binding.object.emptyConstructor(true), true);
+    assert.strictEqual(binding.object.emptyConstructor(false), false);
+  }
+
+  {
+    const expected = { 'one': 1, 'two': 2, 'three': 3 };
+    const actual = binding.object.constructorFromObject(expected);
+    assert.deepStrictEqual(actual, expected);
+  }
+
+  {
     const obj = {};
     const testSym = Symbol();
     binding.object.defineValueProperty(obj, testSym, 1);
@@ -110,9 +121,10 @@ function test(binding) {
   }
 
   {
-    const obj = {'one': 1, 'two': 2, 'three': 3};
+    const testSym = Symbol();
+    const obj = { 'one': 1, 'two': 2, 'three': 3, [testSym]: 4 };
     var arr = binding.object.GetPropertyNames(obj);
-    assert.deepStrictEqual(arr, ['one', 'two', 'three'])
+    assert.deepStrictEqual(arr, ['one', 'two', 'three']);
   }
 
   {
@@ -135,5 +147,14 @@ function test(binding) {
       circular: magicObject,
       circular2: magicObject
     });
+  }
+
+  {
+    function Ctor() {};
+
+    assert.strictEqual(binding.object.instanceOf(new Ctor(), Ctor), true);
+    assert.strictEqual(binding.object.instanceOf(new Ctor(), Object), true);
+    assert.strictEqual(binding.object.instanceOf({}, Ctor), false);
+    assert.strictEqual(binding.object.instanceOf(null, Ctor), false);
   }
 }
