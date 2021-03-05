@@ -36,6 +36,14 @@ Value HasPropertyWithCppStyleString(const CallbackInfo& info);
 Value AddFinalizer(const CallbackInfo& info);
 Value AddFinalizerWithHint(const CallbackInfo& info);
 
+// Native wrappers for testing Object::operator []
+Value SubscriptGetWithCStyleString(const CallbackInfo& info);
+Value SubscriptGetWithCppStyleString(const CallbackInfo& info);
+Value SubscriptGetAtIndex(const CallbackInfo& info);
+void SubscriptSetWithCStyleString(const CallbackInfo& info);
+void SubscriptSetWithCppStyleString(const CallbackInfo& info);
+void SubscriptSetAtIndex(const CallbackInfo& info);
+
 static bool testValue = true;
 // Used to test void* Data() integrity
 struct UserDataHolder {
@@ -278,6 +286,13 @@ Object InitObject(Env env) {
   exports["addFinalizerWithHint"] = Function::New(env, AddFinalizerWithHint);
 
   exports["instanceOf"] = Function::New(env, InstanceOf);
+
+  exports["subscriptGetWithCStyleString"] = Function::New(env, SubscriptGetWithCStyleString);
+  exports["subscriptGetWithCppStyleString"] = Function::New(env, SubscriptGetWithCppStyleString);
+  exports["subscriptGetAtIndex"] = Function::New(env, SubscriptGetAtIndex);
+  exports["subscriptSetWithCStyleString"] = Function::New(env, SubscriptSetWithCStyleString);
+  exports["subscriptSetWithCppStyleString"] = Function::New(env, SubscriptSetWithCppStyleString);
+  exports["subscriptSetAtIndex"] = Function::New(env, SubscriptSetAtIndex);
 
   return exports;
 }
