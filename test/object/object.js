@@ -103,6 +103,12 @@ function test(binding) {
   testDefineProperties('value');
 
   {
+    const expected = undefined;
+    const actual = binding.object.getEmptyConstructor();
+    assert.strictEqual(actual, expected);
+  }
+
+  {
     const obj = {};
     const testSym = Symbol();
     binding.object.defineValueProperty(obj, testSym, 1);

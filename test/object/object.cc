@@ -69,6 +69,10 @@ Value TestFunctionWithUserData(const CallbackInfo& info) {
   return Number::New(info.Env(), holder->value);
 }
 
+Value GetEmptyConstructor(const CallbackInfo& /*info*/) {
+  return Object();
+}
+
 Array GetPropertyNames(const CallbackInfo& info) {
   Object obj = info[0].As<Object>();
   Array arr = obj.GetPropertyNames();
@@ -236,6 +240,8 @@ Value InstanceOf(const CallbackInfo& info) {
 
 Object InitObject(Env env) {
   Object exports = Object::New(env);
+
+  exports["getEmptyConstructor"] = Function::New(env, GetEmptyConstructor);
 
   exports["GetPropertyNames"] = Function::New(env, GetPropertyNames);
   exports["defineProperties"] = Function::New(env, DefineProperties);
