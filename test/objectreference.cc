@@ -4,6 +4,7 @@ it. Subclasses of Objects can only be set using an ObjectReference
 by first casting it as an Object. */
 
 #include "napi.h"
+#include "test_helper.h"
 
 using namespace Napi;
 
@@ -97,22 +98,22 @@ Value GetFromGetter(const CallbackInfo& info) {
       return String::New(env, "No Referenced Value");
     } else {
       if (info[1].IsString()) {
-        return weak.Get(info[1].As<String>().Utf8Value());
+        return MaybeUnwrapOr(weak.Get(info[1].As<String>().Utf8Value()));
       } else if (info[1].IsNumber()) {
-        return weak.Get(info[1].As<Number>().Uint32Value());
+        return MaybeUnwrapOr(weak.Get(info[1].As<Number>().Uint32Value()));
       }
     }
   } else if (info[0].As<String>() == String::New(env, "persistent")) {
     if (info[1].IsString()) {
-      return persistent.Get(info[1].As<String>().Utf8Value());
+      return MaybeUnwrapOr(persistent.Get(info[1].As<String>().Utf8Value()));
     } else if (info[1].IsNumber()) {
-      return persistent.Get(info[1].As<Number>().Uint32Value());
+      return MaybeUnwrapOr(persistent.Get(info[1].As<Number>().Uint32Value()));
     }
   } else {
     if (info[0].IsString()) {
-      return reference.Get(info[0].As<String>().Utf8Value());
+      return MaybeUnwrapOr(reference.Get(info[0].As<String>().Utf8Value()));
     } else if (info[0].IsNumber()) {
-      return reference.Get(info[0].As<Number>().Uint32Value());
+      return MaybeUnwrapOr(reference.Get(info[0].As<Number>().Uint32Value()));
     }
   }
 
@@ -147,12 +148,12 @@ Value GetCastedFromGetter(const CallbackInfo& info) {
     if (casted_weak.IsEmpty()) {
       return String::New(env, "No Referenced Value");
     } else {
-      return casted_weak.Get(info[1].As<Number>());
+      return MaybeUnwrapOr(casted_weak.Get(info[1].As<Number>()));
     }
   } else if (info[0].As<String>() == String::New(env, "persistent")) {
-    return casted_persistent.Get(info[1].As<Number>());
+    return MaybeUnwrapOr(casted_persistent.Get(info[1].As<Number>()));
   } else {
-    return casted_reference.Get(info[1].As<Number>());
+    return MaybeUnwrapOr(casted_reference.Get(info[1].As<Number>()));
   }
 }
 

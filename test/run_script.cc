@@ -1,4 +1,5 @@
 #include "napi.h"
+#include "test_helper.h"
 
 using namespace Napi;
 
@@ -6,39 +7,39 @@ namespace {
 
 Value RunPlainString(const CallbackInfo& info) {
   Env env = info.Env();
-  return env.RunScript("1 + 2 + 3");
+  return MaybeUnwrapOr(env.RunScript("1 + 2 + 3"));
 }
 
 Value RunStdString(const CallbackInfo& info) {
   Env env = info.Env();
   std::string str = "1 + 2 + 3";
-  return env.RunScript(str);
+  return MaybeUnwrapOr(env.RunScript(str));
 }
 
 Value RunJsString(const CallbackInfo& info) {
   Env env = info.Env();
-  return env.RunScript(info[0].As<String>());
+  return MaybeUnwrapOr(env.RunScript(info[0].As<String>()));
 }
 
 Value RunWithContext(const CallbackInfo& info) {
   Env env = info.Env();
 
-  Array keys = info[1].As<Object>().GetPropertyNames();
+  Array keys = MaybeUnwrap(info[1].As<Object>().GetPropertyNames());
   std::string code = "(";
   for (unsigned int i = 0; i < keys.Length(); i++) {
     if (i != 0) code += ",";
-    code += keys.Get(i).As<String>().Utf8Value();
+    code += MaybeUnwrap(keys.Get(i)).As<String>().Utf8Value();
   }
   code += ") => " + info[0].As<String>().Utf8Value();
 
-  Value ret = env.RunScript(code);
+  Value ret = MaybeUnwrap(env.RunScript(code));
   Function fn = ret.As<Function>();
   std::vector<napi_value> args;
   for (unsigned int i = 0; i < keys.Length(); i++) {
-    Value key = keys.Get(i);
-    args.push_back(info[1].As<Object>().Get(key));
+    Value key = MaybeUnwrap(keys.Get(i));
+    args.push_back(MaybeUnwrap(info[1].As<Object>().Get(key)));
   }
-  return fn.Call(args);
+  return MaybeUnwrapOr(fn.Call(args));
 }
 
 } // end anonymous namespace

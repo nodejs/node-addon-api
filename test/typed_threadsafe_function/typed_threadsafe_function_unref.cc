@@ -1,4 +1,5 @@
 #include "napi.h"
+#include "test_helper.h"
 
 #if (NAPI_VERSION > 3)
 
@@ -14,7 +15,7 @@ static Value TestUnref(const CallbackInfo& info) {
   Object global = env.Global();
   Object resource = info[0].As<Object>();
   Function cb = info[1].As<Function>();
-  Function setTimeout = global.Get("setTimeout").As<Function>();
+  Function setTimeout = MaybeUnwrap(global.Get("setTimeout")).As<Function>();
   TSFN* tsfn = new TSFN;
 
   *tsfn = TSFN::New(

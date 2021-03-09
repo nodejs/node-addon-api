@@ -72,6 +72,10 @@ Object InitThunkingManual(Env env);
 Object InitObjectFreezeSeal(Env env);
 #endif
 
+#if defined(NODE_ADDON_API_ENABLE_MAYBE)
+Object InitMaybeCheck(Env env);
+#endif
+
 Object Init(Env env, Object exports) {
 #if (NAPI_VERSION > 5)
   exports.Set("addon", InitAddon(env));
@@ -148,6 +152,10 @@ Object Init(Env env, Object exports) {
   exports.Set("thunking_manual", InitThunkingManual(env));
 #if (NAPI_VERSION > 7)
   exports.Set("object_freeze_seal", InitObjectFreezeSeal(env));
+#endif
+
+#if defined(NODE_ADDON_API_ENABLE_MAYBE)
+  exports.Set("maybe_check", InitMaybeCheck(env));
 #endif
   return exports;
 }

@@ -1,6 +1,7 @@
 {
   'target_defaults': {
     'includes': ['../common.gypi'],
+    'include_dirs': ['./common'],
     'sources': [
         'addon.cc',
         'addon_data.cc',
@@ -26,6 +27,7 @@
         'function.cc',
         'functionreference.cc',
         'handlescope.cc',
+        'maybe/check.cc',
         'movable_callbacks.cc',
         'memory_management.cc',
         'name.cc',
@@ -81,6 +83,11 @@
     {
       'target_name': 'binding_noexcept',
       'includes': ['../noexcept.gypi']
+    },
+    {
+      'target_name': 'binding_noexcept_maybe',
+      'includes': ['../noexcept.gypi'],
+      'defines': ['NODE_ADDON_API_ENABLE_MAYBE']
     },
   ],
 }
