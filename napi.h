@@ -1175,11 +1175,11 @@ namespace Napi {
     void Reset();
     void Reset(const T& value, uint32_t refcount = 0);
 
-    // Call this on a reference that is declared as static data, to prevent its destructor
-    // from running at program shutdown time, which would attempt to reset the reference when
-    // the environment is no longer valid.
-    // Avoid using this if at all possible. If you do need to use static data, 
-    // MAKE SURE to warn your users that your addon is NOT threadsafe.
+    // Call this on a reference that is declared as static data, to prevent its
+    // destructor from running at program shutdown time, which would attempt to
+    // reset the reference when the environment is no longer valid. Avoid using
+    // this if at all possible. If you do need to use static data, MAKE SURE to
+    // warn your users that your addon is NOT threadsafe.
     void SuppressDestruct();
 
   protected:
