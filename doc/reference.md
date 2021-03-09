@@ -4,7 +4,7 @@ Holds a counted reference to a [`Napi::Value`](value.md) object; initially a wea
 
 The referenced `Napi::Value` is not immediately destroyed when the reference count is zero; it is merely then eligible for garbage-collection if there are no other references to the `Napi::Value`.
 
-`Napi::Reference` objects allocated in static space, such as a global static instance, must call the `SuppressDestruct` method to prevent its destructor, running at program shutdown time, from attempting to reset the reference when the environment is no longer valid.
+`Napi::Reference` objects allocated in static space, such as a global static instance, must call the `SuppressDestruct` method to prevent its destructor, running at program shutdown time, from attempting to reset the reference when the environment is no longer valid. Avoid using this if at all possible.
 
 The following classes inherit, either directly or indirectly, from `Napi::Reference`:
 
@@ -109,3 +109,5 @@ void Napi::Reference::SuppressDestruct();
 ```
 
 Call this method on a `Napi::Reference` that is declared as static data to prevent its destructor, running at program shutdown time, from attempting to reset the reference when the environment is no longer valid.
+
+ Avoid using this if at all possible. If you do need to use static data, **MAKE SURE** to warn your users that your addon is **NOT** threadsafe.
