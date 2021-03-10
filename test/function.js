@@ -8,6 +8,9 @@ test(require(`./build/${buildType}/binding.node`).function.templated);
 test(require(`./build/${buildType}/binding_noexcept.node`).function.templated);
 
 function test(binding) {
+  assert.strictEqual(binding.emptyConstructor(), true);
+  assert.strictEqual(binding.nonEmptyConstructor(), true);
+
   let obj = {};
   assert.deepStrictEqual(binding.voidCallback(obj), undefined);
   assert.deepStrictEqual(obj, { "foo": "bar" });

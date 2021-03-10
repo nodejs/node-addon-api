@@ -6,6 +6,18 @@ namespace {
 
 int testData = 1;
 
+Boolean EmptyConstructor(const CallbackInfo& info) {
+  auto env = info.Env();
+  Function function = Function();
+  return Boolean::New(env, function.IsEmpty());
+}
+
+Boolean NonEmptyConstructor(const CallbackInfo& info) {
+  auto env = info.Env();
+  Function function = Function(env, Object::New(env));
+  return Boolean::New(env, !function.IsEmpty());
+}
+
 void VoidCallback(const CallbackInfo& info) {
   auto env = info.Env();
   Object obj = info[0].As<Object>();
@@ -107,6 +119,8 @@ void IsConstructCall(const CallbackInfo& info) {
 Object InitFunction(Env env) {
   Object result = Object::New(env);
   Object exports = Object::New(env);
+  exports["emptyConstructor"] = Function::New(env, EmptyConstructor);
+  exports["nonEmptyConstructor"] = Function::New(env, NonEmptyConstructor);
   exports["voidCallback"] = Function::New(env, VoidCallback, "voidCallback");
   exports["valueCallback"] = Function::New(env, ValueCallback, std::string("valueCallback"));
   exports["voidCallbackWithData"] =
@@ -124,6 +138,8 @@ Object InitFunction(Env env) {
   result["plain"] = exports;
 
   exports = Object::New(env);
+  exports["emptyConstructor"] = Function::New(env, EmptyConstructor);
+  exports["nonEmptyConstructor"] = Function::New(env, NonEmptyConstructor);
   exports["voidCallback"] = Function::New<VoidCallback>(env, "voidCallback");
   exports["valueCallback"] =
       Function::New<ValueCallback>(env, std::string("valueCallback"));
