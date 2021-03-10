@@ -39,22 +39,22 @@ function test(binding) {
   }
 
   ret = 4;
-  assert.equal(binding.callWithArgs(testFunction, 1, 2, 3), 4);
+  assert.strictEqual(binding.callWithArgs(testFunction, 1, 2, 3), 4);
   assert.strictEqual(receiver, undefined);
   assert.deepStrictEqual(args, [ 1, 2, 3 ]);
 
   ret = 5;
-  assert.equal(binding.callWithVector(testFunction, 2, 3, 4), 5);
+  assert.strictEqual(binding.callWithVector(testFunction, 2, 3, 4), 5);
   assert.strictEqual(receiver, undefined);
   assert.deepStrictEqual(args, [ 2, 3, 4 ]);
 
   ret = 6;
-  assert.equal(binding.callWithReceiverAndArgs(testFunction, obj, 3, 4, 5), 6);
+  assert.strictEqual(binding.callWithReceiverAndArgs(testFunction, obj, 3, 4, 5), 6);
   assert.deepStrictEqual(receiver, obj);
   assert.deepStrictEqual(args, [ 3, 4, 5 ]);
 
   ret = 7;
-  assert.equal(binding.callWithReceiverAndVector(testFunction, obj, 4, 5, 6), 7);
+  assert.strictEqual(binding.callWithReceiverAndVector(testFunction, obj, 4, 5, 6), 7);
   assert.deepStrictEqual(receiver, obj);
   assert.deepStrictEqual(args, [ 4, 5, 6 ]);
 
@@ -95,8 +95,8 @@ function test(binding) {
 
   assert.deepStrictEqual(binding.valueCallbackWithData(), { "foo": "bar", "data": 1 });
 
-  assert.equal(binding.voidCallback.name, 'voidCallback');
-  assert.equal(binding.valueCallback.name, 'valueCallback');
+  assert.strictEqual(binding.voidCallback.name, 'voidCallback');
+  assert.strictEqual(binding.valueCallback.name, 'valueCallback');
 
   let testConstructCall = undefined;
   binding.isConstructCall((result) => { testConstructCall = result; });
