@@ -54,6 +54,11 @@ function test(binding) {
   assert.deepStrictEqual(receiver, undefined);
   assert.deepStrictEqual(args, [ 5, 6, 7 ]);
 
+  ret = 9;
+  assert.strictEqual(binding.callWithReceiverAndCStyleArray(testFunction, obj, 6, 7, 8), ret);
+  assert.deepStrictEqual(receiver, obj);
+  assert.deepStrictEqual(args, [ 6, 7, 8 ]);
+
   ret = 10;
   assert.strictEqual(binding.callWithFunctionOperator(testFunction, 7, 8, 9), ret);
   assert.strictEqual(receiver, undefined);
