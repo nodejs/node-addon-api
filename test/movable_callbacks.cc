@@ -5,7 +5,7 @@ using namespace Napi;
 Value createExternal(const CallbackInfo& info) {
   FunctionReference ref = Reference<Function>::New(info[0].As<Function>(), 1);
   auto ret = External<char>::New(
-      info.Env(), nullptr, [ref = std::move(ref)](Napi::Env env, char* data) {
+      info.Env(), nullptr, [ref = std::move(ref)](Napi::Env /*env*/, char* /*data*/) {
         ref.Call({});
       });
 
