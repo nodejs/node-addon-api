@@ -130,6 +130,16 @@ Value CallConstructorWithVector(const CallbackInfo& info) {
    return func.New(args);
 }
 
+Value CallConstructorWithCStyleArray(const CallbackInfo& info) {
+  Function func = info[0].As<Function>();
+  std::vector<napi_value> args;
+  args.reserve(3);
+  args.push_back(info[1]);
+  args.push_back(info[2]);
+  args.push_back(info[3]);
+  return func.New(args.size(), args.data());
+}
+
 void IsConstructCall(const CallbackInfo& info) {
    Function callback = info[0].As<Function>();
    bool isConstructCall = info.IsConstructCall();
@@ -164,6 +174,8 @@ Object InitFunction(Env env) {
   exports["callWithInvalidReceiver"] = Function::New(env, CallWithInvalidReceiver);
   exports["callConstructorWithArgs"] = Function::New(env, CallConstructorWithArgs);
   exports["callConstructorWithVector"] = Function::New(env, CallConstructorWithVector);
+  exports["callConstructorWithCStyleArray"] =
+      Function::New(env, CallConstructorWithCStyleArray);
   exports["isConstructCall"] = Function::New(env, IsConstructCall);
   exports["callWithFunctionOperator"] =
       Function::New(env, CallWithFunctionOperator);
@@ -194,6 +206,8 @@ Object InitFunction(Env env) {
       Function::New<CallConstructorWithArgs>(env);
   exports["callConstructorWithVector"] =
       Function::New<CallConstructorWithVector>(env);
+  exports["callConstructorWithCStyleArray"] =
+      Function::New<CallConstructorWithCStyleArray>(env);
   exports["isConstructCall"] = Function::New<IsConstructCall>(env);
   exports["callWithFunctionOperator"] =
       Function::New<CallWithFunctionOperator>(env);

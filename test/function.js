@@ -76,6 +76,10 @@ function test(binding) {
   assert(obj instanceof testConstructor);
   assert.deepStrictEqual(args, [ 6, 7, 8 ]);
 
+  obj = binding.callConstructorWithCStyleArray(testConstructor, 7, 8, 9);
+  assert(obj instanceof testConstructor);
+  assert.deepStrictEqual(args, [ 7, 8, 9 ]);
+
   obj = {};
   assert.deepStrictEqual(binding.voidCallbackWithData(obj), undefined);
   assert.deepStrictEqual(obj, { "foo": "bar", "data": 1 });
