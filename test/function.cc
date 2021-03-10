@@ -146,6 +146,54 @@ void IsConstructCall(const CallbackInfo& info) {
    callback({Napi::Boolean::New(info.Env(), isConstructCall)});
 }
 
+void MakeCallbackWithArgs(const CallbackInfo& info) {
+  Env env = info.Env();
+  Function callback = info[0].As<Function>();
+  Object resource = info[1].As<Object>();
+
+  AsyncContext context(env, "async_context_test", resource);
+
+  callback.MakeCallback(
+      resource,
+      std::initializer_list<napi_value>{info[2], info[3], info[4]},
+      context);
+}
+
+void MakeCallbackWithVector(const CallbackInfo& info) {
+  Env env = info.Env();
+  Function callback = info[0].As<Function>();
+  Object resource = info[1].As<Object>();
+
+  AsyncContext context(env, "async_context_test", resource);
+
+  std::vector<napi_value> args;
+  args.reserve(3);
+  args.push_back(info[2]);
+  args.push_back(info[3]);
+  args.push_back(info[4]);
+  callback.MakeCallback(resource, args, context);
+}
+
+void MakeCallbackWithCStyleArray(const CallbackInfo& info) {
+  Env env = info.Env();
+  Function callback = info[0].As<Function>();
+  Object resource = info[1].As<Object>();
+
+  AsyncContext context(env, "async_context_test", resource);
+
+  std::vector<napi_value> args;
+  args.reserve(3);
+  args.push_back(info[2]);
+  args.push_back(info[3]);
+  args.push_back(info[4]);
+  callback.MakeCallback(resource, args.size(), args.data(), context);
+}
+
+void MakeCallbackWithInvalidReceiver(const CallbackInfo& info) {
+  Function callback = info[0].As<Function>();
+  callback.MakeCallback(Value(), std::initializer_list<napi_value>{});
+}
+
 Value CallWithFunctionOperator(const CallbackInfo& info) {
   Function func = info[0].As<Function>();
   return func({info[1], info[2], info[3]});
@@ -177,6 +225,13 @@ Object InitFunction(Env env) {
   exports["callConstructorWithCStyleArray"] =
       Function::New(env, CallConstructorWithCStyleArray);
   exports["isConstructCall"] = Function::New(env, IsConstructCall);
+  exports["makeCallbackWithArgs"] = Function::New(env, MakeCallbackWithArgs);
+  exports["makeCallbackWithVector"] =
+      Function::New(env, MakeCallbackWithVector);
+  exports["makeCallbackWithCStyleArray"] =
+      Function::New(env, MakeCallbackWithCStyleArray);
+  exports["makeCallbackWithInvalidReceiver"] =
+      Function::New(env, MakeCallbackWithInvalidReceiver);
   exports["callWithFunctionOperator"] =
       Function::New(env, CallWithFunctionOperator);
   result["plain"] = exports;
@@ -209,6 +264,13 @@ Object InitFunction(Env env) {
   exports["callConstructorWithCStyleArray"] =
       Function::New<CallConstructorWithCStyleArray>(env);
   exports["isConstructCall"] = Function::New<IsConstructCall>(env);
+  exports["makeCallbackWithArgs"] = Function::New<MakeCallbackWithArgs>(env);
+  exports["makeCallbackWithVector"] =
+      Function::New<MakeCallbackWithVector>(env);
+  exports["makeCallbackWithCStyleArray"] =
+      Function::New<MakeCallbackWithCStyleArray>(env);
+  exports["makeCallbackWithInvalidReceiver"] =
+      Function::New<MakeCallbackWithInvalidReceiver>(env);
   exports["callWithFunctionOperator"] =
       Function::New<CallWithFunctionOperator>(env);
   result["templated"] = exports;

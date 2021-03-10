@@ -29,6 +29,15 @@ function test(binding) {
     args = [].slice.call(arguments);
   }
 
+  function makeCallbackTestFunction(receiver, expectedOne, expectedTwo, expectedThree) {
+    return function callback(one, two, three) {
+      assert.strictEqual(this, receiver);
+      assert.strictEqual(one, expectedOne);
+      assert.strictEqual(two, expectedTwo);
+      assert.strictEqual(three, expectedThree);
+    }
+  }
+
   ret = 4;
   assert.equal(binding.callWithArgs(testFunction, 1, 2, 3), 4);
   assert.strictEqual(receiver, undefined);
@@ -95,5 +104,11 @@ function test(binding) {
   new binding.isConstructCall((result) => { testConstructCall = result; });
   assert.ok(testConstructCall);
 
-  // TODO: Function::MakeCallback tests
+  obj = {};
+  binding.makeCallbackWithArgs(makeCallbackTestFunction(obj, "1", "2", "3"), obj, "1", "2", "3");
+  binding.makeCallbackWithVector(makeCallbackTestFunction(obj, 4, 5, 6), obj, 4, 5, 6);
+  binding.makeCallbackWithCStyleArray(makeCallbackTestFunction(obj, 7, 8, 9), obj, 7, 8, 9);
+  assert.throws(() => {
+    binding.makeCallbackWithInvalidReceiver(() => {});
+  });
 }
