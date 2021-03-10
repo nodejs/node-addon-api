@@ -49,6 +49,11 @@ function test(binding) {
   assert.deepStrictEqual(receiver, obj);
   assert.deepStrictEqual(args, [ 4, 5, 6 ]);
 
+  ret = 10;
+  assert.strictEqual(binding.callWithFunctionOperator(testFunction, 7, 8, 9), ret);
+  assert.strictEqual(receiver, undefined);
+  assert.deepStrictEqual(args, [ 7, 8, 9 ]);
+
   assert.throws(() => {
     binding.callWithInvalidReceiver();
   }, /Invalid (pointer passed as )?argument/);
