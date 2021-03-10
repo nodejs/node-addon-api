@@ -72,6 +72,16 @@ Value CallWithVector(const CallbackInfo& info) {
    return func.Call(args);
 }
 
+Value CallWithCStyleArray(const CallbackInfo& info) {
+  Function func = info[0].As<Function>();
+  std::vector<napi_value> args;
+  args.reserve(3);
+  args.push_back(info[1]);
+  args.push_back(info[2]);
+  args.push_back(info[3]);
+  return func.Call(args.size(), args.data());
+}
+
 Value CallWithReceiverAndArgs(const CallbackInfo& info) {
    Function func = info[0].As<Function>();
    Value receiver = info[1];
@@ -135,6 +145,7 @@ Object InitFunction(Env env) {
     Function::New(env, ValueCallbackWithData, nullptr, &testData);
   exports["callWithArgs"] = Function::New(env, CallWithArgs);
   exports["callWithVector"] = Function::New(env, CallWithVector);
+  exports["callWithCStyleArray"] = Function::New(env, CallWithCStyleArray);
   exports["callWithReceiverAndArgs"] = Function::New(env, CallWithReceiverAndArgs);
   exports["callWithReceiverAndVector"] = Function::New(env, CallWithReceiverAndVector);
   exports["callWithInvalidReceiver"] = Function::New(env, CallWithInvalidReceiver);
@@ -157,6 +168,7 @@ Object InitFunction(Env env) {
       Function::New<ValueCallbackWithData>(env, nullptr, &testData);
   exports["callWithArgs"] = Function::New<CallWithArgs>(env);
   exports["callWithVector"] = Function::New<CallWithVector>(env);
+  exports["callWithCStyleArray"] = Function::New<CallWithCStyleArray>(env);
   exports["callWithReceiverAndArgs"] =
       Function::New<CallWithReceiverAndArgs>(env);
   exports["callWithReceiverAndVector"] =
