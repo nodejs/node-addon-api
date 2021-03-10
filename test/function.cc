@@ -57,8 +57,9 @@ Value ValueCallbackWithData(const CallbackInfo& info) {
 }
 
 Value CallWithArgs(const CallbackInfo& info) {
-   Function func = info[0].As<Function>();
-   return func({ info[1], info[2], info[3] });
+  Function func = info[0].As<Function>();
+  return func.Call(
+      std::initializer_list<napi_value>{info[1], info[2], info[3]});
 }
 
 Value CallWithVector(const CallbackInfo& info) {
@@ -114,6 +115,11 @@ void IsConstructCall(const CallbackInfo& info) {
    callback({Napi::Boolean::New(info.Env(), isConstructCall)});
 }
 
+Value CallWithFunctionOperator(const CallbackInfo& info) {
+  Function func = info[0].As<Function>();
+  return func({info[1], info[2], info[3]});
+}
+
 } // end anonymous namespace
 
 Object InitFunction(Env env) {
@@ -135,6 +141,8 @@ Object InitFunction(Env env) {
   exports["callConstructorWithArgs"] = Function::New(env, CallConstructorWithArgs);
   exports["callConstructorWithVector"] = Function::New(env, CallConstructorWithVector);
   exports["isConstructCall"] = Function::New(env, IsConstructCall);
+  exports["callWithFunctionOperator"] =
+      Function::New(env, CallWithFunctionOperator);
   result["plain"] = exports;
 
   exports = Object::New(env);
@@ -160,6 +168,8 @@ Object InitFunction(Env env) {
   exports["callConstructorWithVector"] =
       Function::New<CallConstructorWithVector>(env);
   exports["isConstructCall"] = Function::New<IsConstructCall>(env);
+  exports["callWithFunctionOperator"] =
+      Function::New<CallWithFunctionOperator>(env);
   result["templated"] = exports;
   return result;
 }
