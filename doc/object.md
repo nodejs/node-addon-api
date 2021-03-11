@@ -232,28 +232,31 @@ void Napi::Object::DefineProperties (____ properties)
 
 Defines properties on the object.
 
-### Operator[]()
+### operator\[\]()
 
 ```cpp
 Napi::PropertyLValue<std::string> Napi::Object::operator[] (const char* utf8name);
 ```
 - `[in] utf8name`: UTF-8 encoded null-terminated property name.
 
-Returns a [`Napi::PropertyLValue`](propertylvalue.md) as the named property or sets the named property.
+Returns a [`Napi::Object::PropertyLValue`](propertylvalue.md) as the named
+property or sets the named property.
 
 ```cpp
 Napi::PropertyLValue<std::string> Napi::Object::operator[] (const std::string& utf8name);
 ```
 - `[in] utf8name`: UTF-8 encoded property name.
 
-Returns a [`Napi::PropertyLValue`](propertylvalue.md) as the named property or sets the named property.
+Returns a [`Napi::Object::PropertyLValue`](propertylvalue.md) as the named
+property or sets the named property.
 
 ```cpp
 Napi::PropertyLValue<uint32_t> Napi::Object::operator[] (uint32_t index);
 ```
 - `[in] index`: Element index.
 
-Returns a [`Napi::PropertyLValue`](propertylvalue.md) or sets an indexed property or array element.
+Returns a [`Napi::Object::PropertyLValue`](propertylvalue.md) or sets an
+indexed property or array element.
 
 ```cpp
 Napi::Value Napi::Object::operator[] (const char* utf8name) const;
