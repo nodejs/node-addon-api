@@ -287,11 +287,15 @@ Object InitObject(Env env) {
 
   exports["instanceOf"] = Function::New(env, InstanceOf);
 
-  exports["subscriptGetWithCStyleString"] = Function::New(env, SubscriptGetWithCStyleString);
-  exports["subscriptGetWithCppStyleString"] = Function::New(env, SubscriptGetWithCppStyleString);
+  exports["subscriptGetWithCStyleString"] =
+      Function::New(env, SubscriptGetWithCStyleString);
+  exports["subscriptGetWithCppStyleString"] =
+      Function::New(env, SubscriptGetWithCppStyleString);
   exports["subscriptGetAtIndex"] = Function::New(env, SubscriptGetAtIndex);
-  exports["subscriptSetWithCStyleString"] = Function::New(env, SubscriptSetWithCStyleString);
-  exports["subscriptSetWithCppStyleString"] = Function::New(env, SubscriptSetWithCppStyleString);
+  exports["subscriptSetWithCStyleString"] =
+      Function::New(env, SubscriptSetWithCStyleString);
+  exports["subscriptSetWithCppStyleString"] =
+      Function::New(env, SubscriptSetWithCppStyleString);
   exports["subscriptSetAtIndex"] = Function::New(env, SubscriptSetAtIndex);
 
   return exports;
