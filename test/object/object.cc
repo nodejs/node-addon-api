@@ -253,6 +253,30 @@ Value CreateObjectUsingMagic(const CallbackInfo& info) {
   return obj;
 }
 
+#ifdef NAPI_CPP_EXCEPTIONS
+Value Sum(const CallbackInfo& info) {
+  Object object = info[0].As<Object>();
+  int64_t sum = 0;
+
+  for (const auto& e : object) {
+    sum += static_cast<Value>(e.second).As<Number>().Int64Value();
+  }
+
+  return Number::New(info.Env(), sum);
+}
+
+void Increment(const CallbackInfo& info) {
+  Env env = info.Env();
+  Object object = info[0].As<Object>();
+
+  for (auto e : object) {
+    int64_t value = static_cast<Value>(e.second).As<Number>().Int64Value();
+    ++value;
+    e.second = Napi::Number::New(env, value);
+  }
+}
+#endif  // NAPI_CPP_EXCEPTIONS
+
 Value InstanceOf(const CallbackInfo& info) {
   Object obj = info[0].As<Object>();
   Function constructor = info[1].As<Function>();
@@ -299,6 +323,10 @@ Object InitObject(Env env) {
   exports["hasPropertyWithCppStyleString"] = Function::New(env, HasPropertyWithCppStyleString);
 
   exports["createObjectUsingMagic"] = Function::New(env, CreateObjectUsingMagic);
+#ifdef NAPI_CPP_EXCEPTIONS
+  exports["sum"] = Function::New(env, Sum);
+  exports["increment"] = Function::New(env, Increment);
+#endif  // NAPI_CPP_EXCEPTIONS
 
   exports["addFinalizer"] = Function::New(env, AddFinalizer);
   exports["addFinalizerWithHint"] = Function::New(env, AddFinalizerWithHint);

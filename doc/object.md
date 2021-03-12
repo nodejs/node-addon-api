@@ -288,5 +288,47 @@ Napi::Value Napi::Object::operator[] (uint32_t index) const;
 
 Returns an indexed property or array element as a [`Napi::Value`](value.md).
 
+## Iterator
+
+Iterators expose an `std::pair<...>`, where the `first` property is a
+[`Napi::Value`](value.md) that holds the currently iterated key and the
+`second` property is a [`Napi::Object::PropertyLValue`](propertylvalue.md) that
+holds the currently iterated value. Iterators are only available if C++
+exceptions are enabled (by defining `NAPI_CPP_EXCEPTIONS` during the build).
+
+### Constant Iterator
+
+In constant iterators, the iterated values are immutable.
+
+```cpp
+Value Sum(const CallbackInfo& info) {
+  Object object = info[0].As<Object>();
+  int64_t sum = 0;
+
+  for (const auto& e : object) {
+    sum += static_cast<Value>(e.second).As<Number>().Int64Value();
+  }
+
+  return Number::New(info.Env(), sum);
+}
+```
+
+### Non Constant Iterator
+
+In non constant iterators, the iterated values are mutable.
+
+```cpp
+void Increment(const CallbackInfo& info) {
+  Env env = info.Env();
+  Object object = info[0].As<Object>();
+
+  for (auto e : object) {
+    int64_t value = static_cast<Value>(e.second).As<Number>().Int64Value();
+    ++value;
+    e.second = Napi::Number::New(env, value);
+  }
+}
+```
+
 [`Napi::Value`]: ./value.md
 [`Napi::Value::From`]: ./value.md#from
