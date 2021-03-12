@@ -156,4 +156,62 @@ function test(binding) {
     assert.strictEqual(binding.object.instanceOf({}, Ctor), false);
     assert.strictEqual(binding.object.instanceOf(null, Ctor), false);
   }
+
+  if ('sum' in binding.object) {
+      {
+        const obj = {
+          '-forbid': -0x4B1D,
+          '-feedcode': -0xFEEDC0DE,
+          '+office': +0x0FF1CE,
+          '+forbid': +0x4B1D,
+          '+deadbeef': +0xDEADBEEF,
+          '+feedcode': +0xFEEDC0DE,
+        };
+
+        let sum = 0;
+        for (const key in obj) {
+          sum += obj[key];
+        }
+
+        assert.strictEqual(binding.object.sum(obj), sum);
+      }
+
+      {
+        const obj = new Proxy({
+          '-forbid': -0x4B1D,
+          '-feedcode': -0xFEEDC0DE,
+          '+office': +0x0FF1CE,
+          '+forbid': +0x4B1D,
+          '+deadbeef': +0xDEADBEEF,
+          '+feedcode': +0xFEEDC0DE,
+        }, {
+          getOwnPropertyDescriptor(target, p) {
+            throw new Error("getOwnPropertyDescriptor error");
+          },
+          ownKeys(target) {
+            throw new Error("ownKeys error");
+          },
+        });
+
+        assert.throws(() => {
+          binding.object.sum(obj);
+        }, /ownKeys error/);
+    }
+  }
+
+  if ('increment' in binding.object) {
+    const obj = {
+      'a': 0,
+      'b': 1,
+      'c': 2,
+    };
+
+    binding.object.increment(obj);
+
+    assert.deepStrictEqual(obj, {
+      'a': 1,
+      'b': 2,
+      'c': 3,
+    });
+  }
 }

@@ -1305,6 +1305,14 @@ inline Object::PropertyLValue<uint32_t> Object::operator [](uint32_t index) {
   return PropertyLValue<uint32_t>(*this, index);
 }
 
+inline Object::PropertyLValue<Value> Object::operator[](Value index) {
+  return PropertyLValue<Value>(*this, index);
+}
+
+inline Object::PropertyLValue<Value> Object::operator[](Value index) const {
+  return PropertyLValue<Value>(*this, index);
+}
+
 inline MaybeOrValue<Value> Object::operator[](const char* utf8name) const {
   return Get(utf8name);
 }
@@ -1528,6 +1536,83 @@ inline void Object::AddFinalizer(Finalizer finalizeCallback,
     NAPI_THROW_IF_FAILED_VOID(_env, status);
   }
 }
+
+#ifdef NAPI_CPP_EXCEPTIONS
+inline Object::const_iterator::const_iterator(const Object* object,
+                                              const Type type) {
+  _object = object;
+  _keys = object->GetPropertyNames();
+  _index = type == Type::BEGIN ? 0 : _keys.Length();
+}
+
+inline Object::const_iterator Napi::Object::begin() const {
+  const_iterator it(this, Object::const_iterator::Type::BEGIN);
+  return it;
+}
+
+inline Object::const_iterator Napi::Object::end() const {
+  const_iterator it(this, Object::const_iterator::Type::END);
+  return it;
+}
+
+inline Object::const_iterator& Object::const_iterator::operator++() {
+  ++_index;
+  return *this;
+}
+
+inline bool Object::const_iterator::operator==(
+    const const_iterator& other) const {
+  return _index == other._index;
+}
+
+inline bool Object::const_iterator::operator!=(
+    const const_iterator& other) const {
+  return _index != other._index;
+}
+
+inline const std::pair<Value, Object::PropertyLValue<Value>>
+Object::const_iterator::operator*() const {
+  const Value key = _keys[_index];
+  const PropertyLValue<Value> value = (*_object)[key];
+  return {key, value};
+}
+
+inline Object::iterator::iterator(Object* object, const Type type) {
+  _object = object;
+  _keys = object->GetPropertyNames();
+  _index = type == Type::BEGIN ? 0 : _keys.Length();
+}
+
+inline Object::iterator Napi::Object::begin() {
+  iterator it(this, Object::iterator::Type::BEGIN);
+  return it;
+}
+
+inline Object::iterator Napi::Object::end() {
+  iterator it(this, Object::iterator::Type::END);
+  return it;
+}
+
+inline Object::iterator& Object::iterator::operator++() {
+  ++_index;
+  return *this;
+}
+
+inline bool Object::iterator::operator==(const iterator& other) const {
+  return _index == other._index;
+}
+
+inline bool Object::iterator::operator!=(const iterator& other) const {
+  return _index != other._index;
+}
+
+inline std::pair<Value, Object::PropertyLValue<Value>>
+Object::iterator::operator*() {
+  Value key = _keys[_index];
+  PropertyLValue<Value> value = (*_object)[key];
+  return {key, value};
+}
+#endif  // NAPI_CPP_EXCEPTIONS
 
 #if NAPI_VERSION >= 8
 inline MaybeOrValue<bool> Object::Freeze() {
