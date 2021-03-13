@@ -103,9 +103,8 @@ function test(binding) {
   testDefineProperties('value');
 
   {
-    const expected = undefined;
-    const actual = binding.object.getEmptyConstructor();
-    assert.strictEqual(actual, expected);
+    assert.strictEqual(binding.object.emptyConstructor(true), true);
+    assert.strictEqual(binding.object.emptyConstructor(false), false);
   }
 
   {
