@@ -108,6 +108,12 @@ function test(binding) {
   }
 
   {
+    const expected = { 'one': 1, 'two': 2, 'three': 3 };
+    const actual = binding.object.constructorFromObject(expected);
+    assert.deepStrictEqual(actual, expected);
+  }
+
+  {
     const obj = {};
     const testSym = Symbol();
     binding.object.defineValueProperty(obj, testSym, 1);

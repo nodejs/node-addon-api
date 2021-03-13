@@ -84,6 +84,12 @@ Value EmptyConstructor(const CallbackInfo& info) {
   return Boolean::New(env, object.IsEmpty());
 }
 
+Value ConstructorFromObject(const CallbackInfo& info) {
+  auto env = info.Env();
+  Object object = info[0].As<Object>();
+  return Object(env, object);
+}
+
 Array GetPropertyNames(const CallbackInfo& info) {
   Object obj = info[0].As<Object>();
   Array arr = obj.GetPropertyNames();
@@ -253,6 +259,7 @@ Object InitObject(Env env) {
   Object exports = Object::New(env);
 
   exports["emptyConstructor"] = Function::New(env, EmptyConstructor);
+  exports["constructorFromObject"] = Function::New(env, ConstructorFromObject);
 
   exports["GetPropertyNames"] = Function::New(env, GetPropertyNames);
   exports["defineProperties"] = Function::New(env, DefineProperties);
