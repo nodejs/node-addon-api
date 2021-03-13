@@ -25,6 +25,7 @@
         'external.cc',
         'function.cc',
         'handlescope.cc',
+        'movable_callbacks.cc',
         'memory_management.cc',
         'name.cc',
         'object/delete_property.cc',
