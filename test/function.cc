@@ -6,13 +6,6 @@ namespace {
 
 int testData = 1;
 
-Boolean EmptyConstructor(const CallbackInfo& info) {
-  auto env = info.Env();
-  bool isEmpty = info[0].As<Boolean>();
-  Function function = isEmpty ? Function() : Function(env, Object::New(env));
-  return Boolean::New(env, function.IsEmpty());
-}
-
 void VoidCallback(const CallbackInfo& info) {
   auto env = info.Env();
   Object obj = info[0].As<Object>();
@@ -52,9 +45,8 @@ Value ValueCallbackWithData(const CallbackInfo& info) {
 }
 
 Value CallWithArgs(const CallbackInfo& info) {
-  Function func = info[0].As<Function>();
-  return func.Call(
-      std::initializer_list<napi_value>{info[1], info[2], info[3]});
+   Function func = info[0].As<Function>();
+   return func({ info[1], info[2], info[3] });
 }
 
 Value CallWithVector(const CallbackInfo& info) {
@@ -65,27 +57,6 @@ Value CallWithVector(const CallbackInfo& info) {
    args.push_back(info[2]);
    args.push_back(info[3]);
    return func.Call(args);
-}
-
-Value CallWithCStyleArray(const CallbackInfo& info) {
-  Function func = info[0].As<Function>();
-  std::vector<napi_value> args;
-  args.reserve(3);
-  args.push_back(info[1]);
-  args.push_back(info[2]);
-  args.push_back(info[3]);
-  return func.Call(args.size(), args.data());
-}
-
-Value CallWithReceiverAndCStyleArray(const CallbackInfo& info) {
-  Function func = info[0].As<Function>();
-  Value receiver = info[1];
-  std::vector<napi_value> args;
-  args.reserve(3);
-  args.push_back(info[2]);
-  args.push_back(info[3]);
-  args.push_back(info[4]);
-  return func.Call(receiver, args.size(), args.data());
 }
 
 Value CallWithReceiverAndArgs(const CallbackInfo& info) {
@@ -125,73 +96,10 @@ Value CallConstructorWithVector(const CallbackInfo& info) {
    return func.New(args);
 }
 
-Value CallConstructorWithCStyleArray(const CallbackInfo& info) {
-  Function func = info[0].As<Function>();
-  std::vector<napi_value> args;
-  args.reserve(3);
-  args.push_back(info[1]);
-  args.push_back(info[2]);
-  args.push_back(info[3]);
-  return func.New(args.size(), args.data());
-}
-
 void IsConstructCall(const CallbackInfo& info) {
    Function callback = info[0].As<Function>();
    bool isConstructCall = info.IsConstructCall();
    callback({Napi::Boolean::New(info.Env(), isConstructCall)});
-}
-
-void MakeCallbackWithArgs(const CallbackInfo& info) {
-  Env env = info.Env();
-  Function callback = info[0].As<Function>();
-  Object resource = info[1].As<Object>();
-
-  AsyncContext context(env, "async_context_test", resource);
-
-  callback.MakeCallback(
-      resource,
-      std::initializer_list<napi_value>{info[2], info[3], info[4]},
-      context);
-}
-
-void MakeCallbackWithVector(const CallbackInfo& info) {
-  Env env = info.Env();
-  Function callback = info[0].As<Function>();
-  Object resource = info[1].As<Object>();
-
-  AsyncContext context(env, "async_context_test", resource);
-
-  std::vector<napi_value> args;
-  args.reserve(3);
-  args.push_back(info[2]);
-  args.push_back(info[3]);
-  args.push_back(info[4]);
-  callback.MakeCallback(resource, args, context);
-}
-
-void MakeCallbackWithCStyleArray(const CallbackInfo& info) {
-  Env env = info.Env();
-  Function callback = info[0].As<Function>();
-  Object resource = info[1].As<Object>();
-
-  AsyncContext context(env, "async_context_test", resource);
-
-  std::vector<napi_value> args;
-  args.reserve(3);
-  args.push_back(info[2]);
-  args.push_back(info[3]);
-  args.push_back(info[4]);
-  callback.MakeCallback(resource, args.size(), args.data(), context);
-}
-
-void MakeCallbackWithInvalidReceiver(const CallbackInfo& info) {
-  Function callback = info[0].As<Function>();
-  callback.MakeCallback(Value(), std::initializer_list<napi_value>{});
-}
-
-Value CallWithFunctionOperator(const CallbackInfo& info) {
-  Function func = info[0].As<Function>();
-  return func({info[1], info[2], info[3]});
 }
 
 } // end anonymous namespace
@@ -199,7 +107,6 @@ Value CallWithFunctionOperator(const CallbackInfo& info) {
 Object InitFunction(Env env) {
   Object result = Object::New(env);
   Object exports = Object::New(env);
-  exports["emptyConstructor"] = Function::New(env, EmptyConstructor);
   exports["voidCallback"] = Function::New(env, VoidCallback, "voidCallback");
   exports["valueCallback"] = Function::New(env, ValueCallback, std::string("valueCallback"));
   exports["voidCallbackWithData"] =
@@ -208,30 +115,15 @@ Object InitFunction(Env env) {
     Function::New(env, ValueCallbackWithData, nullptr, &testData);
   exports["callWithArgs"] = Function::New(env, CallWithArgs);
   exports["callWithVector"] = Function::New(env, CallWithVector);
-  exports["callWithCStyleArray"] = Function::New(env, CallWithCStyleArray);
-  exports["callWithReceiverAndCStyleArray"] =
-      Function::New(env, CallWithReceiverAndCStyleArray);
   exports["callWithReceiverAndArgs"] = Function::New(env, CallWithReceiverAndArgs);
   exports["callWithReceiverAndVector"] = Function::New(env, CallWithReceiverAndVector);
   exports["callWithInvalidReceiver"] = Function::New(env, CallWithInvalidReceiver);
   exports["callConstructorWithArgs"] = Function::New(env, CallConstructorWithArgs);
   exports["callConstructorWithVector"] = Function::New(env, CallConstructorWithVector);
-  exports["callConstructorWithCStyleArray"] =
-      Function::New(env, CallConstructorWithCStyleArray);
   exports["isConstructCall"] = Function::New(env, IsConstructCall);
-  exports["makeCallbackWithArgs"] = Function::New(env, MakeCallbackWithArgs);
-  exports["makeCallbackWithVector"] =
-      Function::New(env, MakeCallbackWithVector);
-  exports["makeCallbackWithCStyleArray"] =
-      Function::New(env, MakeCallbackWithCStyleArray);
-  exports["makeCallbackWithInvalidReceiver"] =
-      Function::New(env, MakeCallbackWithInvalidReceiver);
-  exports["callWithFunctionOperator"] =
-      Function::New(env, CallWithFunctionOperator);
   result["plain"] = exports;
 
   exports = Object::New(env);
-  exports["emptyConstructor"] = Function::New(env, EmptyConstructor);
   exports["voidCallback"] = Function::New<VoidCallback>(env, "voidCallback");
   exports["valueCallback"] =
       Function::New<ValueCallback>(env, std::string("valueCallback"));
@@ -241,9 +133,6 @@ Object InitFunction(Env env) {
       Function::New<ValueCallbackWithData>(env, nullptr, &testData);
   exports["callWithArgs"] = Function::New<CallWithArgs>(env);
   exports["callWithVector"] = Function::New<CallWithVector>(env);
-  exports["callWithCStyleArray"] = Function::New<CallWithCStyleArray>(env);
-  exports["callWithReceiverAndCStyleArray"] =
-      Function::New<CallWithReceiverAndCStyleArray>(env);
   exports["callWithReceiverAndArgs"] =
       Function::New<CallWithReceiverAndArgs>(env);
   exports["callWithReceiverAndVector"] =
@@ -254,18 +143,7 @@ Object InitFunction(Env env) {
       Function::New<CallConstructorWithArgs>(env);
   exports["callConstructorWithVector"] =
       Function::New<CallConstructorWithVector>(env);
-  exports["callConstructorWithCStyleArray"] =
-      Function::New<CallConstructorWithCStyleArray>(env);
   exports["isConstructCall"] = Function::New<IsConstructCall>(env);
-  exports["makeCallbackWithArgs"] = Function::New<MakeCallbackWithArgs>(env);
-  exports["makeCallbackWithVector"] =
-      Function::New<MakeCallbackWithVector>(env);
-  exports["makeCallbackWithCStyleArray"] =
-      Function::New<MakeCallbackWithCStyleArray>(env);
-  exports["makeCallbackWithInvalidReceiver"] =
-      Function::New<MakeCallbackWithInvalidReceiver>(env);
-  exports["callWithFunctionOperator"] =
-      Function::New<CallWithFunctionOperator>(env);
   result["templated"] = exports;
   return result;
 }
