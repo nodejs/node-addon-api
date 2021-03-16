@@ -86,13 +86,7 @@ The key can be any of the following types:
 - `const std::string&`
 - `uint32_t`
 
-While the value must be any of the following types:
-- `napi_value`
-- [`Napi::Value`](value.md)
-- `const char*`
-- `std::string&`
-- `bool`
-- `double`
+The `value` can be of any type that is accepted by [`Napi::Value::From`][].
 
 ### Delete()
 
@@ -271,3 +265,4 @@ Napi::Value Napi::Object::operator[] (uint32_t index) const;
 Returns an indexed property or array element as a [`Napi::Value`](value.md).
 
 [`Napi::Value`]: ./value.md
+[`Napi::Value::From`]: ./value.md#from
