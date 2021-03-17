@@ -218,8 +218,8 @@ Define a property on the object.
 void Napi::Object::DefineProperties (____ properties)
 ```
 - `[in] properties`: A list of [`Napi::PropertyDescriptor`](property_descriptor.md). Can be one of the following types:
-	- const std::initializer_list<Napi::PropertyDescriptor>&
-	- const std::vector<Napi::PropertyDescriptor>&
+  - const std::initializer_list<Napi::PropertyDescriptor>&
+  - const std::vector<Napi::PropertyDescriptor>&
 
 Defines properties on the object.
 
