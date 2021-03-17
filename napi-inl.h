@@ -4148,10 +4148,9 @@ inline AsyncContext::AsyncContext(napi_env env, const char* resource_name)
 }
 
 inline AsyncContext::AsyncContext(napi_env env,
-		                  const char* resource_name,
+                                  const char* resource_name,
                                   const Object& resource)
-  : _env(env),
-    _context(nullptr) {
+    : _env(env), _context(nullptr) {
   napi_value resource_id;
   napi_status status = napi_create_string_utf8(
       _env, resource_name, NAPI_AUTO_LENGTH, &resource_id);
