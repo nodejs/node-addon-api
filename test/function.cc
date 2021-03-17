@@ -146,7 +146,7 @@ void MakeCallbackWithArgs(const CallbackInfo& info) {
   Function callback = info[0].As<Function>();
   Object resource = info[1].As<Object>();
 
-  AsyncContext context(env, "async_context_test", resource);
+  AsyncContext context(env, "function_test_context", resource);
 
   callback.MakeCallback(
       resource,
@@ -159,7 +159,7 @@ void MakeCallbackWithVector(const CallbackInfo& info) {
   Function callback = info[0].As<Function>();
   Object resource = info[1].As<Object>();
 
-  AsyncContext context(env, "async_context_test", resource);
+  AsyncContext context(env, "function_test_context", resource);
 
   std::vector<napi_value> args;
   args.reserve(3);
@@ -174,7 +174,7 @@ void MakeCallbackWithCStyleArray(const CallbackInfo& info) {
   Function callback = info[0].As<Function>();
   Object resource = info[1].As<Object>();
 
-  AsyncContext context(env, "async_context_test", resource);
+  AsyncContext context(env, "function_test_context", resource);
 
   std::vector<napi_value> args;
   args.reserve(3);
