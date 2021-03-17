@@ -12,19 +12,27 @@ function test(binding) {
     assert.strictEqual(nativeGetProperty(obj, 'test'), 1);
   }
 
+  function testShouldReturnUndefinedIfKeyIsNotPresent(nativeGetProperty) {
+    const obj = { };
+    assert.strictEqual(nativeGetProperty(obj, 'test'), undefined);
+  }
+
   function testShouldThrowErrorIfKeyIsInvalid(nativeGetProperty) {
     assert.throws(() => {
       nativeGetProperty(undefined, 'test');
     }, /Cannot convert undefined or null to object/);
   }
 
-  testGetProperty(binding.object.getPropertyWithNapiValue);
-  testGetProperty(binding.object.getPropertyWithNapiWrapperValue);
-  testGetProperty(binding.object.getPropertyWithCStyleString);
-  testGetProperty(binding.object.getPropertyWithCppStyleString);
+  const nativeFunctions = [
+    binding.object.getPropertyWithNapiValue,
+    binding.object.getPropertyWithNapiWrapperValue,
+    binding.object.getPropertyWithCStyleString,
+    binding.object.getPropertyWithCppStyleString
+  ];
 
-  testShouldThrowErrorIfKeyIsInvalid(binding.object.getPropertyWithNapiValue);
-  testShouldThrowErrorIfKeyIsInvalid(binding.object.getPropertyWithNapiWrapperValue);
-  testShouldThrowErrorIfKeyIsInvalid(binding.object.getPropertyWithCStyleString);
-  testShouldThrowErrorIfKeyIsInvalid(binding.object.getPropertyWithCppStyleString);
+  nativeFunctions.forEach((nativeFunction) => {
+    testGetProperty(nativeFunction);
+    testShouldReturnUndefinedIfKeyIsNotPresent(nativeFunction);
+    testShouldThrowErrorIfKeyIsInvalid(nativeFunction);
+  });
 }

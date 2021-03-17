@@ -60,7 +60,7 @@ This is the type describing a callback returning `void` that will be invoked
 from JavaScript.
 
 ```cpp
-typedef void (*VoidCallback)(const Napi::CallbackInfo& info);
+using VoidCallback = void (*)(const Napi::CallbackInfo& info);
 ```
 
 ### Napi::Function::Callback
@@ -70,7 +70,7 @@ from JavaScript.
 
 
 ```cpp
-typedef Value (*Callback)(const Napi::CallbackInfo& info);
+using Callback = Value (*)(const Napi::CallbackInfo& info);
 ```
 
 ## Methods

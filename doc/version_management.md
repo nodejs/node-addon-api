@@ -25,7 +25,8 @@ information is stored in the `napi_node_version` structure that is defined as
 shown below:
 
 ```cpp
-typedef struct {
+using napi_node_version =
+struct {
   uint32_t major;
   uint32_t minor;
   uint32_t patch;

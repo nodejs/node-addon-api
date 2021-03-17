@@ -35,6 +35,7 @@
         'object/has_property.cc',
         'object/object.cc',
         'object/set_property.cc',
+        'object/subscript_operator.cc',
         'promise.cc',
         'run_script.cc',
         'threadsafe_function/threadsafe_function_ctx.cc',

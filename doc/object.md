@@ -56,16 +56,7 @@ Napi::Object::Object(napi_env env, napi_value value);
 ```
 - `[in] env`: The `napi_env` environment in which to construct the Value object.
 
-- `[in] value`: The C++ primitive from which to instantiate the Value. `value` may be any of:
-  - bool
-  - Any integer type
-  - Any floating point type
-  - const char* (encoded using UTF-8, null-terminated)
-  - const char16_t* (encoded using UTF-16-LE, null-terminated)
-  - std::string (encoded using UTF-8)
-  - std::u16string
-  - Napi::Value
-  - napi_value
+- `[in] value`: The `napi_value` which is a handle for a JavaScript object.
 
 Creates a non-empty `Napi::Object` instance.
 

@@ -11,14 +11,14 @@ classes.
 The common JavaScript `TypedArray` types are pre-defined for each of use:
 
 ```cpp
-typedef Napi::TypedArrayOf<int8_t> Int8Array;
-typedef Napi::TypedArrayOf<uint8_t> Uint8Array;
-typedef Napi::TypedArrayOf<int16_t> Int16Array;
-typedef Napi::TypedArrayOf<uint16_t> Uint16Array;
-typedef Napi::TypedArrayOf<int32_t> Int32Array;
-typedef Napi::TypedArrayOf<uint32_t> Uint32Array;
-typedef Napi::TypedArrayOf<float> Float32Array;
-typedef Napi::TypedArrayOf<double> Float64Array;
+using Int8Array = Napi::TypedArrayOf<int8_t>;
+using Uint8Array = Napi::TypedArrayOf<uint8_t>;
+using Int16Array = Napi::TypedArrayOf<int16_t>;
+using Uint16Array = Napi::TypedArrayOf<uint16_t>;
+using Int32Array = Napi::TypedArrayOf<int32_t>;
+using Uint32Array = Napi::TypedArrayOf<uint32_t>;
+using Float32Array = Napi::TypedArrayOf<float>;
+using Float64Array = Napi::TypedArrayOf<double>;
 ```
 
 The one exception is the `Uint8ClampedArray` which requires explicit
