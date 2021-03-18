@@ -14,7 +14,7 @@ function test(binding) {
 
     assert.strictEqual(nativeHasProperty(obj, 'one'), true);
     assert.strictEqual(nativeHasProperty(obj, 'two'), true);
-    assert.strictEqual('toString' in obj, true);
+    assert.strictEqual('toString' in obj, true); 
     assert.strictEqual(nativeHasProperty(obj, 'toString'), true);
   }
 
@@ -23,6 +23,9 @@ function test(binding) {
       nativeHasProperty(undefined, 'test');
     }, /Cannot convert undefined or null to object/);
   }
+
+  const objectWithInt32Key = { 12: 101 };
+  assert.strictEqual(binding.object.hasPropertyWithUint32(objectWithInt32Key,12),true);
 
   testHasProperty(binding.object.hasPropertyWithNapiValue);
   testHasProperty(binding.object.hasPropertyWithNapiWrapperValue);

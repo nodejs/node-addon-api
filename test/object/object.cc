@@ -3,6 +3,7 @@
 using namespace Napi;
 
 // Native wrappers for testing Object::Get()
+Value GetPropertyWithUint32(const CallbackInfo& info);
 Value GetPropertyWithNapiValue(const CallbackInfo& info);
 Value GetPropertyWithNapiWrapperValue(const CallbackInfo& info);
 Value GetPropertyWithCStyleString(const CallbackInfo& info);
@@ -15,6 +16,7 @@ void SetPropertyWithCStyleString(const CallbackInfo& info);
 void SetPropertyWithCppStyleString(const CallbackInfo& info);
 
 // Native wrappers for testing Object::Delete()
+Value DeletePropertyWithUint32(const CallbackInfo& info);
 Value DeletePropertyWithNapiValue(const CallbackInfo& info);
 Value DeletePropertyWithNapiWrapperValue(const CallbackInfo& info);
 Value DeletePropertyWithCStyleString(const CallbackInfo& info);
@@ -27,6 +29,7 @@ Value HasOwnPropertyWithCStyleString(const CallbackInfo& info);
 Value HasOwnPropertyWithCppStyleString(const CallbackInfo& info);
 
 // Native wrappers for testing Object::Has()
+Value HasPropertyWithUint32(const CallbackInfo& info);
 Value HasPropertyWithNapiValue(const CallbackInfo& info);
 Value HasPropertyWithNapiWrapperValue(const CallbackInfo& info);
 Value HasPropertyWithCStyleString(const CallbackInfo& info);
@@ -265,6 +268,7 @@ Object InitObject(Env env) {
   exports["defineProperties"] = Function::New(env, DefineProperties);
   exports["defineValueProperty"] = Function::New(env, DefineValueProperty);
 
+  exports["getPropertyWithUint32"] = Function::New(env, GetPropertyWithUint32);
   exports["getPropertyWithNapiValue"] = Function::New(env, GetPropertyWithNapiValue);
   exports["getPropertyWithNapiWrapperValue"] = Function::New(env, GetPropertyWithNapiWrapperValue);
   exports["getPropertyWithCStyleString"] = Function::New(env, GetPropertyWithCStyleString);
@@ -275,6 +279,7 @@ Object InitObject(Env env) {
   exports["setPropertyWithCStyleString"] = Function::New(env, SetPropertyWithCStyleString);
   exports["setPropertyWithCppStyleString"] = Function::New(env, SetPropertyWithCppStyleString);
 
+  exports["deletePropertyWithUint32"] = Function::New(env, DeletePropertyWithUint32);
   exports["deletePropertyWithNapiValue"] = Function::New(env, DeletePropertyWithNapiValue);
   exports["deletePropertyWithNapiWrapperValue"] = Function::New(env, DeletePropertyWithNapiWrapperValue);
   exports["deletePropertyWithCStyleString"] = Function::New(env, DeletePropertyWithCStyleString);
@@ -285,6 +290,7 @@ Object InitObject(Env env) {
   exports["hasOwnPropertyWithCStyleString"] = Function::New(env, HasOwnPropertyWithCStyleString);
   exports["hasOwnPropertyWithCppStyleString"] = Function::New(env, HasOwnPropertyWithCppStyleString);
 
+  exports["hasPropertyWithUint32"] = Function::New(env, HasPropertyWithUint32);
   exports["hasPropertyWithNapiValue"] = Function::New(env, HasPropertyWithNapiValue);
   exports["hasPropertyWithNapiWrapperValue"] = Function::New(env, HasPropertyWithNapiWrapperValue);
   exports["hasPropertyWithCStyleString"] = Function::New(env, HasPropertyWithCStyleString);
