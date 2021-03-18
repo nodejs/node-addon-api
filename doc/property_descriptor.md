@@ -50,7 +50,7 @@ Void Init(Env env) {
 ### PropertyDescriptor::GetterCallback
 
 ```cpp
-typedef Napi::Value (*GetterCallback)(const Napi::CallbackInfo& info);
+using GetterCallback = Napi::Value (*)(const Napi::CallbackInfo& info);
 ```
 
 This is the signature of a getter function to be passed as a template parameter
@@ -59,7 +59,7 @@ to `PropertyDescriptor::Accessor`.
 ### PropertyDescriptor::SetterCallback
 
 ```cpp
-typedef void (*SetterCallback)(const Napi::CallbackInfo& info);
+using SetterCallback = void (*)(const Napi::CallbackInfo& info);
 ```
 
 This is the signature of a setter function to be passed as a template parameter
@@ -282,5 +282,5 @@ The name of the property can be any of the following types:
 - napi\_writable,
 - napi\_enumerable,
 - napi\_configurable
-For more information on the flags and on napi\_property\_attributes, please read the documentation [here](https://github.com/nodejs/node/blob/master/doc/api/n-api.md#napi_property_attributes).
+For more information on the flags and on napi\_property\_attributes, please read the documentation [here](https://github.com/nodejs/node/blob/HEAD/doc/api/n-api.md#napi_property_attributes).
 

@@ -56,16 +56,7 @@ Napi::Object::Object(napi_env env, napi_value value);
 ```
 - `[in] env`: The `napi_env` environment in which to construct the Value object.
 
-- `[in] value`: The C++ primitive from which to instantiate the Value. `value` may be any of:
-  - bool
-  - Any integer type
-  - Any floating point type
-  - const char* (encoded using UTF-8, null-terminated)
-  - const char16_t* (encoded using UTF-16-LE, null-terminated)
-  - std::string (encoded using UTF-8)
-  - std::u16string
-  - Napi::Value
-  - napi_value
+- `[in] value`: The `napi_value` which is a handle for a JavaScript object.
 
 Creates a non-empty `Napi::Object` instance.
 
@@ -232,28 +223,31 @@ void Napi::Object::DefineProperties (____ properties)
 
 Defines properties on the object.
 
-### Operator[]()
+### operator\[\]()
 
 ```cpp
 Napi::PropertyLValue<std::string> Napi::Object::operator[] (const char* utf8name);
 ```
 - `[in] utf8name`: UTF-8 encoded null-terminated property name.
 
-Returns a [`Napi::PropertyLValue`](propertylvalue.md) as the named property or sets the named property.
+Returns a [`Napi::Object::PropertyLValue`](propertylvalue.md) as the named
+property or sets the named property.
 
 ```cpp
 Napi::PropertyLValue<std::string> Napi::Object::operator[] (const std::string& utf8name);
 ```
 - `[in] utf8name`: UTF-8 encoded property name.
 
-Returns a [`Napi::PropertyLValue`](propertylvalue.md) as the named property or sets the named property.
+Returns a [`Napi::Object::PropertyLValue`](propertylvalue.md) as the named
+property or sets the named property.
 
 ```cpp
 Napi::PropertyLValue<uint32_t> Napi::Object::operator[] (uint32_t index);
 ```
 - `[in] index`: Element index.
 
-Returns a [`Napi::PropertyLValue`](propertylvalue.md) or sets an indexed property or array element.
+Returns a [`Napi::Object::PropertyLValue`](propertylvalue.md) or sets an
+indexed property or array element.
 
 ```cpp
 Napi::Value Napi::Object::operator[] (const char* utf8name) const;

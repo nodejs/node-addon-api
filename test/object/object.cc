@@ -36,6 +36,14 @@ Value HasPropertyWithCppStyleString(const CallbackInfo& info);
 Value AddFinalizer(const CallbackInfo& info);
 Value AddFinalizerWithHint(const CallbackInfo& info);
 
+// Native wrappers for testing Object::operator []
+Value SubscriptGetWithCStyleString(const CallbackInfo& info);
+Value SubscriptGetWithCppStyleString(const CallbackInfo& info);
+Value SubscriptGetAtIndex(const CallbackInfo& info);
+void SubscriptSetWithCStyleString(const CallbackInfo& info);
+void SubscriptSetWithCppStyleString(const CallbackInfo& info);
+void SubscriptSetAtIndex(const CallbackInfo& info);
+
 static bool testValue = true;
 // Used to test void* Data() integrity
 struct UserDataHolder {
@@ -67,6 +75,19 @@ Value TestFunction(const CallbackInfo& info) {
 Value TestFunctionWithUserData(const CallbackInfo& info) {
   UserDataHolder* holder = reinterpret_cast<UserDataHolder*>(info.Data());
   return Number::New(info.Env(), holder->value);
+}
+
+Value EmptyConstructor(const CallbackInfo& info) {
+  auto env = info.Env();
+  bool isEmpty = info[0].As<Boolean>();
+  Object object = isEmpty ? Object() : Object(env, Object::New(env));
+  return Boolean::New(env, object.IsEmpty());
+}
+
+Value ConstructorFromObject(const CallbackInfo& info) {
+  auto env = info.Env();
+  Object object = info[0].As<Object>();
+  return Object(env, object);
 }
 
 Array GetPropertyNames(const CallbackInfo& info) {
@@ -228,8 +249,17 @@ Value CreateObjectUsingMagic(const CallbackInfo& info) {
   return obj;
 }
 
+Value InstanceOf(const CallbackInfo& info) {
+  Object obj = info[0].As<Object>();
+  Function constructor = info[1].As<Function>();
+  return Boolean::New(info.Env(), obj.InstanceOf(constructor));
+}
+
 Object InitObject(Env env) {
   Object exports = Object::New(env);
+
+  exports["emptyConstructor"] = Function::New(env, EmptyConstructor);
+  exports["constructorFromObject"] = Function::New(env, ConstructorFromObject);
 
   exports["GetPropertyNames"] = Function::New(env, GetPropertyNames);
   exports["defineProperties"] = Function::New(env, DefineProperties);
@@ -264,6 +294,19 @@ Object InitObject(Env env) {
 
   exports["addFinalizer"] = Function::New(env, AddFinalizer);
   exports["addFinalizerWithHint"] = Function::New(env, AddFinalizerWithHint);
+
+  exports["instanceOf"] = Function::New(env, InstanceOf);
+
+  exports["subscriptGetWithCStyleString"] =
+      Function::New(env, SubscriptGetWithCStyleString);
+  exports["subscriptGetWithCppStyleString"] =
+      Function::New(env, SubscriptGetWithCppStyleString);
+  exports["subscriptGetAtIndex"] = Function::New(env, SubscriptGetAtIndex);
+  exports["subscriptSetWithCStyleString"] =
+      Function::New(env, SubscriptSetWithCStyleString);
+  exports["subscriptSetWithCppStyleString"] =
+      Function::New(env, SubscriptSetWithCppStyleString);
+  exports["subscriptSetAtIndex"] = Function::New(env, SubscriptSetAtIndex);
 
   return exports;
 }

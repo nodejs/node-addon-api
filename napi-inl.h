@@ -344,12 +344,11 @@ struct AccessorCallbackData {
 ////////////////////////////////////////////////////////////////////////////////
 
 // Register an add-on based on an initializer function.
-#define NODE_API_MODULE(modname, regfunc)                 \
-  napi_value __napi_ ## regfunc(napi_env env,             \
-                                napi_value exports) {     \
-    return Napi::RegisterModule(env, exports, regfunc);   \
-  }                                                       \
-  NAPI_MODULE(modname, __napi_ ## regfunc)
+#define NODE_API_MODULE(modname, regfunc)                                      \
+  static napi_value __napi_##regfunc(napi_env env, napi_value exports) {       \
+    return Napi::RegisterModule(env, exports, regfunc);                        \
+  }                                                                            \
+  NAPI_MODULE(modname, __napi_##regfunc)
 
 // Register an add-on based on a subclass of `Addon<T>` with a custom Node.js
 // module name.
@@ -1346,7 +1345,8 @@ inline bool Object::InstanceOf(const Function& constructor) const {
 template <typename Finalizer, typename T>
 inline void Object::AddFinalizer(Finalizer finalizeCallback, T* data) {
   details::FinalizeData<T, Finalizer>* finalizeData =
-    new details::FinalizeData<T, Finalizer>({ finalizeCallback, nullptr });
+      new details::FinalizeData<T, Finalizer>(
+          {std::move(finalizeCallback), nullptr});
   napi_status status =
       details::AttachData(_env,
                           *this,
@@ -1364,7 +1364,8 @@ inline void Object::AddFinalizer(Finalizer finalizeCallback,
                                  T* data,
                                  Hint* finalizeHint) {
   details::FinalizeData<T, Finalizer, Hint>* finalizeData =
-    new details::FinalizeData<T, Finalizer, Hint>({ finalizeCallback, finalizeHint });
+      new details::FinalizeData<T, Finalizer, Hint>(
+          {std::move(finalizeCallback), finalizeHint});
   napi_status status =
       details::AttachData(_env,
                           *this,
@@ -1396,7 +1397,8 @@ inline External<T> External<T>::New(napi_env env,
                                     Finalizer finalizeCallback) {
   napi_value value;
   details::FinalizeData<T, Finalizer>* finalizeData =
-    new details::FinalizeData<T, Finalizer>({ finalizeCallback, nullptr });
+      new details::FinalizeData<T, Finalizer>(
+          {std::move(finalizeCallback), nullptr});
   napi_status status = napi_create_external(
     env,
     data,
@@ -1418,7 +1420,8 @@ inline External<T> External<T>::New(napi_env env,
                                     Hint* finalizeHint) {
   napi_value value;
   details::FinalizeData<T, Finalizer, Hint>* finalizeData =
-    new details::FinalizeData<T, Finalizer, Hint>({ finalizeCallback, finalizeHint });
+      new details::FinalizeData<T, Finalizer, Hint>(
+          {std::move(finalizeCallback), finalizeHint});
   napi_status status = napi_create_external(
     env,
     data,
@@ -1510,7 +1513,8 @@ inline ArrayBuffer ArrayBuffer::New(napi_env env,
                                     Finalizer finalizeCallback) {
   napi_value value;
   details::FinalizeData<void, Finalizer>* finalizeData =
-    new details::FinalizeData<void, Finalizer>({ finalizeCallback, nullptr });
+      new details::FinalizeData<void, Finalizer>(
+          {std::move(finalizeCallback), nullptr});
   napi_status status = napi_create_external_arraybuffer(
     env,
     externalData,
@@ -1534,7 +1538,8 @@ inline ArrayBuffer ArrayBuffer::New(napi_env env,
                                     Hint* finalizeHint) {
   napi_value value;
   details::FinalizeData<void, Finalizer, Hint>* finalizeData =
-    new details::FinalizeData<void, Finalizer, Hint>({ finalizeCallback, finalizeHint });
+      new details::FinalizeData<void, Finalizer, Hint>(
+          {std::move(finalizeCallback), finalizeHint});
   napi_status status = napi_create_external_arraybuffer(
     env,
     externalData,
@@ -1984,8 +1989,8 @@ inline Function Function::New(napi_env env,
                               Callable cb,
                               const char* utf8name,
                               void* data) {
-  typedef decltype(cb(CallbackInfo(nullptr, nullptr))) ReturnType;
-  typedef details::CallbackData<Callable, ReturnType> CbData;
+  using ReturnType = decltype(cb(CallbackInfo(nullptr, nullptr)));
+  using CbData = details::CallbackData<Callable, ReturnType>;
   auto callbackData = new CbData({ cb, data });
 
   napi_value value;
@@ -2154,7 +2159,8 @@ inline Buffer<T> Buffer<T>::New(napi_env env,
                                 Finalizer finalizeCallback) {
   napi_value value;
   details::FinalizeData<T, Finalizer>* finalizeData =
-    new details::FinalizeData<T, Finalizer>({ finalizeCallback, nullptr });
+      new details::FinalizeData<T, Finalizer>(
+          {std::move(finalizeCallback), nullptr});
   napi_status status = napi_create_external_buffer(
     env,
     length * sizeof (T),
@@ -2178,7 +2184,8 @@ inline Buffer<T> Buffer<T>::New(napi_env env,
                                 Hint* finalizeHint) {
   napi_value value;
   details::FinalizeData<T, Finalizer, Hint>* finalizeData =
-    new details::FinalizeData<T, Finalizer, Hint>({ finalizeCallback, finalizeHint });
+      new details::FinalizeData<T, Finalizer, Hint>(
+          {std::move(finalizeCallback), finalizeHint});
   napi_status status = napi_create_external_buffer(
     env,
     length * sizeof (T),
@@ -3036,7 +3043,7 @@ PropertyDescriptor::Accessor(Napi::Env env,
                              Getter getter,
                              napi_property_attributes attributes,
                              void* data) {
-  typedef details::CallbackData<Getter, Napi::Value> CbData;
+  using CbData = details::CallbackData<Getter, Napi::Value>;
   auto callbackData = new CbData({ getter, data });
 
   napi_status status = AttachData(env, object, callbackData);
@@ -3074,7 +3081,7 @@ inline PropertyDescriptor PropertyDescriptor::Accessor(Napi::Env env,
                                                        Getter getter,
                                                        napi_property_attributes attributes,
                                                        void* data) {
-  typedef details::CallbackData<Getter, Napi::Value> CbData;
+  using CbData = details::CallbackData<Getter, Napi::Value>;
   auto callbackData = new CbData({ getter, data });
 
   napi_status status = AttachData(env, object, callbackData);
@@ -3103,7 +3110,7 @@ inline PropertyDescriptor PropertyDescriptor::Accessor(Napi::Env env,
                                                        Setter setter,
                                                        napi_property_attributes attributes,
                                                        void* data) {
-  typedef details::AccessorCallbackData<Getter, Setter> CbData;
+  using CbData = details::AccessorCallbackData<Getter, Setter>;
   auto callbackData = new CbData({ getter, setter, data });
 
   napi_status status = AttachData(env, object, callbackData);
@@ -3143,7 +3150,7 @@ inline PropertyDescriptor PropertyDescriptor::Accessor(Napi::Env env,
                                                        Setter setter,
                                                        napi_property_attributes attributes,
                                                        void* data) {
-  typedef details::AccessorCallbackData<Getter, Setter> CbData;
+  using CbData = details::AccessorCallbackData<Getter, Setter>;
   auto callbackData = new CbData({ getter, setter, data });
 
   napi_status status = AttachData(env, object, callbackData);
@@ -3263,7 +3270,7 @@ inline void InstanceWrap<T>::AttachPropData(napi_env env,
                                        napi_value value,
                                        const napi_property_descriptor* prop) {
   napi_status status;
-  if (prop->method != nullptr && !(prop->attributes & napi_static)) {
+  if (!(prop->attributes & napi_static)) {
     if (prop->method == T::InstanceVoidMethodCallbackWrapper) {
       status = Napi::details::AttachData(env,
                     value,

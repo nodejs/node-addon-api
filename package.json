@@ -329,6 +329,11 @@
     "type": "git",
     "url": "git://github.com/nodejs/node-addon-api.git"
   },
+  "files": [
+    "*.{c,h,gyp,gypi}",
+    "package-support.json",
+    "tools/"
+  ],
   "scripts": {
     "prebenchmark": "node-gyp rebuild -C benchmark",
     "benchmark": "node benchmark",
