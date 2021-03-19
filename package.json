@@ -344,8 +344,8 @@
     "predev:incremental": "node-gyp configure build -C test --debug",
     "dev:incremental": "node test",
     "doc": "doxygen doc/Doxyfile",
-    "lint": "node tools/clang-format.js",
-    "lint:fix": "git-clang-format '*.h', '*.cc'"
+    "lint": "node tools/clang-format",
+    "lint:fix": "node tools/clang-format --fix"
   },
   "pre-commit": "lint",
   "version": "3.1.0",
