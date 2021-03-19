@@ -10,10 +10,10 @@ Value GetPropertyWithNapiValueAsKey(const CallbackInfo& info);
 void CreateMockTestObject(const CallbackInfo& info);
 
 // Wrapper for testing Object::Set() for global Objects
-Value SetPropertyWithCStyleStringAsKey(const CallbackInfo& info);
-Value SetPropertyWithCppStyleStringAsKey(const CallbackInfo& info);
-Value SetPropertyWithInt32AsKey(const CallbackInfo& info);
-Value SetPropertyWithNapiValueAsKey(const CallbackInfo& info);
+void SetPropertyWithCStyleStringAsKey(const CallbackInfo& info);
+void SetPropertyWithCppStyleStringAsKey(const CallbackInfo& info);
+void SetPropertyWithInt32AsKey(const CallbackInfo& info);
+void SetPropertyWithNapiValueAsKey(const CallbackInfo& info);
 
 Value HasPropertyWithCStyleStringAsKey(const CallbackInfo& info);
 Value HasPropertyWithCppStyleStringAsKey(const CallbackInfo& info);
