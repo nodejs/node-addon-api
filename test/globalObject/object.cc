@@ -17,7 +17,6 @@ Value SetPropertyWithNapiValueAsKey(const CallbackInfo& info);
 
 Value HasPropertyWithCStyleStringAsKey(const CallbackInfo& info);
 Value HasPropertyWithCppStyleStringAsKey(const CallbackInfo& info);
-Value HasPropertyWithInt32AsKey(const CallbackInfo& info);
 Value HasPropertyWithNapiValueAsKey(const CallbackInfo& info);
 
 Value DeletePropertyWithCStyleStringAsKey(const CallbackInfo& info);
@@ -46,8 +45,6 @@ Object InitGlobalObject(Env env) {
       Function::New(env, SetPropertyWithInt32AsKey);
   exports["hasPropertyWithCStyleString"] =
       Function::New(env, HasPropertyWithCStyleStringAsKey);
-  exports["hasPropertyWithInt32"] =
-      Function::New(env, HasPropertyWithInt32AsKey);
   exports["hasPropertyWithCppStyleString"] =
       Function::New(env, HasPropertyWithCppStyleStringAsKey);
   exports["hasPropertyWithNapiValue"] =

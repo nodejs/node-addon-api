@@ -15,12 +15,6 @@ Value HasPropertyWithCppStyleStringAsKey(const CallbackInfo& info) {
   return Boolean::New(info.Env(), globalObject.HasOwnProperty(key.Utf8Value()));
 }
 
-Value HasPropertyWithInt32AsKey(const CallbackInfo& info) {
-  Object globalObject = info.Env().Global();
-  Number key = info[0].As<Number>();
-  return Boolean::New(info.Env(), globalObject.HasOwnProperty(key));
-}
-
 Value HasPropertyWithNapiValueAsKey(const CallbackInfo& info) {
   Object globalObject = info.Env().Global();
   Name key = info[0].As<Name>();

@@ -279,7 +279,8 @@ Object InitObject(Env env) {
   exports["setPropertyWithCStyleString"] = Function::New(env, SetPropertyWithCStyleString);
   exports["setPropertyWithCppStyleString"] = Function::New(env, SetPropertyWithCppStyleString);
 
-  exports["deletePropertyWithUint32"] = Function::New(env, DeletePropertyWithUint32);
+  exports["deletePropertyWithUint32"] =
+      Function::New(env, DeletePropertyWithUint32);
   exports["deletePropertyWithNapiValue"] = Function::New(env, DeletePropertyWithNapiValue);
   exports["deletePropertyWithNapiWrapperValue"] = Function::New(env, DeletePropertyWithNapiWrapperValue);
   exports["deletePropertyWithCStyleString"] = Function::New(env, DeletePropertyWithCStyleString);

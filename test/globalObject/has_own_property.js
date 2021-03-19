@@ -30,10 +30,6 @@ function test(binding) {
               case KEY_TYPE.CPP_STR:
                 assert.strictEqual(binding.globalObject.hasPropertyWithCppStyleString(key), true);
                 break;
-      
-              case KEY_TYPE.INT_32:
-                assert.strictEqual(binding.globalObject.hasPropertyWithInt32(key), true);
-                break;
         }
     }
 
@@ -47,7 +43,6 @@ function test(binding) {
     assertGlobalObjectHasProperty('c_str_key',KEY_TYPE.C_STR);
     assertGlobalObjectHasProperty('cpp_string_key',KEY_TYPE.CPP_STR);
     assertGlobalObjectHasProperty('circular',KEY_TYPE.CPP_STR);
-    assertGlobalObjectHasProperty(15,true);
     assertGlobalObjectHasProperty('2', KEY_TYPE.NAPI);
 
     assertErrMessageIsThrown(binding.globalObject.hasPropertyWithCppStyleString, 'Error: A string was expected');

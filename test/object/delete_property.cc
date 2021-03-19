@@ -2,7 +2,6 @@
 
 using namespace Napi;
 
-
 Value DeletePropertyWithUint32(const CallbackInfo& info) {
   Object obj = info[0].As<Object>();
   Number key = info[1].As<Number>();
