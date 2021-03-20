@@ -138,7 +138,7 @@ The name of the property can be any of the following types:
 - `napi_value value`
 - `Napi::Name`
 
-**This signature is deprecated. It will result in a memory leak if used.**
+**The above signature is deprecated. It will result in a memory leak if used.**
 
 ```cpp
 static Napi::PropertyDescriptor Napi::PropertyDescriptor::Accessor (
@@ -186,7 +186,7 @@ The name of the property can be any of the following types:
 - `napi_value value`
 - `Napi::Name`
 
-**This signature is deprecated. It will result in a memory leak if used.**
+**The above signature is deprecated. It will result in a memory leak if used.**
 
 ```cpp
 static Napi::PropertyDescriptor Napi::PropertyDescriptor::Accessor (
@@ -236,7 +236,7 @@ The name of the property can be any of the following types:
 - `napi_value value`
 - `Napi::Name`
 
-**This signature is deprecated. It will result in a memory leak if used.**
+**The above signature is deprecated. It will result in a memory leak if used.**
 
 ```cpp
 static Napi::PropertyDescriptor Napi::PropertyDescriptor::Function (
