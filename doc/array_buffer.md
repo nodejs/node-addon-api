@@ -30,10 +30,10 @@ expects it to be valid for the lifetime of the instance. Since the
 `Napi::ArrayBuffer` is subject to garbage collection this overload is only
 suitable for data which is static and never needs to be freed.
 This factory method will not provide the caller with an opportunity to free the
-data when hen the `Napi::ArrayBuffer` gets garbage-collected. If you need to
-free the data retained by the `Napi::ArrayBuffer` object please use other
+data when the `Napi::ArrayBuffer` gets garbage-collected. If you need to free
+the data retained by the `Napi::ArrayBuffer` object please use other
 variants of the `Napi::ArrayBuffer::New` factory method that accept
-`Napi::Finalizer`, which is a function that will be invoked when  the
+`Napi::Finalizer`, which is a function that will be invoked when the
 `Napi::ArrayBuffer` object has been destroyed.
 
 ```cpp
