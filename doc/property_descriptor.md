@@ -220,7 +220,7 @@ The name of the property can be any of the following types:
 static Napi::PropertyDescriptor Napi::PropertyDescriptor::Function (___ name,
                 Callable cb,
                 napi_property_attributes attributes = napi_default,
-		            void *data = nullptr);
+                void *data = nullptr);
 ```
 
 * `[in] name`: The name of the Callable function.
@@ -244,7 +244,7 @@ static Napi::PropertyDescriptor Napi::PropertyDescriptor::Function (
                 ___ name,
                 Callable cb,
                 napi_property_attributes attributes = napi_default,
-		            void *data = nullptr);
+                void *data = nullptr);
 ```
 
 * `[in] env`: The environment in which to create this accessor.
