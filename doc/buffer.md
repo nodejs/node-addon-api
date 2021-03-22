@@ -28,6 +28,12 @@ The `Napi::Buffer` object does not assume ownership for the data and expects it 
 valid for the lifetime of the object. Since the `Napi::Buffer` is subject to garbage
 collection this overload is only suitable for data which is static and never
 needs to be freed.
+This factory method will not provide the caller with an opportunity to free the
+data when the `Napi::Buffer` gets garbage-collected. If you need to free the
+data retained by the `Napi::Buffer` object please use other variants of the
+`Napi::Buffer::New` factory method that accept `Napi::Finalizer`, which is a
+function that will be invoked when the `Napi::Buffer` object has been
+destroyed.
 
 ```cpp
 static Napi::Buffer<T> Napi::Buffer::New(napi_env env, T* data, size_t length);
