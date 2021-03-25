@@ -3,9 +3,9 @@
 `Napi::Value` is the C++ manifestation of a JavaScript value. It is the base
 class upon which other JavaScript values such as `Napi::Number`,
 `Napi::Boolean`, `Napi::String`, and `Napi::Object` are based. It represents a
-JavaScript value of an unknown type. It is a thin wrapper around the N-API
+JavaScript value of an unknown type. It is a thin wrapper around the Node-API
 datatype `napi_value`. Methods on this class can be used to check the JavaScript
-type of the underlying N-API `napi_value` and also to convert to C++ types.
+type of the underlying Node-API `napi_value` and also to convert to C++ types.
 
 ## Constructors
 
@@ -45,7 +45,7 @@ value` may be any of:
 Napi::Value::operator napi_value() const;
 ```
 
-Returns the underlying N-API `napi_value`. If the instance is _empty_, this
+Returns the underlying Node-API `napi_value`. If the instance is _empty_, this
 returns `nullptr`.
 
 ### operator ==
@@ -98,10 +98,10 @@ static Napi::Value Napi::Value::From(napi_env env, const T& value);
 
 - `[in] env`: The `napi_env` environment in which to create the `Napi::Value`
 object.
-- `[in] value`: The N-API primitive value from which to create the `Napi::Value`
+- `[in] value`: The Node-API primitive value from which to create the `Napi::Value`
 object.
 
-Returns a `Napi::Value` object from an N-API primitive value.
+Returns a `Napi::Value` object from an Node-API primitive value.
 
 This method is used to convert from a C++ type to a JavaScript value.
 Here, `value` may be any of:
@@ -192,7 +192,7 @@ Thus, when C++ exceptions are not being used, callers should check the result of
 bool Napi::Value::IsExternal() const;
 ```
 
-Returns `true` if the underlying value is a N-API external object or `false`
+Returns `true` if the underlying value is a Node-API external object or `false`
 otherwise.
 
 ### IsFunction

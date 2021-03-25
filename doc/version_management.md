@@ -1,14 +1,14 @@
 # VersionManagement
 
 The `Napi::VersionManagement` class contains methods that allow information
-to be retrieved about the version of N-API and Node.js. In some cases it is
+to be retrieved about the version of Node-API and Node.js. In some cases it is
 important to make decisions based on different versions of the system.
 
 ## Methods
 
 ### GetNapiVersion
 
-Retrieves the highest N-API version supported by Node.js runtime.
+Retrieves the highest Node-API version supported by Node.js runtime.
 
 ```cpp
 static uint32_t Napi::VersionManagement::GetNapiVersion(Env env);
@@ -16,7 +16,7 @@ static uint32_t Napi::VersionManagement::GetNapiVersion(Env env);
 
 - `[in] env`: The environment in which the API is invoked under.
 
-Returns the highest N-API version supported by Node.js runtime.
+Returns the highest Node-API version supported by Node.js runtime.
 
 ### GetNodeVersion
 

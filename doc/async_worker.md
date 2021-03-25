@@ -343,8 +343,8 @@ virtual Napi::AsyncWorker::~AsyncWorker();
 Napi::AsyncWorker::operator napi_async_work() const;
 ```
 
-Returns the N-API napi_async_work wrapped by the `Napi::AsyncWorker` object. This
-can be used to mix usage of the C N-API and node-addon-api.
+Returns the Node-API `napi_async_work` wrapped by the `Napi::AsyncWorker` object. This
+can be used to mix usage of the C Node-API and node-addon-api.
 
 ## Example
 

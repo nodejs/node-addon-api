@@ -2,7 +2,7 @@
 
 ## Prerequisites
 
-Before starting to use **N-API** you need to assure you have the following
+Before starting to use **Node-API** you need to assure you have the following
 prerequisites:
 
 * **Node.JS** see: [Installing Node.js](https://nodejs.org/)
@@ -13,7 +13,7 @@ prerequisites:
 
 ## Installation and usage
 
-To use **N-API** in a native module:
+To use **Node-API** in a native module:
 
   1. Add a dependency on this package to `package.json`:
 
@@ -29,9 +29,9 @@ To use **N-API** in a native module:
   'include_dirs': ["<!(node -p \"require('node-addon-api').include_dir\")"],
 ```
 
-  3. Decide whether the package will enable C++ exceptions in the N-API wrapper.
+  3. Decide whether the package will enable C++ exceptions in the Node-API wrapper.
      The base ABI-stable C APIs do not throw or handle C++ exceptions, but the
-     N-API C++ wrapper classes may _optionally_
+     Node-API C++ wrapper classes may _optionally_
      [integrate C++ and JavaScript exception-handling
      ](https://github.com/nodejs/node-addon-api/blob/HEAD/doc/error_handling.md).
      To enable that capability, C++ exceptions must be enabled in `binding.gyp`:
@@ -49,7 +49,7 @@ To use **N-API** in a native module:
   },
 ```
 
-  Alternatively, disable use of C++ exceptions in N-API:
+  Alternatively, disable use of C++ exceptions in Node-API:
 
 ```gyp
   'defines': [ 'NAPI_DISABLE_CPP_EXCEPTIONS' ],
@@ -74,8 +74,8 @@ To use **N-API** in a native module:
 #include "napi.h"
 ```
 
-At build time, the N-API back-compat library code will be used only when the
-targeted node version *does not* have N-API built-in.
+At build time, the Node-API back-compat library code will be used only when the
+targeted node version *does not* have Node-API built-in.
 
 The preprocessor directive `NODE_ADDON_API_DISABLE_DEPRECATED` can be defined at
 compile time before including `napi.h` to skip the definition of deprecated APIs.

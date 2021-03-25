@@ -2,7 +2,7 @@
 
 **node-addon-api** provides a [checker tool][] that will inspect a given
 directory tree, identifying all Node.js native addons therein, and further
-indicating for each addon whether it is an N-API addon.
+indicating for each addon whether it is an Node-API addon.
 
 ## To use the checker tool:
 

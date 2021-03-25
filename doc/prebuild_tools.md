@@ -9,7 +9,7 @@ possible to distribute the native add-on in pre-built form for different platfor
 and architectures. The prebuild tools help to create and distribute the pre-built
 form of a native add-on.
 
-The following list report known tools that are compatible with **N-API**:
+The following list report known tools that are compatible with **Node-API**:
 
 - **[node-pre-gyp](https://www.npmjs.com/package/node-pre-gyp)**
 - **[prebuild](https://www.npmjs.com/package/prebuild)**

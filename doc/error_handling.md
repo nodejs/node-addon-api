@@ -41,8 +41,8 @@ exception, then node-addon-api automatically converts and throws it as a C++
 exception of type `Napi:Error` on return from the JavaScript code to the native
 method.
 
-If a C++ exception of type `Napi::Error` escapes from a N-API C++ callback, then
-the N-API wrapper automatically converts and throws it as a JavaScript exception.
+If a C++ exception of type `Napi::Error` escapes from a Node-API C++ callback, then
+the Node-API wrapper automatically converts and throws it as a JavaScript exception.
 
 On return from a native method, node-addon-api will automatically convert a pending C++
 exception to a JavaScript exception.
@@ -67,7 +67,7 @@ will bubble up as a C++ exception of type `Napi::Error`, until it is either caug
 while still in C++, or else automatically propagated as a JavaScript exception
 when returning to JavaScript.
 
-### Propagating a N-API C++ exception
+### Propagating a Node-API C++ exception
 
 ```cpp
 Napi::Function jsFunctionThatThrows = someObj.As<Napi::Function>();
@@ -81,7 +81,7 @@ executed. The exception will bubble up as a C++ exception of type `Napi::Error`,
 until it is either caught while still in C++, or else automatically propagated as
 a JavaScript exception when returning to JavaScript.
 
-### Handling a N-API C++ exception
+### Handling a Node-API C++ exception
 
 ```cpp
 Napi::Function jsFunctionThatThrows = someObj.As<Napi::Function>();
@@ -123,7 +123,7 @@ return;
 After throwing a JavaScript exception, the code should generally return
 immediately from the native callback, after performing any necessary cleanup.
 
-### Propagating a N-API JS exception
+### Propagating a Node-API JS exception
 
 ```cpp
 Napi::Env env = ...
@@ -139,7 +139,7 @@ If env.IsExceptionPending() returns true a JavaScript exception is pending. To
 let the exception propagate, the code should generally return immediately from
 the native callback, after performing any necessary cleanup.
 
-### Handling a N-API JS exception
+### Handling a Node-API JS exception
 
 ```cpp
 Napi::Env env = ...
@@ -154,10 +154,10 @@ if (env.IsExceptionPending()) {
 Since the exception was cleared here, it will not be propagated as a JavaScript
 exception after the native callback returns.
 
-## Calling N-API directly from a **node-addon-api** addon
+## Calling Node-API directly from a **node-addon-api** addon
 
 **node-addon-api** provides macros for throwing errors in response to non-OK
-`napi_status` results when calling [N-API](https://nodejs.org/docs/latest/api/n-api.html)
+`napi_status` results when calling [Node-API](https://nodejs.org/docs/latest/api/n-api.html)
 functions from within a native addon. These macros are defined differently
 depending on whether C++ exceptions are enabled or not, but are available for
 use in either case.
