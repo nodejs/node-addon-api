@@ -165,7 +165,7 @@ void ThrowDefaultError(const CallbackInfo& info) {
   NAPI_FATAL_IF_FAILED(status, "ThrowDefaultError", "napi_get_undefined");
 
   if (info[0].As<Boolean>().Value()) {
-    // Provoke N-API into setting an error, then use the `Napi::Error::New`
+    // Provoke Node-API into setting an error, then use the `Napi::Error::New`
     // factory with only the `env` parameter to throw an exception generated
     // from the last error.
     uint32_t dummy_uint32;
