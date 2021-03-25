@@ -113,7 +113,7 @@ if (majorNodeVersion < 12) {
 }
 
 (async function() {
-console.log(`Testing with N-API Version '${napiVersion}'.`);
+console.log(`Testing with Node-API Version '${napiVersion}'.`);
 
 console.log('Starting test suite\n');
 
