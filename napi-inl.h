@@ -2,9 +2,9 @@
 #define SRC_NAPI_INL_H_
 
 ////////////////////////////////////////////////////////////////////////////////
-// N-API C++ Wrapper Classes
+// Node-API C++ Wrapper Classes
 //
-// Inline header-only implementations for "N-API" ABI-stable C APIs for Node.js.
+// Inline header-only implementations for "Node-API" ABI-stable C APIs for Node.js.
 ////////////////////////////////////////////////////////////////////////////////
 
 // Note: Do not include this file directly! Include "napi.h" instead.
