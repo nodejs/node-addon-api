@@ -15,7 +15,7 @@ being used, callers should check the result of `Env::IsExceptionPending` before
 attempting to use the returned value.
 
 ```cpp
-Napi::String::String(napi_env env, napi_value value); ///< Wraps a N-API value primitive.
+Napi::String::String(napi_env env, napi_value value); ///< Wraps a Node-API value primitive.
 ```
 - `[in] env` - The environment in which to create the string.
 - `[in] value` - The primitive to wrap.

@@ -2,7 +2,7 @@
 
 There are cases (for example, resolving promises) where it is necessary to have
 the equivalent of the scope associated with a callback in place when making
-certain N-API calls.
+certain Node-API calls.
 
 ## Methods
 
@@ -50,5 +50,5 @@ Returns the `Napi::Env` associated with the `Napi::CallbackScope`.
 Napi::CallbackScope::operator napi_callback_scope() const;
 ```
 
-Returns the N-API `napi_callback_scope` wrapped by the `Napi::CallbackScope`
-object. This can be used to mix usage of the C N-API and node-addon-api.
+Returns the Node-API `napi_callback_scope` wrapped by the `Napi::CallbackScope`
+object. This can be used to mix usage of the C Node-API and node-addon-api.

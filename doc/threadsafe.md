@@ -48,7 +48,7 @@ native C++ code (the "callback") on the Node.js thread.
 
 ### [`Napi::ThreadSafeFunction`](threadsafe_function.md)
 
-This API is designed without N-API 5 native support for [the optional JavaScript
+This API is designed without Node-API 5 native support for [the optional JavaScript
   function callback feature](https://github.com/nodejs/node/commit/53297e66cb).
 
 This API has some dynamic functionality, in that:
@@ -65,7 +65,7 @@ situational **memory leaks**:
   and dynamically constructs a wrapper for your callback on the heap for every
   call to `[Non]BlockingCall()`.
 - In acting in this "broker" fashion, the API will call the underlying "make
-  call" N-API method on this packaged item. If the API has determined the
+  call" Node-API method on this packaged item. If the API has determined the
   thread-safe function is no longer accessible (eg. all threads have released
   yet there are still items on the queue), **the callback passed to
   [Non]BlockingCall will not execute**. This means it is impossible to perform
@@ -81,11 +81,11 @@ situational **memory leaks**:
 ### [`Napi::TypedThreadSafeFunction`](typed_threadsafe_function.md)
 
 The `TypedThreadSafeFunction` class is a new implementation to address the
-drawbacks listed above. The API is designed with N-API 5's support of an
+drawbacks listed above. The API is designed with Node-API 5's support of an
 optional function callback. The API will correctly allow developers to pass
 `std::nullptr` instead of a `const Function&` for the callback function
-specified in `::New`. It also provides helper APIs to _target_ N-API 4 and
-construct a no-op `Function` **or** to target N-API 5 and "construct" a
+specified in `::New`. It also provides helper APIs to _target_ Node-API 4 and
+construct a no-op `Function` **or** to target Node-API 5 and "construct" a
 `std::nullptr` callback. This allows a single codebase to use the same APIs,
 with just a switch of the `NAPI_VERSION` compile-time constant.
 
@@ -111,7 +111,7 @@ The removal of the dynamic call functionality has the following implications:
 
 In summary, it may be best to use `Napi::TypedThreadSafeFunction` if:
 
-- static, compile-time support for targeting N-API 4 or 5+ with an optional
+- static, compile-time support for targeting Node-API 4 or 5+ with an optional
   JavaScript callback feature is desired;
 - the callback can have `static` storage class and will not change across calls
   to `[Non]BlockingCall()`;

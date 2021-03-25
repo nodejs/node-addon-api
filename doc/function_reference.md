@@ -60,7 +60,7 @@ Napi::FunctionReference::FunctionReference(napi_env env, napi_ref ref);
 ```
 
 - `[in] env`: The environment in which to construct the `Napi::FunctionReference` object.
-- `[in] ref`: The N-API reference to be held by the `Napi::FunctionReference`.
+- `[in] ref`: The Node-API reference to be held by the `Napi::FunctionReference`.
 
 Returns a newly created `Napi::FunctionReference` object.
 

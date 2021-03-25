@@ -75,7 +75,7 @@ Napi::ObjectReference::ObjectReference(napi_env env, napi_value value);
 
 * `[in] env`: The `napi_env` environment in which to construct the `Napi::ObjectReference` object.
 
-* `[in] value`: The N-API primitive value to be held by the `Napi::ObjectReference`.
+* `[in] value`: The Node-API primitive value to be held by the `Napi::ObjectReference`.
 
 Returns the newly created reference.
 

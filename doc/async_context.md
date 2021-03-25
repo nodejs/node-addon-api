@@ -61,8 +61,8 @@ Returns the `Napi::Env` environment in which the async context has been created.
 Napi::AsyncContext::operator napi_async_context() const;
 ```
 
-Returns the N-API `napi_async_context` wrapped by the `Napi::AsyncContext`
-object. This can be used to mix usage of the C N-API and node-addon-api.
+Returns the Node-API `napi_async_context` wrapped by the `Napi::AsyncContext`
+object. This can be used to mix usage of the C Node-API and node-addon-api.
 
 ## Example
 

@@ -159,7 +159,7 @@ napi_status Napi::ThreadSafeFunction::NonBlockingCall(DataType* data, Callback c
   call as an `Napi::Function` in its parameters and the `DataType*` data pointer
   (if provided). Must implement `void operator()(Napi::Env env, Function
   jsCallback, DataType* data)`, skipping `data` if not provided. It is not
-  necessary to call into JavaScript via `MakeCallback()` because N-API runs
+  necessary to call into JavaScript via `MakeCallback()` because Node-API runs
   `callback` in a context appropriate for callbacks.
 
 **These specific function overloads should only be used on a `ThreadSafeFunction`

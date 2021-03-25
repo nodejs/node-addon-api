@@ -108,10 +108,10 @@ inside the `Napi::ObjectWrap<T>` class.
 operator napi_property_descriptor&() { return _desc; }
 ```
 
-Returns the original N-API `napi_property_descriptor` wrapped inside the `Napi::ClassPropertyDescriptor`
+Returns the original Node-API `napi_property_descriptor` wrapped inside the `Napi::ClassPropertyDescriptor`
 
 ```cpp
 operator const napi_property_descriptor&() const { return _desc; }
 ```
 
-Returns the original N-API `napi_property_descriptor` wrapped inside the `Napi::ClassPropertyDescriptor`
+Returns the original Node-API `napi_property_descriptor` wrapped inside the `Napi::ClassPropertyDescriptor`

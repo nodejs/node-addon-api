@@ -263,7 +263,7 @@ void CallJs(Napi::Env env, Function callback, Context *context,
   // Is the JavaScript environment still available to call into, eg. the TSFN is
   // not aborted
   if (env != nullptr) {
-    // On N-API 5+, the `callback` parameter is optional; however, this example
+    // On Node-API 5+, the `callback` parameter is optional; however, this example
     // does ensure a callback is provided.
     if (callback != nullptr) {
       callback.Call(context->Value(), {Number::New(env, *data)});
