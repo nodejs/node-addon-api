@@ -4,7 +4,8 @@
 ////////////////////////////////////////////////////////////////////////////////
 // Node-API C++ Wrapper Classes
 //
-// Inline header-only implementations for "Node-API" ABI-stable C APIs for Node.js.
+// Inline header-only implementations for "Node-API" ABI-stable C APIs for
+// Node.js.
 ////////////////////////////////////////////////////////////////////////////////
 
 // Note: Do not include this file directly! Include "napi.h" instead.

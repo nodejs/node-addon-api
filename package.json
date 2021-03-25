@@ -296,7 +296,6 @@
       "url": "https://github.com/ZzqiZQute"
     }
   ],
-  "dependencies": {},
   "description": "Node.js API (Node-API)",
   "devDependencies": {
     "benchmark": "^2.1.4",

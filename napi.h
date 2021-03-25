@@ -159,22 +159,25 @@ namespace Napi {
       TypedArrayOf<uint64_t>;  ///< Typed array of unsigned 64-bit integers
 #endif  // NAPI_VERSION > 5
 
-  /// Defines the signature of a Node-API C++ module's registration callback (init) function.
+  /// Defines the signature of a Node-API C++ module's registration callback
+  /// (init) function.
   using ModuleRegisterCallback = Object (*)(Env env, Object exports);
 
   class MemoryManagement;
 
   /// Environment for Node-API values and operations.
   ///
-  /// All Node-API values and operations must be associated with an environment. An environment
-  /// instance is always provided to callback functions; that environment must then be used for any
-  /// creation of Node-API values or other Node-API operations within the callback. (Many methods infer
-  /// the environment from the `this` instance that the method is called on.)
+  /// All Node-API values and operations must be associated with an environment.
+  /// An environment instance is always provided to callback functions; that
+  /// environment must then be used for any creation of Node-API values or other
+  /// Node-API operations within the callback. (Many methods infer the
+  /// environment from the `this` instance that the method is called on.)
   ///
-  /// In the future, multiple environments per process may be supported, although current
-  /// implementations only support one environment per process.
+  /// In the future, multiple environments per process may be supported,
+  /// although current implementations only support one environment per process.
   ///
-  /// In the V8 JavaScript engine, a Node-API environment approximately corresponds to an Isolate.
+  /// In the V8 JavaScript engine, a Node-API environment approximately
+  /// corresponds to an Isolate.
   class Env {
 #if NAPI_VERSION > 5
   private:
@@ -232,7 +235,8 @@ namespace Napi {
   class Value {
   public:
     Value();                               ///< Creates a new _empty_ Value instance.
-    Value(napi_env env, napi_value value); ///< Wraps a Node-API value primitive.
+    Value(napi_env env,
+          napi_value value);  ///< Wraps a Node-API value primitive.
 
     /// Creates a JS value from a C++ primitive.
     ///
@@ -322,80 +326,92 @@ namespace Napi {
   /// A JavaScript boolean value.
   class Boolean : public Value {
   public:
-    static Boolean New(
-      napi_env env, ///< Node-API environment
-      bool value    ///< Boolean value
-    );
+   static Boolean New(napi_env env,  ///< Node-API environment
+                      bool value     ///< Boolean value
+   );
 
-    Boolean();                               ///< Creates a new _empty_ Boolean instance.
-    Boolean(napi_env env, napi_value value); ///< Wraps a Node-API value primitive.
+   Boolean();  ///< Creates a new _empty_ Boolean instance.
+   Boolean(napi_env env,
+           napi_value value);  ///< Wraps a Node-API value primitive.
 
-    operator bool() const; ///< Converts a Boolean value to a boolean primitive.
-    bool Value() const;    ///< Converts a Boolean value to a boolean primitive.
+   operator bool() const;  ///< Converts a Boolean value to a boolean primitive.
+   bool Value() const;     ///< Converts a Boolean value to a boolean primitive.
   };
 
   /// A JavaScript number value.
   class Number : public Value {
   public:
-    static Number New(
-      napi_env env, ///< Node-API environment
-      double value  ///< Number value
-    );
+   static Number New(napi_env env,  ///< Node-API environment
+                     double value   ///< Number value
+   );
 
-    Number();                               ///< Creates a new _empty_ Number instance.
-    Number(napi_env env, napi_value value); ///< Wraps a Node-API value primitive.
+   Number();  ///< Creates a new _empty_ Number instance.
+   Number(napi_env env,
+          napi_value value);  ///< Wraps a Node-API value primitive.
 
-    operator int32_t() const;  ///< Converts a Number value to a 32-bit signed integer value.
-    operator uint32_t() const; ///< Converts a Number value to a 32-bit unsigned integer value.
-    operator int64_t() const;  ///< Converts a Number value to a 64-bit signed integer value.
-    operator float() const;    ///< Converts a Number value to a 32-bit floating-point value.
-    operator double() const;   ///< Converts a Number value to a 64-bit floating-point value.
+   operator int32_t()
+       const;  ///< Converts a Number value to a 32-bit signed integer value.
+   operator uint32_t()
+       const;  ///< Converts a Number value to a 32-bit unsigned integer value.
+   operator int64_t()
+       const;  ///< Converts a Number value to a 64-bit signed integer value.
+   operator float()
+       const;  ///< Converts a Number value to a 32-bit floating-point value.
+   operator double()
+       const;  ///< Converts a Number value to a 64-bit floating-point value.
 
-    int32_t Int32Value() const;   ///< Converts a Number value to a 32-bit signed integer value.
-    uint32_t Uint32Value() const; ///< Converts a Number value to a 32-bit unsigned integer value.
-    int64_t Int64Value() const;   ///< Converts a Number value to a 64-bit signed integer value.
-    float FloatValue() const;     ///< Converts a Number value to a 32-bit floating-point value.
-    double DoubleValue() const;   ///< Converts a Number value to a 64-bit floating-point value.
+   int32_t Int32Value()
+       const;  ///< Converts a Number value to a 32-bit signed integer value.
+   uint32_t Uint32Value()
+       const;  ///< Converts a Number value to a 32-bit unsigned integer value.
+   int64_t Int64Value()
+       const;  ///< Converts a Number value to a 64-bit signed integer value.
+   float FloatValue()
+       const;  ///< Converts a Number value to a 32-bit floating-point value.
+   double DoubleValue()
+       const;  ///< Converts a Number value to a 64-bit floating-point value.
   };
 
 #if NAPI_VERSION > 5
   /// A JavaScript bigint value.
   class BigInt : public Value {
   public:
-    static BigInt New(
-      napi_env env, ///< Node-API environment
-      int64_t value ///< Number value
-    );
-    static BigInt New(
-      napi_env env,  ///< Node-API environment
-      uint64_t value ///< Number value
-    );
+   static BigInt New(napi_env env,  ///< Node-API environment
+                     int64_t value  ///< Number value
+   );
+   static BigInt New(napi_env env,   ///< Node-API environment
+                     uint64_t value  ///< Number value
+   );
 
-    /// Creates a new BigInt object using a specified sign bit and a
-    /// specified list of digits/words.
-    /// The resulting number is calculated as:
-    /// (-1)^sign_bit * (words[0] * (2^64)^0 + words[1] * (2^64)^1 + ...)
-    static BigInt New(
-      napi_env env,          ///< Node-API environment
-      int sign_bit,          ///< Sign bit. 1 if negative.
-      size_t word_count,     ///< Number of words in array
-      const uint64_t* words  ///< Array of words
-    );
+   /// Creates a new BigInt object using a specified sign bit and a
+   /// specified list of digits/words.
+   /// The resulting number is calculated as:
+   /// (-1)^sign_bit * (words[0] * (2^64)^0 + words[1] * (2^64)^1 + ...)
+   static BigInt New(napi_env env,          ///< Node-API environment
+                     int sign_bit,          ///< Sign bit. 1 if negative.
+                     size_t word_count,     ///< Number of words in array
+                     const uint64_t* words  ///< Array of words
+   );
 
-    BigInt();                               ///< Creates a new _empty_ BigInt instance.
-    BigInt(napi_env env, napi_value value); ///< Wraps a Node-API value primitive.
+   BigInt();  ///< Creates a new _empty_ BigInt instance.
+   BigInt(napi_env env,
+          napi_value value);  ///< Wraps a Node-API value primitive.
 
-    int64_t Int64Value(bool* lossless) const;   ///< Converts a BigInt value to a 64-bit signed integer value.
-    uint64_t Uint64Value(bool* lossless) const; ///< Converts a BigInt value to a 64-bit unsigned integer value.
+   int64_t Int64Value(bool* lossless)
+       const;  ///< Converts a BigInt value to a 64-bit signed integer value.
+   uint64_t Uint64Value(bool* lossless)
+       const;  ///< Converts a BigInt value to a 64-bit unsigned integer value.
 
-    size_t WordCount() const; ///< The number of 64-bit words needed to store the result of ToWords().
+   size_t WordCount() const;  ///< The number of 64-bit words needed to store
+                              ///< the result of ToWords().
 
-    /// Writes the contents of this BigInt to a specified memory location.
-    /// `sign_bit` must be provided and will be set to 1 if this BigInt is negative.
-    /// `*word_count` has to be initialized to the length of the `words` array.
-    /// Upon return, it will be set to the actual number of words that would
-    /// be needed to store this BigInt (i.e. the return value of `WordCount()`).
-    void ToWords(int* sign_bit, size_t* word_count, uint64_t* words);
+   /// Writes the contents of this BigInt to a specified memory location.
+   /// `sign_bit` must be provided and will be set to 1 if this BigInt is
+   /// negative.
+   /// `*word_count` has to be initialized to the length of the `words` array.
+   /// Upon return, it will be set to the actual number of words that would
+   /// be needed to store this BigInt (i.e. the return value of `WordCount()`).
+   void ToWords(int* sign_bit, size_t* word_count, uint64_t* words);
   };
 #endif  // NAPI_VERSION > 5
 
@@ -404,16 +420,15 @@ namespace Napi {
   class Date : public Value {
   public:
     /// Creates a new Date value from a double primitive.
-    static Date New(
-      napi_env env, ///< Node-API environment
-      double value  ///< Number value
-    );
+   static Date New(napi_env env,  ///< Node-API environment
+                   double value   ///< Number value
+   );
 
-    Date();                               ///< Creates a new _empty_ Date instance.
-    Date(napi_env env, napi_value value); ///< Wraps a Node-API value primitive.
-    operator double() const;              ///< Converts a Date value to double primitive
+   Date();  ///< Creates a new _empty_ Date instance.
+   Date(napi_env env, napi_value value);  ///< Wraps a Node-API value primitive.
+   operator double() const;  ///< Converts a Date value to double primitive
 
-    double ValueOf() const;   ///< Converts a Date value to a double primitive.
+   double ValueOf() const;  ///< Converts a Date value to a double primitive.
   };
   #endif
 
@@ -421,102 +436,111 @@ namespace Napi {
   class Name : public Value {
   public:
     Name();                               ///< Creates a new _empty_ Name instance.
-    Name(napi_env env, napi_value value); ///< Wraps a Node-API value primitive.
+    Name(napi_env env,
+         napi_value value);  ///< Wraps a Node-API value primitive.
   };
 
   /// A JavaScript string value.
   class String : public Name {
   public:
     /// Creates a new String value from a UTF-8 encoded C++ string.
-    static String New(
-      napi_env env,            ///< Node-API environment
-      const std::string& value ///< UTF-8 encoded C++ string
-    );
+   static String New(napi_env env,             ///< Node-API environment
+                     const std::string& value  ///< UTF-8 encoded C++ string
+   );
 
-    /// Creates a new String value from a UTF-16 encoded C++ string.
-    static String New(
-      napi_env env,               ///< Node-API environment
-      const std::u16string& value ///< UTF-16 encoded C++ string
-    );
+   /// Creates a new String value from a UTF-16 encoded C++ string.
+   static String New(napi_env env,                ///< Node-API environment
+                     const std::u16string& value  ///< UTF-16 encoded C++ string
+   );
 
-    /// Creates a new String value from a UTF-8 encoded C string.
-    static String New(
-      napi_env env,     ///< Node-API environment
-      const char* value ///< UTF-8 encoded null-terminated C string
-    );
+   /// Creates a new String value from a UTF-8 encoded C string.
+   static String New(
+       napi_env env,      ///< Node-API environment
+       const char* value  ///< UTF-8 encoded null-terminated C string
+   );
 
-    /// Creates a new String value from a UTF-16 encoded C string.
-    static String New(
-      napi_env env,         ///< Node-API environment
-      const char16_t* value ///< UTF-16 encoded null-terminated C string
-    );
+   /// Creates a new String value from a UTF-16 encoded C string.
+   static String New(
+       napi_env env,          ///< Node-API environment
+       const char16_t* value  ///< UTF-16 encoded null-terminated C string
+   );
 
-    /// Creates a new String value from a UTF-8 encoded C string with specified length.
-    static String New(
-      napi_env env,      ///< Node-API environment
-      const char* value, ///< UTF-8 encoded C string (not necessarily null-terminated)
-      size_t length      ///< length of the string in bytes
-    );
+   /// Creates a new String value from a UTF-8 encoded C string with specified
+   /// length.
+   static String New(napi_env env,       ///< Node-API environment
+                     const char* value,  ///< UTF-8 encoded C string (not
+                                         ///< necessarily null-terminated)
+                     size_t length       ///< length of the string in bytes
+   );
 
-    /// Creates a new String value from a UTF-16 encoded C string with specified length.
-    static String New(
-      napi_env env,          ///< Node-API environment
-      const char16_t* value, ///< UTF-16 encoded C string (not necessarily null-terminated)
-      size_t length          ///< Length of the string in 2-byte code units
-    );
+   /// Creates a new String value from a UTF-16 encoded C string with specified
+   /// length.
+   static String New(
+       napi_env env,           ///< Node-API environment
+       const char16_t* value,  ///< UTF-16 encoded C string (not necessarily
+                               ///< null-terminated)
+       size_t length           ///< Length of the string in 2-byte code units
+   );
 
-    /// Creates a new String based on the original object's type.
-    ///
-    /// `value` may be any of:
-    /// - const char* (encoded using UTF-8, null-terminated)
-    /// - const char16_t* (encoded using UTF-16-LE, null-terminated)
-    /// - std::string (encoded using UTF-8)
-    /// - std::u16string
-    template <typename T>
-    static String From(napi_env env, const T& value);
+   /// Creates a new String based on the original object's type.
+   ///
+   /// `value` may be any of:
+   /// - const char* (encoded using UTF-8, null-terminated)
+   /// - const char16_t* (encoded using UTF-16-LE, null-terminated)
+   /// - std::string (encoded using UTF-8)
+   /// - std::u16string
+   template <typename T>
+   static String From(napi_env env, const T& value);
 
-    String();                               ///< Creates a new _empty_ String instance.
-    String(napi_env env, napi_value value); ///< Wraps a Node-API value primitive.
+   String();  ///< Creates a new _empty_ String instance.
+   String(napi_env env,
+          napi_value value);  ///< Wraps a Node-API value primitive.
 
-    operator std::string() const;      ///< Converts a String value to a UTF-8 encoded C++ string.
-    operator std::u16string() const;   ///< Converts a String value to a UTF-16 encoded C++ string.
-    std::string Utf8Value() const;     ///< Converts a String value to a UTF-8 encoded C++ string.
-    std::u16string Utf16Value() const; ///< Converts a String value to a UTF-16 encoded C++ string.
+   operator std::string()
+       const;  ///< Converts a String value to a UTF-8 encoded C++ string.
+   operator std::u16string()
+       const;  ///< Converts a String value to a UTF-16 encoded C++ string.
+   std::string Utf8Value()
+       const;  ///< Converts a String value to a UTF-8 encoded C++ string.
+   std::u16string Utf16Value()
+       const;  ///< Converts a String value to a UTF-16 encoded C++ string.
   };
 
   /// A JavaScript symbol value.
   class Symbol : public Name {
   public:
     /// Creates a new Symbol value with an optional description.
-    static Symbol New(
-      napi_env env,                     ///< Node-API environment
-      const char* description = nullptr ///< Optional UTF-8 encoded null-terminated C string
-                                        ///  describing the symbol
-    );
+   static Symbol New(
+       napi_env env,  ///< Node-API environment
+       const char* description =
+           nullptr  ///< Optional UTF-8 encoded null-terminated C string
+                    ///  describing the symbol
+   );
 
-    /// Creates a new Symbol value with a description.
-    static Symbol New(
-      napi_env env,                  ///< Node-API environment
-      const std::string& description ///< UTF-8 encoded C++ string describing the symbol
-    );
+   /// Creates a new Symbol value with a description.
+   static Symbol New(
+       napi_env env,  ///< Node-API environment
+       const std::string&
+           description  ///< UTF-8 encoded C++ string describing the symbol
+   );
 
-    /// Creates a new Symbol value with a description.
-    static Symbol New(
-      napi_env env,      ///< Node-API environment
-      String description ///< String value describing the symbol
-    );
+   /// Creates a new Symbol value with a description.
+   static Symbol New(napi_env env,       ///< Node-API environment
+                     String description  ///< String value describing the symbol
+   );
 
-    /// Creates a new Symbol value with a description.
-    static Symbol New(
-      napi_env env,          ///< Node-API environment
-      napi_value description ///< String value describing the symbol
-    );
+   /// Creates a new Symbol value with a description.
+   static Symbol New(
+       napi_env env,           ///< Node-API environment
+       napi_value description  ///< String value describing the symbol
+   );
 
-    /// Get a public Symbol (e.g. Symbol.iterator).
-    static Symbol WellKnown(napi_env, const std::string& name);
+   /// Get a public Symbol (e.g. Symbol.iterator).
+   static Symbol WellKnown(napi_env, const std::string& name);
 
-    Symbol();                               ///< Creates a new _empty_ Symbol instance.
-    Symbol(napi_env env, napi_value value); ///< Wraps a Node-API value primitive.
+   Symbol();  ///< Creates a new _empty_ Symbol instance.
+   Symbol(napi_env env,
+          napi_value value);  ///< Wraps a Node-API value primitive.
   };
 
   /// A JavaScript object value.
@@ -552,12 +576,12 @@ namespace Napi {
     };
 
     /// Creates a new Object value.
-    static Object New(
-      napi_env env ///< Node-API environment
+    static Object New(napi_env env  ///< Node-API environment
     );
 
     Object();                               ///< Creates a new _empty_ Object instance.
-    Object(napi_env env, napi_value value); ///< Wraps a Node-API value primitive.
+    Object(napi_env env,
+           napi_value value);  ///< Wraps a Node-API value primitive.
 
     /// Gets or sets a named property.
     PropertyLValue<std::string> operator [](
@@ -792,46 +816,61 @@ namespace Napi {
   class ArrayBuffer : public Object {
   public:
     /// Creates a new ArrayBuffer instance over a new automatically-allocated buffer.
-    static ArrayBuffer New(
-      napi_env env,     ///< Node-API environment
-      size_t byteLength ///< Length of the buffer to be allocated, in bytes
-    );
+   static ArrayBuffer New(
+       napi_env env,      ///< Node-API environment
+       size_t byteLength  ///< Length of the buffer to be allocated, in bytes
+   );
 
-    /// Creates a new ArrayBuffer instance, using an external buffer with specified byte length.
-    static ArrayBuffer New(
-      napi_env env,       ///< Node-API environment
-      void* externalData, ///< Pointer to the external buffer to be used by the array
-      size_t byteLength   ///< Length of the external buffer to be used by the array, in bytes
-    );
+   /// Creates a new ArrayBuffer instance, using an external buffer with
+   /// specified byte length.
+   static ArrayBuffer New(
+       napi_env env,        ///< Node-API environment
+       void* externalData,  ///< Pointer to the external buffer to be used by
+                            ///< the array
+       size_t byteLength    ///< Length of the external buffer to be used by the
+                            ///< array, in bytes
+   );
 
-    /// Creates a new ArrayBuffer instance, using an external buffer with specified byte length.
-    template <typename Finalizer>
-    static ArrayBuffer New(
-      napi_env env,              ///< Node-API environment
-      void* externalData,        ///< Pointer to the external buffer to be used by the array
-      size_t byteLength,         ///< Length of the external buffer to be used by the array,
-                                 ///  in bytes
-      Finalizer finalizeCallback ///< Function to be called when the array buffer is destroyed;
-                                 ///  must implement `void operator()(Env env, void* externalData)`
-    );
+   /// Creates a new ArrayBuffer instance, using an external buffer with
+   /// specified byte length.
+   template <typename Finalizer>
+   static ArrayBuffer New(
+       napi_env env,        ///< Node-API environment
+       void* externalData,  ///< Pointer to the external buffer to be used by
+                            ///< the array
+       size_t byteLength,   ///< Length of the external buffer to be used by the
+                            ///< array,
+                            ///  in bytes
+       Finalizer finalizeCallback  ///< Function to be called when the array
+                                   ///< buffer is destroyed;
+                                   ///  must implement `void operator()(Env env,
+                                   ///  void* externalData)`
+   );
 
-    /// Creates a new ArrayBuffer instance, using an external buffer with specified byte length.
-    template <typename Finalizer, typename Hint>
-    static ArrayBuffer New(
-      napi_env env,               ///< Node-API environment
-      void* externalData,         ///< Pointer to the external buffer to be used by the array
-      size_t byteLength,          ///< Length of the external buffer to be used by the array,
-                                  ///  in bytes
-      Finalizer finalizeCallback, ///< Function to be called when the array buffer is destroyed;
-                                  ///  must implement `void operator()(Env env, void* externalData, Hint* hint)`
-      Hint* finalizeHint          ///< Hint (second parameter) to be passed to the finalize callback
-    );
+   /// Creates a new ArrayBuffer instance, using an external buffer with
+   /// specified byte length.
+   template <typename Finalizer, typename Hint>
+   static ArrayBuffer New(
+       napi_env env,        ///< Node-API environment
+       void* externalData,  ///< Pointer to the external buffer to be used by
+                            ///< the array
+       size_t byteLength,   ///< Length of the external buffer to be used by the
+                            ///< array,
+                            ///  in bytes
+       Finalizer finalizeCallback,  ///< Function to be called when the array
+                                    ///< buffer is destroyed;
+                                    ///  must implement `void operator()(Env
+                                    ///  env, void* externalData, Hint* hint)`
+       Hint* finalizeHint  ///< Hint (second parameter) to be passed to the
+                           ///< finalize callback
+   );
 
-    ArrayBuffer();                               ///< Creates a new _empty_ ArrayBuffer instance.
-    ArrayBuffer(napi_env env, napi_value value); ///< Wraps a Node-API value primitive.
+   ArrayBuffer();  ///< Creates a new _empty_ ArrayBuffer instance.
+   ArrayBuffer(napi_env env,
+               napi_value value);  ///< Wraps a Node-API value primitive.
 
-    void* Data();        ///< Gets a pointer to the data buffer.
-    size_t ByteLength(); ///< Gets the length of the array buffer in bytes.
+   void* Data();         ///< Gets a pointer to the data buffer.
+   size_t ByteLength();  ///< Gets the length of the array buffer in bytes.
 
 #if NAPI_VERSION >= 7
     bool IsDetached() const;
@@ -851,7 +890,8 @@ namespace Napi {
   class TypedArray : public Object {
   public:
     TypedArray();                               ///< Creates a new _empty_ TypedArray instance.
-    TypedArray(napi_env env, napi_value value); ///< Wraps a Node-API value primitive.
+    TypedArray(napi_env env,
+               napi_value value);  ///< Wraps a Node-API value primitive.
 
     napi_typedarray_type TypedArrayType() const; ///< Gets the type of this typed-array.
     Napi::ArrayBuffer ArrayBuffer() const;       ///< Gets the backing array buffer.
@@ -906,16 +946,19 @@ namespace Napi {
     /// parameter T), except when creating a "clamped" array:
     ///
     ///     Uint8Array::New(env, length, napi_uint8_clamped_array)
-    static TypedArrayOf New(
-      napi_env env,         ///< Node-API environment
-      size_t elementLength, ///< Length of the created array, as a number of elements
+   static TypedArrayOf New(
+       napi_env env,          ///< Node-API environment
+       size_t elementLength,  ///< Length of the created array, as a number of
+                              ///< elements
 #if defined(NAPI_HAS_CONSTEXPR)
-      napi_typedarray_type type = TypedArray::TypedArrayTypeForPrimitiveType<T>()
+       napi_typedarray_type type =
+           TypedArray::TypedArrayTypeForPrimitiveType<T>()
 #else
-      napi_typedarray_type type
+       napi_typedarray_type type
 #endif
-        ///< Type of array, if different from the default array type for the template parameter T.
-    );
+       ///< Type of array, if different from the default array type for the
+       ///< template parameter T.
+   );
 
     /// Creates a new TypedArray instance over a provided array buffer.
     ///
@@ -923,21 +966,26 @@ namespace Napi {
     /// parameter T), except when creating a "clamped" array:
     ///
     ///     Uint8Array::New(env, length, buffer, 0, napi_uint8_clamped_array)
-    static TypedArrayOf New(
-      napi_env env,                  ///< Node-API environment
-      size_t elementLength,          ///< Length of the created array, as a number of elements
-      Napi::ArrayBuffer arrayBuffer, ///< Backing array buffer instance to use
-      size_t bufferOffset,           ///< Offset into the array buffer where the typed-array starts
+   static TypedArrayOf New(
+       napi_env env,          ///< Node-API environment
+       size_t elementLength,  ///< Length of the created array, as a number of
+                              ///< elements
+       Napi::ArrayBuffer arrayBuffer,  ///< Backing array buffer instance to use
+       size_t bufferOffset,  ///< Offset into the array buffer where the
+                             ///< typed-array starts
 #if defined(NAPI_HAS_CONSTEXPR)
-      napi_typedarray_type type = TypedArray::TypedArrayTypeForPrimitiveType<T>()
+       napi_typedarray_type type =
+           TypedArray::TypedArrayTypeForPrimitiveType<T>()
 #else
-      napi_typedarray_type type
+       napi_typedarray_type type
 #endif
-        ///< Type of array, if different from the default array type for the template parameter T.
-    );
+       ///< Type of array, if different from the default array type for the
+       ///< template parameter T.
+   );
 
     TypedArrayOf();                               ///< Creates a new _empty_ TypedArrayOf instance.
-    TypedArrayOf(napi_env env, napi_value value); ///< Wraps a Node-API value primitive.
+    TypedArrayOf(napi_env env,
+                 napi_value value);  ///< Wraps a Node-API value primitive.
 
     T& operator [](size_t index);             ///< Gets or sets an element in the array.
     const T& operator [](size_t index) const; ///< Gets an element in the array.
@@ -979,7 +1027,8 @@ namespace Napi {
                         size_t byteLength);
 
     DataView();                               ///< Creates a new _empty_ DataView instance.
-    DataView(napi_env env, napi_value value); ///< Wraps a Node-API value primitive.
+    DataView(napi_env env,
+             napi_value value);  ///< Wraps a Node-API value primitive.
 
     Napi::ArrayBuffer ArrayBuffer() const;    ///< Gets the backing array buffer.
     size_t ByteOffset() const;    ///< Gets the offset into the buffer where the array starts.
@@ -1276,41 +1325,46 @@ namespace Napi {
   ObjectReference Persistent(Object value);
   FunctionReference Persistent(Function value);
 
-  /// A persistent reference to a JavaScript error object. Use of this class depends somewhat
-  /// on whether C++ exceptions are enabled at compile time.
+  /// A persistent reference to a JavaScript error object. Use of this class
+  /// depends somewhat on whether C++ exceptions are enabled at compile time.
   ///
   /// ### Handling Errors With C++ Exceptions
   ///
-  /// If C++ exceptions are enabled, then the `Error` class extends `std::exception` and enables
-  /// integrated error-handling for C++ exceptions and JavaScript exceptions.
+  /// If C++ exceptions are enabled, then the `Error` class extends
+  /// `std::exception` and enables integrated error-handling for C++ exceptions
+  /// and JavaScript exceptions.
   ///
-  /// If a Node-API call fails without executing any JavaScript code (for example due to an invalid
-  /// argument), then the Node-API wrapper automatically converts and throws the error as a C++
-  /// exception of type `Napi::Error`. Or if a JavaScript function called by C++ code via Node-API
-  /// throws a JavaScript exception, then the Node-API wrapper automatically converts and throws it as
-  /// a C++ exception of type `Napi::Error`.
+  /// If a Node-API call fails without executing any JavaScript code (for
+  /// example due to an invalid argument), then the Node-API wrapper
+  /// automatically converts and throws the error as a C++ exception of type
+  /// `Napi::Error`. Or if a JavaScript function called by C++ code via Node-API
+  /// throws a JavaScript exception, then the Node-API wrapper automatically
+  /// converts and throws it as a C++ exception of type `Napi::Error`.
   ///
-  /// If a C++ exception of type `Napi::Error` escapes from a Node-API C++ callback, then the Node-API
-  /// wrapper automatically converts and throws it as a JavaScript exception. Therefore, catching
-  /// a C++ exception of type `Napi::Error` prevents a JavaScript exception from being thrown.
+  /// If a C++ exception of type `Napi::Error` escapes from a Node-API C++
+  /// callback, then the Node-API wrapper automatically converts and throws it
+  /// as a JavaScript exception. Therefore, catching a C++ exception of type
+  /// `Napi::Error` prevents a JavaScript exception from being thrown.
   ///
   /// #### Example 1A - Throwing a C++ exception:
   ///
   ///     Napi::Env env = ...
   ///     throw Napi::Error::New(env, "Example exception");
   ///
-  /// Following C++ statements will not be executed. The exception will bubble up as a C++
-  /// exception of type `Napi::Error`, until it is either caught while still in C++, or else
-  /// automatically propataged as a JavaScript exception when the callback returns to JavaScript.
+  /// Following C++ statements will not be executed. The exception will bubble
+  /// up as a C++ exception of type `Napi::Error`, until it is either caught
+  /// while still in C++, or else automatically propataged as a JavaScript
+  /// exception when the callback returns to JavaScript.
   ///
   /// #### Example 2A - Propagating a Node-API C++ exception:
   ///
   ///     Napi::Function jsFunctionThatThrows = someObj.As<Napi::Function>();
   ///     Napi::Value result = jsFunctionThatThrows({ arg1, arg2 });
   ///
-  /// Following C++ statements will not be executed. The exception will bubble up as a C++
-  /// exception of type `Napi::Error`, until it is either caught while still in C++, or else
-  /// automatically propagated as a JavaScript exception when the callback returns to JavaScript.
+  /// Following C++ statements will not be executed. The exception will bubble
+  /// up as a C++ exception of type `Napi::Error`, until it is either caught
+  /// while still in C++, or else automatically propagated as a JavaScript
+  /// exception when the callback returns to JavaScript.
   ///
   /// #### Example 3A - Handling a Node-API C++ exception:
   ///
@@ -1322,26 +1376,29 @@ namespace Napi {
   ///       cerr << "Caught JavaScript exception: " + e.what();
   ///     }
   ///
-  /// Since the exception was caught here, it will not be propagated as a JavaScript exception.
+  /// Since the exception was caught here, it will not be propagated as a
+  /// JavaScript exception.
   ///
   /// ### Handling Errors Without C++ Exceptions
   ///
-  /// If C++ exceptions are disabled (by defining `NAPI_DISABLE_CPP_EXCEPTIONS`) then this class
-  /// does not extend `std::exception`, and APIs in the `Napi` namespace do not throw C++
-  /// exceptions when they fail. Instead, they raise _pending_ JavaScript exceptions and
-  /// return _empty_ `Value`s. Calling code should check `Value::IsEmpty()` before attempting
-  /// to use a returned value, and may use methods on the `Env` class to check for, get, and
-  /// clear a pending JavaScript exception. If the pending exception is not cleared, it will
-  /// be thrown when the native callback returns to JavaScript.
+  /// If C++ exceptions are disabled (by defining `NAPI_DISABLE_CPP_EXCEPTIONS`)
+  /// then this class does not extend `std::exception`, and APIs in the `Napi`
+  /// namespace do not throw C++ exceptions when they fail. Instead, they raise
+  /// _pending_ JavaScript exceptions and return _empty_ `Value`s. Calling code
+  /// should check `Value::IsEmpty()` before attempting to use a returned value,
+  /// and may use methods on the `Env` class to check for, get, and clear a
+  /// pending JavaScript exception. If the pending exception is not cleared, it
+  /// will be thrown when the native callback returns to JavaScript.
   ///
   /// #### Example 1B - Throwing a JS exception
   ///
   ///     Napi::Env env = ...
-  ///     Napi::Error::New(env, "Example exception").ThrowAsJavaScriptException();
-  ///     return;
+  ///     Napi::Error::New(env, "Example
+  ///     exception").ThrowAsJavaScriptException(); return;
   ///
-  /// After throwing a JS exception, the code should generally return immediately from the native
-  /// callback, after performing any necessary cleanup.
+  /// After throwing a JS exception, the code should generally return
+  /// immediately from the native callback, after performing any necessary
+  /// cleanup.
   ///
   /// #### Example 2B - Propagating a Node-API JS exception:
   ///
@@ -1349,9 +1406,10 @@ namespace Napi {
   ///     Napi::Value result = jsFunctionThatThrows({ arg1, arg2 });
   ///     if (result.IsEmpty()) return;
   ///
-  /// An empty value result from a Node-API call indicates an error occurred, and a JavaScript
-  /// exception is pending. To let the exception propagate, the code should generally return
-  /// immediately from the native callback, after performing any necessary cleanup.
+  /// An empty value result from a Node-API call indicates an error occurred,
+  /// and a JavaScript exception is pending. To let the exception propagate, the
+  /// code should generally return immediately from the native callback, after
+  /// performing any necessary cleanup.
   ///
   /// #### Example 3B - Handling a Node-API JS exception:
   ///
@@ -1362,8 +1420,8 @@ namespace Napi {
   ///       cerr << "Caught JavaScript exception: " + e.Message();
   ///     }
   ///
-  /// Since the exception was cleared here, it will not be propagated as a JavaScript exception
-  /// after the native callback returns.
+  /// Since the exception was cleared here, it will not be propagated as a
+  /// JavaScript exception after the native callback returns.
   class Error : public ObjectReference
 #ifdef NAPI_CPP_EXCEPTIONS
     , public std::exception
