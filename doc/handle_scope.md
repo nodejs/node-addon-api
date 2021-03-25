@@ -34,7 +34,7 @@ Napi::HandleScope::HandleScope(Napi::Env env, Napi::HandleScope scope);
 - `[in] scope`: pre-existing `Napi::HandleScope`.
 
 Returns a new `Napi::HandleScope` instance which wraps the napi_handle_scope
-handle passed in.  This can be used to mix usage of the C N-API
+handle passed in.  This can be used to mix usage of the C Node-API
 and node-addon-api.
 
 operator HandleScope::napi_handle_scope
@@ -43,8 +43,8 @@ operator HandleScope::napi_handle_scope
 operator Napi::HandleScope::napi_handle_scope() const
 ```
 
-Returns the N-API napi_handle_scope wrapped by the `Napi::EscapableHandleScope` object.
-This can be used to mix usage of the C N-API and node-addon-api by allowing
+Returns the Node-API napi_handle_scope wrapped by the `Napi::EscapableHandleScope` object.
+This can be used to mix usage of the C Node-API and node-addon-api by allowing
 the class to be used be converted to a napi_handle_scope.
 
 ### Destructor

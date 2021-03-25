@@ -28,7 +28,7 @@ Napi::Symbol::New(napi_env env, napi_value description);
   - `std::string&` - UTF8 string description.
   - `const char*` - represents a UTF8 string description.
   - `String` - Node addon API String description.
-  - `napi_value` - N-API `napi_value` description.
+  - `napi_value` - Node-API `napi_value` description.
 
 If an error occurs, a `Napi::Error` will get thrown. If C++ exceptions are not
 being used, callers should check the result of `Napi::Env::IsExceptionPending` before

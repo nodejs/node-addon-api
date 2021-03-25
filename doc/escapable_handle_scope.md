@@ -40,7 +40,7 @@ Napi::EscapableHandleScope Napi::EscapableHandleScope::New(napi_env env, napi_ha
 
 Returns a new `Napi::EscapableHandleScope` instance which wraps the
 napi_escapable_handle_scope handle passed in. This can be used
-to mix usage of the C N-API and node-addon-api.
+to mix usage of the C Node-API and node-addon-api.
 
 operator EscapableHandleScope::napi_escapable_handle_scope
 
@@ -48,8 +48,8 @@ operator EscapableHandleScope::napi_escapable_handle_scope
 operator Napi::EscapableHandleScope::napi_escapable_handle_scope() const
 ```
 
-Returns the N-API napi_escapable_handle_scope wrapped by the `Napi::EscapableHandleScope` object.
-This can be used to mix usage of the C N-API and node-addon-api by allowing
+Returns the Node-API napi_escapable_handle_scope wrapped by the `Napi::EscapableHandleScope` object.
+This can be used to mix usage of the C Node-API and node-addon-api by allowing
 the class to be used be converted to a napi_escapable_handle_scope.
 
 ### Destructor

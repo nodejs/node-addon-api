@@ -63,7 +63,7 @@ void Napi::Promise::Deferred::Resolve(napi_value value) const;
 
 Resolves the `Napi::Promise` object held by the `Napi::Promise::Deferred` object.
 
-* `[in] value`: The N-API primitive value with which to resolve the `Napi::Promise`.
+* `[in] value`: The Node-API primitive value with which to resolve the `Napi::Promise`.
 
 ### Reject
 
@@ -73,7 +73,7 @@ void Napi::Promise::Deferred::Reject(napi_value value) const;
 
 Rejects the Promise object held by the `Napi::Promise::Deferred` object.
 
-* `[in] value`: The N-API primitive value with which to reject the `Napi::Promise`.
+* `[in] value`: The Node-API primitive value with which to reject the `Napi::Promise`.
 
 
 [`Napi::Object`]: ./object.md
