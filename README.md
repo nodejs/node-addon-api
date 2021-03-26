@@ -11,19 +11,19 @@ git branch -u origin/main main
 
 # **node-addon-api module**
 This module contains **header-only C++ wrapper classes** which simplify
-the use of the C based [N-API](https://nodejs.org/dist/latest/docs/api/n-api.html)
+the use of the C based [Node-API](https://nodejs.org/dist/latest/docs/api/n-api.html)
 provided by Node.js when using C++. It provides a C++ object model
 and exception handling semantics with low overhead.
 
-There are three options for implementing addons: N-API, nan, or direct
+There are three options for implementing addons: Node-API, nan, or direct
 use of internal V8, libuv and Node.js libraries. Unless there is a need for
-direct access to functionality which is not exposed by N-API as outlined
+direct access to functionality which is not exposed by Node-API as outlined
 in [C/C++ addons](https://nodejs.org/dist/latest/docs/api/addons.html)
-in Node.js core, use N-API. Refer to
-[C/C++ addons with N-API](https://nodejs.org/dist/latest/docs/api/n-api.html)
-for more information on N-API.
+in Node.js core, use Node-API. Refer to
+[C/C++ addons with Node-API](https://nodejs.org/dist/latest/docs/api/n-api.html)
+for more information on Node-API.
 
-N-API is an ABI stable C interface provided by Node.js for building native
+Node-API is an ABI stable C interface provided by Node.js for building native
 addons. It is independent from the underlying JavaScript runtime (e.g. V8 or ChakraCore)
 and is maintained as part of Node.js itself. It is intended to insulate
 native addons from changes in the underlying JavaScript engine and allow
@@ -31,24 +31,24 @@ modules compiled for one version to run on later versions of Node.js without
 recompilation.
 
 The `node-addon-api` module, which is not part of Node.js, preserves the benefits
-of the N-API as it consists only of inline code that depends only on the stable API
-provided by N-API. As such, modules built against one version of Node.js
+of the Node-API as it consists only of inline code that depends only on the stable API
+provided by Node-API. As such, modules built against one version of Node.js
 using node-addon-api should run without having to be rebuilt with newer versions
 of Node.js.
 
 It is important to remember that *other* Node.js interfaces such as
 `libuv` (included in a project via `#include <uv.h>`) are not ABI-stable across
-Node.js major versions. Thus, an addon must use N-API and/or `node-addon-api`
+Node.js major versions. Thus, an addon must use Node-API and/or `node-addon-api`
 exclusively and build against a version of Node.js that includes an
-implementation of N-API (meaning an active LTS version of Node.js) in
+implementation of Node-API (meaning an active LTS version of Node.js) in
 order to benefit from ABI stability across Node.js major versions. Node.js
 provides an [ABI stability guide][] containing a detailed explanation of ABI
-stability in general, and the N-API ABI stability guarantee in particular.
+stability in general, and the Node-API ABI stability guarantee in particular.
 
-As new APIs are added to N-API, node-addon-api must be updated to provide
+As new APIs are added to Node-API, node-addon-api must be updated to provide
 wrappers for those new APIs. For this reason node-addon-api provides
-methods that allow callers to obtain the underlying N-API handles so
-direct calls to N-API and the use of the objects/methods provided by
+methods that allow callers to obtain the underlying Node-API handles so
+direct calls to Node-API and the use of the objects/methods provided by
 node-addon-api can be used together. For example, in order to be able
 to use an API for which the node-addon-api does not yet provide a wrapper.
 
@@ -56,8 +56,8 @@ APIs exposed by node-addon-api are generally used to create and
 manipulate JavaScript values. Concepts and operations generally map
 to ideas specified in the **ECMA262 Language Specification**.
 
-The [N-API Resource](https://nodejs.github.io/node-addon-examples/) offers an
-excellent orientation and tips for developers just getting started with N-API
+The [Node-API Resource](https://nodejs.github.io/node-addon-examples/) offers an
+excellent orientation and tips for developers just getting started with Node-API
 and node-addon-api.
 
 - **[Setup](#setup)**
@@ -78,8 +78,8 @@ and node-addon-api.
 
 <a name="setup"></a>
 
-node-addon-api is based on [N-API](https://nodejs.org/api/n-api.html) and supports using different N-API versions.
-This allows addons built with it to run with Node.js versions which support the targeted N-API version.
+node-addon-api is based on [Node-API](https://nodejs.org/api/n-api.html) and supports using different Node-API versions.
+This allows addons built with it to run with Node.js versions which support the targeted Node-API version.
 **However** the node-addon-api support model is to support only the active LTS Node.js versions. This means that
 every year there will be a new major which drops support for the Node.js LTS version which has gone out of service.
 
@@ -178,14 +178,14 @@ npm install
 npm test --disable-deprecated
 ```
 
-To run the tests targeting a specific version of N-API run
+To run the tests targeting a specific version of Node-API run
 ```
 npm install
 export NAPI_VERSION=X
 npm test --NAPI_VERSION=X
 ```
 
-where X is the version of N-API you want to target.
+where X is the version of Node-API you want to target.
 
 ### **Debug**
 
@@ -217,11 +217,11 @@ See [benchmark/README.md](benchmark/README.md) for more details about running an
 
 ### **More resource and info about native Addons**
 - **[C++ Addons](https://nodejs.org/dist/latest/docs/api/addons.html)**
-- **[N-API](https://nodejs.org/dist/latest/docs/api/n-api.html)**
-- **[N-API - Next Generation Node API for Native Modules](https://youtu.be/-Oniup60Afs)**
-- **[How We Migrated Realm JavaScript From NAN to N-API](https://developer.mongodb.com/article/realm-javascript-nan-to-n-api)**
+- **[Node-API](https://nodejs.org/dist/latest/docs/api/n-api.html)**
+- **[Node-API - Next Generation Node API for Native Modules](https://youtu.be/-Oniup60Afs)**
+- **[How We Migrated Realm JavaScript From NAN to Node-API](https://developer.mongodb.com/article/realm-javascript-nan-to-n-api)**
 
-As node-addon-api's core mission is to expose the plain C N-API as C++
+As node-addon-api's core mission is to expose the plain C Node-API as C++
 wrappers, tools that facilitate n-api/node-addon-api providing more
 convenient patterns on developing a Node.js add-ons with n-api/node-addon-api
 can be published to NPM as standalone packages. It is also recommended to tag
@@ -233,19 +233,19 @@ Quick links to NPM searches: [keywords:node-addon-api](https://www.npmjs.com/sea
 
 ### **Badges**
 
-The use of badges is recommended to indicate the minimum version of N-API
+The use of badges is recommended to indicate the minimum version of Node-API
 required for the module. This helps to determine which Node.js major versions are
-supported. Addon maintainers can consult the [N-API support matrix][] to determine
-which Node.js versions provide a given N-API version. The following badges are
+supported. Addon maintainers can consult the [Node-API support matrix][] to determine
+which Node.js versions provide a given Node-API version. The following badges are
 available:
 
-![N-API v1 Badge](https://github.com/nodejs/abi-stable-node/blob/doc/assets/N-API%20v1%20Badge.svg)
-![N-API v2 Badge](https://github.com/nodejs/abi-stable-node/blob/doc/assets/N-API%20v2%20Badge.svg)
-![N-API v3 Badge](https://github.com/nodejs/abi-stable-node/blob/doc/assets/N-API%20v3%20Badge.svg)
-![N-API v4 Badge](https://github.com/nodejs/abi-stable-node/blob/doc/assets/N-API%20v4%20Badge.svg)
-![N-API v5 Badge](https://github.com/nodejs/abi-stable-node/blob/doc/assets/N-API%20v5%20Badge.svg)
-![N-API v6 Badge](https://github.com/nodejs/abi-stable-node/blob/doc/assets/N-API%20v6%20Badge.svg)
-![N-API Experimental Version Badge](https://github.com/nodejs/abi-stable-node/blob/doc/assets/N-API%20Experimental%20Version%20Badge.svg)
+![Node-API v1 Badge](https://github.com/nodejs/abi-stable-node/blob/doc/assets/Node-API%20v1%20Badge.svg)
+![Node-API v2 Badge](https://github.com/nodejs/abi-stable-node/blob/doc/assets/Node-API%20v2%20Badge.svg)
+![Node-API v3 Badge](https://github.com/nodejs/abi-stable-node/blob/doc/assets/Node-API%20v3%20Badge.svg)
+![Node-API v4 Badge](https://github.com/nodejs/abi-stable-node/blob/doc/assets/Node-API%20v4%20Badge.svg)
+![Node-API v5 Badge](https://github.com/nodejs/abi-stable-node/blob/doc/assets/Node-API%20v5%20Badge.svg)
+![Node-API v6 Badge](https://github.com/nodejs/abi-stable-node/blob/doc/assets/Node-API%20v6%20Badge.svg)
+![Node-API Experimental Version Badge](https://github.com/nodejs/abi-stable-node/blob/doc/assets/Node-API%20Experimental%20Version%20Badge.svg)
 
 ## **Contributing**
 
@@ -282,4 +282,4 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for more details on our philosophy around
 Licensed under [MIT](./LICENSE.md)
 
 [ABI stability guide]: https://nodejs.org/en/docs/guides/abi-stability/
-[N-API support matrix]: https://nodejs.org/dist/latest/docs/api/n-api.html#n_api_n_api_version_matrix
+[Node-API support matrix]: https://nodejs.org/dist/latest/docs/api/n-api.html#n_api_n_api_version_matrix
