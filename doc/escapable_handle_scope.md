@@ -42,8 +42,6 @@ Returns a new `Napi::EscapableHandleScope` instance which wraps the
 `napi_escapable_handle_scope` handle passed in. This can be used
 to mix usage of the C Node-API and node-addon-api.
 
-operator EscapableHandleScope::napi_escapable_handle_scope
-
 ```cpp
 operator Napi::EscapableHandleScope::napi_escapable_handle_scope() const
 ```

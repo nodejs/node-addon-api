@@ -37,8 +37,6 @@ Returns a new `Napi::HandleScope` instance which wraps the `napi_handle_scope`
 handle passed in.  This can be used to mix usage of the C Node-API
 and node-addon-api.
 
-operator HandleScope::napi_handle_scope
-
 ```cpp
 operator Napi::HandleScope::napi_handle_scope() const
 ```
