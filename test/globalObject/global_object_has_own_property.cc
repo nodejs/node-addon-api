@@ -18,6 +18,5 @@ Value HasPropertyWithCppStyleStringAsKey(const CallbackInfo& info) {
 Value HasPropertyWithNapiValueAsKey(const CallbackInfo& info) {
   Object globalObject = info.Env().Global();
   Name key = info[0].As<Name>();
-  return Boolean::New(
-      info.Env(), globalObject.HasOwnProperty(static_cast<napi_value>(key)));
+  return Boolean::New(info.Env(), globalObject.HasOwnProperty(key));
 }

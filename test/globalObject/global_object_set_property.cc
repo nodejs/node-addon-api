@@ -27,5 +27,5 @@ void SetPropertyWithNapiValueAsKey(const CallbackInfo& info) {
   Object globalObject = info.Env().Global();
   Name key = info[0].As<Name>();
   Value value = info[1];
-  globalObject.Set(static_cast<napi_value>(key), value);
+  globalObject.Set(key, value);
 }

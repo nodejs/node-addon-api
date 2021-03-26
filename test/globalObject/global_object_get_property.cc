@@ -5,7 +5,7 @@ using namespace Napi;
 Value GetPropertyWithNapiValueAsKey(const CallbackInfo& info) {
   Object globalObject = info.Env().Global();
   Name key = info[0].As<Name>();
-  return globalObject.Get(static_cast<napi_value>(key));
+  return globalObject.Get(key);
 }
 
 Value GetPropertyWithInt32AsKey(const CallbackInfo& info) {
@@ -28,12 +28,10 @@ Value GetPropertyWithCppStyleStringAsKey(const CallbackInfo& info) {
 
 void CreateMockTestObject(const CallbackInfo& info) {
   Object globalObject = info.Env().Global();
-
-  napi_value napi_key;
-  napi_create_int32(info.Env(), 2, &napi_key);
+  Number napi_key = Number::New(info.Env(), 2);
+  const char* CStringKey = "c_str_key";
 
   globalObject.Set(napi_key, "napi_attribute");
-  const char* CStringKey = "c_str_key";
   globalObject[CStringKey] = "c_string_attribute";
   globalObject[std::string("cpp_string_key")] = "cpp_string_attribute";
   globalObject[std::string("circular")] = globalObject;

@@ -23,6 +23,5 @@ Value DeletePropertyWithInt32AsKey(const CallbackInfo& info) {
 Value DeletePropertyWithNapiValueAsKey(const CallbackInfo& info) {
   Object globalObject = info.Env().Global();
   Name key = info[0].As<Name>();
-  return Boolean::New(info.Env(),
-                      globalObject.Delete(static_cast<napi_value>(key)));
+  return Boolean::New(info.Env(), globalObject.Delete(key));
 }
