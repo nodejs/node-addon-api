@@ -39,6 +39,7 @@
         'object/has_own_property.cc',
         'object/has_property.cc',
         'object/object.cc',
+        'object/object_freeze_seal.cc',
         'object/set_property.cc',
         'object/subscript_operator.cc',
         'promise.cc',

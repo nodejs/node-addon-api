@@ -776,6 +776,10 @@ namespace Napi {
     inline void AddFinalizer(Finalizer finalizeCallback,
                              T* data,
                              Hint* finalizeHint);
+#if NAPI_VERSION >= 8
+    void Freeze();
+    void Seal();
+#endif  // NAPI_VERSION >= 8
   };
 
   template <typename T>
