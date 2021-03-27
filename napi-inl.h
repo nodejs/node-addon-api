@@ -1388,7 +1388,7 @@ inline void Object::Seal() {
   napi_status status = napi_object_seal(_env, _value);
   NAPI_THROW_IF_FAILED_VOID(_env, status);
 }
-#endif // NAPI_VERSION >= 8
+#endif  // NAPI_VERSION >= 8
 
 ////////////////////////////////////////////////////////////////////////////////
 // External class

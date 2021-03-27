@@ -755,7 +755,7 @@ namespace Napi {
 #if NAPI_VERSION >= 8
     void Freeze();
     void Seal();
-#endif // NAPI_VERSION >= 8
+#endif  // NAPI_VERSION >= 8
   };
 
   template <typename T>

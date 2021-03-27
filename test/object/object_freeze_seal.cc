@@ -1,5 +1,7 @@
 #include "napi.h"
 
+#if (NAPI_VERSION > 7)
+
 using namespace Napi;
 
 void Freeze(const CallbackInfo& info) {
@@ -18,3 +20,5 @@ Object InitObjectFreezeSeal(Env env) {
   exports["seal"] = Function::New(env, Seal);
   return exports;
 }
+
+#endif

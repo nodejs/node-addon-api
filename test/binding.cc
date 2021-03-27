@@ -142,9 +142,9 @@ Object Init(Env env, Object exports) {
   exports.Set("reference", InitReference(env));
   exports.Set("version_management", InitVersionManagement(env));
   exports.Set("thunking_manual", InitThunkingManual(env));
-  #if (NAPI_VERSION > 7)
+#if (NAPI_VERSION > 7)
   exports.Set("object_freeze_seal", InitObjectFreezeSeal(env));
-  #endif
+#endif
   return exports;
 }
 
