@@ -66,6 +66,9 @@ Object InitObjectReference(Env env);
 Object InitReference(Env env);
 Object InitVersionManagement(Env env);
 Object InitThunkingManual(Env env);
+#if (NAPI_VERSION > 7)
+Object InitObjectFreezeSeal(Env env);
+#endif
 
 Object Init(Env env, Object exports) {
 #if (NAPI_VERSION > 5)
@@ -139,6 +142,9 @@ Object Init(Env env, Object exports) {
   exports.Set("reference", InitReference(env));
   exports.Set("version_management", InitVersionManagement(env));
   exports.Set("thunking_manual", InitThunkingManual(env));
+  #if (NAPI_VERSION > 7)
+  exports.Set("object_freeze_seal", InitObjectFreezeSeal(env));
+  #endif
   return exports;
 }
 

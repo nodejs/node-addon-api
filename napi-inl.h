@@ -1378,6 +1378,18 @@ inline void Object::AddFinalizer(Finalizer finalizeCallback,
   }
 }
 
+#if NAPI_VERSION >= 8
+inline void Object::Freeze() {
+  napi_status status = napi_object_freeze(_env, _value);
+  NAPI_THROW_IF_FAILED_VOID(_env, status);
+}
+
+inline void Object::Seal() {
+  napi_status status = napi_object_seal(_env, _value);
+  NAPI_THROW_IF_FAILED_VOID(_env, status);
+}
+#endif // NAPI_VERSION >= 8
+
 ////////////////////////////////////////////////////////////////////////////////
 // External class
 ////////////////////////////////////////////////////////////////////////////////

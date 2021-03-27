@@ -112,6 +112,10 @@ if (majorNodeVersion < 12) {
   testModules.splice(testModules.indexOf('objectwrap_worker_thread'), 1);
 }
 
+if (napiVersion < 8) {
+  testModules.splice(testModules.indexOf('object/object_freeze_seal'), 1);
+}
+
 (async function() {
 console.log(`Testing with N-API Version '${napiVersion}'.`);
 
