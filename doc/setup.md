@@ -58,12 +58,14 @@ To use **Node-API** in a native module:
   following settings in the `binding.gyp` file:
 
   ```gyp
-  ['OS=="mac"', {
-      'cflags+': ['-fvisibility=hidden'],
-      'xcode_settings': {
-        'GCC_SYMBOLS_PRIVATE_EXTERN': 'YES', # -fvisibility=hidden
-      }
-  }]
+  'conditions': [
+    ['OS=="mac"', {
+        'cflags+': ['-fvisibility=hidden'],
+        'xcode_settings': {
+          'GCC_SYMBOLS_PRIVATE_EXTERN': 'YES', # -fvisibility=hidden
+        }
+    }]
+  ]
   ```
 
   5. Include `napi.h` in the native module code.
