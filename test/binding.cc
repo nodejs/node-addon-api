@@ -58,6 +58,7 @@ Object InitTypedThreadSafeFunctionSum(Env env);
 Object InitTypedThreadSafeFunctionUnref(Env env);
 Object InitTypedThreadSafeFunction(Env env);
 #endif
+Object InitSymbol(Env env);
 Object InitTypedArray(Env env);
 Object InitGlobalObject(Env env);
 Object InitObjectWrap(Env env);
@@ -117,6 +118,7 @@ Object Init(Env env, Object exports) {
 #endif // !NODE_ADDON_API_DISABLE_DEPRECATED
   exports.Set("promise", InitPromise(env));
   exports.Set("run_script", InitRunScript(env));
+  exports.Set("symbol", InitSymbol(env));
 #if (NAPI_VERSION > 3)
   exports.Set("threadsafe_function_ctx", InitThreadSafeFunctionCtx(env));
   exports.Set("threadsafe_function_existing_tsfn", InitThreadSafeFunctionExistingTsfn(env));
