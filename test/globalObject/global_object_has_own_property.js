@@ -33,9 +33,9 @@ function test(binding) {
         }
     }
 
-    function assertErrMessageIsThrown(propertyCheckExistanceFunction, errMsg) {
+    function assertErrMessageIsThrown(propertyCheckExistenceFunction, errMsg) {
         assert.throws(() => {
-          propertyCheckExistanceFunction(undefined);
+          propertyCheckExistenceFunction(undefined);
         }, errMsg);
     }
 
