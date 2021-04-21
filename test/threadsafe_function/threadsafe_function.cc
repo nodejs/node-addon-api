@@ -1,4 +1,6 @@
 #include <chrono>
+#include <condition_variable>
+#include <mutex>
 #include <thread>
 #include "napi.h"
 
@@ -22,6 +24,9 @@ struct ThreadSafeFunctionInfo {
   bool startSecondary;
   FunctionReference jsFinalizeCallback;
   uint32_t maxQueueSize;
+  bool closeCalledFromJs;
+  std::mutex protect;
+  std::condition_variable signal;
 } tsfnInfo;
 
 // Thread data to transmit to JS
@@ -65,12 +70,13 @@ static void DataSourceThread() {
         break;
     }
 
-    if (info->maxQueueSize == 0) {
-      // Let's make this thread really busy for 200 ms to give the main thread a
-      // chance to abort.
-      auto start = std::chrono::high_resolution_clock::now();
-      constexpr auto MS_200 = std::chrono::milliseconds(200);
-      for (; std::chrono::high_resolution_clock::now() - start < MS_200;);
+    if (info->abort && info->type != ThreadSafeFunctionInfo::NON_BLOCKING) {
+      // Let's make this thread really busy to give the main thread a chance to
+      // abort / close.
+      std::unique_lock<std::mutex> lk(info->protect);
+      while (!info->closeCalledFromJs) {
+        info->signal.wait(lk);
+      }
     }
 
     switch (status) {
@@ -112,6 +118,11 @@ static Value StopThread(const CallbackInfo& info) {
   } else {
     tsfn.Release();
   }
+  {
+    std::lock_guard<std::mutex> _(tsfnInfo.protect);
+    tsfnInfo.closeCalledFromJs = true;
+    tsfnInfo.signal.notify_one();
+  }
   return Value();
 }
 
@@ -134,6 +145,7 @@ static Value StartThreadInternal(const CallbackInfo& info,
   tsfnInfo.abort = info[1].As<Boolean>();
   tsfnInfo.startSecondary = info[2].As<Boolean>();
   tsfnInfo.maxQueueSize = info[3].As<Number>().Uint32Value();
+  tsfnInfo.closeCalledFromJs = false;
 
   tsfn = ThreadSafeFunction::New(info.Env(), info[0].As<Function>(),
       "Test", tsfnInfo.maxQueueSize, 2, &tsfnInfo, JoinTheThreads, threads);
