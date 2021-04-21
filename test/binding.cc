@@ -121,7 +121,7 @@ Object Init(Env env, Object exports) {
   exports.Set("threadsafe_function_ptr", InitThreadSafeFunctionPtr(env));
   exports.Set("threadsafe_function_sum", InitThreadSafeFunctionSum(env));
   exports.Set("threadsafe_function_unref", InitThreadSafeFunctionUnref(env));
-  exports.Set("threadsafe_function", InitTypedThreadSafeFunction(env));
+  exports.Set("threadsafe_function", InitThreadSafeFunction(env));
   exports.Set("typed_threadsafe_function_ctx",
               InitTypedThreadSafeFunctionCtx(env));
   exports.Set("typed_threadsafe_function_existing_tsfn",
