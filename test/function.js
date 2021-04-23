@@ -1,11 +1,11 @@
 'use strict';
-const buildType = process.config.target_defaults.default_configuration;
+
 const assert = require('assert');
 
-test(require(`./build/${buildType}/binding.node`).function.plain);
-test(require(`./build/${buildType}/binding_noexcept.node`).function.plain);
-test(require(`./build/${buildType}/binding.node`).function.templated);
-test(require(`./build/${buildType}/binding_noexcept.node`).function.templated);
+module.exports = require('./common').runTest(binding => {
+  test(binding.function.plain);
+  test(binding.function.templated);
+});
 
 function test(binding) {
   assert.strictEqual(binding.emptyConstructor(true), true);

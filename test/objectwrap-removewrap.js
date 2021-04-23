@@ -5,10 +5,11 @@ if (process.argv[2] === 'child') {
   return new (require(process.argv[3]).objectwrap.Test)();
 }
 
-const buildType = process.config.target_defaults.default_configuration;
 const assert = require('assert');
 const { spawnSync } = require('child_process');
 const testUtil = require('./testUtil');
+
+module.exports = require('./common').runTestWithBindingPath(test);
 
 function test(bindingName) {
   return testUtil.runGCTests([
@@ -37,6 +38,3 @@ function test(bindingName) {
   assert.strictEqual(child.signal, null);
   assert.strictEqual(child.status, 0);
 }
-
-module.exports = test(`./build/${buildType}/binding.node`)
-  .then(() => test(`./build/${buildType}/binding_noexcept.node`));

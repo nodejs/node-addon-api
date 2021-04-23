@@ -10,6 +10,5 @@ if (isMainThread) {
     };
 
     const buildType = workerData;
-    test(require(`./build/${buildType}/binding.node`));
-    test(require(`./build/${buildType}/binding_noexcept.node`));
+    require('./common').runTest(test, buildType);
 }

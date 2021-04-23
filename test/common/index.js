@@ -74,3 +74,35 @@ exports.mustNotCall = function(msg) {
     assert.fail(msg || 'function should not have been called');
   };
 };
+
+exports.runTest = async function(test, buildType) {
+  buildType = buildType || process.config.target_defaults.default_configuration;
+
+  const bindings = [
+    `../build/${buildType}/binding.node`,
+    `../build/${buildType}/binding_noexcept.node`,
+  ].map(it => require.resolve(it));
+
+  // TODO(legendecas): investigate strange CHECK failures in Node.js core
+  // - src/callback.cc
+  //   - InternalCallbackScope::Close
+  //     - CHECK_EQ(env_->execution_async_id(), 0);
+  //
+  // for (const item of bindings) {
+  //   await test(require(item));
+  // }
+  return bindings.map(item => test(require(item)));
+}
+
+exports.runTestWithBindingPath = async function(test, buildType) {
+  buildType = buildType || process.config.target_defaults.default_configuration;
+
+  const bindings = [
+    `../build/${buildType}/binding.node`,
+    `../build/${buildType}/binding_noexcept.node`,
+  ].map(it => require.resolve(it));
+
+  for (const item of bindings) {
+    await test(item);
+  }
+}

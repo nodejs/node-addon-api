@@ -1,7 +1,5 @@
 'use strict';
-const buildType = process.config.target_defaults.default_configuration;
 const assert = require('assert');
-const common = require('./common');
 
 // we only check async hooks on 8.x an higher were
 // they are closer to working properly
@@ -17,8 +15,7 @@ function checkAsyncHooks() {
   return false;
 }
 
-test(require(`./build/${buildType}/binding.node`));
-test(require(`./build/${buildType}/binding_noexcept.node`));
+module.exports = require('./common').runTest(test);
 
 function test(binding) {
   if (!checkAsyncHooks())

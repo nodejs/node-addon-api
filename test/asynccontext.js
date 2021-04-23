@@ -1,5 +1,5 @@
 'use strict';
-const buildType = process.config.target_defaults.default_configuration;
+
 const assert = require('assert');
 const common = require('./common');
 
@@ -17,8 +17,7 @@ function checkAsyncHooks() {
   return false;
 }
 
-test(require(`./build/${buildType}/binding.node`));
-test(require(`./build/${buildType}/binding_noexcept.node`));
+module.exports = common.runTest(test);
 
 function installAsyncHooksForTest() {
   return new Promise((resolve, reject) => {
@@ -53,21 +52,24 @@ function installAsyncHooksForTest() {
 }
 
 function test(binding) {
-  binding.asynccontext.makeCallback(common.mustCall(), { foo: 'foo' });
-  if (!checkAsyncHooks())
+  if (!checkAsyncHooks()) {
     return;
+  }
 
   const hooks = installAsyncHooksForTest();
   const triggerAsyncId = async_hooks.executionAsyncId();
-  hooks.then(actual => {
-    assert.deepStrictEqual(actual, [
-      { eventName: 'init',
-        type: 'async_context_test',
-        triggerAsyncId: triggerAsyncId,
-        resource: { foo: 'foo' } },
-      { eventName: 'before' },
-      { eventName: 'after' },
-      { eventName: 'destroy' }
-    ]);
-  }).catch(common.mustNotCall());
+  const interval = setInterval(() => {}, 10);
+  binding.asynccontext.makeCallback(common.mustCall(), { foo: 'foo' });
+  return hooks.then(actual => {
+      assert.deepStrictEqual(actual, [
+        { eventName: 'init',
+          type: 'async_context_test',
+          triggerAsyncId: triggerAsyncId,
+          resource: { foo: 'foo' } },
+        { eventName: 'before' },
+        { eventName: 'after' },
+        { eventName: 'destroy' }
+      ]);
+  }).catch(common.mustNotCall())
+  .finally(() => clearInterval(interval));
 }
