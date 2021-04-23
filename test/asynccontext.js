@@ -23,7 +23,21 @@ function installAsyncHooksForTest() {
   return new Promise((resolve, reject) => {
     let id;
     const events = [];
-    const hook = async_hooks.createHook({
+    /**
+     * TODO(legendecas): investigate why resolving & disabling hooks in
+     * destroy callback causing crash with case 'callbackscope.js'.
+     */
+    let hook;
+    let destroyed = false;
+    const interval = setInterval(() => {
+      if (destroyed) {
+        hook.disable();
+        clearInterval(interval);
+        resolve(events);
+      }
+    }, 10);
+
+    hook = async_hooks.createHook({
       init(asyncId, type, triggerAsyncId, resource) {
         if (id === undefined && type === 'async_context_test') {
           id = asyncId;
@@ -43,8 +57,7 @@ function installAsyncHooksForTest() {
       destroy(asyncId) {
         if (asyncId === id) {
           events.push({ eventName: 'destroy' });
-          hook.disable();
-          resolve(events);
+          destroyed = true;
         }
       }
     }).enable();
@@ -58,7 +71,6 @@ function test(binding) {
 
   const hooks = installAsyncHooksForTest();
   const triggerAsyncId = async_hooks.executionAsyncId();
-  const interval = setInterval(() => {}, 10);
   binding.asynccontext.makeCallback(common.mustCall(), { foo: 'foo' });
   return hooks.then(actual => {
       assert.deepStrictEqual(actual, [
@@ -70,6 +82,5 @@ function test(binding) {
         { eventName: 'after' },
         { eventName: 'destroy' }
       ]);
-  }).catch(common.mustNotCall())
-  .finally(() => clearInterval(interval));
+  }).catch(common.mustNotCall());
 }

@@ -83,15 +83,10 @@ exports.runTest = async function(test, buildType) {
     `../build/${buildType}/binding_noexcept.node`,
   ].map(it => require.resolve(it));
 
-  // TODO(legendecas): investigate strange CHECK failures in Node.js core
-  // - src/callback.cc
-  //   - InternalCallbackScope::Close
-  //     - CHECK_EQ(env_->execution_async_id(), 0);
-  //
-  // for (const item of bindings) {
-  //   await test(require(item));
-  // }
-  return bindings.map(item => test(require(item)));
+  for (const item of bindings) {
+    await Promise.resolve(test(require(item)))
+      .finally(exports.mustCall());
+  }
 }
 
 exports.runTestWithBindingPath = async function(test, buildType) {

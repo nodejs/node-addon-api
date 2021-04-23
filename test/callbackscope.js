@@ -23,7 +23,7 @@ function test(binding) {
 
   let id;
   let insideHook = false;
-  async_hooks.createHook({
+  const hook = async_hooks.createHook({
     init(asyncId, type, triggerAsyncId, resource) {
       if (id === undefined && type === 'callback_scope_test') {
         id = asyncId;
@@ -39,7 +39,11 @@ function test(binding) {
     }
   }).enable();
 
-  binding.callbackscope.runInCallbackScope(function() {
-    assert(insideHook);
+  return new Promise(resolve => {
+    binding.callbackscope.runInCallbackScope(function() {
+      assert(insideHook);
+      hook.disable();
+      resolve();
+    });
   });
 }
