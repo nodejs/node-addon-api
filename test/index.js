@@ -117,17 +117,17 @@ if (napiVersion < 8) {
 }
 
 (async function() {
-console.log(`Testing with Node-API Version '${napiVersion}'.`);
+  console.log(`Testing with Node-API Version '${napiVersion}'.`);
 
-console.log('Starting test suite\n');
+  console.log('Starting test suite\n');
 
-// Requiring each module runs tests in the module.
-for (const name of testModules) {
-  console.log(`Running test '${name}'`);
-  await require('./' + name);
-};
+  // Requiring each module runs tests in the module.
+  for (const name of testModules) {
+    console.log(`Running test '${name}'`);
+    await require('./' + name);
+  };
 
-console.log('\nAll tests passed!');
+  console.log('\nAll tests passed!');
 })().catch((error) => {
   console.log(error);
   process.exit(1);

@@ -74,3 +74,30 @@ exports.mustNotCall = function(msg) {
     assert.fail(msg || 'function should not have been called');
   };
 };
+
+exports.runTest = async function(test, buildType) {
+  buildType = buildType || process.config.target_defaults.default_configuration;
+
+  const bindings = [
+    `../build/${buildType}/binding.node`,
+    `../build/${buildType}/binding_noexcept.node`,
+  ].map(it => require.resolve(it));
+
+  for (const item of bindings) {
+    await Promise.resolve(test(require(item)))
+      .finally(exports.mustCall());
+  }
+}
+
+exports.runTestWithBindingPath = async function(test, buildType) {
+  buildType = buildType || process.config.target_defaults.default_configuration;
+
+  const bindings = [
+    `../build/${buildType}/binding.node`,
+    `../build/${buildType}/binding_noexcept.node`,
+  ].map(it => require.resolve(it));
+
+  for (const item of bindings) {
+    await test(item);
+  }
+}

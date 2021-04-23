@@ -1,9 +1,8 @@
 'use strict';
-const buildType = process.config.target_defaults.default_configuration;
+
 const common = require('./common');
 
-module.exports = test(require(`./build/${buildType}/binding.node`))
-  .then(() => test(require(`./build/${buildType}/binding_noexcept.node`)));
+module.exports = common.runTest(test);
 
 async function test(binding) {
   await binding.asyncworker.doWorkNoCallback(true, {})

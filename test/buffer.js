@@ -1,11 +1,10 @@
 'use strict';
-const buildType = process.config.target_defaults.default_configuration;
+
 const assert = require('assert');
 const testUtil = require('./testUtil');
 const safeBuffer = require('safe-buffer');
 
-module.exports = test(require(`./build/${buildType}/binding.node`))
-  .then(() => test(require(`./build/${buildType}/binding_noexcept.node`)));
+module.exports = require('./common').runTest(test);
 
 function test(binding) {
   return testUtil.runGCTests([

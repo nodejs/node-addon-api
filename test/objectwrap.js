@@ -1,7 +1,9 @@
 'use strict';
-const buildType = process.config.target_defaults.default_configuration;
+
 const assert = require('assert');
 const testUtil = require('./testUtil');
+
+module.exports = require('./common').runTest(test);
 
 async function test(binding) {
   const Test = binding.objectwrap.Test;
@@ -280,6 +282,3 @@ async function test(binding) {
   // Make sure the C++ object can be garbage collected without issues.
   await testUtil.runGCTests(['one last gc', () => {}, () => {}]);
 }
-
-module.exports = test(require(`./build/${buildType}/binding.node`))
-  .then(() => test(require(`./build/${buildType}/binding_noexcept.node`)));

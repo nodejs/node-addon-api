@@ -1,10 +1,8 @@
 'use strict';
 
 const assert = require('assert');
-const buildType = process.config.target_defaults.default_configuration;
 
-module.exports = test(require(`../build/${buildType}/binding.node`))
-  .then(() => test(require(`../build/${buildType}/binding_noexcept.node`)));
+module.exports = require('../common').runTest(test);
 
 async function test(binding) {
   const ctx = { };

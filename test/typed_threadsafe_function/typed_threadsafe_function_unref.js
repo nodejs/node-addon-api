@@ -1,7 +1,6 @@
 'use strict';
 
 const assert = require('assert');
-const buildType = process.config.target_defaults.default_configuration;
 
 const isMainProcess = process.argv[1] != __filename;
 
@@ -15,8 +14,7 @@ const isMainProcess = process.argv[1] != __filename;
  */
 
 if (isMainProcess) {
-  module.exports = test(`../build/${buildType}/binding.node`)
-    .then(() => test(`../build/${buildType}/binding_noexcept.node`));
+  module.exports = require('../common').runTestWithBindingPath(test);
 } else {
   test(process.argv[2]);
 }

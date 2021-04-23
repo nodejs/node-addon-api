@@ -1,5 +1,4 @@
 'use strict';
-const buildType = process.config.target_defaults.default_configuration;
 const assert = require('assert');
 const common = require('./common');
 
@@ -17,14 +16,27 @@ function checkAsyncHooks() {
   return false;
 }
 
-module.exports = test(require(`./build/${buildType}/binding.node`))
-  .then(() => test(require(`./build/${buildType}/binding_noexcept.node`)));
+module.exports = common.runTest(test);
 
 function installAsyncHooksForTest() {
   return new Promise((resolve, reject) => {
     let id;
     const events = [];
-    const hook = async_hooks.createHook({
+    /**
+     * TODO(legendecas): investigate why resolving & disabling hooks in
+     * destroy callback causing crash with case 'callbackscope.js'.
+     */
+     let hook;
+     let destroyed = false;
+     const interval = setInterval(() => {
+       if (destroyed) {
+         hook.disable();
+         clearInterval(interval);
+         resolve(events);
+       }
+     }, 10);
+
+    hook = async_hooks.createHook({
       init(asyncId, type, triggerAsyncId, resource) {
         if (id === undefined && type === 'TestResource') {
           id = asyncId;
@@ -44,8 +56,7 @@ function installAsyncHooksForTest() {
       destroy(asyncId) {
         if (asyncId === id) {
           events.push({ eventName: 'destroy' });
-          hook.disable();
-          resolve(events);
+          destroyed = true;
         }
       }
     }).enable();
