@@ -9,7 +9,7 @@ test(require(`../build/${buildType}/binding_noexcept.node`));
 function test(binding) {
   function testSetProperty(nativeSetProperty) {
     const obj = {};
-    nativeSetProperty(obj, 'test', 1);
+    assert.strictEqual(nativeSetProperty(obj, 'test', 1), true);
     assert.strictEqual(obj.test, 1);
   }
 
