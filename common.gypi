@@ -15,7 +15,6 @@
       }
     }]
   ],
-  'defines': [ 'NODE_API_SWALLOW_UNTHROWABLE_EXCEPTIONS' ],
   'include_dirs': ["<!(node -p \"require('../').include_dir\")"],
   'cflags': [ '-Werror', '-Wall', '-Wextra', '-Wpedantic', '-Wunused-parameter' ],
   'cflags_cc': [ '-Werror', '-Wall', '-Wextra', '-Wpedantic', '-Wunused-parameter' ]
