@@ -1,4 +1,3 @@
-#define NODE_API_SWALLOW_UNTHROWABLE_EXCEPTIONS
 #include <future>
 #include "napi.h"
 
