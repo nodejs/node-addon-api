@@ -1,6 +1,5 @@
 'use strict';
 const assert = require('assert');
-const buildType = process.config.target_defaults.default_configuration;
 
 /**
  *
@@ -29,8 +28,7 @@ const buildType = process.config.target_defaults.default_configuration;
 const THREAD_COUNT = 5;
 const EXPECTED_SUM = (THREAD_COUNT - 1) * (THREAD_COUNT) / 2;
 
-module.exports = test(require(`../build/${buildType}/binding.node`))
-  .then(() => test(require(`../build/${buildType}/binding_noexcept.node`)));
+module.exports = require('../common').runTest(test);
 
 /** @param {number[]} N */
 const sum = (N) => N.reduce((sum, n) => sum + n, 0);

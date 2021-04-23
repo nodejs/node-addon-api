@@ -1,6 +1,5 @@
 'use strict';
 
-const buildType = process.config.target_defaults.default_configuration;
 const assert = require('assert');
 
 const test = bindingName => {
@@ -11,5 +10,4 @@ const test = bindingName => {
   assert.strictEqual(testmi.test, 0);
 }
 
-test(`./build/${buildType}/binding.node`);
-test(`./build/${buildType}/binding_noexcept.node`);
+module.exports = require('./common').runTestWithBindingPath(test);

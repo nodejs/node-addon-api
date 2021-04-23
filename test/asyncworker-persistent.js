@@ -1,9 +1,6 @@
 'use strict';
-const buildType = process.config.target_defaults.default_configuration;
+
 const assert = require('assert');
-const common = require('./common');
-const binding = require(`./build/${buildType}/binding.node`);
-const noexceptBinding = require(`./build/${buildType}/binding_noexcept.node`);
 
 function test(binding, succeed) {
   return new Promise((resolve) =>
@@ -21,7 +18,7 @@ function test(binding, succeed) {
     }));
 }
 
-module.exports = test(binding.persistentasyncworker, false)
-  .then(() => test(binding.persistentasyncworker, true))
-  .then(() => test(noexceptBinding.persistentasyncworker, false))
-  .then(() => test(noexceptBinding.persistentasyncworker, true));
+module.exports = require('./common').runTest(async binding => {
+  await test(binding.persistentasyncworker, false);
+  await test(binding.persistentasyncworker, true);
+});

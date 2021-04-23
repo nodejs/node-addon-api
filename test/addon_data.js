@@ -1,15 +1,10 @@
 'use strict';
-const buildType = process.config.target_defaults.default_configuration;
+
 const assert = require('assert');
 const { spawn } = require('child_process');
 const readline = require('readline');
-const path = require('path');
 
-module.exports =
-  test(path.resolve(__dirname, `./build/${buildType}/binding.node`))
-  .then(() =>
-    test(path.resolve(__dirname,
-                      `./build/${buildType}/binding_noexcept.node`)));
+module.exports = require('./common').runTestWithBindingPath(test);
 
 // Make sure the instance data finalizer is called at process exit. If the hint
 // is non-zero, it will be printed out by the child process.
