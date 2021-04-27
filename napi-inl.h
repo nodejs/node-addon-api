@@ -2393,7 +2393,8 @@ inline void Error::ThrowAsJavaScriptException() const {
     // new one as that is not allowed/possible
     napi_status status = napi_is_exception_pending(_env, &pendingException);
 
-    if ((status == napi_ok) && (pendingException == false)) {
+    if ((status != napi_ok) ||
+        ((status == napi_ok) && (pendingException == false))) {
       // We intentionally don't use `NAPI_THROW_*` macros here to ensure
       // that there is no possible recursion as `ThrowAsJavaScriptException`
       // is part of `NAPI_THROW_*` macro definition for noexcept.

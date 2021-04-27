@@ -1,7 +1,8 @@
 {
   'target_defaults': {
     'includes': ['../common.gypi'],
-    'sources': [
+    'variables': {
+      'build_sources': [
         'addon.cc',
         'addon_data.cc',
         'arraybuffer.cc',
@@ -66,20 +67,39 @@
         'version_management.cc',
         'thunking_manual.cc',
       ],
+      'build_sources_swallowexcept': [
+        'binding-swallowexcept.cc',
+        'error.cc',
+      ],
       'conditions': [
         ['disable_deprecated!="true"', {
-          'sources': ['object/object_deprecated.cc']
+          'build_sources': ['object/object_deprecated.cc']
         }]
-      ],
+      ]
+    },
   },
   'targets': [
     {
       'target_name': 'binding',
-      'includes': ['../except.gypi']
+      'includes': ['../except.gypi'],
+      'sources': ['>@(build_sources)']
     },
     {
       'target_name': 'binding_noexcept',
-      'includes': ['../noexcept.gypi']
+      'includes': ['../noexcept.gypi'],
+      'sources': ['>@(build_sources)']
+    },
+    {
+      'target_name': 'binding_swallowexcept',
+      'includes': ['../except.gypi'],
+      'sources': [ '>@(build_sources_swallowexcept)'],
+      'defines': ['NODE_API_SWALLOW_UNTHROWABLE_EXCEPTIONS']
+    },
+    {
+      'target_name': 'binding_swallowexcept_noexcept',
+      'includes': ['../noexcept.gypi'],
+      'sources': ['>@(build_sources_swallowexcept)'],
+      'defines': ['NODE_API_SWALLOW_UNTHROWABLE_EXCEPTIONS']
     },
   ],
 }

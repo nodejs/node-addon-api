@@ -66,10 +66,12 @@ if (process.argv[2] === 'runInWorkerThread') {
   assert.fail('This should not be reachable');
 }
 
-test(`./build/${buildType}/binding.node`);
-test(`./build/${buildType}/binding_noexcept.node`);
+test(`./build/${buildType}/binding.node`, true);
+test(`./build/${buildType}/binding_noexcept.node`, true);
+test(`./build/${buildType}/binding_swallowexcept.node`, false);
+test(`./build/${buildType}/binding_swallowexcept_noexcept.node`, false);
 
-function test(bindingPath) {
+function test(bindingPath, process_should_abort) {
   const number_of_test_cases = 5;
 
   for (let i = 0; i < number_of_test_cases; ++i) {
@@ -83,6 +85,10 @@ function test(bindingPath) {
       ]
     );
 
-    assert(child_process.status === 0, `Test case ${i} failed`);
+    if (process_should_abort) {
+      assert(child_process.status !== 0, `Test case ${bindingPath} ${i} failed: Process exited with status code 0.`);
+    } else {
+      assert(child_process.status === 0, `Test case ${bindingPath} ${i} failed: Process status ${child_process.status} is non-zero`);
+    }
   }
 }
