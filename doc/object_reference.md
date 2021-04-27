@@ -81,7 +81,7 @@ Returns the newly created reference.
 
 ### Set
 ```cpp
-void Napi::ObjectReference::Set(___ key, ___ value);
+bool Napi::ObjectReference::Set(___ key, ___ value);
 ```
 
 * `[in] key`: The name for the property being assigned.
