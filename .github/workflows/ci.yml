@@ -12,6 +12,7 @@ jobs:
           - node/12
           - node/14
           - node/15
+          - node/16
         compiler:
           - gcc
           - clang
