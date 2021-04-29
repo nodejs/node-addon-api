@@ -10,10 +10,10 @@ Value GetPropertyWithCStyleString(const CallbackInfo& info);
 Value GetPropertyWithCppStyleString(const CallbackInfo& info);
 
 // Native wrappers for testing Object::Set()
-void SetPropertyWithNapiValue(const CallbackInfo& info);
-void SetPropertyWithNapiWrapperValue(const CallbackInfo& info);
-void SetPropertyWithCStyleString(const CallbackInfo& info);
-void SetPropertyWithCppStyleString(const CallbackInfo& info);
+Value SetPropertyWithNapiValue(const CallbackInfo& info);
+Value SetPropertyWithNapiWrapperValue(const CallbackInfo& info);
+Value SetPropertyWithCStyleString(const CallbackInfo& info);
+Value SetPropertyWithCppStyleString(const CallbackInfo& info);
 
 // Native wrappers for testing Object::Delete()
 Value DeletePropertyWithUint32(const CallbackInfo& info);

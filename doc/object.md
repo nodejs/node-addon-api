@@ -72,7 +72,7 @@ Creates a new `Napi::Object` value.
 ### Set()
 
 ```cpp
-void Napi::Object::Set (____ key, ____ value);
+bool Napi::Object::Set (____ key, ____ value);
 ```
 - `[in] key`: The name for the property being assigned.
 - `[in] value`: The value being assigned to the property.
@@ -200,7 +200,7 @@ The key can be any of the following types:
 ### DefineProperty()
 
 ```cpp
-void Napi::Object::DefineProperty (const Napi::PropertyDescriptor& property);
+bool Napi::Object::DefineProperty (const Napi::PropertyDescriptor& property);
 ```
 - `[in] property`: A [`Napi::PropertyDescriptor`](property_descriptor.md).
 
@@ -209,7 +209,7 @@ Define a property on the object.
 ### DefineProperties()
 
 ```cpp
-void Napi::Object::DefineProperties (____ properties)
+bool Napi::Object::DefineProperties (____ properties)
 ```
 - `[in] properties`: A list of [`Napi::PropertyDescriptor`](property_descriptor.md). Can be one of the following types:
   - const std::initializer_list<Napi::PropertyDescriptor>&

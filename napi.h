@@ -675,30 +675,26 @@ namespace Napi {
 
     /// Sets a property.
     template <typename ValueType>
-    void Set(
-      napi_value key,  ///< Property key primitive
-      const ValueType& value ///< Property value primitive
+    bool Set(napi_value key,         ///< Property key primitive
+             const ValueType& value  ///< Property value primitive
     );
 
     /// Sets a property.
     template <typename ValueType>
-    void Set(
-      Value key,  ///< Property key
-      const ValueType& value ///< Property value
+    bool Set(Value key,              ///< Property key
+             const ValueType& value  ///< Property value
     );
 
     /// Sets a named property.
     template <typename ValueType>
-    void Set(
-      const char* utf8name, ///< UTF-8 encoded null-terminated property name
-      const ValueType& value
-    );
+    bool Set(
+        const char* utf8name,  ///< UTF-8 encoded null-terminated property name
+        const ValueType& value);
 
     /// Sets a named property.
     template <typename ValueType>
-    void Set(
-      const std::string& utf8name, ///< UTF-8 encoded property name
-      const ValueType& value             ///< Property value primitive
+    bool Set(const std::string& utf8name,  ///< UTF-8 encoded property name
+             const ValueType& value        ///< Property value primitive
     );
 
     /// Delete property.
@@ -733,9 +729,8 @@ namespace Napi {
 
     /// Sets an indexed property or array element.
     template <typename ValueType>
-    void Set(
-      uint32_t index,  ///< Property / element index
-      const ValueType& value ///< Property value primitive
+    bool Set(uint32_t index,         ///< Property / element index
+             const ValueType& value  ///< Property value primitive
     );
 
     /// Deletes an indexed property or array element.
@@ -746,19 +741,20 @@ namespace Napi {
     Array GetPropertyNames() const; ///< Get all property names
 
     /// Defines a property on the object.
-    void DefineProperty(
-      const PropertyDescriptor& property ///< Descriptor for the property to be defined
+    bool DefineProperty(
+        const PropertyDescriptor&
+            property  ///< Descriptor for the property to be defined
     );
 
     /// Defines properties on the object.
-    void DefineProperties(
-      const std::initializer_list<PropertyDescriptor>& properties
+    bool DefineProperties(
+        const std::initializer_list<PropertyDescriptor>& properties
         ///< List of descriptors for the properties to be defined
     );
 
     /// Defines properties on the object.
-    void DefineProperties(
-      const std::vector<PropertyDescriptor>& properties
+    bool DefineProperties(
+        const std::vector<PropertyDescriptor>& properties
         ///< Vector of descriptors for the properties to be defined
     );
 
@@ -1261,26 +1257,26 @@ namespace Napi {
 
     Napi::Value Get(const char* utf8name) const;
     Napi::Value Get(const std::string& utf8name) const;
-    void Set(const char* utf8name, napi_value value);
-    void Set(const char* utf8name, Napi::Value value);
-    void Set(const char* utf8name, const char* utf8value);
-    void Set(const char* utf8name, bool boolValue);
-    void Set(const char* utf8name, double numberValue);
-    void Set(const std::string& utf8name, napi_value value);
-    void Set(const std::string& utf8name, Napi::Value value);
-    void Set(const std::string& utf8name, std::string& utf8value);
-    void Set(const std::string& utf8name, bool boolValue);
-    void Set(const std::string& utf8name, double numberValue);
+    bool Set(const char* utf8name, napi_value value);
+    bool Set(const char* utf8name, Napi::Value value);
+    bool Set(const char* utf8name, const char* utf8value);
+    bool Set(const char* utf8name, bool boolValue);
+    bool Set(const char* utf8name, double numberValue);
+    bool Set(const std::string& utf8name, napi_value value);
+    bool Set(const std::string& utf8name, Napi::Value value);
+    bool Set(const std::string& utf8name, std::string& utf8value);
+    bool Set(const std::string& utf8name, bool boolValue);
+    bool Set(const std::string& utf8name, double numberValue);
 
     Napi::Value Get(uint32_t index) const;
-    void Set(uint32_t index, const napi_value value);
-    void Set(uint32_t index, const Napi::Value value);
-    void Set(uint32_t index, const char* utf8value);
-    void Set(uint32_t index, const std::string& utf8value);
-    void Set(uint32_t index, bool boolValue);
-    void Set(uint32_t index, double numberValue);
+    bool Set(uint32_t index, const napi_value value);
+    bool Set(uint32_t index, const Napi::Value value);
+    bool Set(uint32_t index, const char* utf8value);
+    bool Set(uint32_t index, const std::string& utf8value);
+    bool Set(uint32_t index, bool boolValue);
+    bool Set(uint32_t index, double numberValue);
 
-  protected:
+   protected:
     ObjectReference(const ObjectReference&);
   };
 

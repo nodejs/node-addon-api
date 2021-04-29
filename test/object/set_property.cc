@@ -2,30 +2,30 @@
 
 using namespace Napi;
 
-void SetPropertyWithNapiValue(const CallbackInfo& info) {
+Value SetPropertyWithNapiValue(const CallbackInfo& info) {
   Object obj = info[0].As<Object>();
   Name key = info[1].As<Name>();
   Value value = info[2];
-  obj.Set(static_cast<napi_value>(key), value);
+  return Boolean::New(info.Env(), obj.Set(static_cast<napi_value>(key), value));
 }
 
-void SetPropertyWithNapiWrapperValue(const CallbackInfo& info) {
+Value SetPropertyWithNapiWrapperValue(const CallbackInfo& info) {
   Object obj = info[0].As<Object>();
   Name key = info[1].As<Name>();
   Value value = info[2];
-  obj.Set(key, value);
+  return Boolean::New(info.Env(), obj.Set(key, value));
 }
 
-void SetPropertyWithCStyleString(const CallbackInfo& info) {
+Value SetPropertyWithCStyleString(const CallbackInfo& info) {
   Object obj = info[0].As<Object>();
   String jsKey = info[1].As<String>();
   Value value = info[2];
-  obj.Set(jsKey.Utf8Value().c_str(), value);
+  return Boolean::New(info.Env(), obj.Set(jsKey.Utf8Value().c_str(), value));
 }
 
-void SetPropertyWithCppStyleString(const CallbackInfo& info) {
+Value SetPropertyWithCppStyleString(const CallbackInfo& info) {
   Object obj = info[0].As<Object>();
   String jsKey = info[1].As<String>();
   Value value = info[2];
-  obj.Set(jsKey.Utf8Value(), value);
+  return Boolean::New(info.Env(), obj.Set(jsKey.Utf8Value(), value));
 }
