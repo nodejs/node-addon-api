@@ -76,7 +76,7 @@ exports.mustNotCall = function(msg) {
 };
 
 exports.runTest = async function(test, buildType) {
-  buildType = buildType || process.config.target_defaults.default_configuration;
+  buildType = buildType || process.config.target_defaults.default_configuration || 'Release';
 
   const bindings = [
     `../build/${buildType}/binding.node`,
@@ -90,7 +90,7 @@ exports.runTest = async function(test, buildType) {
 }
 
 exports.runTestWithBindingPath = async function(test, buildType) {
-  buildType = buildType || process.config.target_defaults.default_configuration;
+  buildType = buildType || process.config.target_defaults.default_configuration || 'Release';
 
   const bindings = [
     `../build/${buildType}/binding.node`,

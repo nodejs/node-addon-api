@@ -773,8 +773,8 @@ namespace Napi {
                              T* data,
                              Hint* finalizeHint);
 #if NAPI_VERSION >= 8
-    void Freeze();
-    void Seal();
+    bool Freeze();
+    bool Seal();
 #endif  // NAPI_VERSION >= 8
   };
 
