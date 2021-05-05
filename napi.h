@@ -738,7 +738,7 @@ namespace Napi {
       uint32_t index ///< Property / element index
     );
 
-    Array GetPropertyNames() const; ///< Get all property names
+    Array GetPropertyNames();  ///< Get all property names
 
     /// Defines a property on the object.
     bool DefineProperty(
@@ -761,9 +761,8 @@ namespace Napi {
     /// Checks if an object is an instance created by a constructor function.
     ///
     /// This is equivalent to the JavaScript `instanceof` operator.
-    bool InstanceOf(
-      const Function& constructor ///< Constructor function
-    ) const;
+    bool InstanceOf(const Function& constructor  ///< Constructor function
+    );
 
     template <typename Finalizer, typename T>
     inline void AddFinalizer(Finalizer finalizeCallback, T* data);

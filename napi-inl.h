@@ -1315,7 +1315,7 @@ inline bool Object::Delete(uint32_t index) {
   return result;
 }
 
-inline Array Object::GetPropertyNames() const {
+inline Array Object::GetPropertyNames() {
   napi_value result;
   napi_status status = napi_get_property_names(_env, _value, &result);
   NAPI_THROW_IF_FAILED(_env, status, Array());
@@ -1345,7 +1345,7 @@ inline bool Object::DefineProperties(
   return true;
 }
 
-inline bool Object::InstanceOf(const Function& constructor) const {
+inline bool Object::InstanceOf(const Function& constructor) {
   bool result;
   napi_status status = napi_instanceof(_env, _value, constructor, &result);
   NAPI_THROW_IF_FAILED(_env, status, false);
