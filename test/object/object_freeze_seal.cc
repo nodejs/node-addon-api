@@ -4,14 +4,14 @@
 
 using namespace Napi;
 
-void Freeze(const CallbackInfo& info) {
+Value Freeze(const CallbackInfo& info) {
   Object obj = info[0].As<Object>();
-  obj.Freeze();
+  return Boolean::New(info.Env(), obj.Freeze());
 }
 
-void Seal(const CallbackInfo& info) {
+Value Seal(const CallbackInfo& info) {
   Object obj = info[0].As<Object>();
-  obj.Seal();
+  return Boolean::New(info.Env(), obj.Seal());
 }
 
 Object InitObjectFreezeSeal(Env env) {

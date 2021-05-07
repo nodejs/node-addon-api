@@ -1389,14 +1389,16 @@ inline void Object::AddFinalizer(Finalizer finalizeCallback,
 }
 
 #if NAPI_VERSION >= 8
-inline void Object::Freeze() {
+inline bool Object::Freeze() {
   napi_status status = napi_object_freeze(_env, _value);
-  NAPI_THROW_IF_FAILED_VOID(_env, status);
+  NAPI_THROW_IF_FAILED(_env, status, false);
+  return true;
 }
 
-inline void Object::Seal() {
+inline bool Object::Seal() {
   napi_status status = napi_object_seal(_env, _value);
-  NAPI_THROW_IF_FAILED_VOID(_env, status);
+  NAPI_THROW_IF_FAILED(_env, status, false);
+  return true;
 }
 #endif  // NAPI_VERSION >= 8
 
