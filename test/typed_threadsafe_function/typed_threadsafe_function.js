@@ -25,11 +25,9 @@ async function test(binding) {
       binding.typed_threadsafe_function[threadStarter](function testCallback(value) {
         array.push(value);
         if (array.length === quitAfter) {
-          setImmediate(() => {
-            binding.typed_threadsafe_function.stopThread(common.mustCall(() => {
-              resolve(array);
-            }), !!abort);
-          });
+          binding.typed_threadsafe_function.stopThread(common.mustCall(() => {
+            resolve(array);
+          }), !!abort);
         }
       }, !!abort, !!launchSecondary, maxQueueSize);
       if (threadStarter === 'startThreadNonblocking') {
