@@ -375,7 +375,7 @@ const exampleCallback = (errorResponse, okResponse, progressData) => {
     // ...
 };
 
-// Call our native addon with the paramters of a string and a function
+// Call our native addon with the parameters of a string and a function
 nativeAddon.echo("example", exampleCallback);
 ```
 
@@ -550,7 +550,7 @@ const onProgressCallback = (num) => {
     // ...
 };
 
-// Call our native addon with the paramters of a string and three callback functions
+// Call our native addon with the parameters of a string and three callback functions
 nativeAddon.echo("example", onErrorCallback, onOkCallback, onProgressCallback);
 ```
 
