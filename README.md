@@ -229,6 +229,12 @@ such packages with `node-addon-api` to provide more visibility to the community.
 
 Quick links to NPM searches: [keywords:node-addon-api](https://www.npmjs.com/search?q=keywords%3Anode-addon-api).
 
+<a name="other-bindings"></a>
+
+### **Other bindings**
+
+- **[napi-rs](https://napi.rs)** - (`Rust`)
+
 <a name="badges"></a>
 
 ### **Badges**
