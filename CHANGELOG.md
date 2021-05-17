@@ -1,5 +1,89 @@
 # node-addon-api Changelog
 
+## 2021-05-17 Version 3.2.0, @NickNaso
+
+### Notable changes:
+
+#### API
+
+- Remove unnecessary symbol exposure.
+- Fixed leak in `Napi::ObjectWrap` instance for getter and setter method.
+- Added `Napi::Object::Freeze` and `Napi::object::Seal` methods.
+- `Napi::Reference` is now copyable.
+
+#### Documentation
+
+- Added docuemtnation for `Napi::Object::PropertyLValue`.
+- Changed all N-API references to Node-API.
+- Some minor corrections all over the documentation.
+
+#### TEST
+
+- Added tests relating to fetch property from Global Object.
+- Added addtiona tests for `Napi::Object`.
+- Added test for `Napi::Function` contructors.
+- Fixed intermittent failure for `Napi::ThreadSafeFunction` test.
+- Some minor corrections all over the test suite.
+
+### TOOL
+
+- Added Node.js v16.x to CI.
+- Added CI configuration for Windows.
+- Some fixex on linter command.
+
+### Commits
+
+* [[`52721312f6`](https://github.com/nodejs/node-addon-api/commit/52721312f6)] - **docs**: add napi-rs iin Other Bindings section (#999) (LongYinan)
+* [[`78a6570a42`](https://github.com/nodejs/node-addon-api/commit/78a6570a42)] - **doc**: fix typo in code example (#997) (Tobias Nießen)
+* [[`da3bd5778f`](https://github.com/nodejs/node-addon-api/commit/da3bd5778f)] - **test**: fix undoc assumptions about the timing of tsfn calls (legendecas) [#995](https://github.com/nodejs/node-addon-api/pull/995)
+* [[`410cf6a81e`](https://github.com/nodejs/node-addon-api/commit/410cf6a81e)] - **src**: return bool on object freeze and seal (#991) (legendecas)
+* [[`93f1898312`](https://github.com/nodejs/node-addon-api/commit/93f1898312)] - **src**: return bool on object set and define property (#977) (legendecas)
+* [[`331c2ee274`](https://github.com/nodejs/node-addon-api/commit/331c2ee274)] - **build**: add Node.js v16.x to CI (#983) (legendecas)
+* [[`b6f5eb15e6`](https://github.com/nodejs/node-addon-api/commit/b6f5eb15e6)] - **test**: run test suites with helpers (legendecas) [#976](https://github.com/nodejs/node-addon-api/pull/976)
+* [[`fbcdf00ea0`](https://github.com/nodejs/node-addon-api/commit/fbcdf00ea0)] - **test**: rename misspelled parameters (Tobias Nießen) [#973](https://github.com/nodejs/node-addon-api/pull/973)
+* [[`63a6c32e80`](https://github.com/nodejs/node-addon-api/commit/63a6c32e80)] - **test**: fix intermittent TSFN crashes (Kevin Eady) [#974](https://github.com/nodejs/node-addon-api/pull/974)
+* [[`8f120b033f`](https://github.com/nodejs/node-addon-api/commit/8f120b033f)] - **fix**: key for wapping drawing's system condition (#970) (Kévin VOYER)
+* [[`1c9d528d66`](https://github.com/nodejs/node-addon-api/commit/1c9d528d66)] - **doc**: correct struct definition (#969) (Darshan Sen)
+* [[`5e64d1fa61`](https://github.com/nodejs/node-addon-api/commit/5e64d1fa61)] - Added badges for Node-API v7 and v8. (#954) (Nicola Del Gobbo)
+* [[`6ce629b3fa`](https://github.com/nodejs/node-addon-api/commit/6ce629b3fa)] - **src**: add pull request template (#967) (Michael Dawson)
+* [[`98126661af`](https://github.com/nodejs/node-addon-api/commit/98126661af)] - Update CONTRIBUTING.md (#966) (Michael Dawson)
+* [[`77350eee98`](https://github.com/nodejs/node-addon-api/commit/77350eee98)] - **src**: added Freeze and Seal method to Object class. (NickNaso) [#955](https://github.com/nodejs/node-addon-api/pull/955)
+* [[`bc5147cc4a`](https://github.com/nodejs/node-addon-api/commit/bc5147cc4a)] - Finished tests relating to fetch property from Global Object (JckXia)
+* [[`0127813111`](https://github.com/nodejs/node-addon-api/commit/0127813111)] - **doc**: unambiguously mark deprecated signatures (Tobias Nießen) [#942](https://github.com/nodejs/node-addon-api/pull/942)
+* [[`787e216105`](https://github.com/nodejs/node-addon-api/commit/787e216105)] - **doc**: rename N-API with Node-API (Darshan Sen) [#951](https://github.com/nodejs/node-addon-api/pull/951)
+* [[`628023689a`](https://github.com/nodejs/node-addon-api/commit/628023689a)] - **src**: rename N-API with Node-API on comments (NickNaso) [#953](https://github.com/nodejs/node-addon-api/pull/953)
+* [[`5c6391578f`](https://github.com/nodejs/node-addon-api/commit/5c6391578f)] - **build**: add CI configuration for Windows (NickNaso) [#948](https://github.com/nodejs/node-addon-api/pull/948)
+* [[`8ef07251ec`](https://github.com/nodejs/node-addon-api/commit/8ef07251ec)] - **doc**: added some warnings for buffer and array buffer factory method. (#929) (Nicola Del Gobbo)
+* [[`6490b1f730`](https://github.com/nodejs/node-addon-api/commit/6490b1f730)] - **doc**: sync Object::Set value arg with Value::From (#933) (Tobias Nießen)
+* [[`7319a0d7a2`](https://github.com/nodejs/node-addon-api/commit/7319a0d7a2)] - Fix tab indent (#938) (Tobias Nießen)
+* [[`1916cb937e`](https://github.com/nodejs/node-addon-api/commit/1916cb937e)] - **chore**: fixup linter commands (#940) (legendecas)
+* [[`fc4585fa23`](https://github.com/nodejs/node-addon-api/commit/fc4585fa23)] - **test**: dd tests for Function constructors (JoseExposito) [#937](https://github.com/nodejs/node-addon-api/pull/937)
+* [[`87b7aae469`](https://github.com/nodejs/node-addon-api/commit/87b7aae469)] - **doc**: warn about SuppressDestruct() (#926) (Anna Henningsen)
+* [[`71494a49a3`](https://github.com/nodejs/node-addon-api/commit/71494a49a3)] - **src,doc**: refactor to replace typedefs with usings (Darshan Sen) [#910](https://github.com/nodejs/node-addon-api/pull/910)
+* [[`298ff8d9d2`](https://github.com/nodejs/node-addon-api/commit/298ff8d9d2)] - **test**: add additional tests for Object (JoseExposito) [#923](https://github.com/nodejs/node-addon-api/pull/923)
+* [[`8a1147b430`](https://github.com/nodejs/node-addon-api/commit/8a1147b430)] - **revert**: src: add additional tests for Function (Michael Dawson)
+* [[`bb56ffaa6f`](https://github.com/nodejs/node-addon-api/commit/bb56ffaa6f)] - **doc**: fix documentation for object api (Nicola Del Gobbo) [#931](https://github.com/nodejs/node-addon-api/pull/931)
+* [[`3b8bddab49`](https://github.com/nodejs/node-addon-api/commit/3b8bddab49)] - **src**: add additional tests for Function (José Expósito) [#928](https://github.com/nodejs/node-addon-api/pull/928)
+* [[`74ab50c775`](https://github.com/nodejs/node-addon-api/commit/74ab50c775)] - **src**: allow references to be copyable in APIs (legendecas) [#915](https://github.com/nodejs/node-addon-api/pull/915)
+* [[`929709d0fe`](https://github.com/nodejs/node-addon-api/commit/929709d0fe)] - **doc**: add propertylvalue.md (#925) (Gabriel Schulhof)
+* [[`69d0d98be4`](https://github.com/nodejs/node-addon-api/commit/69d0d98be4)] - fixup (Anna Henningsen)
+* [[`46e41d961b`](https://github.com/nodejs/node-addon-api/commit/46e41d961b)] - fixup (Anna Henningsen)
+* [[`1af1642fb7`](https://github.com/nodejs/node-addon-api/commit/1af1642fb7)] - **doc**: warn about SuppressDestruct() (Anna Henningsen)
+* [[`12c548b2ff`](https://github.com/nodejs/node-addon-api/commit/12c548b2ff)] - **tools**: fix error detection (#914) (Darshan Sen)
+* [[`458d895d5b`](https://github.com/nodejs/node-addon-api/commit/458d895d5b)] - **packaging**: list files to be published to npm (Lovell Fuller) [#889](https://github.com/nodejs/node-addon-api/pull/889)
+* [[`f7ed2490d4`](https://github.com/nodejs/node-addon-api/commit/f7ed2490d4)] - **test**: remove outdated V8 flag (Darshan Sen) [#895](https://github.com/nodejs/node-addon-api/pull/895)
+* [[`a575a6ec60`](https://github.com/nodejs/node-addon-api/commit/a575a6ec60)] - **src**: fix leak in ObjectWrap instance set/getters (Kevin Eady) [#899](https://github.com/nodejs/node-addon-api/pull/899)
+* [[`b6e844e0b0`](https://github.com/nodejs/node-addon-api/commit/b6e844e0b0)] - **doc**: fix spelling of "targeted" and "targeting" (#904) (Tobias Nießen)
+* [[`4d856f6e91`](https://github.com/nodejs/node-addon-api/commit/4d856f6e91)] - **src**: remove unnecessary symbol exposure (Gabriel Schulhof) [#896](https://github.com/nodejs/node-addon-api/pull/896)
+* [[`f35bb7d0d7`](https://github.com/nodejs/node-addon-api/commit/f35bb7d0d7)] - **doc**: Update GitHub URL references from 'master' to 'HEAD' (#898) (Jim Schlight)
+* [[`286ae215d1`](https://github.com/nodejs/node-addon-api/commit/286ae215d1)] - Add warning about branch rename (Michael Dawson)
+* [[`a4a7b28288`](https://github.com/nodejs/node-addon-api/commit/a4a7b28288)] - Update branch references from master to main (#886) (Jim Schlight)
+* [[`a2ad0a107a`](https://github.com/nodejs/node-addon-api/commit/a2ad0a107a)] - **docs**: add NAN to N-API resource link (#880) (kidneysolo)
+* [[`1c040eeb63`](https://github.com/nodejs/node-addon-api/commit/1c040eeb63)] - **test**: load testModules automatically (raisinten) [#876](https://github.com/nodejs/node-addon-api/pull/876)
+* [[`bf478e4496`](https://github.com/nodejs/node-addon-api/commit/bf478e4496)] - **src**: use NAPI\_NOEXCEPT macro instead of noexcept (NickNaso) [#864](https://github.com/nodejs/node-addon-api/pull/864)
+* [[`744705f2eb`](https://github.com/nodejs/node-addon-api/commit/744705f2eb)] - **test**: refactor remove repeated execution index.js (raisinten) [#839](https://github.com/nodejs/node-addon-api/pull/839)
+* [[`db62e3c811`](https://github.com/nodejs/node-addon-api/commit/db62e3c811)] - Update team members (Michael Dawson)
+
 ## 2020-12-17 Version 3.1.0, @NickNaso
 
 ### Notable changes:

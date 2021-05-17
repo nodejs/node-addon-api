@@ -116,6 +116,10 @@
       "url": "https://github.com/ikokostya"
     },
     {
+      "name": "Jack Xia",
+      "url": "https://github.com/JckXia"
+    },
+    {
       "name": "Jake Barnes",
       "url": "https://github.com/DuBistKomisch"
     },
@@ -140,6 +144,10 @@
       "url": "https://github.com/romandev"
     },
     {
+      "name": "José Expósito",
+      "url": "https://github.com/JoseExposito"
+    },
+    {
       "name": "joshgarde",
       "url": "https://github.com/joshgarde"
     },
@@ -154,6 +162,10 @@
     {
       "name": "Kevin Eady",
       "url": "https://github.com/KevinEady"
+    },
+    {
+      "name": "Kévin VOYER",
+      "url": "https://github.com/kecsou"
     },
     {
       "name": "kidneysolo",
@@ -174,6 +186,10 @@
     {
       "name": "legendecas",
       "url": "https://github.com/legendecas"
+    },
+    {
+      "name": "LongYinan",
+      "url": "https://github.com/Brooooooklyn"
     },
     {
       "name": "Lovell Fuller",
@@ -347,6 +363,6 @@
     "lint:fix": "node tools/clang-format --fix"
   },
   "pre-commit": "lint",
-  "version": "3.1.0",
+  "version": "3.2.0",
   "support": true
 }
