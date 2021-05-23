@@ -2609,7 +2609,7 @@ template <typename T>
 inline uint32_t Reference<T>::Ref() {
   uint32_t result;
   napi_status status = napi_reference_ref(_env, _ref, &result);
-  NAPI_THROW_IF_FAILED(_env, status, 1);
+  NAPI_THROW_IF_FAILED(_env, status, 0);
   return result;
 }
 
@@ -2617,7 +2617,7 @@ template <typename T>
 inline uint32_t Reference<T>::Unref() {
   uint32_t result;
   napi_status status = napi_reference_unref(_env, _ref, &result);
-  NAPI_THROW_IF_FAILED(_env, status, 1);
+  NAPI_THROW_IF_FAILED(_env, status, 0);
   return result;
 }
 
