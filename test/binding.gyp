@@ -24,6 +24,7 @@
         'error.cc',
         'external.cc',
         'function.cc',
+        'functionreference.cc',
         'handlescope.cc',
         'movable_callbacks.cc',
         'memory_management.cc',

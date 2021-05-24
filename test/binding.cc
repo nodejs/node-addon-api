@@ -33,6 +33,7 @@ Object InitDataViewReadWrite(Env env);
 Object InitError(Env env);
 Object InitExternal(Env env);
 Object InitFunction(Env env);
+Object InitFunctionReference(Env env);
 Object InitHandleScope(Env env);
 Object InitMovableCallbacks(Env env);
 Object InitMemoryManagement(Env env);
@@ -105,6 +106,7 @@ Object Init(Env env, Object exports) {
   exports.Set("error", InitError(env));
   exports.Set("external", InitExternal(env));
   exports.Set("function", InitFunction(env));
+  exports.Set("functionreference", InitFunctionReference(env));
   exports.Set("name", InitName(env));
   exports.Set("handlescope", InitHandleScope(env));
   exports.Set("movable_callbacks", InitMovableCallbacks(env));
