@@ -1,5 +1,17 @@
 # node-addon-api Changelog
 
+## 2021-05-28 Version 3.2.1, @NickNaso
+
+### Notable changes:
+
+#### Documentation
+
+- Fixed documentation about the oldest Node.js version supported.
+
+### Commits
+
+* [[`6d41ee5a3a`](https://github.com/nodejs/node-addon-api/commit/6d41ee5a3a)] - Fixed readme for new release. (NickNaso)
+
 ## 2021-05-17 Version 3.2.0, @NickNaso
 
 ### Notable changes:
