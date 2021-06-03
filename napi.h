@@ -85,18 +85,12 @@ static_assert(sizeof(char16_t) == sizeof(wchar_t), "Size mismatch between char16
   } while (0)
 
 #define NAPI_THROW_IF_FAILED(env, status, ...)                                 \
-  if ((status) == napi_pending_exception) {                                    \
-    return __VA_ARGS__;                                                        \
-  }                                                                            \
   if ((status) != napi_ok) {                                                   \
     Napi::Error::New(env).ThrowAsJavaScriptException();                        \
     return __VA_ARGS__;                                                        \
   }
 
 #define NAPI_THROW_IF_FAILED_VOID(env, status)                                 \
-  if ((status) == napi_pending_exception) {                                    \
-    return;                                                                    \
-  }                                                                            \
   if ((status) != napi_ok) {                                                   \
     Napi::Error::New(env).ThrowAsJavaScriptException();                        \
     return;                                                                    \
