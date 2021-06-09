@@ -1,4 +1,5 @@
 #include "napi.h"
+#include "test_helper.h"
 
 using namespace Napi;
 
@@ -8,7 +9,7 @@ Value Call(const CallbackInfo& info) {
   FunctionReference ref;
   ref.Reset(info[0].As<Function>());
 
-  return ref.Call({});
+  return MaybeUnwrapOr(ref.Call({}));
 }
 
 Value Construct(const CallbackInfo& info) {
@@ -16,7 +17,7 @@ Value Construct(const CallbackInfo& info) {
   FunctionReference ref;
   ref.Reset(info[0].As<Function>());
 
-  return ref.New({});
+  return MaybeUnwrapOr(ref.New({}));
 }
 }  // namespace
 
