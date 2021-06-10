@@ -670,7 +670,7 @@ namespace Napi {
       Key _key;
 
       friend class Napi::Object;
-    };
+   };
 
     /// Creates a new Object value.
     static Object New(napi_env env  ///< Node-API environment
