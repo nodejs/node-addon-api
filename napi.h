@@ -131,16 +131,6 @@ static_assert(sizeof(char16_t) == sizeof(wchar_t), "Size mismatch between char16
 #define NAPI_FATAL_IF_FAILED(status, location, message)                        \
   NAPI_CHECK((status) == napi_ok, location, message)
 
-// Annotate a function indicating the caller must examine the return value.
-// Use like:
-//   NAPI_WARN_UNUSED_RESULT int foo();
-// TODO: find a way to define NAPI_HAS_ATTRIBUTE_WARN_UNUSED_RESULT
-#if NAPI_HAS_ATTRIBUTE_WARN_UNUSED_RESULT
-#define NAPI_WARN_UNUSED_RESULT __attribute__((warn_unused_result))
-#else
-#define NAPI_WARN_UNUSED_RESULT /* NOT SUPPORTED */
-#endif
-
 ////////////////////////////////////////////////////////////////////////////////
 /// Node-API C++ Wrapper Classes
 ///
@@ -647,16 +637,22 @@ namespace Napi {
   /// A JavaScript object value.
   class Object : public Value {
   public:
-    /// Enables property and element assignments using indexing syntax.
-    ///
-    /// Example:
-    ///
-    ///     Napi::Value propertyValue = object1['A'];
-    ///     object2['A'] = propertyValue;
-    ///     Napi::Value elementValue = array[0];
-    ///     array[1] = elementValue;
-    template <typename Key>
-    class PropertyLValue {
+   /// Enables property and element assignments using indexing syntax.
+   ///
+   /// This is a convenient helper to get and set object properties. As
+   /// getting and setting object properties may throw with JavaScript
+   /// exceptions, it is notable that these operations may fail.
+   /// When NODE_ADDON_API_ENABLE_MAYBE is defined, the process will abort
+   /// on JavaScript exceptions.
+   ///
+   /// Example:
+   ///
+   ///     Napi::Value propertyValue = object1['A'];
+   ///     object2['A'] = propertyValue;
+   ///     Napi::Value elementValue = array[0];
+   ///     array[1] = elementValue;
+   template <typename Key>
+   class PropertyLValue {
     public:
       /// Converts an L-value to a value.
       operator Value() const;
@@ -684,37 +680,31 @@ namespace Napi {
     Object(napi_env env,
            napi_value value);  ///< Wraps a Node-API value primitive.
 
-    /// TODO(legendecas): find a way to boxing with MaybeOrValue.
     /// Gets or sets a named property.
     PropertyLValue<std::string> operator [](
       const char* utf8name ///< UTF-8 encoded null-terminated property name
     );
 
-    /// TODO(legendecas): find a way to boxing with MaybeOrValue.
     /// Gets or sets a named property.
     PropertyLValue<std::string> operator [](
       const std::string& utf8name ///< UTF-8 encoded property name
     );
 
-    /// TODO(legendecas): find a way to boxing with MaybeOrValue.
     /// Gets or sets an indexed property or array element.
     PropertyLValue<uint32_t> operator [](
       uint32_t index /// Property / element index
     );
 
-    /// TODO(legendecas): find a way to boxing with MaybeOrValue.
     /// Gets a named property.
     MaybeOrValue<Value> operator[](
         const char* utf8name  ///< UTF-8 encoded null-terminated property name
     ) const;
 
-    /// TODO(legendecas): find a way to boxing with MaybeOrValue.
     /// Gets a named property.
     MaybeOrValue<Value> operator[](
         const std::string& utf8name  ///< UTF-8 encoded property name
     ) const;
 
-    /// TODO(legendecas): find a way to boxing with MaybeOrValue.
     /// Gets an indexed property or array element.
     MaybeOrValue<Value> operator[](uint32_t index  ///< Property / element index
     ) const;

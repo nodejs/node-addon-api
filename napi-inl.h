@@ -839,10 +839,7 @@ inline int64_t Number::Int64Value() const {
 }
 
 inline float Number::FloatValue() const {
-  double result;
-  napi_status status = napi_get_value_double(_env, _value, &result);
-  NAPI_THROW_IF_FAILED(_env, status, 0);
-  return result;
+  return static_cast<float>(DoubleValue());
 }
 
 inline double Number::DoubleValue() const {
@@ -1192,7 +1189,6 @@ template <typename Key>
 inline Object::PropertyLValue<Key>::operator Value() const {
   MaybeOrValue<Value> val = Object(_env, _object).Get(_key);
 #ifdef NODE_ADDON_API_ENABLE_MAYBE
-  // TODO: Find a way more intuitive on maybe enabled.
   return val.Unwrap();
 #else
   return val;
@@ -1206,7 +1202,6 @@ inline Object::PropertyLValue<Key>& Object::PropertyLValue<Key>::operator =(Valu
 #endif
       Object(_env, _object).Set(_key, value);
 #ifdef NODE_ADDON_API_ENABLE_MAYBE
-  // TODO: Find a way more intuitive on maybe enabled.
   result.Unwrap();
 #endif
   return *this;
