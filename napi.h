@@ -2474,9 +2474,8 @@ namespace Napi {
         Finalizer finalizeCallback,
         FinalizerDataType* data = nullptr);
 
-    TypedThreadSafeFunction<ContextType, DataType, CallJs>();
-    TypedThreadSafeFunction<ContextType, DataType, CallJs>(
-        napi_threadsafe_function tsFunctionValue);
+    TypedThreadSafeFunction();
+    TypedThreadSafeFunction(napi_threadsafe_function tsFunctionValue);
 
     operator napi_threadsafe_function() const;
 
