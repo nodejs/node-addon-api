@@ -81,3 +81,11 @@ targeted node version *does not* have Node-API built-in.
 
 The preprocessor directive `NODE_ADDON_API_DISABLE_DEPRECATED` can be defined at
 compile time before including `napi.h` to skip the definition of deprecated APIs.
+
+## Known Issues
+
+There is a known incompatibility between `node-addon-api` and `gcc-11` when
+using the (currently
+[experimental](https://gcc.gnu.org/onlinedocs/gcc-11.1.0/gcc/C-Dialect-Options.html#C-Dialect-Options))
+`c++20` standard. This issue is tracked on the GCC bug tracker, see
+[here](https://gcc.gnu.org/bugzilla/show_bug.cgi?id=101032).
