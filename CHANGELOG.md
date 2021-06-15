@@ -1,5 +1,29 @@
 # node-addon-api Changelog
 
+## 2021-06-15 Version 4.0.0, @NickNaso
+
+### Notable changes:
+
+#### API
+
+- Fixed a crashing issue in `Napi::Error::ThrowAsJavaScriptException` 
+introducing the preprocessor directive `NODE_API_SWALLOW_UNTHROWABLE_EXCEPTIONS`.
+- Fixed compilation problem for GCC 11 and C++20. 
+
+#### TEST
+
+- Added test for function reference call and contructor.
+
+### Documentation
+
+- Updated the oldest Node.js version supported from `10.x` to `12.x`.
+
+### Commits
+
+* [[`028107f686`](https://github.com/nodejs/node-addon-api/commit/028107f686)] - **src**: fix Error::ThrowAsJavaScriptException crash (rudolftam) [#975](https://github.com/nodejs/node-addon-api/pull/975)
+* [[`fed13534c5`](https://github.com/nodejs/node-addon-api/commit/fed13534c5)] - **src**: fix gcc-11 c++20 compilation (Kevin Eady) [#1009](https://github.com/nodejs/node-addon-api/pull/1009)
+* [[`b75afc4d29`](https://github.com/nodejs/node-addon-api/commit/b75afc4d29)] - **test**: function reference call & construct (legendecas) [#1005](https://github.com/nodejs/node-addon-api/pull/1005)
+
 ## 2021-05-28 Version 3.2.1, @NickNaso
 
 ### Notable changes:
