@@ -102,14 +102,14 @@ static_assert(sizeof(char16_t) == sizeof(wchar_t), "Size mismatch between char16
 #define NAPI_MAYBE_THROW_IF_FAILED(env, status, type)                          \
   NAPI_THROW_IF_FAILED(env, status, Napi::Nothing<type>())
 
-#define NAPI_MAYBE_RETURN_OR_THROW_IF_FAILED(env, status, result, type)        \
+#define NAPI_RETURN_OR_THROW_IF_FAILED(env, status, result, type)              \
   NAPI_MAYBE_THROW_IF_FAILED(env, status, type);                               \
   return Napi::Just<type>(result);
 #else
 #define NAPI_MAYBE_THROW_IF_FAILED(env, status, type)                          \
   NAPI_THROW_IF_FAILED(env, status, type())
 
-#define NAPI_MAYBE_RETURN_OR_THROW_IF_FAILED(env, status, result, type)        \
+#define NAPI_RETURN_OR_THROW_IF_FAILED(env, status, result, type)              \
   NAPI_MAYBE_THROW_IF_FAILED(env, status, type);                               \
   return result;
 #endif
@@ -831,7 +831,7 @@ namespace Napi {
     /// https://tc39.es/ecma262/#sec-proxy-object-internal-methods-and-internal-slots-ownpropertykeys
     /// -
     /// https://tc39.es/ecma262/#sec-proxy-object-internal-methods-and-internal-slots-getownproperty-p
-    MaybeOrValue<Array> GetPropertyNames();  ///< Get all property names
+    MaybeOrValue<Array> GetPropertyNames() const;  ///< Get all property names
 
     /// Defines a property on the object.
     ///
@@ -873,7 +873,7 @@ namespace Napi {
     /// https://tc39.es/ecma262/#sec-proxy-object-internal-methods-and-internal-slots-getprototypeof
     MaybeOrValue<bool> InstanceOf(
         const Function& constructor  ///< Constructor function
-    );
+    ) const;
 
     template <typename Finalizer, typename T>
     inline void AddFinalizer(Finalizer finalizeCallback, T* data);

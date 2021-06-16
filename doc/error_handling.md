@@ -104,7 +104,7 @@ exception.
 If C++ exceptions are disabled (for more info see: [Setup](setup.md)), then the
 `Napi::Error` class does not extend `std::exception`. This means that any calls to
 node-addon-api function do not throw a C++ exceptions. Instead, these node-api
-functions that calling into JavaScript are returning with `Maybe` boxed values.
+functions that call into JavaScript are returning with `Maybe` boxed values.
 In that case, the calling side should convert the `Maybe` boxed values with
 checks to ensure that the call did succeed and therefore no exception is pending.
 If the check fails, that is to say, the returning value is _empty_, the calling

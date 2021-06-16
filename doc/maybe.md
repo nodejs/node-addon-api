@@ -1,10 +1,10 @@
 # Maybe (template)
 
-Class `Napi::Maybe<T>` represents an maybe empty value: every `Maybe` is either
-`Just` and contains a value, or `Nothing`, and does not. `Maybe` types are very
-common in node-addon-api code, as they represent the function may throw a
-JavaScript exception and cause the program unable to evaluation any JavaScript
-code until the exception is been handled.
+Class `Napi::Maybe<T>` represents a value that may be empty: every `Maybe` is
+either `Just` and contains a value, or `Nothing`, and does not. `Maybe` types
+are very common in node-addon-api code, as they represent that the function may
+throw a JavaScript exception and cause the program to be unable to evaluate any
+JavaScript code until the exception has been handled.
 
 Typically, the value wrapped in `Napi::Maybe<T>` is [`Napi::Value`] and its
 subclasses.
@@ -58,7 +58,7 @@ template <typename T>
 T Napi::Maybe::UnwrapOr(const T& default_value) const;
 ```
 
-Return the value of type T contained in the Maybe, or using a default
+Return the value of type T contained in the Maybe, or use a default
 value if this Maybe is nothing (empty).
 
 ### UnwrapTo
@@ -69,6 +69,6 @@ bool Napi::Maybe::UnwrapTo() const;
 ```
 
 Converts this Maybe to a value of type `T` in the `out`. If this Maybe is
-nothing (empty), `false` is returned and `out is left untouched.
+nothing (empty), `false` is returned and `out` is left untouched.
 
 [`Napi::Value`]: ./value.md

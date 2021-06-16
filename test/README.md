@@ -7,16 +7,16 @@ build flags defined in `napi.h`:
 2. c++ exceptions disabled,
 3. c++ exceptions disabled, and `NODE_ADDON_API_ENABLE_MAYBE` is defined.
 
-`Napi` functions that calling into JavaScript can have different declared
-`NODE_ADDON_API_ENABLE_MAYBE` is defined and c++ exceptions disabled
-return types to reflect build flavor settings. For example,
-`Napi::Object::Set` returns `bool`, and `Napi::Maybe<bool>` when
-`NODE_ADDON_API_ENABLE_MAYBE` is defined. In source code, return type variants
-are defined as `Napi::MaybeOrValue<>` to prevent from duplicating most of the
-code base.
+Functions in node-addon-api that call into JavaScript can have different
+declared return types to reflect build flavor settings. For example,
+`Napi::Object::Set` returns `bool` when `NODE_ADDON_API_ENABLE_MAYBE`
+is not defined, and `Napi::Maybe<bool>` when `NODE_ADDON_API_ENABLE_MAYBE`
+is defined. In source code, return type variants are defined as
+`Napi::MaybeOrValue<>` to prevent from duplicating most part of the code base.
 
-To properly test these build flavors, we should take care of the return value
-of `Napi` functions that may call into JavaScript. For example:
+To properly test these build flavors, all values returned by a function defined
+with `Napi::MaybeOrValue<>` return types in node-addon-api test suite, should
+use one of the following test helpers to handle possible JavaScript exceptions.
 
 ```cpp
 #include "napi.h"
@@ -24,13 +24,17 @@ of `Napi` functions that may call into JavaScript. For example:
 
 using namespace Napi;
 
-Value fn(const CallbackInfo& info) {
+void fn(const CallbackInfo& info) {
   Object obj = info[0].As<Object>();
-  Value value = MaybeUnwrap(obj->Get("foobar")); // <- `obj->Get` may throws
+  Value value = MaybeUnwrap(obj->Get("foobar")); // <- `obj->Get` is calling
+  // into JavaScript and may throw JavaScript Exceptions. Here we just assert
+  // getting the parameter must not fail for convenience.
+
+  // ... do works with the value.
 }
 ```
 
-There are there test helper function to conveniently convert `Napi::MaybeOrValue<>`
+There are three test helper functions to conveniently convert `Napi::MaybeOrValue<>`
 type to raw types.
 
 ## MaybeUnwrap
@@ -49,7 +53,8 @@ Example:
 
 ```cpp
 Object obj = info[0].As<Object>();
-Value value = MaybeUnwrap(obj->Get("foobar")); // we are sure the parameters should not throw
+Value value = MaybeUnwrap(obj->Get("foobar")); // we are sure the parameters
+// should not throw
 ```
 
 ## MaybeUnwrapOr
