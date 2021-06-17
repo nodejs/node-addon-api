@@ -90,3 +90,10 @@ targeted node version *does not* have Node-API built-in.
 
 The preprocessor directive `NODE_ADDON_API_DISABLE_DEPRECATED` can be defined at
 compile time before including `napi.h` to skip the definition of deprecated APIs.
+
+By default, throwing an exception on a terminating environment (eg. worker
+threads) will cause a fatal exception, terminating the Node process. This is to
+provide feedback to the user of the runtime error, as it is impossible to pass
+the error to JavaScript when the environment is terminating. In order to bypass
+this behavior such that the Node process will not terminate, define the
+preprocessor directive `NODE_API_SWALLOW_UNTHROWABLE_EXCEPTIONS`.

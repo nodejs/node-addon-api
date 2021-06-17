@@ -1,8 +1,53 @@
+#include <future>
 #include "napi.h"
 
 using namespace Napi;
 
 namespace {
+
+std::promise<void> promise_for_child_process_;
+std::promise<void> promise_for_worker_thread_;
+
+void ResetPromises(const CallbackInfo&) {
+  promise_for_child_process_ = std::promise<void>();
+  promise_for_worker_thread_ = std::promise<void>();
+}
+
+void WaitForWorkerThread(const CallbackInfo&) {
+  std::future<void> future = promise_for_worker_thread_.get_future();
+
+  std::future_status status = future.wait_for(std::chrono::seconds(5));
+
+  if (status != std::future_status::ready) {
+    Error::Fatal("WaitForWorkerThread", "status != std::future_status::ready");
+  }
+}
+
+void ReleaseAndWaitForChildProcess(const CallbackInfo& info,
+                                   const uint32_t index) {
+  if (info.Length() < index + 1) {
+    return;
+  }
+
+  if (!info[index].As<Boolean>().Value()) {
+    return;
+  }
+
+  promise_for_worker_thread_.set_value();
+
+  std::future<void> future = promise_for_child_process_.get_future();
+
+  std::future_status status = future.wait_for(std::chrono::seconds(5));
+
+  if (status != std::future_status::ready) {
+    Error::Fatal("ReleaseAndWaitForChildProcess",
+                 "status != std::future_status::ready");
+  }
+}
+
+void ReleaseWorkerThread(const CallbackInfo&) {
+  promise_for_child_process_.set_value();
+}
 
 void DoNotCatch(const CallbackInfo& info) {
   Function thrower = info[0].As<Function>();
@@ -18,16 +63,22 @@ void ThrowApiError(const CallbackInfo& info) {
 
 void ThrowJSError(const CallbackInfo& info) {
   std::string message = info[0].As<String>().Utf8Value();
+
+  ReleaseAndWaitForChildProcess(info, 1);
   throw Error::New(info.Env(), message);
 }
 
 void ThrowTypeError(const CallbackInfo& info) {
   std::string message = info[0].As<String>().Utf8Value();
+
+  ReleaseAndWaitForChildProcess(info, 1);
   throw TypeError::New(info.Env(), message);
 }
 
 void ThrowRangeError(const CallbackInfo& info) {
   std::string message = info[0].As<String>().Utf8Value();
+
+  ReleaseAndWaitForChildProcess(info, 1);
   throw RangeError::New(info.Env(), message);
 }
 
@@ -83,16 +134,22 @@ void CatchAndRethrowErrorThatEscapesScope(const CallbackInfo& info) {
 
 void ThrowJSError(const CallbackInfo& info) {
   std::string message = info[0].As<String>().Utf8Value();
+
+  ReleaseAndWaitForChildProcess(info, 1);
   Error::New(info.Env(), message).ThrowAsJavaScriptException();
 }
 
 void ThrowTypeError(const CallbackInfo& info) {
   std::string message = info[0].As<String>().Utf8Value();
+
+  ReleaseAndWaitForChildProcess(info, 1);
   TypeError::New(info.Env(), message).ThrowAsJavaScriptException();
 }
 
 void ThrowRangeError(const CallbackInfo& info) {
   std::string message = info[0].As<String>().Utf8Value();
+
+  ReleaseAndWaitForChildProcess(info, 1);
   RangeError::New(info.Env(), message).ThrowAsJavaScriptException();
 }
 
@@ -187,6 +244,8 @@ void ThrowDefaultError(const CallbackInfo& info) {
     Error::Fatal("ThrowDefaultError", "napi_get_named_property");
   }
 
+  ReleaseAndWaitForChildProcess(info, 1);
+
   // The macro creates a `Napi::Error` using the factory that takes only the
   // env, however, it heeds the exception mechanism to be used.
   NAPI_THROW_IF_FAILED_VOID(env, status);
@@ -209,5 +268,8 @@ Object InitError(Env env) {
     Function::New(env, CatchAndRethrowErrorThatEscapesScope);
   exports["throwFatalError"] = Function::New(env, ThrowFatalError);
   exports["throwDefaultError"] = Function::New(env, ThrowDefaultError);
+  exports["resetPromises"] = Function::New(env, ResetPromises);
+  exports["waitForWorkerThread"] = Function::New(env, WaitForWorkerThread);
+  exports["releaseWorkerThread"] = Function::New(env, ReleaseWorkerThread);
   return exports;
 }
