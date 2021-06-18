@@ -9,7 +9,7 @@ Value Call(const CallbackInfo& info) {
   FunctionReference ref;
   ref.Reset(info[0].As<Function>());
 
-  return MaybeUnwrapOr(ref.Call({}));
+  return MaybeUnwrapOr(ref.Call({}), Value());
 }
 
 Value Construct(const CallbackInfo& info) {
@@ -17,7 +17,7 @@ Value Construct(const CallbackInfo& info) {
   FunctionReference ref;
   ref.Reset(info[0].As<Function>());
 
-  return MaybeUnwrapOr(ref.New({}));
+  return MaybeUnwrapOr(ref.New({}), Object());
 }
 }  // namespace
 

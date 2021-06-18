@@ -18,22 +18,6 @@ To properly test these build flavors, all values returned by a function defined
 with `Napi::MaybeOrValue<>` return types in node-addon-api test suite, should
 use one of the following test helpers to handle possible JavaScript exceptions.
 
-```cpp
-#include "napi.h"
-#include "test_helper.h"
-
-using namespace Napi;
-
-void fn(const CallbackInfo& info) {
-  Object obj = info[0].As<Object>();
-  Value value = MaybeUnwrap(obj->Get("foobar")); // <- `obj->Get` is calling
-  // into JavaScript and may throw JavaScript Exceptions. Here we just assert
-  // getting the parameter must not fail for convenience.
-
-  // ... do works with the value.
-}
-```
-
 There are three test helper functions to conveniently convert `Napi::MaybeOrValue<>`
 type to raw types.
 

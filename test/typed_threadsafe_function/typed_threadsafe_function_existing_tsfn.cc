@@ -65,18 +65,13 @@ static Value TestCall(const CallbackInfo& info) {
   bool hasData = false;
   if (info.Length() > 0) {
     Object opts = info[0].As<Object>();
-    bool hasProperty = false;
-    if (MaybeUnwrapTo(opts.Has("blocking"), &hasProperty)) {
-      isBlocking = hasProperty &&
-                   MaybeUnwrap(MaybeUnwrap(opts.Get("blocking")).ToBoolean());
-    } else {
-      env.GetAndClearPendingException();
+    bool hasProperty = MaybeUnwrap(opts.Has("blocking"));
+    if (hasProperty) {
+      isBlocking = MaybeUnwrap(MaybeUnwrap(opts.Get("blocking")).ToBoolean());
     }
-    if (MaybeUnwrapTo(opts.Has("data"), &hasProperty)) {
-      hasData =
-          hasProperty && MaybeUnwrap(MaybeUnwrap(opts.Get("data")).ToBoolean());
-    } else {
-      env.GetAndClearPendingException();
+    hasProperty = MaybeUnwrap(opts.Has("data"));
+    if (hasProperty) {
+      hasData = MaybeUnwrap(MaybeUnwrap(opts.Get("data")).ToBoolean());
     }
   }
 

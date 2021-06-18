@@ -32,7 +32,7 @@ inline T MaybeUnwrap(MaybeOrValue<T> maybe) {
  * Do nothing when NODE_ADDON_API_ENABLE_MAYBE is not defined.
  */
 template <typename T>
-inline T MaybeUnwrapOr(MaybeOrValue<T> maybe, const T& default_value = T()) {
+inline T MaybeUnwrapOr(MaybeOrValue<T> maybe, const T& default_value) {
 #if defined(NODE_ADDON_API_ENABLE_MAYBE)
   return maybe.UnwrapOr(default_value);
 #else

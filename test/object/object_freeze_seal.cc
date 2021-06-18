@@ -7,12 +7,12 @@ using namespace Napi;
 
 Value Freeze(const CallbackInfo& info) {
   Object obj = info[0].As<Object>();
-  return Boolean::New(info.Env(), MaybeUnwrapOr(obj.Freeze()));
+  return Boolean::New(info.Env(), MaybeUnwrapOr(obj.Freeze(), false));
 }
 
 Value Seal(const CallbackInfo& info) {
   Object obj = info[0].As<Object>();
-  return Boolean::New(info.Env(), MaybeUnwrapOr(obj.Seal()));
+  return Boolean::New(info.Env(), MaybeUnwrapOr(obj.Seal(), false));
 }
 
 Object InitObjectFreezeSeal(Env env) {

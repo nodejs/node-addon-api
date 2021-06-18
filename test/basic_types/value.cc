@@ -76,19 +76,19 @@ static Value IsExternal(const CallbackInfo& info) {
 }
 
 static Value ToBoolean(const CallbackInfo& info) {
-  return MaybeUnwrapOr(info[0].ToBoolean());
+  return MaybeUnwrap(info[0].ToBoolean());
 }
 
 static Value ToNumber(const CallbackInfo& info) {
-  return MaybeUnwrapOr(info[0].ToNumber());
+  return MaybeUnwrap(info[0].ToNumber());
 }
 
 static Value ToString(const CallbackInfo& info) {
-  return MaybeUnwrapOr(info[0].ToString());
+  return MaybeUnwrap(info[0].ToString());
 }
 
 static Value ToObject(const CallbackInfo& info) {
-  return MaybeUnwrapOr(info[0].ToObject());
+  return MaybeUnwrap(info[0].ToObject());
 }
 
 Object InitBasicTypesValue(Env env) {

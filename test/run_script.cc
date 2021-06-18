@@ -7,18 +7,18 @@ namespace {
 
 Value RunPlainString(const CallbackInfo& info) {
   Env env = info.Env();
-  return MaybeUnwrapOr(env.RunScript("1 + 2 + 3"));
+  return MaybeUnwrap(env.RunScript("1 + 2 + 3"));
 }
 
 Value RunStdString(const CallbackInfo& info) {
   Env env = info.Env();
   std::string str = "1 + 2 + 3";
-  return MaybeUnwrapOr(env.RunScript(str));
+  return MaybeUnwrap(env.RunScript(str));
 }
 
 Value RunJsString(const CallbackInfo& info) {
   Env env = info.Env();
-  return MaybeUnwrapOr(env.RunScript(info[0].As<String>()));
+  return MaybeUnwrapOr(env.RunScript(info[0].As<String>()), Value());
 }
 
 Value RunWithContext(const CallbackInfo& info) {
@@ -39,7 +39,7 @@ Value RunWithContext(const CallbackInfo& info) {
     Value key = MaybeUnwrap(keys.Get(i));
     args.push_back(MaybeUnwrap(info[1].As<Object>().Get(key)));
   }
-  return MaybeUnwrapOr(fn.Call(args));
+  return MaybeUnwrap(fn.Call(args));
 }
 
 } // end anonymous namespace

@@ -98,22 +98,22 @@ Value GetFromGetter(const CallbackInfo& info) {
       return String::New(env, "No Referenced Value");
     } else {
       if (info[1].IsString()) {
-        return MaybeUnwrapOr(weak.Get(info[1].As<String>().Utf8Value()));
+        return MaybeUnwrap(weak.Get(info[1].As<String>().Utf8Value()));
       } else if (info[1].IsNumber()) {
-        return MaybeUnwrapOr(weak.Get(info[1].As<Number>().Uint32Value()));
+        return MaybeUnwrap(weak.Get(info[1].As<Number>().Uint32Value()));
       }
     }
   } else if (info[0].As<String>() == String::New(env, "persistent")) {
     if (info[1].IsString()) {
-      return MaybeUnwrapOr(persistent.Get(info[1].As<String>().Utf8Value()));
+      return MaybeUnwrap(persistent.Get(info[1].As<String>().Utf8Value()));
     } else if (info[1].IsNumber()) {
-      return MaybeUnwrapOr(persistent.Get(info[1].As<Number>().Uint32Value()));
+      return MaybeUnwrap(persistent.Get(info[1].As<Number>().Uint32Value()));
     }
   } else {
     if (info[0].IsString()) {
-      return MaybeUnwrapOr(reference.Get(info[0].As<String>().Utf8Value()));
+      return MaybeUnwrap(reference.Get(info[0].As<String>().Utf8Value()));
     } else if (info[0].IsNumber()) {
-      return MaybeUnwrapOr(reference.Get(info[0].As<Number>().Uint32Value()));
+      return MaybeUnwrap(reference.Get(info[0].As<Number>().Uint32Value()));
     }
   }
 
@@ -148,12 +148,12 @@ Value GetCastedFromGetter(const CallbackInfo& info) {
     if (casted_weak.IsEmpty()) {
       return String::New(env, "No Referenced Value");
     } else {
-      return MaybeUnwrapOr(casted_weak.Get(info[1].As<Number>()));
+      return MaybeUnwrap(casted_weak.Get(info[1].As<Number>()));
     }
   } else if (info[0].As<String>() == String::New(env, "persistent")) {
-    return MaybeUnwrapOr(casted_persistent.Get(info[1].As<Number>()));
+    return MaybeUnwrap(casted_persistent.Get(info[1].As<Number>()));
   } else {
-    return MaybeUnwrapOr(casted_reference.Get(info[1].As<Number>()));
+    return MaybeUnwrap(casted_reference.Get(info[1].As<Number>()));
   }
 }
 

@@ -54,7 +54,7 @@ Value ValueCallbackWithData(const CallbackInfo& info) {
 
 Value CallWithArgs(const CallbackInfo& info) {
   Function func = info[0].As<Function>();
-  return MaybeUnwrapOr(
+  return MaybeUnwrap(
       func.Call(std::initializer_list<napi_value>{info[1], info[2], info[3]}));
 }
 
@@ -65,7 +65,7 @@ Value CallWithVector(const CallbackInfo& info) {
    args.push_back(info[1]);
    args.push_back(info[2]);
    args.push_back(info[3]);
-   return MaybeUnwrapOr(func.Call(args));
+   return MaybeUnwrap(func.Call(args));
 }
 
 Value CallWithCStyleArray(const CallbackInfo& info) {
@@ -75,7 +75,7 @@ Value CallWithCStyleArray(const CallbackInfo& info) {
   args.push_back(info[1]);
   args.push_back(info[2]);
   args.push_back(info[3]);
-  return MaybeUnwrapOr(func.Call(args.size(), args.data()));
+  return MaybeUnwrap(func.Call(args.size(), args.data()));
 }
 
 Value CallWithReceiverAndCStyleArray(const CallbackInfo& info) {
@@ -86,13 +86,13 @@ Value CallWithReceiverAndCStyleArray(const CallbackInfo& info) {
   args.push_back(info[2]);
   args.push_back(info[3]);
   args.push_back(info[4]);
-  return MaybeUnwrapOr(func.Call(receiver, args.size(), args.data()));
+  return MaybeUnwrap(func.Call(receiver, args.size(), args.data()));
 }
 
 Value CallWithReceiverAndArgs(const CallbackInfo& info) {
    Function func = info[0].As<Function>();
    Value receiver = info[1];
-   return MaybeUnwrapOr(func.Call(
+   return MaybeUnwrap(func.Call(
        receiver, std::initializer_list<napi_value>{info[2], info[3], info[4]}));
 }
 
@@ -104,18 +104,18 @@ Value CallWithReceiverAndVector(const CallbackInfo& info) {
    args.push_back(info[2]);
    args.push_back(info[3]);
    args.push_back(info[4]);
-   return MaybeUnwrapOr(func.Call(receiver, args));
+   return MaybeUnwrap(func.Call(receiver, args));
 }
 
 Value CallWithInvalidReceiver(const CallbackInfo& info) {
    Function func = info[0].As<Function>();
-   return MaybeUnwrapOr(
-       func.Call(Value(), std::initializer_list<napi_value>{}));
+   return MaybeUnwrapOr(func.Call(Value(), std::initializer_list<napi_value>{}),
+                        Value());
 }
 
 Value CallConstructorWithArgs(const CallbackInfo& info) {
    Function func = info[0].As<Function>();
-   return MaybeUnwrapOr(
+   return MaybeUnwrap(
        func.New(std::initializer_list<napi_value>{info[1], info[2], info[3]}));
 }
 
@@ -126,7 +126,7 @@ Value CallConstructorWithVector(const CallbackInfo& info) {
    args.push_back(info[1]);
    args.push_back(info[2]);
    args.push_back(info[3]);
-   return MaybeUnwrapOr(func.New(args));
+   return MaybeUnwrap(func.New(args));
 }
 
 Value CallConstructorWithCStyleArray(const CallbackInfo& info) {
@@ -136,7 +136,7 @@ Value CallConstructorWithCStyleArray(const CallbackInfo& info) {
   args.push_back(info[1]);
   args.push_back(info[2]);
   args.push_back(info[3]);
-  return MaybeUnwrapOr(func.New(args.size(), args.data()));
+  return MaybeUnwrap(func.New(args.size(), args.data()));
 }
 
 void IsConstructCall(const CallbackInfo& info) {
@@ -195,7 +195,7 @@ void MakeCallbackWithInvalidReceiver(const CallbackInfo& info) {
 
 Value CallWithFunctionOperator(const CallbackInfo& info) {
   Function func = info[0].As<Function>();
-  return MaybeUnwrapOr(func({info[1], info[2], info[3]}));
+  return MaybeUnwrap(func({info[1], info[2], info[3]}));
 }
 
 } // end anonymous namespace

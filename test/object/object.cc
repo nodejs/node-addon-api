@@ -96,7 +96,7 @@ Value ConstructorFromObject(const CallbackInfo& info) {
 
 Array GetPropertyNames(const CallbackInfo& info) {
   Object obj = info[0].As<Object>();
-  Array arr = MaybeUnwrapOr(obj.GetPropertyNames());
+  Array arr = MaybeUnwrap(obj.GetPropertyNames());
   return arr;
 }
 
@@ -256,7 +256,7 @@ Value CreateObjectUsingMagic(const CallbackInfo& info) {
 Value InstanceOf(const CallbackInfo& info) {
   Object obj = info[0].As<Object>();
   Function constructor = info[1].As<Function>();
-  return Boolean::New(info.Env(), MaybeUnwrapOr(obj.InstanceOf(constructor)));
+  return Boolean::New(info.Env(), MaybeUnwrap(obj.InstanceOf(constructor)));
 }
 
 Object InitObject(Env env) {

@@ -4,7 +4,7 @@
 Napi::ObjectReference testStaticContextRef;
 
 Napi::Value StaticGetter(const Napi::CallbackInfo& /*info*/) {
-  return MaybeUnwrapOr(testStaticContextRef.Value().Get("value"));
+  return MaybeUnwrap(testStaticContextRef.Value().Get("value"));
 }
 
 void StaticSetter(const Napi::CallbackInfo& /*info*/, const Napi::Value& value) {
@@ -81,7 +81,7 @@ public:
   Napi::Value Iterator(const Napi::CallbackInfo& info) {
     Napi::Array array = Napi::Array::New(info.Env());
     array.Set(array.Length(), Napi::String::From(info.Env(), value_));
-    return MaybeUnwrapOr(
+    return MaybeUnwrap(
         MaybeUnwrap(array.Get(MaybeUnwrap(
                         Napi::Symbol::WellKnown(info.Env(), "iterator"))))
             .As<Napi::Function>()
