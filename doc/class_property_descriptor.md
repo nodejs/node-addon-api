@@ -17,7 +17,6 @@ class Example : public Napi::ObjectWrap<Example> {
     Example(const Napi::CallbackInfo &info);
 
   private:
-    static Napi::FunctionReference constructor;
     double _value;
     Napi::Value GetValue(const Napi::CallbackInfo &info);
     void SetValue(const Napi::CallbackInfo &info, const Napi::Value &value);
@@ -31,8 +30,9 @@ Napi::Object Example::Init(Napi::Env env, Napi::Object exports) {
         InstanceAccessor<&Example::GetValue>("readOnlyProp")
     });
 
-    constructor = Napi::Persistent(func);
-    constructor.SuppressDestruct();
+    Napi::FunctionReference *constructor = new Napi::FunctionReference();
+    *constructor = Napi::Persistent(func);
+    env.SetInstanceData(constructor);
     exports.Set("Example", func);
 
     return exports;
@@ -44,8 +44,6 @@ Example::Example(const Napi::CallbackInfo &info) : Napi::ObjectWrap<Example>(inf
     Napi::Number value = info[0].As<Napi::Number>();
     this->_value = value.DoubleValue();
 }
-
-Napi::FunctionReference Example::constructor;
 
 Napi::Value Example::GetValue(const Napi::CallbackInfo &info) {
     Napi::Env env = info.Env();
