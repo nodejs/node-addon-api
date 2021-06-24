@@ -135,6 +135,8 @@ namespace Napi {
   class CallbackInfo;
   class TypedArray;
   template <typename T> class TypedArrayOf;
+  template <typename Hook, typename Hint = void>
+  class EnvCleanupHook;
 
   using Int8Array =
       TypedArrayOf<int8_t>;  ///< Typed-array of signed 8-bit integers
@@ -201,6 +203,12 @@ namespace Napi {
     Value RunScript(const std::string& utf8script);
     Value RunScript(String script);
 
+    template <typename Hook>
+    EnvCleanupHook<Hook> AddCleanupHook(Napi::Env env, Hook hook);
+
+    template <typename Hook, typename Hint>
+    EnvCleanupHook<Hook> AddCleanupHook(Napi::Env env, Hook hook);
+
 #if NAPI_VERSION > 5
     template <typename T> T* GetInstanceData();
 
@@ -221,6 +229,26 @@ namespace Napi {
     napi_env _env;
   };
 
+  template <typename Hook, typename Hint = void>
+  struct EnvHookCleanupData {
+    static inline void Wrapper(void* data) NAPI_NOEXCEPT;
+    static inline void WrapperWithHint(void* data) NAPI_NOEXCEPT;
+
+    Hook callback;
+    Hint* hint;
+  };
+
+  template <typename Hook, typename Hint>
+  class EnvCleanupHook {
+   public:
+    EnvCleanupHook(void (*wrapper)(void* arg),
+                   EnvHookCleanupData<Hook, Hint>* data);
+    void Remove(Napi::Env env);
+
+   private:
+    void (*wrapper)(void* arg);
+    EnvHookCleanupData<Hook, Hint>* data;
+  };
   /// A JavaScript value of unknown type.
   ///
   /// For type-specific operations, convert to one of the Value subclasses using a `To*` or `As()`

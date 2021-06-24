@@ -22,6 +22,7 @@
         'callbackscope.cc',
         'dataview/dataview.cc',
         'dataview/dataview_read_write.cc',
+        'env_cleanup.cc',
         'error.cc',
         'external.cc',
         'function.cc',
