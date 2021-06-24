@@ -179,8 +179,12 @@ namespace Napi {
   /// In the V8 JavaScript engine, a Node-API environment approximately
   /// corresponds to an Isolate.
   class Env {
+   private:
+#if NAPI_VERSION > 2
+    template <typename Hook, typename Arg = void>
+    class CleanupHook;
+#endif  // NAPI_VERSION > 2
 #if NAPI_VERSION > 5
-  private:
     template <typename T> static void DefaultFini(Env, T* data);
     template <typename DataType, typename HintType>
     static void DefaultFiniWithHint(Env, DataType* data, HintType* hint);
@@ -201,6 +205,14 @@ namespace Napi {
     Value RunScript(const std::string& utf8script);
     Value RunScript(String script);
 
+#if NAPI_VERSION > 2
+    template <typename Hook>
+    CleanupHook<Hook> AddCleanupHook(Hook hook);
+
+    template <typename Hook, typename Arg>
+    CleanupHook<Hook, Arg> AddCleanupHook(Hook hook, Arg* arg);
+#endif  // NAPI_VERSION > 2
+
 #if NAPI_VERSION > 5
     template <typename T> T* GetInstanceData();
 
@@ -219,7 +231,28 @@ namespace Napi {
 
   private:
     napi_env _env;
+
+#if NAPI_VERSION > 2
+    template <typename Hook, typename Arg>
+    class CleanupHook {
+     public:
+      CleanupHook(Env env, Hook hook, Arg* arg);
+      CleanupHook(Env env, Hook hook);
+      bool Remove(Env env);
+      bool IsEmpty() const;
+
+     private:
+      static inline void Wrapper(void* data) NAPI_NOEXCEPT;
+      static inline void WrapperWithArg(void* data) NAPI_NOEXCEPT;
+
+      void (*wrapper)(void* arg);
+      struct CleanupData {
+        Hook hook;
+        Arg* arg;
+      } * data;
+    };
   };
+#endif  // NAPI_VERSION > 2
 
   /// A JavaScript value of unknown type.
   ///
