@@ -232,16 +232,19 @@ namespace Napi {
   template <typename Hook, typename Hint>
   class CleanupHook {
    public:
-    struct CleanupData {
-      Hook hook;
-      Hint* hint;
-    };
-    CleanupHook(Env env, void (*wrapper)(void* arg), Hook hook, Hint* hint);
+    CleanupHook(Env env, Hook hook, Hint* hint);
+    CleanupHook(Env env, Hook hook);
     void Remove(Env env);
 
    private:
+    static inline void Wrapper(void* data) NAPI_NOEXCEPT;
+    static inline void WrapperWithHint(void* data) NAPI_NOEXCEPT;
+
     void (*wrapper)(void* arg);
-    CleanupData* data;
+    struct CleanupData {
+      Hook hook;
+      Hint* hint;
+    } * data;
   };
 
   /// A JavaScript value of unknown type.

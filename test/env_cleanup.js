@@ -1,5 +1,3 @@
-// @ts-check
-
 'use strict';
 
 const assert = require('assert');
@@ -29,7 +27,7 @@ function test(bindingPath) {
         );
 
         const stdout = output[1].trim();
-        const lines = stdout.split(/\n/).sort();
+        const lines = stdout.split(/[\r\n]+/).sort();
 
         assert(status === 0, `Process aborted with status ${status}`);
 

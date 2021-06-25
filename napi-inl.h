@@ -334,22 +334,6 @@ struct AccessorCallbackData {
   void* data;
 };
 
-template <typename Hook, typename Hint = void>
-struct CleanupHookDetails {
-  static inline void Wrapper(void* data) NAPI_NOEXCEPT {
-    auto* cleanupData =
-        static_cast<typename Napi::CleanupHook<Hook, Hint>::CleanupData*>(data);
-    cleanupData->hook();
-    delete cleanupData;
-  }
-
-  static inline void WrapperWithHint(void* data) NAPI_NOEXCEPT {
-    auto* cleanupData =
-        static_cast<typename Napi::CleanupHook<Hook, Hint>::CleanupData*>(data);
-    cleanupData->hook(static_cast<Hint*>(cleanupData->hint));
-    delete cleanupData;
-  }
-};
 }  // namespace details
 
 #ifndef NODE_ADDON_API_DISABLE_DEPRECATED
@@ -456,6 +440,21 @@ inline Value Env::RunScript(String script) {
   napi_status status = napi_run_script(_env, script, &result);
   NAPI_THROW_IF_FAILED(_env, status, Undefined());
   return Value(_env, result);
+}
+
+template <typename Hook, typename Hint>
+void CleanupHook<Hook, Hint>::Wrapper(void* data) NAPI_NOEXCEPT {
+  auto* cleanupData =
+      static_cast<typename Napi::CleanupHook<Hook, Hint>::CleanupData*>(data);
+  cleanupData->hook();
+  delete cleanupData;
+}
+template <typename Hook, typename Hint>
+void CleanupHook<Hook, Hint>::WrapperWithHint(void* data) NAPI_NOEXCEPT {
+  auto* cleanupData =
+      static_cast<typename Napi::CleanupHook<Hook, Hint>::CleanupData*>(data);
+  cleanupData->hook(static_cast<Hint*>(cleanupData->hint));
+  delete cleanupData;
 }
 
 #if NAPI_VERSION > 5
@@ -5710,29 +5709,31 @@ Addon<T>::DefineProperties(Object object,
 
 template <typename Hook, typename Hint>
 CleanupHook<Hook, Hint> Env::AddCleanupHook(Hook hook, Hint* arg) {
-  return CleanupHook<Hook, Hint>(
-      *this,
-      details::CleanupHookDetails<Hook, Hint>::WrapperWithHint,
-      hook,
-      arg);
+  return CleanupHook<Hook, Hint>(*this, hook, arg);
 }
 
 template <typename Hook>
 CleanupHook<Hook> Env::AddCleanupHook(Hook hook) {
-  return CleanupHook<Hook>(
-      *this, details::CleanupHookDetails<Hook>::Wrapper, hook, nullptr);
+  return CleanupHook<Hook>(*this, hook);
 }
 
 template <class Hook, class Hint>
-CleanupHook<Hook, Hint>::CleanupHook(Napi::Env env,
-                                     void (*wrapper)(void* arg),
-                                     Hook hook,
-                                     Hint* hint)
-    : wrapper(wrapper) {
+CleanupHook<Hook, Hint>::CleanupHook(Napi::Env env, Hook hook)
+    : wrapper(CleanupHook<Hook, Hint>::Wrapper) {
+  data = new CleanupData{std::move(hook), nullptr};
+  napi_status status = napi_add_env_cleanup_hook(env, wrapper, data);
+  NAPI_FATAL_IF_FAILED(status,
+                       "CleanupHook<Hook, Hint>::CleanupHook Wrapper",
+                       "napi_add_env_cleanup_hook");
+}
+
+template <class Hook, class Hint>
+CleanupHook<Hook, Hint>::CleanupHook(Napi::Env env, Hook hook, Hint* hint)
+    : wrapper(CleanupHook<Hook, Hint>::WrapperWithHint) {
   data = new CleanupData{std::move(hook), hint};
   napi_status status = napi_add_env_cleanup_hook(env, wrapper, data);
   NAPI_FATAL_IF_FAILED(status,
-                       "CleanupHook<Hook, Hint>::CleanupHook",
+                       "CleanupHook<Hook, Hint>::CleanupHook WrapperWithHint",
                        "napi_add_env_cleanup_hook");
 }
 
