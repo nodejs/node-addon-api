@@ -179,13 +179,13 @@ namespace Napi {
   /// In the V8 JavaScript engine, a Node-API environment approximately
   /// corresponds to an Isolate.
   class Env {
+   private:
+    template <typename Hook, typename Arg = void>
+    class CleanupHook;
 #if NAPI_VERSION > 5
-  private:
     template <typename T> static void DefaultFini(Env, T* data);
     template <typename DataType, typename HintType>
     static void DefaultFiniWithHint(Env, DataType* data, HintType* hint);
-    template <typename Hook, typename Arg = void>
-    class CleanupHook;
 #endif  // NAPI_VERSION > 5
   public:
     Env(napi_env env);
