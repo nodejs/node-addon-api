@@ -130,3 +130,41 @@ Associates a data item stored at `T* data` with the current instance of the
 addon. The item will be passed to the function `fini` which gets called when an
 instance of the addon is unloaded. This overload accepts an additional hint to
 be passed to `fini`.
+
+### AddCleanupHook
+
+```cpp
+template <typename Hook>
+CleanupHook<Hook> AddCleanupHook(Hook hook);
+```
+
+- `[in] hook`: A function to call when the environment exists. Accepts a
+  function of the form `void ()`.
+
+Registers `hook` as a function to be run once the current Node.js environment
+exits. Unlike the underlying C-based Node-API, providing the same `hook`
+multiple times **is** allowed. The hooks will be called in reverse order, i.e.
+the most recently added one will be called first.
+
+Returns an `Env::CleanupHook` object, which can be used to remove the hook via
+its `Remove()` method.
+
+### AddCleanupHook
+
+```cpp
+template <typename Hook, typename Arg>
+CleanupHook<Hook, Arg> AddCleanupHook(Hook hook, Arg* arg);
+```
+
+- `[in] hook`: A function to call when the environment exists. Accepts a
+  function of the form `void (Arg* arg)`.
+- `[in] arg`: A pointer to data that will be passed as the argument to `hook`.
+
+Registers `hook` as a function to be run with the `arg` parameter once the
+current Node.js environment exits. Unlike the underlying C-based Node-API,
+providing the same `hook` and `arg` pair multiple times **is** allowed. The
+hooks will be called in reverse order, i.e. the most recently added one will be
+called first.
+
+Returns an `Env::CleanupHook` object, which can be used to remove the hook via
+its `Remove()` method.

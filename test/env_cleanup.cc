@@ -24,12 +24,16 @@ Value AddHooks(const CallbackInfo& info) {
 
   // hook: void (*)(void *arg), hint: int
   auto hook1 = env.AddCleanupHook(cleanup, &secret1);
+  // test using same hook+arg pair
+  auto hook1b = env.AddCleanupHook(cleanup, &secret1);
 
   // hook: void (*)(int *arg), hint: int
   auto hook2 = env.AddCleanupHook(cleanupInt, &secret2);
 
-  // hook: void (*)(int *arg), hint: void
+  // hook: void (*)(int *arg), hint: void (default)
   auto hook3 = env.AddCleanupHook(cleanupVoid);
+  // test using the same hook
+  auto hook3b = env.AddCleanupHook(cleanupVoid);
 
   // hook: lambda []void (int *arg)->void, hint: int
   auto hook4 = env.AddCleanupHook(
@@ -45,8 +49,10 @@ Value AddHooks(const CallbackInfo& info) {
 
   if (shouldRemove) {
     hook1.Remove(env);
+    hook1b.Remove(env);
     hook2.Remove(env);
     hook3.Remove(env);
+    hook3b.Remove(env);
     hook4.Remove(env);
     hook5.Remove(env);
     hook6.Remove(env);

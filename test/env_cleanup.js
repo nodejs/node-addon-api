@@ -4,7 +4,7 @@ const assert = require('assert');
 
 if (process.argv[2] === 'runInChildProcess') {
     const binding_path = process.argv[3];
-    const remove_hooks = process.argv[4] === "true";
+    const remove_hooks = process.argv[4] === 'true';
 
     const binding = require(binding_path);
     binding.env_cleanup.addHooks(remove_hooks);
@@ -27,7 +27,12 @@ function test(bindingPath) {
         );
 
         const stdout = output[1].trim();
-        const lines = stdout.split(/[\r\n]+/).sort();
+        /**
+         * There is no need to sort the lines, as per Node-API documentation:
+         *  > The hooks will be called in reverse order, i.e. the most recently
+         *  > added one will be called first.
+        */
+        const lines = stdout.split(/[\r\n]+/);
 
         assert(status === 0, `Process aborted with status ${status}`);
 
@@ -35,12 +40,14 @@ function test(bindingPath) {
             assert.deepStrictEqual(lines, [''], 'Child process had console output when none expected')
         } else {
             assert.deepStrictEqual(lines, [
-                "lambda cleanup()",
-                "lambda cleanup(42)",
-                "lambda cleanup(void)",
-                "static cleanup()",
-                "static cleanup(42)",
-                "static cleanup(43)",
+                'lambda cleanup()',
+                'lambda cleanup(void)',
+                'lambda cleanup(42)',
+                'static cleanup()',
+                'static cleanup()',
+                'static cleanup(43)',
+                'static cleanup(42)',
+                'static cleanup(42)'
             ],  'Child process console output mismisatch')
         }
     }
