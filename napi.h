@@ -135,8 +135,6 @@ namespace Napi {
   class CallbackInfo;
   class TypedArray;
   template <typename T> class TypedArrayOf;
-  template <typename Hook, typename Hint = void>
-  class CleanupHook;
 
   using Int8Array =
       TypedArrayOf<int8_t>;  ///< Typed-array of signed 8-bit integers
@@ -186,6 +184,8 @@ namespace Napi {
     template <typename T> static void DefaultFini(Env, T* data);
     template <typename DataType, typename HintType>
     static void DefaultFiniWithHint(Env, DataType* data, HintType* hint);
+    template <typename Hook, typename Arg = void>
+    class CleanupHook;
 #endif  // NAPI_VERSION > 5
   public:
     Env(napi_env env);
@@ -206,8 +206,8 @@ namespace Napi {
     template <typename Hook>
     CleanupHook<Hook> AddCleanupHook(Hook hook);
 
-    template <typename Hook, typename Hint>
-    CleanupHook<Hook, Hint> AddCleanupHook(Hook hook, Hint* hint);
+    template <typename Hook, typename Arg>
+    CleanupHook<Hook, Arg> AddCleanupHook(Hook hook, Arg* arg);
 
 #if NAPI_VERSION > 5
     template <typename T> T* GetInstanceData();
@@ -227,24 +227,24 @@ namespace Napi {
 
   private:
     napi_env _env;
-  };
 
-  template <typename Hook, typename Hint>
-  class CleanupHook {
-   public:
-    CleanupHook(Env env, Hook hook, Hint* hint);
-    CleanupHook(Env env, Hook hook);
-    void Remove(Env env);
+    template <typename Hook, typename Arg>
+    class CleanupHook {
+     public:
+      CleanupHook(Env env, Hook hook, Arg* arg);
+      CleanupHook(Env env, Hook hook);
+      void Remove(Env env);
 
-   private:
-    static inline void Wrapper(void* data) NAPI_NOEXCEPT;
-    static inline void WrapperWithHint(void* data) NAPI_NOEXCEPT;
+     private:
+      static inline void Wrapper(void* data) NAPI_NOEXCEPT;
+      static inline void WrapperWithArg(void* data) NAPI_NOEXCEPT;
 
-    void (*wrapper)(void* arg);
-    struct CleanupData {
-      Hook hook;
-      Hint* hint;
-    } * data;
+      void (*wrapper)(void* arg);
+      struct CleanupData {
+        Hook hook;
+        Arg* arg;
+      } * data;
+    };
   };
 
   /// A JavaScript value of unknown type.

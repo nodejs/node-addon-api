@@ -442,18 +442,20 @@ inline Value Env::RunScript(String script) {
   return Value(_env, result);
 }
 
-template <typename Hook, typename Hint>
-void CleanupHook<Hook, Hint>::Wrapper(void* data) NAPI_NOEXCEPT {
+template <typename Hook, typename Arg>
+void Env::CleanupHook<Hook, Arg>::Wrapper(void* data) NAPI_NOEXCEPT {
   auto* cleanupData =
-      static_cast<typename Napi::CleanupHook<Hook, Hint>::CleanupData*>(data);
+      static_cast<typename Napi::Env::CleanupHook<Hook, Arg>::CleanupData*>(
+          data);
   cleanupData->hook();
   delete cleanupData;
 }
-template <typename Hook, typename Hint>
-void CleanupHook<Hook, Hint>::WrapperWithHint(void* data) NAPI_NOEXCEPT {
+template <typename Hook, typename Arg>
+void Env::CleanupHook<Hook, Arg>::WrapperWithArg(void* data) NAPI_NOEXCEPT {
   auto* cleanupData =
-      static_cast<typename Napi::CleanupHook<Hook, Hint>::CleanupData*>(data);
-  cleanupData->hook(static_cast<Hint*>(cleanupData->hint));
+      static_cast<typename Napi::Env::CleanupHook<Hook, Arg>::CleanupData*>(
+          data);
+  cleanupData->hook(static_cast<Arg*>(cleanupData->arg));
   delete cleanupData;
 }
 
@@ -5707,41 +5709,42 @@ Addon<T>::DefineProperties(Object object,
 }
 #endif  // NAPI_VERSION > 5
 
-template <typename Hook, typename Hint>
-CleanupHook<Hook, Hint> Env::AddCleanupHook(Hook hook, Hint* arg) {
-  return CleanupHook<Hook, Hint>(*this, hook, arg);
+template <typename Hook, typename Arg>
+Env::CleanupHook<Hook, Arg> Env::AddCleanupHook(Hook hook, Arg* arg) {
+  return CleanupHook<Hook, Arg>(*this, hook, arg);
 }
 
 template <typename Hook>
-CleanupHook<Hook> Env::AddCleanupHook(Hook hook) {
+Env::CleanupHook<Hook> Env::AddCleanupHook(Hook hook) {
   return CleanupHook<Hook>(*this, hook);
 }
 
-template <class Hook, class Hint>
-CleanupHook<Hook, Hint>::CleanupHook(Napi::Env env, Hook hook)
-    : wrapper(CleanupHook<Hook, Hint>::Wrapper) {
+template <typename Hook, typename Arg>
+Env::CleanupHook<Hook, Arg>::CleanupHook(Napi::Env env, Hook hook)
+    : wrapper(Env::CleanupHook<Hook, Arg>::Wrapper) {
   data = new CleanupData{std::move(hook), nullptr};
   napi_status status = napi_add_env_cleanup_hook(env, wrapper, data);
   NAPI_FATAL_IF_FAILED(status,
-                       "CleanupHook<Hook, Hint>::CleanupHook Wrapper",
+                       "Env::CleanupHook<Hook, Arg>::CleanupHook Wrapper",
                        "napi_add_env_cleanup_hook");
 }
 
-template <class Hook, class Hint>
-CleanupHook<Hook, Hint>::CleanupHook(Napi::Env env, Hook hook, Hint* hint)
-    : wrapper(CleanupHook<Hook, Hint>::WrapperWithHint) {
-  data = new CleanupData{std::move(hook), hint};
+template <typename Hook, typename Arg>
+Env::CleanupHook<Hook, Arg>::CleanupHook(Napi::Env env, Hook hook, Arg* arg)
+    : wrapper(Env::CleanupHook<Hook, Arg>::WrapperWithArg) {
+  data = new CleanupData{std::move(hook), arg};
   napi_status status = napi_add_env_cleanup_hook(env, wrapper, data);
-  NAPI_FATAL_IF_FAILED(status,
-                       "CleanupHook<Hook, Hint>::CleanupHook WrapperWithHint",
-                       "napi_add_env_cleanup_hook");
+  NAPI_FATAL_IF_FAILED(
+      status,
+      "Env::CleanupHook<Hook, Arg>::CleanupHook WrapperWithArg",
+      "napi_add_env_cleanup_hook");
 }
 
-template <class Hook, class Hint>
-void CleanupHook<Hook, Hint>::Remove(Env env) {
+template <class Hook, class Arg>
+void Env::CleanupHook<Hook, Arg>::Remove(Env env) {
   napi_status status = napi_remove_env_cleanup_hook(env, wrapper, data);
   NAPI_FATAL_IF_FAILED(status,
-                       "CleanupHook<Hook, Hint>::Remove",
+                       "Env::CleanupHook<Hook, Arg>::Remove",
                        "napi_remove_env_cleanup_hook");
   delete data;
 }
