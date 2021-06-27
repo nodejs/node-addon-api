@@ -900,6 +900,11 @@ inline String String::New(napi_env env, const std::u16string& val) {
 }
 
 inline String String::New(napi_env env, const char* val) {
+  if (val == nullptr) {
+    NAPI_THROW(
+        TypeError::New(env, "String::New received a nullpointer as a value"),
+        Napi::String());
+  }
   napi_value value;
   napi_status status = napi_create_string_utf8(env, val, std::strlen(val), &value);
   NAPI_THROW_IF_FAILED(env, status, String());
