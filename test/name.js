@@ -6,7 +6,14 @@ module.exports = require('./common').runTest(test);
 
 function test(binding) {
   const expected = '123456789';
-
+  
+  try{
+    binding.name.nullStringShouldThrow();
+  }catch(e)
+  {
+    console.log('Err ',e.message);
+  }
+ 
   assert.ok(binding.name.checkString(expected, 'utf8'));
   assert.ok(binding.name.checkString(expected, 'utf16'));
   assert.ok(binding.name.checkString(expected.substr(0, 3), 'utf8', 3));
