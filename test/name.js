@@ -11,9 +11,8 @@ function test(binding) {
     binding.name.nullStringShouldThrow();
   }catch(e)
   {
-    console.log('Err ',e.message);
+    assert.strictEqual(e.message, 'String::New recieved a nullpointer as a value');
   }
- 
   assert.ok(binding.name.checkString(expected, 'utf8'));
   assert.ok(binding.name.checkString(expected, 'utf16'));
   assert.ok(binding.name.checkString(expected.substr(0, 3), 'utf8', 3));
