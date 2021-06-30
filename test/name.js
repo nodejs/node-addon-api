@@ -7,12 +7,11 @@ module.exports = require('./common').runTest(test);
 function test(binding) {
   const expected = '123456789';
   
-  try{
-    binding.name.nullStringShouldThrow();
-  }catch(e)
-  {
-    assert.strictEqual(e.message, 'String::New recieved a nullpointer as a value');
-  }
+
+  assert.throws(binding.name.nullStringShouldThrow, {
+    name: 'TypeError',
+    message: 'String::New received a nullpointer as a value',
+  });
   assert.ok(binding.name.checkString(expected, 'utf8'));
   assert.ok(binding.name.checkString(expected, 'utf16'));
   assert.ok(binding.name.checkString(expected.substr(0, 3), 'utf8', 3));

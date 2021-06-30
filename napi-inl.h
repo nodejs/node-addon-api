@@ -902,7 +902,7 @@ inline String String::New(napi_env env, const std::u16string& val) {
 inline String String::New(napi_env env, const char* val) {
   if (val == nullptr) {
     NAPI_THROW(
-        TypeError::New(env, "String::New recieved a nullpointer as a value"),
+        TypeError::New(env, "String::New received a nullpointer as a value"),
         Napi::String());
   }
   napi_value value;
