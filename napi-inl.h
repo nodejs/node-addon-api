@@ -900,10 +900,11 @@ inline String String::New(napi_env env, const std::u16string& val) {
 }
 
 inline String String::New(napi_env env, const char* val) {
+  // TODO(@gabrielschulhof) Remove if-statement when core's error handling is
+  // available in all supported versions.
   if (val == nullptr) {
-    NAPI_THROW(
-        TypeError::New(env, "String::New received a nullpointer as a value"),
-        Napi::String());
+    // Throw an error that looks like it came from core.
+    NAPI_THROW_IF_FAILED(env, napi_invalid_arg, String());
   }
   napi_value value;
   napi_status status = napi_create_string_utf8(env, val, std::strlen(val), &value);
@@ -913,6 +914,12 @@ inline String String::New(napi_env env, const char* val) {
 
 inline String String::New(napi_env env, const char16_t* val) {
   napi_value value;
+  // TODO(@gabrielschulhof) Remove if-statement when core's error handling is
+  // available in all supported versions.
+  if (val == nullptr) {
+    // Throw an error that looks like it came from core.
+    NAPI_THROW_IF_FAILED(env, napi_invalid_arg, String());
+  }
   napi_status status = napi_create_string_utf16(env, val, std::u16string(val).size(), &value);
   NAPI_THROW_IF_FAILED(env, status, String());
   return String(env, value);

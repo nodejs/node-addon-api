@@ -9,8 +9,8 @@ function test(binding) {
 
 
   assert.throws(binding.name.nullStringShouldThrow, {
-    name: 'TypeError',
-    message: 'String::New received a nullpointer as a value',
+    name: 'Error',
+    message: 'Error in native callback',
   });
   assert.ok(binding.name.checkString(expected, 'utf8'));
   assert.ok(binding.name.checkString(expected, 'utf16'));
