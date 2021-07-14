@@ -56,7 +56,7 @@ To use **Node-API** in a native module:
 ```
 
   If you decide to use node-addon-api without C++ exceptions enabled, please
-  consider enabling node-addon-api safe API type guards to ensure proper
+  consider enabling node-addon-api safe API type guards to ensure the proper
   exception handling pattern:
 
 ```gyp

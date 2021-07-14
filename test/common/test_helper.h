@@ -49,7 +49,7 @@ inline T MaybeUnwrapOr(MaybeOrValue<T> maybe, const T& default_value) {
  * Copying the value to out when NODE_ADDON_API_ENABLE_MAYBE is not defined.
  */
 template <typename T>
-inline T MaybeUnwrapTo(MaybeOrValue<T> maybe, T* out) {
+inline bool MaybeUnwrapTo(MaybeOrValue<T> maybe, T* out) {
 #if defined(NODE_ADDON_API_ENABLE_MAYBE)
   return maybe.UnwrapTo(out);
 #else

@@ -18,7 +18,8 @@ template <typename T>
 bool Napi::Maybe::IsNothing() const;
 ```
 
-Returns if the `Maybe` is `Nothing` and does not contain a value.
+Returns `true` if the `Maybe` is `Nothing` and does not contain a value, and
+`false` otherwise.
 
 ### IsJust
 
@@ -27,7 +28,8 @@ template <typename T>
 bool Napi::Maybe::IsJust() const;
 ```
 
-Returns if the `Maybe` is `Just` and contains a value.
+Returns `true` if the `Maybe` is `Just` and contains a value, and `false`
+otherwise.
 
 ### Check
 
@@ -65,7 +67,7 @@ value if this Maybe is nothing (empty).
 
 ```cpp
 template <typename T>
-bool Napi::Maybe::UnwrapTo() const;
+bool Napi::Maybe::UnwrapTo(T* result) const;
 ```
 
 Converts this Maybe to a value of type `T` in the `out`. If this Maybe is

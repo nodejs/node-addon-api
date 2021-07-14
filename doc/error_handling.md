@@ -103,16 +103,17 @@ exception.
 
 If C++ exceptions are disabled (for more info see: [Setup](setup.md)), then the
 `Napi::Error` class does not extend `std::exception`. This means that any calls to
-node-addon-api function do not throw a C++ exceptions. Instead, these node-api
+node-addon-api functions do not throw a C++ exceptions. Instead, these node-api
 functions that call into JavaScript are returning with `Maybe` boxed values.
 In that case, the calling side should convert the `Maybe` boxed values with
 checks to ensure that the call did succeed and therefore no exception is pending.
 If the check fails, that is to say, the returning value is _empty_, the calling
 side should determine what to do with `env.GetAndClearPendingException()` before
-attempting to calling into another node-api (for more info see: [Env](env.md)).
+attempting to call another node-api (for more info see: [Env](env.md)).
 
-The conversion from `Maybe` boxed values to actual return value is enforced by
-compilers so that the exceptions must be properly handled before continuing.
+The conversion from the `Maybe` boxed value to the actual return value is
+enforced by compilers so that the exceptions must be properly handled before
+continuing.
 
 ## Examples with Maybe Type and C++ exceptions disabled
 

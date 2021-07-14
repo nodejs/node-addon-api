@@ -1,25 +1,25 @@
 # Writing Tests
 
-There are multiple flavors of node-addon-api test build that covers different
+There are multiple flavors of node-addon-api test builds that cover different
 build flags defined in `napi.h`:
 
 1. c++ exceptions enabled,
 2. c++ exceptions disabled,
-3. c++ exceptions disabled, and `NODE_ADDON_API_ENABLE_MAYBE` is defined.
+3. c++ exceptions disabled, and `NODE_ADDON_API_ENABLE_MAYBE` defined.
 
 Functions in node-addon-api that call into JavaScript can have different
 declared return types to reflect build flavor settings. For example,
 `Napi::Object::Set` returns `bool` when `NODE_ADDON_API_ENABLE_MAYBE`
 is not defined, and `Napi::Maybe<bool>` when `NODE_ADDON_API_ENABLE_MAYBE`
 is defined. In source code, return type variants are defined as
-`Napi::MaybeOrValue<>` to prevent from duplicating most part of the code base.
+`Napi::MaybeOrValue<>` to prevent the duplication of most of the code base.
 
 To properly test these build flavors, all values returned by a function defined
-with `Napi::MaybeOrValue<>` return types in node-addon-api test suite, should
-use one of the following test helpers to handle possible JavaScript exceptions.
+to return `Napi::MaybeOrValue<>` should be tested by using one of the following
+test helpers to handle possible JavaScript exceptions.
 
-There are three test helper functions to conveniently convert `Napi::MaybeOrValue<>`
-type to raw types.
+There are three test helper functions to conveniently convert
+`Napi::MaybeOrValue<>` values to raw values.
 
 ## MaybeUnwrap
 
@@ -37,8 +37,8 @@ Example:
 
 ```cpp
 Object obj = info[0].As<Object>();
-Value value = MaybeUnwrap(obj->Get("foobar")); // we are sure the parameters
-// should not throw
+// we are sure the parameters should not throw
+Value value = MaybeUnwrap(obj->Get("foobar"));
 ```
 
 ## MaybeUnwrapOr
@@ -68,7 +68,7 @@ Value CallWithArgs(const CallbackInfo& info) {
 
 ```cpp
 template <typename T>
-T MaybeUnwrapTo(MaybeOrValue<T> maybe, T* out);
+bool MaybeUnwrapTo(MaybeOrValue<T> maybe, T* out);
 ```
 
 Converts `MaybeOrValue<T>` to `T` by getting the value that wrapped by the
@@ -81,7 +81,7 @@ Example:
 ```cpp
 Object opts = info[0].As<Object>();
 bool hasProperty = false;
-// The check may throwing, but we are going to suppress that.
+// The check may throw, but we are going to suppress that.
 if (MaybeUnwrapTo(opts.Has("blocking"), &hasProperty)) {
   isBlocking = hasProperty &&
                 MaybeUnwrap(MaybeUnwrap(opts.Get("blocking")).ToBoolean());
