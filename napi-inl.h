@@ -966,6 +966,11 @@ inline String String::New(napi_env env, const std::u16string& val) {
 }
 
 inline String String::New(napi_env env, const char* val) {
+  if (val == nullptr) {
+    NAPI_THROW(
+        TypeError::New(env, "String::New received a nullpointer as a value"),
+        Napi::String());
+  }
   napi_value value;
   napi_status status = napi_create_string_utf8(env, val, std::strlen(val), &value);
   NAPI_THROW_IF_FAILED(env, status, String());
@@ -1073,6 +1078,27 @@ inline MaybeOrValue<Symbol> Symbol::WellKnown(napi_env env,
 #else
   return Napi::Env(env).Global().Get("Symbol").As<Object>().Get(name).As<Symbol>();
 #endif
+}
+
+inline Symbol Symbol::For(napi_env env, const std::string& description) {
+  napi_value descriptionValue = String::New(env, description);
+  return Symbol::For(env, descriptionValue);
+}
+
+inline Symbol Symbol::For(napi_env env, const char* description) {
+  napi_value descriptionValue = String::New(env, description);
+  return Symbol::For(env, descriptionValue);
+}
+
+inline Symbol Symbol::For(napi_env env, String description) {
+  return Symbol::For(env, static_cast<napi_value>(description));
+}
+
+inline Symbol Symbol::For(napi_env env, napi_value description) {
+  Object symbObject = Napi::Env(env).Global().Get("Symbol").As<Object>();
+  auto forSymb =
+      symbObject.Get("for").As<Function>().Call(symbObject, {description});
+  return forSymb.As<Symbol>();
 }
 
 inline Symbol::Symbol() : Name() {
@@ -2697,7 +2723,7 @@ template <typename T>
 inline uint32_t Reference<T>::Ref() {
   uint32_t result;
   napi_status status = napi_reference_ref(_env, _ref, &result);
-  NAPI_THROW_IF_FAILED(_env, status, 1);
+  NAPI_THROW_IF_FAILED(_env, status, 0);
   return result;
 }
 
@@ -2705,7 +2731,7 @@ template <typename T>
 inline uint32_t Reference<T>::Unref() {
   uint32_t result;
   napi_status status = napi_reference_unref(_env, _ref, &result);
-  NAPI_THROW_IF_FAILED(_env, status, 1);
+  NAPI_THROW_IF_FAILED(_env, status, 0);
   return result;
 }
 
