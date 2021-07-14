@@ -1080,25 +1080,41 @@ inline MaybeOrValue<Symbol> Symbol::WellKnown(napi_env env,
 #endif
 }
 
-inline Symbol Symbol::For(napi_env env, const std::string& description) {
+inline MaybeOrValue<Symbol> Symbol::For(napi_env env,
+                                        const std::string& description) {
   napi_value descriptionValue = String::New(env, description);
   return Symbol::For(env, descriptionValue);
 }
 
-inline Symbol Symbol::For(napi_env env, const char* description) {
+inline MaybeOrValue<Symbol> Symbol::For(napi_env env, const char* description) {
   napi_value descriptionValue = String::New(env, description);
   return Symbol::For(env, descriptionValue);
 }
 
-inline Symbol Symbol::For(napi_env env, String description) {
+inline MaybeOrValue<Symbol> Symbol::For(napi_env env, String description) {
   return Symbol::For(env, static_cast<napi_value>(description));
 }
 
-inline Symbol Symbol::For(napi_env env, napi_value description) {
-  Object symbObject = Napi::Env(env).Global().Get("Symbol").As<Object>();
-  auto forSymb =
-      symbObject.Get("for").As<Function>().Call(symbObject, {description});
-  return forSymb.As<Symbol>();
+inline MaybeOrValue<Symbol> Symbol::For(napi_env env, napi_value description) {
+#if defined(NODE_ADDON_API_ENABLE_MAYBE)
+  Value symbol_obj;
+  Value symbol_for_value;
+  Value symbol_value;
+  if (Napi::Env(env).Global().Get("Symbol").UnwrapTo(&symbol_obj) &&
+      symbol_obj.As<Object>().Get("for").UnwrapTo(&symbol_for_value) &&
+      symbol_for_value.As<Function>()
+          .Call(symbol_obj, {description})
+          .UnwrapTo(&symbol_value)) {
+    return Just<Symbol>(symbol_value.As<Symbol>());
+  }
+  return Nothing<Symbol>();
+#else
+  Object symbol_obj = Napi::Env(env).Global().Get("Symbol").As<Object>();
+  return symbol_obj.Get("for")
+      .As<Function>()
+      .Call(symbol_obj, {description})
+      .As<Symbol>();
+#endif
 }
 
 inline Symbol::Symbol() : Name() {

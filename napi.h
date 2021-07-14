@@ -630,16 +630,17 @@ namespace Napi {
    static MaybeOrValue<Symbol> WellKnown(napi_env, const std::string& name);
 
    // Create a symbol in the global registry, UTF-8 Encoded cpp string
-   static Symbol For(napi_env env, const std::string& description);
+   static MaybeOrValue<Symbol> For(napi_env env,
+                                   const std::string& description);
 
    // Create a symbol in the global registry, C style string (null terminated)
-   static Symbol For(napi_env env, const char* description);
+   static MaybeOrValue<Symbol> For(napi_env env, const char* description);
 
    // Create a symbol in the global registry, String value describing the symbol
-   static Symbol For(napi_env env, String description);
+   static MaybeOrValue<Symbol> For(napi_env env, String description);
 
    // Create a symbol in the global registry, napi_value describing the symbol
-   static Symbol For(napi_env env, napi_value description);
+   static MaybeOrValue<Symbol> For(napi_env env, napi_value description);
 
    Symbol();  ///< Creates a new _empty_ Symbol instance.
    Symbol(napi_env env,
