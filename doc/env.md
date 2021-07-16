@@ -168,3 +168,29 @@ called first.
 
 Returns an `Env::CleanupHook` object, which can be used to remove the hook via
 its `Remove()` method.
+
+# Env::CleanupHook
+
+The `Env::CleanupHook` object allows removal of the hook added via
+`Env::AddCleanupHook()`
+
+## Methods
+
+### IsEmpty
+
+```cpp
+bool IsEmpty();
+```
+
+Returns `true` if the cleanup hook was **not** successfully registered.
+
+### Remove
+
+```cpp
+bool Remove(Env env);
+```
+
+Unregisters the hook from running once the current Node.js environment exits.
+
+Returns `true` if the hook was successfully removed from the Node.js
+environment.

@@ -7,7 +7,9 @@ if (process.argv[2] === 'runInChildProcess') {
     const remove_hooks = process.argv[4] === 'true';
 
     const binding = require(binding_path);
-    binding.env_cleanup.addHooks(remove_hooks);
+    const actualAdded = binding.env_cleanup.addHooks(remove_hooks);
+    const expectedAdded = remove_hooks === true ? 0 : 8;
+    assert(actualAdded === expectedAdded, 'Incorrect number of hooks added');
 }
 else {
     module.exports = require('./common').runTestWithBindingPath(test);

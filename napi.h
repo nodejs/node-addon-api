@@ -203,11 +203,13 @@ namespace Napi {
     Value RunScript(const std::string& utf8script);
     Value RunScript(String script);
 
+#if NAPI_VERSION > 2
     template <typename Hook>
     CleanupHook<Hook> AddCleanupHook(Hook hook);
 
     template <typename Hook, typename Arg>
     CleanupHook<Hook, Arg> AddCleanupHook(Hook hook, Arg* arg);
+#endif  // NAPI_VERSION > 2
 
 #if NAPI_VERSION > 5
     template <typename T> T* GetInstanceData();
@@ -228,12 +230,14 @@ namespace Napi {
   private:
     napi_env _env;
 
+#if NAPI_VERSION > 2
     template <typename Hook, typename Arg>
     class CleanupHook {
      public:
       CleanupHook(Env env, Hook hook, Arg* arg);
       CleanupHook(Env env, Hook hook);
-      void Remove(Env env);
+      bool Remove(Env env);
+      bool IsEmpty() const;
 
      private:
       static inline void Wrapper(void* data) NAPI_NOEXCEPT;
@@ -246,6 +250,7 @@ namespace Napi {
       } * data;
     };
   };
+#endif  // NAPI_VERSION > 2
 
   /// A JavaScript value of unknown type.
   ///

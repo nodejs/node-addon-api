@@ -58,7 +58,18 @@ Value AddHooks(const CallbackInfo& info) {
     hook6.Remove(env);
   }
 
-  return env.Undefined();
+  int added = 0;
+
+  added += !hook1.IsEmpty();
+  added += !hook1b.IsEmpty();
+  added += !hook2.IsEmpty();
+  added += !hook3.IsEmpty();
+  added += !hook3b.IsEmpty();
+  added += !hook4.IsEmpty();
+  added += !hook5.IsEmpty();
+  added += !hook6.IsEmpty();
+
+  return Number::New(env, added);
 }
 
 Object InitEnvCleanup(Env env) {
