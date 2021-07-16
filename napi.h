@@ -180,8 +180,10 @@ namespace Napi {
   /// corresponds to an Isolate.
   class Env {
    private:
+#if NAPI_VERSION > 2
     template <typename Hook, typename Arg = void>
     class CleanupHook;
+#endif  // NAPI_VERSION > 2
 #if NAPI_VERSION > 5
     template <typename T> static void DefaultFini(Env, T* data);
     template <typename DataType, typename HintType>
