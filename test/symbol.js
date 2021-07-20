@@ -6,7 +6,7 @@ const assert = require('assert');
 module.exports = require('./common').runTest(test);
 
 
-async function test(binding)
+function test(binding)
 {
 
     const wellKnownSymbolFunctions = ['asyncIterator','hasInstance','isConcatSpreadable', 'iterator','match','matchAll','replace','search','split','species','toPrimitive','toStringTag','unscopables'];
