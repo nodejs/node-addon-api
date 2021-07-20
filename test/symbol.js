@@ -3,14 +3,17 @@
 const buildType = process.config.target_defaults.default_configuration;
 const assert = require('assert');
 
-test(require(`./build/${buildType}/binding.node`));
-test(require(`./build/${buildType}/binding_noexcept.node`));
+module.exports = require('./common').runTest(test);
 
 
-async function test(binding)
+function test(binding)
 {
+    const majorNodeVersion = process.versions.node.split('.')[0];
 
-    const wellKnownSymbolFunctions = ['asyncIterator','hasInstance','isConcatSpreadable', 'iterator','match','matchAll','replace','search','split','species','toPrimitive','toStringTag','unscopables'];
+    let wellKnownSymbolFunctions = ['asyncIterator','hasInstance','isConcatSpreadable', 'iterator','match','replace','search','split','species','toPrimitive','toStringTag','unscopables'];
+    if (majorNodeVersion >= 12) {
+      wellKnownSymbolFunctions.push('matchAll');
+    }
 
     function assertCanCreateSymbol(symbol)
     {
