@@ -8,8 +8,12 @@ module.exports = require('./common').runTest(test);
 
 function test(binding)
 {
+    const majorNodeVersion = process.versions.node.split('.')[0];
 
-    const wellKnownSymbolFunctions = ['asyncIterator','hasInstance','isConcatSpreadable', 'iterator','match','matchAll','replace','search','split','species','toPrimitive','toStringTag','unscopables'];
+    let wellKnownSymbolFunctions = ['asyncIterator','hasInstance','isConcatSpreadable', 'iterator','match','replace','search','split','species','toPrimitive','toStringTag','unscopables'];
+    if (majorNodeVersion >= 12) {
+      wellKnownSymbolFunctions.push('matchAll');
+    }
 
     function assertCanCreateSymbol(symbol)
     {
