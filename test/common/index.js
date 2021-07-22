@@ -102,7 +102,7 @@ exports.runTestWithBindingPath = async function(test, buildType) {
   }
 }
 
-exports.runTestNoBinding = async function(test, buildType) {
+exports.runTestWithBuildType = async function(test, buildType) {
   buildType = buildType || process.config.target_defaults.default_configuration || 'Release';
 
    await Promise.resolve(test(buildType))

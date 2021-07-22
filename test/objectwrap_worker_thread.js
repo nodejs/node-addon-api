@@ -2,7 +2,7 @@
 const path = require('path');
 const { Worker, isMainThread, workerData } = require('worker_threads');
 
-module.exports = require('./common').runTestNoBinding(test);
+module.exports = require('./common').runTestWithBuildType(test);
 
 async function test(buildType) {
   if (isMainThread) {
