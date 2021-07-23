@@ -82,6 +82,7 @@ if (process.env.NAPI_VERSION) {
 console.log('napiVersion:' + napiVersion);
 
 if (napiVersion < 3) {
+  testModules.splice(testModules.indexOf('env_cleanup'), 1);
   testModules.splice(testModules.indexOf('callbackscope'), 1);
   testModules.splice(testModules.indexOf('version_management'), 1);
 }

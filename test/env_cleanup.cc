@@ -3,6 +3,9 @@
 
 using namespace Napi;
 
+#if (NAPI_VERSION > 2)
+namespace {
+
 static void cleanup(void* arg) {
   printf("static cleanup(%d)\n", *(int*)(arg));
 }
@@ -72,6 +75,8 @@ Value AddHooks(const CallbackInfo& info) {
   return Number::New(env, added);
 }
 
+}  // anonymous namespace
+
 Object InitEnvCleanup(Env env) {
   Object exports = Object::New(env);
 
@@ -79,3 +84,5 @@ Object InitEnvCleanup(Env env) {
 
   return exports;
 }
+
+#endif

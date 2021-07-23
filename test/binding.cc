@@ -104,7 +104,9 @@ Object Init(Env env, Object exports) {
   exports.Set("dataview", InitDataView(env));
   exports.Set("dataview_read_write", InitDataView(env));
   exports.Set("dataview_read_write", InitDataViewReadWrite(env));
+#if (NAPI_VERSION > 2)
   exports.Set("env_cleanup", InitEnvCleanup(env));
+#endif
   exports.Set("error", InitError(env));
   exports.Set("external", InitExternal(env));
   exports.Set("function", InitFunction(env));
