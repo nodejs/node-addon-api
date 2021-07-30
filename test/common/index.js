@@ -7,10 +7,10 @@ const noop = () => {};
 
 const mustCallChecks = [];
 
-function runCallChecks(exitCode) {
+function runCallChecks (exitCode) {
   if (exitCode !== 0) return;
 
-  const failed = mustCallChecks.filter(function(context) {
+  const failed = mustCallChecks.filter(function (context) {
     if ('minimum' in context) {
       context.messageSegment = `at least ${context.minimum}`;
       return context.actual < context.minimum;
@@ -20,25 +20,25 @@ function runCallChecks(exitCode) {
     }
   });
 
-  failed.forEach(function(context) {
+  failed.forEach(function (context) {
     console.log('Mismatched %s function calls. Expected %s, actual %d.',
-                context.name,
-                context.messageSegment,
-                context.actual);
+      context.name,
+      context.messageSegment,
+      context.actual);
     console.log(context.stack.split('\n').slice(2).join('\n'));
   });
 
   if (failed.length) process.exit(1);
 }
 
-exports.mustCall = function(fn, exact) {
+exports.mustCall = function (fn, exact) {
   return _mustCallInner(fn, exact, 'exact');
 };
-exports.mustCallAtLeast = function(fn, minimum) {
+exports.mustCallAtLeast = function (fn, minimum) {
   return _mustCallInner(fn, minimum, 'minimum');
 };
 
-function _mustCallInner(fn, criteria, field) {
+function _mustCallInner (fn, criteria, field) {
   if (typeof fn === 'number') {
     criteria = fn;
     fn = noop;
@@ -49,8 +49,7 @@ function _mustCallInner(fn, criteria, field) {
     criteria = 1;
   }
 
-  if (typeof criteria !== 'number')
-    throw new TypeError(`Invalid ${field} value: ${criteria}`);
+  if (typeof criteria !== 'number') { throw new TypeError(`Invalid ${field} value: ${criteria}`); }
 
   const context = {
     [field]: criteria,
@@ -64,50 +63,50 @@ function _mustCallInner(fn, criteria, field) {
 
   mustCallChecks.push(context);
 
-  return function() {
+  return function () {
     context.actual++;
     return fn.apply(this, arguments);
   };
 }
 
-exports.mustNotCall = function(msg) {
-  return function mustNotCall() {
+exports.mustNotCall = function (msg) {
+  return function mustNotCall () {
     assert.fail(msg || 'function should not have been called');
   };
 };
 
-exports.runTest = async function(test, buildType, buildPathRoot = process.env.REL_BUILD_PATH || '') {
+exports.runTest = async function (test, buildType, buildPathRoot = process.env.BUILD_PATH || '') {
   buildType = buildType || process.config.target_defaults.default_configuration || 'Release';
 
   const bindings = [
     path.join(buildPathRoot, `../build/${buildType}/binding.node`),
     path.join(buildPathRoot, `../build/${buildType}/binding_noexcept.node`),
-    path.join(buildPathRoot, `../build/${buildType}/binding_noexcept_maybe.node`),
+    path.join(buildPathRoot, `../build/${buildType}/binding_noexcept_maybe.node`)
   ].map(it => require.resolve(it));
 
   for (const item of bindings) {
     await Promise.resolve(test(require(item)))
       .finally(exports.mustCall());
   }
-}
+};
 
-exports.runTestWithBindingPath = async function(test, buildType, buildPathRoot = process.env.REL_BUILD_PATH || '') {
+exports.runTestWithBindingPath = async function (test, buildType, buildPathRoot = process.env.BUILD_PATH || '') {
   buildType = buildType || process.config.target_defaults.default_configuration || 'Release';
 
   const bindings = [
     path.join(buildPathRoot, `../build/${buildType}/binding.node`),
     path.join(buildPathRoot, `../build/${buildType}/binding_noexcept.node`),
-    path.join(buildPathRoot, `../build/${buildType}/binding_noexcept_maybe.node`),
+    path.join(buildPathRoot, `../build/${buildType}/binding_noexcept_maybe.node`)
   ].map(it => require.resolve(it));
 
   for (const item of bindings) {
     await test(item);
   }
-}
+};
 
-exports.runTestWithBuildType = async function(test, buildType) {
+exports.runTestWithBuildType = async function (test, buildType) {
   buildType = buildType || process.config.target_defaults.default_configuration || 'Release';
 
-   await Promise.resolve(test(buildType))
-     .finally(exports.mustCall());
-}
+  await Promise.resolve(test(buildType))
+    .finally(exports.mustCall());
+};

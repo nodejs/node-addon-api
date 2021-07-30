@@ -4,7 +4,7 @@ const majorNodeVersion = process.versions.node.split('.')[0];
 
 if (typeof global.gc !== 'function') {
   // Construct the correct (version-dependent) command-line args.
-  let args = ['--expose-gc'];
+  const args = ['--expose-gc'];
   const majorV8Version = process.versions.v8.split('.')[0];
   if (majorV8Version < 9) {
     args.push('--no-concurrent-array-buffer-freeing');
@@ -15,7 +15,7 @@ if (typeof global.gc !== 'function') {
   args.push(__filename);
 
   const child = require('./napi_child').spawnSync(process.argv[0], args, {
-    stdio: 'inherit',
+    stdio: 'inherit'
   });
 
   if (child.signal) {
@@ -27,17 +27,36 @@ if (typeof global.gc !== 'function') {
   process.exit(process.exitCode);
 }
 
+const testModules = [];
+
 const fs = require('fs');
 const path = require('path');
 
-let testModules = [];
+let filterCondition = process.env.npm_config_filter || '';
+let filterConditionFiles = [];
+
+if (filterCondition !== '') {
+  filterCondition = require('../unit-test/matchModules').matchWildCards(process.env.npm_config_filter);
+  filterConditionFiles = filterCondition.split(' ').length > 0 ? filterCondition.split(' ') : [filterCondition];
+}
+
+const filterConditionsProvided = filterConditionFiles.length > 0;
+
+function checkFilterCondition (fileName, parsedFilepath) {
+  let result = false;
+
+  if (!filterConditionsProvided) return true;
+  if (filterConditionFiles.includes(parsedFilepath)) result = true;
+  if (filterConditionFiles.includes(fileName)) result = true;
+  return result;
+}
 
 // TODO(RaisinTen): Update this when the test filenames
 // are changed into test_*.js.
-function loadTestModules(currentDirectory = __dirname, pre = '') {
+function loadTestModules (currentDirectory = __dirname, pre = '') {
   fs.readdirSync(currentDirectory).forEach((file) => {
     if (currentDirectory === __dirname && (
-          file === 'binding.cc' ||
+      file === 'binding.cc' ||
           file === 'binding.gyp' ||
           file === 'build' ||
           file === 'common' ||
@@ -50,15 +69,19 @@ function loadTestModules(currentDirectory = __dirname, pre = '') {
       return;
     }
     const absoluteFilepath = path.join(currentDirectory, file);
+    const parsedFilepath = path.parse(file);
+    const parsedPath = path.parse(currentDirectory);
+
     if (fs.statSync(absoluteFilepath).isDirectory()) {
       if (fs.existsSync(absoluteFilepath + '/index.js')) {
-        testModules.push(pre + file);
+        if (checkFilterCondition(parsedFilepath.name, parsedPath.base)) {
+          testModules.push(pre + file);
+        }
       } else {
         loadTestModules(absoluteFilepath, pre + file + '/');
       }
     } else {
-      const parsedFilepath = path.parse(file);
-      if (parsedFilepath.ext === '.js') {
+      if (parsedFilepath.ext === '.js' && checkFilterCondition(parsedFilepath.name, parsedPath.base)) {
         testModules.push(pre + parsedFilepath.name);
       }
     }
@@ -69,7 +92,7 @@ loadTestModules();
 
 process.config.target_defaults.default_configuration =
   fs
-    .readdirSync(path.join(__dirname, 'build'))
+    .readdirSync(path.join(__dirname, process.env.REL_BUILD_PATH || '', 'build'))
     .filter((item) => (item === 'Debug' || item === 'Release'))[0];
 
 let napiVersion = Number(process.versions.napi);
@@ -87,7 +110,7 @@ if (napiVersion < 3) {
   testModules.splice(testModules.indexOf('version_management'), 1);
 }
 
-if (napiVersion < 4) {
+if (napiVersion < 4 && !filterConditionsProvided) {
   testModules.splice(testModules.indexOf('asyncprogressqueueworker'), 1);
   testModules.splice(testModules.indexOf('asyncprogressworker'), 1);
   testModules.splice(testModules.indexOf('threadsafe_function/threadsafe_function_ctx'), 1);
@@ -98,36 +121,36 @@ if (napiVersion < 4) {
   testModules.splice(testModules.indexOf('threadsafe_function/threadsafe_function'), 1);
 }
 
-if (napiVersion < 5) {
+if (napiVersion < 5 && !filterConditionsProvided) {
   testModules.splice(testModules.indexOf('date'), 1);
 }
 
-if (napiVersion < 6) {
+if (napiVersion < 6 && !filterConditionsProvided) {
   testModules.splice(testModules.indexOf('addon'), 1);
   testModules.splice(testModules.indexOf('addon_data'), 1);
   testModules.splice(testModules.indexOf('bigint'), 1);
   testModules.splice(testModules.indexOf('typedarray-bigint'), 1);
 }
 
-if (majorNodeVersion < 12) {
+if (majorNodeVersion < 12 && !filterConditionsProvided) {
   testModules.splice(testModules.indexOf('objectwrap_worker_thread'), 1);
   testModules.splice(testModules.indexOf('error_terminating_environment'), 1);
 }
 
-if (napiVersion < 8) {
+if (napiVersion < 8 && !filterConditionsProvided) {
   testModules.splice(testModules.indexOf('object/object_freeze_seal'), 1);
 }
 
-(async function() {
+(async function () {
   console.log(`Testing with Node-API Version '${napiVersion}'.`);
 
-  console.log('Starting test suite\n');
+  if (filterConditionsProvided) { console.log('Starting test suite\n', testModules); } else { console.log('Starting test suite\n'); }
 
   // Requiring each module runs tests in the module.
   for (const name of testModules) {
     console.log(`Running test '${name}'`);
     await require('./' + name);
-  };
+  }
 
   console.log('\nAll tests passed!');
 })().catch((error) => {
