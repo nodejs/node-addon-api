@@ -76,7 +76,7 @@ exports.mustNotCall = function(msg) {
   };
 };
 
-exports.runTest = async function(test, buildType, buildPathRoot = process.env.REL_BUILD_PATH || '') {
+exports.runTest = async function(test, buildType, buildPathRoot = process.env.BUILD_PATH || '') {
   buildType = buildType || process.config.target_defaults.default_configuration || 'Release';
 
   const bindings = [
@@ -91,7 +91,7 @@ exports.runTest = async function(test, buildType, buildPathRoot = process.env.RE
   }
 }
 
-exports.runTestWithBindingPath = async function(test, buildType, buildPathRoot = process.env.REL_BUILD_PATH || '') {
+exports.runTestWithBindingPath = async function(test, buildType, buildPathRoot = process.env.BUILD_PATH || '') {
   buildType = buildType || process.config.target_defaults.default_configuration || 'Release';
 
   const bindings = [

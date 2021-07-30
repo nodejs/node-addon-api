@@ -29,8 +29,22 @@ if (typeof global.gc !== 'function') {
 
 const fs = require('fs');
 const path = require('path');
+process.env.filter = require('../unit-test/matchModules').matchWildCards(process.env.filter);
 
 let testModules = [];
+
+const filterCondition = process.env.filter || '';
+const filterConditionFiles = filterCondition.split(' ').length ?  filterCondition.split(' ') : [filterCondition];
+
+
+function checkFilterCondition(fileName, parsedFilepath) {
+  let result = false;
+  
+  if (!filterConditionFiles.length) result = true;
+  if (filterConditionFiles.includes(parsedFilepath)) result = true;
+  if (filterConditionFiles.includes(fileName)) result = true;
+  return result;
+}
 
 // TODO(RaisinTen): Update this when the test filenames
 // are changed into test_*.js.
@@ -50,15 +64,19 @@ function loadTestModules(currentDirectory = __dirname, pre = '') {
       return;
     }
     const absoluteFilepath = path.join(currentDirectory, file);
+    const parsedFilepath = path.parse(file);
+    const parsedPath = path.parse(currentDirectory);
+
     if (fs.statSync(absoluteFilepath).isDirectory()) {
       if (fs.existsSync(absoluteFilepath + '/index.js')) {
-        testModules.push(pre + file);
+        if (checkFilterCondition(parsedFilepath.name, parsedPath.base)) {
+          testModules.push(pre + file);
+        }
       } else {
         loadTestModules(absoluteFilepath, pre + file + '/');
       }
     } else {
-      const parsedFilepath = path.parse(file);
-      if (parsedFilepath.ext === '.js') {
+      if (parsedFilepath.ext === '.js' && checkFilterCondition(parsedFilepath.name, parsedPath.base)) {
         testModules.push(pre + parsedFilepath.name);
       }
     }
@@ -69,7 +87,7 @@ loadTestModules();
 
 process.config.target_defaults.default_configuration =
   fs
-    .readdirSync(path.join(__dirname, 'build'))
+    .readdirSync(path.join(__dirname, process.env.REL_BUILD_PATH, 'build'))
     .filter((item) => (item === 'Debug' || item === 'Release'))[0];
 
 let napiVersion = Number(process.versions.napi);
@@ -87,7 +105,7 @@ if (napiVersion < 3) {
   testModules.splice(testModules.indexOf('version_management'), 1);
 }
 
-if (napiVersion < 4) {
+if (napiVersion < 4 && !filterConditionFiles.length) {
   testModules.splice(testModules.indexOf('asyncprogressqueueworker'), 1);
   testModules.splice(testModules.indexOf('asyncprogressworker'), 1);
   testModules.splice(testModules.indexOf('threadsafe_function/threadsafe_function_ctx'), 1);
@@ -98,30 +116,30 @@ if (napiVersion < 4) {
   testModules.splice(testModules.indexOf('threadsafe_function/threadsafe_function'), 1);
 }
 
-if (napiVersion < 5) {
+if (napiVersion < 5 && !filterConditionFiles.length) {
   testModules.splice(testModules.indexOf('date'), 1);
 }
 
-if (napiVersion < 6) {
+if (napiVersion < 6 && !filterConditionFiles.length) {
   testModules.splice(testModules.indexOf('addon'), 1);
   testModules.splice(testModules.indexOf('addon_data'), 1);
   testModules.splice(testModules.indexOf('bigint'), 1);
   testModules.splice(testModules.indexOf('typedarray-bigint'), 1);
 }
 
-if (majorNodeVersion < 12) {
+if (majorNodeVersion < 12 && !filterConditionFiles.length) {
   testModules.splice(testModules.indexOf('objectwrap_worker_thread'), 1);
   testModules.splice(testModules.indexOf('error_terminating_environment'), 1);
 }
 
-if (napiVersion < 8) {
+if (napiVersion < 8 && !filterConditionFiles.length) {
   testModules.splice(testModules.indexOf('object/object_freeze_seal'), 1);
 }
 
 (async function() {
   console.log(`Testing with Node-API Version '${napiVersion}'.`);
 
-  console.log('Starting test suite\n');
+  console.log('Starting test suite\n', testModules);
 
   // Requiring each module runs tests in the module.
   for (const name of testModules) {

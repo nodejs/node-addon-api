@@ -378,7 +378,9 @@
     "dev:incremental": "node test",
     "doc": "doxygen doc/Doxyfile",
     "lint": "eslint $(git diff --name-only refs/remotes/origin/main '**/*.js' | xargs) && node tools/clang-format",
-    "lint:fix": "node tools/clang-format --fix && eslint --fix $(git diff --cached --name-only '**/*.js' | xargs && git diff --name-only '**/*.js' | xargs)"
+    "lint:fix": "node tools/clang-format --fix && eslint --fix $(git diff --cached --name-only '**/*.js' | xargs && git diff --name-only '**/*.js' | xargs)",
+    "preunit": "filter=\"$npm_config_filter\" node-gyp rebuild -C unit-test",
+    "unit": "filter=\"$npm_config_filter\" node unit-test/test"
   },
   "pre-commit": "lint",
   "version": "4.2.0",
