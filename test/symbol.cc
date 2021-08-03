@@ -1,4 +1,5 @@
 #include <napi.h>
+#include "test_helper.h"
 using namespace Napi;
 
 Symbol CreateNewSymbolWithNoArgs(const Napi::CallbackInfo&) {
@@ -22,33 +23,34 @@ Symbol CreateNewSymbolWithNapiString(const Napi::CallbackInfo& info) {
 
 Symbol GetWellknownSymbol(const Napi::CallbackInfo& info) {
   String registrySymbol = info[0].As<String>();
-  return Napi::Symbol::WellKnown(info.Env(),
-                                 registrySymbol.Utf8Value().c_str());
+  return MaybeUnwrap(
+      Napi::Symbol::WellKnown(info.Env(), registrySymbol.Utf8Value().c_str()));
 }
 
 Symbol FetchSymbolFromGlobalRegistry(const Napi::CallbackInfo& info) {
   String registrySymbol = info[0].As<String>();
-  return Napi::Symbol::For(info.Env(), registrySymbol);
+  return MaybeUnwrap(Napi::Symbol::For(info.Env(), registrySymbol));
 }
 
 Symbol FetchSymbolFromGlobalRegistryWithCppKey(const Napi::CallbackInfo& info) {
   String cppStringKey = info[0].As<String>();
-  return Napi::Symbol::For(info.Env(), cppStringKey.Utf8Value());
+  return MaybeUnwrap(Napi::Symbol::For(info.Env(), cppStringKey.Utf8Value()));
 }
 
 Symbol FetchSymbolFromGlobalRegistryWithCKey(const Napi::CallbackInfo& info) {
   String cppStringKey = info[0].As<String>();
-  return Napi::Symbol::For(info.Env(), cppStringKey.Utf8Value().c_str());
+  return MaybeUnwrap(
+      Napi::Symbol::For(info.Env(), cppStringKey.Utf8Value().c_str()));
 }
 
 Symbol TestUndefinedSymbolsCanBeCreated(const Napi::CallbackInfo& info) {
   Napi::Env env = info.Env();
-  return Napi::Symbol::For(env, env.Undefined());
+  return MaybeUnwrap(Napi::Symbol::For(env, env.Undefined()));
 }
 
 Symbol TestNullSymbolsCanBeCreated(const Napi::CallbackInfo& info) {
   Napi::Env env = info.Env();
-  return Napi::Symbol::For(env, env.Null());
+  return MaybeUnwrap(Napi::Symbol::For(env, env.Null()));
 }
 
 Object InitSymbol(Env env) {

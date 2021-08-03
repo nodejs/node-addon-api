@@ -17,6 +17,7 @@ error-handling for C++ exceptions and JavaScript exceptions.
 The following sections explain the approach for each case:
 
 - [Handling Errors With C++ Exceptions](#exceptions)
+- [Handling Errors With Maybe Type and C++ Exceptions Disabled](#noexceptions-maybe)
 - [Handling Errors Without C++ Exceptions](#noexceptions)
 
 <a name="exceptions"></a>
@@ -70,7 +71,7 @@ when returning to JavaScript.
 ### Propagating a Node-API C++ exception
 
 ```cpp
-Napi::Function jsFunctionThatThrows = someObj.As<Napi::Function>();
+Napi::Function jsFunctionThatThrows = someValue.As<Napi::Function>();
 Napi::Value result = jsFunctionThatThrows({ arg1, arg2 });
 // other C++ statements
 // ...
@@ -84,7 +85,7 @@ a JavaScript exception when returning to JavaScript.
 ### Handling a Node-API C++ exception
 
 ```cpp
-Napi::Function jsFunctionThatThrows = someObj.As<Napi::Function>();
+Napi::Function jsFunctionThatThrows = someValue.As<Napi::Function>();
 Napi::Value result;
 try {
     result = jsFunctionThatThrows({ arg1, arg2 });
@@ -95,6 +96,70 @@ try {
 
 Since the exception was caught here, it will not be propagated as a JavaScript
 exception.
+
+<a name="noexceptions-maybe"></a>
+
+## Handling Errors With Maybe Type and C++ Exceptions Disabled
+
+If C++ exceptions are disabled (for more info see: [Setup](setup.md)), then the
+`Napi::Error` class does not extend `std::exception`. This means that any calls to
+node-addon-api functions do not throw a C++ exceptions. Instead, these node-api
+functions that call into JavaScript are returning with `Maybe` boxed values.
+In that case, the calling side should convert the `Maybe` boxed values with
+checks to ensure that the call did succeed and therefore no exception is pending.
+If the check fails, that is to say, the returning value is _empty_, the calling
+side should determine what to do with `env.GetAndClearPendingException()` before
+attempting to call another node-api (for more info see: [Env](env.md)).
+
+The conversion from the `Maybe` boxed value to the actual return value is
+enforced by compilers so that the exceptions must be properly handled before
+continuing.
+
+## Examples with Maybe Type and C++ exceptions disabled
+
+### Throwing a JS exception
+
+```cpp
+Napi::Env env = ...
+Napi::Error::New(env, "Example exception").ThrowAsJavaScriptException();
+return;
+```
+
+After throwing a JavaScript exception, the code should generally return
+immediately from the native callback, after performing any necessary cleanup.
+
+### Propagating a Node-API JS exception
+
+```cpp
+Napi::Env env = ...
+Napi::Function jsFunctionThatThrows = someValue.As<Napi::Function>();
+Maybe<Napi::Value> maybeResult = jsFunctionThatThrows({ arg1, arg2 });
+Napi::Value result;
+if (!maybeResult.To(&result)) {
+    // The Maybe is empty, calling into js failed, cleaning up...
+    // It is recommended to return an empty Maybe if the procedure failed.
+    return result;
+}
+```
+
+If `maybeResult.To(&result)` returns false a JavaScript exception is pending.
+To let the exception propagate, the code should generally return immediately
+from the native callback, after performing any necessary cleanup.
+
+### Handling a Node-API JS exception
+
+```cpp
+Napi::Env env = ...
+Napi::Function jsFunctionThatThrows = someValue.As<Napi::Function>();
+Maybe<Napi::Value> maybeResult = jsFunctionThatThrows({ arg1, arg2 });
+if (maybeResult.IsNothing()) {
+    Napi::Error e = env.GetAndClearPendingException();
+    cerr << "Caught JavaScript exception: " + e.Message();
+}
+```
+
+Since the exception was cleared here, it will not be propagated as a JavaScript
+exception after the native callback returns.
 
 <a name="noexceptions"></a>
 
@@ -127,7 +192,7 @@ immediately from the native callback, after performing any necessary cleanup.
 
 ```cpp
 Napi::Env env = ...
-Napi::Function jsFunctionThatThrows = someObj.As<Napi::Function>();
+Napi::Function jsFunctionThatThrows = someValue.As<Napi::Function>();
 Napi::Value result = jsFunctionThatThrows({ arg1, arg2 });
 if (env.IsExceptionPending()) {
     Error e = env.GetAndClearPendingException();
@@ -143,7 +208,7 @@ the native callback, after performing any necessary cleanup.
 
 ```cpp
 Napi::Env env = ...
-Napi::Function jsFunctionThatThrows = someObj.As<Napi::Function>();
+Napi::Function jsFunctionThatThrows = someValue.As<Napi::Function>();
 Napi::Value result = jsFunctionThatThrows({ arg1, arg2 });
 if (env.IsExceptionPending()) {
     Napi::Error e = env.GetAndClearPendingException();

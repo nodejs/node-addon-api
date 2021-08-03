@@ -378,6 +378,72 @@ inline napi_value RegisterModule(napi_env env,
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+// Maybe class
+////////////////////////////////////////////////////////////////////////////////
+
+template <class T>
+bool Maybe<T>::IsNothing() const {
+  return !_has_value;
+}
+
+template <class T>
+bool Maybe<T>::IsJust() const {
+  return _has_value;
+}
+
+template <class T>
+void Maybe<T>::Check() const {
+  NAPI_CHECK(IsJust(), "Napi::Maybe::Check", "Maybe value is Nothing.");
+}
+
+template <class T>
+T Maybe<T>::Unwrap() const {
+  NAPI_CHECK(IsJust(), "Napi::Maybe::Unwrap", "Maybe value is Nothing.");
+  return _value;
+}
+
+template <class T>
+T Maybe<T>::UnwrapOr(const T& default_value) const {
+  return _has_value ? _value : default_value;
+}
+
+template <class T>
+bool Maybe<T>::UnwrapTo(T* out) const {
+  if (IsJust()) {
+    *out = _value;
+    return true;
+  };
+  return false;
+}
+
+template <class T>
+bool Maybe<T>::operator==(const Maybe& other) const {
+  return (IsJust() == other.IsJust()) &&
+         (!IsJust() || Unwrap() == other.Unwrap());
+}
+
+template <class T>
+bool Maybe<T>::operator!=(const Maybe& other) const {
+  return !operator==(other);
+}
+
+template <class T>
+Maybe<T>::Maybe() : _has_value(false) {}
+
+template <class T>
+Maybe<T>::Maybe(const T& t) : _has_value(true), _value(t) {}
+
+template <class T>
+inline Maybe<T> Nothing() {
+  return Maybe<T>();
+}
+
+template <class T>
+inline Maybe<T> Just(const T& t) {
+  return Maybe<T>(t);
+}
+
+////////////////////////////////////////////////////////////////////////////////
 // Env class
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -426,20 +492,20 @@ inline Error Env::GetAndClearPendingException() {
   return Error(_env, value);
 }
 
-inline Value Env::RunScript(const char* utf8script) {
+inline MaybeOrValue<Value> Env::RunScript(const char* utf8script) {
   String script = String::New(_env, utf8script);
   return RunScript(script);
 }
 
-inline Value Env::RunScript(const std::string& utf8script) {
+inline MaybeOrValue<Value> Env::RunScript(const std::string& utf8script) {
   return RunScript(utf8script.c_str());
 }
 
-inline Value Env::RunScript(String script) {
+inline MaybeOrValue<Value> Env::RunScript(String script) {
   napi_value result;
   napi_status status = napi_run_script(_env, script, &result);
-  NAPI_THROW_IF_FAILED(_env, status, Undefined());
-  return Value(_env, result);
+  NAPI_RETURN_OR_THROW_IF_FAILED(
+      _env, status, Napi::Value(_env, result), Napi::Value);
 }
 
 #if NAPI_VERSION > 2
@@ -678,32 +744,32 @@ inline T Value::As() const {
   return T(_env, _value);
 }
 
-inline Boolean Value::ToBoolean() const {
+inline MaybeOrValue<Boolean> Value::ToBoolean() const {
   napi_value result;
   napi_status status = napi_coerce_to_bool(_env, _value, &result);
-  NAPI_THROW_IF_FAILED(_env, status, Boolean());
-  return Boolean(_env, result);
+  NAPI_RETURN_OR_THROW_IF_FAILED(
+      _env, status, Napi::Boolean(_env, result), Napi::Boolean);
 }
 
-inline Number Value::ToNumber() const {
+inline MaybeOrValue<Number> Value::ToNumber() const {
   napi_value result;
   napi_status status = napi_coerce_to_number(_env, _value, &result);
-  NAPI_THROW_IF_FAILED(_env, status, Number());
-  return Number(_env, result);
+  NAPI_RETURN_OR_THROW_IF_FAILED(
+      _env, status, Napi::Number(_env, result), Napi::Number);
 }
 
-inline String Value::ToString() const {
+inline MaybeOrValue<String> Value::ToString() const {
   napi_value result;
   napi_status status = napi_coerce_to_string(_env, _value, &result);
-  NAPI_THROW_IF_FAILED(_env, status, String());
-  return String(_env, result);
+  NAPI_RETURN_OR_THROW_IF_FAILED(
+      _env, status, Napi::String(_env, result), Napi::String);
 }
 
-inline Object Value::ToObject() const {
+inline MaybeOrValue<Object> Value::ToObject() const {
   napi_value result;
   napi_status status = napi_coerce_to_object(_env, _value, &result);
-  NAPI_THROW_IF_FAILED(_env, status, Object());
-  return Object(_env, result);
+  NAPI_RETURN_OR_THROW_IF_FAILED(
+      _env, status, Napi::Object(_env, result), Napi::Object);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -1026,29 +1092,56 @@ inline Symbol Symbol::New(napi_env env, napi_value description) {
   return Symbol(env, value);
 }
 
-inline Symbol Symbol::WellKnown(napi_env env, const std::string& name) {
+inline MaybeOrValue<Symbol> Symbol::WellKnown(napi_env env,
+                                              const std::string& name) {
+#if defined(NODE_ADDON_API_ENABLE_MAYBE)
+  Value symbol_obj;
+  Value symbol_value;
+  if (Napi::Env(env).Global().Get("Symbol").UnwrapTo(&symbol_obj) &&
+      symbol_obj.As<Object>().Get(name).UnwrapTo(&symbol_value)) {
+    return Just<Symbol>(symbol_value.As<Symbol>());
+  }
+  return Nothing<Symbol>();
+#else
   return Napi::Env(env).Global().Get("Symbol").As<Object>().Get(name).As<Symbol>();
+#endif
 }
 
-inline Symbol Symbol::For(napi_env env, const std::string& description) {
+inline MaybeOrValue<Symbol> Symbol::For(napi_env env,
+                                        const std::string& description) {
   napi_value descriptionValue = String::New(env, description);
   return Symbol::For(env, descriptionValue);
 }
 
-inline Symbol Symbol::For(napi_env env, const char* description) {
+inline MaybeOrValue<Symbol> Symbol::For(napi_env env, const char* description) {
   napi_value descriptionValue = String::New(env, description);
   return Symbol::For(env, descriptionValue);
 }
 
-inline Symbol Symbol::For(napi_env env, String description) {
+inline MaybeOrValue<Symbol> Symbol::For(napi_env env, String description) {
   return Symbol::For(env, static_cast<napi_value>(description));
 }
 
-inline Symbol Symbol::For(napi_env env, napi_value description) {
-  Object symbObject = Napi::Env(env).Global().Get("Symbol").As<Object>();
-  auto forSymb =
-      symbObject.Get("for").As<Function>().Call(symbObject, {description});
-  return forSymb.As<Symbol>();
+inline MaybeOrValue<Symbol> Symbol::For(napi_env env, napi_value description) {
+#if defined(NODE_ADDON_API_ENABLE_MAYBE)
+  Value symbol_obj;
+  Value symbol_for_value;
+  Value symbol_value;
+  if (Napi::Env(env).Global().Get("Symbol").UnwrapTo(&symbol_obj) &&
+      symbol_obj.As<Object>().Get("for").UnwrapTo(&symbol_for_value) &&
+      symbol_for_value.As<Function>()
+          .Call(symbol_obj, {description})
+          .UnwrapTo(&symbol_value)) {
+    return Just<Symbol>(symbol_value.As<Symbol>());
+  }
+  return Nothing<Symbol>();
+#else
+  Object symbol_obj = Napi::Env(env).Global().Get("Symbol").As<Object>();
+  return symbol_obj.Get("for")
+      .As<Function>()
+      .Call(symbol_obj, {description})
+      .As<Symbol>();
+#endif
 }
 
 inline Symbol::Symbol() : Name() {
@@ -1163,12 +1256,23 @@ String String::From(napi_env env, const T& value) {
 
 template <typename Key>
 inline Object::PropertyLValue<Key>::operator Value() const {
-  return Object(_env, _object).Get(_key);
+  MaybeOrValue<Value> val = Object(_env, _object).Get(_key);
+#ifdef NODE_ADDON_API_ENABLE_MAYBE
+  return val.Unwrap();
+#else
+  return val;
+#endif
 }
 
 template <typename Key> template <typename ValueType>
 inline Object::PropertyLValue<Key>& Object::PropertyLValue<Key>::operator =(ValueType value) {
-  Object(_env, _object).Set(_key, value);
+#ifdef NODE_ADDON_API_ENABLE_MAYBE
+  MaybeOrValue<bool> result =
+#endif
+      Object(_env, _object).Set(_key, value);
+#ifdef NODE_ADDON_API_ENABLE_MAYBE
+  result.Unwrap();
+#endif
   return *this;
 }
 
@@ -1201,208 +1305,192 @@ inline Object::PropertyLValue<uint32_t> Object::operator [](uint32_t index) {
   return PropertyLValue<uint32_t>(*this, index);
 }
 
-inline Value Object::operator [](const char* utf8name) const {
+inline MaybeOrValue<Value> Object::operator[](const char* utf8name) const {
   return Get(utf8name);
 }
 
-inline Value Object::operator [](const std::string& utf8name) const {
+inline MaybeOrValue<Value> Object::operator[](
+    const std::string& utf8name) const {
   return Get(utf8name);
 }
 
-inline Value Object::operator [](uint32_t index) const {
+inline MaybeOrValue<Value> Object::operator[](uint32_t index) const {
   return Get(index);
 }
 
-inline bool Object::Has(napi_value key) const {
+inline MaybeOrValue<bool> Object::Has(napi_value key) const {
   bool result;
   napi_status status = napi_has_property(_env, _value, key, &result);
-  NAPI_THROW_IF_FAILED(_env, status, false);
-  return result;
+  NAPI_RETURN_OR_THROW_IF_FAILED(_env, status, result, bool);
 }
 
-inline bool Object::Has(Value key) const {
+inline MaybeOrValue<bool> Object::Has(Value key) const {
   bool result;
   napi_status status = napi_has_property(_env, _value, key, &result);
-  NAPI_THROW_IF_FAILED(_env, status, false);
-  return result;
+  NAPI_RETURN_OR_THROW_IF_FAILED(_env, status, result, bool);
 }
 
-inline bool Object::Has(const char* utf8name) const {
+inline MaybeOrValue<bool> Object::Has(const char* utf8name) const {
   bool result;
   napi_status status = napi_has_named_property(_env, _value, utf8name, &result);
-  NAPI_THROW_IF_FAILED(_env, status, false);
-  return result;
+  NAPI_RETURN_OR_THROW_IF_FAILED(_env, status, result, bool);
 }
 
-inline bool Object::Has(const std::string& utf8name) const {
+inline MaybeOrValue<bool> Object::Has(const std::string& utf8name) const {
   return Has(utf8name.c_str());
 }
 
-inline bool Object::HasOwnProperty(napi_value key) const {
+inline MaybeOrValue<bool> Object::HasOwnProperty(napi_value key) const {
   bool result;
   napi_status status = napi_has_own_property(_env, _value, key, &result);
-  NAPI_THROW_IF_FAILED(_env, status, false);
-  return result;
+  NAPI_RETURN_OR_THROW_IF_FAILED(_env, status, result, bool);
 }
 
-inline bool Object::HasOwnProperty(Value key) const {
+inline MaybeOrValue<bool> Object::HasOwnProperty(Value key) const {
   bool result;
   napi_status status = napi_has_own_property(_env, _value, key, &result);
-  NAPI_THROW_IF_FAILED(_env, status, false);
-  return result;
+  NAPI_RETURN_OR_THROW_IF_FAILED(_env, status, result, bool);
 }
 
-inline bool Object::HasOwnProperty(const char* utf8name) const {
+inline MaybeOrValue<bool> Object::HasOwnProperty(const char* utf8name) const {
   napi_value key;
   napi_status status = napi_create_string_utf8(_env, utf8name, std::strlen(utf8name), &key);
-  NAPI_THROW_IF_FAILED(_env, status, false);
+  NAPI_MAYBE_THROW_IF_FAILED(_env, status, bool);
   return HasOwnProperty(key);
 }
 
-inline bool Object::HasOwnProperty(const std::string& utf8name) const {
+inline MaybeOrValue<bool> Object::HasOwnProperty(
+    const std::string& utf8name) const {
   return HasOwnProperty(utf8name.c_str());
 }
 
-inline Value Object::Get(napi_value key) const {
+inline MaybeOrValue<Value> Object::Get(napi_value key) const {
   napi_value result;
   napi_status status = napi_get_property(_env, _value, key, &result);
-  NAPI_THROW_IF_FAILED(_env, status, Value());
-  return Value(_env, result);
+  NAPI_RETURN_OR_THROW_IF_FAILED(_env, status, Value(_env, result), Value);
 }
 
-inline Value Object::Get(Value key) const {
+inline MaybeOrValue<Value> Object::Get(Value key) const {
   napi_value result;
   napi_status status = napi_get_property(_env, _value, key, &result);
-  NAPI_THROW_IF_FAILED(_env, status, Value());
-  return Value(_env, result);
+  NAPI_RETURN_OR_THROW_IF_FAILED(_env, status, Value(_env, result), Value);
 }
 
-inline Value Object::Get(const char* utf8name) const {
+inline MaybeOrValue<Value> Object::Get(const char* utf8name) const {
   napi_value result;
   napi_status status = napi_get_named_property(_env, _value, utf8name, &result);
-  NAPI_THROW_IF_FAILED(_env, status, Value());
-  return Value(_env, result);
+  NAPI_RETURN_OR_THROW_IF_FAILED(_env, status, Value(_env, result), Value);
 }
 
-inline Value Object::Get(const std::string& utf8name) const {
+inline MaybeOrValue<Value> Object::Get(const std::string& utf8name) const {
   return Get(utf8name.c_str());
 }
 
 template <typename ValueType>
-inline bool Object::Set(napi_value key, const ValueType& value) {
+inline MaybeOrValue<bool> Object::Set(napi_value key, const ValueType& value) {
   napi_status status =
       napi_set_property(_env, _value, key, Value::From(_env, value));
-  NAPI_THROW_IF_FAILED(_env, status, false);
-  return true;
+  NAPI_RETURN_OR_THROW_IF_FAILED(_env, status, status == napi_ok, bool);
 }
 
 template <typename ValueType>
-inline bool Object::Set(Value key, const ValueType& value) {
+inline MaybeOrValue<bool> Object::Set(Value key, const ValueType& value) {
   napi_status status =
       napi_set_property(_env, _value, key, Value::From(_env, value));
-  NAPI_THROW_IF_FAILED(_env, status, false);
-  return true;
+  NAPI_RETURN_OR_THROW_IF_FAILED(_env, status, status == napi_ok, bool);
 }
 
 template <typename ValueType>
-inline bool Object::Set(const char* utf8name, const ValueType& value) {
+inline MaybeOrValue<bool> Object::Set(const char* utf8name,
+                                      const ValueType& value) {
   napi_status status =
       napi_set_named_property(_env, _value, utf8name, Value::From(_env, value));
-  NAPI_THROW_IF_FAILED(_env, status, false);
-  return true;
+  NAPI_RETURN_OR_THROW_IF_FAILED(_env, status, status == napi_ok, bool);
 }
 
 template <typename ValueType>
-inline bool Object::Set(const std::string& utf8name, const ValueType& value) {
+inline MaybeOrValue<bool> Object::Set(const std::string& utf8name,
+                                      const ValueType& value) {
   return Set(utf8name.c_str(), value);
 }
 
-inline bool Object::Delete(napi_value key) {
+inline MaybeOrValue<bool> Object::Delete(napi_value key) {
   bool result;
   napi_status status = napi_delete_property(_env, _value, key, &result);
-  NAPI_THROW_IF_FAILED(_env, status, false);
-  return result;
+  NAPI_RETURN_OR_THROW_IF_FAILED(_env, status, result, bool);
 }
 
-inline bool Object::Delete(Value key) {
+inline MaybeOrValue<bool> Object::Delete(Value key) {
   bool result;
   napi_status status = napi_delete_property(_env, _value, key, &result);
-  NAPI_THROW_IF_FAILED(_env, status, false);
-  return result;
+  NAPI_RETURN_OR_THROW_IF_FAILED(_env, status, result, bool);
 }
 
-inline bool Object::Delete(const char* utf8name) {
+inline MaybeOrValue<bool> Object::Delete(const char* utf8name) {
   return Delete(String::New(_env, utf8name));
 }
 
-inline bool Object::Delete(const std::string& utf8name) {
+inline MaybeOrValue<bool> Object::Delete(const std::string& utf8name) {
   return Delete(String::New(_env, utf8name));
 }
 
-inline bool Object::Has(uint32_t index) const {
+inline MaybeOrValue<bool> Object::Has(uint32_t index) const {
   bool result;
   napi_status status = napi_has_element(_env, _value, index, &result);
-  NAPI_THROW_IF_FAILED(_env, status, false);
-  return result;
+  NAPI_RETURN_OR_THROW_IF_FAILED(_env, status, result, bool);
 }
 
-inline Value Object::Get(uint32_t index) const {
+inline MaybeOrValue<Value> Object::Get(uint32_t index) const {
   napi_value value;
   napi_status status = napi_get_element(_env, _value, index, &value);
-  NAPI_THROW_IF_FAILED(_env, status, Value());
-  return Value(_env, value);
+  NAPI_RETURN_OR_THROW_IF_FAILED(_env, status, Value(_env, value), Value);
 }
 
 template <typename ValueType>
-inline bool Object::Set(uint32_t index, const ValueType& value) {
+inline MaybeOrValue<bool> Object::Set(uint32_t index, const ValueType& value) {
   napi_status status =
       napi_set_element(_env, _value, index, Value::From(_env, value));
-  NAPI_THROW_IF_FAILED(_env, status, false);
-  return true;
+  NAPI_RETURN_OR_THROW_IF_FAILED(_env, status, status == napi_ok, bool);
 }
 
-inline bool Object::Delete(uint32_t index) {
+inline MaybeOrValue<bool> Object::Delete(uint32_t index) {
   bool result;
   napi_status status = napi_delete_element(_env, _value, index, &result);
-  NAPI_THROW_IF_FAILED(_env, status, false);
-  return result;
+  NAPI_RETURN_OR_THROW_IF_FAILED(_env, status, result, bool);
 }
 
-inline Array Object::GetPropertyNames() const {
+inline MaybeOrValue<Array> Object::GetPropertyNames() const {
   napi_value result;
   napi_status status = napi_get_property_names(_env, _value, &result);
-  NAPI_THROW_IF_FAILED(_env, status, Array());
-  return Array(_env, result);
+  NAPI_RETURN_OR_THROW_IF_FAILED(_env, status, Array(_env, result), Array);
 }
 
-inline bool Object::DefineProperty(const PropertyDescriptor& property) {
+inline MaybeOrValue<bool> Object::DefineProperty(
+    const PropertyDescriptor& property) {
   napi_status status = napi_define_properties(_env, _value, 1,
     reinterpret_cast<const napi_property_descriptor*>(&property));
-  NAPI_THROW_IF_FAILED(_env, status, false);
-  return true;
+  NAPI_RETURN_OR_THROW_IF_FAILED(_env, status, status == napi_ok, bool);
 }
 
-inline bool Object::DefineProperties(
+inline MaybeOrValue<bool> Object::DefineProperties(
     const std::initializer_list<PropertyDescriptor>& properties) {
   napi_status status = napi_define_properties(_env, _value, properties.size(),
     reinterpret_cast<const napi_property_descriptor*>(properties.begin()));
-  NAPI_THROW_IF_FAILED(_env, status, false);
-  return true;
+  NAPI_RETURN_OR_THROW_IF_FAILED(_env, status, status == napi_ok, bool);
 }
 
-inline bool Object::DefineProperties(
+inline MaybeOrValue<bool> Object::DefineProperties(
     const std::vector<PropertyDescriptor>& properties) {
   napi_status status = napi_define_properties(_env, _value, properties.size(),
     reinterpret_cast<const napi_property_descriptor*>(properties.data()));
-  NAPI_THROW_IF_FAILED(_env, status, false);
-  return true;
+  NAPI_RETURN_OR_THROW_IF_FAILED(_env, status, status == napi_ok, bool);
 }
 
-inline bool Object::InstanceOf(const Function& constructor) const {
+inline MaybeOrValue<bool> Object::InstanceOf(
+    const Function& constructor) const {
   bool result;
   napi_status status = napi_instanceof(_env, _value, constructor, &result);
-  NAPI_THROW_IF_FAILED(_env, status, false);
-  return result;
+  NAPI_RETURN_OR_THROW_IF_FAILED(_env, status, result, bool);
 }
 
 template <typename Finalizer, typename T>
@@ -1442,16 +1530,14 @@ inline void Object::AddFinalizer(Finalizer finalizeCallback,
 }
 
 #if NAPI_VERSION >= 8
-inline bool Object::Freeze() {
+inline MaybeOrValue<bool> Object::Freeze() {
   napi_status status = napi_object_freeze(_env, _value);
-  NAPI_THROW_IF_FAILED(_env, status, false);
-  return true;
+  NAPI_RETURN_OR_THROW_IF_FAILED(_env, status, status == napi_ok, bool);
 }
 
-inline bool Object::Seal() {
+inline MaybeOrValue<bool> Object::Seal() {
   napi_status status = napi_object_seal(_env, _value);
-  NAPI_THROW_IF_FAILED(_env, status, false);
-  return true;
+  NAPI_RETURN_OR_THROW_IF_FAILED(_env, status, status == napi_ok, bool);
 }
 #endif  // NAPI_VERSION >= 8
 
@@ -2098,53 +2184,61 @@ inline Function::Function() : Object() {
 inline Function::Function(napi_env env, napi_value value) : Object(env, value) {
 }
 
-inline Value Function::operator ()(const std::initializer_list<napi_value>& args) const {
+inline MaybeOrValue<Value> Function::operator()(
+    const std::initializer_list<napi_value>& args) const {
   return Call(Env().Undefined(), args);
 }
 
-inline Value Function::Call(const std::initializer_list<napi_value>& args) const {
+inline MaybeOrValue<Value> Function::Call(
+    const std::initializer_list<napi_value>& args) const {
   return Call(Env().Undefined(), args);
 }
 
-inline Value Function::Call(const std::vector<napi_value>& args) const {
+inline MaybeOrValue<Value> Function::Call(
+    const std::vector<napi_value>& args) const {
   return Call(Env().Undefined(), args);
 }
 
-inline Value Function::Call(size_t argc, const napi_value* args) const {
+inline MaybeOrValue<Value> Function::Call(size_t argc,
+                                          const napi_value* args) const {
   return Call(Env().Undefined(), argc, args);
 }
 
-inline Value Function::Call(napi_value recv, const std::initializer_list<napi_value>& args) const {
+inline MaybeOrValue<Value> Function::Call(
+    napi_value recv, const std::initializer_list<napi_value>& args) const {
   return Call(recv, args.size(), args.begin());
 }
 
-inline Value Function::Call(napi_value recv, const std::vector<napi_value>& args) const {
+inline MaybeOrValue<Value> Function::Call(
+    napi_value recv, const std::vector<napi_value>& args) const {
   return Call(recv, args.size(), args.data());
 }
 
-inline Value Function::Call(napi_value recv, size_t argc, const napi_value* args) const {
+inline MaybeOrValue<Value> Function::Call(napi_value recv,
+                                          size_t argc,
+                                          const napi_value* args) const {
   napi_value result;
   napi_status status = napi_call_function(
     _env, recv, _value, argc, args, &result);
-  NAPI_THROW_IF_FAILED(_env, status, Value());
-  return Value(_env, result);
+  NAPI_RETURN_OR_THROW_IF_FAILED(
+      _env, status, Napi::Value(_env, result), Napi::Value);
 }
 
-inline Value Function::MakeCallback(
+inline MaybeOrValue<Value> Function::MakeCallback(
     napi_value recv,
     const std::initializer_list<napi_value>& args,
     napi_async_context context) const {
   return MakeCallback(recv, args.size(), args.begin(), context);
 }
 
-inline Value Function::MakeCallback(
+inline MaybeOrValue<Value> Function::MakeCallback(
     napi_value recv,
     const std::vector<napi_value>& args,
     napi_async_context context) const {
   return MakeCallback(recv, args.size(), args.data(), context);
 }
 
-inline Value Function::MakeCallback(
+inline MaybeOrValue<Value> Function::MakeCallback(
     napi_value recv,
     size_t argc,
     const napi_value* args,
@@ -2152,24 +2246,27 @@ inline Value Function::MakeCallback(
   napi_value result;
   napi_status status = napi_make_callback(
     _env, context, recv, _value, argc, args, &result);
-  NAPI_THROW_IF_FAILED(_env, status, Value());
-  return Value(_env, result);
+  NAPI_RETURN_OR_THROW_IF_FAILED(
+      _env, status, Napi::Value(_env, result), Napi::Value);
 }
 
-inline Object Function::New(const std::initializer_list<napi_value>& args) const {
+inline MaybeOrValue<Object> Function::New(
+    const std::initializer_list<napi_value>& args) const {
   return New(args.size(), args.begin());
 }
 
-inline Object Function::New(const std::vector<napi_value>& args) const {
+inline MaybeOrValue<Object> Function::New(
+    const std::vector<napi_value>& args) const {
   return New(args.size(), args.data());
 }
 
-inline Object Function::New(size_t argc, const napi_value* args) const {
+inline MaybeOrValue<Object> Function::New(size_t argc,
+                                          const napi_value* args) const {
   napi_value result;
   napi_status status = napi_new_instance(
     _env, _value, argc, args, &result);
-  NAPI_THROW_IF_FAILED(_env, status, Object());
-  return Object(_env, result);
+  NAPI_RETURN_OR_THROW_IF_FAILED(
+      _env, status, Napi::Object(_env, result), Napi::Object);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -2441,7 +2538,14 @@ inline const std::string& Error::Message() const NAPI_NOEXCEPT {
       // the std::string::operator=, because this method may not throw.
     }
 #else // NAPI_CPP_EXCEPTIONS
+#if defined(NODE_ADDON_API_ENABLE_MAYBE)
+    Napi::Value message_val;
+    if (Get("message").UnwrapTo(&message_val)) {
+      _message = message_val.As<String>();
+    }
+#else
     _message = Get("message").As<String>();
+#endif
 #endif // NAPI_CPP_EXCEPTIONS
   }
   return _message;
@@ -2758,101 +2862,147 @@ inline ObjectReference::ObjectReference(const ObjectReference& other)
   : Reference<Object>(other) {
 }
 
-inline Napi::Value ObjectReference::Get(const char* utf8name) const {
+inline MaybeOrValue<Napi::Value> ObjectReference::Get(
+    const char* utf8name) const {
   EscapableHandleScope scope(_env);
-  return scope.Escape(Value().Get(utf8name));
+  MaybeOrValue<Napi::Value> result = Value().Get(utf8name);
+#ifdef NODE_ADDON_API_ENABLE_MAYBE
+  if (result.IsJust()) {
+    return Just(scope.Escape(result.Unwrap()));
+  }
+  return result;
+#else
+  if (scope.Env().IsExceptionPending()) {
+    return Value();
+  }
+  return scope.Escape(result);
+#endif
 }
 
-inline Napi::Value ObjectReference::Get(const std::string& utf8name) const {
+inline MaybeOrValue<Napi::Value> ObjectReference::Get(
+    const std::string& utf8name) const {
   EscapableHandleScope scope(_env);
-  return scope.Escape(Value().Get(utf8name));
+  MaybeOrValue<Napi::Value> result = Value().Get(utf8name);
+#ifdef NODE_ADDON_API_ENABLE_MAYBE
+  if (result.IsJust()) {
+    return Just(scope.Escape(result.Unwrap()));
+  }
+  return result;
+#else
+  if (scope.Env().IsExceptionPending()) {
+    return Value();
+  }
+  return scope.Escape(result);
+#endif
 }
 
-inline bool ObjectReference::Set(const char* utf8name, napi_value value) {
+inline MaybeOrValue<bool> ObjectReference::Set(const char* utf8name,
+                                               napi_value value) {
   HandleScope scope(_env);
   return Value().Set(utf8name, value);
 }
 
-inline bool ObjectReference::Set(const char* utf8name, Napi::Value value) {
+inline MaybeOrValue<bool> ObjectReference::Set(const char* utf8name,
+                                               Napi::Value value) {
   HandleScope scope(_env);
   return Value().Set(utf8name, value);
 }
 
-inline bool ObjectReference::Set(const char* utf8name, const char* utf8value) {
+inline MaybeOrValue<bool> ObjectReference::Set(const char* utf8name,
+                                               const char* utf8value) {
   HandleScope scope(_env);
   return Value().Set(utf8name, utf8value);
 }
 
-inline bool ObjectReference::Set(const char* utf8name, bool boolValue) {
+inline MaybeOrValue<bool> ObjectReference::Set(const char* utf8name,
+                                               bool boolValue) {
   HandleScope scope(_env);
   return Value().Set(utf8name, boolValue);
 }
 
-inline bool ObjectReference::Set(const char* utf8name, double numberValue) {
+inline MaybeOrValue<bool> ObjectReference::Set(const char* utf8name,
+                                               double numberValue) {
   HandleScope scope(_env);
   return Value().Set(utf8name, numberValue);
 }
 
-inline bool ObjectReference::Set(const std::string& utf8name,
-                                 napi_value value) {
+inline MaybeOrValue<bool> ObjectReference::Set(const std::string& utf8name,
+                                               napi_value value) {
   HandleScope scope(_env);
   return Value().Set(utf8name, value);
 }
 
-inline bool ObjectReference::Set(const std::string& utf8name,
-                                 Napi::Value value) {
+inline MaybeOrValue<bool> ObjectReference::Set(const std::string& utf8name,
+                                               Napi::Value value) {
   HandleScope scope(_env);
   return Value().Set(utf8name, value);
 }
 
-inline bool ObjectReference::Set(const std::string& utf8name,
-                                 std::string& utf8value) {
+inline MaybeOrValue<bool> ObjectReference::Set(const std::string& utf8name,
+                                               std::string& utf8value) {
   HandleScope scope(_env);
   return Value().Set(utf8name, utf8value);
 }
 
-inline bool ObjectReference::Set(const std::string& utf8name, bool boolValue) {
+inline MaybeOrValue<bool> ObjectReference::Set(const std::string& utf8name,
+                                               bool boolValue) {
   HandleScope scope(_env);
   return Value().Set(utf8name, boolValue);
 }
 
-inline bool ObjectReference::Set(const std::string& utf8name,
-                                 double numberValue) {
+inline MaybeOrValue<bool> ObjectReference::Set(const std::string& utf8name,
+                                               double numberValue) {
   HandleScope scope(_env);
   return Value().Set(utf8name, numberValue);
 }
 
-inline Napi::Value ObjectReference::Get(uint32_t index) const {
+inline MaybeOrValue<Napi::Value> ObjectReference::Get(uint32_t index) const {
   EscapableHandleScope scope(_env);
-  return scope.Escape(Value().Get(index));
+  MaybeOrValue<Napi::Value> result = Value().Get(index);
+#ifdef NODE_ADDON_API_ENABLE_MAYBE
+  if (result.IsJust()) {
+    return Just(scope.Escape(result.Unwrap()));
+  }
+  return result;
+#else
+  if (scope.Env().IsExceptionPending()) {
+    return Value();
+  }
+  return scope.Escape(result);
+#endif
 }
 
-inline bool ObjectReference::Set(uint32_t index, napi_value value) {
+inline MaybeOrValue<bool> ObjectReference::Set(uint32_t index,
+                                               napi_value value) {
   HandleScope scope(_env);
   return Value().Set(index, value);
 }
 
-inline bool ObjectReference::Set(uint32_t index, Napi::Value value) {
+inline MaybeOrValue<bool> ObjectReference::Set(uint32_t index,
+                                               Napi::Value value) {
   HandleScope scope(_env);
   return Value().Set(index, value);
 }
 
-inline bool ObjectReference::Set(uint32_t index, const char* utf8value) {
+inline MaybeOrValue<bool> ObjectReference::Set(uint32_t index,
+                                               const char* utf8value) {
   HandleScope scope(_env);
   return Value().Set(index, utf8value);
 }
 
-inline bool ObjectReference::Set(uint32_t index, const std::string& utf8value) {
+inline MaybeOrValue<bool> ObjectReference::Set(uint32_t index,
+                                               const std::string& utf8value) {
   HandleScope scope(_env);
   return Value().Set(index, utf8value);
 }
 
-inline bool ObjectReference::Set(uint32_t index, bool boolValue) {
+inline MaybeOrValue<bool> ObjectReference::Set(uint32_t index, bool boolValue) {
   HandleScope scope(_env);
   return Value().Set(index, boolValue);
 }
 
-inline bool ObjectReference::Set(uint32_t index, double numberValue) {
+inline MaybeOrValue<bool> ObjectReference::Set(uint32_t index,
+                                               double numberValue) {
   HandleScope scope(_env);
   return Value().Set(index, numberValue);
 }
@@ -2886,105 +3036,200 @@ inline FunctionReference& FunctionReference::operator =(FunctionReference&& othe
   return *this;
 }
 
-inline Napi::Value FunctionReference::operator ()(
+inline MaybeOrValue<Napi::Value> FunctionReference::operator()(
     const std::initializer_list<napi_value>& args) const {
   EscapableHandleScope scope(_env);
-  return scope.Escape(Value()(args));
-}
-
-inline Napi::Value FunctionReference::Call(const std::initializer_list<napi_value>& args) const {
-  EscapableHandleScope scope(_env);
-  Napi::Value result = Value().Call(args);
+  MaybeOrValue<Napi::Value> result = Value()(args);
+#ifdef NODE_ADDON_API_ENABLE_MAYBE
+  if (result.IsJust()) {
+    return Just(scope.Escape(result.Unwrap()));
+  }
+  return result;
+#else
   if (scope.Env().IsExceptionPending()) {
     return Value();
   }
   return scope.Escape(result);
+#endif
 }
 
-inline Napi::Value FunctionReference::Call(const std::vector<napi_value>& args) const {
+inline MaybeOrValue<Napi::Value> FunctionReference::Call(
+    const std::initializer_list<napi_value>& args) const {
   EscapableHandleScope scope(_env);
-  Napi::Value result = Value().Call(args);
+  MaybeOrValue<Napi::Value> result = Value().Call(args);
+#ifdef NODE_ADDON_API_ENABLE_MAYBE
+  if (result.IsJust()) {
+    return Just(scope.Escape(result.Unwrap()));
+  }
+  return result;
+#else
   if (scope.Env().IsExceptionPending()) {
     return Value();
   }
   return scope.Escape(result);
+#endif
 }
 
-inline Napi::Value FunctionReference::Call(
+inline MaybeOrValue<Napi::Value> FunctionReference::Call(
+    const std::vector<napi_value>& args) const {
+  EscapableHandleScope scope(_env);
+  MaybeOrValue<Napi::Value> result = Value().Call(args);
+#ifdef NODE_ADDON_API_ENABLE_MAYBE
+  if (result.IsJust()) {
+    return Just(scope.Escape(result.Unwrap()));
+  }
+  return result;
+#else
+  if (scope.Env().IsExceptionPending()) {
+    return Value();
+  }
+  return scope.Escape(result);
+#endif
+}
+
+inline MaybeOrValue<Napi::Value> FunctionReference::Call(
     napi_value recv, const std::initializer_list<napi_value>& args) const {
   EscapableHandleScope scope(_env);
-  Napi::Value result = Value().Call(recv, args);
+  MaybeOrValue<Napi::Value> result = Value().Call(recv, args);
+#ifdef NODE_ADDON_API_ENABLE_MAYBE
+  if (result.IsJust()) {
+    return Just(scope.Escape(result.Unwrap()));
+  }
+  return result;
+#else
   if (scope.Env().IsExceptionPending()) {
     return Value();
   }
   return scope.Escape(result);
+#endif
 }
 
-inline Napi::Value FunctionReference::Call(
+inline MaybeOrValue<Napi::Value> FunctionReference::Call(
     napi_value recv, const std::vector<napi_value>& args) const {
   EscapableHandleScope scope(_env);
-  Napi::Value result = Value().Call(recv, args);
+  MaybeOrValue<Napi::Value> result = Value().Call(recv, args);
+#ifdef NODE_ADDON_API_ENABLE_MAYBE
+  if (result.IsJust()) {
+    return Just(scope.Escape(result.Unwrap()));
+  }
+  return result;
+#else
   if (scope.Env().IsExceptionPending()) {
     return Value();
   }
   return scope.Escape(result);
+#endif
 }
 
-inline Napi::Value FunctionReference::Call(
+inline MaybeOrValue<Napi::Value> FunctionReference::Call(
     napi_value recv, size_t argc, const napi_value* args) const {
   EscapableHandleScope scope(_env);
-  Napi::Value result = Value().Call(recv, argc, args);
+  MaybeOrValue<Napi::Value> result = Value().Call(recv, argc, args);
+#ifdef NODE_ADDON_API_ENABLE_MAYBE
+  if (result.IsJust()) {
+    return Just(scope.Escape(result.Unwrap()));
+  }
+  return result;
+#else
   if (scope.Env().IsExceptionPending()) {
     return Value();
   }
   return scope.Escape(result);
+#endif
 }
 
-inline Napi::Value FunctionReference::MakeCallback(
+inline MaybeOrValue<Napi::Value> FunctionReference::MakeCallback(
     napi_value recv,
     const std::initializer_list<napi_value>& args,
     napi_async_context context) const {
   EscapableHandleScope scope(_env);
-  Napi::Value result = Value().MakeCallback(recv, args, context);
+  MaybeOrValue<Napi::Value> result = Value().MakeCallback(recv, args, context);
+#ifdef NODE_ADDON_API_ENABLE_MAYBE
+  if (result.IsJust()) {
+    return Just(scope.Escape(result.Unwrap()));
+  }
+
+  return result;
+#else
   if (scope.Env().IsExceptionPending()) {
     return Value();
   }
   return scope.Escape(result);
+#endif
 }
 
-inline Napi::Value FunctionReference::MakeCallback(
+inline MaybeOrValue<Napi::Value> FunctionReference::MakeCallback(
     napi_value recv,
     const std::vector<napi_value>& args,
     napi_async_context context) const {
   EscapableHandleScope scope(_env);
-  Napi::Value result = Value().MakeCallback(recv, args, context);
+  MaybeOrValue<Napi::Value> result = Value().MakeCallback(recv, args, context);
+#ifdef NODE_ADDON_API_ENABLE_MAYBE
+  if (result.IsJust()) {
+    return Just(scope.Escape(result.Unwrap()));
+  }
+  return result;
+#else
   if (scope.Env().IsExceptionPending()) {
     return Value();
   }
   return scope.Escape(result);
+#endif
 }
 
-inline Napi::Value FunctionReference::MakeCallback(
+inline MaybeOrValue<Napi::Value> FunctionReference::MakeCallback(
     napi_value recv,
     size_t argc,
     const napi_value* args,
     napi_async_context context) const {
   EscapableHandleScope scope(_env);
-  Napi::Value result = Value().MakeCallback(recv, argc, args, context);
+  MaybeOrValue<Napi::Value> result =
+      Value().MakeCallback(recv, argc, args, context);
+#ifdef NODE_ADDON_API_ENABLE_MAYBE
+  if (result.IsJust()) {
+    return Just(scope.Escape(result.Unwrap()));
+  }
+  return result;
+#else
   if (scope.Env().IsExceptionPending()) {
     return Value();
   }
   return scope.Escape(result);
+#endif
 }
 
-inline Object FunctionReference::New(const std::initializer_list<napi_value>& args) const {
+inline MaybeOrValue<Object> FunctionReference::New(
+    const std::initializer_list<napi_value>& args) const {
   EscapableHandleScope scope(_env);
-  return scope.Escape(Value().New(args)).As<Object>();
+  MaybeOrValue<Object> result = Value().New(args);
+#ifdef NODE_ADDON_API_ENABLE_MAYBE
+  if (result.IsJust()) {
+    return Just(scope.Escape(result.Unwrap()).As<Object>());
+  }
+  return result;
+#else
+  if (scope.Env().IsExceptionPending()) {
+    return Object();
+  }
+  return scope.Escape(result).As<Object>();
+#endif
 }
 
-inline Object FunctionReference::New(const std::vector<napi_value>& args) const {
+inline MaybeOrValue<Object> FunctionReference::New(
+    const std::vector<napi_value>& args) const {
   EscapableHandleScope scope(_env);
-  return scope.Escape(Value().New(args)).As<Object>();
+  MaybeOrValue<Object> result = Value().New(args);
+#ifdef NODE_ADDON_API_ENABLE_MAYBE
+  if (result.IsJust()) {
+    return Just(scope.Escape(result.Unwrap()).As<Object>());
+  }
+  return result;
+#else
+  if (scope.Env().IsExceptionPending()) {
+    return Object();
+  }
+  return scope.Escape(result).As<Object>();
+#endif
 }
 
 ////////////////////////////////////////////////////////////////////////////////

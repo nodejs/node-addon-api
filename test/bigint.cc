@@ -3,6 +3,8 @@
 #define NAPI_EXPERIMENTAL
 #include "napi.h"
 
+#include "test_helper.h"
+
 using namespace Napi;
 
 namespace {
@@ -11,7 +13,7 @@ Value IsLossless(const CallbackInfo& info) {
   Env env = info.Env();
 
   BigInt big = info[0].As<BigInt>();
-  bool is_signed = info[1].ToBoolean().Value();
+  bool is_signed = MaybeUnwrap(info[1].ToBoolean()).Value();
 
   bool lossless;
   if (is_signed) {
