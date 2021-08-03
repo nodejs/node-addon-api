@@ -1,6 +1,7 @@
 #if (NAPI_VERSION > 5)
 #include <stdio.h>
 #include "napi.h"
+#include "test_helper.h"
 
 // An overly elaborate way to get/set a boolean stored in the instance data:
 // 0. A boolean named "verbose" is stored in the instance data. The constructor
@@ -42,7 +43,8 @@ class Addon {
   };
 
   static Napi::Value Getter(const Napi::CallbackInfo& info) {
-    return info.Env().GetInstanceData<Addon>()->VerboseIndicator.New({});
+    return MaybeUnwrap(
+        info.Env().GetInstanceData<Addon>()->VerboseIndicator.New({}));
   }
 
   static void Setter(const Napi::CallbackInfo& info) {

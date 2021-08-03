@@ -81,6 +81,7 @@ exports.runTest = async function(test, buildType) {
   const bindings = [
     `../build/${buildType}/binding.node`,
     `../build/${buildType}/binding_noexcept.node`,
+    `../build/${buildType}/binding_noexcept_maybe.node`,
   ].map(it => require.resolve(it));
 
   for (const item of bindings) {
@@ -95,6 +96,7 @@ exports.runTestWithBindingPath = async function(test, buildType) {
   const bindings = [
     `../build/${buildType}/binding.node`,
     `../build/${buildType}/binding_noexcept.node`,
+    `../build/${buildType}/binding_noexcept_maybe.node`,
   ].map(it => require.resolve(it));
 
   for (const item of bindings) {

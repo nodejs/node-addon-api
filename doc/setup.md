@@ -54,6 +54,15 @@ To use **Node-API** in a native module:
 ```gyp
   'defines': [ 'NAPI_DISABLE_CPP_EXCEPTIONS' ],
 ```
+
+  If you decide to use node-addon-api without C++ exceptions enabled, please
+  consider enabling node-addon-api safe API type guards to ensure the proper
+  exception handling pattern:
+
+```gyp
+  'defines': [ 'NODE_ADDON_API_ENABLE_MAYBE' ],
+```
+
   4. If you would like your native addon to support OSX, please also add the
   following settings in the `binding.gyp` file:
 
