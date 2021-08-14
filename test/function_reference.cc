@@ -1,3 +1,4 @@
+#include "funcRefObject.h"
 #include "napi.h"
 #include "test_helper.h"
 
@@ -20,7 +21,7 @@ Value CallWithVectorArgs(const CallbackInfo& info) {
   std::vector<napi_value> newVec;
   FunctionReference ref;
   ref.Reset(info[0].As<Function>());
-  newVec.reserve(info.Length() - 1);
+
   for (int i = 1; i < (int)info.Length(); i++) {
     newVec.push_back(info[i]);
   }
@@ -48,7 +49,7 @@ Value CallWithRecvVector(const CallbackInfo& info) {
   FunctionReference ref;
   std::vector<napi_value> newVec;
   ref.Reset(info[0].As<Function>());
-  newVec.reserve(info.Length() - 1);
+
   for (int i = 2; i < (int)info.Length(); i++) {
     newVec.push_back(info[i]);
   }
@@ -59,9 +60,9 @@ Value CallWithRecvArgc(const CallbackInfo& info) {
   HandleScope scope(info.Env());
   FunctionReference ref;
   int argLength = info.Length() - 2;
-
   napi_value* args = new napi_value[argLength];
   ref.Reset(info[0].As<Function>());
+
   int argIdx = 0;
   for (int i = 2; i < (int)info.Length(); i++, argIdx++) {
     args[argIdx] = info[i];
@@ -84,10 +85,13 @@ Value MakeAsyncCallbackWithVector(const Napi::CallbackInfo& info) {
   ref.Reset(info[0].As<Function>());
   std::vector<napi_value> newVec;
   Napi::AsyncContext contxt(info.Env(), "func_ref_resources", {});
+
   for (int i = 1; i < (int)info.Length(); i++) {
     newVec.push_back(info[i]);
   }
-  return ref.MakeCallback(Napi::Object::New(info.Env()), newVec, contxt);
+
+  return MaybeUnwrap(
+      ref.MakeCallback(Napi::Object::New(info.Env()), newVec, contxt));
 }
 
 Value MakeAsyncCallbackWithArgv(const Napi::CallbackInfo& info) {
@@ -95,13 +99,41 @@ Value MakeAsyncCallbackWithArgv(const Napi::CallbackInfo& info) {
   ref.Reset(info[0].As<Function>());
   int argLength = info.Length() - 1;
   napi_value* args = new napi_value[argLength];
+
   int argIdx = 0;
   for (int i = 1; i < (int)info.Length(); i++, argIdx++) {
     args[argIdx] = info[i];
   }
+
   Napi::AsyncContext contxt(info.Env(), "func_ref_resources", {});
   return ref.MakeCallback(
       Napi::Object::New(info.Env()), argLength, args, contxt);
+}
+
+Value CreateFunctionReferenceUsingNew(const Napi::CallbackInfo& info) {
+  Napi::Function func = ObjectWrap<FuncRefObject>::DefineClass(
+      info.Env(),
+      "MyObject",
+      {ObjectWrap<FuncRefObject>::InstanceMethod("getValue",
+                                                 &FuncRefObject::GetValue)});
+  Napi::FunctionReference* constructor = new Napi::FunctionReference();
+  *constructor = Napi::Persistent(func);
+
+  return MaybeUnwrapOr(constructor->New({info[0].As<Number>()}), Object());
+}
+
+Value CreateFunctionReferenceUsingNewVec(const Napi::CallbackInfo& info) {
+  Napi::Function func = ObjectWrap<FuncRefObject>::DefineClass(
+      info.Env(),
+      "MyObject",
+      {ObjectWrap<FuncRefObject>::InstanceMethod("getValue",
+                                                 &FuncRefObject::GetValue)});
+  Napi::FunctionReference* constructor = new Napi::FunctionReference();
+  *constructor = Napi::Persistent(func);
+  std::vector<napi_value> newVec;
+  newVec.push_back(info[0]);
+
+  return MaybeUnwrapOr(constructor->New(newVec), Object());
 }
 
 Value Call(const CallbackInfo& info) {
@@ -123,6 +155,10 @@ Value Construct(const CallbackInfo& info) {
 
 Object InitFunctionReference(Env env) {
   Object exports = Object::New(env);
+  exports["CreateFuncRefWithNew"] =
+      Function::New(env, CreateFunctionReferenceUsingNew);
+  exports["CreateFuncRefWithNewVec"] =
+      Function::New(env, CreateFunctionReferenceUsingNewVec);
   exports["CallWithRecvArgc"] = Function::New(env, CallWithRecvArgc);
   exports["CallWithRecvVector"] = Function::New(env, CallWithRecvVector);
   exports["CallWithRecvInitList"] = Function::New(env, CallWithRecvInitList);

@@ -120,6 +120,12 @@ function test(binding) {
   const functionMayThrow = () => { throw e; };
   const classMayThrow = class { constructor() { throw e; } };
 
+  const newRef = binding.CreateFuncRefWithNew(120);
+  assert(newRef.getValue() === 120);
+
+  const newRefWithVecArg = binding.CreateFuncRefWithNewVec(80);
+  assert(newRefWithVecArg.getValue() === 80);
+  
   assert.throws(() => {
     binding.call(functionMayThrow);
   }, /foobar/);
