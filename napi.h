@@ -160,9 +160,9 @@ namespace Napi {
   class PropertyDescriptor;
   class CallbackInfo;
   class TypedArray;
-
+#if defined(IS_TESTING)
   class AsyncWorkerUnitTest;
-
+#endif
   template <typename T> class TypedArrayOf;
 
   using Int8Array =
@@ -2266,8 +2266,9 @@ namespace Napi {
     ObjectReference& Receiver();
     FunctionReference& Callback();
 
+#if defined(IS_TESTING)
     friend class AsyncWorkerUnitTest;
-
+#endif
     virtual void OnExecute(Napi::Env env);
     virtual void OnWorkComplete(Napi::Env env,
                                 napi_status status);
@@ -2318,6 +2319,7 @@ namespace Napi {
     bool _suppress_destruct;
   };
 
+#if defined(IS_TESTING)
   class AsyncWorkerUnitTest {
    public:
     AsyncWorkerUnitTest(AsyncWorker& worker);
@@ -2326,6 +2328,7 @@ namespace Napi {
    private:
     AsyncWorker& _worker;
   };
+#endif
 
 #if (NAPI_VERSION > 3 && !defined(__wasm32__))
   class ThreadSafeFunction {

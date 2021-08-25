@@ -3236,12 +3236,14 @@ inline MaybeOrValue<Object> FunctionReference::New(
 // AsyncWorkerUnitTest
 ////////////////////////////////////////////////////////////////////////////////
 
+#if defined(IS_TESTING)
 inline AsyncWorkerUnitTest::AsyncWorkerUnitTest(AsyncWorker& worker)
     : _worker(worker) {}
 
 inline bool AsyncWorkerUnitTest::isSuppressDest() {
   return this->_worker._suppress_destruct;
 }
+#endif
 
 ////////////////////////////////////////////////////////////////////////////////
 // CallbackInfo class
