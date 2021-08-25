@@ -1,5 +1,39 @@
 # node-addon-api Changelog
 
+## 2021-08-25 Version 4.1.0, @NickNaso
+
+### Notable changes:
+
+#### API
+
+- `Napi::Reference` updated the default value to reflect the most possible 
+values when there are any errors occurred on `napi_reference_unref`.
+- Added the check for nullpointer on `Napi::String` initialization.
+- Added the wraps for `napi_add_env_cleanup_hook` and 
+`napi_remove_env_cleanup_hook`.
+- Added `Napi::Maybe<T>` class to handle pending exception when cpp exception
+disabled.
+
+#### TEST
+
+- Added first set of tests for `Napi::Symbol`.
+- Updated test suite to avoid parallel running.
+
+### Documentation
+
+- Updated example for context sensitivity.
+
+### Commits
+
+* [[`3615041423`](https://github.com/nodejs/node-addon-api/commit/3615041423)] - **src**: return Maybe on pending exception when cpp exception disabled (legendecas) [#927](https://github.com/nodejs/node-addon-api/pull/927)
+* [[`10564a43c6`](https://github.com/nodejs/node-addon-api/commit/10564a43c6)] - **src**: add AddCleanupHook (Kevin Eady) [#1014](https://github.com/nodejs/node-addon-api/pull/1014)
+* [[`a459f5cc8f`](https://github.com/nodejs/node-addon-api/commit/a459f5cc8f)] - **doc**: update tests to avoid running in parallel (Michael Dawson) [#1024](https://github.com/nodejs/node-addon-api/pull/1024)
+* [[`6697c51d1d`](https://github.com/nodejs/node-addon-api/commit/6697c51d1d)] - **src,test**: fix up null char \* exception thrown (Gabriel Schulhof) [#1019](https://github.com/nodejs/node-addon-api/pull/1019)
+* [[`e02e8a4ce3`](https://github.com/nodejs/node-addon-api/commit/e02e8a4ce3)] - **test**: add  first set of symbol tests (JckXia) [#972](https://github.com/nodejs/node-addon-api/pull/972)
+* [[`da50b51398`](https://github.com/nodejs/node-addon-api/commit/da50b51398)] - **test**: dd check for nullptr inside String init (JckXia) [#1015](https://github.com/nodejs/node-addon-api/pull/1015)
+* [[`627dbf3c37`](https://github.com/nodejs/node-addon-api/commit/627dbf3c37)] - **doc**: update examples for context sensitivity (Kevin Eady) [#1013](https://github.com/nodejs/node-addon-api/pull/1013)
+* [[`37a9b8e753`](https://github.com/nodejs/node-addon-api/commit/37a9b8e753)] - **src**: set default return value of Reference Ref/Unref to 0 (legendecas) [#1004](https://github.com/nodejs/node-addon-api/pull/1004)
+
 ## 2021-06-15 Version 4.0.0, @NickNaso
 
 ### Notable changes:
