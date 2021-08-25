@@ -6,6 +6,7 @@ using namespace Napi;
 Object InitAddon(Env env);
 Object InitAddonData(Env env);
 #endif
+Object InitAsyncWorkerUnitTest(Env env);
 Object InitArrayBuffer(Env env);
 Object InitAsyncContext(Env env);
 #if (NAPI_VERSION > 3)
@@ -83,6 +84,7 @@ Object Init(Env env, Object exports) {
   exports.Set("addon", InitAddon(env));
   exports.Set("addon_data", InitAddonData(env));
 #endif
+  exports.Set("asyncWorkerUnitTest", InitAsyncWorkerUnitTest(env));
   exports.Set("arraybuffer", InitArrayBuffer(env));
   exports.Set("asynccontext", InitAsyncContext(env));
 #if (NAPI_VERSION > 3)

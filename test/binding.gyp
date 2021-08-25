@@ -4,6 +4,7 @@
     'include_dirs': ['./common'],
     'variables': {
       'build_sources': [
+        'asyncWorkerUnitTest.cc',
         'addon.cc',
         'addon_data.cc',
         'arraybuffer.cc',
@@ -87,18 +88,20 @@
     {
       'target_name': 'binding',
       'includes': ['../except.gypi'],
-      'sources': ['>@(build_sources)']
+      'sources': ['>@(build_sources)'],
+      'defines': ['IS_TESTING']
     },
     {
       'target_name': 'binding_noexcept',
       'includes': ['../noexcept.gypi'],
-      'sources': ['>@(build_sources)']
+      'sources': ['>@(build_sources)'],
+      'defines': ['IS_TESTING']
     },
     {
       'target_name': 'binding_noexcept_maybe',
       'includes': ['../noexcept.gypi'],
       'sources': ['>@(build_sources)'],
-      'defines': ['NODE_ADDON_API_ENABLE_MAYBE']
+      'defines': ['NODE_ADDON_API_ENABLE_MAYBE','IS_TESTING']
     },
     {
       'target_name': 'binding_swallowexcept',

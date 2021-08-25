@@ -4,11 +4,11 @@
 #include <node_api.h>
 #include <functional>
 #include <initializer_list>
+#include <iostream>
 #include <memory>
 #include <mutex>
 #include <string>
 #include <vector>
-
 // VS2015 RTM has bugs with constexpr, so require min of VS2015 Update 3 (known good version)
 #if !defined(_MSC_VER) || _MSC_FULL_VER >= 190024210
 #define NAPI_HAS_CONSTEXPR 1
@@ -160,6 +160,9 @@ namespace Napi {
   class PropertyDescriptor;
   class CallbackInfo;
   class TypedArray;
+
+  class AsyncWorkerUnitTest;
+
   template <typename T> class TypedArrayOf;
 
   using Int8Array =
@@ -2263,6 +2266,8 @@ namespace Napi {
     ObjectReference& Receiver();
     FunctionReference& Callback();
 
+    friend class AsyncWorkerUnitTest;
+
     virtual void OnExecute(Napi::Env env);
     virtual void OnWorkComplete(Napi::Env env,
                                 napi_status status);
@@ -2313,7 +2318,16 @@ namespace Napi {
     bool _suppress_destruct;
   };
 
-  #if (NAPI_VERSION > 3 && !defined(__wasm32__))
+  class AsyncWorkerUnitTest {
+   public:
+    AsyncWorkerUnitTest(AsyncWorker& worker);
+    bool isSuppressDest();
+
+   private:
+    AsyncWorker& _worker;
+  };
+
+#if (NAPI_VERSION > 3 && !defined(__wasm32__))
   class ThreadSafeFunction {
   public:
     // This API may only be called from the main thread.
