@@ -1,6 +1,7 @@
 /* Test helpers ported from test/common/index.js in Node.js project. */
 'use strict';
 const assert = require('assert');
+const path = require('path');
 
 const noop = () => {};
 
@@ -75,13 +76,13 @@ exports.mustNotCall = function(msg) {
   };
 };
 
-exports.runTest = async function(test, buildType) {
+exports.runTest = async function(test, buildType, buildPathRoot = process.env.REL_BUILD_PATH || '') {
   buildType = buildType || process.config.target_defaults.default_configuration || 'Release';
 
   const bindings = [
-    `../build/${buildType}/binding.node`,
-    `../build/${buildType}/binding_noexcept.node`,
-    `../build/${buildType}/binding_noexcept_maybe.node`,
+    path.join(buildPathRoot, `../build/${buildType}/binding.node`),
+    path.join(buildPathRoot, `../build/${buildType}/binding_noexcept.node`),
+    path.join(buildPathRoot, `../build/${buildType}/binding_noexcept_maybe.node`),
   ].map(it => require.resolve(it));
 
   for (const item of bindings) {
@@ -90,13 +91,13 @@ exports.runTest = async function(test, buildType) {
   }
 }
 
-exports.runTestWithBindingPath = async function(test, buildType) {
+exports.runTestWithBindingPath = async function(test, buildType, buildPathRoot = process.env.REL_BUILD_PATH || '') {
   buildType = buildType || process.config.target_defaults.default_configuration || 'Release';
 
   const bindings = [
-    `../build/${buildType}/binding.node`,
-    `../build/${buildType}/binding_noexcept.node`,
-    `../build/${buildType}/binding_noexcept_maybe.node`,
+    path.join(buildPathRoot, `../build/${buildType}/binding.node`),
+    path.join(buildPathRoot, `../build/${buildType}/binding_noexcept.node`),
+    path.join(buildPathRoot, `../build/${buildType}/binding_noexcept_maybe.node`),
   ].map(it => require.resolve(it));
 
   for (const item of bindings) {
