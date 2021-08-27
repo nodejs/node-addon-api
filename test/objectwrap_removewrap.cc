@@ -1,5 +1,5 @@
-#include <napi.h>
 #include <assert.h>
+#include <napi.h>
 
 namespace {
 
@@ -18,7 +18,7 @@ Napi::Value GetDtorCalled(const Napi::CallbackInfo& info) {
 }
 
 class Test : public Napi::ObjectWrap<Test> {
-public:
+ public:
   Test(const Napi::CallbackInfo& info) : Napi::ObjectWrap<Test>(info) {
 #ifdef NAPI_CPP_EXCEPTIONS
     throw Napi::Error::New(Env(), "Some error");
@@ -32,7 +32,7 @@ public:
     exports.Set("getDtorCalled", Napi::Function::New(env, GetDtorCalled));
   }
 
-private:
+ private:
   DtorCounter dtor_counter_;
 };
 

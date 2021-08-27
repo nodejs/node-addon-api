@@ -16,17 +16,14 @@ struct ProgressData {
 };
 
 class TestWorker : public AsyncProgressQueueWorker<ProgressData> {
-public:
+ public:
   static Napi::Value CreateWork(const CallbackInfo& info) {
     int32_t times = info[0].As<Number>().Int32Value();
     Function cb = info[1].As<Function>();
     Function progress = info[2].As<Function>();
 
-    TestWorker* worker = new TestWorker(cb,
-                                        progress,
-                                        "TestResource",
-                                        Object::New(info.Env()),
-                                        times);
+    TestWorker* worker = new TestWorker(
+        cb, progress, "TestResource", Object::New(info.Env()), times);
 
     return Napi::External<TestWorker>::New(info.Env(), worker);
   }
@@ -37,7 +34,7 @@ public:
     worker->Queue();
   }
 
-protected:
+ protected:
   void Execute(const ExecutionProgress& progress) override {
     using namespace std::chrono_literals;
     std::this_thread::sleep_for(1s);
@@ -56,18 +53,17 @@ protected:
     Napi::Env env = Env();
     if (!_js_progress_cb.IsEmpty()) {
       Number progress = Number::New(env, data->progress);
-      _js_progress_cb.Call(Receiver().Value(), { progress });
+      _js_progress_cb.Call(Receiver().Value(), {progress});
     }
   }
 
-private:
+ private:
   TestWorker(Function cb,
              Function progress,
              const char* resource_name,
              const Object& resource,
              int32_t times)
-    : AsyncProgressQueueWorker(cb, resource_name, resource),
-      _times(times) {
+      : AsyncProgressQueueWorker(cb, resource_name, resource), _times(times) {
     _js_progress_cb.Reset(progress, 1);
   }
 
@@ -75,7 +71,7 @@ private:
   FunctionReference _js_progress_cb;
 };
 
-} // namespace
+}  // namespace
 
 Object InitAsyncProgressQueueWorker(Env env) {
   Object exports = Object::New(env);
