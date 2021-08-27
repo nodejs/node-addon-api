@@ -16,18 +16,19 @@ struct ProgressData {
 };
 
 class TestWorker : public AsyncProgressWorker<ProgressData> {
-public:
+ public:
   static void DoWork(const CallbackInfo& info) {
     int32_t times = info[0].As<Number>().Int32Value();
     Function cb = info[1].As<Function>();
     Function progress = info[2].As<Function>();
 
-    TestWorker* worker = new TestWorker(cb, progress, "TestResource", Object::New(info.Env()));
+    TestWorker* worker =
+        new TestWorker(cb, progress, "TestResource", Object::New(info.Env()));
     worker->_times = times;
     worker->Queue();
   }
 
-protected:
+ protected:
   void Execute(const ExecutionProgress& progress) override {
     if (_times < 0) {
       SetError("test error");
@@ -45,13 +46,16 @@ protected:
     Napi::Env env = Env();
     if (!_progress.IsEmpty()) {
       Number progress = Number::New(env, data->progress);
-      _progress.MakeCallback(Receiver().Value(), { progress });
+      _progress.MakeCallback(Receiver().Value(), {progress});
     }
     _cv.notify_one();
   }
 
-private:
-  TestWorker(Function cb, Function progress, const char* resource_name, const Object& resource)
+ private:
+  TestWorker(Function cb,
+             Function progress,
+             const char* resource_name,
+             const Object& resource)
       : AsyncProgressWorker(cb, resource_name, resource) {
     _progress.Reset(progress, 1);
   }
@@ -118,7 +122,7 @@ class MalignWorker : public AsyncProgressWorker<ProgressData> {
   std::mutex _cvm;
   FunctionReference _progress;
 };
-}
+}  // namespace
 
 Object InitAsyncProgressWorker(Env env) {
   Object exports = Object::New(env);
