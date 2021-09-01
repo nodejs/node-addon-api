@@ -44,7 +44,7 @@ To use **Node-API** in a native module:
       "defines": [
         "_HAS_EXCEPTIONS=1"
       ],
-        "msvs_settings": {
+      "msvs_settings": {
         "VCCLCompilerTool": {
           "ExceptionHandling": 1
         },
