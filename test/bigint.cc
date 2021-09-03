@@ -46,7 +46,7 @@ Value TestWords(const CallbackInfo& info) {
 
   int sign_bit;
   size_t word_count = 10;
-  uint64_t words[10];
+  uint64_t words[10] = {0};
 
   big.ToWords(&sign_bit, &word_count, words);
 
@@ -61,7 +61,7 @@ Value TestWords(const CallbackInfo& info) {
 Value TestTooBigBigInt(const CallbackInfo& info) {
   int sign_bit = 0;
   size_t word_count = SIZE_MAX;
-  uint64_t words[10];
+  uint64_t words[10] = {0};
 
   return BigInt::New(info.Env(), sign_bit, word_count, words);
 }
