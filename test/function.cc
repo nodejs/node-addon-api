@@ -1,3 +1,4 @@
+#include <memory>
 #include "napi.h"
 #include "test_helper.h"
 
@@ -271,5 +272,24 @@ Object InitFunction(Env env) {
   exports["callWithFunctionOperator"] =
       Function::New<CallWithFunctionOperator>(env);
   result["templated"] = exports;
+
+  exports = Object::New(env);
+  exports["lambdaWithNoCapture"] =
+      Function::New(env, [](const CallbackInfo& info) {
+        auto env = info.Env();
+        return Boolean::New(env, true);
+      });
+  exports["lambdaWithCapture"] =
+      Function::New(env, [data = 42](const CallbackInfo& info) {
+        auto env = info.Env();
+        return Boolean::New(env, data == 42);
+      });
+  exports["lambdaWithMoveOnlyCapture"] = Function::New(
+      env, [data = std::make_unique<int>(42)](const CallbackInfo& info) {
+        auto env = info.Env();
+        return Boolean::New(env, *data == 42);
+      });
+  result["lambda"] = exports;
+
   return result;
 }
