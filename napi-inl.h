@@ -14,6 +14,7 @@
 #include <cstring>
 #include <mutex>
 #include <type_traits>
+#include <utility>
 
 namespace Napi {
 
@@ -2156,7 +2157,7 @@ inline Function Function::New(napi_env env,
                               void* data) {
   using ReturnType = decltype(cb(CallbackInfo(nullptr, nullptr)));
   using CbData = details::CallbackData<Callable, ReturnType>;
-  auto callbackData = new CbData({ cb, data });
+  auto callbackData = new CbData{std::move(cb), data};
 
   napi_value value;
   napi_status status = CreateFunction(env,
