@@ -160,7 +160,7 @@ static T* Napi::ObjectWrap::Unwrap(Napi::Object wrapper);
 * `[in] wrapper`: The JavaScript object that wraps the native instance.
 
 Returns a native instance wrapped in a JavaScript object. Given the
-Napi:Object, this allows a method to get a pointer to the wrapped
+`Napi::Object`, this allows a method to get a pointer to the wrapped
 C++ object and then reference fields, call methods, etc. within that class.
 In many cases calling Unwrap is not required, as methods can
 use the `this` field for ObjectWrap when running in a method on a
