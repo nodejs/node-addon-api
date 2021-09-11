@@ -317,6 +317,11 @@
     "benchmark": "^2.1.4",
     "bindings": "^1.5.0",
     "clang-format": "^1.4.0",
+    "eslint": "^7.32.0",
+    "eslint-config-standard": "^16.0.3",
+    "eslint-plugin-import": "^2.24.2",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-promise": "^5.1.0",
     "fs-extra": "^9.0.1",
     "path": "^0.12.7",
     "pre-commit": "^1.2.2",
@@ -339,7 +344,6 @@
   "license": "MIT",
   "main": "index.js",
   "name": "node-addon-api",
-  "optionalDependencies": {},
   "readme": "README.md",
   "repository": {
     "type": "git",
@@ -361,6 +365,7 @@
     "dev:incremental": "node test",
     "doc": "doxygen doc/Doxyfile",
     "lint": "node tools/clang-format",
+    "lint:js": "eslint --fix $(git diff --name-only HEAD '**/*.js' | xargs)",
     "lint:fix": "node tools/clang-format --fix"
   },
   "pre-commit": "lint",
