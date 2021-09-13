@@ -417,9 +417,9 @@ void Napi::AsyncProgressQueueWorker::ExecutionProcess::Send(const T* data, size_
 
 ## Example
 
-The code below show an example of the `Napi::AsyncProgressQueueWorker` implementation, but
-also demonsrates how to use multiple `Napi::Function`'s if you wish to provide multiple
-callback functions for more object oriented code:
+The code below shows an example of the `Napi::AsyncProgressQueueWorker` implementation, but
+also demonstrates how to use multiple `Napi::Function`'s if you wish to provide multiple
+callback functions for more object-oriented code:
 
 ```cpp
 #include <napi.h>
