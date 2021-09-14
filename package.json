@@ -358,17 +358,15 @@
   "scripts": {
     "prebenchmark": "node-gyp rebuild -C benchmark",
     "benchmark": "node benchmark",
-    "pretest": "node-gyp rebuild -C test",
-    "pretest:js": "eslint --ignore-path .gitignore .",
+    "pretest": "node-gyp rebuild -C test && eslint --ignore-path .gitignore .",
     "test": "node test",
     "predev": "node-gyp rebuild -C test --debug",
     "dev": "node test",
     "predev:incremental": "node-gyp configure build -C test --debug",
     "dev:incremental": "node test",
     "doc": "doxygen doc/Doxyfile",
-    "lint": "node tools/clang-format",
-    "lint:js": "eslint --fix $(git diff --name-only HEAD '**/*.js' | xargs)",
-    "lint:fix": "node tools/clang-format --fix"
+    "lint": "node tools/clang-format & eslint $(git diff --cached --name-only '**/*.js' | xargs)",
+    "lint:fix": "node tools/clang-format --fix && eslint --fix $(git diff --cached --name-only '**/*.js' | xargs)"
   },
   "pre-commit": "lint",
   "version": "4.1.0",
