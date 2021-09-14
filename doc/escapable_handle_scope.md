@@ -20,7 +20,7 @@ For more details refer to the section titled
 Creates a new escapable handle scope.
 
 ```cpp
-Napi::EscapableHandleScope Napi::EscapableHandleScope::New(Napi:Env env);
+Napi::EscapableHandleScope Napi::EscapableHandleScope::New(Napi::Env env);
 ```
 
 - `[in] Env`: The environment in which to construct the `Napi::EscapableHandleScope` object.

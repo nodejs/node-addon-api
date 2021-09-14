@@ -73,7 +73,7 @@ New(napi_env env,
 - `initialThreadCount`: The initial number of threads, including the main
   thread, which will be making use of this function.
 - `[optional] context`: Data to attach to the resulting `ThreadSafeFunction`. It
-  can be retreived via `GetContext()`.
+  can be retrieved via `GetContext()`.
 - `[optional] finalizeCallback`: Function to call when the
   `TypedThreadSafeFunction` is being destroyed.  This callback will be invoked
   on the main thread when the thread-safe function is about to be destroyed. It
@@ -130,7 +130,7 @@ napi_status Napi::TypedThreadSafeFunction<ContextType, DataType, Callback>::Rele
 Returns one of:
 - `napi_ok`: The thread-safe function has been successfully released.
 - `napi_invalid_arg`: The thread-safe function's thread-count is zero.
-- `napi_generic_failure`: A generic error occurred when attemping to release the
+- `napi_generic_failure`: A generic error occurred when attempting to release the
   thread-safe function.
 
 ### Abort
@@ -152,7 +152,7 @@ napi_status Napi::TypedThreadSafeFunction<ContextType, DataType, Callback>::Abor
 Returns one of:
 - `napi_ok`: The thread-safe function has been successfully aborted.
 - `napi_invalid_arg`: The thread-safe function's thread-count is zero.
-- `napi_generic_failure`: A generic error occurred when attemping to abort the
+- `napi_generic_failure`: A generic error occurred when attempting to abort the
   thread-safe function.
 
 ### BlockingCall / NonBlockingCall
@@ -180,7 +180,7 @@ Returns one of:
 - `napi_closing`: The thread-safe function is aborted and no further calls can
   be made.
 - `napi_invalid_arg`: The thread-safe function is closed.
-- `napi_generic_failure`: A generic error occurred when attemping to add to the
+- `napi_generic_failure`: A generic error occurred when attempting to add to the
   queue.
 
 

@@ -16,7 +16,7 @@ For more details about error handling refer to the section titled [Error handlin
 Creates a new instance of the `Napi::TypeError` object.
 
 ```cpp
-Napi::TypeError::New(Napi:Env env, const char* message);
+Napi::TypeError::New(Napi::Env env, const char* message);
 ```
 
 - `[in] Env`: The environment in which to construct the `Napi::TypeError` object.
@@ -29,7 +29,7 @@ Returns an instance of a `Napi::TypeError` object.
 Creates a new instance of a `Napi::TypeError` object.
 
 ```cpp
-Napi::TypeError::New(Napi:Env env, const std::string& message);
+Napi::TypeError::New(Napi::Env env, const std::string& message);
 ```
 
 - `[in] Env`: The environment in which to construct the `Napi::TypeError` object.
