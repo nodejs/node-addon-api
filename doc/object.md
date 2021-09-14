@@ -227,7 +227,7 @@ The `Napi::Object::Freeze()` method freezes an object. A frozen object can no
 longer changed. Freezing an object prevents new properties from being added to
 it, existing properties from being removed, prevents changing the
 enumerability, configurability, or writability of existing properties and
-prevents the valuee of existing properties from being changed. In addition,
+prevents the value of existing properties from being changed. In addition,
 freezing an object also prevents its prototype from being changed.
 
 ### Seal()
@@ -238,7 +238,7 @@ void Napi::Object::Seal()
 
 The `Napi::Object::Seal()` method seals an object, preventing new properties
 from being added to it and marking all existing properties as non-configurable.
-Values of present properties can still be changed as long as thery are
+Values of present properties can still be changed as long as they are
 writable.
 
 ### operator\[\]()

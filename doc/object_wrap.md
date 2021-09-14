@@ -284,7 +284,7 @@ static Napi::PropertyDescriptor Napi::ObjectWrap::StaticMethod(Symbol name,
                              void* data = nullptr);
 ```
 
-- `[in] name`: Napi:Symbol that represents the name of a static
+- `[in] name`: Napi::Symbol that represents the name of a static
 method for the class.
 - `[in] method`: The native function that represents a static method of a
 JavaScript class.
@@ -308,7 +308,7 @@ static Napi::PropertyDescriptor Napi::ObjectWrap::StaticMethod(Symbol name,
 ```
 
 method for the class.
-- `[in] name`: Napi:Symbol that represents the name of a static.
+- `[in] name`: Napi::Symbol that represents the name of a static.
 - `[in] method`: The native function that represents a static method of a
 JavaScript class.
 - `[in] attributes`: The attributes associated with a particular property.
@@ -380,7 +380,7 @@ static Napi::PropertyDescriptor Napi::ObjectWrap::StaticMethod(Symbol name,
 
 - `[in] method`: The native function that represents a static method of a
 JavaScript class.
-- `[in] name`: Napi:Symbol that represents the name of a static
+- `[in] name`: Napi::Symbol that represents the name of a static
 method for the class.
 - `[in] attributes`: The attributes associated with a particular property.
 One or more of `napi_property_attributes`.
@@ -403,7 +403,7 @@ static Napi::PropertyDescriptor Napi::ObjectWrap::StaticMethod(Symbol name,
 
 - `[in] method`: The native function that represents a static method of a
 JavaScript class.
-- `[in] name`: Napi:Symbol that represents the name of a static.
+- `[in] name`: Napi::Symbol that represents the name of a static.
 - `[in] attributes`: The attributes associated with a particular property.
 One or more of `napi_property_attributes`.
 - `[in] data`: User-provided data passed into method when it is invoked.
@@ -452,7 +452,7 @@ static Napi::PropertyDescriptor Napi::ObjectWrap::StaticAccessor(Symbol name,
                              void* data = nullptr);
 ```
 
-- `[in] name`: Napi:Symbol that represents the name of a static accessor.
+- `[in] name`: Napi::Symbol that represents the name of a static accessor.
 - `[in] getter`: The native function to call when a get access to the property
 of a JavaScript class is performed.
 - `[in] setter`: The native function to call when a set access to the property
@@ -508,7 +508,7 @@ static Napi::PropertyDescriptor Napi::ObjectWrap::StaticAccessor(Symbol name,
 of a JavaScript class is performed.
 - `[in] setter`: The native function to call when a set access to the property
 of a JavaScript class is performed.
-- `[in] name`: Napi:Symbol that represents the name of a static accessor.
+- `[in] name`: Napi::Symbol that represents the name of a static accessor.
 - `[in] attributes`: The attributes associated with a particular property.
 One or more of `napi_property_attributes`.
 - `[in] data`: User-provided data passed into getter or setter when
