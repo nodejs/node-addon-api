@@ -365,10 +365,11 @@
     "predev:incremental": "node-gyp configure build -C test --debug",
     "dev:incremental": "node test",
     "doc": "doxygen doc/Doxyfile",
-    "lint": "node tools/clang-format & eslint $(git diff --cached --name-only '**/*.js' | xargs)",
-    "lint:fix": "node tools/clang-format --fix && eslint --fix $(git diff --cached --name-only '**/*.js' | xargs)"
+    "lint": "node tools/clang-format",
+    "lint:fix": "node tools/clang-format --fix",
+    "pre-commit:lint": "npm run lint && eslint --fix $(git diff --cached --name-only '**/*.js' | xargs)"
   },
-  "pre-commit": "lint",
+  "pre-commit": "pre-commit:lint",
   "version": "4.1.0",
   "support": true
 }
