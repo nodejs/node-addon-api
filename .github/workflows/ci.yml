@@ -55,4 +55,5 @@ jobs:
           export CFLAGS="$CFLAGS -O3 --coverage" LDFLAGS="$LDFLAGS --coverage"
           echo "CFLAGS=\"$CFLAGS\" LDFLAGS=\"$LDFLAGS\""
           npm run pretest -- --verbose
+          npm run pretest:js
           node test

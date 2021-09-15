@@ -30,4 +30,5 @@ jobs:
       - name: npm test
         run: |
           npm run pretest -- --verbose
+          npm run pretest:js
           node test
