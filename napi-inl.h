@@ -2044,8 +2044,10 @@ inline TypedArrayOf<T>::TypedArrayOf(napi_env env, napi_value value)
   : TypedArray(env, value), _data(nullptr) {
   napi_status status = napi_ok;
   if (value != nullptr) {
+    void* data = nullptr;
     status = napi_get_typedarray_info(
-      _env, _value, &_type, &_length, reinterpret_cast<void**>(&_data), nullptr, nullptr);
+        _env, _value, &_type, &_length, &data, nullptr, nullptr);
+    _data = static_cast<T*>(data);
   } else {
     _type = TypedArrayTypeForPrimitiveType<T>();
     _length = 0;
@@ -3967,10 +3969,10 @@ inline ObjectWrap<T>::~ObjectWrap() {
 
 template<typename T>
 inline T* ObjectWrap<T>::Unwrap(Object wrapper) {
-  T* unwrapped;
-  napi_status status = napi_unwrap(wrapper.Env(), wrapper, reinterpret_cast<void**>(&unwrapped));
+  void* unwrapped;
+  napi_status status = napi_unwrap(wrapper.Env(), wrapper, &unwrapped);
   NAPI_THROW_IF_FAILED(wrapper.Env(), status, nullptr);
-  return unwrapped;
+  return static_cast<T*>(unwrapped);
 }
 
 template <typename T>
