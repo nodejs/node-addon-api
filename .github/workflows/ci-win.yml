@@ -7,25 +7,27 @@ jobs:
     timeout-minutes: 30
     strategy:
       matrix:
-        node-version:  [10.x, 12.x, 14.x, 15.x, 16.x]
+        node-version: [10.x, 12.x, 14.x, 15.x, 16.x]
         os:
           - windows-latest
           - windows-2016
     runs-on: ${{ matrix.os }}
     steps:
-    - uses: actions/checkout@v2
-    - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v2.1.5
-      with:
-        node-version: ${{ matrix.node-version }}
-    - name: Check Node.js installation
-      run: |
-        node --version
-        npm --version
-    - name: Install dependencies
-      run: |
-        npm install
-    - name: npm test
-      run: |
-        npm run pretest -- --verbose
-        node test
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v2.1.5
+        with:
+          node-version: ${{ matrix.node-version }}
+      - name: Check Node.js installation
+        run: |
+          node --version
+          npm --version
+      - name: Install dependencies
+        run: |
+          npm install
+      - name: npm test
+        run: |
+          npm run pretest -- --verbose
+          node test
