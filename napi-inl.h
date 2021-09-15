@@ -2046,7 +2046,7 @@ inline TypedArrayOf<T>::TypedArrayOf(napi_env env, napi_value value)
   if (value != nullptr) {
     void* data = nullptr;
     status = napi_get_typedarray_info(
-      _env, _value, &_type, &_length, &data, nullptr, nullptr); 
+        _env, _value, &_type, &_length, &data, nullptr, nullptr); 
     _data = static_cast<T*>(data);
   } else {
     _type = TypedArrayTypeForPrimitiveType<T>();
