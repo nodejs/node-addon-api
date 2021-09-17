@@ -358,14 +358,14 @@
   "scripts": {
     "prebenchmark": "node-gyp rebuild -C benchmark",
     "benchmark": "node benchmark",
-    "pretest": "npm run lint && node-gyp rebuild -C test",
+    "pretest": "node-gyp rebuild -C test",
     "test": "node test",
     "predev": "node-gyp rebuild -C test --debug",
     "dev": "node test",
     "predev:incremental": "node-gyp configure build -C test --debug",
     "dev:incremental": "node test",
     "doc": "doxygen doc/Doxyfile",
-    "lint": "eslint $(git diff --name-only refs/remotes/origin/main '**/*.js' | xargs && node tools/clang-format)",
+    "lint": "eslint $(git diff --name-only refs/remotes/origin/main '**/*.js' | xargs) && node tools/clang-format",
     "lint:fix": "node tools/clang-format --fix && eslint --fix $(git diff --cached --name-only '**/*.js' | xargs && git diff --name-only '**/*.js' | xargs)"
   },
   "pre-commit": "lint",
