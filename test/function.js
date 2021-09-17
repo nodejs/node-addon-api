@@ -5,6 +5,7 @@ const assert = require('assert');
 module.exports = require('./common').runTest(binding => {
   test(binding.function.plain);
   test(binding.function.templated);
+  testLambda(binding.function.lambda);
 });
 
 function test(binding) {
@@ -111,4 +112,10 @@ function test(binding) {
   assert.throws(() => {
     binding.makeCallbackWithInvalidReceiver(() => {});
   });
+}
+
+function testLambda(binding) {
+  assert.ok(binding.lambdaWithNoCapture());
+  assert.ok(binding.lambdaWithCapture());
+  assert.ok(binding.lambdaWithMoveOnlyCapture());
 }
