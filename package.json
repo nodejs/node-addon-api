@@ -76,6 +76,10 @@
       "url": "https://github.com/davedoesdev"
     },
     {
+      "name": "Deepak Rajamohan",
+      "url": "https://github.com/deepakrkris"
+    },
+    {
       "name": "Dmitry Ashkadov",
       "url": "https://github.com/dmitryash"
     },
@@ -276,6 +280,10 @@
       "url": "https://github.com/sam-github"
     },
     {
+      "name": "strager",
+      "url": "https://github.com/strager"
+    },
+    {
       "name": "Taylor Woll",
       "url": "https://github.com/boingoing"
     },
@@ -290,6 +298,10 @@
     {
       "name": "Tobias Nießen",
       "url": "https://github.com/tniessen"
+    },
+    {
+      "name": "todoroff",
+      "url": "https://github.com/todoroff"
     },
     {
       "name": "Tux3",
@@ -364,6 +376,6 @@
     "lint:fix": "node tools/clang-format --fix"
   },
   "pre-commit": "lint",
-  "version": "4.1.0",
+  "version": "4.2.0",
   "support": true
 }
