@@ -1,5 +1,37 @@
 # node-addon-api Changelog
 
+## 2021-09-17 Version 4.2.0, @NickNaso
+
+### Notable changes:
+
+#### API
+
+- Allow creating Function with move-only functor.
+- Fixed casts to not be undefined behavior.
+
+#### TEST
+
+- Fixed the way to enable C++ exceptions.
+- Run tests with options to prefix build root path.
+
+### Documentation
+
+- Fixed documentation about how to enable C++ exception.
+- Minor fixes all over documentation.
+
+### Commits
+
+* [[`2dc1f5b66c`](https://github.com/nodejs/node-addon-api/commit/2dc1f5b66c)] - Merge pull request #1065 from strager/move-only-functor (Nicola Del Gobbo)
+* [[`2b57a4aa4c`](https://github.com/nodejs/node-addon-api/commit/2b57a4aa4c)] - **src**: fix casts to not be undefined behavior (Anna Henningsen) [#1070](https://github.com/nodejs/node-addon-api/pull/1070)
+* [[`76de4d8222`](https://github.com/nodejs/node-addon-api/commit/76de4d8222)] - **docs**: fix typos (#1068) (todoroff)
+* [[`22a2f3c926`](https://github.com/nodejs/node-addon-api/commit/22a2f3c926)] - **docs**: fix typo and formatting (#1062) (strager)
+* [[`62b666c34c`](https://github.com/nodejs/node-addon-api/commit/62b666c34c)] - **test**: run tests with opts to prefix bld root path (Deepak Rajamohan) [#1055](https://github.com/nodejs/node-addon-api/pull/1055)
+* [[`cbac3aac5d`](https://github.com/nodejs/node-addon-api/commit/cbac3aac5d)] - **test**: standardize unit test file names (Deepak Rajamohan) [#1056](https://github.com/nodejs/node-addon-api/pull/1056)
+* [[`3e5897a78b`](https://github.com/nodejs/node-addon-api/commit/3e5897a78b)] - **src,test**: allow creating Function with move-only functor (Matthew "strager" Glazar)
+* [[`da2e754a02`](https://github.com/nodejs/node-addon-api/commit/da2e754a02)] - **test**: fix errors reported by newer compiler (Michael Dawson)
+* [[`9aaf3b1324`](https://github.com/nodejs/node-addon-api/commit/9aaf3b1324)] - **doc**: fix documentation about how to enable C++ exception (#1059) (Nicola Del Gobbo) [#1059](https://github.com/nodejs/node-addon-api/pull/1059)
+* [[`b2f861987f`](https://github.com/nodejs/node-addon-api/commit/b2f861987f)] - **test**: fixed the way to enable C++ exceptions. (#1061) (Nicola Del Gobbo) [#1061](https://github.com/nodejs/node-addon-api/pull/1061)
+
 ## 2021-08-25 Version 4.1.0, @NickNaso
 
 ### Notable changes:
