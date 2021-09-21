@@ -2595,11 +2595,72 @@ inline Error::Error(napi_env env, napi_value value) : ObjectReference(env, nullp
   if (value != nullptr) {
     napi_status status = napi_create_reference(env, value, 1, &_ref);
 
+    // Creates a wrapper object containg the error value (primitive types) and
+    // create a reference to this wrapper
+    if (status != napi_ok) {
+      napi_value wrappedErrorObj;
+      status = napi_create_object(env, &wrappedErrorObj);
+
+      NAPI_FATAL_IF_FAILED(status, "Error::Error", "napi_create_object");
+
+      status = napi_set_property(env,
+                                 wrappedErrorObj,
+                                 String::From(env, "errorVal"),
+                                 Value::From(env, value));
+      NAPI_FATAL_IF_FAILED(status, "Error::Error", "napi_set_property");
+
+      status = napi_set_property(env,
+                                 wrappedErrorObj,
+                                 String::From(env, "isWrapObject"),
+                                 Value::From(env, value));
+      NAPI_FATAL_IF_FAILED(status, "Error::Error", "napi_set_property");
+
+      status = napi_create_reference(env, wrappedErrorObj, 1, &_ref);
+    }
+
     // Avoid infinite recursion in the failure case.
     // Don't try to construct & throw another Error instance.
     NAPI_FATAL_IF_FAILED(status, "Error::Error", "napi_create_reference");
   }
 }
+
+inline Object Error::Value() const {
+  if (_ref == nullptr) {
+    return Object(_env, nullptr);
+  }
+  // Most likely will mess up thread execution
+
+  napi_value refValue;
+  napi_status status = napi_get_reference_value(_env, _ref, &refValue);
+  NAPI_THROW_IF_FAILED(_env, status, Object());
+
+  // We are wrapping this object
+  bool isWrappedObject = false;
+  napi_has_property(
+      _env, refValue, String::From(_env, "isWrapObject"), &isWrappedObject);
+  // Don't care about status
+
+  if (isWrappedObject == true) {
+    napi_value unwrappedValue;
+    status = napi_get_property(
+        _env, refValue, String::From(_env, "errorVal"), &unwrappedValue);
+    NAPI_THROW_IF_FAILED(_env, status, Object());
+    return Object(_env, unwrappedValue);
+  }
+
+  return Object(_env, refValue);
+}
+// template<typename T>
+// inline T Error::Value() const {
+//   // if (_ref == nullptr) {
+//   //   return T(_env, nullptr);
+//   // }
+
+//   // napi_value value;
+//   // napi_status status = napi_get_reference_value(_env, _ref, &value);
+//   // NAPI_THROW_IF_FAILED(_env, status, T());
+//   return nullptr;
+// }
 
 inline Error::Error(Error&& other) : ObjectReference(std::move(other)) {
 }
@@ -2651,6 +2712,7 @@ inline const std::string& Error::Message() const NAPI_NOEXCEPT {
   return _message;
 }
 
+// we created an object on the &_ref
 inline void Error::ThrowAsJavaScriptException() const {
   HandleScope scope(_env);
   if (!IsEmpty()) {

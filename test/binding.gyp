@@ -25,6 +25,7 @@
         'dataview/dataview_read_write.cc',
         'env_cleanup.cc',
         'error.cc',
+        'errorHandlingForPrimitives.cc',
         'external.cc',
         'function.cc',
         'function_reference.cc',

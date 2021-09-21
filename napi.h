@@ -4,11 +4,11 @@
 #include <node_api.h>
 #include <functional>
 #include <initializer_list>
+#include <iostream>
 #include <memory>
 #include <mutex>
 #include <string>
 #include <vector>
-
 // VS2015 RTM has bugs with constexpr, so require min of VS2015 Update 3 (known good version)
 #if !defined(_MSC_VER) || _MSC_FULL_VER >= 190024210
 #define NAPI_HAS_CONSTEXPR 1
@@ -1699,6 +1699,8 @@ namespace Napi {
     const std::string& Message() const NAPI_NOEXCEPT;
     void ThrowAsJavaScriptException() const;
 
+    Object Value() const;
+
 #ifdef NAPI_CPP_EXCEPTIONS
     const char* what() const NAPI_NOEXCEPT override;
 #endif // NAPI_CPP_EXCEPTIONS
@@ -1718,7 +1720,7 @@ namespace Napi {
    /// !endcond
 
   private:
-    mutable std::string _message;
+   mutable std::string _message;
   };
 
   class TypeError : public Error {
