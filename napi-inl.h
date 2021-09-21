@@ -2628,13 +2628,12 @@ inline Object Error::Value() const {
   if (_ref == nullptr) {
     return Object(_env, nullptr);
   }
-  // Most likely will mess up thread execution
 
   napi_value refValue;
   napi_status status = napi_get_reference_value(_env, _ref, &refValue);
   NAPI_THROW_IF_FAILED(_env, status, Object());
 
-  // We are wrapping this object
+  // We are checking if the object is wrapped
   bool isWrappedObject = false;
   napi_has_property(
       _env, refValue, String::From(_env, "isWrapObject"), &isWrappedObject);
@@ -2650,17 +2649,6 @@ inline Object Error::Value() const {
 
   return Object(_env, refValue);
 }
-// template<typename T>
-// inline T Error::Value() const {
-//   // if (_ref == nullptr) {
-//   //   return T(_env, nullptr);
-//   // }
-
-//   // napi_value value;
-//   // napi_status status = napi_get_reference_value(_env, _ref, &value);
-//   // NAPI_THROW_IF_FAILED(_env, status, T());
-//   return nullptr;
-// }
 
 inline Error::Error(Error&& other) : ObjectReference(std::move(other)) {
 }

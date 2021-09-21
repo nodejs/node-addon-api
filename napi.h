@@ -4,7 +4,6 @@
 #include <node_api.h>
 #include <functional>
 #include <initializer_list>
-#include <iostream>
 #include <memory>
 #include <mutex>
 #include <string>
