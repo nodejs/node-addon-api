@@ -6,19 +6,20 @@ const path = require('path');
 const filesToCheck = ['*.h', '*.cc'];
 const CLANG_FORMAT_START = process.env.CLANG_FORMAT_START || 'main';
 
-function main(args) {
+function main (args) {
   let fix = false;
   while (args.length > 0) {
     switch (args[0]) {
       case '-f':
       case '--fix':
         fix = true;
+        break;
       default:
     }
     args.shift();
   }
 
-  let clangFormatPath = path.dirname(require.resolve('clang-format'));
+  const clangFormatPath = path.dirname(require.resolve('clang-format'));
   const options = ['--binary=node_modules/.bin/clang-format', '--style=file'];
   if (fix) {
     options.push(CLANG_FORMAT_START);
