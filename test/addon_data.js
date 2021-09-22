@@ -8,7 +8,7 @@ module.exports = require('./common').runTestWithBindingPath(test);
 
 // Make sure the instance data finalizer is called at process exit. If the hint
 // is non-zero, it will be printed out by the child process.
-function testFinalizer(bindingName, hint, expected) {
+function testFinalizer (bindingName, hint, expected) {
   return new Promise((resolve) => {
     bindingName = bindingName.split('\\').join('\\\\');
     const child = spawn(process.execPath, [
@@ -30,7 +30,7 @@ function testFinalizer(bindingName, hint, expected) {
   });
 }
 
-async function test(bindingName) {
+async function test (bindingName) {
   const binding = require(bindingName).addon_data(0);
 
   // Make sure it is possible to get/set instance data.
@@ -42,5 +42,5 @@ async function test(bindingName) {
 
   await testFinalizer(bindingName, 0, ['addon_data: Addon::~Addon']);
   await testFinalizer(bindingName, 42,
-                      ['addon_data: Addon::~Addon', 'hint: 42']);
+    ['addon_data: Addon::~Addon', 'hint: 42']);
 }
