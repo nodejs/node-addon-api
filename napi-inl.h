@@ -2609,10 +2609,12 @@ inline Error::Error(napi_env env, napi_value value) : ObjectReference(env, nullp
                                  Value::From(env, value));
       NAPI_FATAL_IF_FAILED(status, "Error::Error", "napi_set_property");
 
-      status = napi_set_property(env,
-                                 wrappedErrorObj,
-                                 String::From(env, "isWrapObject"),
-                                 Value::From(env, value));
+      status = napi_set_property(
+          env,
+          wrappedErrorObj,
+          String::From(env,
+                       "4b3d96fd-fb87-4951-a979-eb4f9d2f2ce9-isWrapObject"),
+          Value::From(env, value));
       NAPI_FATAL_IF_FAILED(status, "Error::Error", "napi_set_property");
 
       status = napi_create_reference(env, wrappedErrorObj, 1, &_ref);
@@ -2636,7 +2638,10 @@ inline Object Error::Value() const {
   // We are checking if the object is wrapped
   bool isWrappedObject = false;
   napi_has_property(
-      _env, refValue, String::From(_env, "isWrapObject"), &isWrappedObject);
+      _env,
+      refValue,
+      String::From(_env, "4b3d96fd-fb87-4951-a979-eb4f9d2f2ce9-isWrapObject"),
+      &isWrappedObject);
   // Don't care about status
 
   if (isWrappedObject == true) {
