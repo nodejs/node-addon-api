@@ -28,7 +28,7 @@
         'external.cc',
         'function.cc',
         'funcRefObject.cc',
-        'functionreference.cc',
+        'function_reference.cc',
         'handlescope.cc',
         'maybe/check.cc',
         'movable_callbacks.cc',

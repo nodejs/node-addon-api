@@ -1,61 +1,61 @@
-"use strict";
+'use strict';
 
-const assert = require("assert");
-const async_hook = require("async_hooks");
+const assert = require('assert');
+const asyncHook = require('async_hooks');
 
-module.exports = require("./common").runTest((binding) => {
+module.exports = require('./common').runTest((binding) => {
   test(binding.functionreference);
 });
 
-function installAsyncHook() {
+function installAsyncHook () {
   let id;
   let destroyed;
   let hook;
   const events = [];
-  return new Promise((res, reject) => {
+  return new Promise((resolve, reject) => {
     const interval = setInterval(() => {
       if (destroyed) {
         hook.disable();
         clearInterval(interval);
-        res(events);
+        resolve(events);
       }
     }, 10);
 
-    hook = async_hook
+    hook = asyncHook
       .createHook({
-        init(asyncId, type, triggerAsyncId, resource) {
-          if (id === undefined && type === "func_ref_resources") {
+        init (asyncId, type, triggerAsyncId, resource) {
+          if (id === undefined && type === 'func_ref_resources') {
             id = asyncId;
-            events.push({ eventName: "init", type, triggerAsyncId, resource });
+            events.push({ eventName: 'init', type, triggerAsyncId, resource });
           }
         },
-        before(asyncId) {
+        before (asyncId) {
           if (asyncId === id) {
-            events.push({ eventName: "before" });
+            events.push({ eventName: 'before' });
           }
         },
-        after(asyncId) {
+        after (asyncId) {
           if (asyncId === id) {
-            events.push({ eventName: "after" });
+            events.push({ eventName: 'after' });
           }
         },
-        destroy(asyncId) {
+        destroy (asyncId) {
           if (asyncId === id) {
-            events.push({ eventName: "destroy" });
+            events.push({ eventName: 'destroy' });
             destroyed = true;
           }
-        },
+        }
       })
       .enable();
   });
 }
 
-function canConstructRefFromExistingRef(binding) {
+function canConstructRefFromExistingRef (binding) {
   const testFunc = () => 240;
   assert(binding.ConstructWithMove(testFunc) === 240);
 }
 
-function canCallFunctionWithDifferentOverloads(binding) {
+function canCallFunctionWithDifferentOverloads (binding) {
   let outsideRef = {};
   const testFunc = (a, b) => a * a - b * b;
   const testFuncB = (a, b, c) => a + b - c * c;
@@ -84,56 +84,56 @@ function canCallFunctionWithDifferentOverloads(binding) {
   assert(outsideRef.result === testFuncD(2, 4, 5, 6));
 }
 
-async function canCallAsyncFunctionWithDifferentOverloads(binding) {
+async function canCallAsyncFunctionWithDifferentOverloads (binding) {
   const testFunc = () => 2100;
   const testFuncB = (a, b, c, d) => a + b + c + d;
   let hook = installAsyncHook();
   binding.AsyncCallWithInitList(testFunc);
-  let triggerAsyncId = async_hook.executionAsyncId();
+  let triggerAsyncId = asyncHook.executionAsyncId();
   let res = await hook;
   assert.deepStrictEqual(res, [
     {
-      eventName: "init",
-      type: "func_ref_resources",
+      eventName: 'init',
+      type: 'func_ref_resources',
       triggerAsyncId: triggerAsyncId,
-      resource: {},
+      resource: {}
     },
-    { eventName: "before" },
-    { eventName: "after" },
-    { eventName: "destroy" },
+    { eventName: 'before' },
+    { eventName: 'after' },
+    { eventName: 'destroy' }
   ]);
 
   hook = installAsyncHook();
-  triggerAsyncId = async_hook.executionAsyncId();
+  triggerAsyncId = asyncHook.executionAsyncId();
   assert(
     binding.AsyncCallWithVector(testFuncB, 2, 4, 5, 6) === testFuncB(2, 4, 5, 6)
   );
   res = await hook;
   assert.deepStrictEqual(res, [
     {
-      eventName: "init",
-      type: "func_ref_resources",
+      eventName: 'init',
+      type: 'func_ref_resources',
       triggerAsyncId: triggerAsyncId,
-      resource: {},
+      resource: {}
     },
-    { eventName: "before" },
-    { eventName: "after" },
-    { eventName: "destroy" },
+    { eventName: 'before' },
+    { eventName: 'after' },
+    { eventName: 'destroy' }
   ]);
 
   hook = installAsyncHook();
-  triggerAsyncId = async_hook.executionAsyncId();
+  triggerAsyncId = asyncHook.executionAsyncId();
   assert(
     binding.AsyncCallWithArgv(testFuncB, 2, 4, 5, 6) === testFuncB(2, 4, 5, 6)
   );
 }
-function test(binding) {
-  const e = new Error("foobar");
+function test (binding) {
+  const e = new Error('foobar');
   const functionMayThrow = () => {
     throw e;
   };
   const classMayThrow = class {
-    constructor() {
+    constructor () {
       throw e;
     }
   };
