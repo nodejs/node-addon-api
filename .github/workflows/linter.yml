@@ -21,4 +21,4 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
     - run: npm install
-    - run: CLANG_FORMAT_START=refs/remotes/origin/main npm run lint
+    - run: FORMAT_START=refs/remotes/origin/main npm run lint
