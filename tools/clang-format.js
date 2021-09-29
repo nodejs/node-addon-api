@@ -4,7 +4,7 @@ const spawn = require('child_process').spawnSync;
 const path = require('path');
 
 const filesToCheck = ['*.h', '*.cc'];
-const CLANG_FORMAT_START = process.env.CLANG_FORMAT_START || 'main';
+const FORMAT_START = process.env.FORMAT_START || 'main';
 
 function main (args) {
   let fix = false;
@@ -22,19 +22,17 @@ function main (args) {
   const clangFormatPath = path.dirname(require.resolve('clang-format'));
   const options = ['--binary=node_modules/.bin/clang-format', '--style=file'];
   if (fix) {
-    options.push(CLANG_FORMAT_START);
+    options.push(FORMAT_START);
   } else {
-    options.push('--diff', CLANG_FORMAT_START);
+    options.push('--diff', FORMAT_START);
   }
 
-  const gitClangFormatPath = path.join(clangFormatPath,
-    'bin/git-clang-format');
-  const result = spawn('python', [
-    gitClangFormatPath,
-    ...options,
-    '--',
-    ...filesToCheck
-  ], { encoding: 'utf-8' });
+  const gitClangFormatPath = path.join(clangFormatPath, 'bin/git-clang-format');
+  const result = spawn(
+    'python',
+    [gitClangFormatPath, ...options, '--', ...filesToCheck],
+    { encoding: 'utf-8' }
+  );
 
   if (result.stderr) {
     console.error('Error running git-clang-format:', result.stderr);
@@ -48,9 +46,11 @@ function main (args) {
     return 0;
   }
   // Detect if there is any complains from clang-format
-  if (clangFormatOutput !== '' &&
-      clangFormatOutput !== ('no modified files to format') &&
-      clangFormatOutput !== ('clang-format did not modify any files')) {
+  if (
+    clangFormatOutput !== '' &&
+    clangFormatOutput !== 'no modified files to format' &&
+    clangFormatOutput !== 'clang-format did not modify any files'
+  ) {
     console.error(clangFormatOutput);
     const fixCmd = 'npm run lint:fix';
     console.error(`
@@ -58,7 +58,7 @@ function main (args) {
         Note that when running the command locally, please keep your local
         main branch and working branch up to date with nodejs/node-addon-api
         to exclude un-related complains.
-        Or you can run "env CLANG_FORMAT_START=upstream/main ${fixCmd}".`);
+        Or you can run "env FORMAT_START=upstream/main ${fixCmd}".`);
     return 1;
   }
 }
