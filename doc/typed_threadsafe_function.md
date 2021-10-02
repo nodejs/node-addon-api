@@ -215,8 +215,7 @@ Value Start(const CallbackInfo &info) {
 
   int count = info[1].As<Number>().Int32Value();
 
-  // Create a new context set to the the receiver (ie, `this`) of the function
-  // call
+  // Create a new context set to the receiver (ie, `this`) of the function call
   Context *context = new Reference<Value>(Persistent(info.This()));
 
   // Create a ThreadSafeFunction
