@@ -2835,7 +2835,7 @@ namespace Napi {
      class ExecutionProgress {
         friend class AsyncProgressWorker;
        public:
-        void Signal() const;
+        void Signal();
         void Send(const T* data, size_t count) const;
        private:
         explicit ExecutionProgress(AsyncProgressWorker* worker) : _worker(worker) {}
@@ -2876,7 +2876,7 @@ namespace Napi {
 
     private:
      void Execute() override;
-     void Signal() const;
+     void Signal();
      void SendProgress_(const T* data, size_t count);
 
      std::mutex _mutex;
@@ -2892,7 +2892,7 @@ namespace Napi {
      class ExecutionProgress {
         friend class AsyncProgressQueueWorker;
        public:
-        void Signal() const;
+        void Signal();
         void Send(const T* data, size_t count) const;
        private:
         explicit ExecutionProgress(AsyncProgressQueueWorker* worker) : _worker(worker) {}
@@ -2934,7 +2934,7 @@ namespace Napi {
 
     private:
      void Execute() override;
-     void Signal() const;
+     void Signal();
      void SendProgress_(const T* data, size_t count);
   };
   #endif  // NAPI_VERSION > 3 && !defined(__wasm32__)
