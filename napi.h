@@ -2871,7 +2871,7 @@ namespace Napi {
                                   const char* resource_name,
                                   const Object& resource);
 #endif
-     virtual void Execute(const ExecutionProgress& progress) = 0;
+     virtual void Execute(ExecutionProgress& progress) = 0;
      virtual void OnProgress(const T* data, size_t count) = 0;
 
     private:
@@ -2929,7 +2929,7 @@ namespace Napi {
                                        const char* resource_name,
                                        const Object& resource);
 #endif
-     virtual void Execute(const ExecutionProgress& progress) = 0;
+     virtual void Execute(ExecutionProgress& progress) = 0;
      virtual void OnProgress(const T* data, size_t count) = 0;
 
     private:
