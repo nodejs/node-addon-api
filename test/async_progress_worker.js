@@ -9,6 +9,7 @@ async function test({ asyncprogressworker }) {
   await success(asyncprogressworker);
   await fail(asyncprogressworker);
   await malignTest(asyncprogressworker);
+  await signalTest(asyncprogressworker);
 }
 
 function success(binding) {
@@ -56,6 +57,26 @@ function malignTest(binding) {
       common.mustCallAtLeast((error, reason) => {
         assert(!error, reason);
       }, 1)
+    );
+  });
+}
+
+function signalTest (binding) {
+  return new Promise((resolve, reject) => {
+    const expectedCalls = 3;
+    let actualCalls = 0;
+    binding.doWork(expectedCalls,
+      common.mustCall((err) => {
+        if (err) {
+          reject(err);
+        }
+      }),
+      common.mustCall((_progress) => {
+        actualCalls++;
+        if (expectedCalls === actualCalls) {
+          resolve();
+        }
+      }, expectedCalls)
     );
   });
 }

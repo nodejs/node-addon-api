@@ -122,12 +122,59 @@ class MalignWorker : public AsyncProgressWorker<ProgressData> {
   std::mutex _cvm;
   FunctionReference _progress;
 };
+
+class SignalTestWorker : public AsyncProgressWorker<ProgressData> {
+ public:
+  static void DoWork(const CallbackInfo& info) {
+    int32_t times = info[0].As<Number>().Int32Value();
+    Function cb = info[1].As<Function>();
+    Function progress = info[2].As<Function>();
+
+    SignalTestWorker* worker = new SignalTestWorker(
+        cb, progress, "TestResource", Object::New(info.Env()));
+    worker->_times = times;
+    worker->Queue();
+  }
+
+ protected:
+  void Execute(ExecutionProgress& progress) override {
+    if (_times < 0) {
+      SetError("test error");
+    }
+    std::unique_lock<std::mutex> lock(_cvm);
+    for (int32_t idx = 0; idx < _times; idx++) {
+      progress.Signal();
+      _cv.wait(lock);
+    }
+  }
+
+  void OnProgress(const ProgressData* /* data */, size_t /* count */) override {
+    if (!_progress.IsEmpty()) {
+      _progress.MakeCallback(Receiver().Value(), {});
+    }
+    _cv.notify_one();
+  }
+
+ private:
+  SignalTestWorker(Function cb,
+                   Function progress,
+                   const char* resource_name,
+                   const Object& resource)
+      : AsyncProgressWorker(cb, resource_name, resource) {
+    _progress.Reset(progress, 1);
+  }
+  std::condition_variable _cv;
+  std::mutex _cvm;
+  int32_t _times;
+  FunctionReference _progress;
+};
 }  // namespace
 
 Object InitAsyncProgressWorker(Env env) {
   Object exports = Object::New(env);
   exports["doWork"] = Function::New(env, TestWorker::DoWork);
   exports["doMalignTest"] = Function::New(env, MalignWorker::DoWork);
+  exports["doSignalTest"] = Function::New(env, SignalTestWorker::DoWork);
   return exports;
 }
 
