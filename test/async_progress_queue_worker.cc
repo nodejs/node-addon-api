@@ -71,12 +71,65 @@ class TestWorker : public AsyncProgressQueueWorker<ProgressData> {
   FunctionReference _js_progress_cb;
 };
 
+class SignalTestWorker : public AsyncProgressQueueWorker<ProgressData> {
+ public:
+  static Napi::Value CreateWork(const CallbackInfo& info) {
+    int32_t times = info[0].As<Number>().Int32Value();
+    Function cb = info[1].As<Function>();
+    Function progress = info[2].As<Function>();
+
+    SignalTestWorker* worker = new SignalTestWorker(
+        cb, progress, "TestResource", Object::New(info.Env()), times);
+
+    return Napi::External<SignalTestWorker>::New(info.Env(), worker);
+  }
+
+  static void QueueWork(const CallbackInfo& info) {
+    auto wrap = info[0].As<Napi::External<SignalTestWorker>>();
+    auto worker = wrap.Data();
+    worker->Queue();
+  }
+
+ protected:
+  void Execute(ExecutionProgress& progress) override {
+    using namespace std::chrono_literals;
+    std::this_thread::sleep_for(1s);
+
+    for (int32_t idx = 0; idx < _times; idx++) {
+      // TODO: unlike AsyncProgressWorker, this signal does not trigger OnProgress() below, to run
+      // the JS callback. Investigate and fix.
+      progress.Signal();
+    }
+  }
+
+  void OnProgress(const ProgressData* /* data */, size_t /* count */) override {
+    if (!_js_progress_cb.IsEmpty()) {
+      _js_progress_cb.Call(Receiver().Value(), {});
+    }
+  }
+
+ private:
+  SignalTestWorker(Function cb,
+             Function progress,
+             const char* resource_name,
+             const Object& resource,
+             int32_t times)
+      : AsyncProgressQueueWorker(cb, resource_name, resource), _times(times) {
+    _js_progress_cb.Reset(progress, 1);
+  }
+
+  int32_t _times;
+  FunctionReference _js_progress_cb;
+};
+
 }  // namespace
 
 Object InitAsyncProgressQueueWorker(Env env) {
   Object exports = Object::New(env);
   exports["createWork"] = Function::New(env, TestWorker::CreateWork);
   exports["queueWork"] = Function::New(env, TestWorker::QueueWork);
+  exports["createSignalWork"] = Function::New(env, SignalTestWorker::CreateWork);
+  exports["queueSignalWork"] = Function::New(env, SignalTestWorker::QueueWork);
   return exports;
 }
 
