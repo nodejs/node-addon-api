@@ -27,7 +27,6 @@
         'error.cc',
         'external.cc',
         'function.cc',
-        'funcRefObject.cc',
         'function_reference.cc',
         'handlescope.cc',
         'maybe/check.cc',

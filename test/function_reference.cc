@@ -1,8 +1,31 @@
-#include "funcRefObject.h"
 #include "napi.h"
 #include "test_helper.h"
 
 using namespace Napi;
+
+class FuncRefObject : public Napi::ObjectWrap<FuncRefObject> {
+ public:
+  FuncRefObject(const Napi::CallbackInfo& info)
+      : Napi::ObjectWrap<FuncRefObject>(info) {
+    Napi::Env env = info.Env();
+    int argLen = info.Length();
+    if (argLen <= 0 || !info[0].IsNumber()) {
+      Napi::TypeError::New(env, "First param should be a number")
+          .ThrowAsJavaScriptException();
+      return;
+    }
+    Napi::Number value = info[0].As<Napi::Number>();
+    this->_value = value.Int32Value();
+  }
+
+  Napi::Value GetValue(const Napi::CallbackInfo& info) {
+    int value = this->_value;
+    return Napi::Number::New(info.Env(), value);
+  }
+
+ private:
+  int _value;
+};
 
 namespace {
 
@@ -75,24 +98,24 @@ Value MakeAsyncCallbackWithInitList(const Napi::CallbackInfo& info) {
   Napi::FunctionReference ref;
   ref.Reset(info[0].As<Function>());
 
-  Napi::AsyncContext contxt(info.Env(), "func_ref_resources", {});
+  Napi::AsyncContext context(info.Env(), "func_ref_resources", {});
 
   return MaybeUnwrap(
-      ref.MakeCallback(Napi::Object::New(info.Env()), {}, contxt));
+      ref.MakeCallback(Napi::Object::New(info.Env()), {}, context));
 }
 
 Value MakeAsyncCallbackWithVector(const Napi::CallbackInfo& info) {
   Napi::FunctionReference ref;
   ref.Reset(info[0].As<Function>());
   std::vector<napi_value> newVec;
-  Napi::AsyncContext contxt(info.Env(), "func_ref_resources", {});
+  Napi::AsyncContext context(info.Env(), "func_ref_resources", {});
 
   for (int i = 1; i < (int)info.Length(); i++) {
     newVec.push_back(info[i]);
   }
 
   return MaybeUnwrap(
-      ref.MakeCallback(Napi::Object::New(info.Env()), newVec, contxt));
+      ref.MakeCallback(Napi::Object::New(info.Env()), newVec, context));
 }
 
 Value MakeAsyncCallbackWithArgv(const Napi::CallbackInfo& info) {
@@ -106,9 +129,9 @@ Value MakeAsyncCallbackWithArgv(const Napi::CallbackInfo& info) {
     args[argIdx] = info[i];
   }
 
-  Napi::AsyncContext contxt(info.Env(), "func_ref_resources", {});
-  return MaybeUnwrap(
-      ref.MakeCallback(Napi::Object::New(info.Env()), argLength, args, contxt));
+  Napi::AsyncContext context(info.Env(), "func_ref_resources", {});
+  return MaybeUnwrap(ref.MakeCallback(
+      Napi::Object::New(info.Env()), argLength, args, context));
 }
 
 Value CreateFunctionReferenceUsingNew(const Napi::CallbackInfo& info) {

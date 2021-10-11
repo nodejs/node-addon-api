@@ -3,8 +3,8 @@
 const assert = require('assert');
 const asyncHook = require('async_hooks');
 
-module.exports = require('./common').runTest((binding) => {
-  test(binding.functionreference);
+module.exports = require('./common').runTest(async (binding) => {
+  await test(binding.functionreference);
 });
 
 function installAsyncHook () {
@@ -127,7 +127,7 @@ async function canCallAsyncFunctionWithDifferentOverloads (binding) {
     binding.AsyncCallWithArgv(testFuncB, 2, 4, 5, 6) === testFuncB(2, 4, 5, 6)
   );
 }
-function test (binding) {
+async function test (binding) {
   const e = new Error('foobar');
   const functionMayThrow = () => {
     throw e;
@@ -153,5 +153,5 @@ function test (binding) {
 
   canConstructRefFromExistingRef(binding);
   canCallFunctionWithDifferentOverloads(binding);
-  canCallAsyncFunctionWithDifferentOverloads(binding);
+  await canCallAsyncFunctionWithDifferentOverloads(binding);
 }
