@@ -96,8 +96,8 @@ class SignalTestWorker : public AsyncProgressQueueWorker<ProgressData> {
     std::this_thread::sleep_for(1s);
 
     for (int32_t idx = 0; idx < _times; idx++) {
-      // TODO: unlike AsyncProgressWorker, this signal does not trigger OnProgress() below, to run
-      // the JS callback. Investigate and fix.
+      // TODO: unlike AsyncProgressWorker, this signal does not trigger
+      // OnProgress() below, to run the JS callback. Investigate and fix.
       progress.Signal();
     }
   }
@@ -110,10 +110,10 @@ class SignalTestWorker : public AsyncProgressQueueWorker<ProgressData> {
 
  private:
   SignalTestWorker(Function cb,
-             Function progress,
-             const char* resource_name,
-             const Object& resource,
-             int32_t times)
+                   Function progress,
+                   const char* resource_name,
+                   const Object& resource,
+                   int32_t times)
       : AsyncProgressQueueWorker(cb, resource_name, resource), _times(times) {
     _js_progress_cb.Reset(progress, 1);
   }
@@ -128,7 +128,8 @@ Object InitAsyncProgressQueueWorker(Env env) {
   Object exports = Object::New(env);
   exports["createWork"] = Function::New(env, TestWorker::CreateWork);
   exports["queueWork"] = Function::New(env, TestWorker::QueueWork);
-  exports["createSignalWork"] = Function::New(env, SignalTestWorker::CreateWork);
+  exports["createSignalWork"] =
+      Function::New(env, SignalTestWorker::CreateWork);
   exports["queueSignalWork"] = Function::New(env, SignalTestWorker::QueueWork);
   return exports;
 }
