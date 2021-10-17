@@ -5,7 +5,7 @@ const testUtil = require('./testUtil');
 
 module.exports = require('./common').runTest(test);
 
-function test(binding) {
+function test (binding) {
   return testUtil.runGCTests([
     'Plain C string',
     () => {
@@ -21,7 +21,7 @@ function test(binding) {
 
     'JavaScript string',
     () => {
-      const sum = binding.run_script.jsString("1 + 2 + 3");
+      const sum = binding.run_script.jsString('1 + 2 + 3');
       assert.strictEqual(sum, 1 + 2 + 3);
     },
 
@@ -30,15 +30,15 @@ function test(binding) {
       assert.throws(() => {
         binding.run_script.jsString(true);
       }, {
-        name: 'Error',
+        name: 'TypeError',
         message: 'A string was expected'
       });
     },
 
     'With context',
     () => {
-      const a = 1, b = 2, c = 3;
-      const sum = binding.run_script.withContext("a + b + c", { a, b, c });
+      const a = 1; const b = 2; const c = 3;
+      const sum = binding.run_script.withContext('a + b + c', { a, b, c });
       assert.strictEqual(sum, a + b + c);
     }
   ]);

@@ -2520,12 +2520,23 @@ inline Error Error::New(napi_env env) {
   napi_status status;
   napi_value error = nullptr;
   bool is_exception_pending;
-  const napi_extended_error_info* info;
+  napi_extended_error_info last_error_info_copy;
 
-  // We must retrieve the last error info before doing anything else, because
-  // doing anything else will replace the last error info.
-  status = napi_get_last_error_info(env, &info);
-  NAPI_FATAL_IF_FAILED(status, "Error::New", "napi_get_last_error_info");
+  {
+    // We must retrieve the last error info before doing anything else because
+    // doing anything else will replace the last error info.
+    const napi_extended_error_info* last_error_info;
+    status = napi_get_last_error_info(env, &last_error_info);
+    NAPI_FATAL_IF_FAILED(status, "Error::New", "napi_get_last_error_info");
+
+    // All fields of the `napi_extended_error_info` structure gets reset in
+    // subsequent Node-API function calls on the same `env`. This includes a
+    // call to `napi_is_exception_pending()`. So here it is necessary to make a
+    // copy of the information as the `error_code` field is used later on.
+    memcpy(&last_error_info_copy,
+           last_error_info,
+           sizeof(napi_extended_error_info));
+  }
 
   status = napi_is_exception_pending(env, &is_exception_pending);
   NAPI_FATAL_IF_FAILED(status, "Error::New", "napi_is_exception_pending");
@@ -2536,8 +2547,9 @@ inline Error Error::New(napi_env env) {
     NAPI_FATAL_IF_FAILED(status, "Error::New", "napi_get_and_clear_last_exception");
   }
   else {
-    const char* error_message = info->error_message != nullptr ?
-      info->error_message : "Error in native callback";
+    const char* error_message = last_error_info_copy.error_message != nullptr
+                                    ? last_error_info_copy.error_message
+                                    : "Error in native callback";
 
     napi_value message;
     status = napi_create_string_utf8(
@@ -2547,16 +2559,16 @@ inline Error Error::New(napi_env env) {
       &message);
     NAPI_FATAL_IF_FAILED(status, "Error::New", "napi_create_string_utf8");
 
-    switch (info->error_code) {
-    case napi_object_expected:
-    case napi_string_expected:
-    case napi_boolean_expected:
-    case napi_number_expected:
-      status = napi_create_type_error(env, nullptr, message, &error);
-      break;
-    default:
-      status = napi_create_error(env, nullptr,  message, &error);
-      break;
+    switch (last_error_info_copy.error_code) {
+      case napi_object_expected:
+      case napi_string_expected:
+      case napi_boolean_expected:
+      case napi_number_expected:
+        status = napi_create_type_error(env, nullptr, message, &error);
+        break;
+      default:
+        status = napi_create_error(env, nullptr, message, &error);
+        break;
     }
     NAPI_FATAL_IF_FAILED(status, "Error::New", "napi_create_error");
   }

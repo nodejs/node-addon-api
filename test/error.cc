@@ -59,6 +59,16 @@ void ThrowApiError(const CallbackInfo& info) {
   Function(info.Env(), nullptr).Call(std::initializer_list<napi_value>{});
 }
 
+void LastExceptionErrorCode(const CallbackInfo& info) {
+  // Previously, `napi_extended_error_info.error_code` got reset to `napi_ok` in
+  // subsequent Node-API function calls, so this would have previously thrown an
+  // `Error` object instead of a `TypeError` object.
+  Env env = info.Env();
+  bool res;
+  napi_get_value_bool(env, Value::From(env, "asd"), &res);
+  NAPI_THROW_VOID(Error::New(env));
+}
+
 #ifdef NAPI_CPP_EXCEPTIONS
 
 void ThrowJSError(const CallbackInfo& info) {
@@ -256,6 +266,8 @@ void ThrowDefaultError(const CallbackInfo& info) {
 Object InitError(Env env) {
   Object exports = Object::New(env);
   exports["throwApiError"] = Function::New(env, ThrowApiError);
+  exports["lastExceptionErrorCode"] =
+      Function::New(env, LastExceptionErrorCode);
   exports["throwJSError"] = Function::New(env, ThrowJSError);
   exports["throwTypeError"] = Function::New(env, ThrowTypeError);
   exports["throwRangeError"] = Function::New(env, ThrowRangeError);
