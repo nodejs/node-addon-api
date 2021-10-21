@@ -2635,21 +2635,27 @@ inline Object Error::Value() const {
   napi_status status = napi_get_reference_value(_env, _ref, &refValue);
   NAPI_THROW_IF_FAILED(_env, status, Object());
 
-  // We are checking if the object is wrapped
-  bool isWrappedObject = false;
-  napi_has_property(
-      _env,
-      refValue,
-      String::From(_env, "4b3d96fd-fb87-4951-a979-eb4f9d2f2ce9-isWrapObject"),
-      &isWrappedObject);
-  // Don't care about status
+  napi_valuetype type;
+  status = napi_typeof(_env, refValue, &type);
+  NAPI_THROW_IF_FAILED(_env, status, Object());
 
-  if (isWrappedObject == true) {
-    napi_value unwrappedValue;
-    status = napi_get_property(
-        _env, refValue, String::From(_env, "errorVal"), &unwrappedValue);
-    NAPI_THROW_IF_FAILED(_env, status, Object());
-    return Object(_env, unwrappedValue);
+  if (type != napi_symbol) {
+    // We are checking if the object is wrapped
+    bool isWrappedObject = false;
+    napi_has_property(
+        _env,
+        refValue,
+        String::From(_env, "4b3d96fd-fb87-4951-a979-eb4f9d2f2ce9-isWrapObject"),
+        &isWrappedObject);
+    // Don't care about status
+
+    if (isWrappedObject == true) {
+      napi_value unwrappedValue;
+      status = napi_get_property(
+          _env, refValue, String::From(_env, "errorVal"), &unwrappedValue);
+      NAPI_THROW_IF_FAILED(_env, status, Object());
+      return Object(_env, unwrappedValue);
+    }
   }
 
   return Object(_env, refValue);

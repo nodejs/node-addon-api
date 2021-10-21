@@ -8,6 +8,7 @@
 #include <mutex>
 #include <string>
 #include <vector>
+
 // VS2015 RTM has bugs with constexpr, so require min of VS2015 Update 3 (known good version)
 #if !defined(_MSC_VER) || _MSC_FULL_VER >= 190024210
 #define NAPI_HAS_CONSTEXPR 1
