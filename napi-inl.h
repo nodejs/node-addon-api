@@ -2603,20 +2603,45 @@ inline Error::Error(napi_env env, napi_value value) : ObjectReference(env, nullp
 
       NAPI_FATAL_IF_FAILED(status, "Error::Error", "napi_create_object");
 
-      status = napi_set_property(env,
-                                 wrappedErrorObj,
-                                 String::From(env, "errorVal"),
-                                 Value::From(env, value));
-      NAPI_FATAL_IF_FAILED(status, "Error::Error", "napi_set_property");
+      napi_property_descriptor errValDesc = {
+          "errorVal",                     // const char* utf8Name
+          String::From(env, "errorVal"),  //  napi_value name
+          nullptr,                        // Method
+          nullptr,                        // getter
+          nullptr,                        // setter
+          Value::From(env, value),        // napi_value value
+          napi_enumerable,
+          nullptr};
 
-      status = napi_set_property(
-          env,
-          wrappedErrorObj,
-          String::From(env,
-                       "4b3d96fd-fb87-4951-a979-eb4f9d2f2ce9-isWrapObject"),
-          Value::From(env, value));
-      NAPI_FATAL_IF_FAILED(status, "Error::Error", "napi_set_property");
+      status = napi_define_properties(env, wrappedErrorObj, 1, &errValDesc);
+      NAPI_FATAL_IF_FAILED(status, "Error::Error", "napi_define_properties");
 
+      MaybeOrValue<Symbol> result = Symbol::For(env, "isWrapObject");
+      napi_property_descriptor wrapObjFlag = {nullptr,
+                                              nullptr,
+                                              nullptr,
+                                              nullptr,
+                                              nullptr,
+                                              Value::From(env, value),
+                                              napi_enumerable,
+                                              nullptr};
+
+#ifdef NODE_ADDON_API_ENABLE_MAYBE
+      Symbol uniqueSymb;
+      if (result.IsJust()) {
+        uniqueSymb = result.Unwrap();
+      }
+
+      wrapObjFlag.name = uniqueSymb;
+      status = napi_define_properties(env, wrappedErrorObj, 1, &wrapObjFlag);
+      NAPI_FATAL_IF_FAILED(status, "Error::Error", "napi_define_properties");
+#else
+
+      wrapObjFlag.name = result;
+      status = napi_define_properties(env, wrappedErrorObj, 1, &wrapObjFlag);
+      NAPI_FATAL_IF_FAILED(status, "Error::Error", "napi_define_properties");
+
+#endif
       status = napi_create_reference(env, wrappedErrorObj, 1, &_ref);
     }
 
@@ -2642,11 +2667,23 @@ inline Object Error::Value() const {
   if (type != napi_symbol) {
     // We are checking if the object is wrapped
     bool isWrappedObject = false;
-    napi_has_property(
-        _env,
-        refValue,
-        String::From(_env, "4b3d96fd-fb87-4951-a979-eb4f9d2f2ce9-isWrapObject"),
-        &isWrappedObject);
+
+    MaybeOrValue<Symbol> result = Symbol::For(_env, "isWrapObject");
+
+#ifdef NODE_ADDON_API_ENABLE_MAYBE
+    Symbol uniqueSymb;
+    if (result.IsJust()) {
+      uniqueSymb = result.Unwrap();
+    }
+    status = napi_has_property(_env, refValue, uniqueSymb, &isWrappedObject);
+    NAPI_FATAL_IF_FAILED(status, "Error::Error", "napi_set_property");
+
+#else
+
+    status = napi_has_property(_env, refValue, result, &isWrappedObject);
+    NAPI_FATAL_IF_FAILED(status, "Error::Error", "napi_set_property");
+#endif
+
     // Don't care about status
 
     if (isWrappedObject == true) {
@@ -2654,6 +2691,7 @@ inline Object Error::Value() const {
       status = napi_get_property(
           _env, refValue, String::From(_env, "errorVal"), &unwrappedValue);
       NAPI_THROW_IF_FAILED(_env, status, Object());
+
       return Object(_env, unwrappedValue);
     }
   }
