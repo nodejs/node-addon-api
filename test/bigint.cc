@@ -25,6 +25,14 @@ Value IsLossless(const CallbackInfo& info) {
   return Boolean::New(env, lossless);
 }
 
+Value IsBigInt(const CallbackInfo& info) {
+  Env env = info.Env();
+
+  BigInt big = info[0].As<BigInt>();
+
+  return Boolean::New(env, big.IsBigInt());
+}
+
 Value TestInt64(const CallbackInfo& info) {
   bool lossless;
   int64_t input = info[0].As<BigInt>().Int64Value(&lossless);
@@ -71,6 +79,7 @@ Value TestTooBigBigInt(const CallbackInfo& info) {
 Object InitBigInt(Env env) {
   Object exports = Object::New(env);
   exports["IsLossless"] = Function::New(env, IsLossless);
+  exports["IsBigInt"] = Function::New(env, IsBigInt);
   exports["TestInt64"] = Function::New(env, TestInt64);
   exports["TestUint64"] = Function::New(env, TestUint64);
   exports["TestWords"] = Function::New(env, TestWords);
