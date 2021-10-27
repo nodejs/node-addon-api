@@ -5877,8 +5877,8 @@ inline void AsyncProgressWorker<T>::Signal() {
   this->NonBlockingCall(static_cast<T*>(nullptr));
 }
 
-template<class T>
-inline void AsyncProgressWorker<T>::ExecutionProgress::Signal() {
+template <class T>
+inline void AsyncProgressWorker<T>::ExecutionProgress::Signal() const {
   _worker->Signal();
 }
 
@@ -5995,8 +5995,8 @@ inline void AsyncProgressQueueWorker<T>::OnWorkComplete(Napi::Env env, napi_stat
   AsyncProgressWorkerBase<std::pair<T*, size_t>>::OnWorkComplete(env, status);
 }
 
-template<class T>
-inline void AsyncProgressQueueWorker<T>::ExecutionProgress::Signal() {
+template <class T>
+inline void AsyncProgressQueueWorker<T>::ExecutionProgress::Signal() const {
   _worker->Signal();
 }
 

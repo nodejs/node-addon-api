@@ -2835,7 +2835,7 @@ namespace Napi {
      class ExecutionProgress {
         friend class AsyncProgressWorker;
        public:
-        void Signal();
+        void Signal() const;
         void Send(const T* data, size_t count) const;
        private:
         explicit ExecutionProgress(AsyncProgressWorker* worker) : _worker(worker) {}
@@ -2892,7 +2892,7 @@ namespace Napi {
      class ExecutionProgress {
         friend class AsyncProgressQueueWorker;
        public:
-        void Signal();
+        void Signal() const;
         void Send(const T* data, size_t count) const;
        private:
         explicit ExecutionProgress(AsyncProgressQueueWorker* worker) : _worker(worker) {}
