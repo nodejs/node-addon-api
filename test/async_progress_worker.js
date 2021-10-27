@@ -65,7 +65,7 @@ function signalTest (binding) {
   return new Promise((resolve, reject) => {
     const expectedCalls = 3;
     let actualCalls = 0;
-    binding.doWork(expectedCalls,
+    binding.doSignalTest(expectedCalls,
       common.mustCall((err) => {
         if (err) {
           reject(err);
