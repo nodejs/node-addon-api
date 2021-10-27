@@ -35,7 +35,7 @@ class TestWorker : public AsyncProgressQueueWorker<ProgressData> {
   }
 
  protected:
-  void Execute(ExecutionProgress& progress) override {
+  void Execute(const ExecutionProgress& progress) override {
     using namespace std::chrono_literals;
     std::this_thread::sleep_for(1s);
 
@@ -91,7 +91,7 @@ class SignalTestWorker : public AsyncProgressQueueWorker<ProgressData> {
   }
 
  protected:
-  void Execute(ExecutionProgress& progress) override {
+  void Execute(const ExecutionProgress& progress) override {
     using namespace std::chrono_literals;
     std::this_thread::sleep_for(1s);
 

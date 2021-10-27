@@ -29,7 +29,7 @@ class TestWorker : public AsyncProgressWorker<ProgressData> {
   }
 
  protected:
-  void Execute(ExecutionProgress& progress) override {
+  void Execute(const ExecutionProgress& progress) override {
     if (_times < 0) {
       SetError("test error");
     }
@@ -77,7 +77,7 @@ class MalignWorker : public AsyncProgressWorker<ProgressData> {
   }
 
  protected:
-  void Execute(ExecutionProgress& progress) override {
+  void Execute(const ExecutionProgress& progress) override {
     std::unique_lock<std::mutex> lock(_cvm);
     // Testing a nullptr send is acceptable.
     progress.Send(nullptr, 0);
@@ -137,7 +137,7 @@ class SignalTestWorker : public AsyncProgressWorker<ProgressData> {
   }
 
  protected:
-  void Execute(ExecutionProgress& progress) override {
+  void Execute(const ExecutionProgress& progress) override {
     if (_times < 0) {
       SetError("test error");
     }
