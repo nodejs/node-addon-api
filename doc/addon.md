@@ -90,6 +90,12 @@ to either attach methods, accessors, and/or values to the `exports` object or to
 create its own `exports` object and attach methods, accessors, and/or values to
 it.
 
+**Note:** `Napi::Addon<T>` uses `Napi::Env::SetInstanceData()` internally. This
+means that the add-on should only use `Napi::Env::GetInstanceData` explicitly to
+retrieve the instance of the `Napi::Addon<T>` class. Variables whose scope would
+otherwise be global should be stored as instance variables in the
+`Napi::Addon<T>` class.
+
 Functions created with `Napi::Function::New()`, accessors created with
 `PropertyDescriptor::Accessor()`, and values can also be attached. If their
 implementation requires the `ExampleAddon` instance, it can be retrieved from
