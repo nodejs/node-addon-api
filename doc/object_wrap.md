@@ -36,9 +36,9 @@ class Example : public Napi::ObjectWrap<Example> {
 Napi::Object Example::Init(Napi::Env env, Napi::Object exports) {
     // This method is used to hook the accessor and method callbacks
     Napi::Function func = DefineClass(env, "Example", {
-        InstanceMethod<&Example::GetValue>("GetValue"),
-        InstanceMethod<&Example::SetValue>("SetValue"),
-        StaticMethod<&Example::CreateNewItem>("CreateNewItem"),
+        InstanceMethod<&Example::GetValue>("GetValue", static_cast<napi_property_attributes>(napi_writable | napi_configurable)),
+        InstanceMethod<&Example::SetValue>("SetValue", static_cast<napi_property_attributes>(napi_writable | napi_configurable)),
+        StaticMethod<&Example::CreateNewItem>("CreateNewItem", static_cast<napi_property_attributes>(napi_writable | napi_configurable)),
     });
 
     Napi::FunctionReference* constructor = new Napi::FunctionReference();
