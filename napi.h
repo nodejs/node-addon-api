@@ -1720,6 +1720,8 @@ namespace Napi {
    /// !endcond
 
   private:
+   const char* ERROR_WRAP_VALUE =
+       "4bda9e7e-4913-4dbc-95de-891cbf66598e-errorVal";
    mutable std::string _message;
   };
 
