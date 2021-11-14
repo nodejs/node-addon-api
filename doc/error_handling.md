@@ -15,7 +15,7 @@ If C++ exceptions are enabled (for more info see: [Setup](setup.md)), then the
 error-handling for C++ exceptions and JavaScript exceptions.
 
 Note, that due to limitations of the Node-API, if one attempts to cast the error object wrapping a primitive inside a C++ addon, the wrapped object
-will be received instead. (With properties `4b3d96fd-fb87-4951-a979-eb4f9d2f2ce9-isWrapObject` and `errorVal` containing the primitive value thrown)
+will be received instead. (With property `4bda9e7e-4913-4dbc-95de-891cbf66598e-errorVal` containing the primitive value thrown)
 
 The following sections explain the approach for each case:
 
