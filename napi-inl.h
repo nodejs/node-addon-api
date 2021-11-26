@@ -2593,12 +2593,78 @@ inline Error::Error() : ObjectReference() {
 
 inline Error::Error(napi_env env, napi_value value) : ObjectReference(env, nullptr) {
   if (value != nullptr) {
+    // Attempting to create a reference on the error object.
+    // If it's not a Object/Function/Symbol, this call will return an error
+    // status.
     napi_status status = napi_create_reference(env, value, 1, &_ref);
 
+    if (status != napi_ok) {
+      napi_value wrappedErrorObj;
+
+      // Create an error object
+      status = napi_create_object(env, &wrappedErrorObj);
+      NAPI_FATAL_IF_FAILED(status, "Error::Error", "napi_create_object");
+
+      // property flag that we attach to show the error object is wrapped
+      napi_property_descriptor wrapObjFlag = {
+          ERROR_WRAP_VALUE,  // Unique GUID identifier since Symbol isn't a
+                             // viable option
+          nullptr,
+          nullptr,
+          nullptr,
+          nullptr,
+          Value::From(env, value),
+          napi_enumerable,
+          nullptr};
+
+      status = napi_define_properties(env, wrappedErrorObj, 1, &wrapObjFlag);
+      NAPI_FATAL_IF_FAILED(status, "Error::Error", "napi_define_properties");
+
+      // Create a reference on the newly wrapped object
+      status = napi_create_reference(env, wrappedErrorObj, 1, &_ref);
+    }
+
     // Avoid infinite recursion in the failure case.
-    // Don't try to construct & throw another Error instance.
     NAPI_FATAL_IF_FAILED(status, "Error::Error", "napi_create_reference");
   }
+}
+
+inline Object Error::Value() const {
+  if (_ref == nullptr) {
+    return Object(_env, nullptr);
+  }
+
+  napi_value refValue;
+  napi_status status = napi_get_reference_value(_env, _ref, &refValue);
+  NAPI_THROW_IF_FAILED(_env, status, Object());
+
+  napi_valuetype type;
+  status = napi_typeof(_env, refValue, &type);
+  NAPI_THROW_IF_FAILED(_env, status, Object());
+
+  // If refValue isn't a symbol, then we proceed to whether the refValue has the
+  // wrapped error flag
+  if (type != napi_symbol) {
+    // We are checking if the object is wrapped
+    bool isWrappedObject = false;
+
+    status = napi_has_property(
+        _env, refValue, String::From(_env, ERROR_WRAP_VALUE), &isWrappedObject);
+
+    // Don't care about status
+    if (isWrappedObject) {
+      napi_value unwrappedValue;
+      status = napi_get_property(_env,
+                                 refValue,
+                                 String::From(_env, ERROR_WRAP_VALUE),
+                                 &unwrappedValue);
+      NAPI_THROW_IF_FAILED(_env, status, Object());
+
+      return Object(_env, unwrappedValue);
+    }
+  }
+
+  return Object(_env, refValue);
 }
 
 inline Error::Error(Error&& other) : ObjectReference(std::move(other)) {
@@ -2651,6 +2717,7 @@ inline const std::string& Error::Message() const NAPI_NOEXCEPT {
   return _message;
 }
 
+// we created an object on the &_ref
 inline void Error::ThrowAsJavaScriptException() const {
   HandleScope scope(_env);
   if (!IsEmpty()) {

@@ -1699,6 +1699,8 @@ namespace Napi {
     const std::string& Message() const NAPI_NOEXCEPT;
     void ThrowAsJavaScriptException() const;
 
+    Object Value() const;
+
 #ifdef NAPI_CPP_EXCEPTIONS
     const char* what() const NAPI_NOEXCEPT override;
 #endif // NAPI_CPP_EXCEPTIONS
@@ -1718,7 +1720,9 @@ namespace Napi {
    /// !endcond
 
   private:
-    mutable std::string _message;
+   const char* ERROR_WRAP_VALUE =
+       "4bda9e7e-4913-4dbc-95de-891cbf66598e-errorVal";
+   mutable std::string _message;
   };
 
   class TypeError : public Error {

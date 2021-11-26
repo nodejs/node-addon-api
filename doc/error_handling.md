@@ -14,6 +14,9 @@ If C++ exceptions are enabled (for more info see: [Setup](setup.md)), then the
 `Napi::Error` class extends `std::exception` and enables integrated
 error-handling for C++ exceptions and JavaScript exceptions.
 
+Note, that due to limitations of the Node-API, if one attempts to cast the error object wrapping a primitive inside a C++ addon, the wrapped object
+will be received instead. (With property `4bda9e7e-4913-4dbc-95de-891cbf66598e-errorVal` containing the primitive value thrown)
+
 The following sections explain the approach for each case:
 
 - [Handling Errors With C++ Exceptions](#exceptions)

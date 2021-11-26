@@ -31,6 +31,7 @@ Object InitDate(Env env);
 Object InitDataView(Env env);
 Object InitDataViewReadWrite(Env env);
 Object InitEnvCleanup(Env env);
+Object InitErrorHandlingPrim(Env env);
 Object InitError(Env env);
 Object InitExternal(Env env);
 Object InitFunction(Env env);
@@ -113,6 +114,7 @@ Object Init(Env env, Object exports) {
   exports.Set("env_cleanup", InitEnvCleanup(env));
 #endif
   exports.Set("error", InitError(env));
+  exports.Set("errorHandlingPrim", InitErrorHandlingPrim(env));
   exports.Set("external", InitExternal(env));
   exports.Set("function", InitFunction(env));
   exports.Set("functionreference", InitFunctionReference(env));
