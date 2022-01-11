@@ -1,21 +1,20 @@
 #include <napi.h>
-#include "test_helper.h"
 #include <unordered_map>
+#include "test_helper.h"
 
-class NonConstructorTest :
-  public Napi::ObjectWrap<NonConstructorTest> {
-public:
-  NonConstructorTest(const Napi::CallbackInfo& info) :
-    Napi::ObjectWrap<NonConstructorTest>(info) {}
+class NonConstructorTest : public Napi::ObjectWrap<NonConstructorTest> {
+ public:
+  NonConstructorTest(const Napi::CallbackInfo& info)
+      : Napi::ObjectWrap<NonConstructorTest>(info) {}
 
   static Napi::Value NonConstructor(const Napi::CallbackInfo& info) {
     // If called with a "true" argument, throw an exeption to test the handling.
-    if(!info[0].IsUndefined() && MaybeUnwrap(info[0].ToBoolean())) {
+    if (!info[0].IsUndefined() && MaybeUnwrap(info[0].ToBoolean())) {
       NAPI_THROW(Napi::Error::New(info.Env(), "an exception"), Napi::Value());
     }
     // Otherwise, act as a factory.
     std::vector<napi_value> args;
-    for(size_t i = 0; i < info.Length(); i++) args.push_back(info[i]);
+    for (size_t i = 0; i < info.Length(); i++) args.push_back(info[i]);
     return MaybeUnwrap(GetConstructor(info.Env()).New(args));
   }
 
@@ -37,7 +36,8 @@ public:
   }
 };
 
-std::unordered_map<napi_env, Napi::FunctionReference*> NonConstructorTest::constructors = {};
+std::unordered_map<napi_env, Napi::FunctionReference*>
+    NonConstructorTest::constructors = {};
 
 Napi::Object InitObjectWrapNonConstructor(Napi::Env env) {
   Napi::Object exports = Napi::Object::New(env);

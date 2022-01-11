@@ -3,7 +3,7 @@
 const assert = require('assert');
 const testUtil = require('./testUtil');
 
-function test(binding) {
+function test (binding) {
   return testUtil.runGCTests([
     'objectwrap nonconstructor',
     () => {
