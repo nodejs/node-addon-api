@@ -212,6 +212,29 @@ property of the `Napi::CallbackInfo`.
 
 Returns a `Napi::Function` representing the constructor function for the class.
 
+### OnCalledAsFunction
+
+Provides an opportunity to customize the behavior when a `Napi::ObjectWrap<T>`
+class is called from JavaScript as a function (without the **new** operator).
+
+The default behavior in this scenario is to throw a `Napi::TypeError` with the
+message `Class constructors cannot be invoked without 'new'`.  Define this
+public method on your derived class to override that behavior.
+
+For example, you could internally re-call the JavaScript contstructor _with_
+the **new** operator (via
+`Napi::Function::New(const std::vector<napi_value> &args)`), and return the
+resulting object.  Or you might do something else entirely, such as the way
+[`Date()`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date#constructor)
+produces a string when called as a function.
+
+```cpp
+static Napi::Value OnCalledAsFunction(const Napi::CallbackInfo& callbackInfo);
+```
+
+- `[in] callbackInfo`: The object representing the components of the JavaScript
+request being made.
+
 ### Finalize
 
 Provides an opportunity to run cleanup code that requires access to the

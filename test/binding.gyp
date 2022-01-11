@@ -66,6 +66,7 @@
         'typedarray.cc',
         'objectwrap.cc',
         'objectwrap_constructor_exception.cc',
+        'objectwrap_function.cc',
         'objectwrap_removewrap.cc',
         'objectwrap_multiple_inheritance.cc',
         'object_reference.cc',

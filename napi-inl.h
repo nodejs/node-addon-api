@@ -4452,6 +4452,15 @@ inline ClassPropertyDescriptor<T> ObjectWrap<T>::StaticValue(Symbol name,
 }
 
 template <typename T>
+inline Value ObjectWrap<T>::OnCalledAsFunction(
+    const Napi::CallbackInfo& callbackInfo) {
+  NAPI_THROW(
+      TypeError::New(callbackInfo.Env(),
+                     "Class constructors cannot be invoked without 'new'"),
+      Napi::Value());
+}
+
+template <typename T>
 inline void ObjectWrap<T>::Finalize(Napi::Env /*env*/) {}
 
 template <typename T>
@@ -4464,8 +4473,8 @@ inline napi_value ObjectWrap<T>::ConstructorCallbackWrapper(
 
   bool isConstructCall = (new_target != nullptr);
   if (!isConstructCall) {
-    napi_throw_type_error(env, nullptr, "Class constructors cannot be invoked without 'new'");
-    return nullptr;
+    return details::WrapCallback(
+        [&] { return T::OnCalledAsFunction(CallbackInfo(env, info)); });
   }
 
   napi_value wrapper = details::WrapCallback([&] {
