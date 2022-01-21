@@ -12,6 +12,10 @@
       "url": "https://github.com/jmendeth"
     },
     {
+      "name": "Alexander Floh",
+      "url": "https://github.com/alexanderfloh"
+    },
+    {
       "name": "András Timár, Dr",
       "url": "https://github.com/timarandras"
     },
@@ -86,6 +90,10 @@
     {
       "name": "Dongjin Na",
       "url": "https://github.com/nadongguri"
+    },
+    {
+      "name": "Doni Rubiagatra",
+      "url": "https://github.com/rubiagatra"
     },
     {
       "name": "Ferdinand Holzer",
@@ -312,6 +320,11 @@
       "url": "https://github.com/Velmisov"
     },
     {
+      "name": "WenheLI",
+      "url": "https://github.com/WenheLI"
+    },
+
+    {
       "name": "Yohei Kishimoto",
       "url": "https://github.com/morokosi"
     },
@@ -381,6 +394,6 @@
     "lint:fix": "node tools/clang-format --fix && node tools/eslint-format --fix"
   },
   "pre-commit": "lint",
-  "version": "4.2.0",
+  "version": "4.3.0",
   "support": true
 }

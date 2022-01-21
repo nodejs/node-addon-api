@@ -1,5 +1,52 @@
 # node-addon-api Changelog
 
+## 2022-01-21 Version 4.3.0, @NickNaso
+
+### Notable changes:
+
+#### API
+
+- Added iterator for `Napi::Object`.
+- Fixed usage of `napi_extended_error_info` in `Napi::Error::New()`.
+- Added unwrapping logic to handle graceful error handling for primitives.
+
+#### TEST
+
+- Removed travis config.
+- Updated compiler used for testing.
+- Added BigInt value test.
+- Minor fixes all overtest suite.
+
+### Documentation
+
+- Documentation of iterator for `Napi::Object`.
+- Minor fixes all over documentation.
+
+### Commits
+
+* [[`7046834305`](https://github.com/nodejs/node-addon-api/commit/7046834305)] - Update to use recent version of stale action (Michael Dawson)
+* [[`293c7327ad`](https://github.com/nodejs/node-addon-api/commit/293c7327ad)] - Merge pull request #1075 from JckXia/handle-error-thrown (Jack)
+* [[`706b19986d`](https://github.com/nodejs/node-addon-api/commit/706b19986d)] - **test**: create tools/eslint-format (Doni Rubiagatra) [#1080](https://github.com/nodejs/node-addon-api/pull/1080)
+* [[`e0567d098a`](https://github.com/nodejs/node-addon-api/commit/e0567d098a)] - Update documents (JckXia)
+* [[`691813842e`](https://github.com/nodejs/node-addon-api/commit/691813842e)] - Refactor code. Using hard coded string instead of using symbol (JckXia)
+* [[`7423cc5025`](https://github.com/nodejs/node-addon-api/commit/7423cc5025)] - Update object\_wrap.md (#1094) (Alexander Floh)
+* [[`5aab27e6e1`](https://github.com/nodejs/node-addon-api/commit/5aab27e6e1)] - **doc**: add blurb about SetInstanceData (Gabriel Schulhof)
+* [[`e439222fe6`](https://github.com/nodejs/node-addon-api/commit/e439222fe6)] - **test**: add bigint value test (WenheLI) [#1096](https://github.com/nodejs/node-addon-api/pull/1096)
+* [[`0dfa89f4ef`](https://github.com/nodejs/node-addon-api/commit/0dfa89f4ef)] - **doc**: document object iterators (#1090) (Darshan Sen)
+* [[`04b26a9d9b`](https://github.com/nodejs/node-addon-api/commit/04b26a9d9b)] - **test**: add first set of func Ref tests (JckXia) [#1035](https://github.com/nodejs/node-addon-api/pull/1035)
+* [[`a0b3fe9197`](https://github.com/nodejs/node-addon-api/commit/a0b3fe9197)] - Replace magic value with symbol (JckXia)
+* [[`173c5bc9d9`](https://github.com/nodejs/node-addon-api/commit/173c5bc9d9)] - Update PR based on review comments (JckXia)
+* [[`02bcfbccfd`](https://github.com/nodejs/node-addon-api/commit/02bcfbccfd)] - Update doc and appending GUID to object property (JckXia)
+* [[`c89f0bfb0b`](https://github.com/nodejs/node-addon-api/commit/c89f0bfb0b)] - Remove un-necessary comment/iostream and updated docs to reflect on limitations with this impl (JckXia)
+* [[`ed4d1c51c4`](https://github.com/nodejs/node-addon-api/commit/ed4d1c51c4)] - Added unwrapping logic to handle graceful error handling for primitives (JckXia)
+* [[`4663453eae`](https://github.com/nodejs/node-addon-api/commit/4663453eae)] - **src**: fix usage of `napi_extended_error_info` in `Error::New()` (Darshan Sen) [#1092](https://github.com/nodejs/node-addon-api/pull/1092)
+* [[`cb228418e6`](https://github.com/nodejs/node-addon-api/commit/cb228418e6)] - **doc**: fix typo in TypedThreadSafeFunction example (#1083) (Tobias Nießen)
+* [[`b70acdda1f`](https://github.com/nodejs/node-addon-api/commit/b70acdda1f)] - **test**: remove travis config (#1082) (Michael Dawson)
+* [[`1404b7cbea`](https://github.com/nodejs/node-addon-api/commit/1404b7cbea)] - **test**: update compiler used for testing (#1079) (Michael Dawson)
+* [[`4351bffd53`](https://github.com/nodejs/node-addon-api/commit/4351bffd53)] - **doc**: fixup to meet lint rules (Michael Dawson) [#1077](https://github.com/nodejs/node-addon-api/pull/1077)
+* [[`bd8f6e6d1a`](https://github.com/nodejs/node-addon-api/commit/bd8f6e6d1a)] - **src**: add iterator for Object (Darshan Sen)
+* [[`d8fc7b869a`](https://github.com/nodejs/node-addon-api/commit/d8fc7b869a)] - **lint**: add eslint based on config-semistandard (#1067) (Doni Rubiagatra)
+
 ## 2021-09-17 Version 4.2.0, @NickNaso
 
 ### Notable changes:

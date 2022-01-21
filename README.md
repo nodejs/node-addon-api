@@ -70,7 +70,7 @@ and node-addon-api.
 - **[Contributors](#contributors)**
 - **[License](#license)**
 
-## **Current version: 4.2.0**
+## **Current version: 4.3.0**
 
 (See [CHANGELOG.md](CHANGELOG.md) for complete Changelog)
 
