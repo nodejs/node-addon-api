@@ -1527,57 +1527,18 @@ inline void Object::AddFinalizer(Finalizer finalizeCallback,
 }
 
 #ifdef NAPI_CPP_EXCEPTIONS
-inline Object::const_iterator::const_iterator(const Object* object,
-                                              const Type type) {
+inline Object::iterator::iterator(const Object* object, const Type type) {
   _object = object;
   _keys = object->GetPropertyNames();
   _index = type == Type::BEGIN ? 0 : _keys.Length();
 }
 
-inline Object::const_iterator Napi::Object::begin() const {
-  const_iterator it(this, Object::const_iterator::Type::BEGIN);
-  return it;
-}
-
-inline Object::const_iterator Napi::Object::end() const {
-  const_iterator it(this, Object::const_iterator::Type::END);
-  return it;
-}
-
-inline Object::const_iterator& Object::const_iterator::operator++() {
-  ++_index;
-  return *this;
-}
-
-inline bool Object::const_iterator::operator==(
-    const const_iterator& other) const {
-  return _index == other._index;
-}
-
-inline bool Object::const_iterator::operator!=(
-    const const_iterator& other) const {
-  return _index != other._index;
-}
-
-inline const std::pair<Value, Object::PropertyLValue<Value>>
-Object::const_iterator::operator*() const {
-  const Value key = _keys[_index];
-  const PropertyLValue<Value> value = (*_object)[key];
-  return {key, value};
-}
-
-inline Object::iterator::iterator(Object* object, const Type type) {
-  _object = object;
-  _keys = object->GetPropertyNames();
-  _index = type == Type::BEGIN ? 0 : _keys.Length();
-}
-
-inline Object::iterator Napi::Object::begin() {
+inline Object::iterator Napi::Object::begin() const {
   iterator it(this, Object::iterator::Type::BEGIN);
   return it;
 }
 
-inline Object::iterator Napi::Object::end() {
+inline Object::iterator Napi::Object::end() const {
   iterator it(this, Object::iterator::Type::END);
   return it;
 }
@@ -1596,7 +1557,7 @@ inline bool Object::iterator::operator!=(const iterator& other) const {
 }
 
 inline std::pair<Value, Object::PropertyLValue<Value>>
-Object::iterator::operator*() {
+Object::iterator::operator*() const {
   Value key = _keys[_index];
   PropertyLValue<Value> value = (*_object)[key];
   return {key, value};

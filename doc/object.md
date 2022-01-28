@@ -273,13 +273,7 @@ indexed property or array element.
 Napi::Object::iterator Napi::Object::begin() const;
 ```
 
-Returns a constant iterator to the beginning of the object.
-
-```cpp
-Napi::Object::iterator Napi::Object::begin();
-```
-
-Returns a non constant iterator to the beginning of the object.
+Returns an iterator to the beginning of the object.
 
 ### end()
 
@@ -287,13 +281,7 @@ Returns a non constant iterator to the beginning of the object.
 Napi::Object::iterator Napi::Object::end() const;
 ```
 
-Returns a constant iterator to the end of the object.
-
-```cpp
-Napi::Object::iterator Napi::Object::end();
-```
-
-Returns a non constant iterator to the end of the object.
+Returns an iterator to the end of the object.
 
 ## Iterator
 
@@ -303,63 +291,7 @@ Iterators expose an `std::pair<...>`, where the `first` property is a
 holds the currently iterated value. Iterators are only available if C++
 exceptions are enabled (by defining `NAPI_CPP_EXCEPTIONS` during the build).
 
-### Constant Iterator
-
-In constant iterators, the iterated values are immutable.
-
-#### operator++()
-
-```cpp
-inline Napi::Object::const_iterator& Napi::Object::const_iterator::operator++();
-```
-
-Moves the iterator one step forward.
-
-#### operator==
-
-```cpp
-inline bool Napi::Object::const_iterator::operator==(const Napi::Object::const_iterator& other) const;
-```
-- `[in] other`: Another iterator to compare the current iterator to.
-
-Returns whether both iterators are at the same index.
-
-#### operator!=
-
-```cpp
-inline bool Napi::Object::const_iterator::operator!=(const Napi::Object::const_iterator& other) const;
-```
-- `[in] other`: Another iterator to compare the current iterator to.
-
-Returns whether both iterators are at different indices.
-
-#### operator*()
-
-```cpp
-inline const std::pair<Napi::Value, Napi::Object::PropertyLValue<Napi::Value>> Napi::Object::const_iterator::operator*() const;
-```
-
-Returns the currently iterated key and value.
-
-#### Example
-```cpp
-Value Sum(const CallbackInfo& info) {
-  Object object = info[0].As<Object>();
-  int64_t sum = 0;
-
-  for (const auto& e : object) {
-    sum += static_cast<Value>(e.second).As<Number>().Int64Value();
-  }
-
-  return Number::New(info.Env(), sum);
-}
-```
-
-### Non Constant Iterator
-
-In non constant iterators, the iterated values are mutable.
-
-#### operator++()
+### operator++()
 
 ```cpp
 inline Napi::Object::iterator& Napi::Object::iterator::operator++();
@@ -367,7 +299,7 @@ inline Napi::Object::iterator& Napi::Object::iterator::operator++();
 
 Moves the iterator one step forward.
 
-#### operator==
+### operator==
 
 ```cpp
 inline bool Napi::Object::iterator::operator==(const Napi::Object::iterator& other) const;
@@ -376,7 +308,7 @@ inline bool Napi::Object::iterator::operator==(const Napi::Object::iterator& oth
 
 Returns whether both iterators are at the same index.
 
-#### operator!=
+### operator!=
 
 ```cpp
 inline bool Napi::Object::iterator::operator!=(const Napi::Object::iterator& other) const;
@@ -385,15 +317,15 @@ inline bool Napi::Object::iterator::operator!=(const Napi::Object::iterator& oth
 
 Returns whether both iterators are at different indices.
 
-#### operator*()
+### operator*()
 
 ```cpp
-inline std::pair<Napi::Value, Napi::Object::PropertyLValue<Napi::Value>> Napi::Object::iterator::operator*();
+inline std::pair<Napi::Value, Napi::Object::PropertyLValue<Napi::Value>> Napi::Object::iterator::operator*() const;
 ```
 
 Returns the currently iterated key and value.
 
-#### Example
+### Example
 ```cpp
 void Increment(const CallbackInfo& info) {
   Env env = info.Env();
