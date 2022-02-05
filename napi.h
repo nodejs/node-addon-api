@@ -2199,7 +2199,8 @@ namespace Napi {
     static PropertyDescriptor StaticValue(Symbol name,
                                           Napi::Value value,
                                           napi_property_attributes attributes = napi_default);
-    static Napi::Value NonConstructor(const Napi::CallbackInfo& info);
+    static Napi::Value OnCalledAsFunction(
+        const Napi::CallbackInfo& callbackInfo);
     virtual void Finalize(Napi::Env env);
 
   private:
