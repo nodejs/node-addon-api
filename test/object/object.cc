@@ -11,6 +11,7 @@ Value GetPropertyWithCStyleString(const CallbackInfo& info);
 Value GetPropertyWithCppStyleString(const CallbackInfo& info);
 
 // Native wrappers for testing Object::Set()
+Value SetPropertyWithUint32(const CallbackInfo& info);
 Value SetPropertyWithNapiValue(const CallbackInfo& info);
 Value SetPropertyWithNapiWrapperValue(const CallbackInfo& info);
 Value SetPropertyWithCStyleString(const CallbackInfo& info);
@@ -299,6 +300,7 @@ Object InitObject(Env env) {
   exports["getPropertyWithCStyleString"] = Function::New(env, GetPropertyWithCStyleString);
   exports["getPropertyWithCppStyleString"] = Function::New(env, GetPropertyWithCppStyleString);
 
+  exports["setPropertyWithUint32"] = Function::New(env, SetPropertyWithUint32);
   exports["setPropertyWithNapiValue"] = Function::New(env, SetPropertyWithNapiValue);
   exports["setPropertyWithNapiWrapperValue"] = Function::New(env, SetPropertyWithNapiWrapperValue);
   exports["setPropertyWithCStyleString"] = Function::New(env, SetPropertyWithCStyleString);
