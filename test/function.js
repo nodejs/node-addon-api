@@ -49,6 +49,11 @@ function test(binding) {
   assert.strictEqual(receiver, undefined);
   assert.deepStrictEqual(args, [ 2, 3, 4 ]);
 
+  ret = 5;
+  assert.strictEqual(binding.callWithVectorUsingCppWrapper(testFunction, 2, 3, 4), 5);
+  assert.strictEqual(receiver, undefined);
+  assert.deepStrictEqual(args, [ 2, 3, 4 ]);
+
   ret = 6;
   assert.strictEqual(binding.callWithReceiverAndArgs(testFunction, obj, 3, 4, 5), 6);
   assert.deepStrictEqual(receiver, obj);
@@ -56,6 +61,11 @@ function test(binding) {
 
   ret = 7;
   assert.strictEqual(binding.callWithReceiverAndVector(testFunction, obj, 4, 5, 6), 7);
+  assert.deepStrictEqual(receiver, obj);
+  assert.deepStrictEqual(args, [ 4, 5, 6 ]);
+
+  ret = 7;
+  assert.strictEqual(binding.callWithReceiverAndVectorUsingCppWrapper(testFunction, obj, 4, 5, 6), 7);
   assert.deepStrictEqual(receiver, obj);
   assert.deepStrictEqual(args, [ 4, 5, 6 ]);
 
