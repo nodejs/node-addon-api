@@ -10,7 +10,7 @@ git branch -u origin/main main
 ```
 
 # **node-addon-api module**
-This module contains **header-only C++ wrapper classes** which simplify
+This module contains  **header-only C++ wrapper classes** which simplify
 the use of the C based [Node-API](https://nodejs.org/dist/latest/docs/api/n-api.html)
 provided by Node.js when using C++. It provides a C++ object model
 and exception handling semantics with low overhead.
