@@ -70,6 +70,7 @@ test(`./build/${buildType}/binding.node`, true);
 test(`./build/${buildType}/binding_noexcept.node`, true);
 test(`./build/${buildType}/binding_swallowexcept.node`, false);
 test(`./build/${buildType}/binding_swallowexcept_noexcept.node`, false);
+test(`./build/${buildType}/binding_custom_namespace.node`, true);
 
 function test(bindingPath, process_should_abort) {
   const number_of_test_cases = 5;

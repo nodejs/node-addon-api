@@ -140,6 +140,18 @@ static_assert(sizeof(char16_t) == sizeof(wchar_t), "Size mismatch between char16
 ////////////////////////////////////////////////////////////////////////////////
 namespace Napi {
 
+#ifdef NAPI_CPP_CUSTOM_NAMESPACE
+// NAPI_CPP_CUSTOM_NAMESPACE can be #define'd per-addon to avoid symbol
+// conflicts between different instances of node-addon-api
+
+// First dummy definition of the namespace to make sure that Napi::(name) still
+// refers to the right things inside this file.
+namespace NAPI_CPP_CUSTOM_NAMESPACE {}
+using namespace NAPI_CPP_CUSTOM_NAMESPACE;
+
+namespace NAPI_CPP_CUSTOM_NAMESPACE {
+#endif
+
   // Forward declarations
   class Env;
   class Value;
@@ -2976,6 +2988,10 @@ namespace Napi {
     Object entry_point_;
   };
 #endif  // NAPI_VERSION > 5
+
+#ifdef NAPI_CPP_CUSTOM_NAMESPACE
+  }  // namespace NAPI_CPP_CUSTOM_NAMESPACE
+#endif
 
 } // namespace Napi
 

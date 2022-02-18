@@ -81,7 +81,8 @@ exports.runTest = async function (test, buildType, buildPathRoot = process.env.B
   const bindings = [
     path.join(buildPathRoot, `../build/${buildType}/binding.node`),
     path.join(buildPathRoot, `../build/${buildType}/binding_noexcept.node`),
-    path.join(buildPathRoot, `../build/${buildType}/binding_noexcept_maybe.node`)
+    path.join(buildPathRoot, `../build/${buildType}/binding_noexcept_maybe.node`),
+    path.join(buildPathRoot, `../build/${buildType}/binding_custom_namespace.node`)
   ].map(it => require.resolve(it));
 
   for (const item of bindings) {
@@ -96,7 +97,8 @@ exports.runTestWithBindingPath = async function (test, buildType, buildPathRoot 
   const bindings = [
     path.join(buildPathRoot, `../build/${buildType}/binding.node`),
     path.join(buildPathRoot, `../build/${buildType}/binding_noexcept.node`),
-    path.join(buildPathRoot, `../build/${buildType}/binding_noexcept_maybe.node`)
+    path.join(buildPathRoot, `../build/${buildType}/binding_noexcept_maybe.node`),
+    path.join(buildPathRoot, `../build/${buildType}/binding_custom_namespace.node`)
   ].map(it => require.resolve(it));
 
   for (const item of bindings) {

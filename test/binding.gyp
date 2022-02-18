@@ -114,5 +114,11 @@
       'sources': ['>@(build_sources_swallowexcept)'],
       'defines': ['NODE_API_SWALLOW_UNTHROWABLE_EXCEPTIONS']
     },
+    {
+      'target_name': 'binding_custom_namespace',
+      'includes': ['../noexcept.gypi'],
+      'sources': ['>@(build_sources)'],
+      'defines': ['NAPI_CPP_CUSTOM_NAMESPACE=cstm']
+    },
   ],
 }

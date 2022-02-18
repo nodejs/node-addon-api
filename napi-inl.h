@@ -18,6 +18,10 @@
 
 namespace Napi {
 
+#ifdef NAPI_CPP_CUSTOM_NAMESPACE
+namespace NAPI_CPP_CUSTOM_NAMESPACE {
+#endif
+
 // Helpers to handle functions exposed from C++.
 namespace details {
 
@@ -6212,6 +6216,10 @@ bool Env::CleanupHook<Hook, Arg>::IsEmpty() const {
   return data == nullptr;
 }
 #endif  // NAPI_VERSION > 2
+
+#ifdef NAPI_CPP_CUSTOM_NAMESPACE
+}  // namespace NAPI_CPP_CUSTOM_NAMESPACE
+#endif
 
 } // namespace Napi
 

@@ -3,6 +3,12 @@
 
 namespace Napi {
 
+// Needs this here since the MaybeUnwrap() functions need to be in the
+// same namespace as their arguments for C++ argument-dependent lookup
+#ifdef NAPI_CPP_CUSTOM_NAMESPACE
+namespace NAPI_CPP_CUSTOM_NAMESPACE {
+#endif
+
 // Use this when a variable or parameter is unused in order to explicitly
 // silence a compiler warning about that.
 template <typename T>
@@ -57,5 +63,9 @@ inline bool MaybeUnwrapTo(MaybeOrValue<T> maybe, T* out) {
   return true;
 #endif
 }
+
+#ifdef NAPI_CPP_CUSTOM_NAMESPACE
+}  // namespace NAPI_CPP_CUSTOM_NAMESPACE
+#endif
 
 }  // namespace Napi
