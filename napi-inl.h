@@ -2607,8 +2607,8 @@ inline Error::Error(napi_env env, napi_value value) : ObjectReference(env, nullp
 
       // property flag that we attach to show the error object is wrapped
       napi_property_descriptor wrapObjFlag = {
-          ERROR_WRAP_VALUE,  // Unique GUID identifier since Symbol isn't a
-                             // viable option
+          ERROR_WRAP_VALUE(),  // Unique GUID identifier since Symbol isn't a
+                               // viable option
           nullptr,
           nullptr,
           nullptr,
@@ -2648,15 +2648,17 @@ inline Object Error::Value() const {
     // We are checking if the object is wrapped
     bool isWrappedObject = false;
 
-    status = napi_has_property(
-        _env, refValue, String::From(_env, ERROR_WRAP_VALUE), &isWrappedObject);
+    status = napi_has_property(_env,
+                               refValue,
+                               String::From(_env, ERROR_WRAP_VALUE()),
+                               &isWrappedObject);
 
     // Don't care about status
     if (isWrappedObject) {
       napi_value unwrappedValue;
       status = napi_get_property(_env,
                                  refValue,
-                                 String::From(_env, ERROR_WRAP_VALUE),
+                                 String::From(_env, ERROR_WRAP_VALUE()),
                                  &unwrappedValue);
       NAPI_THROW_IF_FAILED(_env, status, Object());
 
@@ -2771,6 +2773,10 @@ inline const char* Error::what() const NAPI_NOEXCEPT {
 }
 
 #endif // NAPI_CPP_EXCEPTIONS
+
+inline const char* Error::ERROR_WRAP_VALUE() NAPI_NOEXCEPT {
+  return "4bda9e7e-4913-4dbc-95de-891cbf66598e-errorVal";
+}
 
 template <typename TError>
 inline TError Error::New(napi_env env,
