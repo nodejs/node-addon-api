@@ -36,7 +36,7 @@ class FunctionTest : public Napi::ObjectWrap<FunctionTest> {
 };
 
 std::unordered_map<napi_env, Napi::FunctionReference>
-    FunctionTest::constructors = {};
+    FunctionTest::constructors;
 
 Napi::Object InitObjectWrapFunction(Napi::Env env) {
   Napi::Object exports = Napi::Object::New(env);
