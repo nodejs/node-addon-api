@@ -2287,6 +2287,11 @@ inline MaybeOrValue<Value> Function::Call(
   return Call(Env().Undefined(), args);
 }
 
+inline MaybeOrValue<Value> Function::Call(
+    const std::vector<Value>& args) const {
+  return Call(Env().Undefined(), args);
+}
+
 inline MaybeOrValue<Value> Function::Call(size_t argc,
                                           const napi_value* args) const {
   return Call(Env().Undefined(), argc, args);
@@ -2300,6 +2305,27 @@ inline MaybeOrValue<Value> Function::Call(
 inline MaybeOrValue<Value> Function::Call(
     napi_value recv, const std::vector<napi_value>& args) const {
   return Call(recv, args.size(), args.data());
+}
+
+inline MaybeOrValue<Value> Function::Call(
+    napi_value recv, const std::vector<Value>& args) const {
+  const size_t argc = args.size();
+  const size_t stackArgsCount = 6;
+  napi_value stackArgs[stackArgsCount];
+  std::vector<napi_value> heapArgs;
+  napi_value* argv;
+  if (argc <= stackArgsCount) {
+    argv = stackArgs;
+  } else {
+    heapArgs.resize(argc);
+    argv = heapArgs.data();
+  }
+
+  for (size_t index = 0; index < argc; index++) {
+    argv[index] = static_cast<napi_value>(args[index]);
+  }
+
+  return Call(recv, argc, argv);
 }
 
 inline MaybeOrValue<Value> Function::Call(napi_value recv,

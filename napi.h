@@ -1350,11 +1350,14 @@ namespace Napi {
    MaybeOrValue<Value> Call(
        const std::initializer_list<napi_value>& args) const;
    MaybeOrValue<Value> Call(const std::vector<napi_value>& args) const;
+   MaybeOrValue<Value> Call(const std::vector<Value>& args) const;
    MaybeOrValue<Value> Call(size_t argc, const napi_value* args) const;
    MaybeOrValue<Value> Call(
        napi_value recv, const std::initializer_list<napi_value>& args) const;
    MaybeOrValue<Value> Call(napi_value recv,
                             const std::vector<napi_value>& args) const;
+   MaybeOrValue<Value> Call(napi_value recv,
+                            const std::vector<Value>& args) const;
    MaybeOrValue<Value> Call(napi_value recv,
                             size_t argc,
                             const napi_value* args) const;
