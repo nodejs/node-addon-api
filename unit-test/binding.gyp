@@ -11,23 +11,23 @@
   },
   'targets': [
     {
-			"target_name": "generateBindingCC",
-			"type": "none",
-			"actions": [ {
-				"action_name": "generateBindingCC",
-				"message": "Generating binding cc file",
-				"outputs": ["generated/binding.cc"],
-				"conditions": [
-					[ "'true'=='true'", {
-						"inputs": [""],
-						"action": [
-							"node",
-							"generate-binding-cc.js",
+      "target_name": "generateBindingCC",
+      "type": "none",
+      "actions": [ {
+        "action_name": "generateBindingCC",
+        "message": "Generating binding cc file",
+        "outputs": ["generated/binding.cc"],
+        "conditions": [
+          [ "'true'=='true'", {
+            "inputs": [""],
+            "action": [
+              "node",
+              "generate-binding-cc.js",
               "<!@(node -p \"require('./injectTestParams').filesForBinding()\" )"
-						]
-					} ]
-				]
-			} ]
+            ]
+          } ]
+        ]
+      } ]
     },
     {
       'target_name': 'binding',
@@ -59,6 +59,13 @@
       'includes': ['../noexcept.gypi'],
       'sources': ['>@(build_sources)'],
       'defines': ['NODE_API_SWALLOW_UNTHROWABLE_EXCEPTIONS'],
+      'dependencies': [ 'generateBindingCC' ]
+    },
+    {
+      'target_name': 'binding_custom_namespace',
+      'includes': ['../noexcept.gypi'],
+      'sources': ['>@(build_sources)'],
+      'defines': ['NAPI_CPP_CUSTOM_NAMESPACE=cstm'],
       'dependencies': [ 'generateBindingCC' ]
     },
   ],
