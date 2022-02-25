@@ -20,7 +20,10 @@ function main (args) {
   }
 
   const clangFormatPath = path.dirname(require.resolve('clang-format'));
-  const options = ['--binary=node_modules/.bin/clang-format', '--style=file'];
+  const binary = process.platform === 'win32'
+    ? 'node_modules\\.bin\\clang-format.cmd'
+    : 'node_modules/.bin/clang-format';
+  const options = ['--binary=' + binary, '--style=file'];
   if (fix) {
     options.push(FORMAT_START);
   } else {
