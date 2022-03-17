@@ -1,6 +1,11 @@
 # Property Descriptor
 
-A [`Napi::Object`](object.md) can be assigned properties via its [`DefineProperty`](object.md#defineproperty) and [`DefineProperties`](object.md#defineproperties) functions, which take PropertyDescriptor(s) as their parameters. The `Napi::PropertyDescriptor` can contain either values or functions, which are then assigned to the `Napi::Object`. Note that a single instance of a `Napi::PropertyDescriptor` class can only contain either one value, or at most two functions. PropertyDescriptors can only be created through the class methods [`Accessor`](#accessor), [`Function`](#function), or [`Value`](#value), each of which return a new static instance of a `Napi::PropertyDescriptor`.
+A [`Napi::Object`](object.md) can be assigned properties via its [`DefineProperty`](object.md#defineproperty) and [`DefineProperties`](object.md#defineproperties) functions, which take PropertyDescriptor(s) as their parameters. The `Napi::PropertyDescriptor` can contain either values or functions, which are then assigned to the `Napi::Object`. Note that a single instance of a `Napi::PropertyDescriptor` class can only contains either one value, or at most two functions. PropertyDescriptors can only be created through the class methods [`Accessor`](#accessor), [`Function`](#function), or [`Value`](#value), each of which return a new static instance of a `Napi::PropertyDescriptor`.
+
+`Napi::PropertyDescriptor` class has some factory meethods that receive
+ `const char*` or `const std::string&` as parameter. It's responsibility of the
+caller to maintain the pointer until the `Napi::PropertyDescriptor` object is 
+no longer be used.
 
 ## Example
 
@@ -85,6 +90,7 @@ static Napi::PropertyDescriptor Napi::PropertyDescriptor::Accessor (___ name,
 ```
 
 * `[template] Getter`: A getter function.
+* `[name]`: The name used for the getter function.
 * `[in] attributes`: Potential attributes for the getter function.
 * `[in] data`: A pointer to data of any type, default is a null pointer.
 
@@ -107,6 +113,7 @@ static Napi::PropertyDescriptor Napi::PropertyDescriptor::Accessor (___ name,
 
 * `[template] Getter`: A getter function.
 * `[template] Setter`: A setter function.
+* `[name]`: The name of the getter and setter function.
 * `[in] attributes`: Potential attributes for the getter function.
 * `[in] data`: A pointer to data of any type, default is a null pointer.
 
