@@ -1298,9 +1298,9 @@ inline Object::Object() : Value() {
 inline Object::Object(napi_env env, napi_value value) : Value(env, value) {
 }
 
-inline Object::PropertyLValue<std::string> Object::operator[](
+inline Object::PropertyLValue<const char*> Object::operator[](
     const char* utf8name) const {
-  return PropertyLValue<std::string>(*this, utf8name);
+  return PropertyLValue<const char*>(*this, utf8name);
 }
 
 inline Object::PropertyLValue<std::string> Object::operator[](

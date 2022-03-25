@@ -740,7 +740,7 @@ namespace NAPI_CPP_CUSTOM_NAMESPACE {
            napi_value value);  ///< Wraps a Node-API value primitive.
 
     /// Gets or sets a named property.
-    PropertyLValue<std::string> operator[](
+    PropertyLValue<const char*> operator[](
         const char* utf8name  ///< UTF-8 encoded null-terminated property name
     ) const;
 
