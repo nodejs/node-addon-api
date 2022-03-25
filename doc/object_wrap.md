@@ -16,6 +16,10 @@ be directly invoked from JavaScript. The **wrap** word refers to a way of
 grouping methods and state of the class because it will be necessary write
 custom code to bridge each of your C++ class methods.
 
+**Caution:** When the JavaScript object is garbage collected, the call to the
+C++ destructor may be deferred until a later time. Within that period,
+`Value()` will return an empty value.
+
 ## Example
 
 ```cpp
