@@ -1,10 +1,18 @@
 # Class property and descriptor
 
-Property descriptor for use with `Napi::ObjectWrap::DefineClass()`.
-This is different from the standalone `Napi::PropertyDescriptor` because it is
-specific to each `Napi::ObjectWrap<T>` subclass.
-This prevents using descriptors from a different class when defining a new class
-(preventing the callbacks from having incorrect `this` pointers).
+Property descriptor for use with `Napi::ObjectWrap<T>` and 
+`Napi::InstanceWrap<T>`. This is different from the standalone
+`Napi::PropertyDescriptor` because it is specific to each 
+`Napi::ObjectWrap<T>` and `Napi::InstanceWrap<T>` subclasses.
+This prevents using descriptors from a different class when defining a new
+class (preventing the callbacks from having incorrect `this` pointers).
+
+`Napi::ClassPropertyDescriptor` is a helper class created with
+`Napi::ObjectWrap<T>` and `Napi::InstanceWrap<T>`. For more reference about it
+see:
+
+- [InstanceWrap](./instance_wrap.md)
+- [ObjectWrap](./object_wrap.md)
 
 ## Example
 
