@@ -742,20 +742,34 @@ namespace NAPI_CPP_CUSTOM_NAMESPACE {
     /// Gets or sets a named property.
     PropertyLValue<std::string> operator[](
         const char* utf8name  ///< UTF-8 encoded null-terminated property name
-    ) const;
+    );
 
     /// Gets or sets a named property.
     PropertyLValue<std::string> operator[](
         const std::string& utf8name  ///< UTF-8 encoded property name
-    ) const;
+    );
 
     /// Gets or sets an indexed property or array element.
     PropertyLValue<uint32_t> operator[](
         uint32_t index  /// Property / element index
-    ) const;
+    );
 
     /// Gets or sets an indexed property or array element.
     PropertyLValue<Value> operator[](Value index  /// Property / element index
+    ) const;
+
+    /// Gets a named property.
+    MaybeOrValue<Value> operator[](
+        const char* utf8name  ///< UTF-8 encoded null-terminated property name
+    ) const;
+
+    /// Gets a named property.
+    MaybeOrValue<Value> operator[](
+        const std::string& utf8name  ///< UTF-8 encoded property name
+    ) const;
+
+    /// Gets an indexed property or array element.
+    MaybeOrValue<Value> operator[](uint32_t index  ///< Property / element index
     ) const;
 
     /// Checks whether a property is present.
