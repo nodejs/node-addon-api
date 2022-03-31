@@ -1299,22 +1299,34 @@ inline Object::Object(napi_env env, napi_value value) : Value(env, value) {
 }
 
 inline Object::PropertyLValue<std::string> Object::operator[](
-    const char* utf8name) const {
+    const char* utf8name) {
   return PropertyLValue<std::string>(*this, utf8name);
 }
 
 inline Object::PropertyLValue<std::string> Object::operator[](
-    const std::string& utf8name) const {
+    const std::string& utf8name) {
   return PropertyLValue<std::string>(*this, utf8name);
 }
 
-inline Object::PropertyLValue<uint32_t> Object::operator[](
-    uint32_t index) const {
+inline Object::PropertyLValue<uint32_t> Object::operator[](uint32_t index) {
   return PropertyLValue<uint32_t>(*this, index);
 }
 
 inline Object::PropertyLValue<Value> Object::operator[](Value index) const {
   return PropertyLValue<Value>(*this, index);
+}
+
+inline MaybeOrValue<Value> Object::operator[](const char* utf8name) const {
+  return Get(utf8name);
+}
+
+inline MaybeOrValue<Value> Object::operator[](
+    const std::string& utf8name) const {
+  return Get(utf8name);
+}
+
+inline MaybeOrValue<Value> Object::operator[](uint32_t index) const {
+  return Get(index);
 }
 
 inline MaybeOrValue<bool> Object::Has(napi_value key) const {
