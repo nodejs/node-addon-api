@@ -2005,11 +2005,11 @@ inline void DataView::WriteData(size_t byteOffset, T value) const {
 ////////////////////////////////////////////////////////////////////////////////
 
 inline TypedArray::TypedArray()
-  : Object(), _type(TypedArray::unknown_array_type), _length(0) {
+  : Object(), _type_is_known(false), _length(0) {
 }
 
 inline TypedArray::TypedArray(napi_env env, napi_value value)
-  : Object(env, value), _type(TypedArray::unknown_array_type), _length(0) {
+  : Object(env, value), _type_is_known(false), _length(0) {
 }
 
 inline TypedArray::TypedArray(napi_env env,
@@ -2019,12 +2019,13 @@ inline TypedArray::TypedArray(napi_env env,
   : Object(env, value), _type(type), _length(length) {
 }
 
-inline napi_typedarray_type TypedArray::TypedArrayType() const {
-  if (_type == TypedArray::unknown_array_type) {
+inline napi_typedarray_type TypedArray::TypedArrayType() {
+  if (!_type_is_known) {
     napi_status status = napi_get_typedarray_info(_env, _value,
       &const_cast<TypedArray*>(this)->_type, &const_cast<TypedArray*>(this)->_length,
       nullptr, nullptr, nullptr);
     NAPI_THROW_IF_FAILED(_env, status, napi_int8_array);
+    _type_is_known = true;
   }
 
   return _type;
@@ -2054,12 +2055,13 @@ inline uint8_t TypedArray::ElementSize() const {
   }
 }
 
-inline size_t TypedArray::ElementLength() const {
-  if (_type == TypedArray::unknown_array_type) {
+inline size_t TypedArray::ElementLength() {
+  if (!_type_is_known) {
     napi_status status = napi_get_typedarray_info(_env, _value,
       &const_cast<TypedArray*>(this)->_type, &const_cast<TypedArray*>(this)->_length,
       nullptr, nullptr, nullptr);
     NAPI_THROW_IF_FAILED(_env, status, 0);
+    _type_is_known = true;
   }
 
   return _length;
@@ -2127,7 +2129,7 @@ inline TypedArrayOf<T>::TypedArrayOf(napi_env env, napi_value value)
         _env, _value, &_type, &_length, &data, nullptr, nullptr);
     _data = static_cast<T*>(data);
   } else {
-    _type = TypedArrayTypeForPrimitiveType<T>();
+    _type = TypedArray::NapiTypedarrayType<T>::value;
     _length = 0;
   }
   NAPI_THROW_IF_FAILED_VOID(_env, status);
@@ -2140,7 +2142,7 @@ inline TypedArrayOf<T>::TypedArrayOf(napi_env env,
                                      size_t length,
                                      T* data)
   : TypedArray(env, value, type, length), _data(data) {
-  if (!(type == TypedArrayTypeForPrimitiveType<T>() ||
+  if (!(type == TypedArray::NapiTypedarrayType<T>::value ||
       (type == napi_uint8_clamped_array && std::is_same<T, uint8_t>::value))) {
     NAPI_THROW_VOID(TypeError::New(env, "Array type must match the template parameter. "
       "(Uint8 arrays may optionally have the \"clamped\" array type.)"));
