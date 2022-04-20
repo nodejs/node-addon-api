@@ -99,7 +99,7 @@ class DelayedTSFNTask {
   // Entry point for std::thread
   void entryDelayedTSFN(int threadId) {
     std::unique_lock<std::mutex> lk(mtx);
-    cv.wait(lk);
+    cv.wait(lk, [this] { return this->tsfn != nullptr; });
     tsfn.BlockingCall(new double(threadId));
     tsfn.Release();
   };
