@@ -81,7 +81,7 @@ public:
   // Entry point for std::thread
   void entryDelayedTSFN(int threadId) {
     std::unique_lock<std::mutex> lk(mtx);
-    cv.wait(lk);
+    cv.wait(lk, [this] { return this->tsfn != nullptr; });
     tsfn.BlockingCall([=](Napi::Env env, Function callback) {
       callback.Call({Number::New(env, static_cast<double>(threadId))});
     });
