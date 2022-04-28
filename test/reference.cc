@@ -4,7 +4,7 @@ using namespace Napi;
 
 static Reference<Buffer<uint8_t>> weak;
 
-void  CreateWeakArray(const CallbackInfo& info) {
+void CreateWeakArray(const CallbackInfo& info) {
   weak = Weak(Buffer<uint8_t>::New(info.Env(), 1));
   weak.SuppressDestruct();
 }

@@ -7,12 +7,14 @@ namespace {
 class TestAddon : public Napi::Addon<TestAddon> {
  public:
   inline TestAddon(Napi::Env env, Napi::Object exports) {
-    DefineAddon(exports, {
-      InstanceMethod("increment", &TestAddon::Increment),
-      InstanceValue("subObject", DefineProperties(Napi::Object::New(env), {
-        InstanceMethod("decrement", &TestAddon::Decrement)
-      }))
-    });
+    DefineAddon(
+        exports,
+        {InstanceMethod("increment", &TestAddon::Increment),
+         InstanceValue(
+             "subObject",
+             DefineProperties(
+                 Napi::Object::New(env),
+                 {InstanceMethod("decrement", &TestAddon::Decrement)}))});
   }
 
  private:

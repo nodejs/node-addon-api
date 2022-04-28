@@ -7,7 +7,8 @@ Napi::Value StaticGetter(const Napi::CallbackInfo& /*info*/) {
   return MaybeUnwrap(testStaticContextRef.Value().Get("value"));
 }
 
-void StaticSetter(const Napi::CallbackInfo& /*info*/, const Napi::Value& value) {
+void StaticSetter(const Napi::CallbackInfo& /*info*/,
+                  const Napi::Value& value) {
   testStaticContextRef.Value().Set("value", value);
 }
 
@@ -22,11 +23,9 @@ Napi::Value TestStaticMethodInternal(const Napi::CallbackInfo& info) {
 }
 
 class Test : public Napi::ObjectWrap<Test> {
-public:
-  Test(const Napi::CallbackInfo& info) :
-    Napi::ObjectWrap<Test>(info) {
-
-    if(info.Length() > 0) {
+ public:
+  Test(const Napi::CallbackInfo& info) : Napi::ObjectWrap<Test>(info) {
+    if (info.Length() > 0) {
       finalizeCb_ = Napi::Persistent(info[0].As<Napi::Function>());
     }
     // Create an own instance property.
@@ -35,20 +34,19 @@ public:
                                            info.This().As<Napi::Object>(),
                                            "ownProperty",
                                            OwnPropertyGetter,
-                                           napi_enumerable, this));
+                                           napi_enumerable,
+                                           this));
 
     // Create an own instance property with a templated function.
     info.This().As<Napi::Object>().DefineProperty(
-        Napi::PropertyDescriptor::Accessor<OwnPropertyGetter>("ownPropertyT",
-                                                              napi_enumerable, this));
+        Napi::PropertyDescriptor::Accessor<OwnPropertyGetter>(
+            "ownPropertyT", napi_enumerable, this));
 
     bufref_ = Napi::Persistent(Napi::Buffer<uint8_t>::New(
         Env(),
         static_cast<uint8_t*>(malloc(1)),
         1,
-        [](Napi::Env, uint8_t* bufaddr) {
-            free(bufaddr);
-        }));
+        [](Napi::Env, uint8_t* bufaddr) { free(bufaddr); }));
   }
 
   static Napi::Value OwnPropertyGetter(const Napi::CallbackInfo& info) {
@@ -88,16 +86,16 @@ public:
             .Call(array, {}));
   }
 
-  void TestVoidMethodT(const Napi::CallbackInfo &info) {
+  void TestVoidMethodT(const Napi::CallbackInfo& info) {
     value_ = MaybeUnwrap(info[0].ToString());
   }
 
-  Napi::Value TestMethodT(const Napi::CallbackInfo &info) {
-      return Napi::String::New(info.Env(), value_);
+  Napi::Value TestMethodT(const Napi::CallbackInfo& info) {
+    return Napi::String::New(info.Env(), value_);
   }
 
   static Napi::Value TestStaticMethodT(const Napi::CallbackInfo& info) {
-      return Napi::String::New(info.Env(), s_staticMethodText);
+    return Napi::String::New(info.Env(), s_staticMethodText);
   }
 
   static void TestStaticVoidMethodT(const Napi::CallbackInfo& info) {
@@ -105,20 +103,31 @@ public:
   }
 
   static void Initialize(Napi::Env env, Napi::Object exports) {
+    Napi::Symbol kTestStaticValueInternal =
+        Napi::Symbol::New(env, "kTestStaticValueInternal");
+    Napi::Symbol kTestStaticAccessorInternal =
+        Napi::Symbol::New(env, "kTestStaticAccessorInternal");
+    Napi::Symbol kTestStaticAccessorTInternal =
+        Napi::Symbol::New(env, "kTestStaticAccessorTInternal");
+    Napi::Symbol kTestStaticMethodInternal =
+        Napi::Symbol::New(env, "kTestStaticMethodInternal");
+    Napi::Symbol kTestStaticMethodTInternal =
+        Napi::Symbol::New(env, "kTestStaticMethodTInternal");
+    Napi::Symbol kTestStaticVoidMethodTInternal =
+        Napi::Symbol::New(env, "kTestStaticVoidMethodTInternal");
 
-    Napi::Symbol kTestStaticValueInternal = Napi::Symbol::New(env, "kTestStaticValueInternal");
-    Napi::Symbol kTestStaticAccessorInternal = Napi::Symbol::New(env, "kTestStaticAccessorInternal");
-    Napi::Symbol kTestStaticAccessorTInternal = Napi::Symbol::New(env, "kTestStaticAccessorTInternal");
-    Napi::Symbol kTestStaticMethodInternal = Napi::Symbol::New(env, "kTestStaticMethodInternal");
-    Napi::Symbol kTestStaticMethodTInternal     = Napi::Symbol::New(env, "kTestStaticMethodTInternal");
-    Napi::Symbol kTestStaticVoidMethodTInternal = Napi::Symbol::New(env, "kTestStaticVoidMethodTInternal");
-
-    Napi::Symbol kTestValueInternal = Napi::Symbol::New(env, "kTestValueInternal");
-    Napi::Symbol kTestAccessorInternal = Napi::Symbol::New(env, "kTestAccessorInternal");
-    Napi::Symbol kTestAccessorTInternal = Napi::Symbol::New(env, "kTestAccessorTInternal");
-    Napi::Symbol kTestMethodInternal = Napi::Symbol::New(env, "kTestMethodInternal");
-    Napi::Symbol kTestMethodTInternal     = Napi::Symbol::New(env, "kTestMethodTInternal");
-    Napi::Symbol kTestVoidMethodTInternal = Napi::Symbol::New(env, "kTestVoidMethodTInternal");
+    Napi::Symbol kTestValueInternal =
+        Napi::Symbol::New(env, "kTestValueInternal");
+    Napi::Symbol kTestAccessorInternal =
+        Napi::Symbol::New(env, "kTestAccessorInternal");
+    Napi::Symbol kTestAccessorTInternal =
+        Napi::Symbol::New(env, "kTestAccessorTInternal");
+    Napi::Symbol kTestMethodInternal =
+        Napi::Symbol::New(env, "kTestMethodInternal");
+    Napi::Symbol kTestMethodTInternal =
+        Napi::Symbol::New(env, "kTestMethodTInternal");
+    Napi::Symbol kTestVoidMethodTInternal =
+        Napi::Symbol::New(env, "kTestVoidMethodTInternal");
 
     exports.Set(
         "Test",
@@ -237,17 +246,15 @@ public:
   }
 
   void Finalize(Napi::Env env) {
-
-    if(finalizeCb_.IsEmpty()) {
+    if (finalizeCb_.IsEmpty()) {
       return;
     }
 
     finalizeCb_.Call(env.Global(), {Napi::Boolean::New(env, true)});
     finalizeCb_.Unref();
-
   }
 
-private:
+ private:
   std::string value_;
   Napi::FunctionReference finalizeCb_;
 

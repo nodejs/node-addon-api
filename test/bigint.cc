@@ -59,7 +59,8 @@ Value TestWords(const CallbackInfo& info) {
   big.ToWords(&sign_bit, &word_count, words);
 
   if (word_count != expected_word_count) {
-    Error::New(info.Env(), "word count did not match").ThrowAsJavaScriptException();
+    Error::New(info.Env(), "word count did not match")
+        .ThrowAsJavaScriptException();
     return BigInt();
   }
 

@@ -43,27 +43,32 @@ Value MaxDouble(const CallbackInfo& info) {
 
 Value OperatorInt32(const CallbackInfo& info) {
   Number number = info[0].As<Number>();
-  return Boolean::New(info.Env(), number.Int32Value() == static_cast<int32_t>(number));
+  return Boolean::New(info.Env(),
+                      number.Int32Value() == static_cast<int32_t>(number));
 }
 
 Value OperatorUint32(const CallbackInfo& info) {
   Number number = info[0].As<Number>();
-  return Boolean::New(info.Env(), number.Uint32Value() == static_cast<uint32_t>(number));
+  return Boolean::New(info.Env(),
+                      number.Uint32Value() == static_cast<uint32_t>(number));
 }
 
 Value OperatorInt64(const CallbackInfo& info) {
   Number number = info[0].As<Number>();
-  return Boolean::New(info.Env(), number.Int64Value() == static_cast<int64_t>(number));
+  return Boolean::New(info.Env(),
+                      number.Int64Value() == static_cast<int64_t>(number));
 }
 
 Value OperatorFloat(const CallbackInfo& info) {
   Number number = info[0].As<Number>();
-  return Boolean::New(info.Env(), number.FloatValue() == static_cast<float>(number));
+  return Boolean::New(info.Env(),
+                      number.FloatValue() == static_cast<float>(number));
 }
 
 Value OperatorDouble(const CallbackInfo& info) {
   Number number = info[0].As<Number>();
-  return Boolean::New(info.Env(), number.DoubleValue() == static_cast<double>(number));
+  return Boolean::New(info.Env(),
+                      number.DoubleValue() == static_cast<double>(number));
 }
 
 Value CreateEmptyNumber(const CallbackInfo& info) {
@@ -93,7 +98,8 @@ Object InitBasicTypesNumber(Env env) {
   exports["operatorFloat"] = Function::New(env, OperatorFloat);
   exports["operatorDouble"] = Function::New(env, OperatorDouble);
   exports["createEmptyNumber"] = Function::New(env, CreateEmptyNumber);
-  exports["createNumberFromExistingValue"] = Function::New(env, CreateNumberFromExistingValue);
+  exports["createNumberFromExistingValue"] =
+      Function::New(env, CreateNumberFromExistingValue);
 
   return exports;
 }

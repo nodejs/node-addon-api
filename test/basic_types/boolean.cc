@@ -31,8 +31,10 @@ Object InitBasicTypesBoolean(Env env) {
 
   exports["createBoolean"] = Function::New(env, CreateBoolean);
   exports["createEmptyBoolean"] = Function::New(env, CreateEmptyBoolean);
-  exports["createBooleanFromExistingValue"] = Function::New(env, CreateBooleanFromExistingValue);
-  exports["createBooleanFromPrimitive"] = Function::New(env, CreateBooleanFromPrimitive);
+  exports["createBooleanFromExistingValue"] =
+      Function::New(env, CreateBooleanFromExistingValue);
+  exports["createBooleanFromPrimitive"] =
+      Function::New(env, CreateBooleanFromPrimitive);
   exports["operatorBool"] = Function::New(env, OperatorBool);
   return exports;
 }
