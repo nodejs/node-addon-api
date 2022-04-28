@@ -101,6 +101,7 @@ function test (binding) {
   testDefineProperties('string');
   testDefineProperties('value');
 
+  // eslint-disable-next-line no-lone-blocks
   {
     assert.strictEqual(binding.object.emptyConstructor(true), true);
     assert.strictEqual(binding.object.emptyConstructor(false), false);
@@ -114,13 +115,13 @@ function test (binding) {
 
   {
     const obj = {};
-    const testSym = Symbol();
+    const testSym = Symbol('testSym');
     binding.object.defineValueProperty(obj, testSym, 1);
     assert.strictEqual(obj[testSym], 1);
   }
 
   {
-    const testSym = Symbol();
+    const testSym = Symbol('testSym');
     const obj = { one: 1, two: 2, three: 3, [testSym]: 4 };
     const arr = binding.object.GetPropertyNames(obj);
     assert.deepStrictEqual(arr, ['one', 'two', 'three']);

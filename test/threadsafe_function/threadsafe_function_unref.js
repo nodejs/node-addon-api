@@ -2,7 +2,7 @@
 
 const assert = require('assert');
 
-const isMainProcess = process.argv[1] != __filename;
+const isMainProcess = process.argv[1] !== __filename;
 
 /**
  * In order to test that the event loop exits even with an active TSFN, we need

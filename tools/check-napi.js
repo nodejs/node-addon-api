@@ -4,12 +4,11 @@
 
 const fs = require('fs');
 const path = require('path');
-const child_process = require('child_process');
 
 // Read the output of the command, break it into lines, and use the reducer to
 // decide whether the file is an N-API module or not.
 function checkFile (file, command, argv, reducer) {
-  const child = child_process.spawn(command, argv, {
+  const child = require('child_process').spawn(command, argv, {
     stdio: ['inherit', 'pipe', 'inherit']
   });
   let leftover = '';
@@ -71,13 +70,13 @@ function checkFileWin32 (file) {
 function recurse (top) {
   fs.readdir(top, (error, items) => {
     if (error) {
-      throw ('error reading directory ' + top + ': ' + error);
+      throw new Error('error reading directory ' + top + ': ' + error);
     }
     items.forEach((item) => {
       item = path.join(top, item);
       fs.stat(item, ((item) => (error, stats) => {
         if (error) {
-          throw ('error about ' + item + ': ' + error);
+          throw new Error('error about ' + item + ': ' + error);
         }
         if (stats.isDirectory()) {
           recurse(item);

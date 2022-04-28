@@ -8,11 +8,6 @@ function test (binding) {
   if (!('object_deprecated' in binding)) {
     return;
   }
-  function assertPropertyIs (obj, key, attribute) {
-    const propDesc = Object.getOwnPropertyDescriptor(obj, key);
-    assert.ok(propDesc);
-    assert.ok(propDesc[attribute]);
-  }
 
   function assertPropertyIsNot (obj, key, attribute) {
     const propDesc = Object.getOwnPropertyDescriptor(obj, key);

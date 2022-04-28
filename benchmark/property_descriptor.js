@@ -18,6 +18,7 @@ const addonName = path.basename(__filename, '.js');
 
     Object.keys(rootAddon).forEach((key) => {
       getters.add(`${key} getter`.padStart(maxNameLength + 7), () => {
+        // eslint-disable-next-line no-unused-vars
         const x = rootAddon[key];
       });
       setters.add(`${key} setter`.padStart(maxNameLength + 7), () => {

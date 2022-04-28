@@ -4,11 +4,11 @@ const assert = require('assert');
 // we only check async hooks on 8.x an higher were
 // they are closer to working properly
 const nodeVersion = process.versions.node.split('.')[0];
-let async_hooks;
+let asyncHooks;
 function checkAsyncHooks () {
   if (nodeVersion >= 8) {
-    if (async_hooks == undefined) {
-      async_hooks = require('async_hooks');
+    if (asyncHooks === undefined) {
+      asyncHooks = require('async_hooks');
     }
     return true;
   }
@@ -22,7 +22,7 @@ function test (binding) {
 
   let id;
   let insideHook = false;
-  const hook = async_hooks.createHook({
+  const hook = asyncHooks.createHook({
     init (asyncId, type, triggerAsyncId, resource) {
       if (id === undefined && type === 'callback_scope_test') {
         id = asyncId;

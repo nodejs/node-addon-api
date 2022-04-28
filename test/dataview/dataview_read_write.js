@@ -1,3 +1,4 @@
+/* eslint-disable no-eval */
 'use strict';
 
 const assert = require('assert');
@@ -17,6 +18,7 @@ function test (binding) {
     eval(`binding.dataview_read_write.set${type}(dataview, offset, value)`);
   }
 
+  // eslint-disable-next-line no-unused-vars
   function isLittleEndian () {
     const buffer = new ArrayBuffer(2);
     new DataView(buffer).setInt16(0, 256, true /* littleEndian */);

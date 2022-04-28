@@ -18,9 +18,9 @@ module.exports = require('./common').runTest(test);
 
 function test (binding) {
   function testCastedEqual (testToCompare) {
-    const compare_test = ['hello', 'world', '!'];
+    const compareTest = ['hello', 'world', '!'];
     if (testToCompare instanceof Array) {
-      assert.deepEqual(compare_test, testToCompare);
+      assert.deepEqual(compareTest, testToCompare);
     } else if (testToCompare instanceof String) {
       assert.deepEqual('No Referenced Value', testToCompare);
     } else {
@@ -33,7 +33,7 @@ function test (binding) {
     () => {
       binding.objectreference.setCastedObjects();
       const test = binding.objectreference.getCastedFromValue('weak');
-      const test2 = new Array();
+      const test2 = [];
       test2[0] = binding.objectreference.getCastedFromGetter('weak', 0);
       test2[1] = binding.objectreference.getCastedFromGetter('weak', 1);
       test2[2] = binding.objectreference.getCastedFromGetter('weak', 2);
@@ -46,7 +46,7 @@ function test (binding) {
     () => {
       binding.objectreference.setCastedObjects();
       const test = binding.objectreference.getCastedFromValue('persistent');
-      const test2 = new Array();
+      const test2 = [];
       test2[0] = binding.objectreference.getCastedFromGetter('persistent', 0);
       test2[1] = binding.objectreference.getCastedFromGetter('persistent', 1);
       test2[2] = binding.objectreference.getCastedFromGetter('persistent', 2);
@@ -61,7 +61,7 @@ function test (binding) {
     () => {
       binding.objectreference.setCastedObjects();
       const test = binding.objectreference.getCastedFromValue();
-      const test2 = new Array();
+      const test2 = [];
       test2[0] = binding.objectreference.getCastedFromGetter('reference', 0);
       test2[1] = binding.objectreference.getCastedFromGetter('reference', 1);
       test2[2] = binding.objectreference.getCastedFromGetter('reference', 2);

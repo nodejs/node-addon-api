@@ -36,6 +36,7 @@ function test (binding) {
   assert.ok(binding.name.checkString(substr2, 'utf8', 3));
   assert.ok(binding.name.checkString(substr2, 'utf16', 3));
 
+  // eslint-disable-next-line symbol-description
   assert.ok(binding.name.checkSymbol(Symbol()));
   assert.ok(binding.name.checkSymbol(Symbol('test')));
 

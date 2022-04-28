@@ -2,7 +2,6 @@
 
 const buildType = process.config.target_defaults.default_configuration;
 const assert = require('assert');
-const os = require('os');
 
 const napiChild = require('../napi_child');
 

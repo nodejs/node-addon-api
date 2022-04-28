@@ -1,3 +1,4 @@
+/* eslint-disable no-lone-blocks */
 'use strict';
 
 const assert = require('assert');
@@ -28,6 +29,7 @@ async function test (binding) {
     // read write-only
     {
       let error;
+      // eslint-disable-next-line no-unused-vars
       try { const read = obj.testSetter; } catch (e) { error = e; }
       // no error
       assert.strictEqual(error, undefined);
@@ -111,7 +113,7 @@ async function test (binding) {
         keys.push(key);
       }
 
-      assert(keys.length == 6);
+      assert(keys.length === 6);
       // on prototype
       assert(keys.includes('testGetSet'));
       assert(keys.includes('testGetter'));
@@ -165,6 +167,7 @@ async function test (binding) {
     // read write-only
     {
       let error;
+      // eslint-disable-next-line no-unused-vars
       try { const read = clazz.testStaticSetter; } catch (e) { error = e; }
       // no error
       assert.strictEqual(error, undefined);
@@ -250,6 +253,7 @@ async function test (binding) {
         };
 
         // Scope Test instance so that it can be gc'd.
+        // eslint-disable-next-line no-new
         (() => { new Test(finalizeCb); })();
       },
       () => assert.strictEqual(finalizeCalled, true)

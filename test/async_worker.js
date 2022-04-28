@@ -5,11 +5,11 @@ const common = require('./common');
 // we only check async hooks on 8.x an higher were
 // they are closer to working properly
 const nodeVersion = process.versions.node.split('.')[0];
-let async_hooks;
+let asyncHooks;
 function checkAsyncHooks () {
   if (nodeVersion >= 8) {
-    if (async_hooks == undefined) {
-      async_hooks = require('async_hooks');
+    if (asyncHooks === undefined) {
+      asyncHooks = require('async_hooks');
     }
     return true;
   }
@@ -26,7 +26,6 @@ function installAsyncHooksForTest () {
      * TODO(legendecas): investigate why resolving & disabling hooks in
      * destroy callback causing crash with case 'callbackscope.js'.
      */
-    let hook;
     let destroyed = false;
     const interval = setInterval(() => {
       if (destroyed) {
@@ -36,7 +35,7 @@ function installAsyncHooksForTest () {
       }
     }, 10);
 
-    hook = async_hooks.createHook({
+    const hook = asyncHooks.createHook({
       init (asyncId, type, triggerAsyncId, resource) {
         if (id === undefined && type === 'TestResource') {
           id = asyncId;
@@ -86,9 +85,9 @@ async function test (binding) {
 
     await new Promise((resolve) => {
       binding.asyncworker.doWorkWithResult(true, {}, function (succeed, succeedString) {
-        assert(arguments.length == 2);
+        assert(arguments.length === 2);
         assert(succeed);
-        assert(succeedString == 'ok');
+        assert(succeedString === 'ok');
         assert.strictEqual(typeof this, 'object');
         assert.strictEqual(this.data, 'test data');
         resolve();
@@ -100,7 +99,7 @@ async function test (binding) {
 
   {
     const hooks = installAsyncHooksForTest();
-    const triggerAsyncId = async_hooks.executionAsyncId();
+    const triggerAsyncId = asyncHooks.executionAsyncId();
     await new Promise((resolve) => {
       binding.asyncworker.doWork(true, { foo: 'foo' }, function (e) {
         assert.strictEqual(typeof e, 'undefined');
@@ -127,13 +126,13 @@ async function test (binding) {
 
   {
     const hooks = installAsyncHooksForTest();
-    const triggerAsyncId = async_hooks.executionAsyncId();
+    const triggerAsyncId = asyncHooks.executionAsyncId();
     await new Promise((resolve) => {
       binding.asyncworker.doWorkWithResult(true, { foo: 'foo' },
         function (succeed, succeedString) {
-          assert(arguments.length == 2);
+          assert(arguments.length === 2);
           assert(succeed);
-          assert(succeedString == 'ok');
+          assert(succeedString === 'ok');
           assert.strictEqual(typeof this, 'object');
           assert.strictEqual(this.data, 'test data');
           resolve();
@@ -157,7 +156,7 @@ async function test (binding) {
 
   {
     const hooks = installAsyncHooksForTest();
-    const triggerAsyncId = async_hooks.executionAsyncId();
+    const triggerAsyncId = asyncHooks.executionAsyncId();
     await new Promise((resolve) => {
       binding.asyncworker.doWork(false, { foo: 'foo' }, function (e) {
         assert.ok(e instanceof Error);

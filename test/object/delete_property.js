@@ -27,7 +27,7 @@ function test (binding) {
 
   binding.object.deletePropertyWithUint32(testObj, 15);
 
-  assert.strictEqual(testObj.hasOwnProperty(15), false);
+  assert.strictEqual(Object.prototype.hasOwnProperty.call(testObj, 15), false);
 
   testDeleteProperty(binding.object.deletePropertyWithNapiValue);
   testDeleteProperty(binding.object.deletePropertyWithNapiWrapperValue);

@@ -1,6 +1,5 @@
 'use strict';
 
-const buildType = process.config.target_defaults.default_configuration;
 const assert = require('assert');
 
 module.exports = require('./common').runTest(test);
@@ -59,7 +58,9 @@ function test (binding) {
 
   assert(binding.symbol.createNewSymbolWithNoArgs() === undefined);
 
+  // eslint-disable-next-line no-self-compare
   assert(binding.symbol.testNullSymbolCanBeCreated() === binding.symbol.testNullSymbolCanBeCreated());
+  // eslint-disable-next-line no-self-compare
   assert(binding.symbol.testUndefinedSymbolCanBeCreated() === binding.symbol.testUndefinedSymbolCanBeCreated());
   assert(binding.symbol.testUndefinedSymbolCanBeCreated() !== binding.symbol.testNullSymbolCanBeCreated());
 }

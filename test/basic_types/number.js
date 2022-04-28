@@ -1,3 +1,4 @@
+/* eslint-disable no-lone-blocks */
 'use strict';
 
 const assert = require('assert');

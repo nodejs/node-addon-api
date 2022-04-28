@@ -12,7 +12,7 @@ async function test (binding) {
       const fn = common.mustCall(() => {
         // noop
       }, 1);
-      const external = binding.createExternal(fn);
+      binding.createExternal(fn);
     },
     () => {
       // noop, wait for gc

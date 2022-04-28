@@ -23,7 +23,7 @@ async function beforeAll (addons) {
 
 async function test (addon) {
   console.log(`   >Building addon: '${addon}'`);
-  const { stderr, stdout } = await exec('npm install', {
+  await exec('npm install', {
     cwd: path.join(ADDONS_FOLDER, addon)
   });
   console.log(`   >Running test for: '${addon}'`);
