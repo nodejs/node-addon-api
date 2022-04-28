@@ -4,20 +4,20 @@ const assert = require('assert');
 
 module.exports = require('../common').runTest(test);
 
-function test(binding) {
-  function assertPropertyIs(obj, key, attribute) {
+function test (binding) {
+  function assertPropertyIs (obj, key, attribute) {
     const propDesc = Object.getOwnPropertyDescriptor(obj, key);
     assert.ok(propDesc);
     assert.ok(propDesc[attribute]);
   }
 
-  function assertPropertyIsNot(obj, key, attribute) {
+  function assertPropertyIsNot (obj, key, attribute) {
     const propDesc = Object.getOwnPropertyDescriptor(obj, key);
     assert.ok(propDesc);
     assert.ok(!propDesc[attribute]);
   }
 
-  function testDefineProperties(nameType) {
+  function testDefineProperties (nameType) {
     const obj = {};
     binding.object.defineProperties(obj, nameType);
 
@@ -107,7 +107,7 @@ function test(binding) {
   }
 
   {
-    const expected = { 'one': 1, 'two': 2, 'three': 3 };
+    const expected = { one: 1, two: 2, three: 3 };
     const actual = binding.object.constructorFromObject(expected);
     assert.deepStrictEqual(actual, expected);
   }
@@ -121,8 +121,8 @@ function test(binding) {
 
   {
     const testSym = Symbol();
-    const obj = { 'one': 1, 'two': 2, 'three': 3, [testSym]: 4 };
-    var arr = binding.object.GetPropertyNames(obj);
+    const obj = { one: 1, two: 2, three: 3, [testSym]: 4 };
+    const arr = binding.object.GetPropertyNames(obj);
     assert.deepStrictEqual(arr, ['one', 'two', 'three']);
   }
 
@@ -149,7 +149,7 @@ function test(binding) {
   }
 
   {
-    function Ctor() {};
+    function Ctor () {}
 
     assert.strictEqual(binding.object.instanceOf(new Ctor(), Ctor), true);
     assert.strictEqual(binding.object.instanceOf(new Ctor(), Object), true);
@@ -158,60 +158,60 @@ function test(binding) {
   }
 
   if ('sum' in binding.object) {
-      {
-        const obj = {
-          '-forbid': -0x4B1D,
-          '-feedcode': -0xFEEDC0DE,
-          '+office': +0x0FF1CE,
-          '+forbid': +0x4B1D,
-          '+deadbeef': +0xDEADBEEF,
-          '+feedcode': +0xFEEDC0DE,
-        };
+    {
+      const obj = {
+        '-forbid': -0x4B1D,
+        '-feedcode': -0xFEEDC0DE,
+        '+office': +0x0FF1CE,
+        '+forbid': +0x4B1D,
+        '+deadbeef': +0xDEADBEEF,
+        '+feedcode': +0xFEEDC0DE
+      };
 
-        let sum = 0;
-        for (const key in obj) {
-          sum += obj[key];
-        }
-
-        assert.strictEqual(binding.object.sum(obj), sum);
+      let sum = 0;
+      for (const key in obj) {
+        sum += obj[key];
       }
 
-      {
-        const obj = new Proxy({
-          '-forbid': -0x4B1D,
-          '-feedcode': -0xFEEDC0DE,
-          '+office': +0x0FF1CE,
-          '+forbid': +0x4B1D,
-          '+deadbeef': +0xDEADBEEF,
-          '+feedcode': +0xFEEDC0DE,
-        }, {
-          getOwnPropertyDescriptor(target, p) {
-            throw new Error("getOwnPropertyDescriptor error");
-          },
-          ownKeys(target) {
-            throw new Error("ownKeys error");
-          },
-        });
+      assert.strictEqual(binding.object.sum(obj), sum);
+    }
 
-        assert.throws(() => {
-          binding.object.sum(obj);
-        }, /ownKeys error/);
+    {
+      const obj = new Proxy({
+        '-forbid': -0x4B1D,
+        '-feedcode': -0xFEEDC0DE,
+        '+office': +0x0FF1CE,
+        '+forbid': +0x4B1D,
+        '+deadbeef': +0xDEADBEEF,
+        '+feedcode': +0xFEEDC0DE
+      }, {
+        getOwnPropertyDescriptor (target, p) {
+          throw new Error('getOwnPropertyDescriptor error');
+        },
+        ownKeys (target) {
+          throw new Error('ownKeys error');
+        }
+      });
+
+      assert.throws(() => {
+        binding.object.sum(obj);
+      }, /ownKeys error/);
     }
   }
 
   if ('increment' in binding.object) {
     const obj = {
-      'a': 0,
-      'b': 1,
-      'c': 2,
+      a: 0,
+      b: 1,
+      c: 2
     };
 
     binding.object.increment(obj);
 
     assert.deepStrictEqual(obj, {
-      'a': 1,
-      'b': 2,
-      'c': 3,
+      a: 1,
+      b: 2,
+      c: 3
     });
   }
 }

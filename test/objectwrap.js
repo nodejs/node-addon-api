@@ -5,7 +5,7 @@ const testUtil = require('./testUtil');
 
 module.exports = require('./common').runTest(test);
 
-async function test(binding) {
+async function test (binding) {
   const Test = binding.objectwrap.Test;
 
   const testValue = (obj, clazz) => {
@@ -107,19 +107,19 @@ async function test(binding) {
     // for..in: object and prototype
     {
       const keys = [];
-      for (let key in obj) {
+      for (const key in obj) {
         keys.push(key);
       }
 
       assert(keys.length == 6);
       // on prototype
-      assert(keys.includes("testGetSet"));
-      assert(keys.includes("testGetter"));
-      assert(keys.includes("testValue"));
-      assert(keys.includes("testMethod"));
+      assert(keys.includes('testGetSet'));
+      assert(keys.includes('testGetter'));
+      assert(keys.includes('testValue'));
+      assert(keys.includes('testMethod'));
       // on object only
-      assert(keys.includes("ownProperty"));
-      assert(keys.includes("ownPropertyT"));
+      assert(keys.includes('ownProperty'));
+      assert(keys.includes('ownPropertyT'));
     }
   };
 
@@ -135,7 +135,7 @@ async function test(binding) {
       obj.testSetter = 'iterator';
       const values = [];
 
-      for (let item of obj) {
+      for (const item of obj) {
         values.push(item);
       }
 
@@ -146,7 +146,7 @@ async function test(binding) {
   const testStaticValue = (clazz) => {
     assert.strictEqual(clazz.testStaticValue, 'value');
     assert.strictEqual(clazz[clazz.kTestStaticValueInternal], 5);
-  }
+  };
 
   const testStaticAccessor = (clazz) => {
     // read-only, write-only
@@ -227,7 +227,7 @@ async function test(binding) {
     // for..in
     {
       const keys = [];
-      for (let key in clazz) {
+      for (const key in clazz) {
         keys.push(key);
       }
 
@@ -240,21 +240,21 @@ async function test(binding) {
     }
   };
 
-  async function testFinalize(clazz) {
+  async function testFinalize (clazz) {
     let finalizeCalled = false;
     await testUtil.runGCTests([
       'test finalize',
       () => {
-        const finalizeCb = function(called) {
+        const finalizeCb = function (called) {
           finalizeCalled = called;
         };
 
-        //Scope Test instance so that it can be gc'd.
+        // Scope Test instance so that it can be gc'd.
         (() => { new Test(finalizeCb); })();
       },
       () => assert.strictEqual(finalizeCalled, true)
     ]);
-  };
+  }
 
   const testObj = (obj, clazz) => {
     testValue(obj, clazz);
@@ -264,16 +264,16 @@ async function test(binding) {
     testEnumerables(obj, clazz);
 
     testConventions(obj, clazz);
-  }
+  };
 
-  async function testClass(clazz) {
+  async function testClass (clazz) {
     testStaticValue(clazz);
     testStaticAccessor(clazz);
     testStaticMethod(clazz);
 
     testStaticEnumerables(clazz);
     await testFinalize(clazz);
-  };
+  }
 
   // `Test` is needed for accessing exposed symbols
   testObj(new Test(), Test);

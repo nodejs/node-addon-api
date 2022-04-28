@@ -4,8 +4,8 @@ const assert = require('assert');
 
 module.exports = require('../common').runTest(test);
 
-function test(binding) {
-  function testHasProperty(nativeHasProperty) {
+function test (binding) {
+  function testHasProperty (nativeHasProperty) {
     const obj = { one: 1 };
 
     Object.defineProperty(obj, 'two', { value: 2 });
@@ -16,14 +16,14 @@ function test(binding) {
     assert.strictEqual(nativeHasProperty(obj, 'toString'), true);
   }
 
-  function testShouldThrowErrorIfKeyIsInvalid(nativeHasProperty) {
+  function testShouldThrowErrorIfKeyIsInvalid (nativeHasProperty) {
     assert.throws(() => {
       nativeHasProperty(undefined, 'test');
     }, /Cannot convert undefined or null to object/);
   }
 
   const objectWithInt32Key = { 12: 101 };
-  assert.strictEqual(binding.object.hasPropertyWithUint32(objectWithInt32Key,12),true);
+  assert.strictEqual(binding.object.hasPropertyWithUint32(objectWithInt32Key, 12), true);
 
   testHasProperty(binding.object.hasPropertyWithNapiValue);
   testHasProperty(binding.object.hasPropertyWithNapiWrapperValue);

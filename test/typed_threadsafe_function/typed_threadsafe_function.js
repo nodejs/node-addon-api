@@ -5,7 +5,7 @@ const common = require('../common');
 
 module.exports = common.runTest(test);
 
-async function test(binding) {
+async function test (binding) {
   const expectedArray = (function (arrayLength) {
     const result = [];
     for (let index = 0; index < arrayLength; index++) {
@@ -14,15 +14,16 @@ async function test(binding) {
     return result;
   })(binding.typed_threadsafe_function.ARRAY_LENGTH);
 
-  function testWithJSMarshaller({
+  function testWithJSMarshaller ({
     threadStarter,
     quitAfter,
     abort,
     maxQueueSize,
-    launchSecondary }) {
+    launchSecondary
+  }) {
     return new Promise((resolve) => {
       const array = [];
-      binding.typed_threadsafe_function[threadStarter](function testCallback(value) {
+      binding.typed_threadsafe_function[threadStarter](function testCallback (value) {
         array.push(value);
         if (array.length === quitAfter) {
           binding.typed_threadsafe_function.stopThread(common.mustCall(() => {
@@ -39,9 +40,9 @@ async function test(binding) {
     });
   }
 
-  await new Promise(function testWithoutJSMarshaller(resolve) {
+  await new Promise(function testWithoutJSMarshaller (resolve) {
     let callCount = 0;
-    binding.typed_threadsafe_function.startThreadNoNative(function testCallback() {
+    binding.typed_threadsafe_function.startThreadNoNative(function testCallback () {
       callCount++;
 
       // The default call-into-JS implementation passes no arguments.
@@ -54,7 +55,7 @@ async function test(binding) {
         });
       }
     }, false /* abort */, false /* launchSecondary */,
-      binding.typed_threadsafe_function.MAX_QUEUE_SIZE);
+    binding.typed_threadsafe_function.MAX_QUEUE_SIZE);
   });
 
   // Start the thread in blocking mode, and assert that all values are passed.
@@ -65,7 +66,7 @@ async function test(binding) {
       maxQueueSize: binding.typed_threadsafe_function.MAX_QUEUE_SIZE,
       quitAfter: binding.typed_threadsafe_function.ARRAY_LENGTH
     }),
-    expectedArray,
+    expectedArray
   );
 
   // Start the thread in blocking mode with an infinite queue, and assert that
@@ -76,7 +77,7 @@ async function test(binding) {
       maxQueueSize: 0,
       quitAfter: binding.typed_threadsafe_function.ARRAY_LENGTH
     }),
-    expectedArray,
+    expectedArray
   );
 
   // Start the thread in non-blocking mode, and assert that all values are
@@ -87,7 +88,7 @@ async function test(binding) {
       maxQueueSize: binding.typed_threadsafe_function.MAX_QUEUE_SIZE,
       quitAfter: binding.typed_threadsafe_function.ARRAY_LENGTH
     }),
-    expectedArray,
+    expectedArray
   );
 
   // Start the thread in blocking mode, and assert that all values are passed.
@@ -98,7 +99,7 @@ async function test(binding) {
       maxQueueSize: binding.typed_threadsafe_function.MAX_QUEUE_SIZE,
       quitAfter: 1
     }),
-    expectedArray,
+    expectedArray
   );
 
   // Start the thread in blocking mode with an infinite queue, and assert that
@@ -109,9 +110,8 @@ async function test(binding) {
       maxQueueSize: 0,
       quitAfter: 1
     }),
-    expectedArray,
+    expectedArray
   );
-
 
   // Start the thread in non-blocking mode, and assert that all values are
   // passed. Quit early, but let the thread finish.
@@ -121,7 +121,7 @@ async function test(binding) {
       maxQueueSize: binding.typed_threadsafe_function.MAX_QUEUE_SIZE,
       quitAfter: 1
     }),
-    expectedArray,
+    expectedArray
   );
 
   // Start the thread in blocking mode, and assert that all values are passed.
@@ -134,7 +134,7 @@ async function test(binding) {
       maxQueueSize: binding.typed_threadsafe_function.MAX_QUEUE_SIZE,
       launchSecondary: true
     }),
-    expectedArray,
+    expectedArray
   );
 
   // Start the thread in non-blocking mode, and assert that all values are
@@ -147,7 +147,7 @@ async function test(binding) {
       maxQueueSize: binding.typed_threadsafe_function.MAX_QUEUE_SIZE,
       launchSecondary: true
     }),
-    expectedArray,
+    expectedArray
   );
 
   // Start the thread in blocking mode, and assert that it could not finish.
@@ -159,7 +159,7 @@ async function test(binding) {
       maxQueueSize: binding.typed_threadsafe_function.MAX_QUEUE_SIZE,
       abort: true
     })).indexOf(0),
-    -1,
+    -1
   );
 
   // Start the thread in blocking mode with an infinite queue, and assert that
@@ -171,7 +171,7 @@ async function test(binding) {
       maxQueueSize: 0,
       abort: true
     })).indexOf(0),
-    -1,
+    -1
   );
 
   // Start the thread in non-blocking mode, and assert that it could not finish.
@@ -183,6 +183,6 @@ async function test(binding) {
       maxQueueSize: binding.typed_threadsafe_function.MAX_QUEUE_SIZE,
       abort: true
     })).indexOf(0),
-    -1,
+    -1
   );
 }

@@ -14,7 +14,7 @@ if (process.argv[2] === 'runInChildProcess') {
   // Use C++ promises to ensure the worker thread is terminated right
   // before running the testable code in the binding.
 
-  binding.error.resetPromises()
+  binding.error.resetPromises();
 
   const { Worker } = require('worker_threads');
 
@@ -24,16 +24,16 @@ if (process.argv[2] === 'runInChildProcess') {
       argv: [
         'runInWorkerThread',
         binding_path,
-        index_for_test_case,
+        index_for_test_case
       ]
     }
   );
 
-  binding.error.waitForWorkerThread()
+  binding.error.waitForWorkerThread();
 
   worker.terminate();
 
-  binding.error.releaseWorkerThread()
+  binding.error.releaseWorkerThread();
 
   return;
 }
@@ -72,7 +72,7 @@ test(`./build/${buildType}/binding_swallowexcept.node`, false);
 test(`./build/${buildType}/binding_swallowexcept_noexcept.node`, false);
 test(`./build/${buildType}/binding_custom_namespace.node`, true);
 
-function test(bindingPath, process_should_abort) {
+function test (bindingPath, process_should_abort) {
   const number_of_test_cases = 5;
 
   for (let i = 0; i < number_of_test_cases; ++i) {
@@ -82,7 +82,7 @@ function test(bindingPath, process_should_abort) {
         __filename,
         'runInChildProcess',
         bindingPath,
-        i,
+        i
       ]
     );
 

@@ -33,15 +33,15 @@ module.exports = require('../common').runTest(test);
 /** @param {number[]} N */
 const sum = (N) => N.reduce((sum, n) => sum + n, 0);
 
-function test(binding) {
-  async function check(bindingFunction) {
+function test (binding) {
+  async function check (bindingFunction) {
     const calls = [];
     const result = await bindingFunction(THREAD_COUNT, Array.prototype.push.bind(calls));
     assert.ok(result);
     assert.equal(sum(calls), EXPECTED_SUM);
   }
 
-  async function checkAcquire() {
+  async function checkAcquire () {
     const calls = [];
     const { promise, createThread, stopThreads } = binding.typed_threadsafe_function_sum.testAcquire(Array.prototype.push.bind(calls));
     for (let i = 0; i < THREAD_COUNT; i++) {

@@ -11,7 +11,7 @@ const testUtil = require('./testUtil');
 
 module.exports = require('./common').runTestWithBindingPath(test);
 
-function test(bindingName) {
+function test (bindingName) {
   return testUtil.runGCTests([
     'objectwrap removewrap test',
     () => {

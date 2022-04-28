@@ -4,10 +4,10 @@ const assert = require('assert');
 
 module.exports = require('../common').runTest(test);
 
-function test(binding) {
-  function testDeleteProperty(nativeDeleteProperty) {
+function test (binding) {
+  function testDeleteProperty (nativeDeleteProperty) {
     const obj = { one: 1, two: 2 };
-    Object.defineProperty(obj, "three", {configurable: false, value: 3});
+    Object.defineProperty(obj, 'three', { configurable: false, value: 3 });
     assert.strictEqual(nativeDeleteProperty(obj, 'one'), true);
     assert.strictEqual(nativeDeleteProperty(obj, 'missing'), true);
 
@@ -17,17 +17,17 @@ function test(binding) {
     assert.deepStrictEqual(obj, { two: 2 });
   }
 
-  function testShouldThrowErrorIfKeyIsInvalid(nativeDeleteProperty) {
+  function testShouldThrowErrorIfKeyIsInvalid (nativeDeleteProperty) {
     assert.throws(() => {
       nativeDeleteProperty(undefined, 'test');
     }, /Cannot convert undefined or null to object/);
   }
 
-  const testObj = { 15 : 42 , three: 3};
+  const testObj = { 15: 42, three: 3 };
 
-  binding.object.deletePropertyWithUint32(testObj,15);
+  binding.object.deletePropertyWithUint32(testObj, 15);
 
-  assert.strictEqual(testObj.hasOwnProperty(15),false);
+  assert.strictEqual(testObj.hasOwnProperty(15), false);
 
   testDeleteProperty(binding.object.deletePropertyWithNapiValue);
   testDeleteProperty(binding.object.deletePropertyWithNapiWrapperValue);

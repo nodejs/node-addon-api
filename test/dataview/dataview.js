@@ -3,18 +3,18 @@
 const assert = require('assert');
 module.exports = require('../common').runTest(test);
 
-function test(binding) {
-  function testDataViewCreation(factory, arrayBuffer, offset, length) {
+function test (binding) {
+  function testDataViewCreation (factory, arrayBuffer, offset, length) {
     const view = factory(arrayBuffer, offset, length);
-    offset = offset ? offset : 0;
+    offset = offset || 0;
     assert.ok(dataview.getArrayBuffer(view) instanceof ArrayBuffer);
     assert.strictEqual(dataview.getArrayBuffer(view), arrayBuffer);
     assert.strictEqual(dataview.getByteOffset(view), offset);
     assert.strictEqual(dataview.getByteLength(view),
-        length ? length : arrayBuffer.byteLength - offset);
+      length || arrayBuffer.byteLength - offset);
   }
 
-  function testInvalidRange(factory, arrayBuffer, offset, length) {
+  function testInvalidRange (factory, arrayBuffer, offset, length) {
     assert.throws(() => {
       factory(arrayBuffer, offset, length);
     }, RangeError);

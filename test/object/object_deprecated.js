@@ -4,23 +4,23 @@ const assert = require('assert');
 
 module.exports = require('../common').runTest(test);
 
-function test(binding) {
+function test (binding) {
   if (!('object_deprecated' in binding)) {
     return;
   }
-  function assertPropertyIs(obj, key, attribute) {
+  function assertPropertyIs (obj, key, attribute) {
     const propDesc = Object.getOwnPropertyDescriptor(obj, key);
     assert.ok(propDesc);
     assert.ok(propDesc[attribute]);
   }
 
-  function assertPropertyIsNot(obj, key, attribute) {
+  function assertPropertyIsNot (obj, key, attribute) {
     const propDesc = Object.getOwnPropertyDescriptor(obj, key);
     assert.ok(propDesc);
     assert.ok(!propDesc[attribute]);
   }
 
-  function testDefineProperties(nameType) {
+  function testDefineProperties (nameType) {
     const obj = {};
     binding.object.defineProperties(obj, nameType);
 

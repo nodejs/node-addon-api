@@ -5,11 +5,11 @@ const testUtil = require('../testUtil');
 
 module.exports = require('../common').runTest(test);
 
-function createWeakRef(binding, bindingToTest) {
+function createWeakRef (binding, bindingToTest) {
   return binding.object[bindingToTest]({});
 }
 
-function test(binding) {
+function test (binding) {
   let obj1;
   let obj2;
   return testUtil.runGCTests([

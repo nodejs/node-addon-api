@@ -8,6 +8,6 @@ const test = bindingName => {
   const testmi = new TestMI();
 
   assert.strictEqual(testmi.test, 0);
-}
+};
 
 module.exports = require('./common').runTestWithBindingPath(test);

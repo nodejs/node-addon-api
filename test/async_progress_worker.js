@@ -1,17 +1,17 @@
 'use strict';
 
-const common = require('./common')
+const common = require('./common');
 const assert = require('assert');
 
 module.exports = common.runTest(test);
 
-async function test({ asyncprogressworker }) {
+async function test ({ asyncprogressworker }) {
   await success(asyncprogressworker);
   await fail(asyncprogressworker);
   await malignTest(asyncprogressworker);
 }
 
-function success(binding) {
+function success (binding) {
   return new Promise((resolve, reject) => {
     const expected = [0, 1, 2, 3];
     const actual = [];
@@ -32,11 +32,11 @@ function success(binding) {
   });
 }
 
-function fail(binding) {
+function fail (binding) {
   return new Promise((resolve) => {
     binding.doWork(-1,
       common.mustCall((err) => {
-        assert.throws(() => { throw err }, /test error/)
+        assert.throws(() => { throw err; }, /test error/);
         resolve();
       }),
       common.mustNotCall()
@@ -44,7 +44,7 @@ function fail(binding) {
   });
 }
 
-function malignTest(binding) {
+function malignTest (binding) {
   return new Promise((resolve, reject) => {
     binding.doMalignTest(
       common.mustCall((err) => {

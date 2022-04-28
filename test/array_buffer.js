@@ -5,7 +5,7 @@ const testUtil = require('./testUtil');
 
 module.exports = require('./common').runTest(test);
 
-function test(binding) {
+function test (binding) {
   return testUtil.runGCTests([
     'Internal ArrayBuffer',
     () => {
@@ -64,6 +64,6 @@ function test(binding) {
       // Let C++ detach the ArrayBuffer.
       const extBuffer = binding.arraybuffer.createExternalBuffer();
       binding.arraybuffer.checkDetachUpdatesData(extBuffer);
-    },
+    }
   ]);
 }

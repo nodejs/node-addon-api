@@ -4,10 +4,10 @@ const assert = require('assert');
 
 module.exports = require('./common').runTest(test);
 
-function test(binding) {
+function test (binding) {
   [
     ['bigint64', BigInt64Array],
-    ['biguint64', BigUint64Array],
+    ['biguint64', BigUint64Array]
   ].forEach(([type, Constructor]) => {
     try {
       const length = 4;

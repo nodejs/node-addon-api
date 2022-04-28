@@ -27,7 +27,7 @@ if (process.argv.length === 3) {
   // exception is thrown from a native `SetImmediate()` we cannot catch it
   // anywhere except in the process' `uncaughtException` handler.
   let maxGCTries = 10;
-  (function gcInterval() {
+  (function gcInterval () {
     global.gc();
     if (!interval) {
       interval = setInterval(gcInterval, 100);
@@ -42,7 +42,7 @@ if (process.argv.length === 3) {
 
 module.exports = require('./common').runTestWithBindingPath(test);
 
-function test(bindingPath) {
+function test (bindingPath) {
   const binding = require(bindingPath);
 
   const child = spawnSync(process.execPath, [
@@ -83,6 +83,6 @@ function test(bindingPath) {
     },
     () => {
       assert.strictEqual(1, binding.external.getFinalizeCount());
-    },
+    }
   ]);
 }

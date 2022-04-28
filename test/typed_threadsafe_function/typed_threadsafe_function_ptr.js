@@ -2,6 +2,6 @@
 
 module.exports = require('../common').runTest(test);
 
-function test(binding) {
+function test (binding) {
   binding.typed_threadsafe_function_ptr.test({}, () => {});
 }
