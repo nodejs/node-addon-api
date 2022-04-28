@@ -1,9 +1,9 @@
 // Run each test function in sequence,
 // with an async delay and GC call between each.
 
-function tick(x) {
+function tick (x) {
   return new Promise((resolve) => {
-    setImmediate(function ontick() {
+    setImmediate(function ontick () {
       if (--x === 0) {
         resolve();
       } else {
@@ -11,9 +11,9 @@ function tick(x) {
       }
     });
   });
-};
+}
 
-async function runGCTests(tests) {
+async function runGCTests (tests) {
   // Break up test list into a list of lists of the form
   // [ [ 'test name', function() {}, ... ], ..., ].
   const testList = [];
@@ -27,7 +27,7 @@ async function runGCTests(tests) {
   }
 
   for (const test of testList) {
-    await (async function(test) {
+    await (async function (test) {
       let title;
       for (let i = 0; i < test.length; i++) {
         if (i === 0) {
@@ -50,5 +50,5 @@ async function runGCTests(tests) {
 }
 
 module.exports = {
-  runGCTests,
+  runGCTests
 };

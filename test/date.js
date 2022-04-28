@@ -4,12 +4,12 @@ const assert = require('assert');
 
 module.exports = require('./common').runTest(test);
 
-function test(binding) {
+function test (binding) {
   const {
     CreateDate,
     IsDate,
     ValueOf,
-    OperatorValue,
+    OperatorValue
   } = binding.date;
   assert.deepStrictEqual(CreateDate(0), new Date(0));
   assert.strictEqual(IsDate(new Date(0)), true);

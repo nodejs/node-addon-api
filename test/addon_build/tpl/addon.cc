@@ -3,7 +3,8 @@
 Napi::Value Echo(const Napi::CallbackInfo& info) {
   Napi::Env env = info.Env();
   if (info.Length() != 1) {
-    Napi::TypeError::New(env, "Wrong number of arguments. One argument expected.")
+    Napi::TypeError::New(env,
+                         "Wrong number of arguments. One argument expected.")
         .ThrowAsJavaScriptException();
   }
   return info[0].As<Napi::Value>();

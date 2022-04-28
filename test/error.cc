@@ -140,7 +140,7 @@ void CatchAndRethrowErrorThatEscapesScope(const CallbackInfo& info) {
   }
 }
 
-#else // NAPI_CPP_EXCEPTIONS
+#else  // NAPI_CPP_EXCEPTIONS
 
 void ThrowJSError(const CallbackInfo& info) {
   std::string message = info[0].As<String>().Utf8Value();
@@ -219,7 +219,7 @@ void CatchAndRethrowErrorThatEscapesScope(const CallbackInfo& info) {
   }
 }
 
-#endif // NAPI_CPP_EXCEPTIONS
+#endif  // NAPI_CPP_EXCEPTIONS
 
 void ThrowFatalError(const CallbackInfo& /*info*/) {
   Error::Fatal("Error::ThrowFatalError", "This is a fatal error");
@@ -261,7 +261,7 @@ void ThrowDefaultError(const CallbackInfo& info) {
   NAPI_THROW_IF_FAILED_VOID(env, status);
 }
 
-} // end anonymous namespace
+}  // end anonymous namespace
 
 Object InitError(Env env) {
   Object exports = Object::New(env);
@@ -275,9 +275,10 @@ Object InitError(Env env) {
   exports["catchErrorMessage"] = Function::New(env, CatchErrorMessage);
   exports["doNotCatch"] = Function::New(env, DoNotCatch);
   exports["catchAndRethrowError"] = Function::New(env, CatchAndRethrowError);
-  exports["throwErrorThatEscapesScope"] = Function::New(env, ThrowErrorThatEscapesScope);
+  exports["throwErrorThatEscapesScope"] =
+      Function::New(env, ThrowErrorThatEscapesScope);
   exports["catchAndRethrowErrorThatEscapesScope"] =
-    Function::New(env, CatchAndRethrowErrorThatEscapesScope);
+      Function::New(env, CatchAndRethrowErrorThatEscapesScope);
   exports["throwFatalError"] = Function::New(env, ThrowFatalError);
   exports["throwDefaultError"] = Function::New(env, ThrowDefaultError);
   exports["resetPromises"] = Function::New(env, ResetPromises);

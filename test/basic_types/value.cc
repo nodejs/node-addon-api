@@ -12,7 +12,7 @@ Value CreateExternal(const CallbackInfo& info) {
   return External<int>::New(info.Env(), &testData);
 }
 
-} // end anonymous namespace
+}  // end anonymous namespace
 
 static Value StrictlyEquals(const CallbackInfo& info) {
   bool strictlyEquals = info[0].StrictEquals(info[1]);

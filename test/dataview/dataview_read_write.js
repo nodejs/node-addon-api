@@ -1,55 +1,57 @@
+/* eslint-disable no-eval */
 'use strict';
 
 const assert = require('assert');
 
 module.exports = require('../common').runTest(test);
 
-function test(binding) {
-  function expected(type, value) {
+function test (binding) {
+  function expected (type, value) {
     return eval(`(new ${type}Array([${value}]))[0]`);
   }
 
-  function nativeReadDataView(dataview, type, offset, value) {
+  function nativeReadDataView (dataview, type, offset, value) {
     return eval(`binding.dataview_read_write.get${type}(dataview, offset)`);
   }
 
-  function nativeWriteDataView(dataview, type, offset, value) {
+  function nativeWriteDataView (dataview, type, offset, value) {
     eval(`binding.dataview_read_write.set${type}(dataview, offset, value)`);
   }
 
-  function isLittleEndian() {
+  // eslint-disable-next-line no-unused-vars
+  function isLittleEndian () {
     const buffer = new ArrayBuffer(2);
     new DataView(buffer).setInt16(0, 256, true /* littleEndian */);
     return new Int16Array(buffer)[0] === 256;
   }
 
-  function jsReadDataView(dataview, type, offset, value) {
+  function jsReadDataView (dataview, type, offset, value) {
     return eval(`dataview.get${type}(offset, isLittleEndian())`);
   }
 
-  function jsWriteDataView(dataview, type, offset, value) {
+  function jsWriteDataView (dataview, type, offset, value) {
     eval(`dataview.set${type}(offset, value, isLittleEndian())`);
   }
 
-  function testReadData(dataview, type, offset, value) {
+  function testReadData (dataview, type, offset, value) {
     jsWriteDataView(dataview, type, offset, 0);
     assert.strictEqual(jsReadDataView(dataview, type, offset), 0);
 
     jsWriteDataView(dataview, type, offset, value);
     assert.strictEqual(
-        nativeReadDataView(dataview, type, offset), expected(type, value));
+      nativeReadDataView(dataview, type, offset), expected(type, value));
   }
 
-  function testWriteData(dataview, type, offset, value) {
+  function testWriteData (dataview, type, offset, value) {
     jsWriteDataView(dataview, type, offset, 0);
     assert.strictEqual(jsReadDataView(dataview, type, offset), 0);
 
     nativeWriteDataView(dataview, type, offset, value);
     assert.strictEqual(
-        jsReadDataView(dataview, type, offset), expected(type, value));
+      jsReadDataView(dataview, type, offset), expected(type, value));
   }
 
-  function testInvalidOffset(dataview, type, offset, value) {
+  function testInvalidOffset (dataview, type, offset, value) {
     assert.throws(() => {
       nativeReadDataView(dataview, type, offset);
     }, RangeError);

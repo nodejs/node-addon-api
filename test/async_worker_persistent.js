@@ -2,11 +2,11 @@
 
 const assert = require('assert');
 
-function test(binding, succeed) {
+function test (binding, succeed) {
   return new Promise((resolve) =>
     // Can't pass an arrow function to doWork because that results in an
     // undefined context inside its body when the function gets called.
-    binding.doWork(succeed, function(e) {
+    binding.doWork(succeed, function (e) {
       setImmediate(() => {
         // If the work is supposed to fail, make sure there's an error.
         assert.strictEqual(succeed || e.message === 'test error', true);

@@ -9,12 +9,13 @@ namespace {
 static Value Test(const CallbackInfo& info) {
   Object resource = info[0].As<Object>();
   Function cb = info[1].As<Function>();
-  ThreadSafeFunction tsfn = ThreadSafeFunction::New(info.Env(), cb, resource, "Test", 1, 1);
+  ThreadSafeFunction tsfn =
+      ThreadSafeFunction::New(info.Env(), cb, resource, "Test", 1, 1);
   tsfn.Release();
   return info.Env().Undefined();
 }
 
-}
+}  // namespace
 
 Object InitThreadSafeFunctionPtr(Env env) {
   Object exports = Object::New(env);

@@ -1,10 +1,11 @@
+/* eslint-disable no-lone-blocks */
 'use strict';
 
 const assert = require('assert');
 
 module.exports = require('../common').runTest(test);
 
-function test(binding) {
+function test (binding) {
   const MIN_INT32 = -2147483648;
   const MAX_INT32 = 2147483647;
   const MIN_UINT32 = 0;
@@ -16,9 +17,9 @@ function test(binding) {
   const MIN_DOUBLE = binding.basic_types_number.minDouble();
   const MAX_DOUBLE = binding.basic_types_number.maxDouble();
 
-  function randomRangeTestForInteger(min, max, converter) {
-    for (let i = min; i < max; i+= Math.floor(Math.random() * max / 100)) {
-        assert.strictEqual(i, converter(i));
+  function randomRangeTestForInteger (min, max, converter) {
+    for (let i = min; i < max; i += Math.floor(Math.random() * max / 100)) {
+      assert.strictEqual(i, converter(i));
     }
   }
 
@@ -96,19 +97,19 @@ function test(binding) {
 
   // Construction test
   {
-    assert.strictEqual(binding.basic_types_number.createEmptyNumber(), true);
-    randomRangeTestForInteger(MIN_INT32, MAX_INT32, binding.basic_types_number.createNumberFromExistingValue);
-    assert.strictEqual(MIN_INT32, binding.basic_types_number.createNumberFromExistingValue(MIN_INT32));
-    assert.strictEqual(MAX_INT32, binding.basic_types_number.createNumberFromExistingValue(MAX_INT32));
-    randomRangeTestForInteger(MIN_UINT32, MAX_UINT32, binding.basic_types_number.createNumberFromExistingValue);
-    assert.strictEqual(MIN_UINT32, binding.basic_types_number.createNumberFromExistingValue(MIN_UINT32));
-    assert.strictEqual(MAX_UINT32, binding.basic_types_number.createNumberFromExistingValue(MAX_UINT32));
-    randomRangeTestForInteger(MIN_INT64, MAX_INT64, binding.basic_types_number.createNumberFromExistingValue);
-    assert.strictEqual(MIN_INT64, binding.basic_types_number.createNumberFromExistingValue(MIN_INT64));
-    assert.strictEqual(MAX_INT64, binding.basic_types_number.createNumberFromExistingValue(MAX_INT64));
-    assert.strictEqual(MIN_FLOAT, binding.basic_types_number.createNumberFromExistingValue(MIN_FLOAT));
-    assert.strictEqual(MAX_FLOAT, binding.basic_types_number.createNumberFromExistingValue(MAX_FLOAT));
-    assert.strictEqual(MIN_DOUBLE, binding.basic_types_number.createNumberFromExistingValue(MIN_DOUBLE));
-    assert.strictEqual(MAX_DOUBLE, binding.basic_types_number.createNumberFromExistingValue(MAX_DOUBLE));
+    assert.strictEqual(binding.basic_types_number.createEmptyNumber(), true);
+    randomRangeTestForInteger(MIN_INT32, MAX_INT32, binding.basic_types_number.createNumberFromExistingValue);
+    assert.strictEqual(MIN_INT32, binding.basic_types_number.createNumberFromExistingValue(MIN_INT32));
+    assert.strictEqual(MAX_INT32, binding.basic_types_number.createNumberFromExistingValue(MAX_INT32));
+    randomRangeTestForInteger(MIN_UINT32, MAX_UINT32, binding.basic_types_number.createNumberFromExistingValue);
+    assert.strictEqual(MIN_UINT32, binding.basic_types_number.createNumberFromExistingValue(MIN_UINT32));
+    assert.strictEqual(MAX_UINT32, binding.basic_types_number.createNumberFromExistingValue(MAX_UINT32));
+    randomRangeTestForInteger(MIN_INT64, MAX_INT64, binding.basic_types_number.createNumberFromExistingValue);
+    assert.strictEqual(MIN_INT64, binding.basic_types_number.createNumberFromExistingValue(MIN_INT64));
+    assert.strictEqual(MAX_INT64, binding.basic_types_number.createNumberFromExistingValue(MAX_INT64));
+    assert.strictEqual(MIN_FLOAT, binding.basic_types_number.createNumberFromExistingValue(MIN_FLOAT));
+    assert.strictEqual(MAX_FLOAT, binding.basic_types_number.createNumberFromExistingValue(MAX_FLOAT));
+    assert.strictEqual(MIN_DOUBLE, binding.basic_types_number.createNumberFromExistingValue(MIN_DOUBLE));
+    assert.strictEqual(MAX_DOUBLE, binding.basic_types_number.createNumberFromExistingValue(MAX_DOUBLE));
   }
 }

@@ -43,7 +43,7 @@ Object InitName(Env env);
 Object InitObject(Env env);
 #ifndef NODE_ADDON_API_DISABLE_DEPRECATED
 Object InitObjectDeprecated(Env env);
-#endif // !NODE_ADDON_API_DISABLE_DEPRECATED
+#endif  // !NODE_ADDON_API_DISABLE_DEPRECATED
 Object InitPromise(Env env);
 Object InitRunScript(Env env);
 #if (NAPI_VERSION > 3)
@@ -126,13 +126,14 @@ Object Init(Env env, Object exports) {
   exports.Set("object", InitObject(env));
 #ifndef NODE_ADDON_API_DISABLE_DEPRECATED
   exports.Set("object_deprecated", InitObjectDeprecated(env));
-#endif // !NODE_ADDON_API_DISABLE_DEPRECATED
+#endif  // !NODE_ADDON_API_DISABLE_DEPRECATED
   exports.Set("promise", InitPromise(env));
   exports.Set("run_script", InitRunScript(env));
   exports.Set("symbol", InitSymbol(env));
 #if (NAPI_VERSION > 3)
   exports.Set("threadsafe_function_ctx", InitThreadSafeFunctionCtx(env));
-  exports.Set("threadsafe_function_existing_tsfn", InitThreadSafeFunctionExistingTsfn(env));
+  exports.Set("threadsafe_function_existing_tsfn",
+              InitThreadSafeFunctionExistingTsfn(env));
   exports.Set("threadsafe_function_ptr", InitThreadSafeFunctionPtr(env));
   exports.Set("threadsafe_function_sum", InitThreadSafeFunctionSum(env));
   exports.Set("threadsafe_function_unref", InitThreadSafeFunctionUnref(env));
@@ -152,10 +153,11 @@ Object Init(Env env, Object exports) {
   exports.Set("typedarray", InitTypedArray(env));
   exports.Set("objectwrap", InitObjectWrap(env));
   exports.Set("objectwrapConstructorException",
-      InitObjectWrapConstructorException(env));
+              InitObjectWrapConstructorException(env));
   exports.Set("objectwrap_function", InitObjectWrapFunction(env));
   exports.Set("objectwrap_removewrap", InitObjectWrapRemoveWrap(env));
-  exports.Set("objectwrap_multiple_inheritance", InitObjectWrapMultipleInheritance(env));
+  exports.Set("objectwrap_multiple_inheritance",
+              InitObjectWrapMultipleInheritance(env));
   exports.Set("objectreference", InitObjectReference(env));
   exports.Set("reference", InitReference(env));
   exports.Set("version_management", InitVersionManagement(env));

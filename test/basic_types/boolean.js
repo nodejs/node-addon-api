@@ -4,7 +4,7 @@ const assert = require('assert');
 
 module.exports = require('../common').runTest(test);
 
-function test(binding) {
+function test (binding) {
   const bool1 = binding.basic_types_boolean.createBoolean(true);
   assert.strictEqual(bool1, true);
 
@@ -31,5 +31,4 @@ function test(binding) {
 
   const bool8 = binding.basic_types_boolean.operatorBool(false);
   assert.strictEqual(bool8, false);
-
 }

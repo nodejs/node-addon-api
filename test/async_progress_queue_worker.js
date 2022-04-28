@@ -1,16 +1,16 @@
 'use strict';
 
-const common = require('./common')
+const common = require('./common');
 const assert = require('assert');
 
 module.exports = common.runTest(test);
 
-async function test({ asyncprogressqueueworker }) {
+async function test ({ asyncprogressqueueworker }) {
   await success(asyncprogressqueueworker);
   await fail(asyncprogressqueueworker);
 }
 
-function success(binding) {
+function success (binding) {
   return new Promise((resolve, reject) => {
     const expected = [0, 1, 2, 3];
     const actual = [];
@@ -32,11 +32,11 @@ function success(binding) {
   });
 }
 
-function fail(binding) {
+function fail (binding) {
   return new Promise((resolve, reject) => {
     const worker = binding.createWork(-1,
       common.mustCall((err) => {
-        assert.throws(() => { throw err }, /test error/);
+        assert.throws(() => { throw err; }, /test error/);
         resolve();
       }),
       common.mustNotCall()

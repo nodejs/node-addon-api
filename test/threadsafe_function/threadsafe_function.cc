@@ -15,11 +15,7 @@ static std::thread threads[2];
 static ThreadSafeFunction tsfn;
 
 struct ThreadSafeFunctionInfo {
-  enum CallType {
-    DEFAULT,
-    BLOCKING,
-    NON_BLOCKING
-  } type;
+  enum CallType { DEFAULT, BLOCKING, NON_BLOCKING } type;
   bool abort;
   bool startSecondary;
   FunctionReference jsFinalizeCallback;
@@ -55,7 +51,7 @@ static void DataSourceThread() {
   for (int index = ARRAY_LENGTH - 1; index > -1 && !queueWasClosing; index--) {
     napi_status status = napi_generic_failure;
     auto callback = [](Env env, Function jsCallback, int* data) {
-      jsCallback.Call({ Number::New(env, *data) });
+      jsCallback.Call({Number::New(env, *data)});
     };
 
     switch (info->type) {
@@ -80,20 +76,20 @@ static void DataSourceThread() {
     }
 
     switch (status) {
-    case napi_queue_full:
-      queueWasFull = true;
-      index++;
-      // fall through
+      case napi_queue_full:
+        queueWasFull = true;
+        index++;
+        // fall through
 
-    case napi_ok:
-      continue;
+      case napi_ok:
+        continue;
 
-    case napi_closing:
-      queueWasClosing = true;
-      break;
+      case napi_closing:
+        queueWasClosing = true;
+        break;
 
-    default:
-      Error::Fatal("DataSourceThread", "ThreadSafeFunction.*Call() failed");
+      default:
+        Error::Fatal("DataSourceThread", "ThreadSafeFunction.*Call() failed");
     }
   }
 
@@ -140,15 +136,21 @@ static void JoinTheThreads(Env /* env */,
 }
 
 static Value StartThreadInternal(const CallbackInfo& info,
-    ThreadSafeFunctionInfo::CallType type) {
+                                 ThreadSafeFunctionInfo::CallType type) {
   tsfnInfo.type = type;
   tsfnInfo.abort = info[1].As<Boolean>();
   tsfnInfo.startSecondary = info[2].As<Boolean>();
   tsfnInfo.maxQueueSize = info[3].As<Number>().Uint32Value();
   tsfnInfo.closeCalledFromJs = false;
 
-  tsfn = ThreadSafeFunction::New(info.Env(), info[0].As<Function>(),
-      "Test", tsfnInfo.maxQueueSize, 2, &tsfnInfo, JoinTheThreads, threads);
+  tsfn = ThreadSafeFunction::New(info.Env(),
+                                 info[0].As<Function>(),
+                                 "Test",
+                                 tsfnInfo.maxQueueSize,
+                                 2,
+                                 &tsfnInfo,
+                                 JoinTheThreads,
+                                 threads);
 
   threads[0] = std::thread(DataSourceThread);
 

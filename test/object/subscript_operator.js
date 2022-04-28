@@ -4,8 +4,8 @@ const assert = require('assert');
 
 module.exports = require('../common').runTest(test);
 
-function test(binding) {
-  function testProperty(obj, key, value, nativeGetProperty, nativeSetProperty) {
+function test (binding) {
+  function testProperty (obj, key, value, nativeGetProperty, nativeSetProperty) {
     nativeSetProperty(obj, key, value);
     assert.strictEqual(nativeGetProperty(obj, key), value);
   }

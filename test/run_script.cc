@@ -42,7 +42,7 @@ Value RunWithContext(const CallbackInfo& info) {
   return MaybeUnwrap(fn.Call(args));
 }
 
-} // end anonymous namespace
+}  // end anonymous namespace
 
 Object InitRunScript(Env env) {
   Object exports = Object::New(env);

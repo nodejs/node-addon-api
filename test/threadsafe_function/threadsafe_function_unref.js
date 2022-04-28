@@ -2,7 +2,7 @@
 
 const assert = require('assert');
 
-const isMainProcess = process.argv[1] != __filename;
+const isMainProcess = process.argv[1] !== __filename;
 
 /**
  * In order to test that the event loop exits even with an active TSFN, we need
@@ -19,7 +19,7 @@ if (isMainProcess) {
   test(process.argv[2]);
 }
 
-function test(bindingFile) {
+function test (bindingFile) {
   if (isMainProcess) {
     // Main process
     return new Promise((resolve, reject) => {
@@ -27,21 +27,21 @@ function test(bindingFile) {
         '--expose-gc', __filename, bindingFile
       ], { stdio: 'inherit' });
 
-      let timeout = setTimeout( function() {
+      let timeout = setTimeout(function () {
         child.kill();
         timeout = 0;
-        reject(new Error("Expected child to die"));
+        reject(new Error('Expected child to die'));
       }, 5000);
 
-      child.on("error", (err) => {
+      child.on('error', (err) => {
         clearTimeout(timeout);
         timeout = 0;
         reject(new Error(err));
-      })
+      });
 
-      child.on("close", (code) => {
+      child.on('close', (code) => {
         if (timeout) clearTimeout(timeout);
-        assert.strictEqual(code, 0, "Expected return value 0");
+        assert.strictEqual(code, 0, 'Expected return value 0');
         resolve();
       });
     });

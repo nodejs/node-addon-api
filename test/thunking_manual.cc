@@ -22,64 +22,59 @@ static Napi::Value TestGetter(const Napi::CallbackInfo& /*info*/) {
   return Napi::Value();
 }
 
-static void TestSetter(const Napi::CallbackInfo& /*info*/) {
-}
+static void TestSetter(const Napi::CallbackInfo& /*info*/) {}
 
 class TestClass : public Napi::ObjectWrap<TestClass> {
  public:
-  TestClass(const Napi::CallbackInfo& info):
-      ObjectWrap<TestClass>(info) {
-  }
+  TestClass(const Napi::CallbackInfo& info) : ObjectWrap<TestClass>(info) {}
   static Napi::Value TestClassStaticMethod(const Napi::CallbackInfo& info) {
     return Napi::Number::New(info.Env(), 42);
   }
 
-  static void TestClassStaticVoidMethod(const Napi::CallbackInfo& /*info*/) {
-  }
+  static void TestClassStaticVoidMethod(const Napi::CallbackInfo& /*info*/) {}
 
   Napi::Value TestClassInstanceMethod(const Napi::CallbackInfo& info) {
     return Napi::Number::New(info.Env(), 42);
   }
 
-  void TestClassInstanceVoidMethod(const Napi::CallbackInfo& /*info*/) {
-  }
+  void TestClassInstanceVoidMethod(const Napi::CallbackInfo& /*info*/) {}
 
   Napi::Value TestClassInstanceGetter(const Napi::CallbackInfo& info) {
     return Napi::Number::New(info.Env(), 42);
   }
 
   void TestClassInstanceSetter(const Napi::CallbackInfo& /*info*/,
-                               const Napi::Value& /*new_value*/) {
-  }
+                               const Napi::Value& /*new_value*/) {}
 
   static Napi::Function NewClass(Napi::Env env) {
-    return DefineClass(env, "TestClass", {
-      // Make sure to check that the deleter gets called.
-      StaticMethod("staticMethod", TestClassStaticMethod),
-      // Make sure to check that the deleter gets called.
-      StaticMethod("staticVoidMethod", TestClassStaticVoidMethod),
-      // Make sure to check that the deleter gets called.
-      StaticMethod(Napi::Symbol::New(env, "staticMethod"),
-                   TestClassStaticMethod),
-      // Make sure to check that the deleter gets called.
-      StaticMethod(Napi::Symbol::New(env, "staticVoidMethod"),
-                   TestClassStaticVoidMethod),
-      // Make sure to check that the deleter gets called.
-      InstanceMethod("instanceMethod", &TestClass::TestClassInstanceMethod),
-      // Make sure to check that the deleter gets called.
-      InstanceMethod("instanceVoidMethod",
-                     &TestClass::TestClassInstanceVoidMethod),
-      // Make sure to check that the deleter gets called.
-      InstanceMethod(Napi::Symbol::New(env, "instanceMethod"),
-                     &TestClass::TestClassInstanceMethod),
-      // Make sure to check that the deleter gets called.
-      InstanceMethod(Napi::Symbol::New(env, "instanceVoidMethod"),
-                     &TestClass::TestClassInstanceVoidMethod),
-      // Make sure to check that the deleter gets called.
-      InstanceAccessor("instanceAccessor",
-                       &TestClass::TestClassInstanceGetter,
-                       &TestClass::TestClassInstanceSetter)
-    });
+    return DefineClass(
+        env,
+        "TestClass",
+        {// Make sure to check that the deleter gets called.
+         StaticMethod("staticMethod", TestClassStaticMethod),
+         // Make sure to check that the deleter gets called.
+         StaticMethod("staticVoidMethod", TestClassStaticVoidMethod),
+         // Make sure to check that the deleter gets called.
+         StaticMethod(Napi::Symbol::New(env, "staticMethod"),
+                      TestClassStaticMethod),
+         // Make sure to check that the deleter gets called.
+         StaticMethod(Napi::Symbol::New(env, "staticVoidMethod"),
+                      TestClassStaticVoidMethod),
+         // Make sure to check that the deleter gets called.
+         InstanceMethod("instanceMethod", &TestClass::TestClassInstanceMethod),
+         // Make sure to check that the deleter gets called.
+         InstanceMethod("instanceVoidMethod",
+                        &TestClass::TestClassInstanceVoidMethod),
+         // Make sure to check that the deleter gets called.
+         InstanceMethod(Napi::Symbol::New(env, "instanceMethod"),
+                        &TestClass::TestClassInstanceMethod),
+         // Make sure to check that the deleter gets called.
+         InstanceMethod(Napi::Symbol::New(env, "instanceVoidMethod"),
+                        &TestClass::TestClassInstanceVoidMethod),
+         // Make sure to check that the deleter gets called.
+         InstanceAccessor("instanceAccessor",
+                          &TestClass::TestClassInstanceGetter,
+                          &TestClass::TestClassInstanceSetter)});
   }
 };
 
@@ -91,42 +86,34 @@ static Napi::Value CreateTestObject(const Napi::CallbackInfo& info) {
   item["testMethod"] = Napi::Function::New(env, TestMethod, "testMethod");
 
   item.DefineProperties({
-    // Make sure to check that the deleter gets called.
-    Napi::PropertyDescriptor::Accessor(env,
-                                       item,
-                                       "accessor_1",
-                                       TestGetter),
-    // Make sure to check that the deleter gets called.
-    Napi::PropertyDescriptor::Accessor(env,
-                                       item,
-                                       std::string("accessor_1_std_string"),
-                                       TestGetter),
-    // Make sure to check that the deleter gets called.
-    Napi::PropertyDescriptor::Accessor(env,
-                                       item,
-                                       Napi::String::New(info.Env(),
-                                                        "accessor_1_js_string"),
-                                       TestGetter),
-    // Make sure to check that the deleter gets called.
-    Napi::PropertyDescriptor::Accessor(env,
-                                       item,
-                                       "accessor_2",
-                                       TestGetter,
-                                       TestSetter),
-    // Make sure to check that the deleter gets called.
-    Napi::PropertyDescriptor::Accessor(env,
-                                       item,
-                                       std::string("accessor_2_std_string"),
-                                       TestGetter,
-                                       TestSetter),
-    // Make sure to check that the deleter gets called.
-    Napi::PropertyDescriptor::Accessor(env,
-                                       item,
-                                       Napi::String::New(env,
-                                                        "accessor_2_js_string"),
-                                       TestGetter,
-                                       TestSetter),
-    Napi::PropertyDescriptor::Value("TestClass", TestClass::NewClass(env)),
+      // Make sure to check that the deleter gets called.
+      Napi::PropertyDescriptor::Accessor(env, item, "accessor_1", TestGetter),
+      // Make sure to check that the deleter gets called.
+      Napi::PropertyDescriptor::Accessor(
+          env, item, std::string("accessor_1_std_string"), TestGetter),
+      // Make sure to check that the deleter gets called.
+      Napi::PropertyDescriptor::Accessor(
+          env,
+          item,
+          Napi::String::New(info.Env(), "accessor_1_js_string"),
+          TestGetter),
+      // Make sure to check that the deleter gets called.
+      Napi::PropertyDescriptor::Accessor(
+          env, item, "accessor_2", TestGetter, TestSetter),
+      // Make sure to check that the deleter gets called.
+      Napi::PropertyDescriptor::Accessor(env,
+                                         item,
+                                         std::string("accessor_2_std_string"),
+                                         TestGetter,
+                                         TestSetter),
+      // Make sure to check that the deleter gets called.
+      Napi::PropertyDescriptor::Accessor(
+          env,
+          item,
+          Napi::String::New(env, "accessor_2_js_string"),
+          TestGetter,
+          TestSetter),
+      Napi::PropertyDescriptor::Value("TestClass", TestClass::NewClass(env)),
   });
 
   return item;

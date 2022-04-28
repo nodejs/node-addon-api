@@ -2,7 +2,7 @@ const path = require('path');
 const Benchmark = require('benchmark');
 const addonName = path.basename(__filename, '.js');
 
-[ addonName, addonName + '_noexcept' ]
+[addonName, addonName + '_noexcept']
   .forEach((addonName) => {
     const rootAddon = require('bindings')({
       bindings: addonName,
@@ -20,7 +20,7 @@ const addonName = path.basename(__filename, '.js');
     implems.reduce((suite, implem) => {
       const fn = rootAddon[implem].noArgFunction;
       return suite.add(implem.padStart(maxNameLength, ' '), () => fn());
-    }, new Benchmark.Suite)
+    }, new Benchmark.Suite())
       .on('cycle', (event) => console.log(String(event.target)))
       .run();
 
@@ -28,7 +28,7 @@ const addonName = path.basename(__filename, '.js');
     implems.reduce((suite, implem) => {
       const fn = rootAddon[implem].oneArgFunction;
       return suite.add(implem.padStart(maxNameLength, ' '), () => fn('x'));
-    }, new Benchmark.Suite)
+    }, new Benchmark.Suite())
       .on('cycle', (event) => console.log(String(event.target)))
       .run();
 
@@ -36,7 +36,7 @@ const addonName = path.basename(__filename, '.js');
     implems.reduce((suite, implem) => {
       const fn = rootAddon[implem].twoArgFunction;
       return suite.add(implem.padStart(maxNameLength, ' '), () => fn('x', 12));
-    }, new Benchmark.Suite)
+    }, new Benchmark.Suite())
       .on('cycle', (event) => console.log(String(event.target)))
       .run();
 
@@ -45,7 +45,7 @@ const addonName = path.basename(__filename, '.js');
       const fn = rootAddon[implem].threeArgFunction;
       return suite.add(implem.padStart(maxNameLength, ' '),
         () => fn('x', 12, true));
-    }, new Benchmark.Suite)
+    }, new Benchmark.Suite())
       .on('cycle', (event) => console.log(String(event.target)))
       .run();
 
@@ -54,7 +54,7 @@ const addonName = path.basename(__filename, '.js');
       const fn = rootAddon[implem].fourArgFunction;
       return suite.add(implem.padStart(maxNameLength, ' '),
         () => fn('x', 12, true, anObject));
-    }, new Benchmark.Suite)
+    }, new Benchmark.Suite())
       .on('cycle', (event) => console.log(String(event.target)))
       .run();
   });

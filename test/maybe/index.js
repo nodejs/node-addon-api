@@ -2,19 +2,18 @@
 
 const buildType = process.config.target_defaults.default_configuration;
 const assert = require('assert');
-const os = require('os');
 
 const napiChild = require('../napi_child');
 
 module.exports = test(require(`../build/${buildType}/binding_noexcept_maybe.node`).maybe_check);
 
-function test(binding) {
+function test (binding) {
   if (process.argv.includes('child')) {
     child(binding);
     return;
   }
   const cp = napiChild.spawn(process.execPath, [__filename, 'child'], {
-    stdio: ['ignore', 'inherit', 'pipe'],
+    stdio: ['ignore', 'inherit', 'pipe']
   });
   cp.stderr.setEncoding('utf8');
   let stderr = '';
@@ -31,8 +30,8 @@ function test(binding) {
   });
 }
 
-function child(binding) {
+function child (binding) {
   binding.voidCallback(() => {
     throw new Error('foobar');
-  })
+  });
 }

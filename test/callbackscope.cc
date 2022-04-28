@@ -12,7 +12,7 @@ static void RunInCallbackScope(const CallbackInfo& info) {
   callback.Call({});
 }
 
-} // end anonymous namespace
+}  // end anonymous namespace
 
 Object InitCallbackScope(Env env) {
   Object exports = Object::New(env);

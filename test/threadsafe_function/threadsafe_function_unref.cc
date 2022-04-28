@@ -15,23 +15,23 @@ static Value TestUnref(const CallbackInfo& info) {
   Function setTimeout = MaybeUnwrap(global.Get("setTimeout")).As<Function>();
   ThreadSafeFunction* tsfn = new ThreadSafeFunction;
 
-  *tsfn = ThreadSafeFunction::New(info.Env(), cb, resource, "Test", 1, 1, [tsfn](Napi::Env /* env */) {
-    delete tsfn;
-  });
+  *tsfn = ThreadSafeFunction::New(
+      info.Env(), cb, resource, "Test", 1, 1, [tsfn](Napi::Env /* env */) {
+        delete tsfn;
+      });
 
   tsfn->BlockingCall();
 
-  setTimeout.Call( global, {
-    Function::New(env, [tsfn](const CallbackInfo& info) {
-      tsfn->Unref(info.Env());
-    }),
-    Number::New(env, 100)
-  });
+  setTimeout.Call(
+      global,
+      {Function::New(
+           env, [tsfn](const CallbackInfo& info) { tsfn->Unref(info.Env()); }),
+       Number::New(env, 100)});
 
   return info.Env().Undefined();
 }
 
-}
+}  // namespace
 
 Object InitThreadSafeFunctionUnref(Env env) {
   Object exports = Object::New(env);

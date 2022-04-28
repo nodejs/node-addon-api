@@ -3,8 +3,7 @@ const assert = require('assert');
 
 module.exports = require('../common').runTest(test);
 
-function test(binding) {
-
+function test (binding) {
   // create empty array
   const array = binding.basic_types_array.createArray();
   assert.strictEqual(binding.basic_types_array.getLength(array), 0);
@@ -15,7 +14,7 @@ function test(binding) {
 
   // set function test
   binding.basic_types_array.set(array, 0, 10);
-  binding.basic_types_array.set(array, 1, "test");
+  binding.basic_types_array.set(array, 1, 'test');
   binding.basic_types_array.set(array, 2, 3.0);
 
   // check length after set data
@@ -23,7 +22,7 @@ function test(binding) {
 
   // get function test
   assert.strictEqual(binding.basic_types_array.get(array, 0), 10);
-  assert.strictEqual(binding.basic_types_array.get(array, 1), "test");
+  assert.strictEqual(binding.basic_types_array.get(array, 1), 'test');
   assert.strictEqual(binding.basic_types_array.get(array, 2), 3.0);
 
   // overwrite test

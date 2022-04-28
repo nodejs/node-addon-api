@@ -6,7 +6,7 @@ const path = require('path');
 
 let benchmarks = [];
 
-if (!!process.env.npm_config_benchmarks) {
+if (process.env.npm_config_benchmarks) {
   benchmarks = process.env.npm_config_benchmarks
     .split(';')
     .map((item) => (item + '.js'));

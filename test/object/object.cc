@@ -56,11 +56,11 @@ struct UserDataHolder {
 };
 
 Value TestGetter(const CallbackInfo& info) {
-   return Boolean::New(info.Env(), testValue);
+  return Boolean::New(info.Env(), testValue);
 }
 
 void TestSetter(const CallbackInfo& info) {
-   testValue = info[0].As<Boolean>();
+  testValue = info[0].As<Boolean>();
 }
 
 Value TestGetterWithUserData(const CallbackInfo& info) {
@@ -74,7 +74,7 @@ void TestSetterWithUserData(const CallbackInfo& info) {
 }
 
 Value TestFunction(const CallbackInfo& info) {
-   return Boolean::New(info.Env(), true);
+  return Boolean::New(info.Env(), true);
 }
 
 Value TestFunctionWithUserData(const CallbackInfo& info) {
@@ -112,36 +112,56 @@ void DefineProperties(const CallbackInfo& info) {
 
   if (nameType.Utf8Value() == "literal") {
     obj.DefineProperties({
-      PropertyDescriptor::Accessor(env, obj, "readonlyAccessor", TestGetter),
-      PropertyDescriptor::Accessor(env, obj, "readwriteAccessor", TestGetter, TestSetter),
-      PropertyDescriptor::Accessor(env, obj, "readonlyAccessorWithUserData", TestGetterWithUserData, napi_property_attributes::napi_default, reinterpret_cast<void*>(holder)),
-      PropertyDescriptor::Accessor(env, obj, "readwriteAccessorWithUserData", TestGetterWithUserData, TestSetterWithUserData, napi_property_attributes::napi_default, reinterpret_cast<void*>(holder)),
+        PropertyDescriptor::Accessor(env, obj, "readonlyAccessor", TestGetter),
+        PropertyDescriptor::Accessor(
+            env, obj, "readwriteAccessor", TestGetter, TestSetter),
+        PropertyDescriptor::Accessor(env,
+                                     obj,
+                                     "readonlyAccessorWithUserData",
+                                     TestGetterWithUserData,
+                                     napi_property_attributes::napi_default,
+                                     reinterpret_cast<void*>(holder)),
+        PropertyDescriptor::Accessor(env,
+                                     obj,
+                                     "readwriteAccessorWithUserData",
+                                     TestGetterWithUserData,
+                                     TestSetterWithUserData,
+                                     napi_property_attributes::napi_default,
+                                     reinterpret_cast<void*>(holder)),
 
-      PropertyDescriptor::Accessor<TestGetter>("readonlyAccessorT"),
-      PropertyDescriptor::Accessor<TestGetter, TestSetter>(
-          "readwriteAccessorT"),
-      PropertyDescriptor::Accessor<TestGetterWithUserData>(
-          "readonlyAccessorWithUserDataT",
-          napi_property_attributes::napi_default,
-          reinterpret_cast<void*>(holder)),
-      PropertyDescriptor::Accessor<
-          TestGetterWithUserData,
-          TestSetterWithUserData>("readwriteAccessorWithUserDataT",
-                                  napi_property_attributes::napi_default,
-                                  reinterpret_cast<void*>(holder)),
+        PropertyDescriptor::Accessor<TestGetter>("readonlyAccessorT"),
+        PropertyDescriptor::Accessor<TestGetter, TestSetter>(
+            "readwriteAccessorT"),
+        PropertyDescriptor::Accessor<TestGetterWithUserData>(
+            "readonlyAccessorWithUserDataT",
+            napi_property_attributes::napi_default,
+            reinterpret_cast<void*>(holder)),
+        PropertyDescriptor::Accessor<TestGetterWithUserData,
+                                     TestSetterWithUserData>(
+            "readwriteAccessorWithUserDataT",
+            napi_property_attributes::napi_default,
+            reinterpret_cast<void*>(holder)),
 
-      PropertyDescriptor::Value("readonlyValue", trueValue),
-      PropertyDescriptor::Value("readwriteValue", trueValue, napi_writable),
-      PropertyDescriptor::Value("enumerableValue", trueValue, napi_enumerable),
-      PropertyDescriptor::Value("configurableValue", trueValue, napi_configurable),
-      PropertyDescriptor::Function(env, obj, "function", TestFunction),
-      PropertyDescriptor::Function(env, obj, "functionWithUserData", TestFunctionWithUserData, napi_property_attributes::napi_default, reinterpret_cast<void*>(holder)),
+        PropertyDescriptor::Value("readonlyValue", trueValue),
+        PropertyDescriptor::Value("readwriteValue", trueValue, napi_writable),
+        PropertyDescriptor::Value(
+            "enumerableValue", trueValue, napi_enumerable),
+        PropertyDescriptor::Value(
+            "configurableValue", trueValue, napi_configurable),
+        PropertyDescriptor::Function(env, obj, "function", TestFunction),
+        PropertyDescriptor::Function(env,
+                                     obj,
+                                     "functionWithUserData",
+                                     TestFunctionWithUserData,
+                                     napi_property_attributes::napi_default,
+                                     reinterpret_cast<void*>(holder)),
     });
   } else if (nameType.Utf8Value() == "string") {
-    // VS2013 has lifetime issues when passing temporary objects into the constructor of another
-    // object. It generates code to destruct the object as soon as the constructor call returns.
-    // Since this isn't a common case for using std::string objects, I'm refactoring the test to
-    // work around the issue.
+    // VS2013 has lifetime issues when passing temporary objects into the
+    // constructor of another object. It generates code to destruct the object
+    // as soon as the constructor call returns. Since this isn't a common case
+    // for using std::string objects, I'm refactoring the test to work around
+    // the issue.
     std::string str1("readonlyAccessor");
     std::string str2("readwriteAccessor");
     std::string str1a("readonlyAccessorWithUserData");
@@ -160,66 +180,105 @@ void DefineProperties(const CallbackInfo& info) {
     std::string str8("functionWithUserData");
 
     obj.DefineProperties({
-      PropertyDescriptor::Accessor(env, obj, str1, TestGetter),
-      PropertyDescriptor::Accessor(env, obj, str2, TestGetter, TestSetter),
-      PropertyDescriptor::Accessor(env, obj, str1a, TestGetterWithUserData, napi_property_attributes::napi_default, reinterpret_cast<void*>(holder)),
-      PropertyDescriptor::Accessor(env, obj, str2a, TestGetterWithUserData, TestSetterWithUserData, napi_property_attributes::napi_default, reinterpret_cast<void*>(holder)),
+        PropertyDescriptor::Accessor(env, obj, str1, TestGetter),
+        PropertyDescriptor::Accessor(env, obj, str2, TestGetter, TestSetter),
+        PropertyDescriptor::Accessor(env,
+                                     obj,
+                                     str1a,
+                                     TestGetterWithUserData,
+                                     napi_property_attributes::napi_default,
+                                     reinterpret_cast<void*>(holder)),
+        PropertyDescriptor::Accessor(env,
+                                     obj,
+                                     str2a,
+                                     TestGetterWithUserData,
+                                     TestSetterWithUserData,
+                                     napi_property_attributes::napi_default,
+                                     reinterpret_cast<void*>(holder)),
 
-      PropertyDescriptor::Accessor<TestGetter>(str1t),
-      PropertyDescriptor::Accessor<TestGetter, TestSetter>(str2t),
-      PropertyDescriptor::Accessor<TestGetterWithUserData>(str1at,
-                                         napi_property_attributes::napi_default,
-                                         reinterpret_cast<void*>(holder)),
-      PropertyDescriptor::Accessor<
-          TestGetterWithUserData,
-          TestSetterWithUserData>(str2at,
-                                  napi_property_attributes::napi_default,
-                                  reinterpret_cast<void*>(holder)),
+        PropertyDescriptor::Accessor<TestGetter>(str1t),
+        PropertyDescriptor::Accessor<TestGetter, TestSetter>(str2t),
+        PropertyDescriptor::Accessor<TestGetterWithUserData>(
+            str1at,
+            napi_property_attributes::napi_default,
+            reinterpret_cast<void*>(holder)),
+        PropertyDescriptor::Accessor<TestGetterWithUserData,
+                                     TestSetterWithUserData>(
+            str2at,
+            napi_property_attributes::napi_default,
+            reinterpret_cast<void*>(holder)),
 
-      PropertyDescriptor::Value(str3, trueValue),
-      PropertyDescriptor::Value(str4, trueValue, napi_writable),
-      PropertyDescriptor::Value(str5, trueValue, napi_enumerable),
-      PropertyDescriptor::Value(str6, trueValue, napi_configurable),
-      PropertyDescriptor::Function(env, obj, str7, TestFunction),
-      PropertyDescriptor::Function(env, obj, str8, TestFunctionWithUserData, napi_property_attributes::napi_default, reinterpret_cast<void*>(holder)),
+        PropertyDescriptor::Value(str3, trueValue),
+        PropertyDescriptor::Value(str4, trueValue, napi_writable),
+        PropertyDescriptor::Value(str5, trueValue, napi_enumerable),
+        PropertyDescriptor::Value(str6, trueValue, napi_configurable),
+        PropertyDescriptor::Function(env, obj, str7, TestFunction),
+        PropertyDescriptor::Function(env,
+                                     obj,
+                                     str8,
+                                     TestFunctionWithUserData,
+                                     napi_property_attributes::napi_default,
+                                     reinterpret_cast<void*>(holder)),
     });
   } else if (nameType.Utf8Value() == "value") {
     obj.DefineProperties({
-      PropertyDescriptor::Accessor(env, obj,
-        Napi::String::New(env, "readonlyAccessor"), TestGetter),
-      PropertyDescriptor::Accessor(env, obj,
-        Napi::String::New(env, "readwriteAccessor"), TestGetter, TestSetter),
-      PropertyDescriptor::Accessor(env, obj,
-        Napi::String::New(env, "readonlyAccessorWithUserData"), TestGetterWithUserData, napi_property_attributes::napi_default, reinterpret_cast<void*>(holder)),
-      PropertyDescriptor::Accessor(env, obj,
-        Napi::String::New(env, "readwriteAccessorWithUserData"), TestGetterWithUserData, TestSetterWithUserData, napi_property_attributes::napi_default, reinterpret_cast<void*>(holder)),
+        PropertyDescriptor::Accessor(
+            env, obj, Napi::String::New(env, "readonlyAccessor"), TestGetter),
+        PropertyDescriptor::Accessor(
+            env,
+            obj,
+            Napi::String::New(env, "readwriteAccessor"),
+            TestGetter,
+            TestSetter),
+        PropertyDescriptor::Accessor(
+            env,
+            obj,
+            Napi::String::New(env, "readonlyAccessorWithUserData"),
+            TestGetterWithUserData,
+            napi_property_attributes::napi_default,
+            reinterpret_cast<void*>(holder)),
+        PropertyDescriptor::Accessor(
+            env,
+            obj,
+            Napi::String::New(env, "readwriteAccessorWithUserData"),
+            TestGetterWithUserData,
+            TestSetterWithUserData,
+            napi_property_attributes::napi_default,
+            reinterpret_cast<void*>(holder)),
 
-      PropertyDescriptor::Accessor<TestGetter>(
-                                   Napi::String::New(env, "readonlyAccessorT")),
-      PropertyDescriptor::Accessor<TestGetter, TestSetter>(
-                                  Napi::String::New(env, "readwriteAccessorT")),
-      PropertyDescriptor::Accessor<TestGetterWithUserData>(
-                        Napi::String::New(env, "readonlyAccessorWithUserDataT"),
-                        napi_property_attributes::napi_default,
-                        reinterpret_cast<void*>(holder)),
-      PropertyDescriptor::Accessor<
-          TestGetterWithUserData, TestSetterWithUserData>(
-                       Napi::String::New(env, "readwriteAccessorWithUserDataT"),
-                       napi_property_attributes::napi_default,
-                       reinterpret_cast<void*>(holder)),
+        PropertyDescriptor::Accessor<TestGetter>(
+            Napi::String::New(env, "readonlyAccessorT")),
+        PropertyDescriptor::Accessor<TestGetter, TestSetter>(
+            Napi::String::New(env, "readwriteAccessorT")),
+        PropertyDescriptor::Accessor<TestGetterWithUserData>(
+            Napi::String::New(env, "readonlyAccessorWithUserDataT"),
+            napi_property_attributes::napi_default,
+            reinterpret_cast<void*>(holder)),
+        PropertyDescriptor::Accessor<TestGetterWithUserData,
+                                     TestSetterWithUserData>(
+            Napi::String::New(env, "readwriteAccessorWithUserDataT"),
+            napi_property_attributes::napi_default,
+            reinterpret_cast<void*>(holder)),
 
-      PropertyDescriptor::Value(
-        Napi::String::New(env, "readonlyValue"), trueValue),
-      PropertyDescriptor::Value(
-        Napi::String::New(env, "readwriteValue"), trueValue, napi_writable),
-      PropertyDescriptor::Value(
-        Napi::String::New(env, "enumerableValue"), trueValue, napi_enumerable),
-      PropertyDescriptor::Value(
-        Napi::String::New(env, "configurableValue"), trueValue, napi_configurable),
-      PropertyDescriptor::Function(env, obj,
-        Napi::String::New(env, "function"), TestFunction),
-      PropertyDescriptor::Function(env, obj,
-        Napi::String::New(env, "functionWithUserData"), TestFunctionWithUserData, napi_property_attributes::napi_default, reinterpret_cast<void*>(holder)),
+        PropertyDescriptor::Value(Napi::String::New(env, "readonlyValue"),
+                                  trueValue),
+        PropertyDescriptor::Value(
+            Napi::String::New(env, "readwriteValue"), trueValue, napi_writable),
+        PropertyDescriptor::Value(Napi::String::New(env, "enumerableValue"),
+                                  trueValue,
+                                  napi_enumerable),
+        PropertyDescriptor::Value(Napi::String::New(env, "configurableValue"),
+                                  trueValue,
+                                  napi_configurable),
+        PropertyDescriptor::Function(
+            env, obj, Napi::String::New(env, "function"), TestFunction),
+        PropertyDescriptor::Function(
+            env,
+            obj,
+            Napi::String::New(env, "functionWithUserData"),
+            TestFunctionWithUserData,
+            napi_property_attributes::napi_default,
+            reinterpret_cast<void*>(holder)),
     });
   }
 }
@@ -295,36 +354,57 @@ Object InitObject(Env env) {
   exports["defineValueProperty"] = Function::New(env, DefineValueProperty);
 
   exports["getPropertyWithUint32"] = Function::New(env, GetPropertyWithUint32);
-  exports["getPropertyWithNapiValue"] = Function::New(env, GetPropertyWithNapiValue);
-  exports["getPropertyWithNapiWrapperValue"] = Function::New(env, GetPropertyWithNapiWrapperValue);
-  exports["getPropertyWithCStyleString"] = Function::New(env, GetPropertyWithCStyleString);
-  exports["getPropertyWithCppStyleString"] = Function::New(env, GetPropertyWithCppStyleString);
+  exports["getPropertyWithNapiValue"] =
+      Function::New(env, GetPropertyWithNapiValue);
+  exports["getPropertyWithNapiWrapperValue"] =
+      Function::New(env, GetPropertyWithNapiWrapperValue);
+  exports["getPropertyWithCStyleString"] =
+      Function::New(env, GetPropertyWithCStyleString);
+  exports["getPropertyWithCppStyleString"] =
+      Function::New(env, GetPropertyWithCppStyleString);
 
   exports["setPropertyWithUint32"] = Function::New(env, SetPropertyWithUint32);
-  exports["setPropertyWithNapiValue"] = Function::New(env, SetPropertyWithNapiValue);
-  exports["setPropertyWithNapiWrapperValue"] = Function::New(env, SetPropertyWithNapiWrapperValue);
-  exports["setPropertyWithCStyleString"] = Function::New(env, SetPropertyWithCStyleString);
-  exports["setPropertyWithCppStyleString"] = Function::New(env, SetPropertyWithCppStyleString);
+  exports["setPropertyWithNapiValue"] =
+      Function::New(env, SetPropertyWithNapiValue);
+  exports["setPropertyWithNapiWrapperValue"] =
+      Function::New(env, SetPropertyWithNapiWrapperValue);
+  exports["setPropertyWithCStyleString"] =
+      Function::New(env, SetPropertyWithCStyleString);
+  exports["setPropertyWithCppStyleString"] =
+      Function::New(env, SetPropertyWithCppStyleString);
 
   exports["deletePropertyWithUint32"] =
       Function::New(env, DeletePropertyWithUint32);
-  exports["deletePropertyWithNapiValue"] = Function::New(env, DeletePropertyWithNapiValue);
-  exports["deletePropertyWithNapiWrapperValue"] = Function::New(env, DeletePropertyWithNapiWrapperValue);
-  exports["deletePropertyWithCStyleString"] = Function::New(env, DeletePropertyWithCStyleString);
-  exports["deletePropertyWithCppStyleString"] = Function::New(env, DeletePropertyWithCppStyleString);
+  exports["deletePropertyWithNapiValue"] =
+      Function::New(env, DeletePropertyWithNapiValue);
+  exports["deletePropertyWithNapiWrapperValue"] =
+      Function::New(env, DeletePropertyWithNapiWrapperValue);
+  exports["deletePropertyWithCStyleString"] =
+      Function::New(env, DeletePropertyWithCStyleString);
+  exports["deletePropertyWithCppStyleString"] =
+      Function::New(env, DeletePropertyWithCppStyleString);
 
-  exports["hasOwnPropertyWithNapiValue"] = Function::New(env, HasOwnPropertyWithNapiValue);
-  exports["hasOwnPropertyWithNapiWrapperValue"] = Function::New(env, HasOwnPropertyWithNapiWrapperValue);
-  exports["hasOwnPropertyWithCStyleString"] = Function::New(env, HasOwnPropertyWithCStyleString);
-  exports["hasOwnPropertyWithCppStyleString"] = Function::New(env, HasOwnPropertyWithCppStyleString);
+  exports["hasOwnPropertyWithNapiValue"] =
+      Function::New(env, HasOwnPropertyWithNapiValue);
+  exports["hasOwnPropertyWithNapiWrapperValue"] =
+      Function::New(env, HasOwnPropertyWithNapiWrapperValue);
+  exports["hasOwnPropertyWithCStyleString"] =
+      Function::New(env, HasOwnPropertyWithCStyleString);
+  exports["hasOwnPropertyWithCppStyleString"] =
+      Function::New(env, HasOwnPropertyWithCppStyleString);
 
   exports["hasPropertyWithUint32"] = Function::New(env, HasPropertyWithUint32);
-  exports["hasPropertyWithNapiValue"] = Function::New(env, HasPropertyWithNapiValue);
-  exports["hasPropertyWithNapiWrapperValue"] = Function::New(env, HasPropertyWithNapiWrapperValue);
-  exports["hasPropertyWithCStyleString"] = Function::New(env, HasPropertyWithCStyleString);
-  exports["hasPropertyWithCppStyleString"] = Function::New(env, HasPropertyWithCppStyleString);
+  exports["hasPropertyWithNapiValue"] =
+      Function::New(env, HasPropertyWithNapiValue);
+  exports["hasPropertyWithNapiWrapperValue"] =
+      Function::New(env, HasPropertyWithNapiWrapperValue);
+  exports["hasPropertyWithCStyleString"] =
+      Function::New(env, HasPropertyWithCStyleString);
+  exports["hasPropertyWithCppStyleString"] =
+      Function::New(env, HasPropertyWithCppStyleString);
 
-  exports["createObjectUsingMagic"] = Function::New(env, CreateObjectUsingMagic);
+  exports["createObjectUsingMagic"] =
+      Function::New(env, CreateObjectUsingMagic);
 #ifdef NAPI_CPP_EXCEPTIONS
   exports["sum"] = Function::New(env, Sum);
   exports["increment"] = Function::New(env, Increment);

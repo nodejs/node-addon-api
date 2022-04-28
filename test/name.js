@@ -4,13 +4,12 @@ const assert = require('assert');
 
 module.exports = require('./common').runTest(test);
 
-function test(binding) {
+function test (binding) {
   const expected = '123456789';
-
 
   assert.throws(binding.name.nullStringShouldThrow, {
     name: 'Error',
-    message: 'Error in native callback',
+    message: 'Error in native callback'
   });
   assert.ok(binding.name.checkString(expected, 'utf8'));
   assert.ok(binding.name.checkString(expected, 'utf16'));
@@ -37,6 +36,7 @@ function test(binding) {
   assert.ok(binding.name.checkString(substr2, 'utf8', 3));
   assert.ok(binding.name.checkString(substr2, 'utf16', 3));
 
+  // eslint-disable-next-line symbol-description
   assert.ok(binding.name.checkSymbol(Symbol()));
   assert.ok(binding.name.checkSymbol(Symbol('test')));
 
