@@ -14,6 +14,43 @@ Value CreateExternal(const CallbackInfo& info) {
 
 } // end anonymous namespace
 
+static Value StrictlyEquals(const CallbackInfo& info) {
+  bool strictlyEquals = info[0].StrictEquals(info[1]);
+  return Boolean::New(info.Env(), strictlyEquals);
+}
+
+// tests the  '==' overload
+static Value StrictEqualsOverload(const CallbackInfo& info) {
+  bool strictlyEquals = info[0] == info[1];
+  return Boolean::New(info.Env(), strictlyEquals);
+}
+
+// tests the '!=' overload
+static Value StrictlyNotEqualsOverload(const CallbackInfo& info) {
+  bool strictlyEquals = info[0] != info[1];
+  return Boolean::New(info.Env(), strictlyEquals);
+}
+
+static Value ValueReturnsCorrectEnv(const CallbackInfo& info) {
+  Value testValue = CreateExternal(info);
+  return Boolean::New(info.Env(), testValue.Env() == info.Env());
+}
+
+static Value EmptyValueReturnNullPtrOnCast(const CallbackInfo& info) {
+  Value emptyValue;
+  bool isNullPtr = static_cast<napi_value>(emptyValue) == nullptr;
+  return Boolean::New(info.Env(), isNullPtr);
+}
+
+static Value NonEmptyValueReturnValOnCast(const CallbackInfo& info) {
+  Value boolValue = Value::From(info.Env(), true);
+  return Boolean::New(info.Env(), static_cast<napi_value>(boolValue));
+}
+
+static Value CreateNonEmptyValue(const CallbackInfo& info) {
+  return Napi::Value(info.Env(), String::New(info.Env(), "non_empty_val"));
+}
+
 static Value IsEmpty(const CallbackInfo& info) {
   Value value;
   return Boolean::New(info.Env(), value.IsEmpty());
@@ -114,6 +151,20 @@ Object InitBasicTypesValue(Env env) {
   exports["toString"] = Function::New(env, ToString);
   exports["toObject"] = Function::New(env, ToObject);
 
+  exports["strictlyEquals"] = Function::New(env, StrictlyEquals);
+  exports["strictlyEqualsOverload"] = Function::New(env, StrictEqualsOverload);
+  exports["strictlyNotEqualsOverload"] =
+      Function::New(env, StrictlyNotEqualsOverload);
+
+  exports["assertValueReturnsCorrectEnv"] =
+      Function::New(env, ValueReturnsCorrectEnv);
+
+  exports["assertEmptyValReturnNullPtrOnCast"] =
+      Function::New(env, EmptyValueReturnNullPtrOnCast);
+  exports["assertNonEmptyReturnValOnCast"] =
+      Function::New(env, NonEmptyValueReturnValOnCast);
+
+  exports["createNonEmptyValue"] = Function::New(env, CreateNonEmptyValue);
   exports["createExternal"] = Function::New(env, CreateExternal);
 
   return exports;
