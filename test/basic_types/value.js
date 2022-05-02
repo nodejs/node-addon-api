@@ -4,33 +4,27 @@ const assert = require('assert');
 
 module.exports = require('../common').runTest(test);
 
-function test(binding) {
+function test (binding) {
   const externalValue = binding.basic_types_value.createExternal();
 
-  function isObject(value) {
+  function isObject (value) {
     return (typeof value === 'object' && value !== externalValue) ||
            (typeof value === 'function');
   }
 
-  function detailedTypeOf(value) {
+  function detailedTypeOf (value) {
     const type = typeof value;
-    if (type !== 'object')
-      return type;
+    if (type !== 'object') { return type; }
 
-    if (value === null)
-      return 'null';
+    if (value === null) { return 'null'; }
 
-    if (Array.isArray(value))
-      return 'array';
+    if (Array.isArray(value)) { return 'array'; }
 
-    if (value === externalValue)
-      return 'external';
+    if (value === externalValue) { return 'external'; }
 
-    if (!value.constructor)
-      return type;
+    if (!value.constructor) { return type; }
 
-    if (value instanceof ArrayBuffer)
-      return 'arraybuffer';
+    if (value instanceof ArrayBuffer) { return 'arraybuffer'; }
 
     if (ArrayBuffer.isView(value)) {
       if (value instanceof DataView) {
@@ -40,13 +34,12 @@ function test(binding) {
       }
     }
 
-    if (value instanceof Promise)
-      return 'promise';
+    if (value instanceof Promise) { return 'promise'; }
 
     return 'object';
   }
 
-  function typeCheckerTest(typeChecker, expectedType) {
+  function typeCheckerTest (typeChecker, expectedType) {
     const testValueList = [
       undefined,
       null,
@@ -58,7 +51,7 @@ function test(binding) {
       new ArrayBuffer(10),
       new Int32Array(new ArrayBuffer(12)),
       {},
-      function() {},
+      function () {},
       new Promise((resolve, reject) => {}),
       new DataView(new ArrayBuffer(12)),
       externalValue
@@ -73,7 +66,7 @@ function test(binding) {
     });
   }
 
-  function typeConverterTest(typeConverter, expectedType) {
+  function typeConverterTest (typeConverter, expectedType) {
     const testValueList = [
       true,
       false,
@@ -84,7 +77,7 @@ function test(binding) {
       new ArrayBuffer(10),
       new Int32Array(new ArrayBuffer(12)),
       {},
-      function() {},
+      function () {},
       new Promise((resolve, reject) => {})
     ];
 
@@ -100,7 +93,37 @@ function test(binding) {
     });
   }
 
+  function assertValueStrictlyEqual (value) {
+    const newValue = value.createNonEmptyValue();
+    assert(value.strictlyEquals(newValue, newValue));
+    assert(value.strictlyEqualsOverload(newValue, newValue));
+  }
+
+  function assertValueStrictlyNonEqual (value) {
+    const valueA = value.createNonEmptyValue();
+    const valueB = value.createExternal();
+    assert(value.strictlyNotEqualsOverload(valueA, valueB));
+  }
+
+  function assertValueReturnsCorrectEnv (value) {
+    assert(value.assertValueReturnsCorrectEnv());
+  }
+
+  function assertEmptyValueNullPtrOnCast (value) {
+    assert(value.assertEmptyValReturnNullPtrOnCast());
+  }
+
+  function assertNonEmptyReturnValOnCast (value) {
+    assert(value.assertNonEmptyReturnValOnCast());
+  }
+
   const value = binding.basic_types_value;
+
+  assertValueStrictlyEqual(value);
+  assertValueStrictlyNonEqual(value);
+  assertValueReturnsCorrectEnv(value);
+  assertEmptyValueNullPtrOnCast(value);
+  assertNonEmptyReturnValOnCast(value);
 
   typeCheckerTest(value.isUndefined, 'undefined');
   typeCheckerTest(value.isNull, 'null');
