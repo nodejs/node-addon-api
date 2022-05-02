@@ -96,12 +96,16 @@
       "url": "https://github.com/rubiagatra"
     },
     {
-      "name": "Ferdinand Holzer",
-      "url": "https://github.com/fholzer"
-    },
-    {
       "name": "Eric Bickle",
       "url": "https://github.com/ebickle"
+    },
+    {
+      "name": "extremeheat",
+      "url": "https://github.com/extremeheat"
+    },
+    {
+      "name": "Ferdinand Holzer",
+      "url": "https://github.com/fholzer"
     },
     {
       "name": "Gabriel Schulhof",
@@ -268,6 +272,10 @@
       "url": "https://github.com/DaAitch"
     },
     {
+      "name": "rgerd",
+      "url": "https://github.com/rgerd"
+    },
+    {
       "name": "Rolf Timmermans",
       "url": "https://github.com/rolftimmermans"
     },
@@ -320,8 +328,17 @@
       "url": "https://github.com/Velmisov"
     },
     {
+      "name": "Vladimir Morozov",
+      "url": "https://github.com/vmoroz"
+
+    },
+    {
       "name": "WenheLI",
       "url": "https://github.com/WenheLI"
+    },
+    {
+      "name": "Xuguang Mei",
+      "url": "https://github.com/meixg"
     },
     {
       "name": "Yohei Kishimoto",
@@ -393,6 +410,6 @@
     "lint:fix": "node tools/clang-format --fix && node tools/eslint-format --fix"
   },
   "pre-commit": "lint",
-  "version": "4.3.0",
+  "version": "5.0.0",
   "support": true
 }

@@ -1,5 +1,62 @@
 # node-addon-api Changelog
 
+## 2022-05-02 Version 5.0.0, @NickNaso
+
+### Notable changes:
+
+#### API
+- Marked methods of wrapper classes `const`.
+- Enabled wrapping `Napi` namespace with custom namespace.
+- Added an override to `Napi::Function::Call` to call it with a c-style array
+of `Napi::Value`'s.
+- Some other minor fixes.
+
+#### TEST
+
+- Improved the test framework. Added the possibility to run subsets of tests
+more easily.
+- Added test for `Napi::AsyncContext` class.
+- Fixed ramdom failure on test for `Napi::ThreadSafeFunction` e 
+`Napi::TypedThreadSafeFunction` class.
+- Fixed compilation problem on debian 8 system.
+- Added test for `Napi::Object::Set()` method.
+
+### Documentation
+- Added some clarifications for `Napi::ClassPropertyDescriptor`.
+- Added clarification about weak reference for `Napi::ObjectWrap`.
+- Some minor fixes all over the documentation.
+
+### TOOL
+
+- Fixed `eslint` configuration.
+- Fixed CI configuration for Windows.
+- Enabled pre-commit `ClangFormat` on Windows.
+
+### Commits
+
+* \[[`f32db917f3`](https://github.com/nodejs/node-addon-api/commit/f32db917f3)] - Add test coverage for async contexts (#1164) (Jack)
+* \[[`24455f88af`](https://github.com/nodejs/node-addon-api/commit/24455f88af)] - **src**: check for tsfn in conditional\_variable wait (Kevin Eady) [#1168](https://github.com/nodejs/node-addon-api/pull/1168)
+* \[[`40ed7ce409`](https://github.com/nodejs/node-addon-api/commit/40ed7ce409)] - **src**: fix regression introduced by #874 (Michael Dawson)
+* \[[`9bea434326`](https://github.com/nodejs/node-addon-api/commit/9bea434326)] - **doc**: added some comments to ClassPropertyDescriptor. (#1149) (Nicola Del Gobbo)
+* \[[`57c212e15f`](https://github.com/nodejs/node-addon-api/commit/57c212e15f)] - **buld**: Enable running pre-commit ClangFormat on Win (Vladimir Morozov)
+* \[[`8c46a9501a`](https://github.com/nodejs/node-addon-api/commit/8c46a9501a)] - **doc**: clarify ObjectWrap weak ref behavior (#1155) (Alba Mendez)
+* \[[`01274966d5`](https://github.com/nodejs/node-addon-api/commit/01274966d5)] - **build**: run Windows CI only on nondeprecated build configurations (#1152) (Darshan Sen)
+* \[[`b8449e17e0`](https://github.com/nodejs/node-addon-api/commit/b8449e17e0)] - **src**: mark methods of wrapper classes const (Nikolai Vavilov) [#874](https://github.com/nodejs/node-addon-api/pull/874)
+* \[[`5e2c1f24f8`](https://github.com/nodejs/node-addon-api/commit/5e2c1f24f8)] - **lint**: set sourceType to 'script' (#1141) (Anna Henningsen)
+* \[[`da8af20152`](https://github.com/nodejs/node-addon-api/commit/da8af20152)] - **doc**: mention Napi::Env arg for Finalization callback (#1139) (extremeheat)
+* \[[`5b51864a39`](https://github.com/nodejs/node-addon-api/commit/5b51864a39)] - **src**: enable wrapping Napi namespace with custom namespace (#1135) (Anna Henningsen)
+* \[[`c54aeef5fd`](https://github.com/nodejs/node-addon-api/commit/c54aeef5fd)] - Add Function::Call Napi::Value override (#1026) (rgerd)
+* \[[`e906b5a7ce`](https://github.com/nodejs/node-addon-api/commit/e906b5a7ce)] - **test**: fix compilation problem on debian 8 (NickNaso) [#1138](https://github.com/nodejs/node-addon-api/pull/1138)
+* \[[`5790c55784`](https://github.com/nodejs/node-addon-api/commit/5790c55784)] - **src**: do not use non-static class member for constant value (#1134) (Anna Henningsen)
+* \[[`b7659db945`](https://github.com/nodejs/node-addon-api/commit/b7659db945)] - Merge pull request #1130 from meixg/main (Jack)
+* \[[`a840d51d21`](https://github.com/nodejs/node-addon-api/commit/a840d51d21)] - Add test case for Object Set using uint32 as key (meixg)
+* \[[`2c88a7ec4c`](https://github.com/nodejs/node-addon-api/commit/2c88a7ec4c)] - Merge pull request #1132 from JckXia/test-wfl-run (Jack)
+* \[[`d3a5ed3869`](https://github.com/nodejs/node-addon-api/commit/d3a5ed3869)] - _**Revert**_ "window CI to running on 2019" (JckXia)
+* \[[`cee899ade5`](https://github.com/nodejs/node-addon-api/commit/cee899ade5)] - **src**: allow customization of ObjectWrap behavior (Aaron Meriwether) [#1125](https://github.com/nodejs/node-addon-api/pull/1125)
+* \[[`91879b4082`](https://github.com/nodejs/node-addon-api/commit/91879b4082)] - remove window-latest to debug (JckXia)
+* \[[`1593ef46ee`](https://github.com/nodejs/node-addon-api/commit/1593ef46ee)] - Testing CI run (JckXia)
+* \[[`744c8d2410`](https://github.com/nodejs/node-addon-api/commit/744c8d2410)] - **test**: enhance the test framework (Deepak Rajamohan)
+
 ## 2022-01-21 Version 4.3.0, @NickNaso
 
 ### Notable changes:
