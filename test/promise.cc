@@ -18,12 +18,19 @@ Value RejectPromise(const CallbackInfo& info) {
   return deferred.Promise();
 }
 
+Value PromiseReturnsCorrectEnv(const CallbackInfo& info) {
+  auto deferred = Promise::Deferred::New(info.Env());
+  return Boolean::New(info.Env(), deferred.Env() == info.Env());
+}
+
 Object InitPromise(Env env) {
   Object exports = Object::New(env);
 
   exports["isPromise"] = Function::New(env, IsPromise);
   exports["resolvePromise"] = Function::New(env, ResolvePromise);
   exports["rejectPromise"] = Function::New(env, RejectPromise);
+  exports["promiseReturnsCorrectEnv"] =
+      Function::New(env, PromiseReturnsCorrectEnv);
 
   return exports;
 }
