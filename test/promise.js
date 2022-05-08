@@ -5,7 +5,7 @@ const common = require('./common');
 
 module.exports = common.runTest(test);
 
-async function test(binding) {
+async function test (binding) {
   assert.strictEqual(binding.promise.isPromise({}), false);
 
   const resolving = binding.promise.resolvePromise('resolved');
