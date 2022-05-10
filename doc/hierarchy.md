@@ -81,7 +81,7 @@
 [`Napi::Reference<Napi::Object>`]: ./reference.md
 [`Napi::String`]: ./string.md
 [`Napi::Symbol`]: ./symbol.md
-[`Napi::ThreadSafeFunction`]: ./thread_safe_function.md
+[`Napi::ThreadSafeFunction`]: ./threadsafe_function.md
 [`Napi::TypeError`]: ./type_error.md
 [`Napi::TypedArray`]: ./typed_array.md
 [`Napi::TypedArrayOf`]: ./typed_array_of.md
