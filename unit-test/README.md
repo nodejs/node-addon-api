@@ -3,9 +3,9 @@
 
 ### Example:
 
-  - compile ad run only tests on objectwrap.cc and objectwrap.js
+  - compile and run only tests on objectwrap.cc and objectwrap.js
 ```
-    npm run unit --filter=objectwrap
+    npm run test --filter=objectwrap
 ```
 
 
@@ -15,7 +15,7 @@
 
   - compile and run all tests files ending with reference -> function_reference.cc object_reference.cc reference.cc
 ```
-    npm run unit --filter=*reference
+    npm run test --filter=*reference
 ```
 
 # Multiple filter conditions are also allowed
@@ -24,5 +24,5 @@
 
   - compile and run all tests under folders threadsafe_function and typed_threadsafe_function and also the objectwrap.cc file
 ```
-    npm run unit --filter='*function objectwrap'
+    npm run test --filter='*function objectwrap'
 ```
