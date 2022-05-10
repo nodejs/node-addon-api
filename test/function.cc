@@ -167,6 +167,10 @@ void IsConstructCall(const CallbackInfo& info) {
   callback({Napi::Boolean::New(info.Env(), isConstructCall)});
 }
 
+Value NewTargetCallback(const CallbackInfo& info) {
+  return info.NewTarget();
+}
+
 void MakeCallbackWithArgs(const CallbackInfo& info) {
   Env env = info.Env();
   Function callback = info[0].As<Function>();
@@ -233,6 +237,8 @@ Object InitFunction(Env env) {
       Function::New(env, VoidCallbackWithData, nullptr, &testData);
   exports["valueCallbackWithData"] =
       Function::New(env, ValueCallbackWithData, nullptr, &testData);
+  exports["newTargetCallback"] =
+      Function::New(env, NewTargetCallback, std::string("newTargetCallback"));
   exports["callWithArgs"] = Function::New(env, CallWithArgs);
   exports["callWithVector"] = Function::New(env, CallWithVector);
   exports["callWithVectorUsingCppWrapper"] =
@@ -271,6 +277,8 @@ Object InitFunction(Env env) {
   exports["voidCallback"] = Function::New<VoidCallback>(env, "voidCallback");
   exports["valueCallback"] =
       Function::New<ValueCallback>(env, std::string("valueCallback"));
+  exports["newTargetCallback"] =
+      Function::New<NewTargetCallback>(env, std::string("newTargetCallback"));
   exports["voidCallbackWithData"] =
       Function::New<VoidCallbackWithData>(env, nullptr, &testData);
   exports["valueCallbackWithData"] =

@@ -18,6 +18,10 @@ function test (binding) {
 
   assert.deepStrictEqual(binding.valueCallback(), { foo: 'bar' });
 
+  /* eslint-disable-next-line no-new, new-cap */
+  assert.strictEqual(new binding.newTargetCallback(), binding.newTargetCallback);
+  assert.strictEqual(binding.newTargetCallback(), undefined);
+
   let args = null;
   let ret = null;
   let receiver = null;
