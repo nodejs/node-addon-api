@@ -15,4 +15,6 @@ async function test (binding) {
   const rejecting = binding.promise.rejectPromise('error');
   await assert.strictEqual(binding.promise.isPromise(rejecting), true);
   rejecting.then(common.mustNotCall()).catch(common.mustCall());
+
+  assert(binding.promise.promiseReturnsCorrectEnv());
 }
