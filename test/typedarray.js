@@ -25,6 +25,7 @@ function test (binding) {
       assert.strictEqual(binding.typedarray.getTypedArrayType(t), data[0]);
       assert.strictEqual(binding.typedarray.getTypedArrayLength(t), length);
       assert.strictEqual(binding.typedarray.getTypedArraySize(t), data[2]);
+      assert.strictEqual(binding.typedarray.getTypedArrayByteOffset(t), 0);
       assert.strictEqual(binding.typedarray.getTypedArrayByteLength(t), data[2] * length);
 
       t[3] = 11;
@@ -52,6 +53,7 @@ function test (binding) {
       assert.strictEqual(binding.typedarray.getTypedArrayType(t), data[0]);
       assert.strictEqual(binding.typedarray.getTypedArrayLength(t), length);
       assert.strictEqual(binding.typedarray.getTypedArraySize(t), data[2]);
+      assert.strictEqual(binding.typedarray.getTypedArrayByteOffset(t), offset);
       assert.strictEqual(binding.typedarray.getTypedArrayByteLength(t), data[2] * length);
 
       t[3] = 11;
