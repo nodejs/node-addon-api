@@ -6,15 +6,15 @@ module.exports = require('./common').runTest(test);
 
 function test (binding) {
   const testData = [
-    ['int8', Int8Array],
-    ['uint8', Uint8Array],
-    ['uint8_clamped', Uint8ClampedArray],
-    ['int16', Int16Array],
-    ['uint16', Uint16Array],
-    ['int32', Int32Array],
-    ['uint32', Uint32Array],
-    ['float32', Float32Array],
-    ['float64', Float64Array]
+    ['int8', Int8Array, 1],
+    ['uint8', Uint8Array, 1],
+    ['uint8_clamped', Uint8ClampedArray, 1],
+    ['int16', Int16Array, 2],
+    ['uint16', Uint16Array, 2],
+    ['int32', Int32Array, 4],
+    ['uint32', Uint32Array, 4],
+    ['float32', Float32Array, 4],
+    ['float64', Float64Array, 8]
   ];
 
   testData.forEach(data => {
@@ -24,6 +24,7 @@ function test (binding) {
       assert.ok(t instanceof data[1]);
       assert.strictEqual(binding.typedarray.getTypedArrayType(t), data[0]);
       assert.strictEqual(binding.typedarray.getTypedArrayLength(t), length);
+      assert.strictEqual(binding.typedarray.getTypedArraySize(t), data[2]);
 
       t[3] = 11;
       assert.strictEqual(binding.typedarray.getTypedArrayElement(t, 3), 11);
@@ -49,6 +50,7 @@ function test (binding) {
       assert.ok(t instanceof data[1]);
       assert.strictEqual(binding.typedarray.getTypedArrayType(t), data[0]);
       assert.strictEqual(binding.typedarray.getTypedArrayLength(t), length);
+      assert.strictEqual(binding.typedarray.getTypedArraySize(t), data[2]);
 
       t[3] = 11;
       assert.strictEqual(binding.typedarray.getTypedArrayElement(t, 3), 11);
