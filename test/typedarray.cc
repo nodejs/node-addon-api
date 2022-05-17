@@ -184,6 +184,21 @@ Value GetTypedArrayLength(const CallbackInfo& info) {
   return Number::New(info.Env(), static_cast<double>(array.ElementLength()));
 }
 
+Value GetTypedArraySize(const CallbackInfo& info) {
+  TypedArray array = info[0].As<TypedArray>();
+  return Number::New(info.Env(), static_cast<double>(array.ElementSize()));
+}
+
+Value GetTypedArrayByteOffset(const CallbackInfo& info) {
+  TypedArray array = info[0].As<TypedArray>();
+  return Number::New(info.Env(), static_cast<double>(array.ByteOffset()));
+}
+
+Value GetTypedArrayByteLength(const CallbackInfo& info) {
+  TypedArray array = info[0].As<TypedArray>();
+  return Number::New(info.Env(), static_cast<double>(array.ByteLength()));
+}
+
 Value GetTypedArrayBuffer(const CallbackInfo& info) {
   TypedArray array = info[0].As<TypedArray>();
   return array.ArrayBuffer();
@@ -287,6 +302,11 @@ Object InitTypedArray(Env env) {
       Function::New(env, CreateInvalidTypedArray);
   exports["getTypedArrayType"] = Function::New(env, GetTypedArrayType);
   exports["getTypedArrayLength"] = Function::New(env, GetTypedArrayLength);
+  exports["getTypedArraySize"] = Function::New(env, GetTypedArraySize);
+  exports["getTypedArrayByteOffset"] =
+      Function::New(env, GetTypedArrayByteOffset);
+  exports["getTypedArrayByteLength"] =
+      Function::New(env, GetTypedArrayByteLength);
   exports["getTypedArrayBuffer"] = Function::New(env, GetTypedArrayBuffer);
   exports["getTypedArrayElement"] = Function::New(env, GetTypedArrayElement);
   exports["setTypedArrayElement"] = Function::New(env, SetTypedArrayElement);
