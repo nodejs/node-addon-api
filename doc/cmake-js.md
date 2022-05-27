@@ -47,7 +47,7 @@ add_definitions(-DNAPI_EXPERIMENTAL)
 
 ### node-addon-api
 
-If your Node-API native add-on uses the optional [**node-addon-api**](https://github.com/nodejs/node-addon-api#node-addon-api-module) C++ wrapper, the `CMakeLists.txt` file requires additional configuration information as described on the [CMake.js README file](https://github.com/cmake-js/cmake-js#n-api-and-node-addon-api).
+If your Node-API native add-on uses the optional [**node-addon-api**](https://github.com/nodejs/node-addon-api#node-addon-api-module) C++ wrapper, the `CMakeLists.txt` file requires additional configuration information as described on the [CMake.js README file](https://github.com/cmake-js/cmake-js#node-api-and-node-addon-api).
 
 ## Example
 
