@@ -6,7 +6,7 @@
 
 #### API
 - Marked methods of wrapper classes `const`.
-- Enabled wrapping `Napi` namespace with custom namespace.
+- Enabled wrapping `Napi` namespace with a custom namespace.
 - Added an override to `Napi::Function::Call` to call it with a c-style array
 of `Napi::Value`'s.
 - Some other minor fixes.
@@ -16,9 +16,9 @@ of `Napi::Value`'s.
 - Improved the test framework. Added the possibility to run subsets of tests
 more easily.
 - Added test for `Napi::AsyncContext` class.
-- Fixed ramdom failure on test for `Napi::ThreadSafeFunction` e 
+- Fixed random failure on test for `Napi::ThreadSafeFunction` e
 `Napi::TypedThreadSafeFunction` class.
-- Fixed compilation problem on debian 8 system.
+- Fixed compilation problem on Debian 8 system.
 - Added test for `Napi::Object::Set()` method.
 
 ### Documentation
@@ -72,7 +72,7 @@ more easily.
 - Removed travis config.
 - Updated compiler used for testing.
 - Added BigInt value test.
-- Minor fixes all overtest suite.
+- Minor fixes all over the test suite.
 
 ### Documentation
 
@@ -81,7 +81,7 @@ more easily.
 
 ### Commits
 
-* [[`7046834305`](https://github.com/nodejs/node-addon-api/commit/7046834305)] - Update to use recent version of stale action (Michael Dawson)
+* [[`7046834305`](https://github.com/nodejs/node-addon-api/commit/7046834305)] - Update to use the recent version of stale action (Michael Dawson)
 * [[`293c7327ad`](https://github.com/nodejs/node-addon-api/commit/293c7327ad)] - Merge pull request #1075 from JckXia/handle-error-thrown (Jack)
 * [[`706b19986d`](https://github.com/nodejs/node-addon-api/commit/706b19986d)] - **test**: create tools/eslint-format (Doni Rubiagatra) [#1080](https://github.com/nodejs/node-addon-api/pull/1080)
 * [[`e0567d098a`](https://github.com/nodejs/node-addon-api/commit/e0567d098a)] - Update documents (JckXia)
@@ -110,7 +110,7 @@ more easily.
 
 #### API
 
-- Allow creating Function with move-only functor.
+- Allow creating Function with a move-only functor.
 - Fixed casts to not be undefined behavior.
 
 #### TEST
@@ -142,17 +142,17 @@ more easily.
 
 #### API
 
-- `Napi::Reference` updated the default value to reflect the most possible 
+- `Napi::Reference` updated the default value to reflect the most possible
 values when there are any errors occurred on `napi_reference_unref`.
 - Added the check for nullpointer on `Napi::String` initialization.
-- Added the wraps for `napi_add_env_cleanup_hook` and 
+- Added the wraps for `napi_add_env_cleanup_hook` and
 `napi_remove_env_cleanup_hook`.
 - Added `Napi::Maybe<T>` class to handle pending exception when cpp exception
 disabled.
 
 #### TEST
 
-- Added first set of tests for `Napi::Symbol`.
+- Added the first set of tests for `Napi::Symbol`.
 - Updated test suite to avoid parallel running.
 
 ### Documentation
@@ -176,9 +176,9 @@ disabled.
 
 #### API
 
-- Fixed a crashing issue in `Napi::Error::ThrowAsJavaScriptException` 
+- Fixed a crashing issue in `Napi::Error::ThrowAsJavaScriptException`
 introducing the preprocessor directive `NODE_API_SWALLOW_UNTHROWABLE_EXCEPTIONS`.
-- Fixed compilation problem for GCC 11 and C++20. 
+- Fixed compilation problem for GCC 11 and C++20.
 
 #### TEST
 
@@ -219,14 +219,14 @@ introducing the preprocessor directive `NODE_API_SWALLOW_UNTHROWABLE_EXCEPTIONS`
 
 #### Documentation
 
-- Added docuemtnation for `Napi::Object::PropertyLValue`.
+- Added documentation for `Napi::Object::PropertyLValue`.
 - Changed all N-API references to Node-API.
 - Some minor corrections all over the documentation.
 
 #### TEST
 
-- Added tests relating to fetch property from Global Object.
-- Added addtiona tests for `Napi::Object`.
+- Added tests relating to fetching property from Global Object.
+- Added additional tests for `Napi::Object`.
 - Added test for `Napi::Function` contructors.
 - Fixed intermittent failure for `Napi::ThreadSafeFunction` test.
 - Some minor corrections all over the test suite.
@@ -235,7 +235,7 @@ introducing the preprocessor directive `NODE_API_SWALLOW_UNTHROWABLE_EXCEPTIONS`
 
 - Added Node.js v16.x to CI.
 - Added CI configuration for Windows.
-- Some fixex on linter command.
+- Some fixes on linter command.
 
 ### Commits
 
@@ -297,18 +297,18 @@ introducing the preprocessor directive `NODE_API_SWALLOW_UNTHROWABLE_EXCEPTIONS`
 #### API
 
 - Added `Napi::TypedThreadSafeFunction` class that is a new implementation for
-thread-safe functions. 
+thread-safe functions.
 - Fixed leak on `Napi::AsyncProgressWorkerBase`.
-- Fixed empty data on `Napi::AsyncProgressWorker::OnProgress` caused by race 
+- Fixed empty data on `Napi::AsyncProgressWorker::OnProgress` caused by race
 conditions of `Napi::AsyncProgressWorker`.
 - Added `Napi::ArrayBuffer::Detach()` and `Napi::ArrayBuffer::IsDetached()`.
-- Fixed problem on `Napi::FinalizeCallback` it needs to create a 
+- Fixed problem on `Napi::FinalizeCallback` it needs to create a
 `Napi::HandleScope` when it calls `Napi::ObjectWrap::~ObjectWrap()`.
 
 #### Documentation
 
 - Added documentation for `Napi::TypedThreadSafeFunction`.
-- Removed unsued Doxygen file.
+- Removed unused Doxygen file.
 - Clarified when to use N-API.
 - Added support information.
 - Some minor corrections all over the documentation.
@@ -321,9 +321,9 @@ conditions of `Napi::AsyncProgressWorker`.
 
 ### TOOL
 
-- Setup github actions for tests.
+- Setup Github actions for tests.
 - Added stale action.
-- Removed `sudo` tag from Travis CI.
+- Removed `Sudo` tag from Travis CI.
 - Added clang-format.
 - Added pre-commit package for linting.
 
@@ -373,10 +373,10 @@ conditions of `Napi::AsyncProgressWorker`.
 #### API
 
 - Introduced `include_dir` for use with **gyp** in a scalar context.
-- Added `Napi::Addon` to help handle the loading of a native add-on into 
+- Added `Napi::Addon` to help handle the loading of a native add-on into
 multiple threads and or multiple times in the same thread.
 - Concentrate callbacks provided to core N-API.
-- Make sure wrapcallback is used.
+- Make sure wrap callback is used.
 
 #### Documentation
 
@@ -388,9 +388,9 @@ multiple threads and or multiple times in the same thread.
 #### TEST
 
 - Added tests to check the build process.
-- Refactored test for threasfafe function using async/await.
-- Converted tests that gc into async functions that await 10 ticks after
-each gc.
+- Refactored test for threadsafe function using async/await.
+- Converted tests that go into async functions that await 10 ticks after
+each go.
 - Some minor corrections all over the test suite.
 
 ### Commits
@@ -478,7 +478,7 @@ are override-able.
 - Updated documentation for `Napi::ObjectWrap`.
 - Added documentation on how to add benchmark.
 - Added documentation for `Napi::AsyncProgressQueueWorker`.
-- Added suggestion about tags to use on NPM.
+- Added suggestions about tags to use on NPM.
 - Added reference to N-API badges.
 - Some minor corrections all over the documentation.
 
@@ -561,7 +561,7 @@ are override-able.
 - Improve `Napi::AsyncWorker` documentation.
 - Added documentation for `Napi::Object::AddFinalizer` method.
 - Improved documentation for `Napi::ThreadSafeFunction`.
-- Improved documentation about the usage of CMake as build tool.
+- Improved documentation about the usage of CMake as a build tool.
 - Some minor corrections all over the documentation.
 
 #### TEST
@@ -636,7 +636,7 @@ are override-able.
 
 #### TEST
 
-- Added test case for bool operator.
+- An added test case for bool operator.
 - Fixed test case for `Napi::ObjectWrap`.
 
 ### Commits
@@ -667,9 +667,9 @@ are override-able.
 #### API
 
 - Added `SuppressDestruct` method to `Napi::AsyncWorker`.
-- Added new build targets for debug.
+- Added new build targets for debugging.
 - Exposed macros that throw errors.
-- Fixed memory leaks caused by callback data when a napi error occurs.
+- Fixed memory leaks caused by callback data when an api error occurs.
 - Fixed missing `void *data` usage in `Napi::PropertyDescriptors`.
 
 #### Documentation
@@ -717,8 +717,8 @@ are override-able.
 
 #### Documentation
 
-- Updated links for examples to point to node-addon-examples repo.
-- Fixed typos on some parts of documentation.
+- Updated links for examples to point to the node-addon-examples repo.
+- Fixed typos on some parts of the documentation.
 
 #### API
 
@@ -742,7 +742,7 @@ are override-able.
 
 #### API
 
-- Add `Napi::CallbackScope` class that help to have the equivalent of the scope
+- Add `Napi::CallbackScope` class that helps to have the equivalent of the scope
 associated with a callback in place when making certain N-API calls
 
 #### TEST
@@ -768,7 +768,7 @@ associated with a callback in place when making certain N-API calls
 
 #### Documentation
 
-- Completed the documentation to cover all the API surface.
+- Completed the documentation to cover all the API surfaces.
 - Numerous fixes to make documentation more consistent in all of its parts.
 
 #### API
@@ -784,7 +784,7 @@ associated with a callback in place when making certain N-API calls
 
 #### TOOL
 
-- Add tool to check if a native add-on is built using N-API
+- Add a tool to check if a native add-on is built using N-API
 
 #### TEST
 
@@ -838,7 +838,7 @@ yet backported in the previous Node.js version.
 
 #### API
 
-- Add resource parameters to AsyncWorker constructor
+- Add resource parameters to the AsyncWorker constructor
 - Add memory management feature
 
 ### Commits
@@ -888,7 +888,7 @@ yet backported in the previous Node.js version.
   - Fixed initialization of std::string to nullptr
 
 #### Tests
-- Fix test failures on linuxOne and AIX
+- Fix test failures on Linux one and AIX
 - Added basic tests for Scopes
 - Fix MSVC warning C4244 in tests
 
@@ -912,5 +912,6 @@ yet backported in the previous Node.js version.
 * [0a899bf1c5] - doc: update indication of latest version (Michael Dawson) https://github.com/nodejs/node-addon-api/pull/211
 * [17c74e5a5e] - n-api: RangeError in napi_create_dataview() (Jinho Bang) https://github.com/nodejs/node-addon-api/pull/214
 * [4058a29989] - n-api: fix memory leak in napi_async_destroy() (Jinho Bang) https://github.com/nodejs/node-addon-api/pull/213
+
 
 
