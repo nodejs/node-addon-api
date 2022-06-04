@@ -636,7 +636,7 @@ are override-able.
 
 #### TEST
 
-- An added test case for bool operator.
+- Added test case for bool operator.
 - Fixed test case for `Napi::ObjectWrap`.
 
 ### Commits
