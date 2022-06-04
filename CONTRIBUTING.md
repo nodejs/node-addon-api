@@ -86,7 +86,7 @@ modules (listing them out on the repository/wiki, using them in workshops/tutori
 etc).
 
 The downside of this approach is the following:
-- Potential for lack of visibility: Evangelism and education are hard, and module
+- Potential for lack of visibility. Evangelism and education are hard, and module
 authors might not find the right patterns and instead implement things themselves
 - There might be greater friction for the Node-API WG in evolving APIs since the
 ecosystem would have taken dependencies on the API shape of **node-addon-api**
