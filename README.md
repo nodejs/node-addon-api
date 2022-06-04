@@ -6,7 +6,7 @@ If you have a local clone, you can update it by running:
 ```shell
 git branch -m master main
 git fetch origin
-git branch -u origin/main-main
+git branch -u origin/main main
 ```
 
 # **node-addon-api module**
