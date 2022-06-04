@@ -91,4 +91,3 @@ authors might not find the right patterns and instead implement things themselve
 - There might be greater friction for the Node-API WG in evolving APIs since the
 ecosystem would have taken dependencies on the API shape of **node-addon-api**
 
-
