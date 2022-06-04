@@ -291,4 +291,3 @@ Licensed under [MIT](./LICENSE.md)
 
 [ABI stability guide]: https://nodejs.org/en/docs/guides/abi-stability/
 [Node-API support matrix]: https://nodejs.org/dist/latest/docs/api/n-api.html#n_api_n_api_version_matrix
-
