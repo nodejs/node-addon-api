@@ -32,6 +32,7 @@ static Value TestUnref(const CallbackInfo& info) {
       static_cast<FinalizerDataType*>(nullptr));
 
   tsfn->BlockingCall();
+  tsfn->Ref(info.Env());
 
   setTimeout.Call(
       global,
