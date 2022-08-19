@@ -187,7 +187,7 @@ npm test --NAPI_VERSION=X
 
 where X is the version of Node-API you want to target.
 
-To run a specific unit test filters are available
+To run a specific unit test, filter conditions are available
 
 **Example:**
   compile and run only tests on objectwrap.cc and objectwrap.js
@@ -198,12 +198,12 @@ To run a specific unit test filters are available
 Multiple unit tests cane be selected with wildcards
 
 **Example:**
-compile and run all tests files ending with reference -> function_reference.cc object_reference.cc reference.cc
+compile and run all test files ending with "reference" -> function_reference.cc, object_reference.cc, reference.cc
  ```   
     npm run unit --filter=*reference
  ```
  
-Multiple filter conditions can be joined as well
+Multiple filter conditions can be joined to broaden the test selection
 
 **Example:**
  compile and run all tests under folders threadsafe_function and typed_threadsafe_function and also the objectwrap.cc file
