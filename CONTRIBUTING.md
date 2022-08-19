@@ -4,19 +4,19 @@
 By making a contribution to this project, I certify that:
 
  (a) The contribution was created in whole or in part by me and I
-     have the right to submit it under the open source license
+     have the right to submit it under the open-source license
      indicated in the file; or
 
  (b) The contribution is based upon previous work that, to the best
      of my knowledge, is covered under an appropriate open source
      license and I have the right under that license to submit that
      work with modifications, whether created in whole or in part
-     by me, under the same open source license (unless I am
+     by me, under the same open-source license (unless I am
      permitted to submit under a different license), as indicated
      in the file; or
 
  (c) The contribution was provided directly to me by some other
-     person who certified (a), (b) or (c) and I have not modified
+     person who certified (a), (b), or (c) and I have not modified
      it.
 
  (d) I understand and agree that this project and the contribution
@@ -38,7 +38,7 @@ contribute to **node-addon-api**:
 
 **node-addon-api** is meant to be a thin convenience wrapper around Node-API. With this
 in mind, contributions of any new APIs that wrap around a core Node-API API will
-be considered for merge. However, changes that wrap existing **node-addon-api**
+be considered for merging. However, changes that wrap existing **node-addon-api**
 APIs are encouraged to instead be provided as an ecosystem module. The
 **node-addon-api** team is happy to link to a curated set of modules that build on
 top of **node-addon-api** if they have broad usefulness to the community and promote
@@ -46,13 +46,13 @@ a recommended idiom or pattern.
 
 ### Rationale
 
-The Node-API team considered a couple different approaches with regards to changes
+The Node-API team considered a couple of different approaches with regard to changes
 extending **node-addon-api**
 - Larger core module - Incorporate these helpers and patterns into **node-addon-api**
 - Extras package - Create a new package (strawman name '**node-addon-api**-extras')
 that contain utility classes and methods that help promote good patterns and
 idioms while writing native addons with **node-addon-api**.
-- Ecosystem - Encourage creation of a module ecosystem around **node-addon-api**
+- Ecosystem - Encourage the creation of a module ecosystem around **node-addon-api**
 where folks can build on top of it.
 
 #### Larger Core
@@ -65,9 +65,9 @@ The downside of the approach is the following:
 - More maintenance burden on the Node-API WG core team.
 
 #### Extras Package
-This involves us spinning up a new package which contains the utility classes
+This involves us spinning up a new package that contains the utility classes
 and methods. This has the benefit of having a separate module where helpers
-which make it easier to implement certain patterns and idioms for native addons
+make it easier to implement certain patterns and idioms for native addons
 easier.
 
 The downside of this approach is the following:
@@ -86,8 +86,8 @@ modules (listing them out on the repository/wiki, using them in workshops/tutori
 etc).
 
 The downside of this approach is the following:
-- Potential for lack of visibility - evangelism and education is hard, and module
-authors might not find right patterns and instead implement things themselves
+- Potential for lack of visibility. Evangelism and education are hard, and module
+authors might not find the right patterns and instead implement things themselves
 - There might be greater friction for the Node-API WG in evolving APIs since the
 ecosystem would have taken dependencies on the API shape of **node-addon-api**
 
