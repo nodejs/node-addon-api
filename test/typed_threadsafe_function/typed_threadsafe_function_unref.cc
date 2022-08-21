@@ -63,6 +63,7 @@ static Value TestRef(const CallbackInfo& info) {
       static_cast<FinalizerDataType*>(nullptr));
 
   tsfn->BlockingCall();
+  tsfn->Unref(info.Env());
   tsfn->Ref(info.Env());
 
   return info.Env().Undefined();

@@ -61,7 +61,7 @@ function testRefCallback (resolve, reject, bindingFile) {
     child.kill();
     timeout = 0;
     resolve();
-  }, 500);
+  }, 1000);
 
   child.on('error', (err) => {
     clearTimeout(timeout);
