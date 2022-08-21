@@ -43,11 +43,37 @@ static Value TestUnref(const CallbackInfo& info) {
   return info.Env().Undefined();
 }
 
+static Value TestRef(const CallbackInfo& info) {
+  Object resource = info[0].As<Object>();
+  Function cb = info[1].As<Function>();
+
+  TSFN* tsfn = new TSFN;
+
+  *tsfn = TSFN::New(
+      info.Env(),
+      cb,
+      resource,
+      "Test",
+      1,
+      1,
+      nullptr,
+      [tsfn](Napi::Env /* env */, FinalizerDataType*, ContextType*) {
+        delete tsfn;
+      },
+      static_cast<FinalizerDataType*>(nullptr));
+
+  tsfn->BlockingCall();
+  tsfn->Ref(info.Env());
+
+  return info.Env().Undefined();
+}
+
 }  // namespace
 
 Object InitTypedThreadSafeFunctionUnref(Env env) {
   Object exports = Object::New(env);
   exports["testUnref"] = Function::New(env, TestUnref);
+  exports["testRef"] = Function::New(env, TestRef);
   return exports;
 }
 
