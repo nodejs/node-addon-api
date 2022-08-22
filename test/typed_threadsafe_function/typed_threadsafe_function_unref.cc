@@ -44,27 +44,13 @@ static Value TestUnref(const CallbackInfo& info) {
 }
 
 static Value TestRef(const CallbackInfo& info) {
-  Object resource = info[0].As<Object>();
   Function cb = info[1].As<Function>();
 
-  TSFN* tsfn = new TSFN;
+  auto tsfn = TSFN::New(info.Env(), cb, "testRes", 1, 1, nullptr);
 
-  *tsfn = TSFN::New(
-      info.Env(),
-      cb,
-      resource,
-      "Test",
-      1,
-      1,
-      nullptr,
-      [tsfn](Napi::Env /* env */, FinalizerDataType*, ContextType*) {
-        delete tsfn;
-      },
-      static_cast<FinalizerDataType*>(nullptr));
-
-  tsfn->BlockingCall();
-  tsfn->Unref(info.Env());
-  tsfn->Ref(info.Env());
+  tsfn.BlockingCall();
+  tsfn.Unref(info.Env());
+  tsfn.Ref(info.Env());
 
   return info.Env().Undefined();
 }

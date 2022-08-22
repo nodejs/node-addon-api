@@ -78,11 +78,11 @@ function testRefCallback (resolve, reject, bindingFile) {
 
 function test (bindingFile) {
   // Main process
-  new Promise((resolve, reject) => {
-    testRefCallback(resolve, reject, bindingFile);
+  return new Promise((resolve, reject) => {
+    testUnRefCallback(resolve, reject, bindingFile);
   }).then(() => {
     return new Promise((resolve, reject) => {
-      testUnRefCallback(resolve, reject, bindingFile);
+      testRefCallback(resolve, reject, bindingFile);
     });
   });
 }
