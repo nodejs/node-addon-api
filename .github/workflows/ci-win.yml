@@ -7,14 +7,14 @@ jobs:
     timeout-minutes: 30
     strategy:
       matrix:
-        node-version:  [10.x, 12.x, 14.x, 15.x, 16.x]
+        node-version:  [14.x, 16.x, 18.x]
         os:
           - windows-2019
     runs-on: ${{ matrix.os }}
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
     - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v2.1.5
+      uses: actions/setup-node@v3
       with:
         node-version: ${{ matrix.node-version }}
     - name: Check Node.js installation
