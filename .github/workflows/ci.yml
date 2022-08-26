@@ -32,7 +32,7 @@ jobs:
       run: |
         node --version
         npm --version
-  - name: Install dependencies
+    - name: Install dependencies
       run: |
         npm install
     - name: npm test
