@@ -39,7 +39,6 @@ Function TSFNWrap::Init(Napi::Env env) {
                   {InstanceMethod("getContext", &TSFNWrap::GetContext),
                    InstanceMethod("release", &TSFNWrap::Release)});
 
-  // exports.Set("TSFNWrap", func);
   return func;
 }
 
