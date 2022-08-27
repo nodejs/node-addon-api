@@ -1,3 +1,4 @@
+#include <assert.h>
 #include "napi.h"
 
 #if (NAPI_VERSION > 3)
@@ -11,7 +12,7 @@ namespace {
 
 class TSFNWrap : public ObjectWrap<TSFNWrap> {
  public:
-  static Object Init(Napi::Env env, Object exports);
+  static Function Init(Napi::Env env);
   TSFNWrap(const CallbackInfo& info);
 
   Napi::Value GetContext(const CallbackInfo& /*info*/) {
@@ -31,15 +32,15 @@ class TSFNWrap : public ObjectWrap<TSFNWrap> {
   std::unique_ptr<Promise::Deferred> _deferred;
 };
 
-Object TSFNWrap::Init(Napi::Env env, Object exports) {
+Function TSFNWrap::Init(Napi::Env env) {
   Function func =
       DefineClass(env,
                   "TSFNWrap",
                   {InstanceMethod("getContext", &TSFNWrap::GetContext),
                    InstanceMethod("release", &TSFNWrap::Release)});
 
-  exports.Set("TSFNWrap", func);
-  return exports;
+  // exports.Set("TSFNWrap", func);
+  return func;
 }
 
 TSFNWrap::TSFNWrap(const CallbackInfo& info) : ObjectWrap<TSFNWrap>(info) {
@@ -61,8 +62,41 @@ TSFNWrap::TSFNWrap(const CallbackInfo& info) : ObjectWrap<TSFNWrap>(info) {
 
 }  // namespace
 
+struct SimpleTestContext {
+  SimpleTestContext(int val) : _val(val) {}
+  int _val = -1;
+};
+
+// A simple test to check that the context has been set successfully
+void AssertGetContextFromTSFNNoFinalizerIsCorrect(const CallbackInfo& info) {
+  // Test the overload where we provide a resource name but no finalizer
+  using TSFN = TypedThreadSafeFunction<SimpleTestContext>;
+  SimpleTestContext* ctx = new SimpleTestContext(42);
+  TSFN tsfn = TSFN::New(info.Env(), "testRes", 1, 1, ctx);
+
+  assert(tsfn.GetContext() == ctx);
+  delete ctx;
+  tsfn.Release();
+
+  // Test the other overload where we provide a async resource object, res name
+  // but no finalizer
+  ctx = new SimpleTestContext(52);
+  tsfn = TSFN::New(
+      info.Env(), Object::New(info.Env()), "testResourceObject", 1, 1, ctx);
+
+  assert(tsfn.GetContext() == ctx);
+  delete ctx;
+  tsfn.Release();
+}
+
 Object InitTypedThreadSafeFunctionCtx(Env env) {
-  return TSFNWrap::Init(env, Object::New(env));
+  Object exports = Object::New(env);
+  Function tsfnWrap = TSFNWrap::Init(env);
+
+  exports.Set("TSFNWrap", tsfnWrap);
+  exports.Set("AssertTSFNReturnCorrectCxt",
+              Function::New(env, AssertGetContextFromTSFNNoFinalizerIsCorrect));
+  return exports;
 }
 
 #endif

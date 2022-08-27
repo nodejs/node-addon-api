@@ -9,4 +9,6 @@ async function test (binding) {
   const tsfn = new binding.typed_threadsafe_function_ctx.TSFNWrap(ctx);
   assert(tsfn.getContext() === ctx);
   await tsfn.release();
+
+  binding.typed_threadsafe_function_ctx.AssertTSFNReturnCorrectCxt();
 }
