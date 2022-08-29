@@ -63,6 +63,8 @@ function installAsyncHooksForTest () {
 }
 
 async function test (binding) {
+  binding.asyncworker.tryCancelQueuedWork(() => {}, 'echoString');
+
   if (!checkAsyncHooks()) {
     await new Promise((resolve) => {
       binding.asyncworker.doWork(true, {}, function (e) {

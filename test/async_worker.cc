@@ -1,7 +1,11 @@
+#include <chrono>
+#include <iostream>
+#include <thread>
+#include "assert.h"
 #include "napi.h"
 
 using namespace Napi;
-
+#define MAX_CANCEL_THREADS 6
 class TestWorker : public AsyncWorker {
  public:
   static void DoWork(const CallbackInfo& info) {
@@ -95,6 +99,58 @@ class TestWorkerNoCallback : public AsyncWorker {
   bool _succeed;
 };
 
+class EchoWorker : public AsyncWorker {
+ public:
+  EchoWorker(Function& cb, std::string& echo) : AsyncWorker(cb), echo(echo) {}
+  ~EchoWorker() {}
+
+  void Execute() override {
+    // Simulate cpu heavy task
+    std::this_thread::sleep_for(std::chrono::milliseconds(30));
+  }
+
+  void OnOK() override {
+    HandleScope scope(Env());
+    Callback().Call({Env().Null(), String::New(Env(), echo)});
+  }
+
+ private:
+  std::string echo;
+};
+
+class CancelWorker : public AsyncWorker {
+ public:
+  CancelWorker(Function& cb) : AsyncWorker(cb) {}
+  ~CancelWorker() {}
+
+  static void DoWork(const CallbackInfo& info) {
+    Function cb = info[0].As<Function>();
+    std::string echo = info[1].As<String>();
+    for (int i = 1; i < MAX_CANCEL_THREADS; i++) {
+      AsyncWorker* worker = new EchoWorker(cb, echo);
+      worker->Queue();
+      assert(worker->Env() == info.Env());
+    }
+
+    AsyncWorker* cancelWorker = new CancelWorker(cb);
+    cancelWorker->Queue();
+    cancelWorker->Cancel();
+  }
+
+  void Execute() override {
+    // Simulate cpu heavy task
+    std::this_thread::sleep_for(std::chrono::milliseconds(100));
+  }
+
+  void OnOK() override {
+    NAPI_THROW_IF_FAILED_VOID(this->Env(), napi_generic_failure);
+  }
+
+  void OnError(const Error&) override {
+    NAPI_THROW_IF_FAILED_VOID(this->Env(), napi_generic_failure);
+  }
+};
+
 Object InitAsyncWorker(Env env) {
   Object exports = Object::New(env);
   exports["doWork"] = Function::New(env, TestWorker::DoWork);
@@ -102,5 +158,6 @@ Object InitAsyncWorker(Env env) {
       Function::New(env, TestWorkerNoCallback::DoWork);
   exports["doWorkWithResult"] =
       Function::New(env, TestWorkerWithResult::DoWork);
+  exports["tryCancelQueuedWork"] = Function::New(env, CancelWorker::DoWork);
   return exports;
 }
