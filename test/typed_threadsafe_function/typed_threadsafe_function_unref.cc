@@ -32,6 +32,7 @@ static Value TestUnref(const CallbackInfo& info) {
       static_cast<FinalizerDataType*>(nullptr));
 
   tsfn->BlockingCall();
+  tsfn->Ref(info.Env());
 
   setTimeout.Call(
       global,
@@ -42,11 +43,24 @@ static Value TestUnref(const CallbackInfo& info) {
   return info.Env().Undefined();
 }
 
+static Value TestRef(const CallbackInfo& info) {
+  Function cb = info[1].As<Function>();
+
+  auto tsfn = TSFN::New(info.Env(), cb, "testRes", 1, 1, nullptr);
+
+  tsfn.BlockingCall();
+  tsfn.Unref(info.Env());
+  tsfn.Ref(info.Env());
+
+  return info.Env().Undefined();
+}
+
 }  // namespace
 
 Object InitTypedThreadSafeFunctionUnref(Env env) {
   Object exports = Object::New(env);
   exports["testUnref"] = Function::New(env, TestUnref);
+  exports["testRef"] = Function::New(env, TestRef);
   return exports;
 }
 
