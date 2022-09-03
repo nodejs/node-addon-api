@@ -1,5 +1,4 @@
 #include <chrono>
-#include <iostream>
 #include <thread>
 #include "assert.h"
 #include "napi.h"
