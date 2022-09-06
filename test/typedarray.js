@@ -90,7 +90,7 @@ function test (binding) {
       assert.strictEqual(binding.typedarray.getTypedArrayBuffer(t), b);
 
       const nonEmptyTypedArray = binding.typedarray.createTypedArray(data[0], length, data[3].buffer);
-      assert.strictEqual(binding.typedarray.checkBufferContent(nonEmptyTypedArray, data[3]),true);
+      assert.strictEqual(binding.typedarray.checkBufferContent(nonEmptyTypedArray, data[3]), true);
     } catch (e) {
       console.log(data);
       throw e;
