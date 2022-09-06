@@ -1,5 +1,5 @@
+#include <vector>
 #include "napi.h"
-
 using namespace Napi;
 
 #if defined(NAPI_HAS_CONSTEXPR)
@@ -179,6 +179,99 @@ Value GetTypedArrayType(const CallbackInfo& info) {
   }
 }
 
+template <typename type>
+bool TypedArrayDataIsEquivalent(TypedArrayOf<type> arr,
+                                TypedArrayOf<type> inputArr) {
+  if (arr.ElementLength() != inputArr.ElementLength()) {
+    return false;
+  }
+  std::vector<type> bufferContent(arr.Data(), arr.Data() + arr.ElementLength());
+  std::vector<type> inputContent(inputArr.Data(),
+                                 inputArr.Data() + inputArr.ElementLength());
+  if (bufferContent != inputContent) {
+    return false;
+  }
+  return true;
+}
+
+Value CheckBufferContent(const CallbackInfo& info) {
+  TypedArray array = info[0].As<TypedArray>();
+
+  switch (array.TypedArrayType()) {
+    case napi_int8_array:
+      return Boolean::New(
+          info.Env(),
+          TypedArrayDataIsEquivalent<int8_t>(info[0].As<Int8Array>(),
+                                             info[1].As<Int8Array>()));
+
+      break;
+    case napi_uint8_array:
+      return Boolean::New(
+          info.Env(),
+          TypedArrayDataIsEquivalent<int8_t>(info[0].As<Int8Array>(),
+                                             info[1].As<Int8Array>()));
+
+    case napi_uint8_clamped_array:
+      return Boolean::New(
+          info.Env(),
+          TypedArrayDataIsEquivalent<uint8_t>(info[0].As<Uint8Array>(),
+                                              info[1].As<Uint8Array>()));
+
+    case napi_int16_array:
+      return Boolean::New(
+          info.Env(),
+          TypedArrayDataIsEquivalent<int16_t>(info[0].As<Int16Array>(),
+                                              info[1].As<Int16Array>()));
+
+    case napi_uint16_array:
+      return Boolean::New(
+          info.Env(),
+          TypedArrayDataIsEquivalent<uint16_t>(info[0].As<Uint16Array>(),
+                                               info[1].As<Uint16Array>()));
+
+    case napi_int32_array:
+      return Boolean::New(
+          info.Env(),
+          TypedArrayDataIsEquivalent<int32_t>(info[0].As<Int32Array>(),
+                                              info[1].As<Int32Array>()));
+
+    case napi_uint32_array:
+      return Boolean::New(
+          info.Env(),
+          TypedArrayDataIsEquivalent<uint32_t>(info[0].As<Uint32Array>(),
+                                               info[1].As<Uint32Array>()));
+
+    case napi_float32_array:
+      return Boolean::New(
+          info.Env(),
+          TypedArrayDataIsEquivalent<float>(info[0].As<Float32Array>(),
+                                            info[1].As<Float32Array>()));
+
+    case napi_float64_array:
+      return Boolean::New(
+          info.Env(),
+          TypedArrayDataIsEquivalent<double>(info[0].As<Float64Array>(),
+                                             info[1].As<Float64Array>()));
+
+#if (NAPI_VERSION > 5)
+    case napi_bigint64_array:
+      return Boolean::New(
+          info.Env(),
+          TypedArrayDataIsEquivalent<int64_t>(info[0].As<BigInt64Array>(),
+                                              info[1].As<BigInt64Array>()));
+
+    case napi_biguint64_array:
+      return Boolean::New(
+          info.Env(),
+          TypedArrayDataIsEquivalent<uint64_t>(info[0].As<BigUint64Array>(),
+                                               info[1].As<BigUint64Array>()));
+
+#endif
+    default:
+      return Boolean::New(info.Env(), false);
+  }
+}
+
 Value GetTypedArrayLength(const CallbackInfo& info) {
   TypedArray array = info[0].As<TypedArray>();
   return Number::New(info.Env(), static_cast<double>(array.ElementLength()));
@@ -310,6 +403,7 @@ Object InitTypedArray(Env env) {
   exports["getTypedArrayBuffer"] = Function::New(env, GetTypedArrayBuffer);
   exports["getTypedArrayElement"] = Function::New(env, GetTypedArrayElement);
   exports["setTypedArrayElement"] = Function::New(env, SetTypedArrayElement);
+  exports["checkBufferContent"] = Function::New(env, CheckBufferContent);
 
   return exports;
 }
