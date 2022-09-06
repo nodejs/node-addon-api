@@ -6,6 +6,7 @@
       'build_sources': [
         'addon.cc',
         'addon_data.cc',
+             'typedarray.cc',
         'array_buffer.cc',
         'async_context.cc',
         'async_progress_queue_worker.cc',
@@ -63,7 +64,6 @@
         'typed_threadsafe_function/typed_threadsafe_function_sum.cc',
         'typed_threadsafe_function/typed_threadsafe_function_unref.cc',
         'typed_threadsafe_function/typed_threadsafe_function.cc',
-        'typedarray.cc',
         'objectwrap.cc',
         'objectwrap_constructor_exception.cc',
         'objectwrap_function.cc',
