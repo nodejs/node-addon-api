@@ -125,7 +125,9 @@ class CancelWorker : public AsyncWorker {
   static void DoWork(const CallbackInfo& info) {
     Function cb = info[0].As<Function>();
     std::string echo = info[1].As<String>();
-    for (int i = 1; i < MAX_CANCEL_THREADS; i++) {
+    int threadNum = info[2].As<Number>().Uint32Value();
+
+    for (int i = 0; i < threadNum; i++) {
       AsyncWorker* worker = new EchoWorker(cb, echo);
       worker->Queue();
       assert(worker->Env() == info.Env());
@@ -133,7 +135,17 @@ class CancelWorker : public AsyncWorker {
 
     AsyncWorker* cancelWorker = new CancelWorker(cb);
     cancelWorker->Queue();
+
+#ifdef NAPI_CPP_EXCEPTIONS
+    try {
+      cancelWorker->Cancel();
+    } catch (Napi::Error& e) {
+      Napi::Error::New(info.Env(), "Unable to cancel async worker tasks")
+          .ThrowAsJavaScriptException();
+    }
+#else
     cancelWorker->Cancel();
+#endif
   }
 
   void Execute() override {
@@ -142,11 +154,15 @@ class CancelWorker : public AsyncWorker {
   }
 
   void OnOK() override {
-    NAPI_THROW_IF_FAILED_VOID(this->Env(), napi_generic_failure);
+    Napi::Error::New(this->Env(),
+                     "OnOk should not be invoked on successful cancellation")
+        .ThrowAsJavaScriptException();
   }
 
   void OnError(const Error&) override {
-    NAPI_THROW_IF_FAILED_VOID(this->Env(), napi_generic_failure);
+    Napi::Error::New(this->Env(),
+                     "OnError should not be invoked on successful cancellation")
+        .ThrowAsJavaScriptException();
   }
 };
 
