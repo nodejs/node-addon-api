@@ -4,7 +4,7 @@
 #include "napi.h"
 
 using namespace Napi;
-#define MAX_CANCEL_THREADS 6
+
 class TestWorker : public AsyncWorker {
  public:
   static void DoWork(const CallbackInfo& info) {
