@@ -90,11 +90,6 @@ function loadTestModules (currentDirectory = __dirname, pre = '') {
 
 loadTestModules();
 
-process.config.target_defaults.default_configuration =
-  fs
-    .readdirSync(path.join(__dirname, process.env.REL_BUILD_PATH || '', 'build'))
-    .filter((item) => (item === 'Debug' || item === 'Release'))[0];
-
 let napiVersion = Number(process.versions.napi);
 if (process.env.NAPI_VERSION) {
   // we need this so that we don't try run tests that rely
