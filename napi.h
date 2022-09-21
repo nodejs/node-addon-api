@@ -1169,9 +1169,6 @@ class TypedArray : public Object {
              napi_typedarray_type type,
              size_t length);
 
-  static const napi_typedarray_type unknown_array_type =
-      static_cast<napi_typedarray_type>(-1);
-
   template <typename T>
   static
 #if defined(NAPI_HAS_CONSTEXPR)
@@ -1191,7 +1188,7 @@ class TypedArray : public Object {
            : std::is_same<T, int64_t>::value  ? napi_bigint64_array
            : std::is_same<T, uint64_t>::value ? napi_biguint64_array
 #endif  // NAPI_VERSION > 5
-                                              : unknown_array_type;
+                                              : napi_int8_array;
   }
   /// !endcond
 };

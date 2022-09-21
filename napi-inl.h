@@ -2003,19 +2003,13 @@ inline void DataView::WriteData(size_t byteOffset, T value) const {
 ////////////////////////////////////////////////////////////////////////////////
 
 inline TypedArray::TypedArray()
-    : Object(), _type(TypedArray::unknown_array_type), _length(0) {}
+    : Object(), _type(napi_typedarray_type::napi_int8_array), _length(0) {}
 
 inline TypedArray::TypedArray(napi_env env, napi_value value)
-    : Object(env, value), _type(TypedArray::unknown_array_type), _length(0) {}
-
-inline TypedArray::TypedArray(napi_env env,
-                              napi_value value,
-                              napi_typedarray_type type,
-                              size_t length)
-    : Object(env, value), _type(type), _length(length) {}
-
-inline napi_typedarray_type TypedArray::TypedArrayType() const {
-  if (_type == TypedArray::unknown_array_type) {
+    : Object(env, value),
+      _type(napi_typedarray_type::napi_int8_array),
+      _length(0) {
+  if (value != nullptr) {
     napi_status status =
         napi_get_typedarray_info(_env,
                                  _value,
@@ -2024,14 +2018,22 @@ inline napi_typedarray_type TypedArray::TypedArrayType() const {
                                  nullptr,
                                  nullptr,
                                  nullptr);
-    NAPI_THROW_IF_FAILED(_env, status, napi_int8_array);
+    NAPI_THROW_IF_FAILED_VOID(_env, status);
   }
+}
 
+inline TypedArray::TypedArray(napi_env env,
+                              napi_value value,
+                              napi_typedarray_type type,
+                              size_t length)
+    : Object(env, value), _type(type), _length(length) {}
+
+inline napi_typedarray_type TypedArray::TypedArrayType() const {
   return _type;
 }
 
 inline uint8_t TypedArray::ElementSize() const {
-  switch (TypedArrayType()) {
+  switch (_type) {
     case napi_int8_array:
     case napi_uint8_array:
     case napi_uint8_clamped_array:
@@ -2055,18 +2057,6 @@ inline uint8_t TypedArray::ElementSize() const {
 }
 
 inline size_t TypedArray::ElementLength() const {
-  if (_type == TypedArray::unknown_array_type) {
-    napi_status status =
-        napi_get_typedarray_info(_env,
-                                 _value,
-                                 &const_cast<TypedArray*>(this)->_type,
-                                 &const_cast<TypedArray*>(this)->_length,
-                                 nullptr,
-                                 nullptr,
-                                 nullptr);
-    NAPI_THROW_IF_FAILED(_env, status, 0);
-  }
-
   return _length;
 }
 
