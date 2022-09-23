@@ -61,3 +61,17 @@ Napi::Env Napi::HandleScope::Env() const;
 ```
 
 Returns the `Napi::Env` associated with the `Napi::HandleScope`.
+
+## Example
+
+```cpp
+for (int i = 0; i < LOOP_MAX; i++) {
+  Napi::HandleScope scope(info.Env());
+  std::string name = std::string("inner-scope") + std::to_string(i);
+  Napi::Value newValue = Napi::String::New(info.Env(), name.c_str());
+  // do something with newValue
+};
+```
+
+For more details refer to the section titled [Object lifetime
+management](object_lifetime_management.md).
