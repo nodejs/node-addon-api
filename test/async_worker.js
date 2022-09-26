@@ -63,6 +63,9 @@ function installAsyncHooksForTest () {
 }
 
 async function test (binding) {
+  const libUvThreadCount = Number(process.env.UV_THREADPOOL_SIZE || 4);
+  binding.asyncworker.tryCancelQueuedWork(() => {}, 'echoString', libUvThreadCount);
+
   if (!checkAsyncHooks()) {
     await new Promise((resolve) => {
       binding.asyncworker.doWork(true, {}, function (e) {
