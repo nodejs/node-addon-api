@@ -1,4 +1,6 @@
 #include <chrono>
+#include <condition_variable>
+#include <mutex>
 #include <thread>
 #include "assert.h"
 #include "napi.h"
@@ -117,6 +119,49 @@ class EchoWorker : public AsyncWorker {
   std::string echo;
 };
 
+std::condition_variable cv;
+std::mutex m;
+bool ready = false;
+class FailCancelWorker : public AsyncWorker {
+ public:
+  FailCancelWorker(Function& cb) : AsyncWorker(cb) {}
+  ~FailCancelWorker() {}
+
+  static void DoCancel(const CallbackInfo& info) {
+    Function cb = info[0].As<Function>();
+
+    AsyncWorker* cancelWorker = new FailCancelWorker(cb);
+    cancelWorker->Queue();
+    std::unique_lock<std::mutex> lk(m);
+    cv.wait(lk, [] { return ready; });
+    ready = false;
+
+#ifdef NAPI_CPP_EXCEPTIONS
+    try {
+      cancelWorker->Cancel();
+    } catch (Napi::Error& e) {
+      Napi::Error::New(info.Env(), "Unable to cancel async worker tasks")
+          .ThrowAsJavaScriptException();
+    }
+#else
+    cancelWorker->Cancel();
+#endif
+  }
+
+  void Execute() override {
+    {
+      std::lock_guard<std::mutex> lk(m);
+      ready = true;
+      cv.notify_one();
+    }
+    std::this_thread::sleep_for(std::chrono::seconds(1));
+  }
+
+  void OnOK() override {}
+
+  void OnError(const Error&) override {}
+};
+
 class CancelWorker : public AsyncWorker {
  public:
   CancelWorker(Function& cb) : AsyncWorker(cb) {}
@@ -174,5 +219,8 @@ Object InitAsyncWorker(Env env) {
   exports["doWorkWithResult"] =
       Function::New(env, TestWorkerWithResult::DoWork);
   exports["tryCancelQueuedWork"] = Function::New(env, CancelWorker::DoWork);
+
+  exports["expectCancelToFail"] =
+      Function::New(env, FailCancelWorker::DoCancel);
   return exports;
 }
