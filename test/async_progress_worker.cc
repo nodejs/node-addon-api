@@ -78,10 +78,17 @@ class MalignWorker : public AsyncProgressWorker<ProgressData> {
 
  protected:
   void Execute(const ExecutionProgress& progress) override {
-    std::unique_lock<std::mutex> lock(_cvm);
-    // Testing a nullptr send is acceptable.
-    progress.Send(nullptr, 0);
-    _cv.wait(lock);
+    {
+      std::unique_lock<std::mutex> lock(_cvm);
+      // Testing a nullptr send is acceptable.
+      progress.Send(nullptr, 0);
+      _cv.wait(lock);
+    }
+    {
+      std::unique_lock<std::mutex> lock(_cvm);
+      progress.Signal();
+      _cv.wait(lock);
+    }
     // Testing busy looping on send doesn't trigger unexpected empty data
     // OnProgress call.
     for (size_t i = 0; i < 1000000; i++) {
@@ -95,13 +102,15 @@ class MalignWorker : public AsyncProgressWorker<ProgressData> {
     _test_case_count++;
     bool error = false;
     Napi::String reason = Napi::String::New(env, "No error");
-    if (_test_case_count == 1 && count != 0) {
+    if (_test_case_count <= 2 && count != 0) {
       error = true;
-      reason = Napi::String::New(env, "expect 0 count of data on 1st call");
+      reason =
+          Napi::String::New(env, "expect 0 count of data on 1st and 2nd call");
     }
-    if (_test_case_count > 1 && count != 1) {
+    if (_test_case_count > 2 && count != 1) {
       error = true;
-      reason = Napi::String::New(env, "expect 1 count of data on non-1st call");
+      reason = Napi::String::New(
+          env, "expect 1 count of data on non-1st and non-2nd call");
     }
     _progress.MakeCallback(Receiver().Value(),
                            {Napi::Boolean::New(env, error), reason});

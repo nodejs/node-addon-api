@@ -6032,12 +6032,12 @@ inline void AsyncProgressWorker<T>::SendProgress_(const T* data, size_t count) {
 
 template <class T>
 inline void AsyncProgressWorker<T>::Signal() const {
-  this->NonBlockingCall(static_cast<T*>(nullptr));
+  this->SendProgress_(static_cast<T*>(nullptr), 0);
 }
 
 template <class T>
 inline void AsyncProgressWorker<T>::ExecutionProgress::Signal() const {
-  _worker->Signal();
+  _worker->SendProgress_(static_cast<T*>(nullptr), 0);
 }
 
 template <class T>
@@ -6140,7 +6140,7 @@ inline void AsyncProgressQueueWorker<T>::SendProgress_(const T* data,
 
 template <class T>
 inline void AsyncProgressQueueWorker<T>::Signal() const {
-  this->NonBlockingCall(nullptr);
+  this->SendProgress_(static_cast<T*>(nullptr), 0);
 }
 
 template <class T>
@@ -6152,7 +6152,7 @@ inline void AsyncProgressQueueWorker<T>::OnWorkComplete(Napi::Env env,
 
 template <class T>
 inline void AsyncProgressQueueWorker<T>::ExecutionProgress::Signal() const {
-  _worker->Signal();
+  _worker->SendProgress_(static_cast<T*>(nullptr), 0);
 }
 
 template <class T>

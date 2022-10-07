@@ -41,6 +41,8 @@ class TestWorker : public AsyncProgressQueueWorker<ProgressData> {
 
     if (_times < 0) {
       SetError("test error");
+    } else {
+      progress.Signal();
     }
     ProgressData data{0};
     for (int32_t idx = 0; idx < _times; idx++) {
@@ -49,11 +51,18 @@ class TestWorker : public AsyncProgressQueueWorker<ProgressData> {
     }
   }
 
-  void OnProgress(const ProgressData* data, size_t /* count */) override {
+  void OnProgress(const ProgressData* data, size_t count) override {
     Napi::Env env = Env();
+    _test_case_count++;
     if (!_js_progress_cb.IsEmpty()) {
-      Number progress = Number::New(env, data->progress);
-      _js_progress_cb.Call(Receiver().Value(), {progress});
+      if (_test_case_count == 1) {
+        if (count != 0) {
+          SetError("expect 0 count of data on 1st call");
+        }
+      } else {
+        Number progress = Number::New(env, data->progress);
+        _js_progress_cb.Call(Receiver().Value(), {progress});
+      }
     }
   }
 
@@ -68,6 +77,7 @@ class TestWorker : public AsyncProgressQueueWorker<ProgressData> {
   }
 
   int32_t _times;
+  size_t _test_case_count = 0;
   FunctionReference _js_progress_cb;
 };
 
