@@ -3004,12 +3004,13 @@ class AsyncProgressWorker : public AsyncProgressWorkerBase<void> {
 
  private:
   void Execute() override;
-  void Signal() const;
+  void Signal();
   void SendProgress_(const T* data, size_t count);
 
   std::mutex _mutex;
   T* _asyncdata;
   size_t _asyncsize;
+  bool _signaled;
 };
 
 template <class T>

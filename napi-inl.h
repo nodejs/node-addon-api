@@ -5940,7 +5940,8 @@ inline AsyncProgressWorker<T>::AsyncProgressWorker(const Object& receiver,
                                                    const Object& resource)
     : AsyncProgressWorkerBase(receiver, callback, resource_name, resource),
       _asyncdata(nullptr),
-      _asyncsize(0) {}
+      _asyncsize(0),
+      _signaled(false) {}
 
 #if NAPI_VERSION > 4
 template <class T>
@@ -5980,12 +5981,15 @@ template <class T>
 inline void AsyncProgressWorker<T>::OnWorkProgress(void*) {
   T* data;
   size_t size;
+  bool signaled;
   {
     std::lock_guard<std::mutex> lock(this->_mutex);
     data = this->_asyncdata;
     size = this->_asyncsize;
+    signaled = this->_signaled;
     this->_asyncdata = nullptr;
     this->_asyncsize = 0;
+    this->_signaled = false;
   }
 
   /**
@@ -5995,7 +5999,7 @@ inline void AsyncProgressWorker<T>::OnWorkProgress(void*) {
    * the deferring the signal of uv_async_t is been sent again, i.e. potential
    * not coalesced two calls of the TSFN callback.
    */
-  if (data == nullptr) {
+  if (data == nullptr && !signaled) {
     return;
   }
 
@@ -6014,6 +6018,7 @@ inline void AsyncProgressWorker<T>::SendProgress_(const T* data, size_t count) {
     old_data = _asyncdata;
     _asyncdata = new_data;
     _asyncsize = count;
+    _signaled = false;
   }
   this->NonBlockingCall(nullptr);
 
@@ -6021,13 +6026,17 @@ inline void AsyncProgressWorker<T>::SendProgress_(const T* data, size_t count) {
 }
 
 template <class T>
-inline void AsyncProgressWorker<T>::Signal() const {
+inline void AsyncProgressWorker<T>::Signal() {
+  {
+    std::lock_guard<std::mutex> lock(this->_mutex);
+    _signaled = true;
+  }
   this->NonBlockingCall(static_cast<T*>(nullptr));
 }
 
 template <class T>
 inline void AsyncProgressWorker<T>::ExecutionProgress::Signal() const {
-  _worker->Signal();
+  this->_worker->Signal();
 }
 
 template <class T>
@@ -6130,7 +6139,7 @@ inline void AsyncProgressQueueWorker<T>::SendProgress_(const T* data,
 
 template <class T>
 inline void AsyncProgressQueueWorker<T>::Signal() const {
-  this->NonBlockingCall(nullptr);
+  this->SendProgress_(static_cast<T*>(nullptr), 0);
 }
 
 template <class T>
@@ -6142,7 +6151,7 @@ inline void AsyncProgressQueueWorker<T>::OnWorkComplete(Napi::Env env,
 
 template <class T>
 inline void AsyncProgressQueueWorker<T>::ExecutionProgress::Signal() const {
-  _worker->Signal();
+  _worker->SendProgress_(static_cast<T*>(nullptr), 0);
 }
 
 template <class T>

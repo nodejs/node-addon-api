@@ -51,8 +51,11 @@ virtual void Napi::AsyncProgressWorker::OnOK();
 
 ### OnProgress
 
-This method is invoked when the computation in the `Napi::AsyncProgressWorker::ExecutionProcess::Send`
-method was called during worker thread execution.
+This method is invoked when the computation in the
+`Napi::AsyncProgressWorker::ExecutionProcess::Send` method was called during
+worker thread execution. This method can also be triggered via a call to
+`Napi::AsyncProgress[Queue]Worker::ExecutionProcess::Signal`, in which case the
+`data` parameter will be `nullptr`.
 
 ```cpp
 virtual void Napi::AsyncProgressWorker::OnProgress(const T* data, size_t count)
@@ -251,6 +254,15 @@ class instead which is documented further down this page.
 void Napi::AsyncProgressWorker::ExecutionProcess::Send(const T* data, size_t count) const;
 ```
 
+### Signal
+
+`Napi::AsyncProgressWorker::ExecutionProcess::Signal` triggers an invocation of
+`Napi::AsyncProgressWorker::OnProgress` with `nullptr` as the `data` parameter.
+
+```cpp
+void Napi::AsyncProgressWorker::ExecutionProcess::Signal();
+```
+
 ## Example
 
 The first step to use the `Napi::AsyncProgressWorker` class is to create a new class that
@@ -413,6 +425,15 @@ with each data item.
 
 ```cpp
 void Napi::AsyncProgressQueueWorker::ExecutionProcess::Send(const T* data, size_t count) const;
+```
+
+### Signal
+
+`Napi::AsyncProgressQueueWorker::ExecutionProcess::Signal` triggers an invocation of
+`Napi::AsyncProgressQueueWorker::OnProgress` with `nullptr` as the `data` parameter.
+
+```cpp
+void Napi::AsyncProgressQueueWorker::ExecutionProcess::Signal() const;
 ```
 
 ## Example
