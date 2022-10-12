@@ -119,22 +119,35 @@ class EchoWorker : public AsyncWorker {
   std::string echo;
 };
 
-std::condition_variable cv;
-std::mutex m;
-bool ready = false;
 class FailCancelWorker : public AsyncWorker {
+ private:
+  bool taskIsRunning = false;
+  std::mutex mu;
+  std::condition_variable taskStartingCv;
+  void NotifyJSThreadTaskHasStarted() {
+    {
+      std::lock_guard<std::mutex> lk(mu);
+      taskIsRunning = true;
+      taskStartingCv.notify_one();
+    }
+  }
+
  public:
   FailCancelWorker(Function& cb) : AsyncWorker(cb) {}
   ~FailCancelWorker() {}
 
+  void WaitForWorkerTaskToStart() {
+    std::unique_lock<std::mutex> lk(mu);
+    taskStartingCv.wait(lk, [this] { return taskIsRunning; });
+    taskIsRunning = false;
+  }
+
   static void DoCancel(const CallbackInfo& info) {
     Function cb = info[0].As<Function>();
 
-    AsyncWorker* cancelWorker = new FailCancelWorker(cb);
+    FailCancelWorker* cancelWorker = new FailCancelWorker(cb);
     cancelWorker->Queue();
-    std::unique_lock<std::mutex> lk(m);
-    cv.wait(lk, [] { return ready; });
-    ready = false;
+    cancelWorker->WaitForWorkerTaskToStart();
 
 #ifdef NAPI_CPP_EXCEPTIONS
     try {
@@ -149,11 +162,7 @@ class FailCancelWorker : public AsyncWorker {
   }
 
   void Execute() override {
-    {
-      std::lock_guard<std::mutex> lk(m);
-      ready = true;
-      cv.notify_one();
-    }
+    NotifyJSThreadTaskHasStarted();
     std::this_thread::sleep_for(std::chrono::seconds(1));
   }
 
