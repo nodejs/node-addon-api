@@ -1,4 +1,6 @@
 #include <chrono>
+#include <condition_variable>
+#include <mutex>
 #include <thread>
 #include "assert.h"
 #include "napi.h"
@@ -117,6 +119,58 @@ class EchoWorker : public AsyncWorker {
   std::string echo;
 };
 
+class FailCancelWorker : public AsyncWorker {
+ private:
+  bool taskIsRunning = false;
+  std::mutex mu;
+  std::condition_variable taskStartingCv;
+  void NotifyJSThreadTaskHasStarted() {
+    {
+      std::lock_guard<std::mutex> lk(mu);
+      taskIsRunning = true;
+      taskStartingCv.notify_one();
+    }
+  }
+
+ public:
+  FailCancelWorker(Function& cb) : AsyncWorker(cb) {}
+  ~FailCancelWorker() {}
+
+  void WaitForWorkerTaskToStart() {
+    std::unique_lock<std::mutex> lk(mu);
+    taskStartingCv.wait(lk, [this] { return taskIsRunning; });
+    taskIsRunning = false;
+  }
+
+  static void DoCancel(const CallbackInfo& info) {
+    Function cb = info[0].As<Function>();
+
+    FailCancelWorker* cancelWorker = new FailCancelWorker(cb);
+    cancelWorker->Queue();
+    cancelWorker->WaitForWorkerTaskToStart();
+
+#ifdef NAPI_CPP_EXCEPTIONS
+    try {
+      cancelWorker->Cancel();
+    } catch (Napi::Error& e) {
+      Napi::Error::New(info.Env(), "Unable to cancel async worker tasks")
+          .ThrowAsJavaScriptException();
+    }
+#else
+    cancelWorker->Cancel();
+#endif
+  }
+
+  void Execute() override {
+    NotifyJSThreadTaskHasStarted();
+    std::this_thread::sleep_for(std::chrono::seconds(1));
+  }
+
+  void OnOK() override {}
+
+  void OnError(const Error&) override {}
+};
+
 class CancelWorker : public AsyncWorker {
  public:
   CancelWorker(Function& cb) : AsyncWorker(cb) {}
@@ -174,5 +228,8 @@ Object InitAsyncWorker(Env env) {
   exports["doWorkWithResult"] =
       Function::New(env, TestWorkerWithResult::DoWork);
   exports["tryCancelQueuedWork"] = Function::New(env, CancelWorker::DoWork);
+
+  exports["expectCancelToFail"] =
+      Function::New(env, FailCancelWorker::DoCancel);
   return exports;
 }

@@ -66,6 +66,15 @@ async function test (binding) {
   const libUvThreadCount = Number(process.env.UV_THREADPOOL_SIZE || 4);
   binding.asyncworker.tryCancelQueuedWork(() => {}, 'echoString', libUvThreadCount);
 
+  let taskFailed = false;
+  try {
+    binding.asyncworker.expectCancelToFail(() => {});
+  } catch (e) {
+    taskFailed = true;
+  }
+
+  assert.equal(taskFailed, true, 'We expect task cancellation to fail');
+
   if (!checkAsyncHooks()) {
     await new Promise((resolve) => {
       binding.asyncworker.doWork(true, {}, function (e) {
