@@ -31,11 +31,24 @@ static Value TestUnref(const CallbackInfo& info) {
   return info.Env().Undefined();
 }
 
+static Value TestRef(const CallbackInfo& info) {
+  Function cb = info[1].As<Function>();
+
+  auto tsfn = ThreadSafeFunction::New(info.Env(), cb, "testRes", 1, 1);
+
+  tsfn.BlockingCall();
+  tsfn.Unref(info.Env());
+  tsfn.Ref(info.Env());
+
+  return info.Env().Undefined();
+}
+
 }  // namespace
 
 Object InitThreadSafeFunctionUnref(Env env) {
   Object exports = Object::New(env);
   exports["testUnref"] = Function::New(env, TestUnref);
+  exports["testRef"] = Function::New(env, TestRef);
   return exports;
 }
 
