@@ -86,6 +86,25 @@ void AssertGetContextFromTSFNNoFinalizerIsCorrect(const CallbackInfo& info) {
   assert(tsfn.GetContext() == ctx);
   delete ctx;
   tsfn.Release();
+
+  ctx = new SimpleTestContext(52);
+  tsfn = TSFN::New(info.Env(),
+                   "resStrings",
+                   1,
+                   1,
+                   ctx,
+                   [](Napi::Env, void*, SimpleTestContext*) {});
+
+  assert(tsfn.GetContext() == ctx);
+  delete ctx;
+  tsfn.Release();
+
+  ctx = new SimpleTestContext(52);
+  Function emptyFunc;
+  tsfn = TSFN::New(info.Env(), emptyFunc, "resString", 1, 1, ctx);
+  assert(tsfn.GetContext() == ctx);
+  delete ctx;
+  tsfn.Release();
 }
 
 Object InitTypedThreadSafeFunctionCtx(Env env) {
