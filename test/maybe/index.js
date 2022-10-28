@@ -1,11 +1,14 @@
 'use strict';
 
-const buildType = process.config.target_defaults.default_configuration;
 const assert = require('assert');
+const { whichBuildType } = require('../common');
 
 const napiChild = require('../napi_child');
 
-module.exports = test(require(`../build/${buildType}/binding_noexcept_maybe.node`).maybe_check);
+module.exports = async function wrapTest () {
+  const buildType = await whichBuildType();
+  test(require(`../build/${buildType}/binding_noexcept_maybe.node`).maybe_check);
+};
 
 function test (binding) {
   if (process.argv.includes('child')) {

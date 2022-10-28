@@ -1,6 +1,7 @@
 'use strict';
-const buildType = process.config.target_defaults.default_configuration;
+
 const assert = require('assert');
+const { whichBuildType } = require('./common');
 
 // These tests ensure that Error types can be used in a terminating
 // environment without triggering any fatal errors.
@@ -63,11 +64,16 @@ if (process.argv[2] === 'runInChildProcess') {
     assert.fail('This should not be reachable');
   }
 
-  test(`./build/${buildType}/binding.node`, true);
-  test(`./build/${buildType}/binding_noexcept.node`, true);
-  test(`./build/${buildType}/binding_swallowexcept.node`, false);
-  test(`./build/${buildType}/binding_swallowexcept_noexcept.node`, false);
-  test(`./build/${buildType}/binding_custom_namespace.node`, true);
+  wrapTest();
+
+  async function wrapTest () {
+    const buildType = await whichBuildType();
+    test(`./build/${buildType}/binding.node`, true);
+    test(`./build/${buildType}/binding_noexcept.node`, true);
+    test(`./build/${buildType}/binding_swallowexcept.node`, false);
+    test(`./build/${buildType}/binding_swallowexcept_noexcept.node`, false);
+    test(`./build/${buildType}/binding_custom_namespace.node`, true);
+  }
 
   function test (bindingPath, processShouldAbort) {
     const numberOfTestCases = 5;

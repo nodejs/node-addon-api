@@ -1,12 +1,13 @@
 'use strict';
 const path = require('path');
 const { Worker, isMainThread } = require('worker_threads');
+const { runTestWithBuildType, whichBuildType } = require('./common');
 
-module.exports = require('./common').runTestWithBuildType(test);
+module.exports = runTestWithBuildType(test);
 
-async function test (buildType) {
+async function test () {
   if (isMainThread) {
-    const buildType = process.config.target_defaults.default_configuration;
+    const buildType = await whichBuildType();
     const worker = new Worker(__filename, { workerData: buildType });
     return new Promise((resolve, reject) => {
       worker.on('exit', () => {
