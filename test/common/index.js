@@ -2,6 +2,7 @@
 'use strict';
 const assert = require('assert');
 const path = require('path');
+const { access } = require('node:fs/promises');
 
 const noop = () => {};
 
@@ -75,9 +76,35 @@ exports.mustNotCall = function (msg) {
   };
 };
 
-exports.runTest = async function (test, buildType, buildPathRoot = process.env.BUILD_PATH || '') {
-  buildType = buildType || process.config.target_defaults.default_configuration || 'Release';
+const buildTypes = {
+  Release: 'Release',
+  Debug: 'Debug'
+};
 
+async function checkBuildType (buildType) {
+  try {
+    await access(path.join(path.resolve('./test/build'), buildType));
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+async function whichBuildType () {
+  let buildType;
+  if (await checkBuildType(buildTypes.Release)) {
+    buildType = buildTypes.Release;
+  }
+  if (await checkBuildType(buildTypes.Debug)) {
+    buildType = buildTypes.Debug;
+  }
+  return buildType;
+}
+
+exports.whichBuildType = whichBuildType;
+
+exports.runTest = async function (test, buildType, buildPathRoot = process.env.BUILD_PATH || '') {
+  buildType = buildType || await whichBuildType() || 'Release';
   const bindings = [
     path.join(buildPathRoot, `../build/${buildType}/binding.node`),
     path.join(buildPathRoot, `../build/${buildType}/binding_noexcept.node`),
@@ -92,7 +119,7 @@ exports.runTest = async function (test, buildType, buildPathRoot = process.env.B
 };
 
 exports.runTestWithBindingPath = async function (test, buildType, buildPathRoot = process.env.BUILD_PATH || '') {
-  buildType = buildType || process.config.target_defaults.default_configuration || 'Release';
+  buildType = buildType || await whichBuildType() || 'Release';
 
   const bindings = [
     path.join(buildPathRoot, `../build/${buildType}/binding.node`),
@@ -107,7 +134,7 @@ exports.runTestWithBindingPath = async function (test, buildType, buildPathRoot 
 };
 
 exports.runTestWithBuildType = async function (test, buildType) {
-  buildType = buildType || process.config.target_defaults.default_configuration || 'Release';
+  buildType = buildType || await whichBuildType() || 'Release';
 
   await Promise.resolve(test(buildType))
     .finally(exports.mustCall());
