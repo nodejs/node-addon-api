@@ -91,7 +91,7 @@ async function checkBuildType (buildType) {
 }
 
 async function whichBuildType () {
-  let buildType;
+  let buildType = 'Release';
   if (await checkBuildType(buildTypes.Release)) {
     buildType = buildTypes.Release;
   }
@@ -104,7 +104,7 @@ async function whichBuildType () {
 exports.whichBuildType = whichBuildType;
 
 exports.runTest = async function (test, buildType, buildPathRoot = process.env.BUILD_PATH || '') {
-  buildType = buildType || await whichBuildType() || 'Release';
+  buildType = buildType || await whichBuildType();
   const bindings = [
     path.join(buildPathRoot, `../build/${buildType}/binding.node`),
     path.join(buildPathRoot, `../build/${buildType}/binding_noexcept.node`),
@@ -119,7 +119,7 @@ exports.runTest = async function (test, buildType, buildPathRoot = process.env.B
 };
 
 exports.runTestWithBindingPath = async function (test, buildType, buildPathRoot = process.env.BUILD_PATH || '') {
-  buildType = buildType || await whichBuildType() || 'Release';
+  buildType = buildType || await whichBuildType();
 
   const bindings = [
     path.join(buildPathRoot, `../build/${buildType}/binding.node`),
@@ -134,7 +134,7 @@ exports.runTestWithBindingPath = async function (test, buildType, buildPathRoot 
 };
 
 exports.runTestWithBuildType = async function (test, buildType) {
-  buildType = buildType || await whichBuildType() || 'Release';
+  buildType = buildType || await whichBuildType();
 
   await Promise.resolve(test(buildType))
     .finally(exports.mustCall());
