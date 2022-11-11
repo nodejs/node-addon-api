@@ -134,12 +134,56 @@ class MalignWorker : public AsyncProgressWorker<ProgressData> {
   std::mutex _cvm;
   FunctionReference _progress;
 };
+
+// Calling a Signal after a SendProgress should not clear progress data
+class SignalAfterProgressTestWorker : public AsyncProgressWorker<ProgressData> {
+ public:
+  static void DoWork(const CallbackInfo& info) {
+    Function cb = info[0].As<Function>();
+    Function progress = info[1].As<Function>();
+
+    SignalAfterProgressTestWorker* worker = new SignalAfterProgressTestWorker(
+        cb, progress, "TestResource", Object::New(info.Env()));
+    worker->Queue();
+  }
+
+ protected:
+  void Execute(const ExecutionProgress& progress) override {
+    ProgressData data{0};
+    progress.Send(&data, 1);
+    progress.Signal();
+  }
+
+  void OnProgress(const ProgressData* /* data */, size_t count) override {
+    Napi::Env env = Env();
+    bool error = false;
+    Napi::String reason = Napi::String::New(env, "No error");
+    if (count != 1) {
+      error = true;
+      reason = Napi::String::New(env, "expect 1 count of data");
+    }
+    _progress.MakeCallback(Receiver().Value(),
+                           {Napi::Boolean::New(env, error), reason});
+  }
+
+ private:
+  SignalAfterProgressTestWorker(Function cb,
+                                Function progress,
+                                const char* resource_name,
+                                const Object& resource)
+      : AsyncProgressWorker(cb, resource_name, resource) {
+    _progress.Reset(progress, 1);
+  }
+  FunctionReference _progress;
+};
 }  // namespace
 
 Object InitAsyncProgressWorker(Env env) {
   Object exports = Object::New(env);
   exports["doWork"] = Function::New(env, TestWorker::DoWork);
   exports["doMalignTest"] = Function::New(env, MalignWorker::DoWork);
+  exports["doSignalAfterProgressTest"] =
+      Function::New(env, SignalAfterProgressTestWorker::DoWork);
   return exports;
 }
 
