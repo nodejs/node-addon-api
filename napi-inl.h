@@ -6234,6 +6234,11 @@ Env::CleanupHook<Hook> Env::AddCleanupHook(Hook hook) {
 }
 
 template <typename Hook, typename Arg>
+Env::CleanupHook<Hook, Arg>::CleanupHook() {
+  data = nullptr;
+}
+
+template <typename Hook, typename Arg>
 Env::CleanupHook<Hook, Arg>::CleanupHook(Napi::Env env, Hook hook)
     : wrapper(Env::CleanupHook<Hook, Arg>::Wrapper) {
   data = new CleanupData{std::move(hook), nullptr};

@@ -283,10 +283,7 @@ using MaybeOrValue = T;
 /// corresponds to an Isolate.
 class Env {
  private:
-#if NAPI_VERSION > 2
-  template <typename Hook, typename Arg = void>
-  class CleanupHook;
-#endif  // NAPI_VERSION > 2
+  napi_env _env;
 #if NAPI_VERSION > 5
   template <typename T>
   static void DefaultFini(Env, T* data);
@@ -310,6 +307,9 @@ class Env {
   MaybeOrValue<Value> RunScript(String script) const;
 
 #if NAPI_VERSION > 2
+  template <typename Hook, typename Arg = void>
+  class CleanupHook;
+
   template <typename Hook>
   CleanupHook<Hook> AddCleanupHook(Hook hook);
 
@@ -335,13 +335,11 @@ class Env {
   void SetInstanceData(DataType* data, HintType* hint) const;
 #endif  // NAPI_VERSION > 5
 
- private:
-  napi_env _env;
-
 #if NAPI_VERSION > 2
   template <typename Hook, typename Arg>
   class CleanupHook {
    public:
+    CleanupHook();
     CleanupHook(Env env, Hook hook, Arg* arg);
     CleanupHook(Env env, Hook hook);
     bool Remove(Env env);
@@ -357,8 +355,8 @@ class Env {
       Arg* arg;
     } * data;
   };
-};
 #endif  // NAPI_VERSION > 2
+};
 
 /// A JavaScript value of unknown type.
 ///
