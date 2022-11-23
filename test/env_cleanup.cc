@@ -20,6 +20,13 @@ static void cleanupVoid() {
 static int secret1 = 42;
 static int secret2 = 43;
 
+class TestClass {
+ public:
+  Env::CleanupHook<void (*)(void* arg), int> hook;
+
+  void removeHook(Env env) { hook.Remove(env); }
+};
+
 Value AddHooks(const CallbackInfo& info) {
   auto env = info.Env();
 
@@ -71,6 +78,11 @@ Value AddHooks(const CallbackInfo& info) {
   added += !hook4.IsEmpty();
   added += !hook5.IsEmpty();
   added += !hook6.IsEmpty();
+
+  // Test store a hook in a member class variable
+  auto myclass = TestClass();
+  myclass.hook = env.AddCleanupHook(cleanup, &secret1);
+  myclass.removeHook(env);
 
   return Number::New(env, added);
 }
