@@ -49,7 +49,7 @@ If a C++ exception of type `Napi::Error` escapes from a Node-API C++ callback, t
 the Node-API wrapper automatically converts and throws it as a JavaScript exception.
 
 On return from a native method, node-addon-api will automatically convert a pending
-`Napi:Error` C++ exception to a JavaScript exception.
+`Napi::Error` C++ exception to a JavaScript exception.
 
 When C++ exceptions are enabled try/catch can be used to catch exceptions thrown
 from calls to JavaScript and then they can either be handled or rethrown before
