@@ -26,7 +26,7 @@ The following sections explain the approach for each case:
 <a name="exceptions"></a>
 
 In most cases when an error occurs, the addon should do whatever cleanup is possible
-and then return to JavaScript so that the error can be propagated.  In less frequent
+and then return to JavaScript so that the error can be propagated. In less frequent
 cases the addon may be able to recover from the error, clear the error and then
 continue.
 
@@ -48,8 +48,8 @@ method.
 If a C++ exception of type `Napi::Error` escapes from a Node-API C++ callback, then
 the Node-API wrapper automatically converts and throws it as a JavaScript exception.
 
-On return from a native method, node-addon-api will automatically convert a pending C++
-exception to a JavaScript exception.
+On return from a native method, node-addon-api will automatically convert a pending
+`Napi:Error` C++ exception to a JavaScript exception.
 
 When C++ exceptions are enabled try/catch can be used to catch exceptions thrown
 from calls to JavaScript and then they can either be handled or rethrown before
