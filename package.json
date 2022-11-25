@@ -405,7 +405,7 @@
     "benchmark": "node benchmark",
     "pretest": "node-gyp rebuild -C test",
     "test": "node test",
-    "test:debug": "node-gyp rebuild -C test --debug && node ./test/index.js",
+    "test:debug": "node-gyp rebuild -C test --debug && BUILD_TYPE=Debug node ./test/index.js",
     "predev": "node-gyp rebuild -C test --debug",
     "dev": "node test",
     "predev:incremental": "node-gyp configure build -C test --debug",

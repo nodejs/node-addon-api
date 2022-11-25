@@ -91,12 +91,25 @@ async function checkBuildType (buildType) {
 }
 
 async function whichBuildType () {
-  let buildType = 'Release';
-  if (await checkBuildType(buildTypes.Release)) {
-    buildType = buildTypes.Release;
-  }
-  if (await checkBuildType(buildTypes.Debug)) {
-    buildType = buildTypes.Debug;
+  let buildType;
+  const envBuildType = process.env.BUILD_TYPE;
+  if (envBuildType) {
+    if (Object.values(buildTypes).includes(envBuildType)) {
+      if (await checkBuildType(envBuildType)) {
+        buildType = envBuildType;
+      } else {
+        throw new Error(`The ${envBuildType} build doesn't exists.`);
+      }
+    } else {
+      throw new Error('Invalid value for BUILD_TYPE environment variable. It should be set to Release or Debug.');
+    }
+  } else {
+    if (await checkBuildType(buildTypes.Release)) {
+      buildType = buildTypes.Release;
+    }
+    if (await checkBuildType(buildTypes.Debug)) {
+      buildType = buildTypes.Debug;
+    }
   }
   return buildType;
 }
