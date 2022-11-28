@@ -254,26 +254,6 @@ struct ThreadSafeFinalize {
   Finalizer callback;
 };
 
-// template <typename ContextType, typename DataType, typename CallJs>
-// typename std::enable_if<call != nullptr>::type static inline CallJsWrapper(
-//     napi_env env, napi_value jsCallback, void* context, void* data, CallJs
-//     call) {
-//   call(env,
-//        Function(env, jsCallback),
-//        static_cast<ContextType*>(context),
-//        static_cast<DataType*>(data));
-// }
-
-// template <typename ContextType, typename DataType, typename CallJs>
-// typename std::enable_if<call == nullptr>::type static inline CallJsWrapper(
-//     napi_env env, napi_value jsCallback, void* /*context*/, void* /*data*/,
-//     CallJs call) {
-
-//   if (jsCallback != nullptr) {
-//     Function(env, jsCallback).Call(0, nullptr);
-//   }
-// }
-
 template <typename ContextType, typename DataType, typename CallJs>
 void static inline CallJsWrapper(napi_env env,
                                  napi_value jsCallback,
