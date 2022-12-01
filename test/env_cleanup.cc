@@ -21,12 +21,10 @@ static int secret1 = 42;
 static int secret2 = 43;
 
 class TestClass {
-  public:
-    Env::CleanupHook<void (*)(void *arg), int> hook;
+ public:
+  Env::CleanupHook<void (*)(void* arg), int> hook;
 
-    void removeHook(Env env) {
-      hook.Remove(env);
-    }
+  void removeHook(Env env) { hook.Remove(env); }
 };
 
 Value AddHooks(const CallbackInfo& info) {
