@@ -91,8 +91,8 @@ async function checkBuildType (buildType) {
 }
 
 async function whichBuildType () {
-  let buildType;
-  const envBuildType = process.env.BUILD_TYPE;
+  let buildType = 'Release';
+  const envBuildType = process.env.NODE_API_BUILD_CONFIG;
   if (envBuildType) {
     if (Object.values(buildTypes).includes(envBuildType)) {
       if (await checkBuildType(envBuildType)) {
@@ -101,14 +101,7 @@ async function whichBuildType () {
         throw new Error(`The ${envBuildType} build doesn't exists.`);
       }
     } else {
-      throw new Error('Invalid value for BUILD_TYPE environment variable. It should be set to Release or Debug.');
-    }
-  } else {
-    if (await checkBuildType(buildTypes.Release)) {
-      buildType = buildTypes.Release;
-    }
-    if (await checkBuildType(buildTypes.Debug)) {
-      buildType = buildTypes.Debug;
+      throw new Error('Invalid value for NODE_API_BUILD_CONFIG environment variable. It should be set to Release or Debug.');
     }
   }
   return buildType;
