@@ -50,7 +50,7 @@
         'object/subscript_operator.cc',
         'promise.cc',
         'run_script.cc',
-        "symbol.cc",
+        'symbol.cc',
         'threadsafe_function/threadsafe_function_ctx.cc',
         'threadsafe_function/threadsafe_function_existing_tsfn.cc',
         'threadsafe_function/threadsafe_function_ptr.cc',
