@@ -59,7 +59,7 @@ class Addon {
 
   static void DeleteAddon(Napi::Env, Addon* addon, uint32_t* hint) {
     delete addon;
-    fprintf(stderr, "hint: %d\n", *hint);
+    fprintf(stderr, "hint: %u\n", *hint);
     delete hint;
   }
 

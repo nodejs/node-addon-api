@@ -82,16 +82,16 @@ Value CallWithRecvVector(const CallbackInfo& info) {
 Value CallWithRecvArgc(const CallbackInfo& info) {
   HandleScope scope(info.Env());
   FunctionReference ref;
-  int argLength = info.Length() - 2;
-  napi_value* args = new napi_value[argLength];
   ref.Reset(info[0].As<Function>());
 
-  int argIdx = 0;
-  for (int i = 2; i < (int)info.Length(); i++, argIdx++) {
-    args[argIdx] = info[i];
+  size_t argLength = info.Length() > 2 ? info.Length() - 2 : 0;
+  std::unique_ptr<napi_value[]> args{argLength > 0 ? new napi_value[argLength]
+                                                   : nullptr};
+  for (size_t i = 0; i < argLength; ++i) {
+    args[i] = info[i + 2];
   }
 
-  return MaybeUnwrap(ref.Call(info[1], argLength, args));
+  return MaybeUnwrap(ref.Call(info[1], argLength, args.get()));
 }
 
 Value MakeAsyncCallbackWithInitList(const Napi::CallbackInfo& info) {
@@ -121,17 +121,19 @@ Value MakeAsyncCallbackWithVector(const Napi::CallbackInfo& info) {
 Value MakeAsyncCallbackWithArgv(const Napi::CallbackInfo& info) {
   Napi::FunctionReference ref;
   ref.Reset(info[0].As<Function>());
-  int argLength = info.Length() - 1;
-  napi_value* args = new napi_value[argLength];
 
-  int argIdx = 0;
-  for (int i = 1; i < (int)info.Length(); i++, argIdx++) {
-    args[argIdx] = info[i];
+  size_t argLength = info.Length() > 1 ? info.Length() - 1 : 0;
+  std::unique_ptr<napi_value[]> args{argLength > 0 ? new napi_value[argLength]
+                                                   : nullptr};
+  for (size_t i = 0; i < argLength; ++i) {
+    args[i] = info[i + 1];
   }
 
   Napi::AsyncContext context(info.Env(), "func_ref_resources", {});
-  return MaybeUnwrap(ref.MakeCallback(
-      Napi::Object::New(info.Env()), argLength, args, context));
+  return MaybeUnwrap(ref.MakeCallback(Napi::Object::New(info.Env()),
+                                      argLength,
+                                      argLength > 0 ? args.get() : nullptr,
+                                      context));
 }
 
 Value CreateFunctionReferenceUsingNew(const Napi::CallbackInfo& info) {

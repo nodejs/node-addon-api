@@ -152,7 +152,7 @@ class FailCancelWorker : public AsyncWorker {
 #ifdef NAPI_CPP_EXCEPTIONS
     try {
       cancelWorker->Cancel();
-    } catch (Napi::Error& e) {
+    } catch (Napi::Error&) {
       Napi::Error::New(info.Env(), "Unable to cancel async worker tasks")
           .ThrowAsJavaScriptException();
     }
@@ -193,7 +193,7 @@ class CancelWorker : public AsyncWorker {
 #ifdef NAPI_CPP_EXCEPTIONS
     try {
       cancelWorker->Cancel();
-    } catch (Napi::Error& e) {
+    } catch (Napi::Error&) {
       Napi::Error::New(info.Env(), "Unable to cancel async worker tasks")
           .ThrowAsJavaScriptException();
     }
