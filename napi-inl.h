@@ -30,11 +30,11 @@ namespace details {
 // TODO: Replace this code with `napi_add_finalizer()` whenever it becomes
 // available on all supported versions of Node.js.
 template <typename FreeType>
-static inline napi_status AttachData(napi_env env,
-                                     napi_value obj,
-                                     FreeType* data,
-                                     napi_finalize finalizer = nullptr,
-                                     void* hint = nullptr) {
+inline napi_status AttachData(napi_env env,
+                              napi_value obj,
+                              FreeType* data,
+                              napi_finalize finalizer = nullptr,
+                              void* hint = nullptr) {
   napi_status status;
   if (finalizer == nullptr) {
     finalizer = [](napi_env /*env*/, void* data, void* /*hint*/) {
@@ -134,8 +134,8 @@ struct CallbackData<Callable, void> {
 };
 
 template <void (*Callback)(const CallbackInfo& info)>
-static napi_value TemplatedVoidCallback(napi_env env,
-                                        napi_callback_info info) NAPI_NOEXCEPT {
+napi_value TemplatedVoidCallback(napi_env env,
+                                 napi_callback_info info) NAPI_NOEXCEPT {
   return details::WrapCallback([&] {
     CallbackInfo cbInfo(env, info);
     Callback(cbInfo);
@@ -144,8 +144,8 @@ static napi_value TemplatedVoidCallback(napi_env env,
 }
 
 template <Napi::Value (*Callback)(const CallbackInfo& info)>
-static napi_value TemplatedCallback(napi_env env,
-                                    napi_callback_info info) NAPI_NOEXCEPT {
+napi_value TemplatedCallback(napi_env env,
+                             napi_callback_info info) NAPI_NOEXCEPT {
   return details::WrapCallback([&] {
     CallbackInfo cbInfo(env, info);
     return Callback(cbInfo);
@@ -154,8 +154,8 @@ static napi_value TemplatedCallback(napi_env env,
 
 template <typename T,
           Napi::Value (T::*UnwrapCallback)(const CallbackInfo& info)>
-static napi_value TemplatedInstanceCallback(
-    napi_env env, napi_callback_info info) NAPI_NOEXCEPT {
+napi_value TemplatedInstanceCallback(napi_env env,
+                                     napi_callback_info info) NAPI_NOEXCEPT {
   return details::WrapCallback([&] {
     CallbackInfo cbInfo(env, info);
     T* instance = T::Unwrap(cbInfo.This().As<Object>());
@@ -164,8 +164,8 @@ static napi_value TemplatedInstanceCallback(
 }
 
 template <typename T, void (T::*UnwrapCallback)(const CallbackInfo& info)>
-static napi_value TemplatedInstanceVoidCallback(
-    napi_env env, napi_callback_info info) NAPI_NOEXCEPT {
+napi_value TemplatedInstanceVoidCallback(napi_env env, napi_callback_info info)
+    NAPI_NOEXCEPT {
   return details::WrapCallback([&] {
     CallbackInfo cbInfo(env, info);
     T* instance = T::Unwrap(cbInfo.This().As<Object>());
@@ -2177,11 +2177,11 @@ inline const T* TypedArrayOf<T>::Data() const {
 ////////////////////////////////////////////////////////////////////////////////
 
 template <typename CbData>
-static inline napi_status CreateFunction(napi_env env,
-                                         const char* utf8name,
-                                         napi_callback cb,
-                                         CbData* data,
-                                         napi_value* result) {
+inline napi_status CreateFunction(napi_env env,
+                                  const char* utf8name,
+                                  napi_callback cb,
+                                  CbData* data,
+                                  napi_value* result) {
   napi_status status =
       napi_create_function(env, utf8name, NAPI_AUTO_LENGTH, cb, data, result);
   if (status == napi_ok) {
