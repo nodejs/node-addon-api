@@ -255,8 +255,8 @@ struct ThreadSafeFinalize {
 };
 
 template <typename ContextType, typename DataType, typename CallJs, CallJs call>
-typename std::enable_if<call != nullptr>::type static inline CallJsWrapper(
-    napi_env env, napi_value jsCallback, void* context, void* data) {
+inline typename std::enable_if<call != static_cast<CallJs>(nullptr)>::type
+CallJsWrapper(napi_env env, napi_value jsCallback, void* context, void* data) {
   call(env,
        Function(env, jsCallback),
        static_cast<ContextType*>(context),
@@ -264,8 +264,11 @@ typename std::enable_if<call != nullptr>::type static inline CallJsWrapper(
 }
 
 template <typename ContextType, typename DataType, typename CallJs, CallJs call>
-typename std::enable_if<call == nullptr>::type static inline CallJsWrapper(
-    napi_env env, napi_value jsCallback, void* /*context*/, void* /*data*/) {
+inline typename std::enable_if<call == static_cast<CallJs>(nullptr)>::type
+CallJsWrapper(napi_env env,
+              napi_value jsCallback,
+              void* /*context*/,
+              void* /*data*/) {
   if (jsCallback != nullptr) {
     Function(env, jsCallback).Call(0, nullptr);
   }
