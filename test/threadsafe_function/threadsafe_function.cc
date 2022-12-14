@@ -8,18 +8,12 @@
 
 using namespace Napi;
 
-// Array length of 10
 constexpr size_t ARRAY_LENGTH = 10;
-
-// The queue can at most be 2
 constexpr size_t MAX_QUEUE_SIZE = 2;
 
-// Two threads
 static std::thread threads[2];
 static ThreadSafeFunction s_tsfn;
 
-// Metadata that describes the threadsafe function at hand
-// Saved as the threadsafe function context
 struct ThreadSafeFunctionInfo {
   enum CallType {
     DEFAULT,
@@ -40,47 +34,37 @@ struct ThreadSafeFunctionInfo {
 // Thread data to transmit to JS
 static int ints[ARRAY_LENGTH];
 
-// "Secondary thread"
 static void SecondaryThread() {
   if (s_tsfn.Release() != napi_ok) {
     Error::Fatal("SecondaryThread", "ThreadSafeFunction.Release() failed");
   }
 }
 
-// The thread that is producing data
 // Source thread producing the data
 static void DataSourceThread() {
   ThreadSafeFunctionInfo* info = s_tsfn.GetContext();
 
-  // If we need to spawn a secondary thread from the main thread
   if (info->startSecondary) {
     if (s_tsfn.Acquire() != napi_ok) {
       Error::Fatal("DataSourceThread", "ThreadSafeFunction.Acquire() failed");
     }
-    // otherwise, spawn the secondary thread
     threads[1] = std::thread(SecondaryThread);
   }
 
   bool queueWasFull = false;
   bool queueWasClosing = false;
 
-  // for loop condition:
-  //   Index starts at the last idx of the array,
-  //   AND the queue wasn't closing, decreament index and keep going
   for (int index = ARRAY_LENGTH - 1; index > -1 && !queueWasClosing; index--) {
-    // Set status as generic failure
     napi_status status = napi_generic_failure;
 
-    // Generic callback function
     auto callback = [](Env env, Function jsCallback, int* data) {
-      // Calling js with the data
       jsCallback.Call({Number::New(env, *data)});
     };
 
     auto noArgCallback = [](Env env, Function jsCallback) {
       jsCallback.Call({Number::New(env, 42)});
     };
-    // Swtich base on types
+
     switch (info->type) {
       case ThreadSafeFunctionInfo::DEFAULT:
         status = s_tsfn.BlockingCall();
@@ -141,7 +125,6 @@ static void DataSourceThread() {
   }
 }
 
-// Stops the thread from js
 static Value StopThread(const CallbackInfo& info) {
   tsfnInfo.jsFinalizeCallback = Napi::Persistent(info[0].As<Function>());
   bool abort = info[1].As<Boolean>();
@@ -171,7 +154,6 @@ static void JoinTheThreads(Env /* env */,
   info->jsFinalizeCallback.Reset();
 }
 
-// The function that does the heavy liftin
 static Value StartThreadInternal(const CallbackInfo& info,
                                  ThreadSafeFunctionInfo::CallType type) {
   tsfnInfo.type = type;
@@ -201,17 +183,14 @@ static Value Release(const CallbackInfo& /* info */) {
   return Value();
 }
 
-// Entry point for starting thread, in blocking mode
 static Value StartThread(const CallbackInfo& info) {
   return StartThreadInternal(info, ThreadSafeFunctionInfo::BLOCKING);
 }
 
-// Entry point for starting thread, in nonblocking mode
 static Value StartThreadNonblocking(const CallbackInfo& info) {
   return StartThreadInternal(info, ThreadSafeFunctionInfo::NON_BLOCKING);
 }
 
-// Entry point for starting thread, in block, no args
 static Value StartThreadNoNative(const CallbackInfo& info) {
   return StartThreadInternal(info, ThreadSafeFunctionInfo::DEFAULT);
 }
@@ -226,7 +205,6 @@ static Value StartThreadNonBlockingSingleArg(const CallbackInfo& info) {
                              ThreadSafeFunctionInfo::NON_BLOCKING_SINGLE_ARG);
 }
 
-// Entry point for the addon
 Object InitThreadSafeFunction(Env env) {
   for (size_t index = 0; index < ARRAY_LENGTH; index++) {
     ints[index] = index;

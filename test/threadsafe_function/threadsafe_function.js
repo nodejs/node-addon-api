@@ -43,7 +43,6 @@ async function test (binding) {
     });
   }
 
-  // function testWithoutJSMarshaller(promResolve, nativeFunction)
   function testWithoutJSMarshallers (nativeFunction) {
     return new Promise((resolve) => {
       let callCount = 0;
