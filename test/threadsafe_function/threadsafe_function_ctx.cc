@@ -1,3 +1,4 @@
+#include <assert.h>
 #include "napi.h"
 
 #if (NAPI_VERSION > 3)
@@ -8,7 +9,7 @@ namespace {
 
 class TSFNWrap : public ObjectWrap<TSFNWrap> {
  public:
-  static Object Init(Napi::Env env, Object exports);
+  static Function Init(Napi::Env env);
   TSFNWrap(const CallbackInfo& info);
 
   Napi::Value GetContext(const CallbackInfo& /*info*/) {
@@ -28,15 +29,13 @@ class TSFNWrap : public ObjectWrap<TSFNWrap> {
   std::unique_ptr<Promise::Deferred> _deferred;
 };
 
-Object TSFNWrap::Init(Napi::Env env, Object exports) {
+Function TSFNWrap::Init(Napi::Env env) {
   Function func =
       DefineClass(env,
                   "TSFNWrap",
                   {InstanceMethod("getContext", &TSFNWrap::GetContext),
                    InstanceMethod("release", &TSFNWrap::Release)});
-
-  exports.Set("TSFNWrap", func);
-  return exports;
+  return func;
 }
 
 TSFNWrap::TSFNWrap(const CallbackInfo& info) : ObjectWrap<TSFNWrap>(info) {
@@ -59,11 +58,98 @@ TSFNWrap::TSFNWrap(const CallbackInfo& info) : ObjectWrap<TSFNWrap>(info) {
         delete ctx;
       });
 }
+struct SimpleTestContext {
+  SimpleTestContext(int val) : _val(val) {}
+  int _val = -1;
+};
+
+void AssertGetContextFromVariousTSOverloads(const CallbackInfo& info) {
+  Env env = info.Env();
+  Function emptyFunc;
+
+  SimpleTestContext* ctx = new SimpleTestContext(42);
+  ThreadSafeFunction fn =
+      ThreadSafeFunction::New(env, emptyFunc, "testResource", 1, 1, ctx);
+
+  assert(fn.GetContext() == ctx);
+  delete ctx;
+  fn.Release();
+
+  fn = ThreadSafeFunction::New(env, emptyFunc, "testRes", 1, 1, [](Env) {});
+  fn.Release();
+
+  ctx = new SimpleTestContext(42);
+  fn = ThreadSafeFunction::New(env,
+                               emptyFunc,
+                               Object::New(env),
+                               "resStrObj",
+                               1,
+                               1,
+                               ctx,
+                               [](Env, SimpleTestContext*) {});
+  assert(fn.GetContext() == ctx);
+  delete ctx;
+  fn.Release();
+
+  fn = ThreadSafeFunction::New(
+      env, emptyFunc, Object::New(env), "resStrObj", 1, 1);
+  fn.Release();
+
+  ctx = new SimpleTestContext(42);
+  fn = ThreadSafeFunction::New(
+      env, emptyFunc, Object::New(env), "resStrObj", 1, 1, ctx);
+  assert(fn.GetContext() == ctx);
+  delete ctx;
+  fn.Release();
+
+  using FinalizerDataType = int;
+  FinalizerDataType* finalizerData = new int(42);
+  fn = ThreadSafeFunction::New(
+      env,
+      emptyFunc,
+      Object::New(env),
+      "resObject",
+      1,
+      1,
+      [](Env, FinalizerDataType* data) {
+        assert(*data == 42);
+        delete data;
+      },
+      finalizerData);
+  fn.Release();
+
+  ctx = new SimpleTestContext(42);
+  FinalizerDataType* finalizerDataB = new int(42);
+
+  fn = ThreadSafeFunction::New(
+      env,
+      emptyFunc,
+      Object::New(env),
+      "resObject",
+      1,
+      1,
+      ctx,
+      [](Env, FinalizerDataType* _data, SimpleTestContext* _ctx) {
+        assert(*_data == 42);
+        assert(_ctx->_val == 42);
+        delete _data;
+        delete _ctx;
+      },
+      finalizerDataB);
+  assert(fn.GetContext() == ctx);
+  fn.Release();
+}
 
 }  // namespace
 
 Object InitThreadSafeFunctionCtx(Env env) {
-  return TSFNWrap::Init(env, Object::New(env));
+  Object exports = Object::New(env);
+  Function tsfnWrap = TSFNWrap::Init(env);
+  exports.Set("TSFNWrap", tsfnWrap);
+  exports.Set("AssertFnReturnCorrectCxt",
+              Function::New(env, AssertGetContextFromVariousTSOverloads));
+
+  return exports;
 }
 
 #endif
