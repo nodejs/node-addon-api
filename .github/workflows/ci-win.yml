@@ -8,7 +8,9 @@ jobs:
     strategy:
       matrix:
         node-version: [ 16.x, 18.x, 19.x ]
-        os: [ windows-2019, windows-2022 ]
+        os:
+          - windows-2019
+          - windows-2022
         include:
           - node-version: 14.x
             os: windows-2019
