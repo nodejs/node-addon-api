@@ -23,7 +23,7 @@ jobs:
     - uses: actions/checkout@v3
     - name: Install system dependencies
       run: |
-        if [ "${{ compiler-version }}" = "gcc 6.5" ]; then
+        if [ "${{ matrix.compiler-version }}" = "gcc 6.5" ]; then
           sudo add-apt-repository ppa:ubuntu-toolchain-r/test
           sudo apt-get update
           sudo apt-get install g++-6.5
@@ -44,7 +44,7 @@ jobs:
         if [ "${{ matrix.compiler }}" = "gcc" ]; then
           export CC="gcc" CXX="g++"
         fi
-        if [ "${{ compiler-version }}" = "gcc 6.5" ]; then
+        if [ "${{ matrix.compiler-version }}" = "gcc 6.5" ]; then
           export CC="gcc-6.5" CXX="g++-6.5" AR="gcc-ar-6.5" RANLIB="gcc-ranlib-6.5" NM="gcc-nm-6.5"
         fi
         if [ "${{ matrix.compiler }}" = "clang" ]; then
