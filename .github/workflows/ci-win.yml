@@ -10,6 +10,7 @@ jobs:
         node-version:  [14.x, 16.x, 18.x]
         os:
           - windows-2019
+          - windows-2022
     runs-on: ${{ matrix.os }}
     steps:
     - uses: actions/checkout@v3
