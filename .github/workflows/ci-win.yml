@@ -7,10 +7,11 @@ jobs:
     timeout-minutes: 30
     strategy:
       matrix:
-        node-version:  [14.x, 16.x, 18.x]
-        os:
-          - windows-2019
-          - windows-2022
+        node-version: [14.x, 16.x, 18.x]
+        os: [ windows-2019 ]
+        include:
+          - node-version: 18.x
+            os: windows-2022
     runs-on: ${{ matrix.os }}
     steps:
     - uses: actions/checkout@v3
