@@ -9,14 +9,14 @@ jobs:
       matrix:
         node-version: [ 14.x, 16.x, 18.x, 19.x ]
         os:
-          - ubuntu-latest
           - macos-latest
+          - ubuntu-latest
         compiler:
-          - gcc
           - clang
-        include:
+          - gcc
+        exclude:
           - os: macos-latest
-            compiler: clang
+            compiler: gcc # GCC is an alias for clang on the MacOS image.
     runs-on: ${{ matrix.os }}
     steps:
     - uses: actions/checkout@v3
