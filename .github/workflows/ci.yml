@@ -14,20 +14,9 @@ jobs:
         os:
           - ubuntu-latest
           - macos-latest
-        include:
-          - os: ubuntu-latest
-            compiler: gcc
-            compiler-version: "gcc 6.5"
     runs-on: ${{ matrix.os }}
     steps:
     - uses: actions/checkout@v3
-    - name: Install system dependencies
-      run: |
-        if [ "${{ matrix.compiler-version }}" = "gcc 6.5" ]; then
-          sudo add-apt-repository ppa:ubuntu-toolchain-r/test
-          sudo apt-get update
-          sudo apt-get install g++-6.5
-        fi
     - name: Use Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v3
       with:
@@ -44,14 +33,13 @@ jobs:
         if [ "${{ matrix.compiler }}" = "gcc" ]; then
           export CC="gcc" CXX="g++"
         fi
-        if [ "${{ matrix.compiler-version }}" = "gcc 6.5" ]; then
-          export CC="gcc-6.5" CXX="g++-6.5" AR="gcc-ar-6.5" RANLIB="gcc-ranlib-6.5" NM="gcc-nm-6.5"
-        fi
         if [ "${{ matrix.compiler }}" = "clang" ]; then
           export CC="clang" CXX="clang++"
         fi
         echo "CC=\"$CC\" CXX=\"$CXX\""
+        echo "$CC --version"
         $CC --version
+        echo "$CXX --version"
         $CXX --version
         export CFLAGS="$CFLAGS -O3 --coverage" LDFLAGS="$LDFLAGS --coverage"
         echo "CFLAGS=\"$CFLAGS\" LDFLAGS=\"$LDFLAGS\""
