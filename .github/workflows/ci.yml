@@ -8,12 +8,14 @@ jobs:
     strategy:
       matrix:
         node-version: [ 14.x, 16.x, 18.x, 19.x ]
+        os:
+          - ubuntu-latest
         compiler:
           - gcc
           - clang
-        os:
-          - ubuntu-latest
-          - macos-latest
+        include:
+          - os: macos-latest
+            compiler: clang
     runs-on: ${{ matrix.os }}
     steps:
     - uses: actions/checkout@v3
