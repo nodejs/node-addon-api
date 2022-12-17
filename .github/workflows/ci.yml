@@ -10,6 +10,7 @@ jobs:
         node-version: [ 14.x, 16.x, 18.x, 19.x ]
         os:
           - ubuntu-latest
+          - macos-latest
         compiler:
           - gcc
           - clang
