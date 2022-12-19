@@ -7,9 +7,13 @@ jobs:
     timeout-minutes: 30
     strategy:
       matrix:
-        node-version:  [14.x, 16.x, 18.x]
+        node-version: [ 14.x, 16.x, 18.x, 19.x ]
         os:
           - windows-2019
+          - windows-2022
+        exclude:
+          - node-version: 14.x
+            os: windows-2022 # Node.JS 14.x GYP does not support Visual Studio 2022
     runs-on: ${{ matrix.os }}
     steps:
     - uses: actions/checkout@v3
