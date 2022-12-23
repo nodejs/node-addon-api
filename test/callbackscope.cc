@@ -1,5 +1,5 @@
+#include "assert.h"
 #include "napi.h"
-
 using namespace Napi;
 
 #if (NAPI_VERSION > 2)
@@ -22,6 +22,8 @@ static void RunInCallbackScopeFromExisting(const CallbackInfo& info) {
   napi_open_callback_scope(env, Object::New(env), ctx, &scope);
 
   CallbackScope existingScope(env, scope);
+  assert(existingScope.Env() == env);
+
   callback.Call({});
 }
 
