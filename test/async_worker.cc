@@ -123,12 +123,25 @@ class TestWorkerWithResult : public AsyncWorker {
 class TestWorkerNoCallback : public AsyncWorker {
  public:
   static Value DoWork(const CallbackInfo& info) {
+    bool succeed = info[0].As<Boolean>();
+
+    TestWorkerNoCallback* worker = new TestWorkerNoCallback(info.Env());
+    worker->_succeed = succeed;
+    worker->Queue();
+    return worker->_deferred.Promise();
+  }
+
+  static Value DoWorkWithAsyncRes(const CallbackInfo& info) {
     napi_env env = info.Env();
     bool succeed = info[0].As<Boolean>();
     Object resource = info[1].As<Object>();
 
-    TestWorkerNoCallback* worker =
-        new TestWorkerNoCallback(env, "TestResource", resource);
+    TestWorkerNoCallback* worker = nullptr;
+    if (resource == info.Env().Null()) {
+      worker = new TestWorkerNoCallback(env, "TestResource");
+    } else {
+      worker = new TestWorkerNoCallback(env, "TestResource", resource);
+    }
     worker->_succeed = succeed;
     worker->Queue();
     return worker->_deferred.Promise();
@@ -142,6 +155,13 @@ class TestWorkerNoCallback : public AsyncWorker {
   }
 
  private:
+  TestWorkerNoCallback(Napi::Env env)
+      : AsyncWorker(env), _deferred(Napi::Promise::Deferred::New(env)) {}
+
+  TestWorkerNoCallback(napi_env env, const char* resource_name)
+      : AsyncWorker(env, resource_name),
+        _deferred(Napi::Promise::Deferred::New(env)) {}
+
   TestWorkerNoCallback(napi_env env,
                        const char* resource_name,
                        const Object& resource)
@@ -277,6 +297,8 @@ Object InitAsyncWorker(Env env) {
   exports["doWithRecvAsyncRes"] =
       Function::New(env, TestWorkerWithUserDefRecv::DoWorkWithAsyncRes);
   exports["doWork"] = Function::New(env, TestWorker::DoWork);
+  exports["doWorkAsyncResNoCallback"] =
+      Function::New(env, TestWorkerNoCallback::DoWorkWithAsyncRes);
   exports["doWorkNoCallback"] =
       Function::New(env, TestWorkerNoCallback::DoWork);
   exports["doWorkWithResult"] =
