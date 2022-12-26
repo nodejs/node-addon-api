@@ -2439,9 +2439,6 @@ class AsyncWorker {
  public:
   virtual ~AsyncWorker();
 
-  // An async worker can be moved but cannot be copied.
-  AsyncWorker(AsyncWorker&& other);
-  AsyncWorker& operator=(AsyncWorker&& other);
   NAPI_DISALLOW_ASSIGN_COPY(AsyncWorker)
 
   operator napi_async_work() const;
