@@ -7,6 +7,49 @@
 
 using namespace Napi;
 
+class TestWorkerWithUserDefRecv : public AsyncWorker {
+ public:
+  static void DoWork(const CallbackInfo& info) {
+    Object recv = info[0].As<Object>();
+    Function cb = info[1].As<Function>();
+
+    TestWorkerWithUserDefRecv* worker = new TestWorkerWithUserDefRecv(recv, cb);
+    worker->Queue();
+  }
+
+  static void DoWorkWithAsyncRes(const CallbackInfo& info) {
+    Object recv = info[0].As<Object>();
+    Function cb = info[1].As<Function>();
+    Object resource = info[2].As<Object>();
+
+    TestWorkerWithUserDefRecv* worker = nullptr;
+    if (resource == info.Env().Null()) {
+      worker = new TestWorkerWithUserDefRecv(recv, cb, "TestResource");
+    } else {
+      worker =
+          new TestWorkerWithUserDefRecv(recv, cb, "TestResource", resource);
+    }
+
+    worker->Queue();
+  }
+
+ protected:
+  void Execute() override {}
+
+ private:
+  TestWorkerWithUserDefRecv(const Object& recv, const Function& cb)
+      : AsyncWorker(recv, cb) {}
+  TestWorkerWithUserDefRecv(const Object& recv,
+                            const Function& cb,
+                            const char* resource_name)
+      : AsyncWorker(recv, cb, resource_name) {}
+  TestWorkerWithUserDefRecv(const Object& recv,
+                            const Function& cb,
+                            const char* resource_name,
+                            const Object& resource)
+      : AsyncWorker(recv, cb, resource_name, resource) {}
+};
+
 class TestWorker : public AsyncWorker {
  public:
   static void DoWork(const CallbackInfo& info) {
@@ -15,7 +58,13 @@ class TestWorker : public AsyncWorker {
     Function cb = info[2].As<Function>();
     Value data = info[3];
 
-    TestWorker* worker = new TestWorker(cb, "TestResource", resource);
+    TestWorker* worker = nullptr;
+    if (resource == info.Env().Null()) {
+      worker = new TestWorker(cb, "TestResource");
+    } else {
+      worker = new TestWorker(cb, "TestResource", resource);
+    }
+
     worker->Receiver().Set("data", data);
     worker->_succeed = succeed;
     worker->Queue();
@@ -31,6 +80,8 @@ class TestWorker : public AsyncWorker {
  private:
   TestWorker(Function cb, const char* resource_name, const Object& resource)
       : AsyncWorker(cb, resource_name, resource) {}
+  TestWorker(Function cb, const char* resource_name)
+      : AsyncWorker(cb, resource_name) {}
   bool _succeed;
 };
 
@@ -222,6 +273,9 @@ class CancelWorker : public AsyncWorker {
 
 Object InitAsyncWorker(Env env) {
   Object exports = Object::New(env);
+  exports["doWorkRecv"] = Function::New(env, TestWorkerWithUserDefRecv::DoWork);
+  exports["doWithRecvAsyncRes"] =
+      Function::New(env, TestWorkerWithUserDefRecv::DoWorkWithAsyncRes);
   exports["doWork"] = Function::New(env, TestWorker::DoWork);
   exports["doWorkNoCallback"] =
       Function::New(env, TestWorkerNoCallback::DoWork);
