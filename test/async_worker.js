@@ -79,7 +79,7 @@ async function test (binding) {
   assert.equal(taskFailed, true, 'We expect task cancellation to fail');
 
   if (checkAsyncHooks()) {
-    binding.asyncworker.expectStackAllocWorkerToDealloc(() => {});
+    binding.asyncworker.expectCustomAllocWorkerToDealloc(() => {});
 
     await new Promise((resolve) => {
       const obj = { data: 'test data' };

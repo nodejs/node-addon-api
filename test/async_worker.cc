@@ -1,5 +1,6 @@
 #include <chrono>
 #include <condition_variable>
+#include <memory>
 #include <mutex>
 #include <thread>
 #include "assert.h"
@@ -50,17 +51,29 @@ class TestWorkerWithUserDefRecv : public AsyncWorker {
       : AsyncWorker(recv, cb, resource_name, resource) {}
 };
 
-class StackAllocWorker : public AsyncWorker {
+// Using default std::allocator impl, but assuming user can define their own
+// alloc/dealloc methods
+class CustomAllocWorker : public AsyncWorker {
  public:
+  CustomAllocWorker(Function& cb) : AsyncWorker(cb){};
   static void DoWork(const CallbackInfo& info) {
     Function cb = info[0].As<Function>();
-    StackAllocWorker stkWorker(cb);
+    std::allocator<CustomAllocWorker> create_alloc;
+    CustomAllocWorker* newWorker = create_alloc.allocate(1);
+    create_alloc.construct(newWorker, cb);
+    newWorker->Queue();
   }
+
+ protected:
   void Execute() override {}
-  void Destroy() override { assert(this->_secretVal == 24); }
+  void Destroy() override {
+    assert(this->_secretVal == 24);
+    std::allocator<CustomAllocWorker> deallocer;
+    deallocer.destroy(this);
+    deallocer.deallocate(this, 1);
+  }
 
  private:
-  StackAllocWorker(Function& cb) : AsyncWorker(cb){};
   int _secretVal = 24;
 };
 
@@ -321,7 +334,7 @@ Object InitAsyncWorker(Env env) {
 
   exports["expectCancelToFail"] =
       Function::New(env, FailCancelWorker::DoCancel);
-  exports["expectStackAllocWorkerToDealloc"] =
-      Function::New(env, StackAllocWorker::DoWork);
+  exports["expectCustomAllocWorkerToDealloc"] =
+      Function::New(env, CustomAllocWorker::DoWork);
   return exports;
 }
