@@ -78,8 +78,9 @@ async function test (binding) {
 
   assert.equal(taskFailed, true, 'We expect task cancellation to fail');
 
-  // No reliable AsyncHook impl available
-  if (!checkAsyncHooks()) {
+  if (checkAsyncHooks()) {
+    binding.asyncworker.expectStackAllocWorkerToDealloc(() => {});
+
     await new Promise((resolve) => {
       const obj = { data: 'test data' };
       binding.asyncworker.doWorkRecv(obj, function (e) {

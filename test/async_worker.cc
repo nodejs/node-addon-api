@@ -50,6 +50,20 @@ class TestWorkerWithUserDefRecv : public AsyncWorker {
       : AsyncWorker(recv, cb, resource_name, resource) {}
 };
 
+class StackAllocWorker : public AsyncWorker {
+ public:
+  static void DoWork(const CallbackInfo& info) {
+    Function cb = info[0].As<Function>();
+    StackAllocWorker stkWorker(cb);
+  }
+  void Execute() override {}
+  void Destroy() override { assert(this->_secretVal == 24); }
+
+ private:
+  StackAllocWorker(Function& cb) : AsyncWorker(cb){};
+  int _secretVal = 24;
+};
+
 class TestWorker : public AsyncWorker {
  public:
   static void DoWork(const CallbackInfo& info) {
@@ -307,5 +321,7 @@ Object InitAsyncWorker(Env env) {
 
   exports["expectCancelToFail"] =
       Function::New(env, FailCancelWorker::DoCancel);
+  exports["expectStackAllocWorkerToDealloc"] =
+      Function::New(env, StackAllocWorker::DoWork);
   return exports;
 }
