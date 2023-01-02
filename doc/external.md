@@ -6,6 +6,13 @@ The `Napi::External` template class implements the ability to create a `Napi::Va
 
 `Napi::External` objects can be created with an optional Finalizer function and optional Hint value. The Finalizer function, if specified, is called when your `Napi::External` object is released by Node's garbage collector. It gives your code the opportunity to free any dynamically created data. If you specify a Hint value, it is passed to your Finalizer function.
 
+Note that `Napi::Value::IsExternal()` will return `true` for any external value.
+It does not differentiate between the templated parameter `T` in
+`Napi::External<T>`. It is up to the addon to ensure an `Napi::External<T>`
+object holds the correct `T` when retrieving the data via
+`Napi::External<T>::Data()`. One method to ensure an object is of a specific
+type is through [type tags](./object.md#TypeTag).
+
 ## Methods
 
 ### New

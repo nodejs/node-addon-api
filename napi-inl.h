@@ -1626,6 +1626,19 @@ inline MaybeOrValue<bool> Object::Seal() const {
   napi_status status = napi_object_seal(_env, _value);
   NAPI_RETURN_OR_THROW_IF_FAILED(_env, status, status == napi_ok, bool);
 }
+
+inline void Object::TypeTag(const napi_type_tag* type_tag) const {
+  napi_status status = napi_type_tag_object(_env, _value, type_tag);
+  NAPI_THROW_IF_FAILED_VOID(_env, status);
+}
+
+inline bool Object::CheckTypeTag(const napi_type_tag* type_tag) const {
+  bool result;
+  napi_status status =
+      napi_check_object_type_tag(_env, _value, type_tag, &result);
+  NAPI_THROW_IF_FAILED(_env, status, false);
+  return result;
+}
 #endif  // NAPI_VERSION >= 8
 
 ////////////////////////////////////////////////////////////////////////////////
