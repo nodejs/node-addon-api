@@ -210,6 +210,10 @@ async function test (binding) {
   };
 
   const testStaticMethod = (clazz) => {
+    clazz.testStaticVoidMethod(52);
+    assert.strictEqual(clazz.testStaticGetter, 52);
+    clazz[clazz.kTestStaticVoidMethodInternal](94);
+    assert.strictEqual(clazz.testStaticGetter, 94);
     assert.strictEqual(clazz.testStaticMethod('method'), 'method static');
     assert.strictEqual(clazz[clazz.kTestStaticMethodInternal]('method'), 'method static internal');
     clazz.testStaticVoidMethodT('static method<>(const char*)');

@@ -12,6 +12,10 @@ void StaticSetter(const Napi::CallbackInfo& /*info*/,
   testStaticContextRef.Value().Set("value", value);
 }
 
+void StaticMethodVoidCb(const Napi::CallbackInfo& info) {
+  StaticSetter(info, info[0].As<Napi::Number>());
+}
+
 Napi::Value TestStaticMethod(const Napi::CallbackInfo& info) {
   std::string str = MaybeUnwrap(info[0].ToString());
   return Napi::String::New(info.Env(), str + " static");
@@ -115,7 +119,8 @@ class Test : public Napi::ObjectWrap<Test> {
         Napi::Symbol::New(env, "kTestStaticMethodTInternal");
     Napi::Symbol kTestStaticVoidMethodTInternal =
         Napi::Symbol::New(env, "kTestStaticVoidMethodTInternal");
-
+    Napi::Symbol kTestStaticVoidMethodInternal =
+        Napi::Symbol::New(env, "kTestStaticVoidMethodInternal");
     Napi::Symbol kTestValueInternal =
         Napi::Symbol::New(env, "kTestValueInternal");
     Napi::Symbol kTestAccessorInternal =
@@ -147,6 +152,8 @@ class Test : public Napi::ObjectWrap<Test> {
                             kTestStaticMethodInternal),
                 StaticValue("kTestStaticMethodTInternal",
                             kTestStaticMethodTInternal),
+                StaticValue("kTestStaticVoidMethodInternal",
+                            kTestStaticVoidMethodInternal),
                 StaticValue("kTestStaticVoidMethodTInternal",
                             kTestStaticVoidMethodTInternal),
                 StaticValue("kTestValueInternal", kTestValueInternal),
@@ -184,7 +191,11 @@ class Test : public Napi::ObjectWrap<Test> {
                     "testStaticGetSetT"),
                 StaticAccessor<&StaticGetter, &StaticSetter>(
                     kTestStaticAccessorTInternal),
-
+                StaticMethod(
+                    "testStaticVoidMethod", &StaticMethodVoidCb, napi_default),
+                StaticMethod(kTestStaticVoidMethodInternal,
+                             &StaticMethodVoidCb,
+                             napi_default),
                 StaticMethod(
                     "testStaticMethod", &TestStaticMethod, napi_enumerable),
                 StaticMethod(kTestStaticMethodInternal,
