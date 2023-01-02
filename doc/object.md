@@ -241,6 +241,33 @@ from being added to it and marking all existing properties as non-configurable.
 Values of present properties can still be changed as long as they are
 writable.
 
+### TypeTag()
+
+```cpp
+void Napi::Object::TypeTag(const napi_type_tag* type_tag) const;
+```
+
+- `[in] type_tag`: The tag with which this object is to be marked.
+
+The `Napi::Object::TypeTag()` method associates the value of the `type_tag`
+pointer with this JavaScript object. `Napi::Object::CheckTypeTag()` can then be
+used to compare the tag that was attached to this object with one owned by the
+addon to ensure that this object has the right type.
+
+### CheckTypeTag()
+
+```cpp
+bool Napi::Object::CheckTypeTag(const napi_type_tag* type_tag) const;
+```
+
+- `[in] type_tag`: The tag with which to compare any tag found on this object.
+
+The `Napi::Object::CheckTypeTag()` method compares the pointer given as
+`type_tag` with any that can be found on this JavaScript object. If no tag is
+found on this object or, if a tag is found but it does not match `type_tag`,
+then the return value is `false`. If a tag is found and it matches `type_tag`,
+then the return value is `true`.
+
 ### operator\[\]()
 
 ```cpp
