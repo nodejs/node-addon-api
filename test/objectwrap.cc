@@ -57,6 +57,15 @@ class Test : public Napi::ObjectWrap<Test> {
     return static_cast<Test*>(info.Data())->Getter(info);
   }
 
+  static Napi::Value CanUnWrap(const Napi::CallbackInfo& info) {
+    Napi::Object wrappedObject = info[0].As<Napi::Object>();
+    std::string expectedString = info[1].As<Napi::String>();
+    Test* nativeObject = Test::Unwrap(wrappedObject);
+    std::string strVal = MaybeUnwrap(nativeObject->Getter(info).ToString());
+
+    return Napi::Boolean::New(info.Env(), strVal == expectedString);
+  }
+
   void Setter(const Napi::CallbackInfo& /*info*/, const Napi::Value& value) {
     value_ = MaybeUnwrap(value.ToString());
   }
@@ -206,7 +215,7 @@ class Test : public Napi::ObjectWrap<Test> {
                 StaticMethod<&TestStaticVoidMethodT>(
                     kTestStaticVoidMethodTInternal),
                 StaticMethod<&TestStaticMethodT>(kTestStaticMethodTInternal),
-
+                StaticMethod("canUnWrap", &CanUnWrap, napi_enumerable),
                 InstanceValue("testValue",
                               Napi::Boolean::New(env, true),
                               napi_enumerable),
@@ -276,6 +285,9 @@ class Test : public Napi::ObjectWrap<Test> {
 
 std::string Test::s_staticMethodText;
 
+// A potnetial test would be:
+// 1. Set a value on object with instance setter
+// 2. Check with object unwrapper that it indeed is correct value
 Napi::Object InitObjectWrap(Napi::Env env) {
   testStaticContextRef = Napi::Persistent(Napi::Object::New(env));
   testStaticContextRef.SuppressDestruct();
