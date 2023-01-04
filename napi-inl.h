@@ -3451,6 +3451,10 @@ inline CallbackInfo::~CallbackInfo() {
   }
 }
 
+inline CallbackInfo::operator napi_callback_info() const {
+  return _info;
+}
+
 inline Value CallbackInfo::NewTarget() const {
   napi_value newTarget;
   napi_status status = napi_get_new_target(_env, _info, &newTarget);
