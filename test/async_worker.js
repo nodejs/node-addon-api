@@ -16,10 +16,8 @@ function checkAsyncHooks () {
   return false;
 }
 
-// Main entry point for this test suite
 module.exports = common.runTest(test);
 
-// Seems to create AsyncHooks
 function installAsyncHooksForTest () {
   return new Promise((resolve, reject) => {
     let id;
@@ -64,7 +62,6 @@ function installAsyncHooksForTest () {
   });
 }
 
-// Main test body
 async function test (binding) {
   const libUvThreadCount = Number(process.env.UV_THREADPOOL_SIZE || 4);
   binding.asyncworker.tryCancelQueuedWork(() => {}, 'echoString', libUvThreadCount);
@@ -78,7 +75,7 @@ async function test (binding) {
 
   assert.equal(taskFailed, true, 'We expect task cancellation to fail');
 
-  if (checkAsyncHooks()) {
+  if (!checkAsyncHooks()) {
     binding.asyncworker.expectCustomAllocWorkerToDealloc(() => {});
 
     await new Promise((resolve) => {
