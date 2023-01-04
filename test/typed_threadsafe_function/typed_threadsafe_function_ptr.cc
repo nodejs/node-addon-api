@@ -16,12 +16,16 @@ static Value Test(const CallbackInfo& info) {
   return info.Env().Undefined();
 }
 
+static Value ExtractEnvNullValue(const CallbackInfo& info) {
+  return info.Env().Null();
+}
+
 }  // namespace
 
 Object InitTypedThreadSafeFunctionPtr(Env env) {
   Object exports = Object::New(env);
   exports["test"] = Function::New(env, Test);
-
+  exports["null"] = Function::New(env, ExtractEnvNullValue);
   return exports;
 }
 

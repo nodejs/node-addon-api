@@ -1791,6 +1791,7 @@ class CallbackInfo {
   Value This() const;
   void* Data() const;
   void SetData(void* data);
+  operator napi_callback_info() const;
 
  private:
   const size_t _staticArgCount = 6;
