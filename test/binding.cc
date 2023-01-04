@@ -28,6 +28,7 @@ Object InitCallbackScope(Env env);
 #if (NAPI_VERSION > 4)
 Object InitDate(Env env);
 #endif
+Object InitCallbackInfo(Env env);
 Object InitDataView(Env env);
 Object InitDataViewReadWrite(Env env);
 Object InitEnvCleanup(Env env);
@@ -108,6 +109,7 @@ Object Init(Env env, Object exports) {
 #if (NAPI_VERSION > 2)
   exports.Set("callbackscope", InitCallbackScope(env));
 #endif
+  exports.Set("callbackInfo", InitCallbackInfo(env));
   exports.Set("dataview", InitDataView(env));
   exports.Set("dataview_read_write", InitDataView(env));
   exports.Set("dataview_read_write", InitDataViewReadWrite(env));
