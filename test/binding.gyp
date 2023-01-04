@@ -17,6 +17,7 @@
         'basic_types/number.cc',
         'basic_types/value.cc',
         'bigint.cc',
+        'callbackInfo.cc',
         'date.cc',
         'binding.cc',
         'buffer.cc',
