@@ -5889,7 +5889,11 @@ template <typename DataType>
 inline napi_status AsyncProgressWorkerBase<DataType>::NonBlockingCall(
     DataType* data) {
   auto tsd = new AsyncProgressWorkerBase::ThreadSafeData(this, data);
-  return _tsfn.NonBlockingCall(tsd, OnAsyncWorkProgress);
+  auto ret = _tsfn.NonBlockingCall(tsd, OnAsyncWorkProgress);
+  if (ret != napi_ok) {
+    delete tsd;
+  }
+  return ret;
 }
 
 template <typename DataType>
