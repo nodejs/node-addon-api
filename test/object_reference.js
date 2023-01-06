@@ -16,6 +16,15 @@ const testUtil = require('./testUtil');
 
 module.exports = require('./common').runTest(test);
 
+const enumType = {
+  JS: 0,
+  C_STR: 1,
+  BOOL: 2,
+  INT: 3,
+  DOUBLE: 4,
+  JS_CAST: 5
+};
+
 function test (binding) {
   function testCastedEqual (testToCompare) {
     const compareTest = ['hello', 'world', '!'];
@@ -74,13 +83,25 @@ function test (binding) {
 
     'Weak',
     () => {
-      binding.objectreference.setObjects('hello', 'world');
-      const test = binding.objectreference.getFromValue('weak');
-      const test2 = binding.objectreference.getFromGetter('weak', 'hello');
+      const configObjects = [
+        { keyType: enumType.C_STR, valType: enumType.JS, key: 'hello', val: 'world' },
+        { keyType: enumType.C_STR, valType: enumType.C_STR, key: 'hello', val: 'world' },
+        { keyType: enumType.C_STR, valType: enumType.BOOL, key: 'hello', val: false },
+        { keyType: enumType.C_STR, valType: enumType.DOUBLE, key: 'hello', val: 3.56 },
+        { keyType: enumType.C_STR, valType: enumType.JS_CAST, key: 'hello_cast', val: 'world' }
+      ];
 
-      assert.deepEqual({ hello: 'world' }, test);
-      assert.equal('world', test2);
-      assert.equal(test.hello, test2);
+      for (const configObject of configObjects) {
+        binding.objectreference.setObject(configObject);
+        const test = binding.objectreference.getFromValue('weak');
+        const test2 = binding.objectreference.getFromGetter('weak', configObject.key);
+
+        const assertObject = {
+          [configObject.key]: configObject.val
+        };
+        assert.deepEqual(assertObject, test);
+        assert.equal(configObject.val, test2);
+      }
     },
     () => {
       binding.objectreference.setObjects('hello', 'world', 'javascript');
