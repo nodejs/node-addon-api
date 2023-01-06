@@ -4801,29 +4801,6 @@ inline void AsyncWorker::Destroy() {
   delete this;
 }
 
-inline AsyncWorker::AsyncWorker(AsyncWorker&& other) {
-  _env = other._env;
-  other._env = nullptr;
-  _work = other._work;
-  other._work = nullptr;
-  _receiver = std::move(other._receiver);
-  _callback = std::move(other._callback);
-  _error = std::move(other._error);
-  _suppress_destruct = other._suppress_destruct;
-}
-
-inline AsyncWorker& AsyncWorker::operator=(AsyncWorker&& other) {
-  _env = other._env;
-  other._env = nullptr;
-  _work = other._work;
-  other._work = nullptr;
-  _receiver = std::move(other._receiver);
-  _callback = std::move(other._callback);
-  _error = std::move(other._error);
-  _suppress_destruct = other._suppress_destruct;
-  return *this;
-}
-
 inline AsyncWorker::operator napi_async_work() const {
   return _work;
 }
