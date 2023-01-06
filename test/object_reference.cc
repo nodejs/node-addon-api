@@ -61,7 +61,7 @@ void SetObjectWithJsStringKey(Napi::ObjectReference& obj,
                               Napi::Value key,
                               Napi::Value val,
                               int valType) {
-  auto c_key = key.As<Napi::String>();
+  std::string c_key = key.As<Napi::String>();
   switch (valType) {
     case JS:
       obj.Set(c_key, val);
@@ -69,10 +69,6 @@ void SetObjectWithJsStringKey(Napi::ObjectReference& obj,
 
     case JS_CAST:
       obj.Set(c_key, static_cast<napi_value>(val));
-      break;
-
-    case C_STR:
-      obj.Set(c_key, val.As<Napi::String>().Utf8Value().c_str());
       break;
 
     case BOOL:
@@ -89,7 +85,7 @@ void SetObjectWithIntKey(Napi::ObjectReference& obj,
                          Napi::Value key,
                          Napi::Value val,
                          int valType) {
-  auto c_key = key.As<Napi::Number>().Uint32Value();
+  uint32_t c_key = key.As<Napi::Number>().Uint32Value();
   switch (valType) {
     case JS:
       obj.Set(c_key, val);

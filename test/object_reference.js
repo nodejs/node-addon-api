@@ -88,7 +88,15 @@ function test (binding) {
         { keyType: enumType.C_STR, valType: enumType.C_STR, key: 'hello', val: 'world' },
         { keyType: enumType.C_STR, valType: enumType.BOOL, key: 'hello', val: false },
         { keyType: enumType.C_STR, valType: enumType.DOUBLE, key: 'hello', val: 3.56 },
-        { keyType: enumType.C_STR, valType: enumType.JS_CAST, key: 'hello_cast', val: 'world' }
+        { keyType: enumType.C_STR, valType: enumType.JS_CAST, key: 'hello_cast', val: 'world' },
+        { keyType: enumType.JS, valType: enumType.JS, key: 'hello_js', val: 'world_js' },
+        { keyType: enumType.JS, valType: enumType.JS_CAST, key: 'hello_js', val: 'world_js' },
+        { keyType: enumType.JS, valType: enumType.BOOL, key: 'hello_js', val: true },
+        { keyType: enumType.INT, valType: enumType.JS, key: 1, val: 'hello world' },
+        { keyType: enumType.INT, valType: enumType.JS_CAST, key: 2, val: 'hello world' },
+        { keyType: enumType.INT, valType: enumType.C_STR, key: 3, val: 'hello world' },
+        { keyType: enumType.INT, valType: enumType.BOOL, key: 3, val: false },
+        { keyType: enumType.INT, valType: enumType.DOUBLE, key: 4, val: 3.14159 }
       ];
 
       for (const configObject of configObjects) {
@@ -102,38 +110,19 @@ function test (binding) {
         assert.deepEqual(assertObject, test);
         assert.equal(configObject.val, test2);
       }
-    },
-    () => {
-      binding.objectreference.setObjects('hello', 'world', 'javascript');
-      const test = binding.objectreference.getFromValue('weak');
-      const test2 = binding.objectreference.getFromValue('weak', 'hello');
+    }, () => {
+      binding.objectreference.setObject({ keyType: enumType.INT, valType: enumType.JS, key: 0, val: 'hello' });
+      binding.objectreference.setObject({ keyType: enumType.INT, valType: enumType.JS, key: 1, val: 'world' });
 
-      assert.deepEqual({ hello: 'world' }, test);
-      assert.deepEqual({ hello: 'world' }, test2);
-      assert.equal(test, test2);
-    },
-    () => {
-      binding.objectreference.setObjects(1, 'hello world');
-      const test = binding.objectreference.getFromValue('weak');
-      const test2 = binding.objectreference.getFromGetter('weak', 1);
-
-      assert.deepEqual({ 1: 'hello world' }, test);
-      assert.equal('hello world', test2);
-      assert.equal(test[1], test2);
-    },
-    () => {
-      binding.objectreference.setObjects(0, 'hello');
-      binding.objectreference.setObjects(1, 'world');
       const test = binding.objectreference.getFromValue('weak');
       const test2 = binding.objectreference.getFromGetter('weak', 0);
       const test3 = binding.objectreference.getFromGetter('weak', 1);
-
       assert.deepEqual({ 1: 'world' }, test);
       assert.equal(undefined, test2);
       assert.equal('world', test3);
     },
     () => {
-      binding.objectreference.setObjects('hello', 'world');
+      binding.objectreference.setObject({ keyType: enumType.JS, valType: enumType.JS, key: 'hello', val: 'world' });
       assert.doesNotThrow(
         () => {
           let rcount = binding.objectreference.refObjects('weak');
