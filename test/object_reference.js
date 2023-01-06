@@ -17,12 +17,13 @@ const testUtil = require('./testUtil');
 module.exports = require('./common').runTest(test);
 
 const enumType = {
-  JS: 0,
-  C_STR: 1,
-  BOOL: 2,
-  INT: 3,
-  DOUBLE: 4,
-  JS_CAST: 5
+  JS: 0, // Napi::Value
+  C_STR: 1, // const char *
+  CPP_STR: 2, // std::string
+  BOOL: 3, // bool
+  INT: 4, // uint32_t
+  DOUBLE: 5, // double
+  JS_CAST: 6 // napi_value
 };
 
 function test (binding) {
@@ -84,17 +85,20 @@ function test (binding) {
     'Weak',
     () => {
       const configObjects = [
-        { keyType: enumType.C_STR, valType: enumType.JS, key: 'hello', val: 'world' },
-        { keyType: enumType.C_STR, valType: enumType.C_STR, key: 'hello', val: 'world' },
+        { keyType: enumType.C_STR, valType: enumType.JS, key: 'hello', val: 'worlds' },
+        { keyType: enumType.C_STR, valType: enumType.C_STR, key: 'hello', val: 'worldd' },
         { keyType: enumType.C_STR, valType: enumType.BOOL, key: 'hello', val: false },
         { keyType: enumType.C_STR, valType: enumType.DOUBLE, key: 'hello', val: 3.56 },
         { keyType: enumType.C_STR, valType: enumType.JS_CAST, key: 'hello_cast', val: 'world' },
-        { keyType: enumType.JS, valType: enumType.JS, key: 'hello_js', val: 'world_js' },
-        { keyType: enumType.JS, valType: enumType.JS_CAST, key: 'hello_js', val: 'world_js' },
-        { keyType: enumType.JS, valType: enumType.BOOL, key: 'hello_js', val: true },
+        { keyType: enumType.CPP_STR, valType: enumType.JS, key: 'hello_cpp', val: 'world_js' },
+        { keyType: enumType.CPP_STR, valType: enumType.JS_CAST, key: 'hello_cpp', val: 'world_js_cast' },
+        { keyType: enumType.CPP_STR, valType: enumType.CPP_STR, key: 'hello_cpp', val: 'world_cpp_str' },
+        { keyType: enumType.CPP_STR, valType: enumType.BOOL, key: 'hello_cpp', val: true },
+        { keyType: enumType.CPP_STR, valType: enumType.DOUBLE, key: 'hello_cpp', val: 3.58 },
         { keyType: enumType.INT, valType: enumType.JS, key: 1, val: 'hello world' },
         { keyType: enumType.INT, valType: enumType.JS_CAST, key: 2, val: 'hello world' },
         { keyType: enumType.INT, valType: enumType.C_STR, key: 3, val: 'hello world' },
+        { keyType: enumType.INT, valType: enumType.CPP_STR, key: 8, val: 'hello world' },
         { keyType: enumType.INT, valType: enumType.BOOL, key: 3, val: false },
         { keyType: enumType.INT, valType: enumType.DOUBLE, key: 4, val: 3.14159 }
       ];

@@ -27,7 +27,7 @@ ObjectReference casted_reference;
 // boolean
 // double
 
-enum VAL_TYPES { JS = 0, C_STR, BOOL, INT, DOUBLE, JS_CAST };
+enum VAL_TYPES { JS = 0, C_STR, CPP_STR, BOOL, INT, DOUBLE, JS_CAST };
 
 void SetObjectWithCStringKey(Napi::ObjectReference& obj,
                              Napi::Value key,
@@ -43,9 +43,11 @@ void SetObjectWithCStringKey(Napi::ObjectReference& obj,
       obj.Set(c_key.c_str(), static_cast<napi_value>(val));
       break;
 
-    case C_STR:
-      obj.Set(c_key.c_str(), val.As<Napi::String>().Utf8Value().c_str());
+    case C_STR: {
+      std::string c_val = val.As<Napi::String>().Utf8Value();
+      obj.Set(c_key.c_str(), c_val.c_str());
       break;
+    }
 
     case BOOL:
       obj.Set(c_key.c_str(), val.As<Napi::Boolean>().Value());
@@ -57,6 +59,7 @@ void SetObjectWithCStringKey(Napi::ObjectReference& obj,
   }
 }
 
+// TODO: Change this function name to SetObjectWithCppStringKey
 void SetObjectWithJsStringKey(Napi::ObjectReference& obj,
                               Napi::Value key,
                               Napi::Value val,
@@ -70,6 +73,12 @@ void SetObjectWithJsStringKey(Napi::ObjectReference& obj,
     case JS_CAST:
       obj.Set(c_key, static_cast<napi_value>(val));
       break;
+
+    case CPP_STR: {
+      std::string c_val = val.As<Napi::String>();
+      obj.Set(c_key, c_val);
+      break;
+    }
 
     case BOOL:
       obj.Set(c_key, val.As<Napi::Boolean>().Value());
@@ -95,9 +104,17 @@ void SetObjectWithIntKey(Napi::ObjectReference& obj,
       obj.Set(c_key, static_cast<napi_value>(val));
       break;
 
-    case C_STR:
-      obj.Set(c_key, val.As<Napi::String>().Utf8Value().c_str());
+    case C_STR: {
+      std::string c_val = val.As<Napi::String>();
+      obj.Set(c_key, c_val.c_str());
       break;
+    }
+
+    case CPP_STR: {
+      std::string cpp_val = val.As<Napi::String>();
+      obj.Set(c_key, cpp_val);
+      break;
+    }
 
     case BOOL:
       obj.Set(c_key, val.As<Napi::Boolean>().Value());
@@ -124,13 +141,15 @@ void SetObject(const Napi::CallbackInfo& info) {
 
   Napi::Object configObject = info[0].As<Napi::Object>();
 
-  int keyType = configObject.Get("keyType").As<Napi::Number>().Uint32Value();
-  int valType = configObject.Get("valType").As<Napi::Number>().Uint32Value();
-  Napi::Value key = configObject.Get("key");
-  Napi::Value val = configObject.Get("val");
+  int keyType =
+      MaybeUnwrap(configObject.Get("keyType")).As<Napi::Number>().Uint32Value();
+  int valType =
+      MaybeUnwrap(configObject.Get("valType")).As<Napi::Number>().Uint32Value();
+  Napi::Value key = MaybeUnwrap(configObject.Get("key"));
+  Napi::Value val = MaybeUnwrap(configObject.Get("val"));
 
   switch (keyType) {
-    case JS:
+    case CPP_STR:
       SetObjectWithJsStringKey(weak, key, val, valType);
       SetObjectWithJsStringKey(persistent, key, val, valType);
       SetObjectWithJsStringKey(reference, key, val, valType);
