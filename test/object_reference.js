@@ -106,7 +106,7 @@ function test (binding) {
       for (const configObject of configObjects) {
         binding.objectreference.setObject(configObject);
         const test = binding.objectreference.getFromValue('weak');
-        const test2 = binding.objectreference.getFromGetter('weak', configObject.key);
+        const test2 = binding.objectreference.getFromGetters('weak', configObject);
 
         const assertObject = {
           [configObject.key]: configObject.val
@@ -115,12 +115,14 @@ function test (binding) {
         assert.equal(configObject.val, test2);
       }
     }, () => {
-      binding.objectreference.setObject({ keyType: enumType.INT, valType: enumType.JS, key: 0, val: 'hello' });
-      binding.objectreference.setObject({ keyType: enumType.INT, valType: enumType.JS, key: 1, val: 'world' });
+      const configObjA = { keyType: enumType.INT, valType: enumType.JS, key: 0, val: 'hello' };
+      const configObjB = { keyType: enumType.INT, valType: enumType.JS, key: 1, val: 'world' };
+      binding.objectreference.setObject(configObjA);
+      binding.objectreference.setObject(configObjB);
 
       const test = binding.objectreference.getFromValue('weak');
-      const test2 = binding.objectreference.getFromGetter('weak', 0);
-      const test3 = binding.objectreference.getFromGetter('weak', 1);
+      const test2 = binding.objectreference.getFromGetters('weak', configObjA);
+      const test3 = binding.objectreference.getFromGetters('weak', configObjB);
       assert.deepEqual({ 1: 'world' }, test);
       assert.equal(undefined, test2);
       assert.equal('world', test3);
@@ -149,11 +151,11 @@ function test (binding) {
       for (const configObject of configObjects) {
         binding.objectreference.setObject(configObject);
         const test = binding.objectreference.getFromValue('persistent');
-        const test2 = binding.objectreference.getFromGetter('persistent', configObject.key);
-
+        const test2 = binding.objectreference.getFromGetters('persistent', configObject);
         const assertObject = {
           [configObject.key]: configObject.val
         };
+
         assert.deepEqual(assertObject, test);
         assert.equal(configObject.val, test2);
       }
@@ -168,12 +170,14 @@ function test (binding) {
       assert.deepEqual(test, test2);
     },
     () => {
-      binding.objectreference.setObject({ keyType: enumType.INT, valType: enumType.JS, key: 0, val: 'hello' });
-      binding.objectreference.setObject({ keyType: enumType.INT, valType: enumType.JS, key: 1, val: 'world' });
+      const configObjA = { keyType: enumType.INT, valType: enumType.JS, key: 0, val: 'hello' };
+      const configObjB = { keyType: enumType.INT, valType: enumType.JS, key: 1, val: 'world' };
+      binding.objectreference.setObject(configObjA);
+      binding.objectreference.setObject(configObjB);
 
       const test = binding.objectreference.getFromValue('persistent');
-      const test2 = binding.objectreference.getFromGetter('persistent', 0);
-      const test3 = binding.objectreference.getFromGetter('persistent', 1);
+      const test2 = binding.objectreference.getFromGetters('persistent', configObjA);
+      const test3 = binding.objectreference.getFromGetters('persistent', configObjB);
 
       assert.deepEqual({ 1: 'world' }, test);
       assert.equal(undefined, test2);
@@ -209,8 +213,7 @@ function test (binding) {
       for (const configObject of configObjects) {
         binding.objectreference.setObject(configObject);
         const test = binding.objectreference.getFromValue();
-        const test2 = binding.objectreference.getFromGetter(configObject.key);
-
+        const test2 = binding.objectreference.getFromGetters('reference', configObject);
         const assertObject = {
           [configObject.key]: configObject.val
         };
@@ -219,11 +222,14 @@ function test (binding) {
       }
     },
     () => {
-      binding.objectreference.setObject({ keyType: enumType.INT, valType: enumType.JS, key: 0, val: 'hello' });
-      binding.objectreference.setObject({ keyType: enumType.INT, valType: enumType.JS, key: 1, val: 'world' });
+      const configObjA = { keyType: enumType.INT, valType: enumType.JS, key: 0, val: 'hello' };
+      const configObjB = { keyType: enumType.INT, valType: enumType.JS, key: 1, val: 'world' };
+      binding.objectreference.setObject(configObjA);
+      binding.objectreference.setObject(configObjB);
       const test = binding.objectreference.getFromValue();
-      const test2 = binding.objectreference.getFromGetter(0);
-      const test3 = binding.objectreference.getFromGetter(1);
+
+      const test2 = binding.objectreference.getFromGetters('reference', configObjA);
+      const test3 = binding.objectreference.getFromGetters('reference', configObjB);
 
       assert.deepEqual({ 1: 'world' }, test);
       assert.equal(undefined, test2);

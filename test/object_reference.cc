@@ -171,40 +171,6 @@ void SetObject(const Napi::CallbackInfo& info) {
   }
 }
 
-// info[0] is the key, which can be either a string or a number.
-// info[1] is the value.
-// info[2] is a flag that differentiates whether the key is a
-// C string or a JavaScript string.
-void SetObjects(const CallbackInfo& info) {
-  Env env = info.Env();
-  HandleScope scope(env);
-
-  weak = Weak(Object::New(env));
-  weak.SuppressDestruct();
-
-  persistent = Persistent(Object::New(env));
-  persistent.SuppressDestruct();
-
-  reference = Reference<Object>::New(Object::New(env), 2);
-  reference.SuppressDestruct();
-
-  if (info[0].IsString()) {
-    if (info[2].As<String>() == String::New(env, "javascript")) {
-      weak.Set(info[0].As<String>(), info[1]);
-      persistent.Set(info[0].As<String>(), info[1]);
-      reference.Set(info[0].As<String>(), info[1]);
-    } else {
-      weak.Set(info[0].As<String>().Utf8Value().c_str(), info[1]);
-      persistent.Set(info[0].As<String>().Utf8Value().c_str(), info[1]);
-      reference.Set(info[0].As<String>().Utf8Value().c_str(), info[1]);
-    }
-  } else if (info[0].IsNumber()) {
-    weak.Set(info[0].As<Number>(), info[1]);
-    persistent.Set(info[0].As<Number>(), info[1]);
-    reference.Set(info[0].As<Number>(), info[1]);
-  }
-}
-
 void SetCastedObjects(const CallbackInfo& info) {
   Env env = info.Env();
   HandleScope scope(env);
@@ -242,9 +208,57 @@ Value GetFromValue(const CallbackInfo& info) {
   }
 }
 
+Value GetHelper(ObjectReference& ref,
+                Object& configObject,
+                const Napi::Env& env) {
+  int keyType =
+      MaybeUnwrap(configObject.Get("keyType")).As<Napi::Number>().Uint32Value();
+  if (ref.IsEmpty()) {
+    return String::New(env, "No referenced Value");
+  }
+
+  switch (keyType) {
+    case C_STR: {
+      std::string c_key =
+          MaybeUnwrap(configObject.Get("key")).As<String>().Utf8Value();
+      return MaybeUnwrap(ref.Get(c_key.c_str()));
+      break;
+    }
+    case CPP_STR: {
+      std::string cpp_key =
+          MaybeUnwrap(configObject.Get("key")).As<String>().Utf8Value();
+      return MaybeUnwrap(ref.Get(cpp_key));
+      break;
+    }
+    case INT: {
+      uint32_t key =
+          MaybeUnwrap(configObject.Get("key")).As<Number>().Uint32Value();
+      return MaybeUnwrap(ref.Get(key));
+      break;
+    }
+
+    default:
+      return String::New(env, "Error: Reached end of getter");
+      break;
+  }
+}
+
+Value GetFromGetters(const CallbackInfo& info) {
+  std::string object_req = info[0].As<String>();
+  Object configObject = info[1].As<Object>();
+  if (object_req == "weak") {
+    return GetHelper(weak, configObject, info.Env());
+  } else if (object_req == "persistent") {
+    return GetHelper(persistent, configObject, info.Env());
+  }
+
+  return GetHelper(reference, configObject, info.Env());
+}
+
 // info[0] is a flag to determine if the weak, persistent, or
 // multiple reference ObjectReference is being requested.
 // info[1] is the key, and it be either a String or a Number.
+// Idea to refactor: [ 'weak', {keyType: enum.INT, key:'abc'}]
 Value GetFromGetter(const CallbackInfo& info) {
   Env env = info.Env();
 
@@ -363,9 +377,8 @@ Object InitObjectReference(Env env) {
 
   exports["setCastedObjects"] = Function::New(env, SetCastedObjects);
   exports["setObject"] = Function::New(env, SetObject);
-  exports["setObjects"] = Function::New(env, SetObjects);
   exports["getCastedFromValue"] = Function::New(env, GetCastedFromValue);
-  exports["getFromGetter"] = Function::New(env, GetFromGetter);
+  exports["getFromGetters"] = Function::New(env, GetFromGetters);
   exports["getCastedFromGetter"] = Function::New(env, GetCastedFromGetter);
   exports["getFromValue"] = Function::New(env, GetFromValue);
   exports["unrefObjects"] = Function::New(env, UnrefObjects);
