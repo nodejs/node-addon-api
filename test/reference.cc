@@ -5,19 +5,6 @@ using namespace Napi;
 
 static Reference<Buffer<uint8_t>> weak;
 
-// TF1:
-//   1. Constructing Reference from existing napi_ref
-//   2. move copy constructors
-//   3. move assignment constructors
-//   4: Comparison operators
-
-// TF2:
-//  1. GC tests around Ref/Unref
-//  TODO: unerstand what runGcTests actually does
-
-// TF3:
-//  1. Tests Reset overloads
-
 static void RefMoveAssignTests(const Napi::CallbackInfo& info) {
   Napi::Object obj = Napi::Object::New(info.Env());
   obj.Set("tPro", "tTEST");
@@ -41,8 +28,6 @@ static void RefMoveAssignTests(const Napi::CallbackInfo& info) {
   assert(copyAssignRef == ref);
 }
 
-// TODO: We are having some issue around napi_delete_ref, when the ref is
-// persistent
 static void ReferenceRefTests(const Napi::CallbackInfo& info) {
   Napi::Object obj = Napi::Object::New(info.Env());
   Napi::Reference<Napi::Object> ref = Napi::Reference<Napi::Object>::New(obj);
