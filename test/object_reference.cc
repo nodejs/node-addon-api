@@ -2,8 +2,7 @@
 are not Objects by creating a blank Object and setting Values to
 it. Subclasses of Objects can only be set using an ObjectReference
 by first casting it as an Object. */
-
-#include <iostream>
+#include "assert.h"
 #include "napi.h"
 #include "test_helper.h"
 
@@ -18,7 +17,7 @@ ObjectReference casted_persistent;
 ObjectReference casted_reference;
 
 // Set keys can be one of:
-// C style string OR Napi::Value, which we cast to std::string& utf8
+// C style string, std::string& utf8, and const char *
 
 // Set values can be one of:
 //  Napi::Value
@@ -28,6 +27,37 @@ ObjectReference casted_reference;
 // double
 
 enum VAL_TYPES { JS = 0, C_STR, CPP_STR, BOOL, INT, DOUBLE, JS_CAST };
+
+void MoveOperatorsTest(const Napi::CallbackInfo& info) {
+  Napi::ObjectReference existingRef;
+  Napi::ObjectReference existingRef2;
+  Napi::Object testObject = Napi::Object::New(info.Env());
+  testObject.Set("testProp", "tProp");
+
+  // ObjectReference(Reference<Object>&& other);
+  Napi::Reference<Napi::Object> refObj =
+      Napi::Reference<Napi::Object>::New(testObject);
+  Napi::ObjectReference objRef = std::move(refObj);
+  std::string prop = MaybeUnwrap(objRef.Get("testProp")).As<Napi::String>();
+  assert(prop == "tProp");
+
+  // ObjectReference& operator=(Reference<Object>&& other);
+  Napi::Reference<Napi::Object> refObj2 =
+      Napi::Reference<Napi::Object>::New(testObject);
+  existingRef = std::move(refObj2);
+  prop = MaybeUnwrap(existingRef.Get("testProp")).As<Napi::String>();
+  assert(prop == "tProp");
+
+  // ObjectReference(ObjectReference&& other);
+  Napi::ObjectReference objRef3 = std::move(existingRef);
+  prop = MaybeUnwrap(objRef3.Get("testProp")).As<Napi::String>();
+  assert(prop == "tProp");
+
+  // ObjectReference& operator=(ObjectReference&& other);
+  existingRef2 = std::move(objRef3);
+  prop = MaybeUnwrap(objRef.Get("testProp")).As<Napi::String>();
+  assert(prop == "tProp");
+}
 
 void SetObjectWithCStringKey(Napi::ObjectReference& obj,
                              Napi::Value key,
@@ -383,6 +413,7 @@ Object InitObjectReference(Env env) {
   exports["getFromValue"] = Function::New(env, GetFromValue);
   exports["unrefObjects"] = Function::New(env, UnrefObjects);
   exports["refObjects"] = Function::New(env, RefObjects);
+  exports["moveOpTest"] = Function::New(env, MoveOperatorsTest);
 
   return exports;
 }

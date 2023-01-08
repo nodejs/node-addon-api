@@ -46,6 +46,7 @@ const configObjects = [
 ];
 
 function test (binding) {
+  binding.objectreference.moveOpTest();
   function testCastedEqual (testToCompare) {
     const compareTest = ['hello', 'world', '!'];
     if (testToCompare instanceof Array) {
