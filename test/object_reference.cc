@@ -89,11 +89,10 @@ void SetObjectWithCStringKey(Napi::ObjectReference& obj,
   }
 }
 
-// TODO: Change this function name to SetObjectWithCppStringKey
-void SetObjectWithJsStringKey(Napi::ObjectReference& obj,
-                              Napi::Value key,
-                              Napi::Value val,
-                              int valType) {
+void SetObjectWithCppStringKey(Napi::ObjectReference& obj,
+                               Napi::Value key,
+                               Napi::Value val,
+                               int valType) {
   std::string c_key = key.As<Napi::String>();
   switch (valType) {
     case JS:
@@ -180,9 +179,9 @@ void SetObject(const Napi::CallbackInfo& info) {
 
   switch (keyType) {
     case CPP_STR:
-      SetObjectWithJsStringKey(weak, key, val, valType);
-      SetObjectWithJsStringKey(persistent, key, val, valType);
-      SetObjectWithJsStringKey(reference, key, val, valType);
+      SetObjectWithCppStringKey(weak, key, val, valType);
+      SetObjectWithCppStringKey(persistent, key, val, valType);
+      SetObjectWithCppStringKey(reference, key, val, valType);
       break;
 
     case C_STR:
@@ -288,7 +287,6 @@ Value GetFromGetters(const CallbackInfo& info) {
 // info[0] is a flag to determine if the weak, persistent, or
 // multiple reference ObjectReference is being requested.
 // info[1] is the key, and it be either a String or a Number.
-// Idea to refactor: [ 'weak', {keyType: enum.INT, key:'abc'}]
 Value GetFromGetter(const CallbackInfo& info) {
   Env env = info.Env();
 
