@@ -70,7 +70,7 @@ and node-addon-api.
 - **[Contributors](#contributors)**
 - **[License](#license)**
 
-## **Current version: 5.0.0**
+## **Current version: 5.1.0**
 
 (See [CHANGELOG.md](CHANGELOG.md) for complete Changelog)
 
@@ -194,21 +194,21 @@ To run a specific unit test, filter conditions are available
   ```
     npm run unit --filter=objectwrap
   ```
- 
+
 Multiple unit tests cane be selected with wildcards
 
 **Example:**
 compile and run all test files ending with "reference" -> function_reference.cc, object_reference.cc, reference.cc
- ```   
+ ```
     npm run unit --filter=*reference
  ```
- 
+
 Multiple filter conditions can be joined to broaden the test selection
 
 **Example:**
  compile and run all tests under folders threadsafe_function and typed_threadsafe_function and also the objectwrap.cc file
     npm run unit --filter='*function objectwrap'
- 
+
 ### **Debug**
 
 To run the **node-addon-api** tests with `--debug` option:
@@ -291,19 +291,21 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for more details on our philosophy around
 | ------------------- | ----------------------------------------------------- |
 | Anna Henningsen     | [addaleax](https://github.com/addaleax)               |
 | Chengzhong Wu       | [legendecas](https://github.com/legendecas)           |
-| Gabriel Schulhof    | [gabrielschulhof](https://github.com/gabrielschulhof) |
-| Jim Schlight        | [jschlight](https://github.com/jschlight)             |
+| Jack Xia            | [JckXia](https://github.com/JckXia)                   |
+| Kevin Eady          | [KevinEady](https://github.com/KevinEady)             |
 | Michael Dawson      | [mhdawson](https://github.com/mhdawson)               |
-| Kevin Eady          | [KevinEady](https://github.com/KevinEady)
 | Nicola Del Gobbo    | [NickNaso](https://github.com/NickNaso)               |
+| Vladimir Morozov    | [vmoroz](https://github.com/vmoroz)                   |
 
 ### Emeritus
 | Name                | GitHub Link                                           |
 | ------------------- | ----------------------------------------------------- |
 | Arunesh Chandra     | [aruneshchandra](https://github.com/aruneshchandra)   |
 | Benjamin Byholm     | [kkoopa](https://github.com/kkoopa)                   |
-| Jason Ginchereau    | [jasongin](https://github.com/jasongin)               |
+| Gabriel Schulhof    | [gabrielschulhof](https://github.com/gabrielschulhof) |
 | Hitesh Kanwathirtha | [digitalinfinity](https://github.com/digitalinfinity) |
+| Jason Ginchereau    | [jasongin](https://github.com/jasongin)               |
+| Jim Schlight        | [jschlight](https://github.com/jschlight)             |
 | Sampson Gao         | [sampsongao](https://github.com/sampsongao)           |
 | Taylor Woll         | [boingoing](https://github.com/boingoing)             |
 
