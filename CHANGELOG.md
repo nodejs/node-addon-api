@@ -1,5 +1,78 @@
 # node-addon-api Changelog
 
+## 2023-01-13 Version 5.1.0, @NickNaso
+
+### Notable changes
+
+#### API
+
+- Fixed memory leak in `Napi::AsyncProgressWorkerBase`.
+- Added api to get `callback_info` from `Napi::CallBackInfo`.
+- Fixed erros and warning in VS 2017.
+- Made `Npi::Env::CleanupHook` public.
+- Removed `Napi::TypedArray::unknown_array_type`.
+
+#### TEST
+
+- Some minor fixes all over the test suite.
+- Added tests related to `Napi::Env`.
+- Added tests related to `Napi::TypedArray`.
+- Added tests related to `Napi::AsyncWorker`.
+- Added tests related to `Napi::TypedThreadSafeFunction`.
+- Added tests related to `Napi::Value`.
+- Added test related to `Napi::Promise`.
+
+### Documentation
+
+- Some minor fixes all over the documentation.
+- Added `Napi::HandleScope` example.
+- Added documentation about how to run a specific unit test.
+
+### TOOL
+
+- Added Windows with VS 2022 and Node.JS 19.x to the CI matrix.
+- Fixed stale workflow.
+- Updated Node.js versions on CI component.
+- Added condition for Window to find eslint.
+
+### Commits
+
+* \[[`79a446fb9c`](https://github.com/nodejs/node-addon-api/commit/79a446fb9c)] - Update contributors (#1265) (Kevin Eady)
+* \[[`01c61690c6`](https://github.com/nodejs/node-addon-api/commit/01c61690c6)] - **src**: napi-inl: Fix a memory leak bug in `AsyncProgressWorkerBase` (Ammar Faizi) [#1264](https://github.com/nodejs/node-addon-api/pull/1264)
+* \[[`55bd08ee26`](https://github.com/nodejs/node-addon-api/commit/55bd08ee26)] - **src**: api to get callback\_info from CallBackInfo (JckXia) [#1253](https://github.com/nodejs/node-addon-api/pull/1253)
+* \[[`ad76256714`](https://github.com/nodejs/node-addon-api/commit/ad76256714)] - **test**: add tests related to env (JckXia) [#1254](https://github.com/nodejs/node-addon-api/pull/1254)
+* \[[`5c3937365d`](https://github.com/nodejs/node-addon-api/commit/5c3937365d)] - **chore**: add Windows with VS 2022 and Node.JS 19.x to the CI matrix (#1252) (Vladimir Morozov)
+* \[[`97736c93f4`](https://github.com/nodejs/node-addon-api/commit/97736c93f4)] - **src**: fix errors and warnings in VS 2017 (Vladimir Morozov) [#1245](https://github.com/nodejs/node-addon-api/pull/1245)
+* \[[`ad7ff92c16`](https://github.com/nodejs/node-addon-api/commit/ad7ff92c16)] - **src**: refactor call js wrapper (#1242) (Jack)
+* \[[`39267baf1b`](https://github.com/nodejs/node-addon-api/commit/39267baf1b)] - **src**: make CleanupHook public (Julian Mesa) [#1240](https://github.com/nodejs/node-addon-api/pull/1240)
+* \[[`edf630cc79`](https://github.com/nodejs/node-addon-api/commit/edf630cc79)] - **src**: fix implementation of Signal (Kevin Eady) [#1216](https://github.com/nodejs/node-addon-api/pull/1216)
+* \[[`de5a502f3c`](https://github.com/nodejs/node-addon-api/commit/de5a502f3c)] - **doc**: Napi::Error is caught (Nicola Del Gobbo) [#1241](https://github.com/nodejs/node-addon-api/pull/1241)
+* \[[`10ad762807`](https://github.com/nodejs/node-addon-api/commit/10ad762807)] - **test**: removed the usage of default\_configuration. (Nicola Del Gobbo) [#1226](https://github.com/nodejs/node-addon-api/pull/1226)
+* \[[`e9db2adef2`](https://github.com/nodejs/node-addon-api/commit/e9db2adef2)] - **test**: Add test coverage to TSFN::New() overloads (#1201) (Jack)
+* \[[`c849ad3f6a`](https://github.com/nodejs/node-addon-api/commit/c849ad3f6a)] - **chore**: fix stale workflow (#1228) (Richard Lau)
+* \[[`e408804ad8`](https://github.com/nodejs/node-addon-api/commit/e408804ad8)] - **test**: adding ref for threadsafefunctions (JckXia) [#1222](https://github.com/nodejs/node-addon-api/pull/1222)
+* \[[`a8afb2d73c`](https://github.com/nodejs/node-addon-api/commit/a8afb2d73c)] - **src**: remove TypedArray::unknown\_array\_type (Kevin Eady) [#1209](https://github.com/nodejs/node-addon-api/pull/1209)
+* \[[`257a52f823`](https://github.com/nodejs/node-addon-api/commit/257a52f823)] - **test**: Add test cased for failed task cancellations (#1214) (Jack)
+* \[[`793268c59f`](https://github.com/nodejs/node-addon-api/commit/793268c59f)] - **test**: Add test case for canceling async worker tasks (#1202) (Jack)
+* \[[`1331856ef1`](https://github.com/nodejs/node-addon-api/commit/1331856ef1)] - **doc**: add HandleScope example (#1210) (Kevin Eady)
+* \[[`d5fc875e5d`](https://github.com/nodejs/node-addon-api/commit/d5fc875e5d)] - **test**: remove update to process.config (#1208) (Michael Dawson)
+* \[[`30cd4a37f0`](https://github.com/nodejs/node-addon-api/commit/30cd4a37f0)] - **test**: add tests for .Data method (JckXia) [#1203](https://github.com/nodejs/node-addon-api/pull/1203)
+* \[[`225ca35963`](https://github.com/nodejs/node-addon-api/commit/225ca35963)] - **test**: Add test coverage for "TSFN::Ref()" (#1196) (Jack)
+* \[[`5a5a213985`](https://github.com/nodejs/node-addon-api/commit/5a5a213985)] - Update CI component versions (#1200) (Vladimir Morozov)
+* \[[`fb27e72b0c`](https://github.com/nodejs/node-addon-api/commit/fb27e72b0c)] - **doc**: Update CONTRIBUTING.md (Saint Gabriel) [#1185](https://github.com/nodejs/node-addon-api/pull/1185)
+* \[[`e9def3ed72`](https://github.com/nodejs/node-addon-api/commit/e9def3ed72)] - **doc**: Update Readme for filter conditions in unit tests (Deepak Rajamohan) [#1199](https://github.com/nodejs/node-addon-api/pull/1199)
+* \[[`efd67876e1`](https://github.com/nodejs/node-addon-api/commit/efd67876e1)] - **doc**: updated npm script for focused tests (Peter Šándor)
+* \[[`134961d853`](https://github.com/nodejs/node-addon-api/commit/134961d853)] - **test**: CallbackInfo NewTarget() basic coverage (#1048) (Peter Šándor)
+* \[[`1dfd03bdd5`](https://github.com/nodejs/node-addon-api/commit/1dfd03bdd5)] - Update README.md (#1187) (Saint Gabriel)
+* \[[`576128fd19`](https://github.com/nodejs/node-addon-api/commit/576128fd19)] - **doc**: fix typo in async\_operations.md (#1189) (Tobias Nießen)
+* \[[`63d3c30ec1`](https://github.com/nodejs/node-addon-api/commit/63d3c30ec1)] - **test**: add tests for TypedArray (Dante Calderon) [#1179](https://github.com/nodejs/node-addon-api/pull/1179)
+* \[[`358ac2f080`](https://github.com/nodejs/node-addon-api/commit/358ac2f080)] - Fix link to CMake.js documentation (#1180) (Kyle Kovacs)
+* \[[`dc4f2bbe4a`](https://github.com/nodejs/node-addon-api/commit/dc4f2bbe4a)] - **test**: Add promise unit test (#1173) (Jenny)
+* \[[`f3124ae0ed`](https://github.com/nodejs/node-addon-api/commit/f3124ae0ed)] - **doc**: fix broken `Napi::ThreadSafeFunction` link (#1172) (Feng Yu)
+* \[[`10b440fe27`](https://github.com/nodejs/node-addon-api/commit/10b440fe27)] - **src**: reformat all code (Kevin Eady) [#1160](https://github.com/nodejs/node-addon-api/pull/1160)
+* \[[`33e402971e`](https://github.com/nodejs/node-addon-api/commit/33e402971e)] - **test**: Add condition for window to find eslint (#1176) (Jack)
+* \[[`d53843b83b`](https://github.com/nodejs/node-addon-api/commit/d53843b83b)] - **test**: add missing value tests (JckXia) [#1170](https://github.com/nodejs/node-addon-api/pull/1170)
+
 ## 2022-05-02 Version 5.0.0, @NickNaso
 
 ### Notable changes:
@@ -16,7 +89,7 @@ of `Napi::Value`'s.
 - Improved the test framework. Added the possibility to run subsets of tests
 more easily.
 - Added test for `Napi::AsyncContext` class.
-- Fixed ramdom failure on test for `Napi::ThreadSafeFunction` e 
+- Fixed ramdom failure on test for `Napi::ThreadSafeFunction` e
 `Napi::TypedThreadSafeFunction` class.
 - Fixed compilation problem on debian 8 system.
 - Added test for `Napi::Object::Set()` method.
@@ -142,10 +215,10 @@ more easily.
 
 #### API
 
-- `Napi::Reference` updated the default value to reflect the most possible 
+- `Napi::Reference` updated the default value to reflect the most possible
 values when there are any errors occurred on `napi_reference_unref`.
 - Added the check for nullpointer on `Napi::String` initialization.
-- Added the wraps for `napi_add_env_cleanup_hook` and 
+- Added the wraps for `napi_add_env_cleanup_hook` and
 `napi_remove_env_cleanup_hook`.
 - Added `Napi::Maybe<T>` class to handle pending exception when cpp exception
 disabled.
@@ -176,9 +249,9 @@ disabled.
 
 #### API
 
-- Fixed a crashing issue in `Napi::Error::ThrowAsJavaScriptException` 
+- Fixed a crashing issue in `Napi::Error::ThrowAsJavaScriptException`
 introducing the preprocessor directive `NODE_API_SWALLOW_UNTHROWABLE_EXCEPTIONS`.
-- Fixed compilation problem for GCC 11 and C++20. 
+- Fixed compilation problem for GCC 11 and C++20.
 
 #### TEST
 
@@ -297,12 +370,12 @@ introducing the preprocessor directive `NODE_API_SWALLOW_UNTHROWABLE_EXCEPTIONS`
 #### API
 
 - Added `Napi::TypedThreadSafeFunction` class that is a new implementation for
-thread-safe functions. 
+thread-safe functions.
 - Fixed leak on `Napi::AsyncProgressWorkerBase`.
-- Fixed empty data on `Napi::AsyncProgressWorker::OnProgress` caused by race 
+- Fixed empty data on `Napi::AsyncProgressWorker::OnProgress` caused by race
 conditions of `Napi::AsyncProgressWorker`.
 - Added `Napi::ArrayBuffer::Detach()` and `Napi::ArrayBuffer::IsDetached()`.
-- Fixed problem on `Napi::FinalizeCallback` it needs to create a 
+- Fixed problem on `Napi::FinalizeCallback` it needs to create a
 `Napi::HandleScope` when it calls `Napi::ObjectWrap::~ObjectWrap()`.
 
 #### Documentation
@@ -373,7 +446,7 @@ conditions of `Napi::AsyncProgressWorker`.
 #### API
 
 - Introduced `include_dir` for use with **gyp** in a scalar context.
-- Added `Napi::Addon` to help handle the loading of a native add-on into 
+- Added `Napi::Addon` to help handle the loading of a native add-on into
 multiple threads and or multiple times in the same thread.
 - Concentrate callbacks provided to core N-API.
 - Make sure wrapcallback is used.
