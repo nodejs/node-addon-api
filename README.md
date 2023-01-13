@@ -70,7 +70,7 @@ and node-addon-api.
 - **[Contributors](#contributors)**
 - **[License](#license)**
 
-## **Current version: 5.0.0**
+## **Current version: 5.1.0**
 
 (See [CHANGELOG.md](CHANGELOG.md) for complete Changelog)
 
@@ -194,21 +194,21 @@ To run a specific unit test, filter conditions are available
   ```
     npm run unit --filter=objectwrap
   ```
- 
+
 Multiple unit tests cane be selected with wildcards
 
 **Example:**
 compile and run all test files ending with "reference" -> function_reference.cc, object_reference.cc, reference.cc
- ```   
+ ```
     npm run unit --filter=*reference
  ```
- 
+
 Multiple filter conditions can be joined to broaden the test selection
 
 **Example:**
  compile and run all tests under folders threadsafe_function and typed_threadsafe_function and also the objectwrap.cc file
     npm run unit --filter='*function objectwrap'
- 
+
 ### **Debug**
 
 To run the **node-addon-api** tests with `--debug` option:
