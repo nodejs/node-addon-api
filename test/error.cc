@@ -85,6 +85,36 @@ void ThrowTypeError(const CallbackInfo& info) {
   throw TypeError::New(info.Env(), message);
 }
 
+void ThrowTypeErrorCStr(const CallbackInfo& info) {
+  std::string message = info[0].As<String>().Utf8Value();
+
+  ReleaseAndWaitForChildProcess(info, 1);
+  throw TypeError::New(info.Env(), message.c_str());
+}
+
+void ThrowTypeErrorNapiVal(const CallbackInfo& info) {
+  std::string message = info[0].As<String>().Utf8Value();
+  ReleaseAndWaitForChildProcess(info, 1);
+  throw TypeError(info.Env(), Napi::String::New(info.Env(), message));
+}
+
+void ThrowRangeErrorCStr(const CallbackInfo& info) {
+  std::string message = info[0].As<String>().Utf8Value();
+  ReleaseAndWaitForChildProcess(info, 1);
+  throw RangeError::New(info.Env(), message.c_str());
+}
+
+void ThrowRangeErrorNapiVal(const CallbackInfo& info) {
+  std::string message = info[0].As<String>().Utf8Value();
+  ReleaseAndWaitForChildProcess(info, 1);
+  throw RangeError(info.Env(), Napi::String::New(info.Env(), message));
+}
+
+void ThrowEmptyRangeError(const CallbackInfo& info) {
+  ReleaseAndWaitForChildProcess(info, 1);
+  throw RangeError();
+}
+
 void ThrowRangeError(const CallbackInfo& info) {
   std::string message = info[0].As<String>().Utf8Value();
 
@@ -156,11 +186,45 @@ void ThrowTypeError(const CallbackInfo& info) {
   TypeError::New(info.Env(), message).ThrowAsJavaScriptException();
 }
 
+void ThrowTypeErrorCStr(const CallbackInfo& info) {
+  std::string message = info[0].As<String>().Utf8Value();
+
+  ReleaseAndWaitForChildProcess(info, 1);
+  TypeError::New(info.Env(), message.c_str()).ThrowAsJavaScriptException();
+}
+
+void ThrowTypeErrorNapiVal(const CallbackInfo& info) {
+  std::string message = info[0].As<String>().Utf8Value();
+  ReleaseAndWaitForChildProcess(info, 1);
+  TypeError(info.Env(), Napi::String::New(info.Env(), message))
+      .ThrowAsJavaScriptException();
+}
+
 void ThrowRangeError(const CallbackInfo& info) {
   std::string message = info[0].As<String>().Utf8Value();
 
   ReleaseAndWaitForChildProcess(info, 1);
   RangeError::New(info.Env(), message).ThrowAsJavaScriptException();
+}
+
+void ThrowRangeErrorCStr(const CallbackInfo& info) {
+  std::string message = info[0].As<String>().Utf8Value();
+  ReleaseAndWaitForChildProcess(info, 1);
+  RangeError::New(info.Env(), message.c_str()).ThrowAsJavaScriptException();
+}
+
+// TODO: Awaiting correct API impl for when second arg is napi_value
+void ThrowRangeErrorNapiVal(const CallbackInfo& info) {
+  std::string message = info[0].As<String>().Utf8Value();
+  ReleaseAndWaitForChildProcess(info, 1);
+  RangeError(info.Env(), Napi::String::New(info.Env(), message))
+      .ThrowAsJavaScriptException();
+}
+
+// TODO: Figure out the correct api for this
+void ThrowEmptyRangeError(const CallbackInfo& info) {
+  ReleaseAndWaitForChildProcess(info, 1);
+  RangeError().ThrowAsJavaScriptException();
 }
 
 Value CatchError(const CallbackInfo& info) {
@@ -270,7 +334,13 @@ Object InitError(Env env) {
       Function::New(env, LastExceptionErrorCode);
   exports["throwJSError"] = Function::New(env, ThrowJSError);
   exports["throwTypeError"] = Function::New(env, ThrowTypeError);
+  exports["throwTypeErrorCStr"] = Function::New(env, ThrowTypeErrorCStr);
+  exports["throwTypeErrorNapiVal"] = Function::New(env, ThrowTypeErrorNapiVal);
   exports["throwRangeError"] = Function::New(env, ThrowRangeError);
+  exports["throwRangeErrorCStr"] = Function::New(env, ThrowRangeErrorCStr);
+  exports["throwRangeErrorNapiVal"] =
+      Function::New(env, ThrowRangeErrorNapiVal);
+  exports["throwEmptyRangeError"] = Function::New(env, ThrowEmptyRangeError);
   exports["catchError"] = Function::New(env, CatchError);
   exports["catchErrorMessage"] = Function::New(env, CatchErrorMessage);
   exports["doNotCatch"] = Function::New(env, DoNotCatch);
