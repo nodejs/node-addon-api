@@ -1,5 +1,4 @@
 #include <assert.h>
-#include <iostream>
 #include "napi.h"
 
 #if (NAPI_VERSION > 3)
