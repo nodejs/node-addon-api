@@ -22,6 +22,7 @@ Object InitBasicTypesValue(Env env);
 Object InitBigInt(Env env);
 #endif
 Object InitBuffer(Env env);
+Object InitBufferNoExternal(Env env);
 #if (NAPI_VERSION > 2)
 Object InitCallbackScope(Env env);
 #endif
@@ -107,6 +108,7 @@ Object Init(Env env, Object exports) {
   exports.Set("date", InitDate(env));
 #endif
   exports.Set("buffer", InitBuffer(env));
+  exports.Set("bufferNoExternal", InitBufferNoExternal(env));
 #if (NAPI_VERSION > 2)
   exports.Set("callbackscope", InitCallbackScope(env));
 #endif

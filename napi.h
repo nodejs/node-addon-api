@@ -1077,6 +1077,7 @@ class ArrayBuffer : public Object {
       size_t byteLength  ///< Length of the buffer to be allocated, in bytes
   );
 
+#ifndef NODE_API_NO_EXTERNAL_BUFFERS_ALLOWED
   /// Creates a new ArrayBuffer instance, using an external buffer with
   /// specified byte length.
   static ArrayBuffer New(
@@ -1120,6 +1121,7 @@ class ArrayBuffer : public Object {
       Hint* finalizeHint  ///< Hint (second parameter) to be passed to the
                           ///< finalize callback
   );
+#endif  // NODE_API_NO_EXTERNAL_BUFFERS_ALLOWED
 
   ArrayBuffer();  ///< Creates a new _empty_ ArrayBuffer instance.
   ArrayBuffer(napi_env env,
@@ -1432,6 +1434,7 @@ template <typename T>
 class Buffer : public Uint8Array {
  public:
   static Buffer<T> New(napi_env env, size_t length);
+#ifndef NODE_API_NO_EXTERNAL_BUFFERS_ALLOWED
   static Buffer<T> New(napi_env env, T* data, size_t length);
 
   // Finalizer must implement `void operator()(Env env, T* data)`.
@@ -1447,6 +1450,22 @@ class Buffer : public Uint8Array {
                        size_t length,
                        Finalizer finalizeCallback,
                        Hint* finalizeHint);
+#endif  // NODE_API_NO_EXTERNAL_BUFFERS_ALLOWED
+
+  static Buffer<T> NewOrCopy(napi_env env, T* data, size_t length);
+  // Finalizer must implement `void operator()(Env env, T* data)`.
+  template <typename Finalizer>
+  static Buffer<T> NewOrCopy(napi_env env,
+                             T* data,
+                             size_t length,
+                             Finalizer finalizeCallback);
+  // Finalizer must implement `void operator()(Env env, T* data, Hint* hint)`.
+  template <typename Finalizer, typename Hint>
+  static Buffer<T> NewOrCopy(napi_env env,
+                             T* data,
+                             size_t length,
+                             Finalizer finalizeCallback,
+                             Hint* finalizeHint);
 
   static Buffer<T> Copy(napi_env env, const T* data, size_t length);
 

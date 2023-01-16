@@ -20,6 +20,7 @@
         'callbackInfo.cc',
         'date.cc',
         'binding.cc',
+        'buffer_no_external.cc',
         'buffer.cc',
         'callbackscope.cc',
         'dataview/dataview.cc',

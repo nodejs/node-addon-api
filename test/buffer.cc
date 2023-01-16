@@ -1,30 +1,16 @@
+#include "buffer.h"
 #include "napi.h"
 
 using namespace Napi;
 
-namespace {
-
-const size_t testLength = 4;
+namespace test_buffer {
 uint16_t testData[testLength];
 int finalizeCount = 0;
+}  // namespace test_buffer
 
-template <typename T>
-void InitData(T* data, size_t length) {
-  for (size_t i = 0; i < length; i++) {
-    data[i] = static_cast<T>(i);
-  }
-}
+using namespace test_buffer;
 
-template <typename T>
-bool VerifyData(T* data, size_t length) {
-  for (size_t i = 0; i < length; i++) {
-    if (data[i] != static_cast<T>(i)) {
-      return false;
-    }
-  }
-  return true;
-}
-
+namespace {
 Value CreateBuffer(const CallbackInfo& info) {
   Buffer<uint16_t> buffer = Buffer<uint16_t>::New(info.Env(), testLength);
 
@@ -146,6 +132,8 @@ Value CreateBufferCopy(const CallbackInfo& info) {
   return buffer;
 }
 
+#include "buffer_new_or_copy-inl.h"
+
 void CheckBuffer(const CallbackInfo& info) {
   if (!info[0].IsBuffer()) {
     Error::New(info.Env(), "A buffer was expected.")
@@ -183,6 +171,12 @@ Object InitBuffer(Env env) {
       Function::New(env, CreateExternalBufferWithFinalize);
   exports["createExternalBufferWithFinalizeHint"] =
       Function::New(env, CreateExternalBufferWithFinalizeHint);
+  exports["createOrCopyExternalBuffer"] =
+      Function::New(env, CreateOrCopyExternalBuffer);
+  exports["createOrCopyExternalBufferWithFinalize"] =
+      Function::New(env, CreateOrCopyExternalBufferWithFinalize);
+  exports["createOrCopyExternalBufferWithFinalizeHint"] =
+      Function::New(env, CreateOrCopyExternalBufferWithFinalizeHint);
   exports["createBufferCopy"] = Function::New(env, CreateBufferCopy);
   exports["checkBuffer"] = Function::New(env, CheckBuffer);
   exports["getFinalizeCount"] = Function::New(env, GetFinalizeCount);
