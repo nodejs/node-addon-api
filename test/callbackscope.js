@@ -24,7 +24,7 @@ function test (binding) {
   let insideHook = false;
   const hook = asyncHooks.createHook({
     init (asyncId, type, triggerAsyncId, resource) {
-      if (id === undefined && type === 'callback_scope_test') {
+      if (id === undefined && (type === 'callback_scope_test' || type === 'existing_callback_scope_test')) {
         id = asyncId;
       }
     },
@@ -39,8 +39,11 @@ function test (binding) {
   return new Promise(resolve => {
     binding.callbackscope.runInCallbackScope(function () {
       assert(insideHook);
-      hook.disable();
-      resolve();
+      binding.callbackscope.runInPreExistingCbScope(function () {
+        assert(insideHook);
+        hook.disable();
+        resolve();
+      });
     });
   });
 }
