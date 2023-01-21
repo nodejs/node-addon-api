@@ -8,20 +8,20 @@ namespace {
 
 void VoidCallback(const CallbackInfo& info) {
   Napi::Function fn = info[0].As<Function>();
-  Maybe<Value> fn_m = fn.Call({});
+  Maybe<Value> ret = fn.Call({});
 
-  assert(fn_m.IsNothing() == true);
-  assert(fn_m.IsJust() == false);
+  assert(ret.IsNothing() == true);
+  assert(ret.IsJust() == false);
 
   Napi::Value placeHolder = Napi::Number::New(info.Env(), 12345);
-  Napi::Value unwrappedValue = fn_m.UnwrapOr(placeHolder);
+  Napi::Value unwrappedValue = ret.UnwrapOr(placeHolder);
 
   assert(unwrappedValue.As<Number>().Uint32Value() == 12345);
 
-  assert(fn_m.UnwrapTo(&placeHolder) == false);
+  assert(ret.UnwrapTo(&placeHolder) == false);
   assert(placeHolder.As<Number>().Uint32Value() == 12345);
 
-  fn_m.Check();
+  ret.Check();
 }
 
 void TestMaybeOperatorOverload(const CallbackInfo& info) {
@@ -36,22 +36,22 @@ void NormalJsCallback(const CallbackInfo& info) {
   Napi::Function fn = info[0].As<Function>();
   uint32_t magic_number = info[1].As<Number>().Uint32Value();
 
-  Maybe<Value> fn_m = fn.Call({});
+  Maybe<Value> ret = fn.Call({});
 
-  assert(fn_m.IsNothing() == false);
-  assert(fn_m.IsJust() == true);
+  assert(ret.IsNothing() == false);
+  assert(ret.IsJust() == true);
 
-  Napi::Value unwrappedValue = fn_m.Unwrap();
+  Napi::Value unwrappedValue = ret.Unwrap();
   assert(unwrappedValue.IsNumber() == true);
 
   assert(unwrappedValue.As<Number>().Uint32Value() == magic_number);
 
   unwrappedValue =
-      fn_m.UnwrapOr(Napi::Number::New(info.Env(), magic_number - 1));
+      ret.UnwrapOr(Napi::Number::New(info.Env(), magic_number - 1));
   assert(unwrappedValue.As<Number>().Uint32Value() == magic_number);
 
   Napi::Value placeHolder = Napi::Number::New(info.Env(), magic_number - 1);
-  assert(fn_m.UnwrapTo(&placeHolder) == true);
+  assert(ret.UnwrapTo(&placeHolder) == true);
   assert(placeHolder.As<Number>().Uint32Value() == magic_number);
 }
 
