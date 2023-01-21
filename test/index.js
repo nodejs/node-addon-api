@@ -134,6 +134,7 @@ if (majorNodeVersion < 12 && !filterConditionsProvided) {
 
 if (napiVersion < 8 && !filterConditionsProvided) {
   testModules.splice(testModules.indexOf('object/object_freeze_seal'), 1);
+  testModules.splice(testModules.indexOf('object/object_type_tag'), 1);
 }
 
 (async function () {

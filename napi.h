@@ -980,6 +980,9 @@ class Object : public Value {
   /// See
   /// https://tc39.es/ecma262/#sec-proxy-object-internal-methods-and-internal-slots-getprototypeof
   MaybeOrValue<bool> Seal() const;
+
+  void TypeTag(const napi_type_tag* type_tag) const;
+  bool CheckTypeTag(const napi_type_tag* type_tag) const;
 #endif  // NAPI_VERSION >= 8
 };
 
