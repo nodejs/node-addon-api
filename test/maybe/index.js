@@ -34,6 +34,16 @@ function test (binding) {
 }
 
 function child (binding) {
+  const MAGIC_NUMBER = 12459062;
+  binding.normalJsCallback(() => {
+    return MAGIC_NUMBER;
+  }, MAGIC_NUMBER);
+
+  binding.testMaybeOverloadOp(
+    () => { return MAGIC_NUMBER; },
+    () => { throw Error('Foobar'); }
+  );
+
   binding.voidCallback(() => {
     throw new Error('foobar');
   });
