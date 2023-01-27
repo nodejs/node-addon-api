@@ -47,6 +47,7 @@
         'object/has_property.cc',
         'object/object.cc',
         'object/object_freeze_seal.cc',
+        'object/object_type_tag.cc',
         'object/set_property.cc',
         'object/subscript_operator.cc',
         'promise.cc',

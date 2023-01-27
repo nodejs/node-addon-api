@@ -75,6 +75,7 @@ Object InitVersionManagement(Env env);
 Object InitThunkingManual(Env env);
 #if (NAPI_VERSION > 7)
 Object InitObjectFreezeSeal(Env env);
+Object InitObjectTypeTag(Env env);
 #endif
 
 #if defined(NODE_ADDON_API_ENABLE_MAYBE)
@@ -166,6 +167,7 @@ Object Init(Env env, Object exports) {
   exports.Set("thunking_manual", InitThunkingManual(env));
 #if (NAPI_VERSION > 7)
   exports.Set("object_freeze_seal", InitObjectFreezeSeal(env));
+  exports.Set("object_type_tag", InitObjectTypeTag(env));
 #endif
 
 #if defined(NODE_ADDON_API_ENABLE_MAYBE)
