@@ -36,6 +36,14 @@ function test (bindingPath) {
     return err instanceof RangeError && err.message === 'test';
   });
 
+  assert.throws(() => binding.error.throwTypeErrorCtor(new TypeError('jsTypeError')), function (err) {
+    return err instanceof TypeError && err.message === 'jsTypeError';
+  });
+
+  assert.throws(() => binding.error.throwRangeErrorCtor(new RangeError('rangeTypeError')), function (err) {
+    return err instanceof RangeError && err.message === 'rangeTypeError';
+  });
+
   assert.throws(
     () => binding.error.doNotCatch(
       () => {
