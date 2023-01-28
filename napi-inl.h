@@ -2833,7 +2833,25 @@ inline TypeError TypeError::New(napi_env env, const std::string& message) {
 inline TypeError::TypeError() : Error() {}
 
 inline TypeError::TypeError(napi_env env, napi_value value)
-    : Error(env, value) {}
+    : Error(env, value) {
+      bool isTypeError = false;
+      napi_value typeErrorCtor;
+      napi_status status;
+
+    #if defined(NODE_ADDON_API_ENABLE_MAYBE)
+      if(Napi::Env(env).Global.Get("TypeError").UnwrapTo(&typeErrorCtor)) {
+         status = napi_instanceof(env, value, typeErrorCtor, &isTypeError);
+      }
+    #else
+      typeErrorCtor = Napi::Env(env).Global().Get("TypeError");
+      status = napi_instanceof(env, value, typeErrorCtor, &isTypeError);
+    #endif
+
+    NAPI_THROW_IF_FAILED(env, status);
+    if(!isTypeError) {
+      NAPI_THROW(Napi::Error::New(env, "We expect a TypeError object"));
+    }
+}
 
 inline RangeError RangeError::New(napi_env env, const char* message) {
   return Error::New<RangeError>(
@@ -2848,7 +2866,25 @@ inline RangeError RangeError::New(napi_env env, const std::string& message) {
 inline RangeError::RangeError() : Error() {}
 
 inline RangeError::RangeError(napi_env env, napi_value value)
-    : Error(env, value) {}
+    : Error(env, value) {
+      bool isRangeError = false;
+      napi_value rangeErrorCtor;
+      napi_status status;
+
+    #if defined(NODE_ADDON_API_ENABLE_MAYBE)
+      if(Napi::Env(env).Global.Get("RangeError").UnwrapTo(&rangeErrorCtor)) {
+         status = napi_instanceof(env, value, rangeErrorCtor, &isRangeError);
+      }
+    #else
+      rangeErrorCtor = Napi::Env(env).Global().Get("RangeError");
+      status = napi_instanceof(env, value, rangeErrorCtor, &isRangeError);
+    #endif
+
+    NAPI_THROW_IF_FAILED(env, status);
+    if(!isRangeError) {
+      NAPI_THROW(Napi::Error::New(env, "We expect an RangeError object"));
+    }
+}
 
 ////////////////////////////////////////////////////////////////////////////////
 // Reference<T> class
