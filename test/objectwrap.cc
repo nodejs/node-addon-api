@@ -285,9 +285,6 @@ class Test : public Napi::ObjectWrap<Test> {
 
 std::string Test::s_staticMethodText;
 
-// A potnetial test would be:
-// 1. Set a value on object with instance setter
-// 2. Check with object unwrapper that it indeed is correct value
 Napi::Object InitObjectWrap(Napi::Env env) {
   testStaticContextRef = Napi::Persistent(Napi::Object::New(env));
   testStaticContextRef.SuppressDestruct();
