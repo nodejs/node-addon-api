@@ -15,7 +15,13 @@ static std::thread threads[2];
 static ThreadSafeFunction s_tsfn;
 
 struct ThreadSafeFunctionInfo {
-  enum CallType { DEFAULT, BLOCKING, NON_BLOCKING } type;
+  enum CallType {
+    DEFAULT,
+    BLOCKING,
+    NON_BLOCKING,
+    NON_BLOCKING_DEFAULT,
+    NON_BLOCKING_SINGLE_ARG
+  } type;
   bool abort;
   bool startSecondary;
   FunctionReference jsFinalizeCallback;
@@ -42,16 +48,21 @@ static void DataSourceThread() {
     if (s_tsfn.Acquire() != napi_ok) {
       Error::Fatal("DataSourceThread", "ThreadSafeFunction.Acquire() failed");
     }
-
     threads[1] = std::thread(SecondaryThread);
   }
 
   bool queueWasFull = false;
   bool queueWasClosing = false;
+
   for (int index = ARRAY_LENGTH - 1; index > -1 && !queueWasClosing; index--) {
     napi_status status = napi_generic_failure;
+
     auto callback = [](Env env, Function jsCallback, int* data) {
       jsCallback.Call({Number::New(env, *data)});
+    };
+
+    auto noArgCallback = [](Env env, Function jsCallback) {
+      jsCallback.Call({Number::New(env, 42)});
     };
 
     switch (info->type) {
@@ -64,9 +75,17 @@ static void DataSourceThread() {
       case ThreadSafeFunctionInfo::NON_BLOCKING:
         status = s_tsfn.NonBlockingCall(&ints[index], callback);
         break;
+      case ThreadSafeFunctionInfo::NON_BLOCKING_DEFAULT:
+        status = s_tsfn.NonBlockingCall();
+        break;
+
+      case ThreadSafeFunctionInfo::NON_BLOCKING_SINGLE_ARG:
+        status = s_tsfn.NonBlockingCall(noArgCallback);
+        break;
     }
 
-    if (info->abort && info->type != ThreadSafeFunctionInfo::NON_BLOCKING) {
+    if (info->abort && (info->type == ThreadSafeFunctionInfo::BLOCKING ||
+                        info->type == ThreadSafeFunctionInfo::DEFAULT)) {
       // Let's make this thread really busy to give the main thread a chance to
       // abort / close.
       std::unique_lock<std::mutex> lk(info->protect);
@@ -176,6 +195,16 @@ static Value StartThreadNoNative(const CallbackInfo& info) {
   return StartThreadInternal(info, ThreadSafeFunctionInfo::DEFAULT);
 }
 
+static Value StartThreadNonblockingNoNative(const CallbackInfo& info) {
+  return StartThreadInternal(info,
+                             ThreadSafeFunctionInfo::NON_BLOCKING_DEFAULT);
+}
+
+static Value StartThreadNonBlockingSingleArg(const CallbackInfo& info) {
+  return StartThreadInternal(info,
+                             ThreadSafeFunctionInfo::NON_BLOCKING_SINGLE_ARG);
+}
+
 Object InitThreadSafeFunction(Env env) {
   for (size_t index = 0; index < ARRAY_LENGTH; index++) {
     ints[index] = index;
@@ -186,8 +215,12 @@ Object InitThreadSafeFunction(Env env) {
   exports["MAX_QUEUE_SIZE"] = Number::New(env, MAX_QUEUE_SIZE);
   exports["startThread"] = Function::New(env, StartThread);
   exports["startThreadNoNative"] = Function::New(env, StartThreadNoNative);
+  exports["startThreadNonblockingNoNative"] =
+      Function::New(env, StartThreadNonblockingNoNative);
   exports["startThreadNonblocking"] =
       Function::New(env, StartThreadNonblocking);
+  exports["startThreadNonblockSingleArg"] =
+      Function::New(env, StartThreadNonBlockingSingleArg);
   exports["stopThread"] = Function::New(env, StopThread);
   exports["release"] = Function::New(env, Release);
 
