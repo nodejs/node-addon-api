@@ -2850,6 +2850,7 @@ inline TypeError::TypeError(napi_env env, napi_value value)
 #endif
 
   if (!isTypeError) {
+    // TODO: What should we do if the napi_value passed in isn't an TypeError?
     NAPI_THROW_VOID(Napi::Error::New(env, "We expect a TypeError object"));
   }
 }
