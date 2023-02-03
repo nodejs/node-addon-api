@@ -1,5 +1,45 @@
 # node-addon-api Changelog
 
+## 2023-02-03 Version 6.0.0, @NickNaso
+
+### Notable changes
+
+#### API
+
+- Added `Napi::Object::TypeTag()` and `Napi::Object::CheckTypeTag()` methods.
+- Made operator `napi_callback_info` explicit.
+
+#### TEST
+
+- Some minor fixes all over the test suite.
+- Added tests related to `Napi::Object::TypeTag()` and `Napi::Object::CheckTypeTag()` methods.
+- Added tests related to `Napi::CallbackScope`.
+- Added tests related to `Napi::EscapableHandleScope`.
+- Added tests related to `Napi::Maybe<T>`.
+- Added tests related to `Napi::ThreadSafeFuntion`.
+- Changed some tests related to `Napi::AsyncWorker`.
+
+### Documentation
+
+- Added documentation for `Napi::Object::TypeTag()` and `Napi::Object::CheckTypeTag()` methods.
+- Added documentation about how to run a specific unit test.
+
+### TOOL
+
+- Added `x86` architecture to the CI matrix.
+
+### Commits
+
+* \[[`e2726193f1`](https://github.com/nodejs/node-addon-api/commit/e2726193f1)] - **src**: remove AsyncWorker move and complete tests (JckXia) [#1266](https://github.com/nodejs/node-addon-api/pull/1266)
+* \[[`ff969485ea`](https://github.com/nodejs/node-addon-api/commit/ff969485ea)] - **chore**: build node-addon-api against X86 (JckXia) [#1276](https://github.com/nodejs/node-addon-api/pull/1276)
+* \[[`a70564cdfd`](https://github.com/nodejs/node-addon-api/commit/a70564cdfd)] - **test**: add cov for ThreadSafeFunction new overloads (JckXia) [#1251](https://github.com/nodejs/node-addon-api/pull/1251)
+* \[[`53f7cf1d48`](https://github.com/nodejs/node-addon-api/commit/53f7cf1d48)] - **src**: make operator napi\_callback\_info explicit (Kevin Eady) [#1275](https://github.com/nodejs/node-addon-api/pull/1275)
+* \[[`78b5a15533`](https://github.com/nodejs/node-addon-api/commit/78b5a15533)] - **test**: Add tests for ThreadSafeFunction's NonBlock function overloads (#1249) (Jack)
+* \[[`fdc6263034`](https://github.com/nodejs/node-addon-api/commit/fdc6263034)] - **test**: Add test covg for Maybe\<T> (#1270) (Jack)
+* \[[`35d9d669b3`](https://github.com/nodejs/node-addon-api/commit/35d9d669b3)] - **test**: add test covg for handle and escapehandle scopes (JckXia) [#1263](https://github.com/nodejs/node-addon-api/pull/1263)
+* \[[`021313409e`](https://github.com/nodejs/node-addon-api/commit/021313409e)] - **test**: add unit test covg for callbackscopes (JckXia) [#1262](https://github.com/nodejs/node-addon-api/pull/1262)
+* \[[`b11e4de2cf`](https://github.com/nodejs/node-addon-api/commit/b11e4de2cf)] - **src**: add Object::TypeTag, Object::CheckTypeTag (Kevin Eady) [#1261](https://github.com/nodejs/node-addon-api/pull/1261)
+
 ## 2023-01-13 Version 5.1.0, @NickNaso
 
 ### Notable changes
