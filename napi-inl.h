@@ -2833,27 +2833,7 @@ inline TypeError TypeError::New(napi_env env, const std::string& message) {
 inline TypeError::TypeError() : Error() {}
 
 inline TypeError::TypeError(napi_env env, napi_value value)
-    : Error(env, value) {
-  bool isTypeError = false;
-  Napi::Value typeErrorCtor;
-
-#if defined(NODE_ADDON_API_ENABLE_MAYBE)
-  if (Napi::Env(env).Global().Get("TypeError").UnwrapTo(&typeErrorCtor)) {
-    napi_status status =
-        napi_instanceof(env, value, typeErrorCtor, &isTypeError);
-    NAPI_THROW_IF_FAILED_VOID(env, status);
-  }
-#else
-  typeErrorCtor = Napi::Env(env).Global().Get("TypeError");
-  napi_status status = napi_instanceof(env, value, typeErrorCtor, &isTypeError);
-  NAPI_THROW_IF_FAILED_VOID(env, status);
-#endif
-
-  if (!isTypeError) {
-    // TODO: What should we do if the napi_value passed in isn't an TypeError?
-    NAPI_THROW_VOID(Napi::Error::New(env, "We expect a TypeError object"));
-  }
-}
+    : Error(env, value) {}
 
 inline RangeError RangeError::New(napi_env env, const char* message) {
   return Error::New<RangeError>(
@@ -2868,27 +2848,7 @@ inline RangeError RangeError::New(napi_env env, const std::string& message) {
 inline RangeError::RangeError() : Error() {}
 
 inline RangeError::RangeError(napi_env env, napi_value value)
-    : Error(env, value) {
-  bool isRangeError = false;
-  Napi::Value rangeErrorCtor;
-
-#if defined(NODE_ADDON_API_ENABLE_MAYBE)
-  if (Napi::Env(env).Global().Get("RangeError").UnwrapTo(&rangeErrorCtor)) {
-    napi_status status =
-        napi_instanceof(env, value, rangeErrorCtor, &isRangeError);
-    NAPI_THROW_IF_FAILED_VOID(env, status);
-  }
-#else
-  rangeErrorCtor = Napi::Env(env).Global().Get("RangeError");
-  napi_status status =
-      napi_instanceof(env, value, rangeErrorCtor, &isRangeError);
-  NAPI_THROW_IF_FAILED_VOID(env, status);
-#endif
-
-  if (!isRangeError) {
-    NAPI_THROW_VOID(Napi::Error::New(env, "We expect an RangeError object"));
-  }
-}
+    : Error(env, value) {}
 
 ////////////////////////////////////////////////////////////////////////////////
 // Reference<T> class
