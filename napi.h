@@ -2,7 +2,8 @@
 #define SRC_NAPI_H_
 
 #ifndef NAPI_HAS_THREADS
-#if !defined(__wasm__) || (defined(__EMSCRIPTEN_PTHREADS__) || (defined(__wasi__) && defined(_REENTRANT)))
+#if !defined(__wasm__) || (defined(__EMSCRIPTEN_PTHREADS__) ||                 \
+                           (defined(__wasi__) && defined(_REENTRANT)))
 #define NAPI_HAS_THREADS 1
 #else
 #define NAPI_HAS_THREADS 0
@@ -2508,7 +2509,7 @@ class AsyncWorker {
   std::string _error;
   bool _suppress_destruct;
 };
-#endif // NAPI_HAS_THREADS
+#endif  // NAPI_HAS_THREADS
 
 #if (NAPI_VERSION > 3 && NAPI_HAS_THREADS)
 class ThreadSafeFunction {

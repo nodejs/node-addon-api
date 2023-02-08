@@ -4913,7 +4913,7 @@ inline void AsyncWorker::OnWorkComplete(Napi::Env /*env*/, napi_status status) {
   }
 }
 
-#endif // NAPI_HAS_THREADS
+#endif  // NAPI_HAS_THREADS
 
 #if (NAPI_VERSION > 3 && NAPI_HAS_THREADS)
 ////////////////////////////////////////////////////////////////////////////////
