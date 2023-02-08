@@ -1,11 +1,22 @@
 #ifndef SRC_NAPI_H_
 #define SRC_NAPI_H_
 
+#ifndef NAPI_HAS_THREADS
+#if !defined(__wasm__) || (defined(__EMSCRIPTEN_PTHREADS__) ||                 \
+                           (defined(__wasi__) && defined(_REENTRANT)))
+#define NAPI_HAS_THREADS 1
+#else
+#define NAPI_HAS_THREADS 0
+#endif
+#endif
+
 #include <node_api.h>
 #include <functional>
 #include <initializer_list>
 #include <memory>
+#if NAPI_HAS_THREADS
 #include <mutex>
+#endif  // NAPI_HAS_THREADS
 #include <string>
 #include <vector>
 
@@ -2454,6 +2465,7 @@ class AsyncContext {
   napi_async_context _context;
 };
 
+#if NAPI_HAS_THREADS
 class AsyncWorker {
  public:
   virtual ~AsyncWorker();
@@ -2516,8 +2528,9 @@ class AsyncWorker {
   std::string _error;
   bool _suppress_destruct;
 };
+#endif  // NAPI_HAS_THREADS
 
-#if (NAPI_VERSION > 3 && !defined(__wasm32__))
+#if (NAPI_VERSION > 3 && NAPI_HAS_THREADS)
 class ThreadSafeFunction {
  public:
   // This API may only be called from the main thread.
@@ -3087,7 +3100,7 @@ class AsyncProgressQueueWorker
   void Signal() const;
   void SendProgress_(const T* data, size_t count);
 };
-#endif  // NAPI_VERSION > 3 && !defined(__wasm32__)
+#endif  // NAPI_VERSION > 3 && NAPI_HAS_THREADS
 
 // Memory management.
 class MemoryManagement {
