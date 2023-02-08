@@ -201,7 +201,7 @@ struct FinalizeData {
   Hint* hint;
 };
 
-#if (NAPI_VERSION > 3 && !defined(__wasm32__))
+#if (NAPI_VERSION > 3 && NAPI_HAS_THREADS)
 template <typename ContextType = void,
           typename Finalizer = std::function<void(Env, void*, ContextType*)>,
           typename FinalizerDataType = void>
@@ -295,7 +295,7 @@ napi_value DefaultCallbackWrapper(napi_env env, Napi::Function cb) {
   return cb;
 }
 #endif  // NAPI_VERSION > 4
-#endif  // NAPI_VERSION > 3 && !defined(__wasm32__)
+#endif  // NAPI_VERSION > 3 && NAPI_HAS_THREADS
 
 template <typename Getter, typename Setter>
 struct AccessorCallbackData {
@@ -4649,7 +4649,7 @@ inline Value EscapableHandleScope::Escape(napi_value escapee) {
   return Value(_env, result);
 }
 
-#if (NAPI_VERSION > 2)
+#if (NAPI_VERSION > 2 && !defined(__wasm__))
 ////////////////////////////////////////////////////////////////////////////////
 // CallbackScope class
 ////////////////////////////////////////////////////////////////////////////////
@@ -4732,6 +4732,8 @@ inline Napi::Env AsyncContext::Env() const {
 ////////////////////////////////////////////////////////////////////////////////
 // AsyncWorker class
 ////////////////////////////////////////////////////////////////////////////////
+
+#if NAPI_HAS_THREADS
 
 inline AsyncWorker::AsyncWorker(const Function& callback)
     : AsyncWorker(callback, "generic") {}
@@ -4911,7 +4913,9 @@ inline void AsyncWorker::OnWorkComplete(Napi::Env /*env*/, napi_status status) {
   }
 }
 
-#if (NAPI_VERSION > 3 && !defined(__wasm32__))
+#endif // NAPI_HAS_THREADS
+
+#if (NAPI_VERSION > 3 && NAPI_HAS_THREADS)
 ////////////////////////////////////////////////////////////////////////////////
 // TypedThreadSafeFunction<ContextType,DataType,CallJs> class
 ////////////////////////////////////////////////////////////////////////////////
@@ -6160,7 +6164,7 @@ inline void AsyncProgressQueueWorker<T>::ExecutionProgress::Send(
     const T* data, size_t count) const {
   _worker->SendProgress_(data, count);
 }
-#endif  // NAPI_VERSION > 3 && !defined(__wasm32__)
+#endif  // NAPI_VERSION > 3 && NAPI_HAS_THREADS
 
 ////////////////////////////////////////////////////////////////////////////////
 // Memory Management class
