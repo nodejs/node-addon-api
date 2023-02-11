@@ -12,7 +12,9 @@
 
 #include <algorithm>
 #include <cstring>
+#if NAPI_HAS_THREADS
 #include <mutex>
+#endif
 #include <type_traits>
 #include <utility>
 
