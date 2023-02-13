@@ -2405,7 +2405,7 @@ class EscapableHandleScope {
   napi_escapable_handle_scope _scope;
 };
 
-#if (NAPI_VERSION > 2 && !defined(__wasm__))
+#if (NAPI_VERSION > 2)
 class CallbackScope {
  public:
   CallbackScope(napi_env env, napi_callback_scope scope);
