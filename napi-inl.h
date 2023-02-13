@@ -14,7 +14,7 @@
 #include <cstring>
 #if NAPI_HAS_THREADS
 #include <mutex>
-#endif
+#endif  // NAPI_HAS_THREADS
 #include <type_traits>
 #include <utility>
 

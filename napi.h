@@ -16,7 +16,7 @@
 #include <memory>
 #if NAPI_HAS_THREADS
 #include <mutex>
-#endif
+#endif  // NAPI_HAS_THREADS
 #include <string>
 #include <vector>
 
