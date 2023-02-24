@@ -9,6 +9,7 @@ static void RefMoveAssignTests(const Napi::CallbackInfo& info) {
   Napi::Object obj = Napi::Object::New(info.Env());
   obj.Set("tPro", "tTEST");
   Napi::Reference<Napi::Object> ref = Napi::Reference<Napi::Object>::New(obj);
+  ref.SuppressDestruct();
 
   napi_ref obj_ref = static_cast<napi_ref>(ref);
   Napi::Reference<Napi::Object> existingRef =
