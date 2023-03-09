@@ -1,3 +1,4 @@
+#include <string.h>
 #include <future>
 #include "assert.h"
 #include "napi.h"
@@ -73,6 +74,11 @@ void LastExceptionErrorCode(const CallbackInfo& info) {
 void TestErrorCopySemantics(const Napi::CallbackInfo& info) {
   Napi::Error newError = Napi::Error::New(info.Env(), "errorCopyCtor");
   Napi::Error existingErr;
+
+#ifdef NAPI_CPP_EXCEPTIONS
+  std::string msg = "errorCopyCtor";
+  assert(strcmp(newError.what(), msg.c_str()) == 0);
+#endif
 
   Napi::Error errCopyCtor = newError;
   assert(errCopyCtor.Message() == "errorCopyCtor");
