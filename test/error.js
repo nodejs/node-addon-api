@@ -11,6 +11,8 @@ module.exports = require('./common').runTestWithBindingPath(test);
 
 function test (bindingPath) {
   const binding = require(bindingPath);
+  binding.error.testErrorCopySemantics();
+  binding.error.testErrorMoveSemantics();
 
   assert.throws(() => binding.error.throwApiError('test'), function (err) {
     return err instanceof Error && err.message.includes('Invalid');
