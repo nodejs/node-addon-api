@@ -82,7 +82,8 @@ void TestErrorCopySemantics(const Napi::CallbackInfo& info) {
 }
 
 void TestErrorMoveSemantics(const Napi::CallbackInfo& info) {
-  Napi::Error newError = Napi::Error::New(info.Env(), "errorMoveCtor");
+  std::string errorMsg = "errorMoveCtor";
+  Napi::Error newError = Napi::Error::New(info.Env(), errorMsg.c_str());
   Napi::Error errFromMove = std::move(newError);
   assert(errFromMove.Message() == "errorMoveCtor");
 
