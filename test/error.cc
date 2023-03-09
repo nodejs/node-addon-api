@@ -99,12 +99,6 @@ void ThrowTypeErrorCStr(const CallbackInfo& info) {
   throw TypeError::New(info.Env(), message.c_str());
 }
 
-void ThrowTypeErrorNapiVal(const CallbackInfo& info) {
-  std::string message = info[0].As<String>().Utf8Value();
-  ReleaseAndWaitForChildProcess(info, 1);
-  throw TypeError(info.Env(), Napi::String::New(info.Env(), message));
-}
-
 void ThrowRangeErrorCStr(const CallbackInfo& info) {
   std::string message = info[0].As<String>().Utf8Value();
   ReleaseAndWaitForChildProcess(info, 1);
@@ -115,12 +109,6 @@ void ThrowRangeErrorCtor(const CallbackInfo& info) {
   Napi::Value js_range_err = info[0];
   ReleaseAndWaitForChildProcess(info, 1);
   throw Napi::RangeError(info.Env(), js_range_err);
-}
-
-void ThrowRangeErrorNapiVal(const CallbackInfo& info) {
-  std::string message = info[0].As<String>().Utf8Value();
-  ReleaseAndWaitForChildProcess(info, 1);
-  throw RangeError(info.Env(), Napi::String::New(info.Env(), message));
 }
 
 void ThrowEmptyRangeError(const CallbackInfo& info) {
@@ -212,13 +200,6 @@ void ThrowTypeErrorCStr(const CallbackInfo& info) {
   TypeError::New(info.Env(), message.c_str()).ThrowAsJavaScriptException();
 }
 
-void ThrowTypeErrorNapiVal(const CallbackInfo& info) {
-  std::string message = info[0].As<String>().Utf8Value();
-  ReleaseAndWaitForChildProcess(info, 1);
-  TypeError(info.Env(), Napi::String::New(info.Env(), message))
-      .ThrowAsJavaScriptException();
-}
-
 void ThrowRangeError(const CallbackInfo& info) {
   std::string message = info[0].As<String>().Utf8Value();
 
@@ -236,14 +217,6 @@ void ThrowRangeErrorCStr(const CallbackInfo& info) {
   std::string message = info[0].As<String>().Utf8Value();
   ReleaseAndWaitForChildProcess(info, 1);
   RangeError::New(info.Env(), message.c_str()).ThrowAsJavaScriptException();
-}
-
-// TODO: Awaiting correct API impl for when second arg is napi_value
-void ThrowRangeErrorNapiVal(const CallbackInfo& info) {
-  std::string message = info[0].As<String>().Utf8Value();
-  ReleaseAndWaitForChildProcess(info, 1);
-  RangeError(info.Env(), Napi::String::New(info.Env(), message))
-      .ThrowAsJavaScriptException();
 }
 
 // TODO: Figure out the correct api for this
@@ -361,12 +334,9 @@ Object InitError(Env env) {
   exports["throwTypeError"] = Function::New(env, ThrowTypeError);
   exports["throwTypeErrorCtor"] = Function::New(env, ThrowTypeErrorCtor);
   exports["throwTypeErrorCStr"] = Function::New(env, ThrowTypeErrorCStr);
-  exports["throwTypeErrorNapiVal"] = Function::New(env, ThrowTypeErrorNapiVal);
   exports["throwRangeError"] = Function::New(env, ThrowRangeError);
   exports["throwRangeErrorCtor"] = Function::New(env, ThrowRangeErrorCtor);
   exports["throwRangeErrorCStr"] = Function::New(env, ThrowRangeErrorCStr);
-  exports["throwRangeErrorNapiVal"] =
-      Function::New(env, ThrowRangeErrorNapiVal);
   exports["throwEmptyRangeError"] = Function::New(env, ThrowEmptyRangeError);
   exports["catchError"] = Function::New(env, CatchError);
   exports["catchErrorMessage"] = Function::New(env, CatchErrorMessage);
