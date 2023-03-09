@@ -1,4 +1,5 @@
 #include <future>
+#include "assert.h"
 #include "napi.h"
 
 using namespace Napi;
@@ -67,6 +68,28 @@ void LastExceptionErrorCode(const CallbackInfo& info) {
   bool res;
   napi_get_value_bool(env, Value::From(env, "asd"), &res);
   NAPI_THROW_VOID(Error::New(env));
+}
+
+void TestErrorCopySemantics(const Napi::CallbackInfo& info) {
+  Napi::Error newError = Napi::Error::New(info.Env(), "errorCopyCtor");
+  Napi::Error existingErr;
+
+  Napi::Error errCopyCtor = newError;
+  assert(errCopyCtor.Message() == "errorCopyCtor");
+
+  existingErr = newError;
+  assert(existingErr.Message() == "errorCopyCtor");
+}
+
+void TestErrorMoveSemantics(const Napi::CallbackInfo& info) {
+  Napi::Error newError = Napi::Error::New(info.Env(), "errorMoveCtor");
+  Napi::Error errFromMove = std::move(newError);
+  assert(errFromMove.Message() == "errorMoveCtor");
+
+  newError = Napi::Error::New(info.Env(), "errorMoveAssign");
+  Napi::Error existingErr = std::move(newError);
+
+  assert(existingErr.Message() == "errorMoveAssign");
 }
 
 #ifdef NAPI_CPP_EXCEPTIONS
@@ -266,6 +289,10 @@ void ThrowDefaultError(const CallbackInfo& info) {
 Object InitError(Env env) {
   Object exports = Object::New(env);
   exports["throwApiError"] = Function::New(env, ThrowApiError);
+  exports["testErrorCopySemantics"] =
+      Function::New(env, TestErrorCopySemantics);
+  exports["testErrorMoveSemantics"] =
+      Function::New(env, TestErrorMoveSemantics);
   exports["lastExceptionErrorCode"] =
       Function::New(env, LastExceptionErrorCode);
   exports["throwJSError"] = Function::New(env, ThrowJSError);
