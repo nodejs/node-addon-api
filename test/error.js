@@ -24,12 +24,24 @@ function test (bindingPath) {
     return err instanceof Error && err.message === 'test';
   });
 
-  assert.throws(() => binding.error.throwTypeError('test'), function (err) {
+  assert.throws(() => binding.error.throwTypeErrorCStr('test'), function (err) {
     return err instanceof TypeError && err.message === 'test';
+  });
+
+  assert.throws(() => binding.error.throwRangeErrorCStr('test'), function (err) {
+    return err instanceof RangeError && err.message === 'test';
   });
 
   assert.throws(() => binding.error.throwRangeError('test'), function (err) {
     return err instanceof RangeError && err.message === 'test';
+  });
+
+  assert.throws(() => binding.error.throwTypeErrorCtor(new TypeError('jsTypeError')), function (err) {
+    return err instanceof TypeError && err.message === 'jsTypeError';
+  });
+
+  assert.throws(() => binding.error.throwRangeErrorCtor(new RangeError('rangeTypeError')), function (err) {
+    return err instanceof RangeError && err.message === 'rangeTypeError';
   });
 
   assert.throws(
