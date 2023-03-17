@@ -451,6 +451,6 @@
     "lint:fix": "node tools/clang-format --fix && node tools/eslint-format --fix"
   },
   "pre-commit": "lint",
-  "version": "5.1.0",
+  "version": "6.0.0",
   "support": true
 }

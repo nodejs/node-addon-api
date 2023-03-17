@@ -1,11 +1,22 @@
 #ifndef SRC_NAPI_H_
 #define SRC_NAPI_H_
 
+#ifndef NAPI_HAS_THREADS
+#if !defined(__wasm__) || (defined(__EMSCRIPTEN_PTHREADS__) ||                 \
+                           (defined(__wasi__) && defined(_REENTRANT)))
+#define NAPI_HAS_THREADS 1
+#else
+#define NAPI_HAS_THREADS 0
+#endif
+#endif
+
 #include <node_api.h>
 #include <functional>
 #include <initializer_list>
 #include <memory>
+#if NAPI_HAS_THREADS
 #include <mutex>
+#endif  // NAPI_HAS_THREADS
 #include <string>
 #include <vector>
 
@@ -1077,6 +1088,7 @@ class ArrayBuffer : public Object {
       size_t byteLength  ///< Length of the buffer to be allocated, in bytes
   );
 
+#ifndef NODE_API_NO_EXTERNAL_BUFFERS_ALLOWED
   /// Creates a new ArrayBuffer instance, using an external buffer with
   /// specified byte length.
   static ArrayBuffer New(
@@ -1120,6 +1132,7 @@ class ArrayBuffer : public Object {
       Hint* finalizeHint  ///< Hint (second parameter) to be passed to the
                           ///< finalize callback
   );
+#endif  // NODE_API_NO_EXTERNAL_BUFFERS_ALLOWED
 
   ArrayBuffer();  ///< Creates a new _empty_ ArrayBuffer instance.
   ArrayBuffer(napi_env env,
@@ -1432,6 +1445,7 @@ template <typename T>
 class Buffer : public Uint8Array {
  public:
   static Buffer<T> New(napi_env env, size_t length);
+#ifndef NODE_API_NO_EXTERNAL_BUFFERS_ALLOWED
   static Buffer<T> New(napi_env env, T* data, size_t length);
 
   // Finalizer must implement `void operator()(Env env, T* data)`.
@@ -1447,6 +1461,22 @@ class Buffer : public Uint8Array {
                        size_t length,
                        Finalizer finalizeCallback,
                        Hint* finalizeHint);
+#endif  // NODE_API_NO_EXTERNAL_BUFFERS_ALLOWED
+
+  static Buffer<T> NewOrCopy(napi_env env, T* data, size_t length);
+  // Finalizer must implement `void operator()(Env env, T* data)`.
+  template <typename Finalizer>
+  static Buffer<T> NewOrCopy(napi_env env,
+                             T* data,
+                             size_t length,
+                             Finalizer finalizeCallback);
+  // Finalizer must implement `void operator()(Env env, T* data, Hint* hint)`.
+  template <typename Finalizer, typename Hint>
+  static Buffer<T> NewOrCopy(napi_env env,
+                             T* data,
+                             size_t length,
+                             Finalizer finalizeCallback,
+                             Hint* finalizeHint);
 
   static Buffer<T> Copy(napi_env env, const T* data, size_t length);
 
@@ -2435,13 +2465,11 @@ class AsyncContext {
   napi_async_context _context;
 };
 
+#if NAPI_HAS_THREADS
 class AsyncWorker {
  public:
   virtual ~AsyncWorker();
 
-  // An async worker can be moved but cannot be copied.
-  AsyncWorker(AsyncWorker&& other);
-  AsyncWorker& operator=(AsyncWorker&& other);
   NAPI_DISALLOW_ASSIGN_COPY(AsyncWorker)
 
   operator napi_async_work() const;
@@ -2500,8 +2528,9 @@ class AsyncWorker {
   std::string _error;
   bool _suppress_destruct;
 };
+#endif  // NAPI_HAS_THREADS
 
-#if (NAPI_VERSION > 3 && !defined(__wasm32__))
+#if (NAPI_VERSION > 3 && NAPI_HAS_THREADS)
 class ThreadSafeFunction {
  public:
   // This API may only be called from the main thread.
@@ -3071,7 +3100,7 @@ class AsyncProgressQueueWorker
   void Signal() const;
   void SendProgress_(const T* data, size_t count);
 };
-#endif  // NAPI_VERSION > 3 && !defined(__wasm32__)
+#endif  // NAPI_VERSION > 3 && NAPI_HAS_THREADS
 
 // Memory management.
 class MemoryManagement {

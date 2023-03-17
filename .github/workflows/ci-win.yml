@@ -8,6 +8,7 @@ jobs:
     strategy:
       matrix:
         node-version: [ 14.x, 16.x, 18.x, 19.x ]
+        architecture: [x64, x86]
         os:
           - windows-2019
           - windows-2022
@@ -21,6 +22,7 @@ jobs:
       uses: actions/setup-node@v3
       with:
         node-version: ${{ matrix.node-version }}
+        architecture: ${{ matrix.architecture }}
     - name: Check Node.js installation
       run: |
         node --version

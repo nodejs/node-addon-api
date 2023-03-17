@@ -12,6 +12,10 @@ void StaticSetter(const Napi::CallbackInfo& /*info*/,
   testStaticContextRef.Value().Set("value", value);
 }
 
+void StaticMethodVoidCb(const Napi::CallbackInfo& info) {
+  StaticSetter(info, info[0].As<Napi::Number>());
+}
+
 Napi::Value TestStaticMethod(const Napi::CallbackInfo& info) {
   std::string str = MaybeUnwrap(info[0].ToString());
   return Napi::String::New(info.Env(), str + " static");
@@ -51,6 +55,15 @@ class Test : public Napi::ObjectWrap<Test> {
 
   static Napi::Value OwnPropertyGetter(const Napi::CallbackInfo& info) {
     return static_cast<Test*>(info.Data())->Getter(info);
+  }
+
+  static Napi::Value CanUnWrap(const Napi::CallbackInfo& info) {
+    Napi::Object wrappedObject = info[0].As<Napi::Object>();
+    std::string expectedString = info[1].As<Napi::String>();
+    Test* nativeObject = Test::Unwrap(wrappedObject);
+    std::string strVal = MaybeUnwrap(nativeObject->Getter(info).ToString());
+
+    return Napi::Boolean::New(info.Env(), strVal == expectedString);
   }
 
   void Setter(const Napi::CallbackInfo& /*info*/, const Napi::Value& value) {
@@ -115,7 +128,8 @@ class Test : public Napi::ObjectWrap<Test> {
         Napi::Symbol::New(env, "kTestStaticMethodTInternal");
     Napi::Symbol kTestStaticVoidMethodTInternal =
         Napi::Symbol::New(env, "kTestStaticVoidMethodTInternal");
-
+    Napi::Symbol kTestStaticVoidMethodInternal =
+        Napi::Symbol::New(env, "kTestStaticVoidMethodInternal");
     Napi::Symbol kTestValueInternal =
         Napi::Symbol::New(env, "kTestValueInternal");
     Napi::Symbol kTestAccessorInternal =
@@ -147,6 +161,8 @@ class Test : public Napi::ObjectWrap<Test> {
                             kTestStaticMethodInternal),
                 StaticValue("kTestStaticMethodTInternal",
                             kTestStaticMethodTInternal),
+                StaticValue("kTestStaticVoidMethodInternal",
+                            kTestStaticVoidMethodInternal),
                 StaticValue("kTestStaticVoidMethodTInternal",
                             kTestStaticVoidMethodTInternal),
                 StaticValue("kTestValueInternal", kTestValueInternal),
@@ -184,7 +200,11 @@ class Test : public Napi::ObjectWrap<Test> {
                     "testStaticGetSetT"),
                 StaticAccessor<&StaticGetter, &StaticSetter>(
                     kTestStaticAccessorTInternal),
-
+                StaticMethod(
+                    "testStaticVoidMethod", &StaticMethodVoidCb, napi_default),
+                StaticMethod(kTestStaticVoidMethodInternal,
+                             &StaticMethodVoidCb,
+                             napi_default),
                 StaticMethod(
                     "testStaticMethod", &TestStaticMethod, napi_enumerable),
                 StaticMethod(kTestStaticMethodInternal,
@@ -195,7 +215,7 @@ class Test : public Napi::ObjectWrap<Test> {
                 StaticMethod<&TestStaticVoidMethodT>(
                     kTestStaticVoidMethodTInternal),
                 StaticMethod<&TestStaticMethodT>(kTestStaticMethodTInternal),
-
+                StaticMethod("canUnWrap", &CanUnWrap, napi_enumerable),
                 InstanceValue("testValue",
                               Napi::Boolean::New(env, true),
                               napi_enumerable),
