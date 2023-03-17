@@ -34,11 +34,16 @@ class TestWorker : public AsyncProgressWorker<ProgressData> {
       SetError("test error");
     }
     ProgressData data{0};
-    std::unique_lock<std::mutex> lock(_cvm);
+
     for (int32_t idx = 0; idx < _times; idx++) {
       data.progress = idx;
       progress.Send(&data, 1);
-      _cv.wait(lock);
+
+      {
+        std::unique_lock<std::mutex> lk(_cvm);
+        _cv.wait(lk, [this] { return dataSent; });
+        dataSent = false;
+      }
     }
   }
 
@@ -48,7 +53,12 @@ class TestWorker : public AsyncProgressWorker<ProgressData> {
       Number progress = Number::New(env, data->progress);
       _progress.MakeCallback(Receiver().Value(), {progress});
     }
-    _cv.notify_one();
+
+    {
+      std::lock_guard<std::mutex> lk(_cvm);
+      dataSent = true;
+      _cv.notify_one();
+    }
   }
 
  private:
@@ -59,6 +69,8 @@ class TestWorker : public AsyncProgressWorker<ProgressData> {
       : AsyncProgressWorker(cb, resource_name, resource) {
     _progress.Reset(progress, 1);
   }
+
+  bool dataSent = false;
   std::condition_variable _cv;
   std::mutex _cvm;
   int32_t _times;

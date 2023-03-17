@@ -23,6 +23,9 @@ Returns a new `Napi::ArrayBuffer` instance.
 
 ### New
 
+> When `NODE_API_NO_EXTERNAL_BUFFERS_ALLOWED` is defined, this method is not available.
+> See [External Buffer][] for more information.
+
 Wraps the provided external data into a new `Napi::ArrayBuffer` instance.
 
 The `Napi::ArrayBuffer` instance does not assume ownership for the data and
@@ -47,6 +50,9 @@ static Napi::ArrayBuffer Napi::ArrayBuffer::New(napi_env env, void* externalData
 Returns a new `Napi::ArrayBuffer` instance.
 
 ### New
+
+> When `NODE_API_NO_EXTERNAL_BUFFERS_ALLOWED` is defined, this method is not available.
+> See [External Buffer][] for more information.
 
 Wraps the provided external data into a new `Napi::ArrayBuffer` instance.
 
@@ -73,6 +79,9 @@ static Napi::ArrayBuffer Napi::ArrayBuffer::New(napi_env env,
 Returns a new `Napi::ArrayBuffer` instance.
 
 ### New
+
+> When `NODE_API_NO_EXTERNAL_BUFFERS_ALLOWED` is defined, this method is not available.
+> See [External Buffer][] for more information.
 
 Wraps the provided external data into a new `Napi::ArrayBuffer` instance.
 
@@ -153,3 +162,4 @@ bool Napi::ArrayBuffer::IsDetached() const;
 Returns `true` if this `ArrayBuffer` has been detached.
 
 [`Napi::Object`]: ./object.md
+[External Buffer]: ./external_buffer.md

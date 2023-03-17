@@ -12,7 +12,9 @@
 
 #include <algorithm>
 #include <cstring>
+#if NAPI_HAS_THREADS
 #include <mutex>
+#endif  // NAPI_HAS_THREADS
 #include <type_traits>
 #include <utility>
 
@@ -22,8 +24,12 @@ namespace Napi {
 namespace NAPI_CPP_CUSTOM_NAMESPACE {
 #endif
 
-// Helpers to handle functions exposed from C++.
+// Helpers to handle functions exposed from C++ and internal constants.
 namespace details {
+
+// New napi_status constants not yet available in all supported versions of
+// Node.js releases. Only necessary when they are used in napi.h and napi-inl.h.
+constexpr int napi_no_external_buffers_allowed = 22;
 
 // Attach a data item to an object and delete it when the object gets
 // garbage-collected.
@@ -201,7 +207,7 @@ struct FinalizeData {
   Hint* hint;
 };
 
-#if (NAPI_VERSION > 3 && !defined(__wasm32__))
+#if (NAPI_VERSION > 3 && NAPI_HAS_THREADS)
 template <typename ContextType = void,
           typename Finalizer = std::function<void(Env, void*, ContextType*)>,
           typename FinalizerDataType = void>
@@ -295,7 +301,7 @@ napi_value DefaultCallbackWrapper(napi_env env, Napi::Function cb) {
   return cb;
 }
 #endif  // NAPI_VERSION > 4
-#endif  // NAPI_VERSION > 3 && !defined(__wasm32__)
+#endif  // NAPI_VERSION > 3 && NAPI_HAS_THREADS
 
 template <typename Getter, typename Setter>
 struct AccessorCallbackData {
@@ -1756,6 +1762,7 @@ inline ArrayBuffer ArrayBuffer::New(napi_env env, size_t byteLength) {
   return ArrayBuffer(env, value);
 }
 
+#ifndef NODE_API_NO_EXTERNAL_BUFFERS_ALLOWED
 inline ArrayBuffer ArrayBuffer::New(napi_env env,
                                     void* externalData,
                                     size_t byteLength) {
@@ -1815,6 +1822,7 @@ inline ArrayBuffer ArrayBuffer::New(napi_env env,
 
   return ArrayBuffer(env, value);
 }
+#endif  // NODE_API_NO_EXTERNAL_BUFFERS_ALLOWED
 
 inline ArrayBuffer::ArrayBuffer() : Object() {}
 
@@ -2434,6 +2442,7 @@ inline Buffer<T> Buffer<T>::New(napi_env env, size_t length) {
   return Buffer(env, value, length, static_cast<T*>(data));
 }
 
+#ifndef NODE_API_NO_EXTERNAL_BUFFERS_ALLOWED
 template <typename T>
 inline Buffer<T> Buffer<T>::New(napi_env env, T* data, size_t length) {
   napi_value value;
@@ -2490,6 +2499,94 @@ inline Buffer<T> Buffer<T>::New(napi_env env,
     NAPI_THROW_IF_FAILED(env, status, Buffer());
   }
   return Buffer(env, value, length, data);
+}
+#endif  // NODE_API_NO_EXTERNAL_BUFFERS_ALLOWED
+
+template <typename T>
+inline Buffer<T> Buffer<T>::NewOrCopy(napi_env env, T* data, size_t length) {
+#ifndef NODE_API_NO_EXTERNAL_BUFFERS_ALLOWED
+  napi_value value;
+  napi_status status = napi_create_external_buffer(
+      env, length * sizeof(T), data, nullptr, nullptr, &value);
+  if (status == details::napi_no_external_buffers_allowed) {
+#endif  // NODE_API_NO_EXTERNAL_BUFFERS_ALLOWED
+    // If we can't create an external buffer, we'll just copy the data.
+    return Buffer<T>::Copy(env, data, length);
+#ifndef NODE_API_NO_EXTERNAL_BUFFERS_ALLOWED
+  }
+  NAPI_THROW_IF_FAILED(env, status, Buffer<T>());
+  return Buffer(env, value, length, data);
+#endif  // NODE_API_NO_EXTERNAL_BUFFERS_ALLOWED
+}
+
+template <typename T>
+template <typename Finalizer>
+inline Buffer<T> Buffer<T>::NewOrCopy(napi_env env,
+                                      T* data,
+                                      size_t length,
+                                      Finalizer finalizeCallback) {
+  details::FinalizeData<T, Finalizer>* finalizeData =
+      new details::FinalizeData<T, Finalizer>(
+          {std::move(finalizeCallback), nullptr});
+#ifndef NODE_API_NO_EXTERNAL_BUFFERS_ALLOWED
+  napi_value value;
+  napi_status status =
+      napi_create_external_buffer(env,
+                                  length * sizeof(T),
+                                  data,
+                                  details::FinalizeData<T, Finalizer>::Wrapper,
+                                  finalizeData,
+                                  &value);
+  if (status == details::napi_no_external_buffers_allowed) {
+#endif  // NODE_API_NO_EXTERNAL_BUFFERS_ALLOWED
+    // If we can't create an external buffer, we'll just copy the data.
+    Buffer<T> ret = Buffer<T>::Copy(env, data, length);
+    details::FinalizeData<T, Finalizer>::Wrapper(env, data, finalizeData);
+    return ret;
+#ifndef NODE_API_NO_EXTERNAL_BUFFERS_ALLOWED
+  }
+  if (status != napi_ok) {
+    delete finalizeData;
+    NAPI_THROW_IF_FAILED(env, status, Buffer());
+  }
+  return Buffer(env, value, length, data);
+#endif  // NODE_API_NO_EXTERNAL_BUFFERS_ALLOWED
+}
+
+template <typename T>
+template <typename Finalizer, typename Hint>
+inline Buffer<T> Buffer<T>::NewOrCopy(napi_env env,
+                                      T* data,
+                                      size_t length,
+                                      Finalizer finalizeCallback,
+                                      Hint* finalizeHint) {
+  details::FinalizeData<T, Finalizer, Hint>* finalizeData =
+      new details::FinalizeData<T, Finalizer, Hint>(
+          {std::move(finalizeCallback), finalizeHint});
+#ifndef NODE_API_NO_EXTERNAL_BUFFERS_ALLOWED
+  napi_value value;
+  napi_status status = napi_create_external_buffer(
+      env,
+      length * sizeof(T),
+      data,
+      details::FinalizeData<T, Finalizer, Hint>::WrapperWithHint,
+      finalizeData,
+      &value);
+  if (status == details::napi_no_external_buffers_allowed) {
+#endif
+    // If we can't create an external buffer, we'll just copy the data.
+    Buffer<T> ret = Buffer<T>::Copy(env, data, length);
+    details::FinalizeData<T, Finalizer, Hint>::WrapperWithHint(
+        env, data, finalizeData);
+    return ret;
+#ifndef NODE_API_NO_EXTERNAL_BUFFERS_ALLOWED
+  }
+  if (status != napi_ok) {
+    delete finalizeData;
+    NAPI_THROW_IF_FAILED(env, status, Buffer());
+  }
+  return Buffer(env, value, length, data);
+#endif
 }
 
 template <typename T>
@@ -4733,6 +4830,8 @@ inline Napi::Env AsyncContext::Env() const {
 // AsyncWorker class
 ////////////////////////////////////////////////////////////////////////////////
 
+#if NAPI_HAS_THREADS
+
 inline AsyncWorker::AsyncWorker(const Function& callback)
     : AsyncWorker(callback, "generic") {}
 
@@ -4911,7 +5010,9 @@ inline void AsyncWorker::OnWorkComplete(Napi::Env /*env*/, napi_status status) {
   }
 }
 
-#if (NAPI_VERSION > 3 && !defined(__wasm32__))
+#endif  // NAPI_HAS_THREADS
+
+#if (NAPI_VERSION > 3 && NAPI_HAS_THREADS)
 ////////////////////////////////////////////////////////////////////////////////
 // TypedThreadSafeFunction<ContextType,DataType,CallJs> class
 ////////////////////////////////////////////////////////////////////////////////
@@ -6160,7 +6261,7 @@ inline void AsyncProgressQueueWorker<T>::ExecutionProgress::Send(
     const T* data, size_t count) const {
   _worker->SendProgress_(data, count);
 }
-#endif  // NAPI_VERSION > 3 && !defined(__wasm32__)
+#endif  // NAPI_VERSION > 3 && NAPI_HAS_THREADS
 
 ////////////////////////////////////////////////////////////////////////////////
 // Memory Management class
