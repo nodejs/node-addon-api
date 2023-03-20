@@ -1,6 +1,6 @@
 # External (template)
 
-Class `Napi::External<T>` inherits from class [`Napi::Value`][].
+Class `Napi::External<T>` inherits from class [`Napi::TypeTaggable`][].
 
 The `Napi::External` template class implements the ability to create a `Napi::Value` object with arbitrary C++ data. It is the user's responsibility to manage the memory for the arbitrary C++ data.
 
@@ -67,4 +67,4 @@ T* Napi::External::Data() const;
 
 Returns a pointer to the arbitrary C++ data held by the `Napi::External` object.
 
-[`Napi::Value`]: ./value.md
+[`Napi::TypeTaggable`]: ./type_taggable.md

@@ -1249,6 +1249,32 @@ String String::From(napi_env env, const T& value) {
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+// TypeTaggable class
+////////////////////////////////////////////////////////////////////////////////
+
+inline TypeTaggable::TypeTaggable() : Value() {}
+
+inline TypeTaggable::TypeTaggable(napi_env _env, napi_value _value)
+    : Value(_env, _value) {}
+
+#if NAPI_VERSION >= 8
+
+inline void TypeTaggable::TypeTag(const napi_type_tag* type_tag) const {
+  napi_status status = napi_type_tag_object(_env, _value, type_tag);
+  NAPI_THROW_IF_FAILED_VOID(_env, status);
+}
+
+inline bool TypeTaggable::CheckTypeTag(const napi_type_tag* type_tag) const {
+  bool result;
+  napi_status status =
+      napi_check_object_type_tag(_env, _value, type_tag, &result);
+  NAPI_THROW_IF_FAILED(_env, status, false);
+  return result;
+}
+
+#endif  // NAPI_VERSION >= 8
+
+////////////////////////////////////////////////////////////////////////////////
 // Object class
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -1287,9 +1313,10 @@ inline Object Object::New(napi_env env) {
   return Object(env, value);
 }
 
-inline Object::Object() : Value() {}
+inline Object::Object() : TypeTaggable() {}
 
-inline Object::Object(napi_env env, napi_value value) : Value(env, value) {}
+inline Object::Object(napi_env env, napi_value value)
+    : TypeTaggable(env, value) {}
 
 inline Object::PropertyLValue<std::string> Object::operator[](
     const char* utf8name) {
@@ -1632,19 +1659,6 @@ inline MaybeOrValue<bool> Object::Seal() const {
   napi_status status = napi_object_seal(_env, _value);
   NAPI_RETURN_OR_THROW_IF_FAILED(_env, status, status == napi_ok, bool);
 }
-
-inline void Object::TypeTag(const napi_type_tag* type_tag) const {
-  napi_status status = napi_type_tag_object(_env, _value, type_tag);
-  NAPI_THROW_IF_FAILED_VOID(_env, status);
-}
-
-inline bool Object::CheckTypeTag(const napi_type_tag* type_tag) const {
-  bool result;
-  napi_status status =
-      napi_check_object_type_tag(_env, _value, type_tag, &result);
-  NAPI_THROW_IF_FAILED(_env, status, false);
-  return result;
-}
 #endif  // NAPI_VERSION >= 8
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -1706,11 +1720,11 @@ inline External<T> External<T>::New(napi_env env,
 }
 
 template <typename T>
-inline External<T>::External() : Value() {}
+inline External<T>::External() : TypeTaggable() {}
 
 template <typename T>
 inline External<T>::External(napi_env env, napi_value value)
-    : Value(env, value) {}
+    : TypeTaggable(env, value) {}
 
 template <typename T>
 inline T* External<T>::Data() const {

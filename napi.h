@@ -714,8 +714,19 @@ class Symbol : public Name {
          napi_value value);  ///< Wraps a Node-API value primitive.
 };
 
+class TypeTaggable : public Value {
+ public:
+#if NAPI_VERSION >= 8
+  void TypeTag(const napi_type_tag* type_tag) const;
+  bool CheckTypeTag(const napi_type_tag* type_tag) const;
+#endif  // NAPI_VERSION >= 8
+ protected:
+  TypeTaggable();
+  TypeTaggable(napi_env env, napi_value value);
+};
+
 /// A JavaScript object value.
-class Object : public Value {
+class Object : public TypeTaggable {
  public:
   /// Enables property and element assignments using indexing syntax.
   ///
@@ -991,14 +1002,11 @@ class Object : public Value {
   /// See
   /// https://tc39.es/ecma262/#sec-proxy-object-internal-methods-and-internal-slots-getprototypeof
   MaybeOrValue<bool> Seal() const;
-
-  void TypeTag(const napi_type_tag* type_tag) const;
-  bool CheckTypeTag(const napi_type_tag* type_tag) const;
 #endif  // NAPI_VERSION >= 8
 };
 
 template <typename T>
-class External : public Value {
+class External : public TypeTaggable {
  public:
   static External New(napi_env env, T* data);
 
