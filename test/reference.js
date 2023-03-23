@@ -9,6 +9,12 @@ function test (binding) {
   return testUtil.runGCTests([
     'test reference',
     () => binding.reference.createWeakArray(),
-    () => assert.strictEqual(true, binding.reference.accessWeakArrayEmpty())
+    () => assert.strictEqual(true, binding.reference.accessWeakArrayEmpty()),
+    'test reference move op',
+    () => binding.reference.refMoveAssignTest(),
+    'test reference ref',
+    () => binding.reference.referenceRefTest(),
+    'test reference reset',
+    () => binding.reference.refResetTest()
   ]);
 }
