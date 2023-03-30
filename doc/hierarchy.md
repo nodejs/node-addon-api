@@ -20,7 +20,7 @@
 | [`Napi::Env`][] |  |
 | [`Napi::Error`][] | [`Napi::ObjectReference`][], [`std::exception`][] |
 | [`Napi::EscapableHandleScope`][] |  |
-| [`Napi::External`][] | [`Napi::Value`][] |
+| [`Napi::External`][] | [`Napi::TypeTaggable`][] |
 | [`Napi::Function`][] | [`Napi::Object`][] |
 | [`Napi::FunctionReference`][] | [`Napi::Reference<Napi::Function>`][] |
 | [`Napi::HandleScope`][] |  |
@@ -28,7 +28,7 @@
 | [`Napi::MemoryManagement`][] |  |
 | [`Napi::Name`][] | [`Napi::Value`][] |
 | [`Napi::Number`][] | [`Napi::Value`][] |
-| [`Napi::Object`][] | [`Napi::Value`][] |
+| [`Napi::Object`][] | [`Napi::TypeTaggable`][] |
 | [`Napi::ObjectReference`][] | [`Napi::Reference<Napi::Object>`][] |
 | [`Napi::ObjectWrap`][] | [`Napi::InstanceWrap`][], [`Napi::Reference<Napi::Object>`][] |
 | [`Napi::Promise`][] | [`Napi::Object`][] |
@@ -38,6 +38,7 @@
 | [`Napi::String`][] | [`Napi::Name`][] |
 | [`Napi::Symbol`][] | [`Napi::Name`][] |
 | [`Napi::ThreadSafeFunction`][] |  |
+| [`Napi::TypeTaggable`][] | [`Napi::Value][] |
 | [`Napi::TypeError`][] | [`Napi::Error`][] |
 | [`Napi::TypedArray`][] | [`Napi::Object`][] |
 | [`Napi::TypedArrayOf`][] | [`Napi::TypedArray`][] |
@@ -83,6 +84,7 @@
 [`Napi::Symbol`]: ./symbol.md
 [`Napi::ThreadSafeFunction`]: ./threadsafe_function.md
 [`Napi::TypeError`]: ./type_error.md
+[`Napi::TypeTaggable`]: ./type_taggable.md
 [`Napi::TypedArray`]: ./typed_array.md
 [`Napi::TypedArrayOf`]: ./typed_array_of.md
 [`Napi::Uint8Array`]: ./typed_array_of.md

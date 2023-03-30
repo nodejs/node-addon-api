@@ -36,3 +36,5 @@ return value is `false`. If a tag is found and it matches `type_tag`, then the
 return value is `true`.
 
 [`Napi::Value`]: ./value.md
+[`Napi::Object`]: ./object.md
+[`Napi::External`]: ./external.md
