@@ -5910,6 +5910,7 @@ inline void ThreadSafeFunction::CallJS(napi_env env,
                                        napi_value jsCallback,
                                        void* /* context */,
                                        void* data) {
+  fprintf(stderr, "ThreadSafeFunction::CallJS\n");
   if (env == nullptr && jsCallback == nullptr) {
     return;
   }

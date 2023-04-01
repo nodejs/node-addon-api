@@ -55,6 +55,7 @@
         'symbol.cc',
         'threadsafe_function/threadsafe_function_ctx.cc',
         'threadsafe_function/threadsafe_function_existing_tsfn.cc',
+        'threadsafe_function/threadsafe_function_objectwrap.cc',
         'threadsafe_function/threadsafe_function_ptr.cc',
         'threadsafe_function/threadsafe_function_sum.cc',
         'threadsafe_function/threadsafe_function_unref.cc',

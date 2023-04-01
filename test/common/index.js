@@ -109,17 +109,28 @@ async function whichBuildType () {
 
 exports.whichBuildType = whichBuildType;
 
-exports.runTest = async function (test, buildType, buildPathRoot = process.env.BUILD_PATH || '') {
+async function resolveBindingPaths (buildType, buildPathRoot) {
   buildType = buildType || await whichBuildType();
-  const bindings = [
+  return [
     path.join(buildPathRoot, `../build/${buildType}/binding.node`),
     path.join(buildPathRoot, `../build/${buildType}/binding_noexcept.node`),
     path.join(buildPathRoot, `../build/${buildType}/binding_noexcept_maybe.node`),
     path.join(buildPathRoot, `../build/${buildType}/binding_custom_namespace.node`)
   ].map(it => require.resolve(it));
+}
 
+exports.runTest = async function (test, buildType, buildPathRoot = process.env.BUILD_PATH || '') {
+  const bindings = await resolveBindingPaths(buildType, buildPathRoot);
   for (const item of bindings) {
     await Promise.resolve(test(require(item)))
+      .finally(exports.mustCall());
+  }
+};
+
+exports.runTestWithBindingPath = async function (test, buildType, buildPathRoot = process.env.BUILD_PATH || '') {
+  const bindings = await resolveBindingPaths(buildType, buildPathRoot);
+  for (const item of bindings) {
+    await Promise.resolve(test(item))
       .finally(exports.mustCall());
   }
 };
