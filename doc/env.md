@@ -138,7 +138,7 @@ template <typename Hook>
 CleanupHook<Hook> AddCleanupHook(Hook hook);
 ```
 
-- `[in] hook`: A function to call when the environment exists. Accepts a
+- `[in] hook`: A function to call when the environment exits. Accepts a
   function of the form `void ()`.
 
 Registers `hook` as a function to be run once the current Node.js environment
@@ -156,7 +156,7 @@ template <typename Hook, typename Arg>
 CleanupHook<Hook, Arg> AddCleanupHook(Hook hook, Arg* arg);
 ```
 
-- `[in] hook`: A function to call when the environment exists. Accepts a
+- `[in] hook`: A function to call when the environment exits. Accepts a
   function of the form `void (Arg* arg)`.
 - `[in] arg`: A pointer to data that will be passed as the argument to `hook`.
 
