@@ -81,6 +81,9 @@
         'binding-swallowexcept.cc',
         'error.cc',
       ],
+      'build_sources_type_check': [
+        'value_type_cast.cc'
+      ],
       'conditions': [
         ['disable_deprecated!="true"', {
           'build_sources': ['object/object_deprecated.cc']
@@ -116,6 +119,12 @@
       'includes': ['../noexcept.gypi'],
       'sources': ['>@(build_sources_swallowexcept)'],
       'defines': ['NODE_API_SWALLOW_UNTHROWABLE_EXCEPTIONS']
+    },
+    {
+      'target_name': 'binding_type_check',
+      'includes': ['../noexcept.gypi'],
+      'sources': ['>@(build_sources_type_check)'],
+      'defines': ['NODE_ADDON_API_ENABLE_TYPE_CHECK_ON_AS']
     },
     {
       'target_name': 'binding_custom_namespace',

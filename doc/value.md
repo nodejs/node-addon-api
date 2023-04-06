@@ -78,7 +78,13 @@ Casts to another type of `Napi::Value`, when the actual type is known or
 assumed.
 
 This conversion does not coerce the type. Calling any methods inappropriate for
-the actual value type will throw `Napi::Error`.
+the actual value type will throw `Napi::Error`. When C++ exceptions are
+disabled, the thrown error will not be reflected before control returns to
+JavaScript.
+
+In order to enforce expected type, use `Napi::Value::Is*()` methods to check
+the type before calling `Napi::Value::As()`, or compile with definition
+`NODE_ADDON_API_ENABLE_TYPE_CHECK_ON_AS` to enforce type checks.
 
 ### Env
 
