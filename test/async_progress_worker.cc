@@ -19,26 +19,27 @@ struct ProgressData {
 class TestWorkerWithNoCb : public AsyncProgressWorker<ProgressData> {
  public:
   static void DoWork(const CallbackInfo& info) {
-    // Object recv = info[0].As<Object>();
-    // Function cb = info[1].As<Function>();
     switch (info.Length()) {
-      case 0: {
-        TestWorkerWithNoCb* worker = new TestWorkerWithNoCb(info.Env());
-        worker->Queue();
-      } break;
-
       case 1: {
-        std::string resName = info[0].As<String>();
-        TestWorkerWithNoCb* worker =
-            new TestWorkerWithNoCb(info.Env(), resName.c_str());
+        Function cb = info[0].As<Function>();
+        TestWorkerWithNoCb* worker = new TestWorkerWithNoCb(info.Env(), cb);
         worker->Queue();
       } break;
 
       case 2: {
         std::string resName = info[0].As<String>();
-        Object resObject = info[1].As<Object>();
+        Function cb = info[1].As<Function>();
         TestWorkerWithNoCb* worker =
-            new TestWorkerWithNoCb(info.Env(), resName.c_str(), resObject);
+            new TestWorkerWithNoCb(info.Env(), resName.c_str(), cb);
+        worker->Queue();
+      } break;
+
+      case 3: {
+        std::string resName = info[0].As<String>();
+        Object resObject = info[1].As<Object>();
+        Function cb = info[2].As<Function>();
+        TestWorkerWithNoCb* worker =
+            new TestWorkerWithNoCb(info.Env(), resName.c_str(), resObject, cb);
         worker->Queue();
       } break;
 
@@ -49,20 +50,31 @@ class TestWorkerWithNoCb : public AsyncProgressWorker<ProgressData> {
   }
 
  protected:
-  void Execute(const ExecutionProgress&) override {
-    std::cout << "Running via Napi::Env " << std::endl;
+  void Execute(const ExecutionProgress& progress) override {
+    ProgressData data{1};
+    progress.Send(&data, 1);
   }
 
-  void OnProgress(const ProgressData*, size_t /* count */) override {}
+  void OnProgress(const ProgressData*, size_t /* count */) override {
+    _cb.Call({});
+  }
 
  private:
-  TestWorkerWithNoCb(Napi::Env env) : AsyncProgressWorker(env) {}
-  TestWorkerWithNoCb(Napi::Env env, const char* resourceName)
-      : AsyncProgressWorker(env, resourceName) {}
+  TestWorkerWithNoCb(Napi::Env env, Function cb) : AsyncProgressWorker(env) {
+    _cb.Reset(cb, 1);
+  }
+  TestWorkerWithNoCb(Napi::Env env, const char* resourceName, Function cb)
+      : AsyncProgressWorker(env, resourceName) {
+    _cb.Reset(cb, 1);
+  }
   TestWorkerWithNoCb(Napi::Env env,
                      const char* resourceName,
-                     const Object& resourceObject)
-      : AsyncProgressWorker(env, resourceName, resourceObject) {}
+                     const Object& resourceObject,
+                     Function cb)
+      : AsyncProgressWorker(env, resourceName, resourceObject) {
+    _cb.Reset(cb, 1);
+  }
+  FunctionReference _cb;
 };
 
 class TestWorkerWithRecv : public AsyncProgressWorker<ProgressData> {

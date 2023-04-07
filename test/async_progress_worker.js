@@ -66,15 +66,17 @@ async function test ({ asyncprogressworker }) {
   await fail(asyncprogressworker);
   await signalTest(asyncprogressworker.doMalignTest);
   await signalTest(asyncprogressworker.doSignalAfterProgressTest);
-  if (checkAsyncHooks()) {
-    await asyncProgressWorkerCallbackOverloads(asyncprogressworker.runWorkerWithCb);
-    await asyncProgressWorkerRecvOverloads(asyncprogressworker.runWorkerWithRecv);
-    await asyncProgressWorkerNoCbOverloads(asyncprogressworker.runWorkerNoCb);
-  }
+
+  await asyncProgressWorkerCallbackOverloads(asyncprogressworker.runWorkerWithCb);
+  await asyncProgressWorkerRecvOverloads(asyncprogressworker.runWorkerWithRecv);
+  await asyncProgressWorkerNoCbOverloads(asyncprogressworker.runWorkerNoCb);
 }
 
 async function asyncProgressWorkerCallbackOverloads (bindingFunction) {
   bindingFunction(common.mustCall());
+  if (!checkAsyncHooks()) {
+    return;
+  }
   const hooks = installAsyncHooksForTest('cbResources');
   const triggerAsyncId = asyncHooks.executionAsyncId();
   await new Promise((resolve, reject) => {
@@ -106,7 +108,9 @@ async function asyncProgressWorkerRecvOverloads (bindingFunction) {
   }
 
   bindingFunction(recvObject, common.mustCall(cb));
-
+  if (!checkAsyncHooks()) {
+    return;
+  }
   const asyncResources = [
     { resName: 'cbRecvResources', resObject: {} },
     { resName: 'cbRecvResourcesObject', resObject: { foo: 'bar' } }
@@ -144,7 +148,44 @@ async function asyncProgressWorkerRecvOverloads (bindingFunction) {
 }
 
 async function asyncProgressWorkerNoCbOverloads (bindingFunction) {
-  bindingFunction();
+  bindingFunction(common.mustCall(() => {}));
+  if (!checkAsyncHooks()) {
+    return;
+  }
+  const asyncResources = [
+    { resName: 'noCbResources', resObject: {} },
+    { resName: 'noCbResourcesObject', resObject: { foo: 'bar' } }
+  ];
+
+  for (const asyncResource of asyncResources) {
+    const asyncResName = asyncResource.resName;
+    const asyncResObject = asyncResource.resObject;
+
+    const hooks = installAsyncHooksForTest(asyncResName);
+    const triggerAsyncId = asyncHooks.executionAsyncId();
+    await new Promise((resolve, reject) => {
+      if (Object.keys(asyncResObject).length === 0) {
+        bindingFunction(asyncResName, common.mustCall(() => {}));
+      } else {
+        bindingFunction(asyncResName, asyncResObject, common.mustCall(() => {}));
+      }
+
+      hooks.then(actual => {
+        assert.deepStrictEqual(actual, [
+          {
+            eventName: 'init',
+            type: asyncResName,
+            triggerAsyncId: triggerAsyncId,
+            resource: asyncResObject
+          },
+          { eventName: 'before' },
+          { eventName: 'after' },
+          { eventName: 'destroy' }
+        ]);
+      }).catch(common.mustNotCall());
+      resolve();
+    });
+  }
 }
 
 function success (binding) {
