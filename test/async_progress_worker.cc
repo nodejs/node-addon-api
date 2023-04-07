@@ -2,6 +2,7 @@
 
 #include <chrono>
 #include <condition_variable>
+#include <iostream>
 #include <mutex>
 #include <thread>
 
@@ -48,7 +49,9 @@ class TestWorkerWithNoCb : public AsyncProgressWorker<ProgressData> {
   }
 
  protected:
-  void Execute(const ExecutionProgress&) override {}
+  void Execute(const ExecutionProgress&) override {
+    std::cout << "Running via Napi::Env " << std::endl;
+  }
 
   void OnProgress(const ProgressData*, size_t /* count */) override {}
 
