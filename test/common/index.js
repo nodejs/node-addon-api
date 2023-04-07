@@ -32,6 +32,51 @@ function runCallChecks (exitCode) {
   if (failed.length) process.exit(1);
 }
 
+exports.installAysncHooks = function (asyncResName) {
+  const asyncHooks = require('async_hooks');
+  return new Promise((resolve, reject) => {
+    let id;
+    const events = [];
+    /**
+     * TODO(legendecas): investigate why resolving & disabling hooks in
+     * destroy callback causing crash with case 'callbackscope.js'.
+     */
+    let destroyed = false;
+    const hook = asyncHooks.createHook({
+      init (asyncId, type, triggerAsyncId, resource) {
+        if (id === undefined && type === asyncResName) {
+          id = asyncId;
+          events.push({ eventName: 'init', type, triggerAsyncId, resource });
+        }
+      },
+      before (asyncId) {
+        if (asyncId === id) {
+          events.push({ eventName: 'before' });
+        }
+      },
+      after (asyncId) {
+        if (asyncId === id) {
+          events.push({ eventName: 'after' });
+        }
+      },
+      destroy (asyncId) {
+        if (asyncId === id) {
+          events.push({ eventName: 'destroy' });
+          destroyed = true;
+        }
+      }
+    }).enable();
+
+    const interval = setInterval(() => {
+      if (destroyed) {
+        hook.disable();
+        clearInterval(interval);
+        resolve(events);
+      }
+    }, 10);
+  });
+};
+
 exports.mustCall = function (fn, exact) {
   return _mustCallInner(fn, exact, 'exact');
 };

@@ -17,50 +17,6 @@ function checkAsyncHooks () {
   return false;
 }
 
-function installAsyncHooksForTest (resName) {
-  return new Promise((resolve, reject) => {
-    let id;
-    const events = [];
-    /**
-     * TODO(legendecas): investigate why resolving & disabling hooks in
-     * destroy callback causing crash with case 'callbackscope.js'.
-     */
-    let destroyed = false;
-    const hook = asyncHooks.createHook({
-      init (asyncId, type, triggerAsyncId, resource) {
-        if (id === undefined && type === resName) {
-          id = asyncId;
-          events.push({ eventName: 'init', type, triggerAsyncId, resource });
-        }
-      },
-      before (asyncId) {
-        if (asyncId === id) {
-          events.push({ eventName: 'before' });
-        }
-      },
-      after (asyncId) {
-        if (asyncId === id) {
-          events.push({ eventName: 'after' });
-        }
-      },
-      destroy (asyncId) {
-        if (asyncId === id) {
-          events.push({ eventName: 'destroy' });
-          destroyed = true;
-        }
-      }
-    }).enable();
-
-    const interval = setInterval(() => {
-      if (destroyed) {
-        hook.disable();
-        clearInterval(interval);
-        resolve(events);
-      }
-    }, 10);
-  });
-}
-
 async function test ({ asyncprogressworker }) {
   await success(asyncprogressworker);
   await fail(asyncprogressworker);
@@ -77,7 +33,9 @@ async function asyncProgressWorkerCallbackOverloads (bindingFunction) {
   if (!checkAsyncHooks()) {
     return;
   }
-  const hooks = installAsyncHooksForTest('cbResources');
+
+  const hooks = common.installAysncHooks('cbResources');
+
   const triggerAsyncId = asyncHooks.executionAsyncId();
   await new Promise((resolve, reject) => {
     bindingFunction(common.mustCall(), 'cbResources');
@@ -120,7 +78,7 @@ async function asyncProgressWorkerRecvOverloads (bindingFunction) {
     const asyncResName = asyncResource.resName;
     const asyncResObject = asyncResource.resObject;
 
-    const hooks = installAsyncHooksForTest(asyncResource.resName);
+    const hooks = common.installAysncHooks(asyncResource.resName);
     const triggerAsyncId = asyncHooks.executionAsyncId();
     await new Promise((resolve, reject) => {
       if (Object.keys(asyncResObject).length === 0) {
@@ -161,7 +119,7 @@ async function asyncProgressWorkerNoCbOverloads (bindingFunction) {
     const asyncResName = asyncResource.resName;
     const asyncResObject = asyncResource.resObject;
 
-    const hooks = installAsyncHooksForTest(asyncResName);
+    const hooks = common.installAysncHooks(asyncResource.resName);
     const triggerAsyncId = asyncHooks.executionAsyncId();
     await new Promise((resolve, reject) => {
       if (Object.keys(asyncResObject).length === 0) {
