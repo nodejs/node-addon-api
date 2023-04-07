@@ -463,6 +463,9 @@ class Value {
   ///
   /// This conversion does NOT coerce the type. Calling any methods
   /// inappropriate for the actual value type will throw `Napi::Error`.
+  ///
+  /// If `NODE_ADDON_API_ENABLE_TYPE_CHECK_ON_AS` is defined, this method
+  /// asserts that the actual type is the expected type.
   template <typename T>
   T As() const;
 
@@ -489,6 +492,8 @@ class Boolean : public Value {
                      bool value     ///< Boolean value
   );
 
+  static void CheckCast(napi_env env, napi_value value);
+
   Boolean();  ///< Creates a new _empty_ Boolean instance.
   Boolean(napi_env env,
           napi_value value);  ///< Wraps a Node-API value primitive.
@@ -503,6 +508,8 @@ class Number : public Value {
   static Number New(napi_env env,  ///< Node-API environment
                     double value   ///< Number value
   );
+
+  static void CheckCast(napi_env env, napi_value value);
 
   Number();  ///< Creates a new _empty_ Number instance.
   Number(napi_env env,
@@ -552,6 +559,8 @@ class BigInt : public Value {
                     const uint64_t* words  ///< Array of words
   );
 
+  static void CheckCast(napi_env env, napi_value value);
+
   BigInt();  ///< Creates a new _empty_ BigInt instance.
   BigInt(napi_env env,
          napi_value value);  ///< Wraps a Node-API value primitive.
@@ -583,6 +592,8 @@ class Date : public Value {
                   double value   ///< Number value
   );
 
+  static void CheckCast(napi_env env, napi_value value);
+
   Date();  ///< Creates a new _empty_ Date instance.
   Date(napi_env env, napi_value value);  ///< Wraps a Node-API value primitive.
   operator double() const;  ///< Converts a Date value to double primitive
@@ -594,6 +605,8 @@ class Date : public Value {
 /// A JavaScript string or symbol value (that can be used as a property name).
 class Name : public Value {
  public:
+  static void CheckCast(napi_env env, napi_value value);
+
   Name();  ///< Creates a new _empty_ Name instance.
   Name(napi_env env,
        napi_value value);  ///< Wraps a Node-API value primitive.
@@ -650,6 +663,8 @@ class String : public Name {
   /// - std::u16string
   template <typename T>
   static String From(napi_env env, const T& value);
+
+  static void CheckCast(napi_env env, napi_value value);
 
   String();  ///< Creates a new _empty_ String instance.
   String(napi_env env,
@@ -709,13 +724,26 @@ class Symbol : public Name {
   // Create a symbol in the global registry, napi_value describing the symbol
   static MaybeOrValue<Symbol> For(napi_env env, napi_value description);
 
+  static void CheckCast(napi_env env, napi_value value);
+
   Symbol();  ///< Creates a new _empty_ Symbol instance.
   Symbol(napi_env env,
          napi_value value);  ///< Wraps a Node-API value primitive.
 };
 
+class TypeTaggable : public Value {
+ public:
+#if NAPI_VERSION >= 8
+  void TypeTag(const napi_type_tag* type_tag) const;
+  bool CheckTypeTag(const napi_type_tag* type_tag) const;
+#endif  // NAPI_VERSION >= 8
+ protected:
+  TypeTaggable();
+  TypeTaggable(napi_env env, napi_value value);
+};
+
 /// A JavaScript object value.
-class Object : public Value {
+class Object : public TypeTaggable {
  public:
   /// Enables property and element assignments using indexing syntax.
   ///
@@ -755,6 +783,8 @@ class Object : public Value {
   /// Creates a new Object value.
   static Object New(napi_env env  ///< Node-API environment
   );
+
+  static void CheckCast(napi_env env, napi_value value);
 
   Object();  ///< Creates a new _empty_ Object instance.
   Object(napi_env env,
@@ -991,14 +1021,11 @@ class Object : public Value {
   /// See
   /// https://tc39.es/ecma262/#sec-proxy-object-internal-methods-and-internal-slots-getprototypeof
   MaybeOrValue<bool> Seal() const;
-
-  void TypeTag(const napi_type_tag* type_tag) const;
-  bool CheckTypeTag(const napi_type_tag* type_tag) const;
 #endif  // NAPI_VERSION >= 8
 };
 
 template <typename T>
-class External : public Value {
+class External : public TypeTaggable {
  public:
   static External New(napi_env env, T* data);
 
@@ -1012,6 +1039,8 @@ class External : public Value {
                       Finalizer finalizeCallback,
                       Hint* finalizeHint);
 
+  static void CheckCast(napi_env env, napi_value value);
+
   External();
   External(napi_env env, napi_value value);
 
@@ -1022,6 +1051,8 @@ class Array : public Object {
  public:
   static Array New(napi_env env);
   static Array New(napi_env env, size_t length);
+
+  static void CheckCast(napi_env env, napi_value value);
 
   Array();
   Array(napi_env env, napi_value value);
@@ -1134,6 +1165,8 @@ class ArrayBuffer : public Object {
   );
 #endif  // NODE_API_NO_EXTERNAL_BUFFERS_ALLOWED
 
+  static void CheckCast(napi_env env, napi_value value);
+
   ArrayBuffer();  ///< Creates a new _empty_ ArrayBuffer instance.
   ArrayBuffer(napi_env env,
               napi_value value);  ///< Wraps a Node-API value primitive.
@@ -1158,6 +1191,8 @@ class ArrayBuffer : public Object {
 ///     }
 class TypedArray : public Object {
  public:
+  static void CheckCast(napi_env env, napi_value value);
+
   TypedArray();  ///< Creates a new _empty_ TypedArray instance.
   TypedArray(napi_env env,
              napi_value value);  ///< Wraps a Node-API value primitive.
@@ -1258,6 +1293,8 @@ class TypedArrayOf : public TypedArray {
       ///< template parameter T.
   );
 
+  static void CheckCast(napi_env env, napi_value value);
+
   TypedArrayOf();  ///< Creates a new _empty_ TypedArrayOf instance.
   TypedArrayOf(napi_env env,
                napi_value value);  ///< Wraps a Node-API value primitive.
@@ -1301,6 +1338,8 @@ class DataView : public Object {
                       Napi::ArrayBuffer arrayBuffer,
                       size_t byteOffset,
                       size_t byteLength);
+
+  static void CheckCast(napi_env env, napi_value value);
 
   DataView();  ///< Creates a new _empty_ DataView instance.
   DataView(napi_env env,
@@ -1382,6 +1421,8 @@ class Function : public Object {
                       const std::string& utf8name,
                       void* data = nullptr);
 
+  static void CheckCast(napi_env env, napi_value value);
+
   Function();
   Function(napi_env env, napi_value value);
 
@@ -1438,6 +1479,8 @@ class Promise : public Object {
     napi_value _promise;
   };
 
+  static void CheckCast(napi_env env, napi_value value);
+
   Promise(napi_env env, napi_value value);
 };
 
@@ -1479,6 +1522,8 @@ class Buffer : public Uint8Array {
                              Hint* finalizeHint);
 
   static Buffer<T> Copy(napi_env env, const T* data, size_t length);
+
+  static void CheckCast(napi_env env, napi_value value);
 
   Buffer();
   Buffer(napi_env env, napi_value value);

@@ -48,7 +48,6 @@
         'object/has_property.cc',
         'object/object.cc',
         'object/object_freeze_seal.cc',
-        'object/object_type_tag.cc',
         'object/set_property.cc',
         'object/subscript_operator.cc',
         'promise.cc',
@@ -60,6 +59,7 @@
         'threadsafe_function/threadsafe_function_sum.cc',
         'threadsafe_function/threadsafe_function_unref.cc',
         'threadsafe_function/threadsafe_function.cc',
+        'type_taggable.cc',
         'typed_threadsafe_function/typed_threadsafe_function_ctx.cc',
         'typed_threadsafe_function/typed_threadsafe_function_existing_tsfn.cc',
         'typed_threadsafe_function/typed_threadsafe_function_ptr.cc',
@@ -80,6 +80,9 @@
       'build_sources_swallowexcept': [
         'binding-swallowexcept.cc',
         'error.cc',
+      ],
+      'build_sources_type_check': [
+        'value_type_cast.cc'
       ],
       'conditions': [
         ['disable_deprecated!="true"', {
@@ -116,6 +119,12 @@
       'includes': ['../noexcept.gypi'],
       'sources': ['>@(build_sources_swallowexcept)'],
       'defines': ['NODE_API_SWALLOW_UNTHROWABLE_EXCEPTIONS']
+    },
+    {
+      'target_name': 'binding_type_check',
+      'includes': ['../noexcept.gypi'],
+      'sources': ['>@(build_sources_type_check)'],
+      'defines': ['NODE_ADDON_API_ENABLE_TYPE_CHECK_ON_AS']
     },
     {
       'target_name': 'binding_custom_namespace',
