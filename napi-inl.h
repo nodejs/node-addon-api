@@ -2937,6 +2937,22 @@ inline Error::Error(napi_env env, napi_value value)
           nullptr};
 
       status = napi_define_properties(env, wrappedErrorObj, 1, &wrapObjFlag);
+#ifdef NODE_API_SWALLOW_UNTHROWABLE_EXCEPTIONS
+      if (status == napi_pending_exception) {
+        // Test if the pending exception was reported because the environment is
+        // shutting down. We assume that a status of napi_pending_exception
+        // coupled with the absence of an actual pending exception means that
+        // the environment is shutting down. If so, we replace the
+        // napi_pending_exception status with napi_ok.
+        bool is_exception_pending = false;
+        status = napi_is_exception_pending(env, &is_exception_pending);
+        if (status == napi_ok && !is_exception_pending) {
+          status = napi_ok;
+        } else {
+          status = napi_pending_exception;
+        }
+      }
+#endif  // NODE_API_SWALLOW_UNTHROWABLE_EXCEPTIONS
       NAPI_FATAL_IF_FAILED(status, "Error::Error", "napi_define_properties");
 
       // Create a reference on the newly wrapped object
