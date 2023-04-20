@@ -1,5 +1,46 @@
 # node-addon-api Changelog
 
+## 2023-04-20 Version 6.1.0, @NickNaso
+
+### Notable changes
+
+#### API
+
+- Enforce type checks on `Napi::Value::As()`.
+- Added `Napi::TypeTaggable` class.
+- Defined `NAPI_HAS_THREADS` to make TSFN available on Emscripten.
+- Defined `NODE_API_NO_EXTERNAL_BUFFERS_ALLOWED` and
+`Napi::Buffer::NewOrCopy()` to handle the support for external buffers.
+
+#### TEST
+
+- Added tests for `Napi::Reference<T>` class.
+- Added tests for copy/move semantics.
+- Added tests for `Napi::RangeError` and `Napi::TypeError` class.
+- Fixed inconsistent failure executing test suite.
+- Added tests for `Napi::ObjectReference<T>` class.
+- Added tests for `Napi::ObjectWrap<T>` class.
+
+### Documentation
+
+- Added documentation for `Napi::TypeTaggable`.
+- Some minor fixes all over the documentation.
+
+### Commits
+
+- \[[`5adb896782`](https://github.com/nodejs/node-addon-api/commit/5adb896782)] - **src**: enforce type checks on Napi::Value::As() (#1281) (Chengzhong Wu)
+- \[[`d9faac7ec2`](https://github.com/nodejs/node-addon-api/commit/d9faac7ec2)] - Fix exits/exists typo in docs for Env::AddCleanupHook() (#1306) (Mathias Stearn)
+- \[[`164459ca03`](https://github.com/nodejs/node-addon-api/commit/164459ca03)] - **doc**: update class hierarchy for TypeTaggable (Gabriel Schulhof) [#1303](https://github.com/nodejs/node-addon-api/pull/1303)
+- \[[`d01304437c`](https://github.com/nodejs/node-addon-api/commit/d01304437c)] - **src**: interject class TypeTaggable (Gabriel Schulhof) [#1298](https://github.com/nodejs/node-addon-api/pull/1298)
+- \[[`d4942ccd4f`](https://github.com/nodejs/node-addon-api/commit/d4942ccd4f)] - **test**: Complete test coverage for Reference\<T> class (#1277) (Jack)
+- \[[`a8ad7e7a7b`](https://github.com/nodejs/node-addon-api/commit/a8ad7e7a7b)] - **test**: Add tests for copy/move semantics (JckXia) [#1295](https://github.com/nodejs/node-addon-api/pull/1295)
+- \[[`e484327344`](https://github.com/nodejs/node-addon-api/commit/e484327344)] - Add test coverage for typed and range err (#1280) (Jack)
+- \[[`ebc7858593`](https://github.com/nodejs/node-addon-api/commit/ebc7858593)] - **test**: Update wait with a condition (#1297) (Jack)
+- \[[`0b53d885f5`](https://github.com/nodejs/node-addon-api/commit/0b53d885f5)] - **src**: define `NAPI_HAS_THREADS` (toyobayashi) [#1283](https://github.com/nodejs/node-addon-api/pull/1283)
+- \[[`464610babf`](https://github.com/nodejs/node-addon-api/commit/464610babf)] - **test**: complete objectRefs tests (JckXia) [#1274](https://github.com/nodejs/node-addon-api/pull/1274)
+- \[[`b16c762a19`](https://github.com/nodejs/node-addon-api/commit/b16c762a19)] - **src**: handle no support for external buffers (legendecas) [#1273](https://github.com/nodejs/node-addon-api/pull/1273)
+- \[[`61b8e28720`](https://github.com/nodejs/node-addon-api/commit/61b8e28720)] - **test**: Add test covg for obj wrap (#1269) (Jack)
+
 ## 2023-02-03 Version 6.0.0, @NickNaso
 
 ### Notable changes
