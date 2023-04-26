@@ -165,7 +165,7 @@ napi_value TemplatedInstanceCallback(napi_env env,
   return details::WrapCallback([&] {
     CallbackInfo cbInfo(env, info);
     T* instance = T::Unwrap(cbInfo.This().As<Object>());
-    return (instance->*UnwrapCallback)(cbInfo);
+    return instance ? (instance->*UnwrapCallback)(cbInfo) : Napi::Value();
   });
 }
 
@@ -175,7 +175,7 @@ napi_value TemplatedInstanceVoidCallback(napi_env env, napi_callback_info info)
   return details::WrapCallback([&] {
     CallbackInfo cbInfo(env, info);
     T* instance = T::Unwrap(cbInfo.This().As<Object>());
-    (instance->*UnwrapCallback)(cbInfo);
+    if (instance) (instance->*UnwrapCallback)(cbInfo);
     return nullptr;
   });
 }
@@ -4340,7 +4340,7 @@ inline napi_value InstanceWrap<T>::InstanceVoidMethodCallbackWrapper(
     callbackInfo.SetData(callbackData->data);
     T* instance = T::Unwrap(callbackInfo.This().As<Object>());
     auto cb = callbackData->callback;
-    (instance->*cb)(callbackInfo);
+    if (instance) (instance->*cb)(callbackInfo);
     return nullptr;
   });
 }
@@ -4355,7 +4355,7 @@ inline napi_value InstanceWrap<T>::InstanceMethodCallbackWrapper(
     callbackInfo.SetData(callbackData->data);
     T* instance = T::Unwrap(callbackInfo.This().As<Object>());
     auto cb = callbackData->callback;
-    return (instance->*cb)(callbackInfo);
+    return instance ? (instance->*cb)(callbackInfo) : Napi::Value();
   });
 }
 
@@ -4369,7 +4369,7 @@ inline napi_value InstanceWrap<T>::InstanceGetterCallbackWrapper(
     callbackInfo.SetData(callbackData->data);
     T* instance = T::Unwrap(callbackInfo.This().As<Object>());
     auto cb = callbackData->getterCallback;
-    return (instance->*cb)(callbackInfo);
+    return instance ? (instance->*cb)(callbackInfo) : Napi::Value();
   });
 }
 
@@ -4383,7 +4383,7 @@ inline napi_value InstanceWrap<T>::InstanceSetterCallbackWrapper(
     callbackInfo.SetData(callbackData->data);
     T* instance = T::Unwrap(callbackInfo.This().As<Object>());
     auto cb = callbackData->setterCallback;
-    (instance->*cb)(callbackInfo, callbackInfo[0]);
+    if (instance) (instance->*cb)(callbackInfo, callbackInfo[0]);
     return nullptr;
   });
 }
@@ -4395,7 +4395,7 @@ inline napi_value InstanceWrap<T>::WrappedMethod(
   return details::WrapCallback([&] {
     const CallbackInfo cbInfo(env, info);
     T* instance = T::Unwrap(cbInfo.This().As<Object>());
-    (instance->*method)(cbInfo, cbInfo[0]);
+    if (instance) (instance->*method)(cbInfo, cbInfo[0]);
     return nullptr;
   });
 }
