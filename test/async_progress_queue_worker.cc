@@ -15,6 +15,158 @@ struct ProgressData {
   int32_t progress;
 };
 
+class TestWorkerWithNoCb : public AsyncProgressQueueWorker<ProgressData> {
+ public:
+  static void DoWork(const CallbackInfo& info) {
+    switch (info.Length()) {
+      case 1: {
+        Function cb = info[0].As<Function>();
+        TestWorkerWithNoCb* worker = new TestWorkerWithNoCb(info.Env(), cb);
+        worker->Queue();
+      } break;
+
+      case 2: {
+        std::string resName = info[0].As<String>();
+        Function cb = info[1].As<Function>();
+        TestWorkerWithNoCb* worker =
+            new TestWorkerWithNoCb(info.Env(), resName.c_str(), cb);
+        worker->Queue();
+      } break;
+
+      case 3: {
+        std::string resName = info[0].As<String>();
+        Object resObject = info[1].As<Object>();
+        Function cb = info[2].As<Function>();
+        TestWorkerWithNoCb* worker =
+            new TestWorkerWithNoCb(info.Env(), resName.c_str(), resObject, cb);
+        worker->Queue();
+      } break;
+
+      default:
+
+        break;
+    }
+  }
+
+ protected:
+  void Execute(const ExecutionProgress& progress) override {
+    ProgressData data{1};
+    progress.Send(&data, 1);
+  }
+
+  void OnProgress(const ProgressData*, size_t /* count */) override {
+    _cb.Call({});
+  }
+
+ private:
+  TestWorkerWithNoCb(Napi::Env env, Function cb)
+      : AsyncProgressQueueWorker(env) {
+    _cb.Reset(cb, 1);
+  }
+  TestWorkerWithNoCb(Napi::Env env, const char* resourceName, Function cb)
+      : AsyncProgressQueueWorker(env, resourceName) {
+    _cb.Reset(cb, 1);
+  }
+  TestWorkerWithNoCb(Napi::Env env,
+                     const char* resourceName,
+                     const Object& resourceObject,
+                     Function cb)
+      : AsyncProgressQueueWorker(env, resourceName, resourceObject) {
+    _cb.Reset(cb, 1);
+  }
+  FunctionReference _cb;
+};
+
+class TestWorkerWithRecv : public AsyncProgressQueueWorker<ProgressData> {
+ public:
+  static void DoWork(const CallbackInfo& info) {
+    switch (info.Length()) {
+      case 2: {
+        Object recv = info[0].As<Object>();
+        Function cb = info[1].As<Function>();
+        TestWorkerWithRecv* worker = new TestWorkerWithRecv(recv, cb);
+        worker->Queue();
+      } break;
+
+      case 3: {
+        Object recv = info[0].As<Object>();
+        Function cb = info[1].As<Function>();
+        std::string resName = info[2].As<String>();
+        TestWorkerWithRecv* worker =
+            new TestWorkerWithRecv(recv, cb, resName.c_str());
+        worker->Queue();
+      } break;
+
+      case 4: {
+        Object recv = info[0].As<Object>();
+        Function cb = info[1].As<Function>();
+        std::string resName = info[2].As<String>();
+        Object resObject = info[3].As<Object>();
+        TestWorkerWithRecv* worker =
+            new TestWorkerWithRecv(recv, cb, resName.c_str(), resObject);
+        worker->Queue();
+      } break;
+
+      default:
+
+        break;
+    }
+  }
+
+ protected:
+  void Execute(const ExecutionProgress&) override {}
+
+  void OnProgress(const ProgressData*, size_t /* count */) override {}
+
+ private:
+  TestWorkerWithRecv(const Object& recv, const Function& cb)
+      : AsyncProgressQueueWorker(recv, cb) {}
+  TestWorkerWithRecv(const Object& recv,
+                     const Function& cb,
+                     const char* resourceName)
+      : AsyncProgressQueueWorker(recv, cb, resourceName) {}
+  TestWorkerWithRecv(const Object& recv,
+                     const Function& cb,
+                     const char* resourceName,
+                     const Object& resourceObject)
+      : AsyncProgressQueueWorker(recv, cb, resourceName, resourceObject) {}
+};
+
+class TestWorkerWithCb : public AsyncProgressQueueWorker<ProgressData> {
+ public:
+  static void DoWork(const CallbackInfo& info) {
+    switch (info.Length()) {
+      case 1: {
+        Function cb = info[0].As<Function>();
+        TestWorkerWithCb* worker = new TestWorkerWithCb(cb);
+        worker->Queue();
+      } break;
+
+      case 2: {
+        Function cb = info[0].As<Function>();
+        std::string asyncResName = info[1].As<String>();
+        TestWorkerWithCb* worker =
+            new TestWorkerWithCb(cb, asyncResName.c_str());
+        worker->Queue();
+      } break;
+
+      default:
+
+        break;
+    }
+  }
+
+ protected:
+  void Execute(const ExecutionProgress&) override {}
+
+  void OnProgress(const ProgressData*, size_t /* count */) override {}
+
+ private:
+  TestWorkerWithCb(Function cb) : AsyncProgressQueueWorker(cb) {}
+  TestWorkerWithCb(Function cb, const char* res_name)
+      : AsyncProgressQueueWorker(cb, res_name) {}
+};
+
 class TestWorker : public AsyncProgressQueueWorker<ProgressData> {
  public:
   static Napi::Value CreateWork(const CallbackInfo& info) {
@@ -87,6 +239,9 @@ Object InitAsyncProgressQueueWorker(Env env) {
   Object exports = Object::New(env);
   exports["createWork"] = Function::New(env, TestWorker::CreateWork);
   exports["queueWork"] = Function::New(env, TestWorker::QueueWork);
+  exports["runWorkerNoCb"] = Function::New(env, TestWorkerWithNoCb::DoWork);
+  exports["runWorkerWithRecv"] = Function::New(env, TestWorkerWithRecv::DoWork);
+  exports["runWorkerWithCb"] = Function::New(env, TestWorkerWithCb::DoWork);
   return exports;
 }
 
