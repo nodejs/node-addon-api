@@ -95,9 +95,7 @@
     {
       'target_name': 'binding',
       'includes': ['../except.gypi'],
-      'sources': ['>@(build_sources)'],
-      "cflags": ["-coverage"],
-      "ldflags": ["-coverage"]
+      'sources': ['>@(build_sources)']
     },
     {
       'target_name': 'binding_noexcept',
