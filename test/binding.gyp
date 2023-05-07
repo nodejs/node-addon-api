@@ -95,12 +95,14 @@
     {
       'target_name': 'binding',
       'includes': ['../except.gypi'],
-      'sources': ['>@(build_sources)']
+      'sources': ['>@(build_sources)'],
+      "cflags": ["-coverage"],
+      "ldflags": ["-coverage"]
     },
     {
       'target_name': 'binding_noexcept',
       'includes': ['../noexcept.gypi'],
-      'sources': ['>@(build_sources)']
+      'sources': ['>@(build_sources)'],
     },
     {
       'target_name': 'binding_noexcept_maybe',
