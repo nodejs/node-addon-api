@@ -1,4 +1,4 @@
-#include "../../napi.h"
+#include "napi.h"
 
 using namespace Napi;
 

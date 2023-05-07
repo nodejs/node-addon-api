@@ -16,6 +16,7 @@
     }]
   ],
   'include_dirs': ["<!(node -p \"require('../').include_dir\")"],
-  'cflags': [ '-Werror', '-Wall', '-Wextra', '-Wpedantic', '-Wunused-parameter' ],
-  'cflags_cc': [ '-Werror', '-Wall', '-Wextra', '-Wpedantic', '-Wunused-parameter' ]
+  'cflags': [ '-Werror', '-Wall', '-Wextra', '-Wpedantic', '-Wunused-parameter' ,'-coverage'],
+  'cflags_cc': [ '-Werror', '-Wall', '-Wextra', '-Wpedantic', '-Wunused-parameter', '-coverage' ],
+  'ldflags': ['-coverage']
 }
