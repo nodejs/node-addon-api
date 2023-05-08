@@ -418,6 +418,7 @@ Value Echo(const CallbackInfo& info) {
     EchoWorker* wk = new EchoWorker(cb, in);
     wk->Queue();
     return info.Env().Undefined();
+}
 ```
 
 Using the implementation of a `Napi::AsyncWorker` is straight forward. You only
