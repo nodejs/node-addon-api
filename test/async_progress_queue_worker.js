@@ -49,8 +49,8 @@ async function asyncProgressWorkerCallbackOverloads (bindingFunction) {
         { eventName: 'after' },
         { eventName: 'destroy' }
       ]);
-    }).catch(common.mustNotCall());
-    resolve();
+      resolve();
+    }).catch((err) => reject(err));
   });
 }
 
@@ -97,14 +97,14 @@ async function asyncProgressWorkerRecvOverloads (bindingFunction) {
           { eventName: 'after' },
           { eventName: 'destroy' }
         ]);
-      }).catch(common.mustNotCall());
-      resolve();
+        resolve();
+      }).catch((err) => reject(err));
     });
   }
 }
 
 async function asyncProgressWorkerNoCbOverloads (bindingFunction) {
-  bindingFunction(common.mustCall(() => {}));
+  bindingFunction(common.mustCall());
   if (!checkAsyncHooks()) {
     return;
   }
@@ -138,8 +138,8 @@ async function asyncProgressWorkerNoCbOverloads (bindingFunction) {
           { eventName: 'after' },
           { eventName: 'destroy' }
         ]);
-      }).catch(common.mustNotCall());
-      resolve();
+        resolve();
+      }).catch((err) => reject(err));
     });
   }
 }
