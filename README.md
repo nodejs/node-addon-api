@@ -83,7 +83,7 @@ This allows addons built with it to run with Node.js versions which support the 
 **However** the node-addon-api support model is to support only the active LTS Node.js versions. This means that
 every year there will be a new major which drops support for the Node.js LTS version which has gone out of service.
 
-The oldest Node.js version supported by the current version of node-addon-api is Node.js 14.x.
+The oldest Node.js version supported by the current version of node-addon-api is Node.js 18.x.
 
 ## Setup
   - [Installation and usage](doc/setup.md)
@@ -275,6 +275,7 @@ available:
 ![Node-API v6 Badge](https://github.com/nodejs/abi-stable-node/blob/doc/assets/Node-API%20v6%20Badge.svg)
 ![Node-API v7 Badge](https://github.com/nodejs/abi-stable-node/blob/doc/assets/Node-API%20v7%20Badge.svg)
 ![Node-API v8 Badge](https://github.com/nodejs/abi-stable-node/blob/doc/assets/Node-API%20v8%20Badge.svg)
+![Node-API v9 Badge](https://github.com/nodejs/abi-stable-node/blob/doc/assets/Node-API%20v9%20Badge.svg)
 ![Node-API Experimental Version Badge](https://github.com/nodejs/abi-stable-node/blob/doc/assets/Node-API%20Experimental%20Version%20Badge.svg)
 
 ## **Contributing**

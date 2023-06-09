@@ -60,3 +60,24 @@ and that the correct version is installed.
 and close the issue.
 
 * Tweet that the release has been created.
+
+## Optional Steps
+
+Depending on circumstances for the release, additional steps may be required to
+support the release process.
+
+### Major Releases to Drop Support Node.js Versions
+
+`node-addon-api` provides support for Node.js versions following the same
+[release schedule](https://nodejs.dev/en/about/releases/): once a Node.js
+version leaves maintenance mode, the next major version of `node-addon-api`
+published will drop support for that version. These are the steps to follow to
+drop support for a Node.js version:
+
+* Update minimum version supported in documentation ([README.md](../README.md))
+
+* Remove from GitHub actions ([ci.yml](../.github/workflows/ci.yml) and
+  [ci-win.yml](../.github/workflows/ci-win.yml))
+
+* Remove from Jenkins CI ([node-test-node-addon-api-LTS versions
+  [Jenkins]](https://ci.nodejs.org/view/x%20-%20Abi%20stable%20module%20API/job/node-test-node-addon-api-LTS%20versions/))
