@@ -78,7 +78,9 @@ Object InitThunkingManual(Env env);
 Object InitObjectFreezeSeal(Env env);
 Object InitTypeTaggable(Env env);
 #endif
-
+#if (NAPI_VERSION > 8)
+Object InitEnvMiscellaneous(Env env);
+#endif
 #if defined(NODE_ADDON_API_ENABLE_MAYBE)
 Object InitMaybeCheck(Env env);
 #endif
@@ -170,6 +172,9 @@ Object Init(Env env, Object exports) {
 #if (NAPI_VERSION > 7)
   exports.Set("object_freeze_seal", InitObjectFreezeSeal(env));
   exports.Set("type_taggable", InitTypeTaggable(env));
+#endif
+#if (NAPI_VERSION > 8)
+  exports.Set("env_misc", InitEnvMiscellaneous(env));
 #endif
 
 #if defined(NODE_ADDON_API_ENABLE_MAYBE)

@@ -137,6 +137,10 @@ if (napiVersion < 8 && !filterConditionsProvided) {
   testModules.splice(testModules.indexOf('type_taggable'), 1);
 }
 
+if (napiVersion < 9 && !filterConditionsProvided) {
+  testModules.splice(testModules.indexOf('env_misc'), 1);
+}
+
 (async function () {
   console.log(`Testing with Node-API Version '${napiVersion}'.`);
 

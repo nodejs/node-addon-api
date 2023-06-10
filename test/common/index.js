@@ -164,7 +164,7 @@ exports.runTest = async function (test, buildType, buildPathRoot = process.env.B
   ].map(it => require.resolve(it));
 
   for (const item of bindings) {
-    await Promise.resolve(test(require(item)))
+    await Promise.resolve(test(require(item), { bindingPath: item }))
       .finally(exports.mustCall());
   }
 };

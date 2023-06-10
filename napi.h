@@ -367,6 +367,10 @@ class Env {
     } * data;
   };
 #endif  // NAPI_VERSION > 2
+
+#if NAPI_VERSION > 8
+  std::string_view GetModuleFileName() const;
+#endif  // NAPI_VERSION > 8
 };
 
 /// A JavaScript value of unknown type.
