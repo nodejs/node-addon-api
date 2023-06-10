@@ -1853,6 +1853,17 @@ class RangeError : public Error {
   RangeError(napi_env env, napi_value value);
 };
 
+#if NAPI_VERSION > 8
+class SyntaxError : public Error {
+ public:
+  static SyntaxError New(napi_env env, const char* message);
+  static SyntaxError New(napi_env env, const std::string& message);
+
+  SyntaxError();
+  SyntaxError(napi_env env, napi_value value);
+};
+#endif  // NAPI_VERSION > 8
+
 class CallbackInfo {
  public:
   CallbackInfo(napi_env env, napi_callback_info info);

@@ -3157,6 +3157,23 @@ inline RangeError::RangeError() : Error() {}
 inline RangeError::RangeError(napi_env env, napi_value value)
     : Error(env, value) {}
 
+#if NAPI_VERSION > 8
+inline SyntaxError SyntaxError::New(napi_env env, const char* message) {
+  return Error::New<SyntaxError>(
+      env, message, std::strlen(message), node_api_create_syntax_error);
+}
+
+inline SyntaxError SyntaxError::New(napi_env env, const std::string& message) {
+  return Error::New<SyntaxError>(
+      env, message.c_str(), message.size(), node_api_create_syntax_error);
+}
+
+inline SyntaxError::SyntaxError() : Error() {}
+
+inline SyntaxError::SyntaxError(napi_env env, napi_value value)
+    : Error(env, value) {}
+#endif  // NAPI_VERSION > 8
+
 ////////////////////////////////////////////////////////////////////////////////
 // Reference<T> class
 ////////////////////////////////////////////////////////////////////////////////

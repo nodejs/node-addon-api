@@ -153,6 +153,27 @@ void ThrowRangeError(const CallbackInfo& info) {
   throw RangeError::New(info.Env(), message);
 }
 
+#if NAPI_VERSION > 8
+void ThrowSyntaxErrorCStr(const CallbackInfo& info) {
+  std::string message = info[0].As<String>().Utf8Value();
+  ReleaseAndWaitForChildProcess(info, 1);
+  throw SyntaxError::New(info.Env(), message.c_str());
+}
+
+void ThrowSyntaxErrorCtor(const CallbackInfo& info) {
+  Napi::Value js_range_err = info[0];
+  ReleaseAndWaitForChildProcess(info, 1);
+  throw Napi::SyntaxError(info.Env(), js_range_err);
+}
+
+void ThrowSyntaxError(const CallbackInfo& info) {
+  std::string message = info[0].As<String>().Utf8Value();
+
+  ReleaseAndWaitForChildProcess(info, 1);
+  throw SyntaxError::New(info.Env(), message);
+}
+#endif  // NAPI_VERSION > 8
+
 Value CatchError(const CallbackInfo& info) {
   Function thrower = info[0].As<Function>();
   try {
@@ -254,6 +275,27 @@ void ThrowEmptyRangeError(const CallbackInfo& info) {
   ReleaseAndWaitForChildProcess(info, 1);
   RangeError().ThrowAsJavaScriptException();
 }
+
+#if NAPI_VERSION > 8
+void ThrowSyntaxError(const CallbackInfo& info) {
+  std::string message = info[0].As<String>().Utf8Value();
+
+  ReleaseAndWaitForChildProcess(info, 1);
+  SyntaxError::New(info.Env(), message).ThrowAsJavaScriptException();
+}
+
+void ThrowSyntaxErrorCtor(const CallbackInfo& info) {
+  Napi::Value js_range_err = info[0];
+  ReleaseAndWaitForChildProcess(info, 1);
+  SyntaxError(info.Env(), js_range_err).ThrowAsJavaScriptException();
+}
+
+void ThrowSyntaxErrorCStr(const CallbackInfo& info) {
+  std::string message = info[0].As<String>().Utf8Value();
+  ReleaseAndWaitForChildProcess(info, 1);
+  SyntaxError::New(info.Env(), message.c_str()).ThrowAsJavaScriptException();
+}
+#endif  // NAPI_VERSION > 8
 
 Value CatchError(const CallbackInfo& info) {
   Function thrower = info[0].As<Function>();
@@ -372,6 +414,11 @@ Object InitError(Env env) {
   exports["throwRangeErrorCtor"] = Function::New(env, ThrowRangeErrorCtor);
   exports["throwRangeErrorCStr"] = Function::New(env, ThrowRangeErrorCStr);
   exports["throwEmptyRangeError"] = Function::New(env, ThrowEmptyRangeError);
+#if NAPI_VERSION > 8
+  exports["throwSyntaxError"] = Function::New(env, ThrowSyntaxError);
+  exports["throwSyntaxErrorCtor"] = Function::New(env, ThrowSyntaxErrorCtor);
+  exports["throwSyntaxErrorCStr"] = Function::New(env, ThrowSyntaxErrorCStr);
+#endif  // NAPI_VERSION > 8
   exports["catchError"] = Function::New(env, CatchError);
   exports["catchErrorMessage"] = Function::New(env, CatchErrorMessage);
   exports["doNotCatch"] = Function::New(env, DoNotCatch);
