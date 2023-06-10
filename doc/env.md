@@ -131,6 +131,17 @@ addon. The item will be passed to the function `fini` which gets called when an
 instance of the addon is unloaded. This overload accepts an additional hint to
 be passed to `fini`.
 
+### GetModuleFileName
+
+```cpp
+const char* Napi::Env::GetModuleFileName() const;
+```
+
+Returns a A URL containing the absolute path of the location from which the
+add-on was loaded. For a file on the local file system it will start with
+`file://`. The string is null-terminated and owned by env and must thus not be
+modified or freed. It is only valid while the add-on is loaded.
+
 ### AddCleanupHook
 
 ```cpp
