@@ -2,6 +2,9 @@ name: Node.js CI Unix Platform
 
 on: [push, pull_request]
 
+permissions:
+  contents: read
+
 jobs:
   test:
     timeout-minutes: 30
@@ -19,9 +22,9 @@ jobs:
             compiler: gcc # GCC is an alias for clang on the MacOS image.
     runs-on: ${{ matrix.os }}
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@8e5e7e5ab8b370d6c329ec480221332ada57f0ab # v3.5.2
     - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v3
+      uses: actions/setup-node@64ed1c7eab4cce3362f8c340dee64e5eaeef8f7c # v3.6.0
       with:
         node-version: ${{ matrix.node-version }}
     - name: Check Node.js installation
