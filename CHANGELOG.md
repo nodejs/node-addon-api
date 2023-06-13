@@ -1,5 +1,36 @@
 # node-addon-api Changelog
 
+## 2023-06-13 Version 7.0.0, @KevinEady
+
+### Notable changes
+
+#### API
+
+- Drop support for Node.js v14.x and v19.x.
+- Ensure native receiver exists when calling instance methods and properties.
+- Fix issue when creating `Napi::Error` instances that wrap primitives values.
+
+#### TEST
+
+- Added tests for `Napi::AsyncProgressQueueWorker<T>` class.
+- Added tests for `Napi::AsyncProgressWorker<T>` class.
+
+### Documentation
+
+- Added documentation for `Napi::Value::IsBigInt()`.
+
+### Commits
+
+* \[[`de5c899400`](https://github.com/nodejs/node-addon-api/commit/de5c899400)] - **doc,chore**: drop support for Node.js v14, v19 (Kevin Eady) [#1324](https://github.com/nodejs/node-addon-api/pull/1324)
+* \[[`3083b7f148`](https://github.com/nodejs/node-addon-api/commit/3083b7f148)] - \[StepSecurity] Apply security best practices (StepSecurity Bot) [#1308](https://github.com/nodejs/node-addon-api/pull/1308)
+* \[[`a198e24a15`](https://github.com/nodejs/node-addon-api/commit/a198e24a15)] - \[Test] Add tests for async progress queue worker (Jack) [#1316](https://github.com/nodejs/node-addon-api/pull/1316)
+* \[[`665f4aa845`](https://github.com/nodejs/node-addon-api/commit/665f4aa845)] - **doc**: add missing Value::IsBigInt (Kevin Eady) [#1319](https://github.com/nodejs/node-addon-api/pull/1319)
+* \[[`358b2d3b4f`](https://github.com/nodejs/node-addon-api/commit/358b2d3b4f)] - **doc**: complete code curly braces  in async\_worker.md (wanlu) [#1317](https://github.com/nodejs/node-addon-api/pull/1317)
+* \[[`858942ce31`](https://github.com/nodejs/node-addon-api/commit/858942ce31)] - **src**: avoid calling into C++ with a null this (Caleb Hearon) [#1313](https://github.com/nodejs/node-addon-api/pull/1313)
+* \[[`64f6515331`](https://github.com/nodejs/node-addon-api/commit/64f6515331)] - **src**: handle failure during error wrap of primitive (Gabriel Schulhof) [#1310](https://github.com/nodejs/node-addon-api/pull/1310)
+* \[[`dfad6b45fe`](https://github.com/nodejs/node-addon-api/commit/dfad6b45fe)] - \[test] Add test coverage for AsyncProgressWorker (Jack) [#1307](https://github.com/nodejs/node-addon-api/pull/1307)
+* \[[`0e34f22839`](https://github.com/nodejs/node-addon-api/commit/0e34f22839)] - **release**: v6.1.0. (Nicola Del Gobbo)
+
 ## 2023-04-20 Version 6.1.0, @NickNaso
 
 ### Notable changes
