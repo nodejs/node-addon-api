@@ -83,7 +83,7 @@ This allows addons built with it to run with Node.js versions which support the 
 **However** the node-addon-api support model is to support only the active LTS Node.js versions. This means that
 every year there will be a new major which drops support for the Node.js LTS version which has gone out of service.
 
-The oldest Node.js version supported by the current version of node-addon-api is Node.js 18.x.
+The oldest Node.js version supported by the current version of node-addon-api is Node.js 16.x.
 
 ## Setup
   - [Installation and usage](doc/setup.md)
