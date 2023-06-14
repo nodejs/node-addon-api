@@ -399,6 +399,14 @@
     {
       "name": "Feng Yu",
       "url": "https://github.com/F3n67u"
+    },
+    {
+      "name": "wanlu wang",
+      "url": "https://github.com/wanlu"
+    },
+    {
+      "name": "Caleb Hearon",
+      "url": "https://github.com/chearon"
     }
   ],
   "description": "Node.js API (Node-API)",
@@ -459,6 +467,6 @@
     "lint:fix": "node tools/clang-format --fix && node tools/eslint-format --fix"
   },
   "pre-commit": "lint",
-  "version": "6.1.0",
+  "version": "7.0.0",
   "support": true
 }
