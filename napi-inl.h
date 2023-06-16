@@ -576,7 +576,7 @@ void Env::DefaultFiniWithHint(Env, DataType* data, HintType*) {
 inline const char* Env::GetModuleFileName() const {
   const char* result;
   napi_status status = node_api_get_module_file_name(_env, &result);
-  NAPI_THROW_IF_FAILED(*this, status, std::string_view());
+  NAPI_THROW_IF_FAILED(*this, status, nullptr);
   return result;
 }
 #endif  // NAPI_VERSION > 8
