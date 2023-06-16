@@ -134,13 +134,13 @@ be passed to `fini`.
 ### GetModuleFileName
 
 ```cpp
-std::string_view Napi::Env::GetModuleFileName() const;
+const char* Napi::Env::GetModuleFileName() const;
 ```
 
 Returns a A URL containing the absolute path of the location from which the
 add-on was loaded. For a file on the local file system it will start with
-`file://`. The `string_view` data is null-terminated and owned by env and is
-only valid while the add-on is loaded.
+`file://`. The string is null-terminated and owned by env and must thus not be
+modified or freed. It is only valid while the add-on is loaded.
 
 ### AddCleanupHook
 

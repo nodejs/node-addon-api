@@ -369,7 +369,7 @@ class Env {
 #endif  // NAPI_VERSION > 2
 
 #if NAPI_VERSION > 8
-  std::string_view GetModuleFileName() const;
+  const char* GetModuleFileName() const;
 #endif  // NAPI_VERSION > 8
 };
 

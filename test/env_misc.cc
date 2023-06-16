@@ -9,7 +9,7 @@ namespace {
 
 Value GetModuleFileName(const CallbackInfo& info) {
   Env env = info.Env();
-  return String::New(env, env.GetModuleFileName().data());
+  return String::New(env, env.GetModuleFileName());
 }
 
 }  // end anonymous namespace
