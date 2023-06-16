@@ -37,6 +37,7 @@
 | [`Napi::Reference`] |  |
 | [`Napi::String`][] | [`Napi::Name`][] |
 | [`Napi::Symbol`][] | [`Napi::Name`][] |
+| [`Napi::SyntaxError`][] | [`Napi::Error`][] |
 | [`Napi::ThreadSafeFunction`][] |  |
 | [`Napi::TypeTaggable`][] | [`Napi::Value][] |
 | [`Napi::TypeError`][] | [`Napi::Error`][] |
@@ -82,6 +83,7 @@
 [`Napi::Reference<Napi::Object>`]: ./reference.md
 [`Napi::String`]: ./string.md
 [`Napi::Symbol`]: ./symbol.md
+[`Napi::SyntaxError`]: ./syntax_error.md
 [`Napi::ThreadSafeFunction`]: ./threadsafe_function.md
 [`Napi::TypeError`]: ./type_error.md
 [`Napi::TypeTaggable`]: ./type_taggable.md

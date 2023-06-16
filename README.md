@@ -132,6 +132,7 @@ The following is the documentation for node-addon-api.
     - [Error](doc/error.md)
       - [TypeError](doc/type_error.md)
       - [RangeError](doc/range_error.md)
+      - [SyntaxError](doc/syntax_error.md)
  - [Object Lifetime Management](doc/object_lifetime_management.md)
     - [HandleScope](doc/handle_scope.md)
     - [EscapableHandleScope](doc/escapable_handle_scope.md)
