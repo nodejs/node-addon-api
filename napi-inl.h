@@ -263,10 +263,12 @@ struct ThreadSafeFinalize {
 template <typename ContextType, typename DataType, typename CallJs, CallJs call>
 inline typename std::enable_if<call != static_cast<CallJs>(nullptr)>::type
 CallJsWrapper(napi_env env, napi_value jsCallback, void* context, void* data) {
-  call(env,
-       Function(env, jsCallback),
-       static_cast<ContextType*>(context),
-       static_cast<DataType*>(data));
+  details::WrapVoidCallback([&]() {
+    call(env,
+         Function(env, jsCallback),
+         static_cast<ContextType*>(context),
+         static_cast<DataType*>(data));
+  });
 }
 
 template <typename ContextType, typename DataType, typename CallJs, CallJs call>
@@ -275,9 +277,11 @@ CallJsWrapper(napi_env env,
               napi_value jsCallback,
               void* /*context*/,
               void* /*data*/) {
-  if (jsCallback != nullptr) {
-    Function(env, jsCallback).Call(0, nullptr);
-  }
+  details::WrapVoidCallback([&]() {
+    if (jsCallback != nullptr) {
+      Function(env, jsCallback).Call(0, nullptr);
+    }
+  });
 }
 
 #if NAPI_VERSION > 4
@@ -6135,13 +6139,15 @@ inline void ThreadSafeFunction::CallJS(napi_env env,
     return;
   }
 
-  if (data != nullptr) {
-    auto* callbackWrapper = static_cast<CallbackWrapper*>(data);
-    (*callbackWrapper)(env, Function(env, jsCallback));
-    delete callbackWrapper;
-  } else if (jsCallback != nullptr) {
-    Function(env, jsCallback).Call({});
-  }
+  details::WrapVoidCallback([&]() {
+    if (data != nullptr) {
+      auto* callbackWrapper = static_cast<CallbackWrapper*>(data);
+      (*callbackWrapper)(env, Function(env, jsCallback));
+      delete callbackWrapper;
+    } else if (jsCallback != nullptr) {
+      Function(env, jsCallback).Call({});
+    }
+  });
 }
 
 ////////////////////////////////////////////////////////////////////////////////
