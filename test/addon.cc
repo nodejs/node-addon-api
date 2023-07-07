@@ -17,6 +17,8 @@ class TestAddon : public Napi::Addon<TestAddon> {
                  {InstanceMethod("decrement", &TestAddon::Decrement)}))});
   }
 
+  ~TestAddon() { fprintf(stderr, "TestAddon::~TestAddon\n"); }
+
  private:
   Napi::Value Increment(const Napi::CallbackInfo& info) {
     return Napi::Number::New(info.Env(), ++value);
@@ -29,10 +31,14 @@ class TestAddon : public Napi::Addon<TestAddon> {
   uint32_t value = 42;
 };
 
+Napi::Value CreateAddon(const Napi::CallbackInfo& info) {
+  return TestAddon::Init(info.Env(), Napi::Object::New(info.Env()));
+}
+
 }  // end of anonymous namespace
 
 Napi::Object InitAddon(Napi::Env env) {
-  return TestAddon::Init(env, Napi::Object::New(env));
+  return Napi::Function::New<CreateAddon>(env, "CreateAddon");
 }
 
 #endif  // (NAPI_VERSION > 5)
