@@ -18,28 +18,26 @@ class FunctionTest : public Napi::ObjectWrap<FunctionTest> {
     return MaybeUnwrap(GetConstructor(info.Env()).New(args));
   }
 
-  // Constructor-per-env map in a static member because env.SetInstanceData()
-  // would interfere with Napi::Addon<T>
-  static std::unordered_map<napi_env, Napi::FunctionReference> constructors;
-
   static void Initialize(Napi::Env env, Napi::Object exports) {
     const char* name = "FunctionTest";
     Napi::Function func = DefineClass(env, name, {});
-    constructors[env] = Napi::Persistent(func);
-    env.AddCleanupHook([env] { constructors.erase(env); });
+    Napi::FunctionReference* ctor = new Napi::FunctionReference();
+    *ctor = Napi::Persistent(func);
+    env.SetInstanceData(ctor);
     exports.Set(name, func);
   }
 
   static Napi::Function GetConstructor(Napi::Env env) {
-    return constructors[env].Value();
+    return env.GetInstanceData<Napi::FunctionReference>()->Value();
   }
 };
 
-std::unordered_map<napi_env, Napi::FunctionReference>
-    FunctionTest::constructors;
+Napi::Value ObjectWrapFunctionFactory(const Napi::CallbackInfo& info) {
+  Napi::Object exports = Napi::Object::New(info.Env());
+  FunctionTest::Initialize(info.Env(), exports);
+  return exports;
+}
 
 Napi::Object InitObjectWrapFunction(Napi::Env env) {
-  Napi::Object exports = Napi::Object::New(env);
-  FunctionTest::Initialize(env, exports);
-  return exports;
+  return Napi::Function::New<ObjectWrapFunctionFactory>(env, "FunctionFactory");
 }

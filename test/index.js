@@ -60,6 +60,7 @@ function loadTestModules (currentDirectory = __dirname, pre = '') {
           file === 'binding.gyp' ||
           file === 'build' ||
           file === 'common' ||
+          file === 'child_processes' ||
           file === 'napi_child.js' ||
           file === 'testUtil.js' ||
           file === 'thunking_manual.cc' ||

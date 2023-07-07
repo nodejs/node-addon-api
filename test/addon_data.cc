@@ -4,10 +4,10 @@
 #include "test_helper.h"
 
 // An overly elaborate way to get/set a boolean stored in the instance data:
-// 0. A boolean named "verbose" is stored in the instance data. The constructor
-//    for JS `VerboseIndicator` instances is also stored in the instance data.
+// 0. The constructor for JS `VerboseIndicator` instances, which have a private
+//    member named "verbose", is stored in the instance data.
 // 1. Add a property named "verbose" onto exports served by a getter/setter.
-// 2. The getter returns a object of type VerboseIndicator, which itself has a
+// 2. The getter returns an object of type VerboseIndicator, which itself has a
 //    property named "verbose", also served by a getter/setter:
 //    * The getter returns a boolean, indicating whether "verbose" is set.
 //    * The setter sets "verbose" on the instance data.
