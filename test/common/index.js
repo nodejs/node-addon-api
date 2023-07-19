@@ -202,7 +202,7 @@ exports.runTestWithBuildType = async function (test, buildType) {
 // in the main process. Two examples are addon and addon_data, both of which
 // use Napi::Env::SetInstanceData(). This helper function provides a common
 // approach for running such tests.
-exports.runTestInChildProcess = function ({ suite, testName, expectedStderr }) {
+exports.runTestInChildProcess = function ({ suite, testName, expectedStderr, execArgv }) {
   return exports.runTestWithBindingPath((bindingName) => {
     return new Promise((resolve) => {
       bindingName = escapeBackslashes(bindingName);
@@ -210,6 +210,7 @@ exports.runTestInChildProcess = function ({ suite, testName, expectedStderr }) {
       const suitePath = escapeBackslashes(path.join(__dirname, '..', 'child_processes', suite));
       const child = spawn(process.execPath, [
         '--expose-gc',
+        ...(execArgv ?? []),
         '-e',
         `require('${suitePath}').${testName}(require('${bindingName}'))`
       ]);
