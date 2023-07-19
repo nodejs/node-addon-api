@@ -3,6 +3,11 @@
 const assert = require('assert');
 const path = require('path');
 const { access } = require('node:fs/promises');
+const { spawn } = require('child_process');
+const { EOL } = require('os');
+const readline = require('readline');
+
+const escapeBackslashes = (pathString) => pathString.split('\\').join('\\\\');
 
 const noop = () => {};
 
@@ -26,7 +31,7 @@ function runCallChecks (exitCode) {
       context.name,
       context.messageSegment,
       context.actual);
-    console.log(context.stack.split('\n').slice(2).join('\n'));
+    console.log(context.stack.split(EOL).slice(2).join(EOL));
   });
 
   if (failed.length) process.exit(1);
@@ -189,4 +194,52 @@ exports.runTestWithBuildType = async function (test, buildType) {
 
   await Promise.resolve(test(buildType))
     .finally(exports.mustCall());
+};
+
+// Some tests have to run in their own process, otherwise they would interfere
+// with each other. Such tests export a factory function rather than the test
+// itself so as to avoid automatic instantiation, and therefore interference,
+// in the main process. Two examples are addon and addon_data, both of which
+// use Napi::Env::SetInstanceData(). This helper function provides a common
+// approach for running such tests.
+exports.runTestInChildProcess = function ({ suite, testName, expectedStderr }) {
+  return exports.runTestWithBindingPath((bindingName) => {
+    return new Promise((resolve) => {
+      bindingName = escapeBackslashes(bindingName);
+      // Test suites are assumed to be located here.
+      const suitePath = escapeBackslashes(path.join(__dirname, '..', 'child_processes', suite));
+      const child = spawn(process.execPath, [
+        '--expose-gc',
+        '-e',
+        `require('${suitePath}').${testName}(require('${bindingName}'))`
+      ]);
+      const resultOfProcess = { stderr: [] };
+
+      // Capture the exit code and signal.
+      child.on('close', (code, signal) => resolve(Object.assign(resultOfProcess, { code, signal })));
+
+      // Capture the stderr as an array of lines.
+      readline
+        .createInterface({ input: child.stderr })
+        .on('line', (line) => {
+          resultOfProcess.stderr.push(line);
+        });
+    }).then(actual => {
+      // Back up the stderr in case the assertion fails.
+      const fullStderr = actual.stderr.map(item => `from child process: ${item}`);
+      const expected = { stderr: expectedStderr, code: 0, signal: null };
+
+      if (!expectedStderr) {
+        // If we don't care about stderr, delete it.
+        delete actual.stderr;
+        delete expected.stderr;
+      } else {
+        // Otherwise we only care about expected lines in the actual stderr, so
+        // filter out everything else.
+        actual.stderr = actual.stderr.filter(line => expectedStderr.includes(line));
+      }
+
+      assert.deepStrictEqual(actual, expected, `Assertion for child process test ${suite}.${testName} failed:${EOL}` + fullStderr.join(EOL));
+    });
+  });
 };

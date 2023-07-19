@@ -468,5 +468,8 @@
   },
   "pre-commit": "lint",
   "version": "7.0.0",
-  "support": true
+  "support": true,
+  "engines": {
+    "node": "^16 || ^18 || >= 20"
+  }
 }
