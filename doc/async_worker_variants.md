@@ -52,9 +52,9 @@ virtual void Napi::AsyncProgressWorker::OnOK();
 ### OnProgress
 
 This method is invoked when the computation in the
-`Napi::AsyncProgressWorker::ExecutionProcess::Send` method was called during
+`Napi::AsyncProgressWorker::ExecutionProgress::Send` method was called during
 worker thread execution. This method can also be triggered via a call to
-`Napi::AsyncProgress[Queue]Worker::ExecutionProcess::Signal`, in which case the
+`Napi::AsyncProgress[Queue]Worker::ExecutionProgress::Signal`, in which case the
 `data` parameter will be `nullptr`.
 
 ```cpp
@@ -227,7 +227,7 @@ unexpected upcoming thread safe calls.
 virtual Napi::AsyncProgressWorker::~AsyncProgressWorker();
 ```
 
-# AsyncProgressWorker::ExecutionProcess
+# AsyncProgressWorker::ExecutionProgress
 
 A bridge class created before the worker thread execution of `Napi::AsyncProgressWorker::Execute`.
 
@@ -235,15 +235,15 @@ A bridge class created before the worker thread execution of `Napi::AsyncProgres
 
 ### Send
 
-`Napi::AsyncProgressWorker::ExecutionProcess::Send` takes two arguments, a pointer
+`Napi::AsyncProgressWorker::ExecutionProgress::Send` takes two arguments, a pointer
 to a generic type of data, and a `size_t` to indicate how many items the pointer is
 pointing to.
 
 The data pointed to will be copied to internal slots of `Napi::AsyncProgressWorker` so
-after the call to `Napi::AsyncProgressWorker::ExecutionProcess::Send` the data can
+after the call to `Napi::AsyncProgressWorker::ExecutionProgress::Send` the data can
 be safely released.
 
-Note that `Napi::AsyncProgressWorker::ExecutionProcess::Send` merely guarantees
+Note that `Napi::AsyncProgressWorker::ExecutionProgress::Send` merely guarantees
 **eventual** invocation of `Napi::AsyncProgressWorker::OnProgress`, which means
 multiple send might be coalesced into single invocation of `Napi::AsyncProgressWorker::OnProgress`
 with latest data. If you would like to guarantee that there is one invocation of
@@ -251,16 +251,16 @@ with latest data. If you would like to guarantee that there is one invocation of
 class instead which is documented further down this page.
 
 ```cpp
-void Napi::AsyncProgressWorker::ExecutionProcess::Send(const T* data, size_t count) const;
+void Napi::AsyncProgressWorker::ExecutionProgress::Send(const T* data, size_t count) const;
 ```
 
 ### Signal
 
-`Napi::AsyncProgressWorker::ExecutionProcess::Signal` triggers an invocation of
+`Napi::AsyncProgressWorker::ExecutionProgress::Signal` triggers an invocation of
 `Napi::AsyncProgressWorker::OnProgress` with `nullptr` as the `data` parameter.
 
 ```cpp
-void Napi::AsyncProgressWorker::ExecutionProcess::Signal();
+void Napi::AsyncProgressWorker::ExecutionProgress::Signal();
 ```
 
 ## Example
@@ -402,7 +402,7 @@ thread in the order it was committed.
 For the most basic use, only the `Napi::AsyncProgressQueueWorker::Execute` and
 `Napi::AsyncProgressQueueWorker::OnProgress` method must be implemented in a subclass.
 
-# AsyncProgressQueueWorker::ExecutionProcess
+# AsyncProgressQueueWorker::ExecutionProgress
 
 A bridge class created before the worker thread execution of `Napi::AsyncProgressQueueWorker::Execute`.
 
@@ -410,30 +410,30 @@ A bridge class created before the worker thread execution of `Napi::AsyncProgres
 
 ### Send
 
-`Napi::AsyncProgressQueueWorker::ExecutionProcess::Send` takes two arguments, a pointer
+`Napi::AsyncProgressQueueWorker::ExecutionProgress::Send` takes two arguments, a pointer
 to a generic type of data, and a `size_t` to indicate how many items the pointer is
 pointing to.
 
 The data pointed to will be copied to internal slots of `Napi::AsyncProgressQueueWorker` so
-after the call to `Napi::AsyncProgressQueueWorker::ExecutionProcess::Send` the data can
+after the call to `Napi::AsyncProgressQueueWorker::ExecutionProgress::Send` the data can
 be safely released.
 
-`Napi::AsyncProgressQueueWorker::ExecutionProcess::Send` guarantees invocation
+`Napi::AsyncProgressQueueWorker::ExecutionProgress::Send` guarantees invocation
 of `Napi::AsyncProgressQueueWorker::OnProgress`, which means multiple `Send`
 call will result in the in-order invocation of `Napi::AsyncProgressQueueWorker::OnProgress`
 with each data item.
 
 ```cpp
-void Napi::AsyncProgressQueueWorker::ExecutionProcess::Send(const T* data, size_t count) const;
+void Napi::AsyncProgressQueueWorker::ExecutionProgress::Send(const T* data, size_t count) const;
 ```
 
 ### Signal
 
-`Napi::AsyncProgressQueueWorker::ExecutionProcess::Signal` triggers an invocation of
+`Napi::AsyncProgressQueueWorker::ExecutionProgress::Signal` triggers an invocation of
 `Napi::AsyncProgressQueueWorker::OnProgress` with `nullptr` as the `data` parameter.
 
 ```cpp
-void Napi::AsyncProgressQueueWorker::ExecutionProcess::Signal() const;
+void Napi::AsyncProgressQueueWorker::ExecutionProgress::Signal() const;
 ```
 
 ## Example
