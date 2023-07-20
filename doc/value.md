@@ -141,6 +141,8 @@ bool Napi::Value::IsArrayBuffer() const;
 Returns `true` if the underlying value is a JavaScript `Napi::ArrayBuffer` or
 `false` otherwise.
 
+### IsBigInt
+
 ```cpp
 bool Napi::Value::IsBigInt() const;
 ```
