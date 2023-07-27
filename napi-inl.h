@@ -2635,7 +2635,7 @@ inline Buffer<T> Buffer<T>::New(napi_env env, size_t length) {
   napi_status status =
       napi_create_buffer(env, length * sizeof(T), &data, &value);
   NAPI_THROW_IF_FAILED(env, status, Buffer<T>());
-  return Buffer(env, value, length, static_cast<T*>(data));
+  return Buffer(env, value);
 }
 
 #ifndef NODE_API_NO_EXTERNAL_BUFFERS_ALLOWED
@@ -2645,7 +2645,7 @@ inline Buffer<T> Buffer<T>::New(napi_env env, T* data, size_t length) {
   napi_status status = napi_create_external_buffer(
       env, length * sizeof(T), data, nullptr, nullptr, &value);
   NAPI_THROW_IF_FAILED(env, status, Buffer<T>());
-  return Buffer(env, value, length, data);
+  return Buffer(env, value);
 }
 
 template <typename T>
@@ -2669,7 +2669,7 @@ inline Buffer<T> Buffer<T>::New(napi_env env,
     delete finalizeData;
     NAPI_THROW_IF_FAILED(env, status, Buffer());
   }
-  return Buffer(env, value, length, data);
+  return Buffer(env, value);
 }
 
 template <typename T>
@@ -2694,7 +2694,7 @@ inline Buffer<T> Buffer<T>::New(napi_env env,
     delete finalizeData;
     NAPI_THROW_IF_FAILED(env, status, Buffer());
   }
-  return Buffer(env, value, length, data);
+  return Buffer(env, value);
 }
 #endif  // NODE_API_NO_EXTERNAL_BUFFERS_ALLOWED
 
@@ -2711,7 +2711,7 @@ inline Buffer<T> Buffer<T>::NewOrCopy(napi_env env, T* data, size_t length) {
 #ifndef NODE_API_NO_EXTERNAL_BUFFERS_ALLOWED
   }
   NAPI_THROW_IF_FAILED(env, status, Buffer<T>());
-  return Buffer(env, value, length, data);
+  return Buffer(env, value);
 #endif  // NODE_API_NO_EXTERNAL_BUFFERS_ALLOWED
 }
 
@@ -2745,7 +2745,7 @@ inline Buffer<T> Buffer<T>::NewOrCopy(napi_env env,
     delete finalizeData;
     NAPI_THROW_IF_FAILED(env, status, Buffer());
   }
-  return Buffer(env, value, length, data);
+  return Buffer(env, value);
 #endif  // NODE_API_NO_EXTERNAL_BUFFERS_ALLOWED
 }
 
@@ -2781,7 +2781,7 @@ inline Buffer<T> Buffer<T>::NewOrCopy(napi_env env,
     delete finalizeData;
     NAPI_THROW_IF_FAILED(env, status, Buffer());
   }
-  return Buffer(env, value, length, data);
+  return Buffer(env, value);
 #endif
 }
 
@@ -2805,42 +2805,20 @@ inline void Buffer<T>::CheckCast(napi_env env, napi_value value) {
 }
 
 template <typename T>
-inline Buffer<T>::Buffer() : Uint8Array(), _length(0), _data(nullptr) {}
+inline Buffer<T>::Buffer() : Uint8Array() {}
 
 template <typename T>
 inline Buffer<T>::Buffer(napi_env env, napi_value value)
-    : Uint8Array(env, value), _length(0), _data(nullptr) {}
-
-template <typename T>
-inline Buffer<T>::Buffer(napi_env env, napi_value value, size_t length, T* data)
-    : Uint8Array(env, value), _length(length), _data(data) {}
+    : Uint8Array(env, value) {}
 
 template <typename T>
 inline size_t Buffer<T>::Length() const {
-  EnsureInfo();
-  return _length;
+  return ByteLength() / sizeof(T);
 }
 
 template <typename T>
 inline T* Buffer<T>::Data() const {
-  EnsureInfo();
-  return _data;
-}
-
-template <typename T>
-inline void Buffer<T>::EnsureInfo() const {
-  // The Buffer instance may have been constructed from a napi_value whose
-  // length/data are not yet known. Fetch and cache these values just once,
-  // since they can never change during the lifetime of the Buffer.
-  if (_data == nullptr) {
-    size_t byteLength;
-    void* voidData;
-    napi_status status =
-        napi_get_buffer_info(_env, _value, &voidData, &byteLength);
-    NAPI_THROW_IF_FAILED_VOID(_env, status);
-    _length = byteLength / sizeof(T);
-    _data = static_cast<T*>(voidData);
-  }
+  return reinterpret_cast<T*>(const_cast<uint8_t*>(Uint8Array::Data()));
 }
 
 ////////////////////////////////////////////////////////////////////////////////

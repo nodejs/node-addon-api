@@ -1535,11 +1535,6 @@ class Buffer : public Uint8Array {
   T* Data() const;
 
  private:
-  mutable size_t _length;
-  mutable T* _data;
-
-  Buffer(napi_env env, napi_value value, size_t length, T* data);
-  void EnsureInfo() const;
 };
 
 /// Holds a counted reference to a value; initially a weak reference unless
