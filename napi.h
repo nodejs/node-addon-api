@@ -3193,6 +3193,9 @@ class Addon : public InstanceWrap<T> {
 }  // namespace NAPI_CPP_CUSTOM_NAMESPACE
 #endif
 
+using PureEnv = Env;
+using NonPureEnv = Env;
+
 }  // namespace Napi
 
 // Inline implementations of all the above class methods are included here.

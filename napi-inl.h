@@ -18,6 +18,8 @@
 #include <type_traits>
 #include <utility>
 
+#include "node-api-wrap.h"
+
 namespace Napi {
 
 #ifdef NAPI_CPP_CUSTOM_NAMESPACE
@@ -49,9 +51,9 @@ inline napi_status AttachData(napi_env env,
   }
 #if (NAPI_VERSION < 5)
   napi_value symbol, external;
-  status = napi_create_symbol(env, nullptr, &symbol);
+  status = NodeApi::CreateSymbol(env, nullptr, &symbol);
   if (status == napi_ok) {
-    status = napi_create_external(env, data, finalizer, hint, &external);
+    status = NodeApi::CreateExternal(env, data, finalizer, hint, &external);
     if (status == napi_ok) {
       napi_property_descriptor desc = {nullptr,
                                        symbol,
@@ -61,11 +63,11 @@ inline napi_status AttachData(napi_env env,
                                        external,
                                        napi_default,
                                        nullptr};
-      status = napi_define_properties(env, obj, 1, &desc);
+      status = NodeApi::DefineProperties(env, obj, 1, &desc);
     }
   }
 #else  // NAPI_VERSION >= 5
-  status = napi_add_finalizer(env, obj, data, finalizer, hint, nullptr);
+  status = NodeApi::AddFinalizer(env, obj, data, finalizer, hint, nullptr);
 #endif
   return status;
 }
@@ -457,28 +459,28 @@ inline Env::operator napi_env() const {
 
 inline Object Env::Global() const {
   napi_value value;
-  napi_status status = napi_get_global(*this, &value);
+  napi_status status = NodeApi::GetGlobal(*this, &value);
   NAPI_THROW_IF_FAILED(*this, status, Object());
   return Object(*this, value);
 }
 
 inline Value Env::Undefined() const {
   napi_value value;
-  napi_status status = napi_get_undefined(*this, &value);
+  napi_status status = NodeApi::GetUndefined(*this, &value);
   NAPI_THROW_IF_FAILED(*this, status, Value());
   return Value(*this, value);
 }
 
 inline Value Env::Null() const {
   napi_value value;
-  napi_status status = napi_get_null(*this, &value);
+  napi_status status = NodeApi::GetNull(*this, &value);
   NAPI_THROW_IF_FAILED(*this, status, Value());
   return Value(*this, value);
 }
 
 inline bool Env::IsExceptionPending() const {
   bool result;
-  napi_status status = napi_is_exception_pending(_env, &result);
+  napi_status status = NodeApi::IsExceptionPending(_env, &result);
   if (status != napi_ok)
     result = false;  // Checking for a pending exception shouldn't throw.
   return result;
@@ -486,7 +488,7 @@ inline bool Env::IsExceptionPending() const {
 
 inline Error Env::GetAndClearPendingException() const {
   napi_value value;
-  napi_status status = napi_get_and_clear_last_exception(_env, &value);
+  napi_status status = NodeApi::GetAndClearLastException(_env, &value);
   if (status != napi_ok) {
     // Don't throw another exception when failing to get the exception!
     return Error();
@@ -505,7 +507,7 @@ inline MaybeOrValue<Value> Env::RunScript(const std::string& utf8script) const {
 
 inline MaybeOrValue<Value> Env::RunScript(String script) const {
   napi_value result;
-  napi_status status = napi_run_script(_env, script, &result);
+  napi_status status = NodeApi::RunScript(_env, script, &result);
   NAPI_RETURN_OR_THROW_IF_FAILED(
       _env, status, Napi::Value(_env, result), Napi::Value);
 }
@@ -533,7 +535,7 @@ void Env::CleanupHook<Hook, Arg>::WrapperWithArg(void* data) NAPI_NOEXCEPT {
 #if NAPI_VERSION > 5
 template <typename T, Env::Finalizer<T> fini>
 inline void Env::SetInstanceData(T* data) const {
-  napi_status status = napi_set_instance_data(
+  napi_status status = NodeApi::SetInstanceData(
       _env,
       data,
       [](napi_env env, void* data, void*) { fini(env, static_cast<T*>(data)); },
@@ -545,7 +547,7 @@ template <typename DataType,
           typename HintType,
           Napi::Env::FinalizerWithHint<DataType, HintType> fini>
 inline void Env::SetInstanceData(DataType* data, HintType* hint) const {
-  napi_status status = napi_set_instance_data(
+  napi_status status = NodeApi::SetInstanceData(
       _env,
       data,
       [](napi_env env, void* data, void* hint) {
@@ -559,7 +561,7 @@ template <typename T>
 inline T* Env::GetInstanceData() const {
   void* data = nullptr;
 
-  napi_status status = napi_get_instance_data(_env, &data);
+  napi_status status = NodeApi::GetInstanceData(_env, &data);
   NAPI_THROW_IF_FAILED(_env, status, nullptr);
 
   return static_cast<T*>(data);
@@ -579,7 +581,7 @@ void Env::DefaultFiniWithHint(Env, DataType* data, HintType*) {
 #if NAPI_VERSION > 8
 inline const char* Env::GetModuleFileName() const {
   const char* result;
-  napi_status status = node_api_get_module_file_name(_env, &result);
+  napi_status status = NodeApi::GetModuleFileName(_env, &result);
   NAPI_THROW_IF_FAILED(*this, status, nullptr);
   return result;
 }
@@ -607,7 +609,7 @@ inline bool Value::operator!=(const Value& other) const {
 
 inline bool Value::StrictEquals(const Value& other) const {
   bool result;
-  napi_status status = napi_strict_equals(_env, *this, other, &result);
+  napi_status status = NodeApi::StrictEquals(_env, *this, other, &result);
   NAPI_THROW_IF_FAILED(_env, status, false);
   return result;
 }
@@ -626,7 +628,7 @@ inline napi_valuetype Value::Type() const {
   }
 
   napi_valuetype type;
-  napi_status status = napi_typeof(_env, _value, &type);
+  napi_status status = NodeApi::Typeof(_env, _value, &type);
   NAPI_THROW_IF_FAILED(_env, status, napi_undefined);
   return type;
 }
@@ -660,7 +662,7 @@ inline bool Value::IsDate() const {
   }
 
   bool result;
-  napi_status status = napi_is_date(_env, _value, &result);
+  napi_status status = NodeApi::IsDate(_env, _value, &result);
   NAPI_THROW_IF_FAILED(_env, status, false);
   return result;
 }
@@ -680,7 +682,7 @@ inline bool Value::IsArray() const {
   }
 
   bool result;
-  napi_status status = napi_is_array(_env, _value, &result);
+  napi_status status = NodeApi::IsArray(_env, _value, &result);
   NAPI_THROW_IF_FAILED(_env, status, false);
   return result;
 }
@@ -691,7 +693,7 @@ inline bool Value::IsArrayBuffer() const {
   }
 
   bool result;
-  napi_status status = napi_is_arraybuffer(_env, _value, &result);
+  napi_status status = NodeApi::IsArrayBuffer(_env, _value, &result);
   NAPI_THROW_IF_FAILED(_env, status, false);
   return result;
 }
@@ -702,7 +704,7 @@ inline bool Value::IsTypedArray() const {
   }
 
   bool result;
-  napi_status status = napi_is_typedarray(_env, _value, &result);
+  napi_status status = NodeApi::IsTypedArray(_env, _value, &result);
   NAPI_THROW_IF_FAILED(_env, status, false);
   return result;
 }
@@ -721,7 +723,7 @@ inline bool Value::IsPromise() const {
   }
 
   bool result;
-  napi_status status = napi_is_promise(_env, _value, &result);
+  napi_status status = NodeApi::IsPromise(_env, _value, &result);
   NAPI_THROW_IF_FAILED(_env, status, false);
   return result;
 }
@@ -732,7 +734,7 @@ inline bool Value::IsDataView() const {
   }
 
   bool result;
-  napi_status status = napi_is_dataview(_env, _value, &result);
+  napi_status status = NodeApi::IsDataView(_env, _value, &result);
   NAPI_THROW_IF_FAILED(_env, status, false);
   return result;
 }
@@ -743,7 +745,7 @@ inline bool Value::IsBuffer() const {
   }
 
   bool result;
-  napi_status status = napi_is_buffer(_env, _value, &result);
+  napi_status status = NodeApi::IsBuffer(_env, _value, &result);
   NAPI_THROW_IF_FAILED(_env, status, false);
   return result;
 }
@@ -762,28 +764,28 @@ inline T Value::As() const {
 
 inline MaybeOrValue<Boolean> Value::ToBoolean() const {
   napi_value result;
-  napi_status status = napi_coerce_to_bool(_env, _value, &result);
+  napi_status status = NodeApi::CoerceToBool(_env, _value, &result);
   NAPI_RETURN_OR_THROW_IF_FAILED(
       _env, status, Napi::Boolean(_env, result), Napi::Boolean);
 }
 
 inline MaybeOrValue<Number> Value::ToNumber() const {
   napi_value result;
-  napi_status status = napi_coerce_to_number(_env, _value, &result);
+  napi_status status = NodeApi::CoerceToNumber(_env, _value, &result);
   NAPI_RETURN_OR_THROW_IF_FAILED(
       _env, status, Napi::Number(_env, result), Napi::Number);
 }
 
 inline MaybeOrValue<String> Value::ToString() const {
   napi_value result;
-  napi_status status = napi_coerce_to_string(_env, _value, &result);
+  napi_status status = NodeApi::CoerceToString(_env, _value, &result);
   NAPI_RETURN_OR_THROW_IF_FAILED(
       _env, status, Napi::String(_env, result), Napi::String);
 }
 
 inline MaybeOrValue<Object> Value::ToObject() const {
   napi_value result;
-  napi_status status = napi_coerce_to_object(_env, _value, &result);
+  napi_status status = NodeApi::CoerceToObject(_env, _value, &result);
   NAPI_RETURN_OR_THROW_IF_FAILED(
       _env, status, Napi::Object(_env, result), Napi::Object);
 }
@@ -794,7 +796,7 @@ inline MaybeOrValue<Object> Value::ToObject() const {
 
 inline Boolean Boolean::New(napi_env env, bool val) {
   napi_value value;
-  napi_status status = napi_get_boolean(env, val, &value);
+  napi_status status = NodeApi::GetBoolean(env, val, &value);
   NAPI_THROW_IF_FAILED(env, status, Boolean());
   return Boolean(env, value);
 }
@@ -803,7 +805,7 @@ inline void Boolean::CheckCast(napi_env env, napi_value value) {
   NAPI_CHECK(value != nullptr, "Boolean::CheckCast", "empty value");
 
   napi_valuetype type;
-  napi_status status = napi_typeof(env, value, &type);
+  napi_status status = NodeApi::Typeof(env, value, &type);
   NAPI_CHECK(status == napi_ok, "Boolean::CheckCast", "napi_typeof failed");
   NAPI_CHECK(
       type == napi_boolean, "Boolean::CheckCast", "value is not napi_boolean");
@@ -820,7 +822,7 @@ inline Boolean::operator bool() const {
 
 inline bool Boolean::Value() const {
   bool result;
-  napi_status status = napi_get_value_bool(_env, _value, &result);
+  napi_status status = NodeApi::GetValueBool(_env, _value, &result);
   NAPI_THROW_IF_FAILED(_env, status, false);
   return result;
 }
@@ -831,7 +833,7 @@ inline bool Boolean::Value() const {
 
 inline Number Number::New(napi_env env, double val) {
   napi_value value;
-  napi_status status = napi_create_double(env, val, &value);
+  napi_status status = NodeApi::CreateDouble(env, val, &value);
   NAPI_THROW_IF_FAILED(env, status, Number());
   return Number(env, value);
 }
@@ -840,7 +842,7 @@ inline void Number::CheckCast(napi_env env, napi_value value) {
   NAPI_CHECK(value != nullptr, "Number::CheckCast", "empty value");
 
   napi_valuetype type;
-  napi_status status = napi_typeof(env, value, &type);
+  napi_status status = NodeApi::Typeof(env, value, &type);
   NAPI_CHECK(status == napi_ok, "Number::CheckCast", "napi_typeof failed");
   NAPI_CHECK(
       type == napi_number, "Number::CheckCast", "value is not napi_number");
@@ -872,21 +874,21 @@ inline Number::operator double() const {
 
 inline int32_t Number::Int32Value() const {
   int32_t result;
-  napi_status status = napi_get_value_int32(_env, _value, &result);
+  napi_status status = NodeApi::GetValueInt32(_env, _value, &result);
   NAPI_THROW_IF_FAILED(_env, status, 0);
   return result;
 }
 
 inline uint32_t Number::Uint32Value() const {
   uint32_t result;
-  napi_status status = napi_get_value_uint32(_env, _value, &result);
+  napi_status status = NodeApi::GetValueUint32(_env, _value, &result);
   NAPI_THROW_IF_FAILED(_env, status, 0);
   return result;
 }
 
 inline int64_t Number::Int64Value() const {
   int64_t result;
-  napi_status status = napi_get_value_int64(_env, _value, &result);
+  napi_status status = NodeApi::GetValueInt64(_env, _value, &result);
   NAPI_THROW_IF_FAILED(_env, status, 0);
   return result;
 }
@@ -897,7 +899,7 @@ inline float Number::FloatValue() const {
 
 inline double Number::DoubleValue() const {
   double result;
-  napi_status status = napi_get_value_double(_env, _value, &result);
+  napi_status status = NodeApi::GetValueDouble(_env, _value, &result);
   NAPI_THROW_IF_FAILED(_env, status, 0);
   return result;
 }
@@ -909,14 +911,14 @@ inline double Number::DoubleValue() const {
 
 inline BigInt BigInt::New(napi_env env, int64_t val) {
   napi_value value;
-  napi_status status = napi_create_bigint_int64(env, val, &value);
+  napi_status status = NodeApi::CreateBigintInt64(env, val, &value);
   NAPI_THROW_IF_FAILED(env, status, BigInt());
   return BigInt(env, value);
 }
 
 inline BigInt BigInt::New(napi_env env, uint64_t val) {
   napi_value value;
-  napi_status status = napi_create_bigint_uint64(env, val, &value);
+  napi_status status = NodeApi::CreateBigintUint64(env, val, &value);
   NAPI_THROW_IF_FAILED(env, status, BigInt());
   return BigInt(env, value);
 }
@@ -927,7 +929,7 @@ inline BigInt BigInt::New(napi_env env,
                           const uint64_t* words) {
   napi_value value;
   napi_status status =
-      napi_create_bigint_words(env, sign_bit, word_count, words, &value);
+      NodeApi::CreateBigintWords(env, sign_bit, word_count, words, &value);
   NAPI_THROW_IF_FAILED(env, status, BigInt());
   return BigInt(env, value);
 }
@@ -936,7 +938,7 @@ inline void BigInt::CheckCast(napi_env env, napi_value value) {
   NAPI_CHECK(value != nullptr, "BigInt::CheckCast", "empty value");
 
   napi_valuetype type;
-  napi_status status = napi_typeof(env, value, &type);
+  napi_status status = NodeApi::Typeof(env, value, &type);
   NAPI_CHECK(status == napi_ok, "BigInt::CheckCast", "napi_typeof failed");
   NAPI_CHECK(
       type == napi_bigint, "BigInt::CheckCast", "value is not napi_bigint");
@@ -949,7 +951,7 @@ inline BigInt::BigInt(napi_env env, napi_value value) : Value(env, value) {}
 inline int64_t BigInt::Int64Value(bool* lossless) const {
   int64_t result;
   napi_status status =
-      napi_get_value_bigint_int64(_env, _value, &result, lossless);
+      NodeApi::GetValueBigintInt64(_env, _value, &result, lossless);
   NAPI_THROW_IF_FAILED(_env, status, 0);
   return result;
 }
@@ -957,7 +959,7 @@ inline int64_t BigInt::Int64Value(bool* lossless) const {
 inline uint64_t BigInt::Uint64Value(bool* lossless) const {
   uint64_t result;
   napi_status status =
-      napi_get_value_bigint_uint64(_env, _value, &result, lossless);
+      NodeApi::GetValueBigintUint64(_env, _value, &result, lossless);
   NAPI_THROW_IF_FAILED(_env, status, 0);
   return result;
 }
@@ -965,7 +967,7 @@ inline uint64_t BigInt::Uint64Value(bool* lossless) const {
 inline size_t BigInt::WordCount() const {
   size_t word_count;
   napi_status status =
-      napi_get_value_bigint_words(_env, _value, nullptr, &word_count, nullptr);
+      NodeApi::GetValueBigintWords(_env, _value, nullptr, &word_count, nullptr);
   NAPI_THROW_IF_FAILED(_env, status, 0);
   return word_count;
 }
@@ -974,7 +976,7 @@ inline void BigInt::ToWords(int* sign_bit,
                             size_t* word_count,
                             uint64_t* words) {
   napi_status status =
-      napi_get_value_bigint_words(_env, _value, sign_bit, word_count, words);
+      NodeApi::GetValueBigintWords(_env, _value, sign_bit, word_count, words);
   NAPI_THROW_IF_FAILED_VOID(_env, status);
 }
 #endif  // NAPI_VERSION > 5
@@ -986,7 +988,7 @@ inline void BigInt::ToWords(int* sign_bit,
 
 inline Date Date::New(napi_env env, double val) {
   napi_value value;
-  napi_status status = napi_create_date(env, val, &value);
+  napi_status status = NodeApi::CreateDate(env, val, &value);
   NAPI_THROW_IF_FAILED(env, status, Date());
   return Date(env, value);
 }
@@ -995,7 +997,7 @@ inline void Date::CheckCast(napi_env env, napi_value value) {
   NAPI_CHECK(value != nullptr, "Date::CheckCast", "empty value");
 
   bool result;
-  napi_status status = napi_is_date(env, value, &result);
+  napi_status status = NodeApi::IsDate(env, value, &result);
   NAPI_CHECK(status == napi_ok, "Date::CheckCast", "napi_is_date failed");
   NAPI_CHECK(result, "Date::CheckCast", "value is not date");
 }
@@ -1010,7 +1012,7 @@ inline Date::operator double() const {
 
 inline double Date::ValueOf() const {
   double result;
-  napi_status status = napi_get_date_value(_env, _value, &result);
+  napi_status status = NodeApi::GetDateValue(_env, _value, &result);
   NAPI_THROW_IF_FAILED(_env, status, 0);
   return result;
 }
@@ -1023,7 +1025,7 @@ inline void Name::CheckCast(napi_env env, napi_value value) {
   NAPI_CHECK(value != nullptr, "Name::CheckCast", "empty value");
 
   napi_valuetype type;
-  napi_status status = napi_typeof(env, value, &type);
+  napi_status status = NodeApi::Typeof(env, value, &type);
   NAPI_CHECK(status == napi_ok, "Name::CheckCast", "napi_typeof failed");
   NAPI_CHECK(type == napi_string || type == napi_symbol,
              "Name::CheckCast",
@@ -1055,7 +1057,7 @@ inline String String::New(napi_env env, const char* val) {
   }
   napi_value value;
   napi_status status =
-      napi_create_string_utf8(env, val, std::strlen(val), &value);
+      NodeApi::CreateStringUtf8(env, val, std::strlen(val), &value);
   NAPI_THROW_IF_FAILED(env, status, String());
   return String(env, value);
 }
@@ -1069,21 +1071,21 @@ inline String String::New(napi_env env, const char16_t* val) {
     NAPI_THROW_IF_FAILED(env, napi_invalid_arg, String());
   }
   napi_status status =
-      napi_create_string_utf16(env, val, std::u16string(val).size(), &value);
+      NodeApi::CreateStringUtf16(env, val, std::u16string(val).size(), &value);
   NAPI_THROW_IF_FAILED(env, status, String());
   return String(env, value);
 }
 
 inline String String::New(napi_env env, const char* val, size_t length) {
   napi_value value;
-  napi_status status = napi_create_string_utf8(env, val, length, &value);
+  napi_status status = NodeApi::CreateStringUtf8(env, val, length, &value);
   NAPI_THROW_IF_FAILED(env, status, String());
   return String(env, value);
 }
 
 inline String String::New(napi_env env, const char16_t* val, size_t length) {
   napi_value value;
-  napi_status status = napi_create_string_utf16(env, val, length, &value);
+  napi_status status = NodeApi::CreateStringUtf16(env, val, length, &value);
   NAPI_THROW_IF_FAILED(env, status, String());
   return String(env, value);
 }
@@ -1092,7 +1094,7 @@ inline void String::CheckCast(napi_env env, napi_value value) {
   NAPI_CHECK(value != nullptr, "String::CheckCast", "empty value");
 
   napi_valuetype type;
-  napi_status status = napi_typeof(env, value, &type);
+  napi_status status = NodeApi::Typeof(env, value, &type);
   NAPI_CHECK(status == napi_ok, "String::CheckCast", "napi_typeof failed");
   NAPI_CHECK(
       type == napi_string, "String::CheckCast", "value is not napi_string");
@@ -1113,13 +1115,13 @@ inline String::operator std::u16string() const {
 inline std::string String::Utf8Value() const {
   size_t length;
   napi_status status =
-      napi_get_value_string_utf8(_env, _value, nullptr, 0, &length);
+      NodeApi::GetValueStringUtf8(_env, _value, nullptr, 0, &length);
   NAPI_THROW_IF_FAILED(_env, status, "");
 
   std::string value;
   value.reserve(length + 1);
   value.resize(length);
-  status = napi_get_value_string_utf8(
+  status = NodeApi::GetValueStringUtf8(
       _env, _value, &value[0], value.capacity(), nullptr);
   NAPI_THROW_IF_FAILED(_env, status, "");
   return value;
@@ -1128,13 +1130,13 @@ inline std::string String::Utf8Value() const {
 inline std::u16string String::Utf16Value() const {
   size_t length;
   napi_status status =
-      napi_get_value_string_utf16(_env, _value, nullptr, 0, &length);
+      NodeApi::GetValueStringUtf16(_env, _value, nullptr, 0, &length);
   NAPI_THROW_IF_FAILED(_env, status, NAPI_WIDE_TEXT(""));
 
   std::u16string value;
   value.reserve(length + 1);
   value.resize(length);
-  status = napi_get_value_string_utf16(
+  status = NodeApi::GetValueStringUtf16(
       _env, _value, &value[0], value.capacity(), nullptr);
   NAPI_THROW_IF_FAILED(_env, status, NAPI_WIDE_TEXT(""));
   return value;
@@ -1163,7 +1165,7 @@ inline Symbol Symbol::New(napi_env env, String description) {
 
 inline Symbol Symbol::New(napi_env env, napi_value description) {
   napi_value value;
-  napi_status status = napi_create_symbol(env, description, &value);
+  napi_status status = NodeApi::CreateSymbol(env, description, &value);
   NAPI_THROW_IF_FAILED(env, status, Symbol());
   return Symbol(env, value);
 }
@@ -1229,7 +1231,7 @@ inline void Symbol::CheckCast(napi_env env, napi_value value) {
   NAPI_CHECK(value != nullptr, "Symbol::CheckCast", "empty value");
 
   napi_valuetype type;
-  napi_status status = napi_typeof(env, value, &type);
+  napi_status status = NodeApi::Typeof(env, value, &type);
   NAPI_CHECK(status == napi_ok, "Symbol::CheckCast", "napi_typeof failed");
   NAPI_CHECK(
       type == napi_symbol, "Symbol::CheckCast", "value is not napi_symbol");
@@ -1344,14 +1346,14 @@ inline TypeTaggable::TypeTaggable(napi_env _env, napi_value _value)
 #if NAPI_VERSION >= 8
 
 inline void TypeTaggable::TypeTag(const napi_type_tag* type_tag) const {
-  napi_status status = napi_type_tag_object(_env, _value, type_tag);
+  napi_status status = NodeApi::TypeTagObject(_env, _value, type_tag);
   NAPI_THROW_IF_FAILED_VOID(_env, status);
 }
 
 inline bool TypeTaggable::CheckTypeTag(const napi_type_tag* type_tag) const {
   bool result;
   napi_status status =
-      napi_check_object_type_tag(_env, _value, type_tag, &result);
+      NodeApi::CheckObjectTypeTag(_env, _value, type_tag, &result);
   NAPI_THROW_IF_FAILED(_env, status, false);
   return result;
 }
@@ -1392,7 +1394,7 @@ inline Object::PropertyLValue<Key>::PropertyLValue(Object object, Key key)
 
 inline Object Object::New(napi_env env) {
   napi_value value;
-  napi_status status = napi_create_object(env, &value);
+  napi_status status = NodeApi::CreateObject(env, &value);
   NAPI_THROW_IF_FAILED(env, status, Object());
   return Object(env, value);
 }
@@ -1401,7 +1403,7 @@ inline void Object::CheckCast(napi_env env, napi_value value) {
   NAPI_CHECK(value != nullptr, "Object::CheckCast", "empty value");
 
   napi_valuetype type;
-  napi_status status = napi_typeof(env, value, &type);
+  napi_status status = NodeApi::Typeof(env, value, &type);
   NAPI_CHECK(status == napi_ok, "Object::CheckCast", "napi_typeof failed");
   NAPI_CHECK(
       type == napi_object, "Object::CheckCast", "value is not napi_object");
@@ -1445,19 +1447,20 @@ inline MaybeOrValue<Value> Object::operator[](uint32_t index) const {
 
 inline MaybeOrValue<bool> Object::Has(napi_value key) const {
   bool result;
-  napi_status status = napi_has_property(_env, _value, key, &result);
+  napi_status status = NodeApi::HasProperty(_env, _value, key, &result);
   NAPI_RETURN_OR_THROW_IF_FAILED(_env, status, result, bool);
 }
 
 inline MaybeOrValue<bool> Object::Has(Value key) const {
   bool result;
-  napi_status status = napi_has_property(_env, _value, key, &result);
+  napi_status status = NodeApi::HasProperty(_env, _value, key, &result);
   NAPI_RETURN_OR_THROW_IF_FAILED(_env, status, result, bool);
 }
 
 inline MaybeOrValue<bool> Object::Has(const char* utf8name) const {
   bool result;
-  napi_status status = napi_has_named_property(_env, _value, utf8name, &result);
+  napi_status status =
+      NodeApi::HasNamedProperty(_env, _value, utf8name, &result);
   NAPI_RETURN_OR_THROW_IF_FAILED(_env, status, result, bool);
 }
 
@@ -1467,20 +1470,20 @@ inline MaybeOrValue<bool> Object::Has(const std::string& utf8name) const {
 
 inline MaybeOrValue<bool> Object::HasOwnProperty(napi_value key) const {
   bool result;
-  napi_status status = napi_has_own_property(_env, _value, key, &result);
+  napi_status status = NodeApi::HasOwnProperty(_env, _value, key, &result);
   NAPI_RETURN_OR_THROW_IF_FAILED(_env, status, result, bool);
 }
 
 inline MaybeOrValue<bool> Object::HasOwnProperty(Value key) const {
   bool result;
-  napi_status status = napi_has_own_property(_env, _value, key, &result);
+  napi_status status = NodeApi::HasOwnProperty(_env, _value, key, &result);
   NAPI_RETURN_OR_THROW_IF_FAILED(_env, status, result, bool);
 }
 
 inline MaybeOrValue<bool> Object::HasOwnProperty(const char* utf8name) const {
   napi_value key;
   napi_status status =
-      napi_create_string_utf8(_env, utf8name, std::strlen(utf8name), &key);
+      NodeApi::CreateStringUtf8(_env, utf8name, std::strlen(utf8name), &key);
   NAPI_MAYBE_THROW_IF_FAILED(_env, status, bool);
   return HasOwnProperty(key);
 }
@@ -1492,19 +1495,20 @@ inline MaybeOrValue<bool> Object::HasOwnProperty(
 
 inline MaybeOrValue<Value> Object::Get(napi_value key) const {
   napi_value result;
-  napi_status status = napi_get_property(_env, _value, key, &result);
+  napi_status status = NodeApi::GetProperty(_env, _value, key, &result);
   NAPI_RETURN_OR_THROW_IF_FAILED(_env, status, Value(_env, result), Value);
 }
 
 inline MaybeOrValue<Value> Object::Get(Value key) const {
   napi_value result;
-  napi_status status = napi_get_property(_env, _value, key, &result);
+  napi_status status = NodeApi::GetProperty(_env, _value, key, &result);
   NAPI_RETURN_OR_THROW_IF_FAILED(_env, status, Value(_env, result), Value);
 }
 
 inline MaybeOrValue<Value> Object::Get(const char* utf8name) const {
   napi_value result;
-  napi_status status = napi_get_named_property(_env, _value, utf8name, &result);
+  napi_status status =
+      NodeApi::GetNamedProperty(_env, _value, utf8name, &result);
   NAPI_RETURN_OR_THROW_IF_FAILED(_env, status, Value(_env, result), Value);
 }
 
@@ -1516,22 +1520,22 @@ template <typename ValueType>
 inline MaybeOrValue<bool> Object::Set(napi_value key,
                                       const ValueType& value) const {
   napi_status status =
-      napi_set_property(_env, _value, key, Value::From(_env, value));
+      NodeApi::SetProperty(_env, _value, key, Value::From(_env, value));
   NAPI_RETURN_OR_THROW_IF_FAILED(_env, status, status == napi_ok, bool);
 }
 
 template <typename ValueType>
 inline MaybeOrValue<bool> Object::Set(Value key, const ValueType& value) const {
   napi_status status =
-      napi_set_property(_env, _value, key, Value::From(_env, value));
+      NodeApi::SetProperty(_env, _value, key, Value::From(_env, value));
   NAPI_RETURN_OR_THROW_IF_FAILED(_env, status, status == napi_ok, bool);
 }
 
 template <typename ValueType>
 inline MaybeOrValue<bool> Object::Set(const char* utf8name,
                                       const ValueType& value) const {
-  napi_status status =
-      napi_set_named_property(_env, _value, utf8name, Value::From(_env, value));
+  napi_status status = NodeApi::SetNamedProperty(
+      _env, _value, utf8name, Value::From(_env, value));
   NAPI_RETURN_OR_THROW_IF_FAILED(_env, status, status == napi_ok, bool);
 }
 
@@ -1543,13 +1547,13 @@ inline MaybeOrValue<bool> Object::Set(const std::string& utf8name,
 
 inline MaybeOrValue<bool> Object::Delete(napi_value key) const {
   bool result;
-  napi_status status = napi_delete_property(_env, _value, key, &result);
+  napi_status status = NodeApi::DeleteProperty(_env, _value, key, &result);
   NAPI_RETURN_OR_THROW_IF_FAILED(_env, status, result, bool);
 }
 
 inline MaybeOrValue<bool> Object::Delete(Value key) const {
   bool result;
-  napi_status status = napi_delete_property(_env, _value, key, &result);
+  napi_status status = NodeApi::DeleteProperty(_env, _value, key, &result);
   NAPI_RETURN_OR_THROW_IF_FAILED(_env, status, result, bool);
 }
 
@@ -1563,13 +1567,13 @@ inline MaybeOrValue<bool> Object::Delete(const std::string& utf8name) const {
 
 inline MaybeOrValue<bool> Object::Has(uint32_t index) const {
   bool result;
-  napi_status status = napi_has_element(_env, _value, index, &result);
+  napi_status status = NodeApi::HasElement(_env, _value, index, &result);
   NAPI_RETURN_OR_THROW_IF_FAILED(_env, status, result, bool);
 }
 
 inline MaybeOrValue<Value> Object::Get(uint32_t index) const {
   napi_value value;
-  napi_status status = napi_get_element(_env, _value, index, &value);
+  napi_status status = NodeApi::GetElement(_env, _value, index, &value);
   NAPI_RETURN_OR_THROW_IF_FAILED(_env, status, Value(_env, value), Value);
 }
 
@@ -1577,25 +1581,25 @@ template <typename ValueType>
 inline MaybeOrValue<bool> Object::Set(uint32_t index,
                                       const ValueType& value) const {
   napi_status status =
-      napi_set_element(_env, _value, index, Value::From(_env, value));
+      NodeApi::SetElement(_env, _value, index, Value::From(_env, value));
   NAPI_RETURN_OR_THROW_IF_FAILED(_env, status, status == napi_ok, bool);
 }
 
 inline MaybeOrValue<bool> Object::Delete(uint32_t index) const {
   bool result;
-  napi_status status = napi_delete_element(_env, _value, index, &result);
+  napi_status status = NodeApi::DeleteElement(_env, _value, index, &result);
   NAPI_RETURN_OR_THROW_IF_FAILED(_env, status, result, bool);
 }
 
 inline MaybeOrValue<Array> Object::GetPropertyNames() const {
   napi_value result;
-  napi_status status = napi_get_property_names(_env, _value, &result);
+  napi_status status = NodeApi::GetPropertyNames(_env, _value, &result);
   NAPI_RETURN_OR_THROW_IF_FAILED(_env, status, Array(_env, result), Array);
 }
 
 inline MaybeOrValue<bool> Object::DefineProperty(
     const PropertyDescriptor& property) const {
-  napi_status status = napi_define_properties(
+  napi_status status = NodeApi::DefineProperties(
       _env,
       _value,
       1,
@@ -1605,7 +1609,7 @@ inline MaybeOrValue<bool> Object::DefineProperty(
 
 inline MaybeOrValue<bool> Object::DefineProperties(
     const std::initializer_list<PropertyDescriptor>& properties) const {
-  napi_status status = napi_define_properties(
+  napi_status status = NodeApi::DefineProperties(
       _env,
       _value,
       properties.size(),
@@ -1615,7 +1619,7 @@ inline MaybeOrValue<bool> Object::DefineProperties(
 
 inline MaybeOrValue<bool> Object::DefineProperties(
     const std::vector<PropertyDescriptor>& properties) const {
-  napi_status status = napi_define_properties(
+  napi_status status = NodeApi::DefineProperties(
       _env,
       _value,
       properties.size(),
@@ -1626,7 +1630,7 @@ inline MaybeOrValue<bool> Object::DefineProperties(
 inline MaybeOrValue<bool> Object::InstanceOf(
     const Function& constructor) const {
   bool result;
-  napi_status status = napi_instanceof(_env, _value, constructor, &result);
+  napi_status status = NodeApi::Instanceof(_env, _value, constructor, &result);
   NAPI_RETURN_OR_THROW_IF_FAILED(_env, status, result, bool);
 }
 
@@ -1745,12 +1749,12 @@ Object::iterator::operator*() {
 
 #if NAPI_VERSION >= 8
 inline MaybeOrValue<bool> Object::Freeze() const {
-  napi_status status = napi_object_freeze(_env, _value);
+  napi_status status = NodeApi::ObjectFreeze(_env, _value);
   NAPI_RETURN_OR_THROW_IF_FAILED(_env, status, status == napi_ok, bool);
 }
 
 inline MaybeOrValue<bool> Object::Seal() const {
-  napi_status status = napi_object_seal(_env, _value);
+  napi_status status = NodeApi::ObjectSeal(_env, _value);
   NAPI_RETURN_OR_THROW_IF_FAILED(_env, status, status == napi_ok, bool);
 }
 #endif  // NAPI_VERSION >= 8
@@ -1763,7 +1767,7 @@ template <typename T>
 inline External<T> External<T>::New(napi_env env, T* data) {
   napi_value value;
   napi_status status =
-      napi_create_external(env, data, nullptr, nullptr, &value);
+      NodeApi::CreateExternal(env, data, nullptr, nullptr, &value);
   NAPI_THROW_IF_FAILED(env, status, External());
   return External(env, value);
 }
@@ -1778,11 +1782,11 @@ inline External<T> External<T>::New(napi_env env,
       new details::FinalizeData<T, Finalizer>(
           {std::move(finalizeCallback), nullptr});
   napi_status status =
-      napi_create_external(env,
-                           data,
-                           details::FinalizeData<T, Finalizer>::Wrapper,
-                           finalizeData,
-                           &value);
+      NodeApi::CreateExternal(env,
+                              data,
+                              details::FinalizeData<T, Finalizer>::Wrapper,
+                              finalizeData,
+                              &value);
   if (status != napi_ok) {
     delete finalizeData;
     NAPI_THROW_IF_FAILED(env, status, External());
@@ -1800,7 +1804,7 @@ inline External<T> External<T>::New(napi_env env,
   details::FinalizeData<T, Finalizer, Hint>* finalizeData =
       new details::FinalizeData<T, Finalizer, Hint>(
           {std::move(finalizeCallback), finalizeHint});
-  napi_status status = napi_create_external(
+  napi_status status = NodeApi::CreateExternal(
       env,
       data,
       details::FinalizeData<T, Finalizer, Hint>::WrapperWithHint,
@@ -1818,7 +1822,7 @@ inline void External<T>::CheckCast(napi_env env, napi_value value) {
   NAPI_CHECK(value != nullptr, "External::CheckCast", "empty value");
 
   napi_valuetype type;
-  napi_status status = napi_typeof(env, value, &type);
+  napi_status status = NodeApi::Typeof(env, value, &type);
   NAPI_CHECK(status == napi_ok, "External::CheckCast", "napi_typeof failed");
   NAPI_CHECK(type == napi_external,
              "External::CheckCast",
@@ -1835,7 +1839,7 @@ inline External<T>::External(napi_env env, napi_value value)
 template <typename T>
 inline T* External<T>::Data() const {
   void* data;
-  napi_status status = napi_get_value_external(_env, _value, &data);
+  napi_status status = NodeApi::GetValueExternal(_env, _value, &data);
   NAPI_THROW_IF_FAILED(_env, status, nullptr);
   return reinterpret_cast<T*>(data);
 }
@@ -1846,14 +1850,14 @@ inline T* External<T>::Data() const {
 
 inline Array Array::New(napi_env env) {
   napi_value value;
-  napi_status status = napi_create_array(env, &value);
+  napi_status status = NodeApi::CreateArray(env, &value);
   NAPI_THROW_IF_FAILED(env, status, Array());
   return Array(env, value);
 }
 
 inline Array Array::New(napi_env env, size_t length) {
   napi_value value;
-  napi_status status = napi_create_array_with_length(env, length, &value);
+  napi_status status = NodeApi::CreateArrayWithLength(env, length, &value);
   NAPI_THROW_IF_FAILED(env, status, Array());
   return Array(env, value);
 }
@@ -1862,7 +1866,7 @@ inline void Array::CheckCast(napi_env env, napi_value value) {
   NAPI_CHECK(value != nullptr, "Array::CheckCast", "empty value");
 
   bool result;
-  napi_status status = napi_is_array(env, value, &result);
+  napi_status status = NodeApi::IsArray(env, value, &result);
   NAPI_CHECK(status == napi_ok, "Array::CheckCast", "napi_is_array failed");
   NAPI_CHECK(result, "Array::CheckCast", "value is not array");
 }
@@ -1873,7 +1877,7 @@ inline Array::Array(napi_env env, napi_value value) : Object(env, value) {}
 
 inline uint32_t Array::Length() const {
   uint32_t result;
-  napi_status status = napi_get_array_length(_env, _value, &result);
+  napi_status status = NodeApi::GetArrayLength(_env, _value, &result);
   NAPI_THROW_IF_FAILED(_env, status, 0);
   return result;
 }
@@ -1885,7 +1889,8 @@ inline uint32_t Array::Length() const {
 inline ArrayBuffer ArrayBuffer::New(napi_env env, size_t byteLength) {
   napi_value value;
   void* data;
-  napi_status status = napi_create_arraybuffer(env, byteLength, &data, &value);
+  napi_status status =
+      NodeApi::CreateArrayBuffer(env, byteLength, &data, &value);
   NAPI_THROW_IF_FAILED(env, status, ArrayBuffer());
 
   return ArrayBuffer(env, value);
@@ -1896,7 +1901,7 @@ inline ArrayBuffer ArrayBuffer::New(napi_env env,
                                     void* externalData,
                                     size_t byteLength) {
   napi_value value;
-  napi_status status = napi_create_external_arraybuffer(
+  napi_status status = NodeApi::CreateExternalArrayBuffer(
       env, externalData, byteLength, nullptr, nullptr, &value);
   NAPI_THROW_IF_FAILED(env, status, ArrayBuffer());
 
@@ -1912,7 +1917,7 @@ inline ArrayBuffer ArrayBuffer::New(napi_env env,
   details::FinalizeData<void, Finalizer>* finalizeData =
       new details::FinalizeData<void, Finalizer>(
           {std::move(finalizeCallback), nullptr});
-  napi_status status = napi_create_external_arraybuffer(
+  napi_status status = NodeApi::CreateExternalArrayBuffer(
       env,
       externalData,
       byteLength,
@@ -1937,7 +1942,7 @@ inline ArrayBuffer ArrayBuffer::New(napi_env env,
   details::FinalizeData<void, Finalizer, Hint>* finalizeData =
       new details::FinalizeData<void, Finalizer, Hint>(
           {std::move(finalizeCallback), finalizeHint});
-  napi_status status = napi_create_external_arraybuffer(
+  napi_status status = NodeApi::CreateExternalArrayBuffer(
       env,
       externalData,
       byteLength,
@@ -1957,7 +1962,7 @@ inline void ArrayBuffer::CheckCast(napi_env env, napi_value value) {
   NAPI_CHECK(value != nullptr, "ArrayBuffer::CheckCast", "empty value");
 
   bool result;
-  napi_status status = napi_is_arraybuffer(env, value, &result);
+  napi_status status = NodeApi::IsArrayBuffer(env, value, &result);
   NAPI_CHECK(status == napi_ok,
              "ArrayBuffer::CheckCast",
              "napi_is_arraybuffer failed");
@@ -1971,7 +1976,8 @@ inline ArrayBuffer::ArrayBuffer(napi_env env, napi_value value)
 
 inline void* ArrayBuffer::Data() {
   void* data;
-  napi_status status = napi_get_arraybuffer_info(_env, _value, &data, nullptr);
+  napi_status status =
+      NodeApi::GetArrayBufferInfo(_env, _value, &data, nullptr);
   NAPI_THROW_IF_FAILED(_env, status, nullptr);
   return data;
 }
@@ -1979,7 +1985,7 @@ inline void* ArrayBuffer::Data() {
 inline size_t ArrayBuffer::ByteLength() {
   size_t length;
   napi_status status =
-      napi_get_arraybuffer_info(_env, _value, nullptr, &length);
+      NodeApi::GetArrayBufferInfo(_env, _value, nullptr, &length);
   NAPI_THROW_IF_FAILED(_env, status, 0);
   return length;
 }
@@ -1987,13 +1993,13 @@ inline size_t ArrayBuffer::ByteLength() {
 #if NAPI_VERSION >= 7
 inline bool ArrayBuffer::IsDetached() const {
   bool detached;
-  napi_status status = napi_is_detached_arraybuffer(_env, _value, &detached);
+  napi_status status = NodeApi::IsDetachedArrayBuffer(_env, _value, &detached);
   NAPI_THROW_IF_FAILED(_env, status, false);
   return detached;
 }
 
 inline void ArrayBuffer::Detach() {
-  napi_status status = napi_detach_arraybuffer(_env, _value);
+  napi_status status = NodeApi::DetachArrayBuffer(_env, _value);
   NAPI_THROW_IF_FAILED_VOID(_env, status);
 }
 #endif  // NAPI_VERSION >= 7
@@ -2026,7 +2032,7 @@ inline DataView DataView::New(napi_env env,
   }
   napi_value value;
   napi_status status =
-      napi_create_dataview(env, byteLength, arrayBuffer, byteOffset, &value);
+      NodeApi::CreateDataView(env, byteLength, arrayBuffer, byteOffset, &value);
   NAPI_THROW_IF_FAILED(env, status, DataView());
   return DataView(env, value);
 }
@@ -2035,7 +2041,7 @@ inline void DataView::CheckCast(napi_env env, napi_value value) {
   NAPI_CHECK(value != nullptr, "DataView::CheckCast", "empty value");
 
   bool result;
-  napi_status status = napi_is_dataview(env, value, &result);
+  napi_status status = NodeApi::IsDataView(env, value, &result);
   NAPI_CHECK(
       status == napi_ok, "DataView::CheckCast", "napi_is_dataview failed");
   NAPI_CHECK(result, "DataView::CheckCast", "value is not dataview");
@@ -2044,35 +2050,35 @@ inline void DataView::CheckCast(napi_env env, napi_value value) {
 inline DataView::DataView() : Object() {}
 
 inline DataView::DataView(napi_env env, napi_value value) : Object(env, value) {
-  napi_status status = napi_get_dataview_info(_env,
-                                              _value /* dataView */,
-                                              &_length /* byteLength */,
-                                              &_data /* data */,
-                                              nullptr /* arrayBuffer */,
-                                              nullptr /* byteOffset */);
+  napi_status status = NodeApi::GetDataViewInfo(_env,
+                                                _value /* dataView */,
+                                                &_length /* byteLength */,
+                                                &_data /* data */,
+                                                nullptr /* arrayBuffer */,
+                                                nullptr /* byteOffset */);
   NAPI_THROW_IF_FAILED_VOID(_env, status);
 }
 
 inline Napi::ArrayBuffer DataView::ArrayBuffer() const {
   napi_value arrayBuffer;
-  napi_status status = napi_get_dataview_info(_env,
-                                              _value /* dataView */,
-                                              nullptr /* byteLength */,
-                                              nullptr /* data */,
-                                              &arrayBuffer /* arrayBuffer */,
-                                              nullptr /* byteOffset */);
+  napi_status status = NodeApi::GetDataViewInfo(_env,
+                                                _value /* dataView */,
+                                                nullptr /* byteLength */,
+                                                nullptr /* data */,
+                                                &arrayBuffer /* arrayBuffer */,
+                                                nullptr /* byteOffset */);
   NAPI_THROW_IF_FAILED(_env, status, Napi::ArrayBuffer());
   return Napi::ArrayBuffer(_env, arrayBuffer);
 }
 
 inline size_t DataView::ByteOffset() const {
   size_t byteOffset;
-  napi_status status = napi_get_dataview_info(_env,
-                                              _value /* dataView */,
-                                              nullptr /* byteLength */,
-                                              nullptr /* data */,
-                                              nullptr /* arrayBuffer */,
-                                              &byteOffset /* byteOffset */);
+  napi_status status = NodeApi::GetDataViewInfo(_env,
+                                                _value /* dataView */,
+                                                nullptr /* byteLength */,
+                                                nullptr /* data */,
+                                                nullptr /* arrayBuffer */,
+                                                &byteOffset /* byteOffset */);
   NAPI_THROW_IF_FAILED(_env, status, 0);
   return byteOffset;
 }
@@ -2179,7 +2185,7 @@ inline void TypedArray::CheckCast(napi_env env, napi_value value) {
   NAPI_CHECK(value != nullptr, "TypedArray::CheckCast", "empty value");
 
   bool result;
-  napi_status status = napi_is_typedarray(env, value, &result);
+  napi_status status = NodeApi::IsTypedArray(env, value, &result);
   NAPI_CHECK(
       status == napi_ok, "TypedArray::CheckCast", "napi_is_typedarray failed");
   NAPI_CHECK(result, "TypedArray::CheckCast", "value is not typedarray");
@@ -2194,13 +2200,13 @@ inline TypedArray::TypedArray(napi_env env, napi_value value)
       _length(0) {
   if (value != nullptr) {
     napi_status status =
-        napi_get_typedarray_info(_env,
-                                 _value,
-                                 &const_cast<TypedArray*>(this)->_type,
-                                 &const_cast<TypedArray*>(this)->_length,
-                                 nullptr,
-                                 nullptr,
-                                 nullptr);
+        NodeApi::GetTypedArrayInfo(_env,
+                                   _value,
+                                   &const_cast<TypedArray*>(this)->_type,
+                                   &const_cast<TypedArray*>(this)->_length,
+                                   nullptr,
+                                   nullptr,
+                                   nullptr);
     NAPI_THROW_IF_FAILED_VOID(_env, status);
   }
 }
@@ -2245,7 +2251,7 @@ inline size_t TypedArray::ElementLength() const {
 
 inline size_t TypedArray::ByteOffset() const {
   size_t byteOffset;
-  napi_status status = napi_get_typedarray_info(
+  napi_status status = NodeApi::GetTypedArrayInfo(
       _env, _value, nullptr, nullptr, nullptr, nullptr, &byteOffset);
   NAPI_THROW_IF_FAILED(_env, status, 0);
   return byteOffset;
@@ -2257,7 +2263,7 @@ inline size_t TypedArray::ByteLength() const {
 
 inline Napi::ArrayBuffer TypedArray::ArrayBuffer() const {
   napi_value arrayBuffer;
-  napi_status status = napi_get_typedarray_info(
+  napi_status status = NodeApi::GetTypedArrayInfo(
       _env, _value, nullptr, nullptr, nullptr, &arrayBuffer, nullptr);
   NAPI_THROW_IF_FAILED(_env, status, Napi::ArrayBuffer());
   return Napi::ArrayBuffer(_env, arrayBuffer);
@@ -2270,7 +2276,7 @@ template <typename T>
 inline void TypedArrayOf<T>::CheckCast(napi_env env, napi_value value) {
   TypedArray::CheckCast(env, value);
   napi_typedarray_type type;
-  napi_status status = napi_get_typedarray_info(
+  napi_status status = NodeApi::GetTypedArrayInfo(
       env, value, &type, nullptr, nullptr, nullptr, nullptr);
   NAPI_CHECK(status == napi_ok,
              "TypedArrayOf::CheckCast",
@@ -2300,7 +2306,7 @@ inline TypedArrayOf<T> TypedArrayOf<T>::New(napi_env env,
                                             size_t bufferOffset,
                                             napi_typedarray_type type) {
   napi_value value;
-  napi_status status = napi_create_typedarray(
+  napi_status status = NodeApi::CreateTypedArray(
       env, type, elementLength, arrayBuffer, bufferOffset, &value);
   NAPI_THROW_IF_FAILED(env, status, TypedArrayOf<T>());
 
@@ -2322,7 +2328,7 @@ inline TypedArrayOf<T>::TypedArrayOf(napi_env env, napi_value value)
   napi_status status = napi_ok;
   if (value != nullptr) {
     void* data = nullptr;
-    status = napi_get_typedarray_info(
+    status = NodeApi::GetTypedArrayInfo(
         _env, _value, &_type, &_length, &data, nullptr, nullptr);
     _data = static_cast<T*>(data);
   } else {
@@ -2379,8 +2385,8 @@ inline napi_status CreateFunction(napi_env env,
                                   napi_callback cb,
                                   CbData* data,
                                   napi_value* result) {
-  napi_status status =
-      napi_create_function(env, utf8name, NAPI_AUTO_LENGTH, cb, data, result);
+  napi_status status = NodeApi::CreateFunction(
+      env, utf8name, NAPI_AUTO_LENGTH, cb, data, result);
   if (status == napi_ok) {
     status = Napi::details::AttachData(env, *result, data);
   }
@@ -2391,12 +2397,13 @@ inline napi_status CreateFunction(napi_env env,
 template <Function::VoidCallback cb>
 inline Function Function::New(napi_env env, const char* utf8name, void* data) {
   napi_value result = nullptr;
-  napi_status status = napi_create_function(env,
-                                            utf8name,
-                                            NAPI_AUTO_LENGTH,
-                                            details::TemplatedVoidCallback<cb>,
-                                            data,
-                                            &result);
+  napi_status status =
+      NodeApi::CreateFunction(env,
+                              utf8name,
+                              NAPI_AUTO_LENGTH,
+                              details::TemplatedVoidCallback<cb>,
+                              data,
+                              &result);
   NAPI_THROW_IF_FAILED(env, status, Function());
   return Function(env, result);
 }
@@ -2404,12 +2411,12 @@ inline Function Function::New(napi_env env, const char* utf8name, void* data) {
 template <Function::Callback cb>
 inline Function Function::New(napi_env env, const char* utf8name, void* data) {
   napi_value result = nullptr;
-  napi_status status = napi_create_function(env,
-                                            utf8name,
-                                            NAPI_AUTO_LENGTH,
-                                            details::TemplatedCallback<cb>,
-                                            data,
-                                            &result);
+  napi_status status = NodeApi::CreateFunction(env,
+                                               utf8name,
+                                               NAPI_AUTO_LENGTH,
+                                               details::TemplatedCallback<cb>,
+                                               data,
+                                               &result);
   NAPI_THROW_IF_FAILED(env, status, Function());
   return Function(env, result);
 }
@@ -2460,7 +2467,7 @@ inline void Function::CheckCast(napi_env env, napi_value value) {
   NAPI_CHECK(value != nullptr, "Function::CheckCast", "empty value");
 
   napi_valuetype type;
-  napi_status status = napi_typeof(env, value, &type);
+  napi_status status = NodeApi::Typeof(env, value, &type);
   NAPI_CHECK(status == napi_ok, "Function::CheckCast", "napi_typeof failed");
   NAPI_CHECK(type == napi_function,
              "Function::CheckCast",
@@ -2533,7 +2540,7 @@ inline MaybeOrValue<Value> Function::Call(napi_value recv,
                                           const napi_value* args) const {
   napi_value result;
   napi_status status =
-      napi_call_function(_env, recv, _value, argc, args, &result);
+      NodeApi::CallFunction(_env, recv, _value, argc, args, &result);
   NAPI_RETURN_OR_THROW_IF_FAILED(
       _env, status, Napi::Value(_env, result), Napi::Value);
 }
@@ -2559,7 +2566,7 @@ inline MaybeOrValue<Value> Function::MakeCallback(
     napi_async_context context) const {
   napi_value result;
   napi_status status =
-      napi_make_callback(_env, context, recv, _value, argc, args, &result);
+      NodeApi::MakeCallback(_env, context, recv, _value, argc, args, &result);
   NAPI_RETURN_OR_THROW_IF_FAILED(
       _env, status, Napi::Value(_env, result), Napi::Value);
 }
@@ -2577,7 +2584,7 @@ inline MaybeOrValue<Object> Function::New(
 inline MaybeOrValue<Object> Function::New(size_t argc,
                                           const napi_value* args) const {
   napi_value result;
-  napi_status status = napi_new_instance(_env, _value, argc, args, &result);
+  napi_status status = NodeApi::NewInstance(_env, _value, argc, args, &result);
   NAPI_RETURN_OR_THROW_IF_FAILED(
       _env, status, Napi::Object(_env, result), Napi::Object);
 }
@@ -2591,7 +2598,7 @@ inline Promise::Deferred Promise::Deferred::New(napi_env env) {
 }
 
 inline Promise::Deferred::Deferred(napi_env env) : _env(env) {
-  napi_status status = napi_create_promise(_env, &_deferred, &_promise);
+  napi_status status = NodeApi::CreatePromise(_env, &_deferred, &_promise);
   NAPI_THROW_IF_FAILED_VOID(_env, status);
 }
 
@@ -2604,12 +2611,12 @@ inline Napi::Env Promise::Deferred::Env() const {
 }
 
 inline void Promise::Deferred::Resolve(napi_value value) const {
-  napi_status status = napi_resolve_deferred(_env, _deferred, value);
+  napi_status status = NodeApi::ResolveDeferred(_env, _deferred, value);
   NAPI_THROW_IF_FAILED_VOID(_env, status);
 }
 
 inline void Promise::Deferred::Reject(napi_value value) const {
-  napi_status status = napi_reject_deferred(_env, _deferred, value);
+  napi_status status = NodeApi::RejectDeferred(_env, _deferred, value);
   NAPI_THROW_IF_FAILED_VOID(_env, status);
 }
 
@@ -2617,7 +2624,7 @@ inline void Promise::CheckCast(napi_env env, napi_value value) {
   NAPI_CHECK(value != nullptr, "Promise::CheckCast", "empty value");
 
   bool result;
-  napi_status status = napi_is_promise(env, value, &result);
+  napi_status status = NodeApi::IsPromise(env, value, &result);
   NAPI_CHECK(status == napi_ok, "Promise::CheckCast", "napi_is_promise failed");
   NAPI_CHECK(result, "Promise::CheckCast", "value is not promise");
 }
@@ -2633,7 +2640,7 @@ inline Buffer<T> Buffer<T>::New(napi_env env, size_t length) {
   napi_value value;
   void* data;
   napi_status status =
-      napi_create_buffer(env, length * sizeof(T), &data, &value);
+      NodeApi::CreateBuffer(env, length * sizeof(T), &data, &value);
   NAPI_THROW_IF_FAILED(env, status, Buffer<T>());
   return Buffer(env, value);
 }
@@ -2642,7 +2649,7 @@ inline Buffer<T> Buffer<T>::New(napi_env env, size_t length) {
 template <typename T>
 inline Buffer<T> Buffer<T>::New(napi_env env, T* data, size_t length) {
   napi_value value;
-  napi_status status = napi_create_external_buffer(
+  napi_status status = NodeApi::CreateExternalBuffer(
       env, length * sizeof(T), data, nullptr, nullptr, &value);
   NAPI_THROW_IF_FAILED(env, status, Buffer<T>());
   return Buffer(env, value);
@@ -2658,13 +2665,13 @@ inline Buffer<T> Buffer<T>::New(napi_env env,
   details::FinalizeData<T, Finalizer>* finalizeData =
       new details::FinalizeData<T, Finalizer>(
           {std::move(finalizeCallback), nullptr});
-  napi_status status =
-      napi_create_external_buffer(env,
-                                  length * sizeof(T),
-                                  data,
-                                  details::FinalizeData<T, Finalizer>::Wrapper,
-                                  finalizeData,
-                                  &value);
+  napi_status status = NodeApi::CreateExternalBuffer(
+      env,
+      length * sizeof(T),
+      data,
+      details::FinalizeData<T, Finalizer>::Wrapper,
+      finalizeData,
+      &value);
   if (status != napi_ok) {
     delete finalizeData;
     NAPI_THROW_IF_FAILED(env, status, Buffer());
@@ -2683,7 +2690,7 @@ inline Buffer<T> Buffer<T>::New(napi_env env,
   details::FinalizeData<T, Finalizer, Hint>* finalizeData =
       new details::FinalizeData<T, Finalizer, Hint>(
           {std::move(finalizeCallback), finalizeHint});
-  napi_status status = napi_create_external_buffer(
+  napi_status status = NodeApi::CreateExternalBuffer(
       env,
       length * sizeof(T),
       data,
@@ -2702,7 +2709,7 @@ template <typename T>
 inline Buffer<T> Buffer<T>::NewOrCopy(napi_env env, T* data, size_t length) {
 #ifndef NODE_API_NO_EXTERNAL_BUFFERS_ALLOWED
   napi_value value;
-  napi_status status = napi_create_external_buffer(
+  napi_status status = NodeApi::CreateExternalBuffer(
       env, length * sizeof(T), data, nullptr, nullptr, &value);
   if (status == details::napi_no_external_buffers_allowed) {
 #endif  // NODE_API_NO_EXTERNAL_BUFFERS_ALLOWED
@@ -2726,13 +2733,13 @@ inline Buffer<T> Buffer<T>::NewOrCopy(napi_env env,
           {std::move(finalizeCallback), nullptr});
 #ifndef NODE_API_NO_EXTERNAL_BUFFERS_ALLOWED
   napi_value value;
-  napi_status status =
-      napi_create_external_buffer(env,
-                                  length * sizeof(T),
-                                  data,
-                                  details::FinalizeData<T, Finalizer>::Wrapper,
-                                  finalizeData,
-                                  &value);
+  napi_status status = NodeApi::CreateExternalBuffer(
+      env,
+      length * sizeof(T),
+      data,
+      details::FinalizeData<T, Finalizer>::Wrapper,
+      finalizeData,
+      &value);
   if (status == details::napi_no_external_buffers_allowed) {
 #endif  // NODE_API_NO_EXTERNAL_BUFFERS_ALLOWED
     // If we can't create an external buffer, we'll just copy the data.
@@ -2761,7 +2768,7 @@ inline Buffer<T> Buffer<T>::NewOrCopy(napi_env env,
           {std::move(finalizeCallback), finalizeHint});
 #ifndef NODE_API_NO_EXTERNAL_BUFFERS_ALLOWED
   napi_value value;
-  napi_status status = napi_create_external_buffer(
+  napi_status status = NodeApi::CreateExternalBuffer(
       env,
       length * sizeof(T),
       data,
@@ -2789,7 +2796,7 @@ template <typename T>
 inline Buffer<T> Buffer<T>::Copy(napi_env env, const T* data, size_t length) {
   napi_value value;
   napi_status status =
-      napi_create_buffer_copy(env, length * sizeof(T), data, nullptr, &value);
+      NodeApi::CreateBufferCopy(env, length * sizeof(T), data, nullptr, &value);
   NAPI_THROW_IF_FAILED(env, status, Buffer<T>());
   return Buffer<T>(env, value);
 }
@@ -2799,7 +2806,7 @@ inline void Buffer<T>::CheckCast(napi_env env, napi_value value) {
   NAPI_CHECK(value != nullptr, "Buffer::CheckCast", "empty value");
 
   bool result;
-  napi_status status = napi_is_buffer(env, value, &result);
+  napi_status status = NodeApi::IsBuffer(env, value, &result);
   NAPI_CHECK(status == napi_ok, "Buffer::CheckCast", "napi_is_buffer failed");
   NAPI_CHECK(result, "Buffer::CheckCast", "value is not buffer");
 }
@@ -2835,7 +2842,7 @@ inline Error Error::New(napi_env env) {
     // We must retrieve the last error info before doing anything else because
     // doing anything else will replace the last error info.
     const napi_extended_error_info* last_error_info;
-    status = napi_get_last_error_info(env, &last_error_info);
+    status = NodeApi::GetLastErrorInfo(env, &last_error_info);
     NAPI_FATAL_IF_FAILED(status, "Error::New", "napi_get_last_error_info");
 
     // All fields of the `napi_extended_error_info` structure gets reset in
@@ -2847,12 +2854,12 @@ inline Error Error::New(napi_env env) {
            sizeof(napi_extended_error_info));
   }
 
-  status = napi_is_exception_pending(env, &is_exception_pending);
+  status = NodeApi::IsExceptionPending(env, &is_exception_pending);
   NAPI_FATAL_IF_FAILED(status, "Error::New", "napi_is_exception_pending");
 
   // A pending exception takes precedence over any internal error status.
   if (is_exception_pending) {
-    status = napi_get_and_clear_last_exception(env, &error);
+    status = NodeApi::GetAndClearLastException(env, &error);
     NAPI_FATAL_IF_FAILED(
         status, "Error::New", "napi_get_and_clear_last_exception");
   } else {
@@ -2861,7 +2868,7 @@ inline Error Error::New(napi_env env) {
                                     : "Error in native callback";
 
     napi_value message;
-    status = napi_create_string_utf8(
+    status = NodeApi::CreateStringUtf8(
         env, error_message, std::strlen(error_message), &message);
     NAPI_FATAL_IF_FAILED(status, "Error::New", "napi_create_string_utf8");
 
@@ -2870,10 +2877,10 @@ inline Error Error::New(napi_env env) {
       case napi_string_expected:
       case napi_boolean_expected:
       case napi_number_expected:
-        status = napi_create_type_error(env, nullptr, message, &error);
+        status = NodeApi::CreateTypeError(env, nullptr, message, &error);
         break;
       default:
-        status = napi_create_error(env, nullptr, message, &error);
+        status = NodeApi::CreateError(env, nullptr, message, &error);
         break;
     }
     NAPI_FATAL_IF_FAILED(status, "Error::New", "napi_create_error");
@@ -2905,13 +2912,13 @@ inline Error::Error(napi_env env, napi_value value)
     // Attempting to create a reference on the error object.
     // If it's not a Object/Function/Symbol, this call will return an error
     // status.
-    napi_status status = napi_create_reference(env, value, 1, &_ref);
+    napi_status status = NodeApi::CreateReference(env, value, 1, &_ref);
 
     if (status != napi_ok) {
       napi_value wrappedErrorObj;
 
       // Create an error object
-      status = napi_create_object(env, &wrappedErrorObj);
+      status = NodeApi::CreateObject(env, &wrappedErrorObj);
       NAPI_FATAL_IF_FAILED(status, "Error::Error", "napi_create_object");
 
       // property flag that we attach to show the error object is wrapped
@@ -2926,7 +2933,7 @@ inline Error::Error(napi_env env, napi_value value)
           napi_enumerable,
           nullptr};
 
-      status = napi_define_properties(env, wrappedErrorObj, 1, &wrapObjFlag);
+      status = NodeApi::DefineProperties(env, wrappedErrorObj, 1, &wrapObjFlag);
 #ifdef NODE_API_SWALLOW_UNTHROWABLE_EXCEPTIONS
       if (status == napi_pending_exception) {
         // Test if the pending exception was reported because the environment is
@@ -2935,7 +2942,7 @@ inline Error::Error(napi_env env, napi_value value)
         // the environment is shutting down. If so, we replace the
         // napi_pending_exception status with napi_ok.
         bool is_exception_pending = false;
-        status = napi_is_exception_pending(env, &is_exception_pending);
+        status = NodeApi::IsExceptionPending(env, &is_exception_pending);
         if (status == napi_ok && !is_exception_pending) {
           status = napi_ok;
         } else {
@@ -2946,7 +2953,7 @@ inline Error::Error(napi_env env, napi_value value)
       NAPI_FATAL_IF_FAILED(status, "Error::Error", "napi_define_properties");
 
       // Create a reference on the newly wrapped object
-      status = napi_create_reference(env, wrappedErrorObj, 1, &_ref);
+      status = NodeApi::CreateReference(env, wrappedErrorObj, 1, &_ref);
     }
 
     // Avoid infinite recursion in the failure case.
@@ -2960,11 +2967,11 @@ inline Object Error::Value() const {
   }
 
   napi_value refValue;
-  napi_status status = napi_get_reference_value(_env, _ref, &refValue);
+  napi_status status = NodeApi::GetReferenceValue(_env, _ref, &refValue);
   NAPI_THROW_IF_FAILED(_env, status, Object());
 
   napi_valuetype type;
-  status = napi_typeof(_env, refValue, &type);
+  status = NodeApi::Typeof(_env, refValue, &type);
   NAPI_THROW_IF_FAILED(_env, status, Object());
 
   // If refValue isn't a symbol, then we proceed to whether the refValue has the
@@ -2973,18 +2980,18 @@ inline Object Error::Value() const {
     // We are checking if the object is wrapped
     bool isWrappedObject = false;
 
-    status = napi_has_property(_env,
-                               refValue,
-                               String::From(_env, ERROR_WRAP_VALUE()),
-                               &isWrappedObject);
+    status = NodeApi::HasProperty(_env,
+                                  refValue,
+                                  String::From(_env, ERROR_WRAP_VALUE()),
+                                  &isWrappedObject);
 
     // Don't care about status
     if (isWrappedObject) {
       napi_value unwrappedValue;
-      status = napi_get_property(_env,
-                                 refValue,
-                                 String::From(_env, ERROR_WRAP_VALUE()),
-                                 &unwrappedValue);
+      status = NodeApi::GetProperty(_env,
+                                    refValue,
+                                    String::From(_env, ERROR_WRAP_VALUE()),
+                                    &unwrappedValue);
       NAPI_THROW_IF_FAILED(_env, status, Object());
 
       return Object(_env, unwrappedValue);
@@ -3011,7 +3018,7 @@ inline Error& Error::operator=(const Error& other) {
 
   napi_value value = other.Value();
   if (value != nullptr) {
-    napi_status status = napi_create_reference(_env, value, 1, &_ref);
+    napi_status status = NodeApi::CreateReference(_env, value, 1, &_ref);
     NAPI_THROW_IF_FAILED(_env, status, *this);
   }
 
@@ -3050,7 +3057,7 @@ inline void Error::ThrowAsJavaScriptException() const {
 
     // check if there is already a pending exception. If so don't try to throw a
     // new one as that is not allowed/possible
-    napi_status status = napi_is_exception_pending(_env, &pendingException);
+    napi_status status = NodeApi::IsExceptionPending(_env, &pendingException);
 
     if ((status != napi_ok) ||
         ((status == napi_ok) && (pendingException == false))) {
@@ -3058,7 +3065,7 @@ inline void Error::ThrowAsJavaScriptException() const {
       // that there is no possible recursion as `ThrowAsJavaScriptException`
       // is part of `NAPI_THROW_*` macro definition for noexcept.
 
-      status = napi_throw(_env, Value());
+      status = NodeApi::Throw(_env, Value());
 
       if (status == napi_pending_exception) {
         // The environment must be terminating as we checked earlier and there
@@ -3075,7 +3082,7 @@ inline void Error::ThrowAsJavaScriptException() const {
     // that there is no possible recursion as `ThrowAsJavaScriptException`
     // is part of `NAPI_THROW_*` macro definition for noexcept.
 
-    napi_status status = napi_throw(_env, Value());
+    napi_status status = NodeApi::Throw(_env, Value());
 #endif
 
 #ifdef NAPI_CPP_EXCEPTIONS
@@ -3107,7 +3114,7 @@ inline TError Error::New(napi_env env,
                          size_t length,
                          create_error_fn create_error) {
   napi_value str;
-  napi_status status = napi_create_string_utf8(env, message, length, &str);
+  napi_status status = NodeApi::CreateStringUtf8(env, message, length, &str);
   NAPI_THROW_IF_FAILED(env, status, TError());
 
   napi_value error;
@@ -3119,12 +3126,16 @@ inline TError Error::New(napi_env env,
 
 inline TypeError TypeError::New(napi_env env, const char* message) {
   return Error::New<TypeError>(
-      env, message, std::strlen(message), napi_create_type_error);
+      env, message, std::strlen(message), [](auto... params) {
+        return NodeApi::CreateTypeError(params...);
+      });
 }
 
 inline TypeError TypeError::New(napi_env env, const std::string& message) {
   return Error::New<TypeError>(
-      env, message.c_str(), message.size(), napi_create_type_error);
+      env, message.c_str(), message.size(), [](auto... params) {
+        return NodeApi::CreateTypeError(params...);
+      });
 }
 
 inline TypeError::TypeError() : Error() {}
@@ -3134,12 +3145,16 @@ inline TypeError::TypeError(napi_env env, napi_value value)
 
 inline RangeError RangeError::New(napi_env env, const char* message) {
   return Error::New<RangeError>(
-      env, message, std::strlen(message), napi_create_range_error);
+      env, message, std::strlen(message), [](auto... params) {
+        return NodeApi::CreateRangeError(params...);
+      });
 }
 
 inline RangeError RangeError::New(napi_env env, const std::string& message) {
   return Error::New<RangeError>(
-      env, message.c_str(), message.size(), napi_create_range_error);
+      env, message.c_str(), message.size(), [](auto... params) {
+        return NodeApi::CreateRangeError(params...);
+      });
 }
 
 inline RangeError::RangeError() : Error() {}
@@ -3150,12 +3165,16 @@ inline RangeError::RangeError(napi_env env, napi_value value)
 #if NAPI_VERSION > 8
 inline SyntaxError SyntaxError::New(napi_env env, const char* message) {
   return Error::New<SyntaxError>(
-      env, message, std::strlen(message), node_api_create_syntax_error);
+      env, message, std::strlen(message), [](auto... params) {
+        return NodeApi::CreateSyntaxError(params...);
+      });
 }
 
 inline SyntaxError SyntaxError::New(napi_env env, const std::string& message) {
   return Error::New<SyntaxError>(
-      env, message.c_str(), message.size(), node_api_create_syntax_error);
+      env, message.c_str(), message.size(), [](auto... params) {
+        return NodeApi::CreateSyntaxError(params...);
+      });
 }
 
 inline SyntaxError::SyntaxError() : Error() {}
@@ -3179,7 +3198,8 @@ inline Reference<T> Reference<T>::New(const T& value,
   }
 
   napi_ref ref;
-  napi_status status = napi_create_reference(env, value, initialRefcount, &ref);
+  napi_status status =
+      NodeApi::CreateReference(env, value, initialRefcount, &ref);
   NAPI_THROW_IF_FAILED(env, status, Reference<T>());
 
   return Reference<T>(env, ref);
@@ -3197,7 +3217,7 @@ template <typename T>
 inline Reference<T>::~Reference() {
   if (_ref != nullptr) {
     if (!_suppressDestruct) {
-      napi_delete_reference(_env, _ref);
+      NodeApi::DeleteReference(_env, _ref);
     }
 
     _ref = nullptr;
@@ -3236,7 +3256,7 @@ inline Reference<T>::Reference(const Reference<T>& other)
     // Copying is a limited scenario (currently only used for Error object) and
     // always creates a strong reference to the given value even if the incoming
     // reference is weak.
-    napi_status status = napi_create_reference(_env, value, 1, &_ref);
+    napi_status status = NodeApi::CreateReference(_env, value, 1, &_ref);
     NAPI_FATAL_IF_FAILED(
         status, "Reference<T>::Reference", "napi_create_reference");
   }
@@ -3275,7 +3295,7 @@ inline T Reference<T>::Value() const {
   }
 
   napi_value value;
-  napi_status status = napi_get_reference_value(_env, _ref, &value);
+  napi_status status = NodeApi::GetReferenceValue(_env, _ref, &value);
   NAPI_THROW_IF_FAILED(_env, status, T());
   return T(_env, value);
 }
@@ -3283,7 +3303,7 @@ inline T Reference<T>::Value() const {
 template <typename T>
 inline uint32_t Reference<T>::Ref() const {
   uint32_t result;
-  napi_status status = napi_reference_ref(_env, _ref, &result);
+  napi_status status = NodeApi::ReferenceRef(_env, _ref, &result);
   NAPI_THROW_IF_FAILED(_env, status, 0);
   return result;
 }
@@ -3291,7 +3311,7 @@ inline uint32_t Reference<T>::Ref() const {
 template <typename T>
 inline uint32_t Reference<T>::Unref() const {
   uint32_t result;
-  napi_status status = napi_reference_unref(_env, _ref, &result);
+  napi_status status = NodeApi::ReferenceUnref(_env, _ref, &result);
   NAPI_THROW_IF_FAILED(_env, status, 0);
   return result;
 }
@@ -3299,7 +3319,7 @@ inline uint32_t Reference<T>::Unref() const {
 template <typename T>
 inline void Reference<T>::Reset() {
   if (_ref != nullptr) {
-    napi_status status = napi_delete_reference(_env, _ref);
+    napi_status status = NodeApi::DeleteReference(_env, _ref);
     NAPI_THROW_IF_FAILED_VOID(_env, status);
     _ref = nullptr;
   }
@@ -3312,7 +3332,7 @@ inline void Reference<T>::Reset(const T& value, uint32_t refcount) {
 
   napi_value val = value;
   if (val != nullptr) {
-    napi_status status = napi_create_reference(_env, value, refcount, &_ref);
+    napi_status status = NodeApi::CreateReference(_env, value, refcount, &_ref);
     NAPI_THROW_IF_FAILED_VOID(_env, status);
   }
 }
@@ -3758,7 +3778,7 @@ inline CallbackInfo::CallbackInfo(napi_env env, napi_callback_info info)
   _argc = _staticArgCount;
   _argv = _staticArgs;
   napi_status status =
-      napi_get_cb_info(env, info, &_argc, _argv, &_this, &_data);
+      NodeApi::GetCbInfo(env, info, &_argc, _argv, &_this, &_data);
   NAPI_THROW_IF_FAILED_VOID(_env, status);
 
   if (_argc > _staticArgCount) {
@@ -3767,7 +3787,7 @@ inline CallbackInfo::CallbackInfo(napi_env env, napi_callback_info info)
     _dynamicArgs = new napi_value[_argc];
     _argv = _dynamicArgs;
 
-    status = napi_get_cb_info(env, info, &_argc, _argv, nullptr, nullptr);
+    status = NodeApi::GetCbInfo(env, info, &_argc, _argv, nullptr, nullptr);
     NAPI_THROW_IF_FAILED_VOID(_env, status);
   }
 }
@@ -3784,7 +3804,7 @@ inline CallbackInfo::operator napi_callback_info() const {
 
 inline Value CallbackInfo::NewTarget() const {
   napi_value newTarget;
-  napi_status status = napi_get_new_target(_env, _info, &newTarget);
+  napi_status status = NodeApi::GetNewTarget(_env, _info, &newTarget);
   NAPI_THROW_IF_FAILED(_env, status, Value());
   return Value(_env, newTarget);
 }
@@ -4434,7 +4454,8 @@ inline ObjectWrap<T>::ObjectWrap(const Napi::CallbackInfo& callbackInfo) {
   napi_status status;
   napi_ref ref;
   T* instance = static_cast<T*>(this);
-  status = napi_wrap(env, wrapper, instance, FinalizeCallback, nullptr, &ref);
+  status =
+      NodeApi::Wrap(env, wrapper, instance, FinalizeCallback, nullptr, &ref);
   NAPI_THROW_IF_FAILED_VOID(env, status);
 
   Reference<Object>* instanceRef = instance;
@@ -4450,7 +4471,7 @@ inline ObjectWrap<T>::~ObjectWrap() {
     // It is not valid to call `napi_remove_wrap()` with an empty `object`.
     // This happens e.g. during garbage collection.
     if (!object.IsEmpty() && _construction_failed) {
-      napi_remove_wrap(Env(), object, nullptr);
+      NodeApi::RemoveWrap(Env(), object, nullptr);
     }
   }
 }
@@ -4458,7 +4479,7 @@ inline ObjectWrap<T>::~ObjectWrap() {
 template <typename T>
 inline T* ObjectWrap<T>::Unwrap(Object wrapper) {
   void* unwrapped;
-  napi_status status = napi_unwrap(wrapper.Env(), wrapper, &unwrapped);
+  napi_status status = NodeApi::Unwrap(wrapper.Env(), wrapper, &unwrapped);
   NAPI_THROW_IF_FAILED(wrapper.Env(), status, nullptr);
   return static_cast<T*>(unwrapped);
 }
@@ -4508,14 +4529,14 @@ inline Function ObjectWrap<T>::DefineClass(
   }
 
   napi_value value;
-  status = napi_define_class(env,
-                             utf8name,
-                             NAPI_AUTO_LENGTH,
-                             T::ConstructorCallbackWrapper,
-                             data,
-                             props_count,
-                             props.data(),
-                             &value);
+  status = NodeApi::DefineClass(env,
+                                utf8name,
+                                NAPI_AUTO_LENGTH,
+                                T::ConstructorCallbackWrapper,
+                                data,
+                                props_count,
+                                props.data(),
+                                &value);
   NAPI_THROW_IF_FAILED(env, status, Function());
 
   // After defining the class we iterate once more over the property descriptors
@@ -4801,7 +4822,7 @@ template <typename T>
 inline napi_value ObjectWrap<T>::ConstructorCallbackWrapper(
     napi_env env, napi_callback_info info) {
   napi_value new_target;
-  napi_status status = napi_get_new_target(env, info, &new_target);
+  napi_status status = NodeApi::GetNewTarget(env, info, &new_target);
   if (status != napi_ok) return nullptr;
 
   bool isConstructCall = (new_target != nullptr);
@@ -4910,12 +4931,12 @@ inline HandleScope::HandleScope(napi_env env, napi_handle_scope scope)
     : _env(env), _scope(scope) {}
 
 inline HandleScope::HandleScope(Napi::Env env) : _env(env) {
-  napi_status status = napi_open_handle_scope(_env, &_scope);
+  napi_status status = NodeApi::OpenHandleScope(_env, &_scope);
   NAPI_THROW_IF_FAILED_VOID(_env, status);
 }
 
 inline HandleScope::~HandleScope() {
-  napi_status status = napi_close_handle_scope(_env, _scope);
+  napi_status status = NodeApi::CloseHandleScope(_env, _scope);
   NAPI_FATAL_IF_FAILED(
       status, "HandleScope::~HandleScope", "napi_close_handle_scope");
 }
@@ -4937,12 +4958,12 @@ inline EscapableHandleScope::EscapableHandleScope(
     : _env(env), _scope(scope) {}
 
 inline EscapableHandleScope::EscapableHandleScope(Napi::Env env) : _env(env) {
-  napi_status status = napi_open_escapable_handle_scope(_env, &_scope);
+  napi_status status = NodeApi::OpenEscapableHandleScope(_env, &_scope);
   NAPI_THROW_IF_FAILED_VOID(_env, status);
 }
 
 inline EscapableHandleScope::~EscapableHandleScope() {
-  napi_status status = napi_close_escapable_handle_scope(_env, _scope);
+  napi_status status = NodeApi::CloseEscapableHandleScope(_env, _scope);
   NAPI_FATAL_IF_FAILED(status,
                        "EscapableHandleScope::~EscapableHandleScope",
                        "napi_close_escapable_handle_scope");
@@ -4958,7 +4979,7 @@ inline Napi::Env EscapableHandleScope::Env() const {
 
 inline Value EscapableHandleScope::Escape(napi_value escapee) {
   napi_value result;
-  napi_status status = napi_escape_handle(_env, _scope, escapee, &result);
+  napi_status status = NodeApi::EscapeHandle(_env, _scope, escapee, &result);
   NAPI_THROW_IF_FAILED(_env, status, Value());
   return Value(_env, result);
 }
@@ -4974,12 +4995,12 @@ inline CallbackScope::CallbackScope(napi_env env, napi_callback_scope scope)
 inline CallbackScope::CallbackScope(napi_env env, napi_async_context context)
     : _env(env) {
   napi_status status =
-      napi_open_callback_scope(_env, Object::New(env), context, &_scope);
+      NodeApi::OpenCallbackScope(_env, Object::New(env), context, &_scope);
   NAPI_THROW_IF_FAILED_VOID(_env, status);
 }
 
 inline CallbackScope::~CallbackScope() {
-  napi_status status = napi_close_callback_scope(_env, _scope);
+  napi_status status = NodeApi::CloseCallbackScope(_env, _scope);
   NAPI_FATAL_IF_FAILED(
       status, "CallbackScope::~CallbackScope", "napi_close_callback_scope");
 }
@@ -5005,17 +5026,17 @@ inline AsyncContext::AsyncContext(napi_env env,
                                   const Object& resource)
     : _env(env), _context(nullptr) {
   napi_value resource_id;
-  napi_status status = napi_create_string_utf8(
+  napi_status status = NodeApi::CreateStringUtf8(
       _env, resource_name, NAPI_AUTO_LENGTH, &resource_id);
   NAPI_THROW_IF_FAILED_VOID(_env, status);
 
-  status = napi_async_init(_env, resource, resource_id, &_context);
+  status = NodeApi::AsyncInit(_env, resource, resource_id, &_context);
   NAPI_THROW_IF_FAILED_VOID(_env, status);
 }
 
 inline AsyncContext::~AsyncContext() {
   if (_context != nullptr) {
-    napi_async_destroy(_env, _context);
+    NodeApi::AsyncDestroy(_env, _context);
     _context = nullptr;
   }
 }
@@ -5081,17 +5102,17 @@ inline AsyncWorker::AsyncWorker(const Object& receiver,
       _callback(Napi::Persistent(callback)),
       _suppress_destruct(false) {
   napi_value resource_id;
-  napi_status status = napi_create_string_latin1(
+  napi_status status = NodeApi::CreateStringLatin1(
       _env, resource_name, NAPI_AUTO_LENGTH, &resource_id);
   NAPI_THROW_IF_FAILED_VOID(_env, status);
 
-  status = napi_create_async_work(_env,
-                                  resource,
-                                  resource_id,
-                                  OnAsyncWorkExecute,
-                                  OnAsyncWorkComplete,
-                                  this,
-                                  &_work);
+  status = NodeApi::CreateAsyncWork(_env,
+                                    resource,
+                                    resource_id,
+                                    OnAsyncWorkExecute,
+                                    OnAsyncWorkComplete,
+                                    this,
+                                    &_work);
   NAPI_THROW_IF_FAILED_VOID(_env, status);
 }
 
@@ -5105,23 +5126,23 @@ inline AsyncWorker::AsyncWorker(Napi::Env env,
                                 const Object& resource)
     : _env(env), _receiver(), _callback(), _suppress_destruct(false) {
   napi_value resource_id;
-  napi_status status = napi_create_string_latin1(
+  napi_status status = NodeApi::CreateStringLatin1(
       _env, resource_name, NAPI_AUTO_LENGTH, &resource_id);
   NAPI_THROW_IF_FAILED_VOID(_env, status);
 
-  status = napi_create_async_work(_env,
-                                  resource,
-                                  resource_id,
-                                  OnAsyncWorkExecute,
-                                  OnAsyncWorkComplete,
-                                  this,
-                                  &_work);
+  status = NodeApi::CreateAsyncWork(_env,
+                                    resource,
+                                    resource_id,
+                                    OnAsyncWorkExecute,
+                                    OnAsyncWorkComplete,
+                                    this,
+                                    &_work);
   NAPI_THROW_IF_FAILED_VOID(_env, status);
 }
 
 inline AsyncWorker::~AsyncWorker() {
   if (_work != nullptr) {
-    napi_delete_async_work(_env, _work);
+    NodeApi::DeleteAsyncWork(_env, _work);
     _work = nullptr;
   }
 }
@@ -5139,12 +5160,12 @@ inline Napi::Env AsyncWorker::Env() const {
 }
 
 inline void AsyncWorker::Queue() {
-  napi_status status = napi_queue_async_work(_env, _work);
+  napi_status status = NodeApi::QueueAsyncWork(_env, _work);
   NAPI_THROW_IF_FAILED_VOID(_env, status);
 }
 
 inline void AsyncWorker::Cancel() {
-  napi_status status = napi_cancel_async_work(_env, _work);
+  napi_status status = NodeApi::CancelAsyncWork(_env, _work);
   NAPI_THROW_IF_FAILED_VOID(_env, status);
 }
 
@@ -5252,17 +5273,17 @@ TypedThreadSafeFunction<ContextType, DataType, CallJs>::New(
   TypedThreadSafeFunction<ContextType, DataType, CallJs> tsfn;
 
   napi_status status =
-      napi_create_threadsafe_function(env,
-                                      nullptr,
-                                      nullptr,
-                                      String::From(env, resourceName),
-                                      maxQueueSize,
-                                      initialThreadCount,
-                                      nullptr,
-                                      nullptr,
-                                      context,
-                                      CallJsInternal,
-                                      &tsfn._tsfn);
+      NodeApi::CreateThreadsafeFunction(env,
+                                        nullptr,
+                                        nullptr,
+                                        String::From(env, resourceName),
+                                        maxQueueSize,
+                                        initialThreadCount,
+                                        nullptr,
+                                        nullptr,
+                                        context,
+                                        CallJsInternal,
+                                        &tsfn._tsfn);
   if (status != napi_ok) {
     NAPI_THROW_IF_FAILED(
         env, status, TypedThreadSafeFunction<ContextType, DataType, CallJs>());
@@ -5287,17 +5308,17 @@ TypedThreadSafeFunction<ContextType, DataType, CallJs>::New(
   TypedThreadSafeFunction<ContextType, DataType, CallJs> tsfn;
 
   napi_status status =
-      napi_create_threadsafe_function(env,
-                                      nullptr,
-                                      resource,
-                                      String::From(env, resourceName),
-                                      maxQueueSize,
-                                      initialThreadCount,
-                                      nullptr,
-                                      nullptr,
-                                      context,
-                                      CallJsInternal,
-                                      &tsfn._tsfn);
+      NodeApi::CreateThreadsafeFunction(env,
+                                        nullptr,
+                                        resource,
+                                        String::From(env, resourceName),
+                                        maxQueueSize,
+                                        initialThreadCount,
+                                        nullptr,
+                                        nullptr,
+                                        context,
+                                        CallJsInternal,
+                                        &tsfn._tsfn);
   if (status != napi_ok) {
     NAPI_THROW_IF_FAILED(
         env, status, TypedThreadSafeFunction<ContextType, DataType, CallJs>());
@@ -5327,7 +5348,7 @@ TypedThreadSafeFunction<ContextType, DataType, CallJs>::New(
   auto* finalizeData = new details::
       ThreadSafeFinalize<ContextType, Finalizer, FinalizerDataType>(
           {data, finalizeCallback});
-  napi_status status = napi_create_threadsafe_function(
+  napi_status status = NodeApi::CreateThreadsafeFunction(
       env,
       nullptr,
       nullptr,
@@ -5371,7 +5392,7 @@ TypedThreadSafeFunction<ContextType, DataType, CallJs>::New(
   auto* finalizeData = new details::
       ThreadSafeFinalize<ContextType, Finalizer, FinalizerDataType>(
           {data, finalizeCallback});
-  napi_status status = napi_create_threadsafe_function(
+  napi_status status = NodeApi::CreateThreadsafeFunction(
       env,
       nullptr,
       resource,
@@ -5410,17 +5431,17 @@ TypedThreadSafeFunction<ContextType, DataType, CallJs>::New(
   TypedThreadSafeFunction<ContextType, DataType, CallJs> tsfn;
 
   napi_status status =
-      napi_create_threadsafe_function(env,
-                                      callback,
-                                      nullptr,
-                                      String::From(env, resourceName),
-                                      maxQueueSize,
-                                      initialThreadCount,
-                                      nullptr,
-                                      nullptr,
-                                      context,
-                                      CallJsInternal,
-                                      &tsfn._tsfn);
+      NodeApi::CreateThreadsafeFunction(env,
+                                        callback,
+                                        nullptr,
+                                        String::From(env, resourceName),
+                                        maxQueueSize,
+                                        initialThreadCount,
+                                        nullptr,
+                                        nullptr,
+                                        context,
+                                        CallJsInternal,
+                                        &tsfn._tsfn);
   if (status != napi_ok) {
     NAPI_THROW_IF_FAILED(
         env, status, TypedThreadSafeFunction<ContextType, DataType, CallJs>());
@@ -5446,17 +5467,17 @@ TypedThreadSafeFunction<ContextType, DataType, CallJs>::New(
   TypedThreadSafeFunction<ContextType, DataType, CallJs> tsfn;
 
   napi_status status =
-      napi_create_threadsafe_function(env,
-                                      callback,
-                                      resource,
-                                      String::From(env, resourceName),
-                                      maxQueueSize,
-                                      initialThreadCount,
-                                      nullptr,
-                                      nullptr,
-                                      context,
-                                      CallJsInternal,
-                                      &tsfn._tsfn);
+      NodeApi::CreateThreadsafeFunction(env,
+                                        callback,
+                                        resource,
+                                        String::From(env, resourceName),
+                                        maxQueueSize,
+                                        initialThreadCount,
+                                        nullptr,
+                                        nullptr,
+                                        context,
+                                        CallJsInternal,
+                                        &tsfn._tsfn);
   if (status != napi_ok) {
     NAPI_THROW_IF_FAILED(
         env, status, TypedThreadSafeFunction<ContextType, DataType, CallJs>());
@@ -5487,7 +5508,7 @@ TypedThreadSafeFunction<ContextType, DataType, CallJs>::New(
   auto* finalizeData = new details::
       ThreadSafeFinalize<ContextType, Finalizer, FinalizerDataType>(
           {data, finalizeCallback});
-  napi_status status = napi_create_threadsafe_function(
+  napi_status status = NodeApi::CreateThreadsafeFunction(
       env,
       callback,
       nullptr,
@@ -5533,7 +5554,7 @@ TypedThreadSafeFunction<ContextType, DataType, CallJs>::New(
   auto* finalizeData = new details::
       ThreadSafeFinalize<ContextType, Finalizer, FinalizerDataType>(
           {data, finalizeCallback});
-  napi_status status = napi_create_threadsafe_function(
+  napi_status status = NodeApi::CreateThreadsafeFunction(
       env,
       details::DefaultCallbackWrapper<
           CallbackType,
@@ -5604,7 +5625,7 @@ template <typename ContextType,
 inline void TypedThreadSafeFunction<ContextType, DataType, CallJs>::Ref(
     napi_env env) const {
   if (_tsfn != nullptr) {
-    napi_status status = napi_ref_threadsafe_function(env, _tsfn);
+    napi_status status = NodeApi::RefThreadsafeFunction(env, _tsfn);
     NAPI_THROW_IF_FAILED_VOID(env, status);
   }
 }
@@ -5615,7 +5636,7 @@ template <typename ContextType,
 inline void TypedThreadSafeFunction<ContextType, DataType, CallJs>::Unref(
     napi_env env) const {
   if (_tsfn != nullptr) {
-    napi_status status = napi_unref_threadsafe_function(env, _tsfn);
+    napi_status status = NodeApi::UnrefThreadsafeFunction(env, _tsfn);
     NAPI_THROW_IF_FAILED_VOID(env, status);
   }
 }
@@ -6019,14 +6040,14 @@ inline napi_status ThreadSafeFunction::NonBlockingCall(
 
 inline void ThreadSafeFunction::Ref(napi_env env) const {
   if (_tsfn != nullptr) {
-    napi_status status = napi_ref_threadsafe_function(env, _tsfn);
+    napi_status status = NodeApi::RefThreadsafeFunction(env, _tsfn);
     NAPI_THROW_IF_FAILED_VOID(env, status);
   }
 }
 
 inline void ThreadSafeFunction::Unref(napi_env env) const {
   if (_tsfn != nullptr) {
-    napi_status status = napi_unref_threadsafe_function(env, _tsfn);
+    napi_status status = NodeApi::UnrefThreadsafeFunction(env, _tsfn);
     NAPI_THROW_IF_FAILED_VOID(env, status);
   }
 }
@@ -6077,17 +6098,17 @@ inline ThreadSafeFunction ThreadSafeFunction::New(napi_env env,
       ThreadSafeFinalize<ContextType, Finalizer, FinalizerDataType>(
           {data, finalizeCallback});
   napi_status status =
-      napi_create_threadsafe_function(env,
-                                      callback,
-                                      resource,
-                                      Value::From(env, resourceName),
-                                      maxQueueSize,
-                                      initialThreadCount,
-                                      finalizeData,
-                                      wrapper,
-                                      context,
-                                      CallJS,
-                                      &tsfn._tsfn);
+      NodeApi::CreateThreadsafeFunction(env,
+                                        callback,
+                                        resource,
+                                        Value::From(env, resourceName),
+                                        maxQueueSize,
+                                        initialThreadCount,
+                                        finalizeData,
+                                        wrapper,
+                                        context,
+                                        CallJS,
+                                        &tsfn._tsfn);
   if (status != napi_ok) {
     delete finalizeData;
     NAPI_THROW_IF_FAILED(env, status, ThreadSafeFunction());
@@ -6490,7 +6511,7 @@ inline int64_t MemoryManagement::AdjustExternalMemory(Env env,
                                                       int64_t change_in_bytes) {
   int64_t result;
   napi_status status =
-      napi_adjust_external_memory(env, change_in_bytes, &result);
+      NodeApi::AdjustExternalMemory(env, change_in_bytes, &result);
   NAPI_THROW_IF_FAILED(env, status, 0);
   return result;
 }
@@ -6501,14 +6522,14 @@ inline int64_t MemoryManagement::AdjustExternalMemory(Env env,
 
 inline uint32_t VersionManagement::GetNapiVersion(Env env) {
   uint32_t result;
-  napi_status status = napi_get_version(env, &result);
+  napi_status status = NodeApi::GetVersion(env, &result);
   NAPI_THROW_IF_FAILED(env, status, 0);
   return result;
 }
 
 inline const napi_node_version* VersionManagement::GetNodeVersion(Env env) {
   const napi_node_version* result;
-  napi_status status = napi_get_node_version(env, &result);
+  napi_status status = NodeApi::GetNodeVersion(env, &result);
   NAPI_THROW_IF_FAILED(env, status, 0);
   return result;
 }
@@ -6544,7 +6565,7 @@ inline Napi::Object Addon<T>::DefineProperties(
       reinterpret_cast<const napi_property_descriptor*>(props.begin());
   size_t size = props.size();
   napi_status status =
-      napi_define_properties(object.Env(), object, size, properties);
+      NodeApi::DefineProperties(object.Env(), object, size, properties);
   NAPI_THROW_IF_FAILED(object.Env(), status, object);
   for (size_t idx = 0; idx < size; idx++)
     T::AttachPropData(object.Env(), object, &properties[idx]);
@@ -6572,7 +6593,7 @@ template <typename Hook, typename Arg>
 Env::CleanupHook<Hook, Arg>::CleanupHook(Napi::Env env, Hook hook)
     : wrapper(Env::CleanupHook<Hook, Arg>::Wrapper) {
   data = new CleanupData{std::move(hook), nullptr};
-  napi_status status = napi_add_env_cleanup_hook(env, wrapper, data);
+  napi_status status = NodeApi::AddEnvCleanupHook(env, wrapper, data);
   if (status != napi_ok) {
     delete data;
     data = nullptr;
@@ -6583,7 +6604,7 @@ template <typename Hook, typename Arg>
 Env::CleanupHook<Hook, Arg>::CleanupHook(Napi::Env env, Hook hook, Arg* arg)
     : wrapper(Env::CleanupHook<Hook, Arg>::WrapperWithArg) {
   data = new CleanupData{std::move(hook), arg};
-  napi_status status = napi_add_env_cleanup_hook(env, wrapper, data);
+  napi_status status = NodeApi::AddEnvCleanupHook(env, wrapper, data);
   if (status != napi_ok) {
     delete data;
     data = nullptr;
@@ -6592,7 +6613,7 @@ Env::CleanupHook<Hook, Arg>::CleanupHook(Napi::Env env, Hook hook, Arg* arg)
 
 template <class Hook, class Arg>
 bool Env::CleanupHook<Hook, Arg>::Remove(Env env) {
-  napi_status status = napi_remove_env_cleanup_hook(env, wrapper, data);
+  napi_status status = NodeApi::RemoveEnvCleanupHook(env, wrapper, data);
   delete data;
   data = nullptr;
   return status == napi_ok;
