@@ -1,6 +1,5 @@
 #if (NAPI_VERSION > 5)
 
-#define NAPI_EXPERIMENTAL
 #include "napi.h"
 
 #include "test_helper.h"
