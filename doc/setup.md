@@ -17,11 +17,11 @@ To use **Node-API** in a native module:
 
   1. Add a dependency on this package to `package.json`:
 
-```json
-  "dependencies": {
-    "node-addon-api": "*",
-  }
-```
+     ```json
+       "dependencies": {
+         "node-addon-api": "*",
+       }
+     ```
 
   2. Decide whether the package will enable C++ exceptions in the Node-API
      wrapper, and reference this package as a dependency in `binding.gyp`.
@@ -32,51 +32,51 @@ To use **Node-API** in a native module:
 
      To use without C++ exceptions, add the following to `binding.gyp`:
 
-```gyp
-  'dependencies': [
-    "<!(node -p \"require('node-addon-api').targets\"):node_addon_api",
-  ],
-```
+     ```gyp
+       'dependencies': [
+         "<!(node -p \"require('node-addon-api').targets\"):node_addon_api",
+       ],
+     ```
 
      To enable that capability, add an alternative dependency in `binding.gyp`:
 
-```gyp
-  'dependencies': [
-    "<!(node -p \"require('node-addon-api').targets\"):node_addon_api_except",
-  ],
-```
+     ```gyp
+       'dependencies': [
+         "<!(node -p \"require('node-addon-api').targets\"):node_addon_api_except",
+       ],
+     ```
 
-  If you decide to use node-addon-api without C++ exceptions enabled, please
-  consider enabling node-addon-api safe API type guards to ensure the proper
-  exception handling pattern:
+     If you decide to use node-addon-api without C++ exceptions enabled, please
+     consider enabling node-addon-api safe API type guards to ensure the proper
+     exception handling pattern:
 
-```gyp
-  'dependencies': [
-    "<!(node -p \"require('node-addon-api').targets\"):node_addon_api_maybe",
-  ],
-```
+     ```gyp
+       'dependencies': [
+         "<!(node -p \"require('node-addon-api').targets\"):node_addon_api_maybe",
+       ],
+     ```
 
   4. If you would like your native addon to support OSX, please also add the
-  following settings in the `binding.gyp` file:
+     following settings in the `binding.gyp` file:
 
-  ```gyp
-  'conditions': [
-    ['OS=="mac"', {
-        'cflags+': ['-fvisibility=hidden'],
-        'xcode_settings': {
-          'GCC_SYMBOLS_PRIVATE_EXTERN': 'YES', # -fvisibility=hidden
-        }
-    }]
-  ]
-  ```
+       ```gyp
+       'conditions': [
+         ['OS=="mac"', {
+             'cflags+': ['-fvisibility=hidden'],
+             'xcode_settings': {
+               'GCC_SYMBOLS_PRIVATE_EXTERN': 'YES', # -fvisibility=hidden
+             }
+         }]
+       ]
+       ```
 
   5. Include `napi.h` in the native module code.
      To ensure only ABI-stable APIs are used, DO NOT include
      `node.h`, `nan.h`, or `v8.h`.
 
-```C++
-#include "napi.h"
-```
+     ```C++
+     #include "napi.h"
+     ```
 
 At build time, the Node-API back-compat library code will be used only when the
 targeted node version *does not* have Node-API built-in.
