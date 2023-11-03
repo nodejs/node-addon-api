@@ -56,7 +56,7 @@ To use **Node-API** in a native module:
        ],
      ```
 
-  4. If you would like your native addon to support OSX, please also add the
+  3. If you would like your native addon to support OSX, please also add the
      following settings in the `binding.gyp` file:
 
        ```gyp
@@ -70,7 +70,7 @@ To use **Node-API** in a native module:
        ]
        ```
 
-  5. Include `napi.h` in the native module code.
+  4. Include `napi.h` in the native module code.
      To ensure only ABI-stable APIs are used, DO NOT include
      `node.h`, `nan.h`, or `v8.h`.
 
