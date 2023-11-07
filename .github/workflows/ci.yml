@@ -2,6 +2,9 @@ name: Node.js CI Unix Platform
 
 on: [push, pull_request]
 
+env:
+  PYTHON_VERSION: '3.11'
+
 permissions:
   contents: read
 
@@ -23,6 +26,10 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
     - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
+    - name: Set up Python ${{ env.PYTHON_VERSION }}
+      uses: actions/setup-python@61a6322f88396a6271a6ee3565807d608ecaddd1  # v4.7.0
+      with:
+        python-version: ${{ env.PYTHON_VERSION }}
     - name: Use Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@8f152de45cc393bb48ce5d89d36b731f54556e65 # v4.0.0
       with:
