@@ -153,14 +153,14 @@ The following is the documentation for node-addon-api.
 
 Are you new to **node-addon-api**? Take a look at our **[examples](https://github.com/nodejs/node-addon-examples)**
 
-- **[Hello World](https://github.com/nodejs/node-addon-examples/tree/HEAD/1_hello_world/node-addon-api)**
-- **[Pass arguments to a function](https://github.com/nodejs/node-addon-examples/tree/HEAD/2_function_arguments/node-addon-api)**
-- **[Callbacks](https://github.com/nodejs/node-addon-examples/tree/HEAD/3_callbacks/node-addon-api)**
-- **[Object factory](https://github.com/nodejs/node-addon-examples/tree/HEAD/4_object_factory/node-addon-api)**
-- **[Function factory](https://github.com/nodejs/node-addon-examples/tree/HEAD/5_function_factory/node-addon-api)**
-- **[Wrapping C++ Object](https://github.com/nodejs/node-addon-examples/tree/HEAD/6_object_wrap/node-addon-api)**
-- **[Factory of wrapped object](https://github.com/nodejs/node-addon-examples/tree/HEAD/7_factory_wrap/node-addon-api)**
-- **[Passing wrapped object around](https://github.com/nodejs/node-addon-examples/tree/HEAD/8_passing_wrapped/node-addon-api)**
+- **[Hello World](https://github.com/nodejs/node-addon-examples/tree/main/src/1-getting-started/1_hello_world)**
+- **[Pass arguments to a function](https://github.com/nodejs/node-addon-examples/tree/main/src/1-getting-started/2_function_arguments/node-addon-api)**
+- **[Callbacks](https://github.com/nodejs/node-addon-examples/tree/main/src/1-getting-started/3_callbacks/node-addon-api)**
+- **[Object factory](https://github.com/nodejs/node-addon-examples/tree/main/src/1-getting-started/4_object_factory/node-addon-api)**
+- **[Function factory](https://github.com/nodejs/node-addon-examples/tree/main/src/1-getting-started/5_function_factory/node-addon-api)**
+- **[Wrapping C++ Object](https://github.com/nodejs/node-addon-examples/tree/main/src/1-getting-started/6_object_wrap/node-addon-api)**
+- **[Factory of wrapped object](https://github.com/nodejs/node-addon-examples/tree/main/src/1-getting-started/7_factory_wrap/node-addon-api)**
+- **[Passing wrapped object around](https://github.com/nodejs/node-addon-examples/tree/main/src/2-js-to-native-conversion/8_passing_wrapped/node-addon-api)**
 
 <a name="tests"></a>
 
