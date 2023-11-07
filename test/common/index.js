@@ -148,7 +148,7 @@ async function whichBuildType () {
       if (await checkBuildType(envBuildType)) {
         buildType = envBuildType;
       } else {
-        throw new Error(`The ${envBuildType} build doesn't exists.`);
+        throw new Error(`The ${envBuildType} build doesn't exist.`);
       }
     } else {
       throw new Error('Invalid value for NODE_API_BUILD_CONFIG environment variable. It should be set to Release or Debug.');

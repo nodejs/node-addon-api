@@ -31,22 +31,22 @@ namespace details {
 // Node.js releases. Only necessary when they are used in napi.h and napi-inl.h.
 constexpr int napi_no_external_buffers_allowed = 22;
 
+template <typename FreeType>
+inline void default_finalizer(napi_env /*env*/, void* data, void* /*hint*/) {
+  delete static_cast<FreeType*>(data);
+}
+
 // Attach a data item to an object and delete it when the object gets
 // garbage-collected.
 // TODO: Replace this code with `napi_add_finalizer()` whenever it becomes
 // available on all supported versions of Node.js.
-template <typename FreeType>
+template <typename FreeType,
+          napi_finalize finalizer = default_finalizer<FreeType>>
 inline napi_status AttachData(napi_env env,
                               napi_value obj,
                               FreeType* data,
-                              napi_finalize finalizer = nullptr,
                               void* hint = nullptr) {
   napi_status status;
-  if (finalizer == nullptr) {
-    finalizer = [](napi_env /*env*/, void* data, void* /*hint*/) {
-      delete static_cast<FreeType*>(data);
-    };
-  }
 #if (NAPI_VERSION < 5)
   napi_value symbol, external;
   status = napi_create_symbol(env, nullptr, &symbol);
@@ -1636,11 +1636,8 @@ inline void Object::AddFinalizer(Finalizer finalizeCallback, T* data) const {
       new details::FinalizeData<T, Finalizer>(
           {std::move(finalizeCallback), nullptr});
   napi_status status =
-      details::AttachData(_env,
-                          *this,
-                          data,
-                          details::FinalizeData<T, Finalizer>::Wrapper,
-                          finalizeData);
+      details::AttachData<T, details::FinalizeData<T, Finalizer>::Wrapper>(
+          _env, *this, data, finalizeData);
   if (status != napi_ok) {
     delete finalizeData;
     NAPI_THROW_IF_FAILED_VOID(_env, status);
@@ -1654,12 +1651,9 @@ inline void Object::AddFinalizer(Finalizer finalizeCallback,
   details::FinalizeData<T, Finalizer, Hint>* finalizeData =
       new details::FinalizeData<T, Finalizer, Hint>(
           {std::move(finalizeCallback), finalizeHint});
-  napi_status status = details::AttachData(
-      _env,
-      *this,
-      data,
-      details::FinalizeData<T, Finalizer, Hint>::WrapperWithHint,
-      finalizeData);
+  napi_status status = details::
+      AttachData<T, details::FinalizeData<T, Finalizer, Hint>::WrapperWithHint>(
+          _env, *this, data, finalizeData);
   if (status != napi_ok) {
     delete finalizeData;
     NAPI_THROW_IF_FAILED_VOID(_env, status);
