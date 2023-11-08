@@ -9,7 +9,7 @@ around `napi_value` representing a JavaScript Array.
 types such as [`Napi::Int32Array`][] and [`Napi::ArrayBuffer`][], respectively,
 that can be used for transferring large amounts of data from JavaScript to the
 native side. An example illustrating the use of a JavaScript-provided
-`ArrayBuffer` in native code is available [here](https://github.com/nodejs/node-addon-examples/tree/HEAD/array_buffer_to_native/node-addon-api).
+`ArrayBuffer` in native code is available [here](https://github.com/nodejs/node-addon-examples/tree/main/src/2-js-to-native-conversion/array_buffer_to_native/node-addon-api).
 
 ## Constructor
 ```cpp
