@@ -407,6 +407,14 @@
     {
       "name": "Caleb Hearon",
       "url": "https://github.com/chearon"
+    },
+    {
+      "name": "Marx",
+      "url": "https://github.com/MarxJiao"
+    },
+    {
+      "name": "Ömer AKGÜL",
+      "url": "https://github.com/tuhalf"
     }
   ],
   "description": "Node.js API (Node-API)",
@@ -467,7 +475,7 @@
     "lint:fix": "node tools/clang-format --fix && node tools/eslint-format --fix"
   },
   "pre-commit": "lint",
-  "version": "7.0.0",
+  "version": "7.1.0",
   "support": true,
   "engines": {
     "node": "^16 || ^18 || >= 20"
