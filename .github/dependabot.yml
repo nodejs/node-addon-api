@@ -3,14 +3,23 @@ updates:
   - package-ecosystem: github-actions
     directory: /
     schedule:
-      interval: daily
+      interval: weekly
+    groups:
+      all:
+        patterns: '*'
 
   - package-ecosystem: npm
     directory: /
     schedule:
-      interval: daily
+      interval: weekly
+    groups:
+      all:
+        patterns: '*'
 
   - package-ecosystem: npm
     directory: /test/addon_build/tpl
     schedule:
-      interval: daily
+      interval: weekly
+    groups:
+      all:
+        patterns: '*'
