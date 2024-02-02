@@ -18,6 +18,16 @@
 #include <type_traits>
 #include <utility>
 
+// TODO(gabrielschulhof): Remove this and remove the wrapping at the call sites
+// (i.e., at the call site, `TSFN_FINALIZER(x)` should be changed back to `x`)
+// after https://github.com/nodejs/node/pull/51801 has landed.
+#if (defined(NAPI_EXPERIMENTAL) &&                                             \
+     defined(NODE_API_EXPERIMENTAL_HAS_POST_FINALIZER))
+#define TSFN_FINALIZER(fini) reinterpret_cast<node_api_nogc_finalize>(fini)
+#else
+#define TSFN_FINALIZER(fini) fini
+#endif
+
 namespace Napi {
 
 #ifdef NAPI_CPP_CUSTOM_NAMESPACE
@@ -30,6 +40,23 @@ namespace details {
 // New napi_status constants not yet available in all supported versions of
 // Node.js releases. Only necessary when they are used in napi.h and napi-inl.h.
 constexpr int napi_no_external_buffers_allowed = 22;
+
+#if (defined(NAPI_EXPERIMENTAL) &&                                             \
+     defined(NODE_API_EXPERIMENTAL_HAS_POST_FINALIZER))
+template <napi_finalize finalizer>
+inline void PostFinalizerWrapper(node_api_nogc_env nogc_env,
+                                 void* data,
+                                 void* hint) {
+  napi_status status = node_api_post_finalizer(nogc_env, finalizer, data, hint);
+  NAPI_FATAL_IF_FAILED(
+      status, "PostFinalizerWrapper", "node_api_post_finalizer failed");
+}
+#else
+template <napi_finalize finalizer>
+inline void PostFinalizerWrapper(napi_env env, void* data, void* hint) {
+  finalizer(env, data, hint);
+}
+#endif
 
 template <typename FreeType>
 inline void default_finalizer(napi_env /*env*/, void* data, void* /*hint*/) {
@@ -65,7 +92,8 @@ inline napi_status AttachData(napi_env env,
     }
   }
 #else  // NAPI_VERSION >= 5
-  status = napi_add_finalizer(env, obj, data, finalizer, hint, nullptr);
+  status = napi_add_finalizer(
+      env, obj, data, details::PostFinalizerWrapper<finalizer>, hint, nullptr);
 #endif
   return status;
 }
@@ -1774,7 +1802,8 @@ inline External<T> External<T>::New(napi_env env,
   napi_status status =
       napi_create_external(env,
                            data,
-                           details::FinalizeData<T, Finalizer>::Wrapper,
+                           details::PostFinalizerWrapper<
+                               details::FinalizeData<T, Finalizer>::Wrapper>,
                            finalizeData,
                            &value);
   if (status != napi_ok) {
@@ -1797,7 +1826,8 @@ inline External<T> External<T>::New(napi_env env,
   napi_status status = napi_create_external(
       env,
       data,
-      details::FinalizeData<T, Finalizer, Hint>::WrapperWithHint,
+      details::PostFinalizerWrapper<
+          details::FinalizeData<T, Finalizer, Hint>::WrapperWithHint>,
       finalizeData,
       &value);
   if (status != napi_ok) {
@@ -1910,7 +1940,8 @@ inline ArrayBuffer ArrayBuffer::New(napi_env env,
       env,
       externalData,
       byteLength,
-      details::FinalizeData<void, Finalizer>::Wrapper,
+      details::PostFinalizerWrapper<
+          details::FinalizeData<void, Finalizer>::Wrapper>,
       finalizeData,
       &value);
   if (status != napi_ok) {
@@ -1935,7 +1966,8 @@ inline ArrayBuffer ArrayBuffer::New(napi_env env,
       env,
       externalData,
       byteLength,
-      details::FinalizeData<void, Finalizer, Hint>::WrapperWithHint,
+      details::PostFinalizerWrapper<
+          details::FinalizeData<void, Finalizer, Hint>::WrapperWithHint>,
       finalizeData,
       &value);
   if (status != napi_ok) {
@@ -2652,13 +2684,14 @@ inline Buffer<T> Buffer<T>::New(napi_env env,
   details::FinalizeData<T, Finalizer>* finalizeData =
       new details::FinalizeData<T, Finalizer>(
           {std::move(finalizeCallback), nullptr});
-  napi_status status =
-      napi_create_external_buffer(env,
-                                  length * sizeof(T),
-                                  data,
-                                  details::FinalizeData<T, Finalizer>::Wrapper,
-                                  finalizeData,
-                                  &value);
+  napi_status status = napi_create_external_buffer(
+      env,
+      length * sizeof(T),
+      data,
+      details::PostFinalizerWrapper<
+          details::FinalizeData<T, Finalizer>::Wrapper>,
+      finalizeData,
+      &value);
   if (status != napi_ok) {
     delete finalizeData;
     NAPI_THROW_IF_FAILED(env, status, Buffer());
@@ -2681,7 +2714,8 @@ inline Buffer<T> Buffer<T>::New(napi_env env,
       env,
       length * sizeof(T),
       data,
-      details::FinalizeData<T, Finalizer, Hint>::WrapperWithHint,
+      details::PostFinalizerWrapper<
+          details::FinalizeData<T, Finalizer, Hint>::WrapperWithHint>,
       finalizeData,
       &value);
   if (status != napi_ok) {
@@ -2720,13 +2754,14 @@ inline Buffer<T> Buffer<T>::NewOrCopy(napi_env env,
           {std::move(finalizeCallback), nullptr});
 #ifndef NODE_API_NO_EXTERNAL_BUFFERS_ALLOWED
   napi_value value;
-  napi_status status =
-      napi_create_external_buffer(env,
-                                  length * sizeof(T),
-                                  data,
-                                  details::FinalizeData<T, Finalizer>::Wrapper,
-                                  finalizeData,
-                                  &value);
+  napi_status status = napi_create_external_buffer(
+      env,
+      length * sizeof(T),
+      data,
+      details::PostFinalizerWrapper<
+          details::FinalizeData<T, Finalizer>::Wrapper>,
+      finalizeData,
+      &value);
   if (status == details::napi_no_external_buffers_allowed) {
 #endif  // NODE_API_NO_EXTERNAL_BUFFERS_ALLOWED
     // If we can't create an external buffer, we'll just copy the data.
@@ -2759,7 +2794,8 @@ inline Buffer<T> Buffer<T>::NewOrCopy(napi_env env,
       env,
       length * sizeof(T),
       data,
-      details::FinalizeData<T, Finalizer, Hint>::WrapperWithHint,
+      details::PostFinalizerWrapper<
+          details::FinalizeData<T, Finalizer, Hint>::WrapperWithHint>,
       finalizeData,
       &value);
   if (status == details::napi_no_external_buffers_allowed) {
@@ -3054,7 +3090,12 @@ inline void Error::ThrowAsJavaScriptException() const {
 
       status = napi_throw(_env, Value());
 
-      if (status == napi_pending_exception) {
+#ifdef NAPI_EXPERIMENTAL
+      napi_status expected_failure_mode = napi_cannot_run_js;
+#else
+      napi_status expected_failure_mode = napi_pending_exception;
+#endif
+      if (status == expected_failure_mode) {
         // The environment must be terminating as we checked earlier and there
         // was no pending exception. In this case continuing will result
         // in a fatal error and there is nothing the author has done incorrectly
@@ -4428,7 +4469,12 @@ inline ObjectWrap<T>::ObjectWrap(const Napi::CallbackInfo& callbackInfo) {
   napi_status status;
   napi_ref ref;
   T* instance = static_cast<T*>(this);
-  status = napi_wrap(env, wrapper, instance, FinalizeCallback, nullptr, &ref);
+  status = napi_wrap(env,
+                     wrapper,
+                     instance,
+                     details::PostFinalizerWrapper<FinalizeCallback>,
+                     nullptr,
+                     &ref);
   NAPI_THROW_IF_FAILED_VOID(env, status);
 
   Reference<Object>* instanceRef = instance;
@@ -5321,19 +5367,21 @@ TypedThreadSafeFunction<ContextType, DataType, CallJs>::New(
   auto* finalizeData = new details::
       ThreadSafeFinalize<ContextType, Finalizer, FinalizerDataType>(
           {data, finalizeCallback});
-  napi_status status = napi_create_threadsafe_function(
-      env,
-      nullptr,
-      nullptr,
-      String::From(env, resourceName),
-      maxQueueSize,
-      initialThreadCount,
-      finalizeData,
+  auto fini =
       details::ThreadSafeFinalize<ContextType, Finalizer, FinalizerDataType>::
-          FinalizeFinalizeWrapperWithDataAndContext,
-      context,
-      CallJsInternal,
-      &tsfn._tsfn);
+          FinalizeFinalizeWrapperWithDataAndContext;
+  napi_status status =
+      napi_create_threadsafe_function(env,
+                                      nullptr,
+                                      nullptr,
+                                      String::From(env, resourceName),
+                                      maxQueueSize,
+                                      initialThreadCount,
+                                      finalizeData,
+                                      TSFN_FINALIZER(fini),
+                                      context,
+                                      CallJsInternal,
+                                      &tsfn._tsfn);
   if (status != napi_ok) {
     delete finalizeData;
     NAPI_THROW_IF_FAILED(
@@ -5365,19 +5413,21 @@ TypedThreadSafeFunction<ContextType, DataType, CallJs>::New(
   auto* finalizeData = new details::
       ThreadSafeFinalize<ContextType, Finalizer, FinalizerDataType>(
           {data, finalizeCallback});
-  napi_status status = napi_create_threadsafe_function(
-      env,
-      nullptr,
-      resource,
-      String::From(env, resourceName),
-      maxQueueSize,
-      initialThreadCount,
-      finalizeData,
+  auto fini =
       details::ThreadSafeFinalize<ContextType, Finalizer, FinalizerDataType>::
-          FinalizeFinalizeWrapperWithDataAndContext,
-      context,
-      CallJsInternal,
-      &tsfn._tsfn);
+          FinalizeFinalizeWrapperWithDataAndContext;
+  napi_status status =
+      napi_create_threadsafe_function(env,
+                                      nullptr,
+                                      resource,
+                                      String::From(env, resourceName),
+                                      maxQueueSize,
+                                      initialThreadCount,
+                                      finalizeData,
+                                      TSFN_FINALIZER(fini),
+                                      context,
+                                      CallJsInternal,
+                                      &tsfn._tsfn);
   if (status != napi_ok) {
     delete finalizeData;
     NAPI_THROW_IF_FAILED(
@@ -5481,19 +5531,21 @@ TypedThreadSafeFunction<ContextType, DataType, CallJs>::New(
   auto* finalizeData = new details::
       ThreadSafeFinalize<ContextType, Finalizer, FinalizerDataType>(
           {data, finalizeCallback});
-  napi_status status = napi_create_threadsafe_function(
-      env,
-      callback,
-      nullptr,
-      String::From(env, resourceName),
-      maxQueueSize,
-      initialThreadCount,
-      finalizeData,
+  auto fini =
       details::ThreadSafeFinalize<ContextType, Finalizer, FinalizerDataType>::
-          FinalizeFinalizeWrapperWithDataAndContext,
-      context,
-      CallJsInternal,
-      &tsfn._tsfn);
+          FinalizeFinalizeWrapperWithDataAndContext;
+  napi_status status =
+      napi_create_threadsafe_function(env,
+                                      callback,
+                                      nullptr,
+                                      String::From(env, resourceName),
+                                      maxQueueSize,
+                                      initialThreadCount,
+                                      finalizeData,
+                                      TSFN_FINALIZER(fini),
+                                      context,
+                                      CallJsInternal,
+                                      &tsfn._tsfn);
   if (status != napi_ok) {
     delete finalizeData;
     NAPI_THROW_IF_FAILED(
@@ -5527,6 +5579,9 @@ TypedThreadSafeFunction<ContextType, DataType, CallJs>::New(
   auto* finalizeData = new details::
       ThreadSafeFinalize<ContextType, Finalizer, FinalizerDataType>(
           {data, finalizeCallback});
+  auto fini =
+      details::ThreadSafeFinalize<ContextType, Finalizer, FinalizerDataType>::
+          FinalizeFinalizeWrapperWithDataAndContext;
   napi_status status = napi_create_threadsafe_function(
       env,
       details::DefaultCallbackWrapper<
@@ -5538,8 +5593,7 @@ TypedThreadSafeFunction<ContextType, DataType, CallJs>::New(
       maxQueueSize,
       initialThreadCount,
       finalizeData,
-      details::ThreadSafeFinalize<ContextType, Finalizer, FinalizerDataType>::
-          FinalizeFinalizeWrapperWithDataAndContext,
+      TSFN_FINALIZER(fini),
       context,
       CallJsInternal,
       &tsfn._tsfn);
@@ -6078,7 +6132,7 @@ inline ThreadSafeFunction ThreadSafeFunction::New(napi_env env,
                                       maxQueueSize,
                                       initialThreadCount,
                                       finalizeData,
-                                      wrapper,
+                                      TSFN_FINALIZER(wrapper),
                                       context,
                                       CallJS,
                                       &tsfn._tsfn);

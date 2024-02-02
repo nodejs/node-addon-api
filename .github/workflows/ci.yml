@@ -13,6 +13,9 @@ jobs:
     timeout-minutes: 30
     strategy:
       matrix:
+        api_version:
+          - standard
+          - experimental
         node-version: [ 18.x, 20.x, 21.x ]
         os:
           - macos-latest
@@ -43,6 +46,9 @@ jobs:
         npm install
     - name: npm test
       run: |
+        if [ "${{ matrix.api_version }}" = "experimental" ]; then
+          export NAPI_VERSION=2147483647
+        fi
         if [ "${{ matrix.compiler }}" = "gcc" ]; then
           export CC="gcc" CXX="g++"
         fi
