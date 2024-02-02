@@ -12,8 +12,12 @@ jobs:
   test:
     timeout-minutes: 30
     strategy:
+      fail-fast: false
       matrix:
-        node-version: [ 18.x, 20.x, 21.x, 22.x ]
+        node-version:
+          - 18.x
+          - 20.x
+          - 22.x
         architecture: [x64, x86]
         os:
           - windows-2019
