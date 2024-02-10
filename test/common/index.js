@@ -142,7 +142,7 @@ async function checkBuildType (buildType) {
 
 async function whichBuildType () {
   let buildType = 'Release';
-  const envBuildType = process.env.NODE_API_BUILD_CONFIG;
+  const envBuildType = process.env.NODE_API_BUILD_CONFIG || (process.env.npm_config_debug === 'true' ? 'Debug' : 'Release');
   if (envBuildType) {
     if (Object.values(buildTypes).includes(envBuildType)) {
       if (await checkBuildType(envBuildType)) {
