@@ -463,6 +463,7 @@
   "scripts": {
     "prebenchmark": "node-gyp rebuild -C benchmark",
     "benchmark": "node benchmark",
+    "coverage": "npm test --coverage && rm -rf coverage && mkdir coverage && gcovr -e test --merge-mode-functions merge-use-line-max --html-nested coverage/index.html test",
     "pretest": "node-gyp rebuild -C test",
     "test": "node test",
     "test:debug": "node-gyp rebuild -C test --debug && NODE_API_BUILD_CONFIG=Debug node ./test/index.js",

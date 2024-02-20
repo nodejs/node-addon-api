@@ -87,12 +87,19 @@
       'build_sources_type_check': [
         'value_type_cast.cc'
       ],
+      'want_coverage': '<!(node -p process.env.npm_config_coverage)',
       'conditions': [
         ['disable_deprecated!="true"', {
           'build_sources': ['object/object_deprecated.cc']
         }]
       ]
     },
+    'conditions': [
+      ['want_coverage=="true" and OS=="linux"', {
+        'cflags_cc': ['--coverage'],
+        'ldflags': ['--coverage'],
+      }]
+    ],
   },
   'targets': [
     {
