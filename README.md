@@ -16,7 +16,7 @@ and exception handling semantics with low overhead.
 
 API references are available in the [doc](doc/README.md) directory.
 
-## Current version: 7.1.0
+## Current version: 8.0.0
 
 (See [CHANGELOG.md](CHANGELOG.md) for complete Changelog)
 
