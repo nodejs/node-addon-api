@@ -1,5 +1,30 @@
 # node-addon-api Changelog
 
+## 2024-03-01 Version 8.0.0, @legendecas
+
+### Notable changes
+
+- Support for Node.js v16.x is no longer maintained.
+
+### Commits
+
+* \[[`df2147a2b6`](https://github.com/nodejs/node-addon-api/commit/df2147a2b6)] - build(deps): bump github/codeql-action from 3.24.3 to 3.24.5 (dependabot\[bot]) [#1455](https://github.com/nodejs/node-addon-api/pull/1455)
+* \[[`eb4fa9b55a`](https://github.com/nodejs/node-addon-api/commit/eb4fa9b55a)] - build(deps): bump actions/dependency-review-action from 4.1.0 to 4.1.3 (dependabot\[bot]) [#1452](https://github.com/nodejs/node-addon-api/pull/1452)
+* \[[`f85e8146bb`](https://github.com/nodejs/node-addon-api/commit/f85e8146bb)] - build(deps): bump github/codeql-action from 3.23.2 to 3.24.3 (dependabot\[bot]) [#1448](https://github.com/nodejs/node-addon-api/pull/1448)
+* \[[`b84deb0d2f`](https://github.com/nodejs/node-addon-api/commit/b84deb0d2f)] - build(deps): bump actions/dependency-review-action from 4.0.0 to 4.1.0 (dependabot\[bot]) [#1447](https://github.com/nodejs/node-addon-api/pull/1447)
+* \[[`7dcee380cd`](https://github.com/nodejs/node-addon-api/commit/7dcee380cd)] - build(deps): bump actions/setup-node from 4.0.1 to 4.0.2 (dependabot\[bot]) [#1444](https://github.com/nodejs/node-addon-api/pull/1444)
+* \[[`a727b629fe`](https://github.com/nodejs/node-addon-api/commit/a727b629fe)] - build(deps): bump actions/upload-artifact from 4.3.0 to 4.3.1 (dependabot\[bot]) [#1443](https://github.com/nodejs/node-addon-api/pull/1443)
+* \[[`ea712094e3`](https://github.com/nodejs/node-addon-api/commit/ea712094e3)] - build(deps): bump step-security/harden-runner from 2.6.1 to 2.7.0 (dependabot\[bot]) [#1440](https://github.com/nodejs/node-addon-api/pull/1440)
+* \[[`898e5006a5`](https://github.com/nodejs/node-addon-api/commit/898e5006a5)] - build(deps): bump github/codeql-action from 3.23.1 to 3.23.2 (dependabot\[bot]) [#1439](https://github.com/nodejs/node-addon-api/pull/1439)
+* \[[`66e6e0e4b6`](https://github.com/nodejs/node-addon-api/commit/66e6e0e4b6)] - build(deps): bump actions/upload-artifact from 4.0.0 to 4.3.0 (dependabot\[bot]) [#1438](https://github.com/nodejs/node-addon-api/pull/1438)
+* \[[`f1ca4ccd7f`](https://github.com/nodejs/node-addon-api/commit/f1ca4ccd7f)] - build(deps): bump actions/dependency-review-action from 3.1.5 to 4.0.0 (dependabot\[bot]) [#1433](https://github.com/nodejs/node-addon-api/pull/1433)
+* \[[`c58112d52e`](https://github.com/nodejs/node-addon-api/commit/c58112d52e)] - build(deps): bump github/codeql-action from 3.23.0 to 3.23.1 (dependabot\[bot]) [#1430](https://github.com/nodejs/node-addon-api/pull/1430)
+* \[[`f1b9c0bc24`](https://github.com/nodejs/node-addon-api/commit/f1b9c0bc24)] - **chore**: remove v16.x regular CI runs (Chengzhong Wu) [#1437](https://github.com/nodejs/node-addon-api/pull/1437)
+* \[[`c6561d90d6`](https://github.com/nodejs/node-addon-api/commit/c6561d90d6)] - **chore**: reduce dependabot noise (Chengzhong Wu) [#1436](https://github.com/nodejs/node-addon-api/pull/1436)
+* \[[`42931eeba6`](https://github.com/nodejs/node-addon-api/commit/42931eeba6)] - **doc**: reorganize readme (Chengzhong Wu) [#1441](https://github.com/nodejs/node-addon-api/pull/1441)
+* \[[`3b9f3db14e`](https://github.com/nodejs/node-addon-api/commit/3b9f3db14e)] - **doc**: update changelog maker commands (Chengzhong Wu) [#1431](https://github.com/nodejs/node-addon-api/pull/1431)
+* \[[`034c039298`](https://github.com/nodejs/node-addon-api/commit/034c039298)] - **test**: heed npm\_config\_debug (Gabriel Schulhof) [#1445](https://github.com/nodejs/node-addon-api/pull/1445)
+
 ## 2024-01-18 Version 7.1.0, @legendecas
 
 ### Notable changes
