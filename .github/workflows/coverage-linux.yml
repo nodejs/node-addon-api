@@ -1,0 +1,78 @@
+name: Coverage Linux
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
+    paths-ignore:
+      - '**.md'
+      - benchmark/**
+      - doc/**
+      - tools/**
+      - unit-test/**
+      - .github/**
+      - '!.github/workflows/coverage-linux.yml'
+  push:
+    branches:
+      - main
+    paths-ignore:
+      - '**.md'
+      - benchmark/**
+      - doc/**
+      - tools/**
+      - unit-test/**
+      - .github/**
+      - '!.github/workflows/coverage-linux.yml'
+
+env:
+  PYTHON_VERSION: '3.11'
+  NODE_VERSION: '20.x'
+
+permissions:
+  contents: read
+
+jobs:
+  coverage-linux:
+    if: github.event.pull_request.draft == false
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11  # v4.1.1
+        with:
+          persist-credentials: false
+      - name: Set up Python ${{ env.PYTHON_VERSION }}
+        uses: actions/setup-python@0a5c61591373683505ea898e09a3ea4f39ef2b9c  # v5.0.0
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+      - name: Use Node.js ${{ env.NODE_VERSION }}
+        uses: actions/setup-node@60edb5dd545a775178f52524783378180af0d1f8 # v4.0.2
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+      - name: Environment Information
+        run: npx envinfo
+      - name: Install gcovr
+        run: pip install gcovr==6.0
+      - name: Install dependencies
+        run: npm install
+      - name: Test with coverage
+        run: |
+          npm run create-coverage
+      - name: Generate coverage report (XML)
+        run: |
+          npm run report-coverage-xml
+      - name: Generate coverage report (HTML)
+        run: |
+          npm run report-coverage-html
+      - name: Upload
+        uses: codecov/codecov-action@54bcd8715eee62d40e33596ef5e8f0f48dbbccab  # v4.1.0
+        with:
+          directory: ./coverage-xml
+          token: ${{ secrets.CODECOV_TOKEN }} # To bypass public API rate limiting, see https://github.com/codecov/codecov-action/issues/557
+      - name: Upload XML coverage
+        uses: actions/upload-artifact@v3
+        with:
+          name: coverage-xml
+          path: coverage-xml/
+      - name: Upload HTML coverage
+        uses: actions/upload-artifact@v3
+        with:
+          name: coverage-html
+          path: coverage-html/
