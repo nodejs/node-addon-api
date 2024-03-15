@@ -2,7 +2,7 @@ name: Coverage Linux
 
 on:
   pull_request:
-    types: [opened, synchronize, reopened, ready_for_review]
+    types: [opened, synchronize, reopened]
     paths-ignore:
       - '**.md'
       - benchmark/**
@@ -32,7 +32,6 @@ permissions:
 
 jobs:
   coverage-linux:
-    if: github.event.pull_request.draft == false
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11  # v4.1.1
@@ -58,21 +57,8 @@ jobs:
       - name: Generate coverage report (XML)
         run: |
           npm run report-coverage-xml
-      - name: Generate coverage report (HTML)
-        run: |
-          npm run report-coverage-html
       - name: Upload
         uses: codecov/codecov-action@54bcd8715eee62d40e33596ef5e8f0f48dbbccab  # v4.1.0
         with:
           directory: ./coverage-xml
           token: ${{ secrets.CODECOV_TOKEN }} # To bypass public API rate limiting, see https://github.com/codecov/codecov-action/issues/557
-      - name: Upload XML coverage
-        uses: actions/upload-artifact@v3
-        with:
-          name: coverage-xml
-          path: coverage-xml/
-      - name: Upload HTML coverage
-        uses: actions/upload-artifact@v3
-        with:
-          name: coverage-html
-          path: coverage-html/
