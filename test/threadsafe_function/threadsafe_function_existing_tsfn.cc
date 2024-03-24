@@ -86,7 +86,7 @@ static Value TestCall(const CallbackInfo& info) {
                                       0,
                                       1,
                                       nullptr, /*finalize data*/
-                                      FinalizeCB,
+                                      TSFN_FINALIZER(FinalizeCB),
                                       testContext,
                                       hasData ? CallJSWithData : CallJSNoData,
                                       &testContext->tsfn);
