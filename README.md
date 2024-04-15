@@ -1,5 +1,7 @@
 # **node-addon-api module**
 
+[![codecov](https://codecov.io/gh/nodejs/node-addon-api/branch/main/graph/badge.svg)](https://app.codecov.io/gh/nodejs/node-addon-api/tree/main)
+
 [![NPM](https://nodei.co/npm/node-addon-api.png?downloads=true&downloadRank=true)](https://nodei.co/npm/node-addon-api/) [![NPM](https://nodei.co/npm-dl/node-addon-api.png?months=6&height=1)](https://nodei.co/npm/node-addon-api/)
 
 This module contains  **header-only C++ wrapper classes** which simplify
