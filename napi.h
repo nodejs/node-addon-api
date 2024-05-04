@@ -1268,7 +1268,7 @@ class TypedArrayOf : public TypedArray {
       napi_typedarray_type type =
           TypedArray::TypedArrayTypeForPrimitiveType<T>()
 #else
-        napi_typedarray_type type
+      napi_typedarray_type type
 #endif
       ///< Type of array, if different from the default array type for the
       ///< template parameter T.
@@ -1291,7 +1291,7 @@ class TypedArrayOf : public TypedArray {
       napi_typedarray_type type =
           TypedArray::TypedArrayTypeForPrimitiveType<T>()
 #else
-        napi_typedarray_type type
+      napi_typedarray_type type
 #endif
       ///< Type of array, if different from the default array type for the
       ///< template parameter T.
@@ -1381,8 +1381,8 @@ class DataView : public Object {
   template <typename T>
   void WriteData(size_t byteOffset, T value) const;
 
-  void* _data;
-  size_t _length;
+  void* _data{};
+  size_t _length{};
 };
 
 class Function : public Object {
@@ -1554,8 +1554,8 @@ class Reference {
   ~Reference();
 
   // A reference can be moved but cannot be copied.
-  Reference(Reference<T>&& other);
-  Reference<T>& operator=(Reference<T>&& other);
+  Reference(Reference<T>&& other) NAPI_NOEXCEPT;
+  Reference<T>& operator=(Reference<T>&& other) NAPI_NOEXCEPT;
   NAPI_DISALLOW_ASSIGN(Reference<T>)
 
   operator napi_ref() const;
@@ -1601,8 +1601,8 @@ class ObjectReference : public Reference<Object> {
   // A reference can be moved but cannot be copied.
   ObjectReference(Reference<Object>&& other);
   ObjectReference& operator=(Reference<Object>&& other);
-  ObjectReference(ObjectReference&& other);
-  ObjectReference& operator=(ObjectReference&& other);
+  ObjectReference(ObjectReference&& other) NAPI_NOEXCEPT;
+  ObjectReference& operator=(ObjectReference&& other) NAPI_NOEXCEPT;
   NAPI_DISALLOW_ASSIGN(ObjectReference)
 
   MaybeOrValue<Napi::Value> Get(const char* utf8name) const;
@@ -1637,10 +1637,10 @@ class FunctionReference : public Reference<Function> {
   FunctionReference(napi_env env, napi_ref ref);
 
   // A reference can be moved but cannot be copied.
-  FunctionReference(Reference<Function>&& other);
-  FunctionReference& operator=(Reference<Function>&& other);
-  FunctionReference(FunctionReference&& other);
-  FunctionReference& operator=(FunctionReference&& other);
+  FunctionReference(Reference<Function>&& other) NAPI_NOEXCEPT;
+  FunctionReference& operator=(Reference<Function>&& other) NAPI_NOEXCEPT;
+  FunctionReference(FunctionReference&& other) NAPI_NOEXCEPT;
+  FunctionReference& operator=(FunctionReference&& other) NAPI_NOEXCEPT;
   NAPI_DISALLOW_ASSIGN_COPY(FunctionReference)
 
   MaybeOrValue<Napi::Value> operator()(
@@ -1715,7 +1715,7 @@ FunctionReference Persistent(Function value);
 ///
 /// Following C++ statements will not be executed. The exception will bubble
 /// up as a C++ exception of type `Napi::Error`, until it is either caught
-/// while still in C++, or else automatically propataged as a JavaScript
+/// while still in C++, or else automatically propagated as a JavaScript
 /// exception when the callback returns to JavaScript.
 ///
 /// #### Example 2A - Propagating a Node-API C++ exception:
@@ -1801,8 +1801,8 @@ class Error : public ObjectReference
   Error(napi_env env, napi_value value);
 
   // An error can be moved or copied.
-  Error(Error&& other);
-  Error& operator=(Error&& other);
+  Error(Error&& other) NAPI_NOEXCEPT;
+  Error& operator=(Error&& other) NAPI_NOEXCEPT;
   Error(const Error&);
   Error& operator=(const Error&);
 
@@ -1888,7 +1888,7 @@ class CallbackInfo {
   napi_value _this;
   size_t _argc;
   napi_value* _argv;
-  napi_value _staticArgs[6];
+  napi_value _staticArgs[6]{};
   napi_value* _dynamicArgs;
   void* _data;
 };
@@ -2507,8 +2507,8 @@ class AsyncContext {
                         const Object& resource);
   virtual ~AsyncContext();
 
-  AsyncContext(AsyncContext&& other);
-  AsyncContext& operator=(AsyncContext&& other);
+  AsyncContext(AsyncContext&& other) NAPI_NOEXCEPT;
+  AsyncContext& operator=(AsyncContext&& other) NAPI_NOEXCEPT;
   NAPI_DISALLOW_ASSIGN_COPY(AsyncContext)
 
   operator napi_async_context() const;
