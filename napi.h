@@ -1554,8 +1554,8 @@ class Reference {
   ~Reference();
 
   // A reference can be moved but cannot be copied.
-  Reference(Reference<T>&& other) NAPI_NOEXCEPT;
-  Reference<T>& operator=(Reference<T>&& other) NAPI_NOEXCEPT;
+  Reference(Reference<T>&& other);
+  Reference<T>& operator=(Reference<T>&& other);
   NAPI_DISALLOW_ASSIGN(Reference<T>)
 
   operator napi_ref() const;
@@ -1601,8 +1601,8 @@ class ObjectReference : public Reference<Object> {
   // A reference can be moved but cannot be copied.
   ObjectReference(Reference<Object>&& other);
   ObjectReference& operator=(Reference<Object>&& other);
-  ObjectReference(ObjectReference&& other) NAPI_NOEXCEPT;
-  ObjectReference& operator=(ObjectReference&& other) NAPI_NOEXCEPT;
+  ObjectReference(ObjectReference&& other);
+  ObjectReference& operator=(ObjectReference&& other);
   NAPI_DISALLOW_ASSIGN(ObjectReference)
 
   MaybeOrValue<Napi::Value> Get(const char* utf8name) const;
@@ -1637,10 +1637,10 @@ class FunctionReference : public Reference<Function> {
   FunctionReference(napi_env env, napi_ref ref);
 
   // A reference can be moved but cannot be copied.
-  FunctionReference(Reference<Function>&& other) NAPI_NOEXCEPT;
-  FunctionReference& operator=(Reference<Function>&& other) NAPI_NOEXCEPT;
-  FunctionReference(FunctionReference&& other) NAPI_NOEXCEPT;
-  FunctionReference& operator=(FunctionReference&& other) NAPI_NOEXCEPT;
+  FunctionReference(Reference<Function>&& other);
+  FunctionReference& operator=(Reference<Function>&& other);
+  FunctionReference(FunctionReference&& other);
+  FunctionReference& operator=(FunctionReference&& other);
   NAPI_DISALLOW_ASSIGN_COPY(FunctionReference)
 
   MaybeOrValue<Napi::Value> operator()(
@@ -1801,8 +1801,8 @@ class Error : public ObjectReference
   Error(napi_env env, napi_value value);
 
   // An error can be moved or copied.
-  Error(Error&& other) NAPI_NOEXCEPT;
-  Error& operator=(Error&& other) NAPI_NOEXCEPT;
+  Error(Error&& other);
+  Error& operator=(Error&& other);
   Error(const Error&);
   Error& operator=(const Error&);
 
@@ -2507,8 +2507,8 @@ class AsyncContext {
                         const Object& resource);
   virtual ~AsyncContext();
 
-  AsyncContext(AsyncContext&& other) NAPI_NOEXCEPT;
-  AsyncContext& operator=(AsyncContext&& other) NAPI_NOEXCEPT;
+  AsyncContext(AsyncContext&& other);
+  AsyncContext& operator=(AsyncContext&& other);
   NAPI_DISALLOW_ASSIGN_COPY(AsyncContext)
 
   operator napi_async_context() const;

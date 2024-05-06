@@ -2988,10 +2988,9 @@ inline Object Error::Value() const {
   return Object(_env, refValue);
 }
 
-inline Error::Error(Error&& other) NAPI_NOEXCEPT
-    : ObjectReference(std::move(other)) {}
+inline Error::Error(Error&& other) : ObjectReference(std::move(other)) {}
 
-inline Error& Error::operator=(Error&& other) NAPI_NOEXCEPT {
+inline Error& Error::operator=(Error&& other) {
   static_cast<Reference<Object>*>(this)->operator=(std::move(other));
   return *this;
 }
@@ -3200,7 +3199,7 @@ inline Reference<T>::~Reference() {
 }
 
 template <typename T>
-inline Reference<T>::Reference(Reference<T>&& other) NAPI_NOEXCEPT
+inline Reference<T>::Reference(Reference<T>&& other)
     : _env(other._env),
       _ref(other._ref),
       _suppressDestruct(other._suppressDestruct) {
@@ -3210,8 +3209,7 @@ inline Reference<T>::Reference(Reference<T>&& other) NAPI_NOEXCEPT
 }
 
 template <typename T>
-inline Reference<T>& Reference<T>::operator=(Reference<T>&& other)
-    NAPI_NOEXCEPT {
+inline Reference<T>& Reference<T>::operator=(Reference<T>&& other) {
   Reset();
   _env = other._env;
   _ref = other._ref;
@@ -3361,11 +3359,10 @@ inline ObjectReference& ObjectReference::operator=(Reference<Object>&& other) {
   return *this;
 }
 
-inline ObjectReference::ObjectReference(ObjectReference&& other) NAPI_NOEXCEPT
+inline ObjectReference::ObjectReference(ObjectReference&& other)
     : Reference<Object>(std::move(other)) {}
 
-inline ObjectReference& ObjectReference::operator=(ObjectReference&& other)
-    NAPI_NOEXCEPT {
+inline ObjectReference& ObjectReference::operator=(ObjectReference&& other) {
   static_cast<Reference<Object>*>(this)->operator=(std::move(other));
   return *this;
 }
@@ -3529,19 +3526,19 @@ inline FunctionReference::FunctionReference(napi_env env, napi_ref ref)
     : Reference<Function>(env, ref) {}
 
 inline FunctionReference::FunctionReference(Reference<Function>&& other)
-    NAPI_NOEXCEPT : Reference<Function>(std::move(other)) {}
+    : Reference<Function>(std::move(other)) {}
 
 inline FunctionReference& FunctionReference::operator=(
-    Reference<Function>&& other) NAPI_NOEXCEPT {
+    Reference<Function>&& other) {
   static_cast<Reference<Function>*>(this)->operator=(std::move(other));
   return *this;
 }
 
 inline FunctionReference::FunctionReference(FunctionReference&& other)
-    NAPI_NOEXCEPT : Reference<Function>(std::move(other)) {}
+    : Reference<Function>(std::move(other)) {}
 
 inline FunctionReference& FunctionReference::operator=(
-    FunctionReference&& other) NAPI_NOEXCEPT {
+    FunctionReference&& other) {
   static_cast<Reference<Function>*>(this)->operator=(std::move(other));
   return *this;
 }
@@ -5020,15 +5017,14 @@ inline AsyncContext::~AsyncContext() {
   }
 }
 
-inline AsyncContext::AsyncContext(AsyncContext&& other) NAPI_NOEXCEPT {
+inline AsyncContext::AsyncContext(AsyncContext&& other) {
   _env = other._env;
   other._env = nullptr;
   _context = other._context;
   other._context = nullptr;
 }
 
-inline AsyncContext& AsyncContext::operator=(AsyncContext&& other)
-    NAPI_NOEXCEPT {
+inline AsyncContext& AsyncContext::operator=(AsyncContext&& other) {
   _env = other._env;
   other._env = nullptr;
   _context = other._context;
