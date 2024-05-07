@@ -51,15 +51,17 @@ class TestWorkerWithUserDefRecv : public AsyncWorker {
 };
 
 // Using default std::allocator impl, but assuming user can define their own
-// alloc/dealloc methods
+// allocate/deallocate methods
 class CustomAllocWorker : public AsyncWorker {
+  using Allocator = std::allocator<CustomAllocWorker>;
+
  public:
   CustomAllocWorker(Function& cb) : AsyncWorker(cb){};
   static void DoWork(const CallbackInfo& info) {
     Function cb = info[0].As<Function>();
-    std::allocator<CustomAllocWorker> create_alloc;
-    CustomAllocWorker* newWorker = create_alloc.allocate(1);
-    create_alloc.construct(newWorker, cb);
+    Allocator allocator;
+    CustomAllocWorker* newWorker = allocator.allocate(1);
+    std::allocator_traits<Allocator>::construct(allocator, newWorker, cb);
     newWorker->Queue();
   }
 
@@ -67,9 +69,9 @@ class CustomAllocWorker : public AsyncWorker {
   void Execute() override {}
   void Destroy() override {
     assert(this->_secretVal == 24);
-    std::allocator<CustomAllocWorker> deallocer;
-    deallocer.destroy(this);
-    deallocer.deallocate(this, 1);
+    Allocator allocator;
+    std::allocator_traits<Allocator>::destroy(allocator, this);
+    allocator.deallocate(this, 1);
   }
 
  private:
@@ -108,7 +110,7 @@ class TestWorker : public AsyncWorker {
       : AsyncWorker(cb, resource_name, resource) {}
   TestWorker(Function cb, const char* resource_name)
       : AsyncWorker(cb, resource_name) {}
-  bool _succeed;
+  bool _succeed{};
 };
 
 class TestWorkerWithResult : public AsyncWorker {
@@ -143,7 +145,7 @@ class TestWorkerWithResult : public AsyncWorker {
                        const char* resource_name,
                        const Object& resource)
       : AsyncWorker(cb, resource_name, resource) {}
-  bool _succeed;
+  bool _succeed{};
 };
 
 class TestWorkerNoCallback : public AsyncWorker {
@@ -194,7 +196,7 @@ class TestWorkerNoCallback : public AsyncWorker {
       : AsyncWorker(env, resource_name, resource),
         _deferred(Napi::Promise::Deferred::New(env)) {}
   Promise::Deferred _deferred;
-  bool _succeed;
+  bool _succeed{};
 };
 
 class EchoWorker : public AsyncWorker {

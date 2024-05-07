@@ -1268,7 +1268,7 @@ class TypedArrayOf : public TypedArray {
       napi_typedarray_type type =
           TypedArray::TypedArrayTypeForPrimitiveType<T>()
 #else
-        napi_typedarray_type type
+      napi_typedarray_type type
 #endif
       ///< Type of array, if different from the default array type for the
       ///< template parameter T.
@@ -1291,7 +1291,7 @@ class TypedArrayOf : public TypedArray {
       napi_typedarray_type type =
           TypedArray::TypedArrayTypeForPrimitiveType<T>()
 #else
-        napi_typedarray_type type
+      napi_typedarray_type type
 #endif
       ///< Type of array, if different from the default array type for the
       ///< template parameter T.
@@ -1381,8 +1381,8 @@ class DataView : public Object {
   template <typename T>
   void WriteData(size_t byteOffset, T value) const;
 
-  void* _data;
-  size_t _length;
+  void* _data{};
+  size_t _length{};
 };
 
 class Function : public Object {
@@ -1715,7 +1715,7 @@ FunctionReference Persistent(Function value);
 ///
 /// Following C++ statements will not be executed. The exception will bubble
 /// up as a C++ exception of type `Napi::Error`, until it is either caught
-/// while still in C++, or else automatically propataged as a JavaScript
+/// while still in C++, or else automatically propagated as a JavaScript
 /// exception when the callback returns to JavaScript.
 ///
 /// #### Example 2A - Propagating a Node-API C++ exception:
@@ -1888,7 +1888,7 @@ class CallbackInfo {
   napi_value _this;
   size_t _argc;
   napi_value* _argv;
-  napi_value _staticArgs[6];
+  napi_value _staticArgs[6]{};
   napi_value* _dynamicArgs;
   void* _data;
 };

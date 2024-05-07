@@ -4891,7 +4891,10 @@ inline napi_value ObjectWrap<T>::WrappedMethod(
     napi_env env, napi_callback_info info) NAPI_NOEXCEPT {
   return details::WrapCallback([&] {
     const CallbackInfo cbInfo(env, info);
-    method(cbInfo, cbInfo[0]);
+    // MSVC requires to copy 'method' function pointer to a local variable
+    // before invoking it.
+    auto m = method;
+    m(cbInfo, cbInfo[0]);
     return nullptr;
   });
 }
