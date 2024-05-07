@@ -12,7 +12,7 @@ if (!dir) {
   process.exit(1);
 }
 
-const NodeApiVersion = require('../package.json').version;
+const NodeApiVersion = require('../').version;
 
 const disable = args[1];
 let ConfigFileOperations;
