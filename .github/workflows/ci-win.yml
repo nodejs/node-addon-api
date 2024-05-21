@@ -13,7 +13,7 @@ jobs:
     timeout-minutes: 30
     strategy:
       matrix:
-        node-version: [ 18.x, 20.x, 21.x ]
+        node-version: [ 18.x, 20.x, 21.x, 22.x ]
         architecture: [x64, x86]
         os:
           - windows-2019
