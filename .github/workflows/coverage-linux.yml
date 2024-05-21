@@ -58,7 +58,7 @@ jobs:
         run: |
           npm run report-coverage-xml
       - name: Upload
-        uses: codecov/codecov-action@5ecb98a3c6b747ed38dc09f787459979aebb39be  # v4.3.1
+        uses: codecov/codecov-action@125fc84a9a348dbcf27191600683ec096ec9021c  # v4.4.1
         with:
           directory: ./coverage-xml
           token: ${{ secrets.CODECOV_TOKEN }} # To bypass public API rate limiting, see https://github.com/codecov/codecov-action/issues/557
