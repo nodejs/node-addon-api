@@ -9,6 +9,8 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 // Note: Do not include this file directly! Include "napi.h" instead.
+// This should be a no-op and is intended for better IDE integration.
+#include "napi.h"
 
 #include <algorithm>
 #include <cstring>
@@ -336,6 +338,15 @@ struct AccessorCallbackData {
   Setter setterCallback;
   void* data;
 };
+
+// Debugging-purpose C++-style variant of sprintf().
+template <typename... Args>
+inline std::string SPrintF(const char* format, Args&&... args) {
+  char buf[256];
+  int ret = snprintf(buf, 256, format, args...);
+  NAPI_CHECK(ret >= 0, "SPrintF", "Malformed format");
+  return buf;
+}
 
 }  // namespace details
 
@@ -805,8 +816,7 @@ inline void Boolean::CheckCast(napi_env env, napi_value value) {
   napi_valuetype type;
   napi_status status = napi_typeof(env, value, &type);
   NAPI_CHECK(status == napi_ok, "Boolean::CheckCast", "napi_typeof failed");
-  NAPI_CHECK(
-      type == napi_boolean, "Boolean::CheckCast", "value is not napi_boolean");
+  NAPI_INTERNAL_CHECK_EQ(type, napi_boolean, "%d", "Boolean::CheckCast");
 }
 
 inline Boolean::Boolean() : Napi::Value() {}
@@ -842,8 +852,7 @@ inline void Number::CheckCast(napi_env env, napi_value value) {
   napi_valuetype type;
   napi_status status = napi_typeof(env, value, &type);
   NAPI_CHECK(status == napi_ok, "Number::CheckCast", "napi_typeof failed");
-  NAPI_CHECK(
-      type == napi_number, "Number::CheckCast", "value is not napi_number");
+  NAPI_INTERNAL_CHECK_EQ(type, napi_number, "%d", "Number::CheckCast");
 }
 
 inline Number::Number() : Value() {}
@@ -938,8 +947,7 @@ inline void BigInt::CheckCast(napi_env env, napi_value value) {
   napi_valuetype type;
   napi_status status = napi_typeof(env, value, &type);
   NAPI_CHECK(status == napi_ok, "BigInt::CheckCast", "napi_typeof failed");
-  NAPI_CHECK(
-      type == napi_bigint, "BigInt::CheckCast", "value is not napi_bigint");
+  NAPI_INTERNAL_CHECK_EQ(type, napi_bigint, "%d", "BigInt::CheckCast");
 }
 
 inline BigInt::BigInt() : Value() {}
@@ -1025,9 +1033,10 @@ inline void Name::CheckCast(napi_env env, napi_value value) {
   napi_valuetype type;
   napi_status status = napi_typeof(env, value, &type);
   NAPI_CHECK(status == napi_ok, "Name::CheckCast", "napi_typeof failed");
-  NAPI_CHECK(type == napi_string || type == napi_symbol,
-             "Name::CheckCast",
-             "value is not napi_string or napi_symbol");
+  NAPI_INTERNAL_CHECK(type == napi_string || type == napi_symbol,
+                      "Name::CheckCast",
+                      "value is not napi_string or napi_symbol, got %d.",
+                      type);
 }
 
 inline Name::Name() : Value() {}
@@ -1094,8 +1103,7 @@ inline void String::CheckCast(napi_env env, napi_value value) {
   napi_valuetype type;
   napi_status status = napi_typeof(env, value, &type);
   NAPI_CHECK(status == napi_ok, "String::CheckCast", "napi_typeof failed");
-  NAPI_CHECK(
-      type == napi_string, "String::CheckCast", "value is not napi_string");
+  NAPI_INTERNAL_CHECK_EQ(type, napi_string, "%d", "String::CheckCast");
 }
 
 inline String::String() : Name() {}
@@ -1231,8 +1239,7 @@ inline void Symbol::CheckCast(napi_env env, napi_value value) {
   napi_valuetype type;
   napi_status status = napi_typeof(env, value, &type);
   NAPI_CHECK(status == napi_ok, "Symbol::CheckCast", "napi_typeof failed");
-  NAPI_CHECK(
-      type == napi_symbol, "Symbol::CheckCast", "value is not napi_symbol");
+  NAPI_INTERNAL_CHECK_EQ(type, napi_symbol, "%d", "Symbol::CheckCast");
 }
 
 inline Symbol::Symbol() : Name() {}
@@ -1403,8 +1410,7 @@ inline void Object::CheckCast(napi_env env, napi_value value) {
   napi_valuetype type;
   napi_status status = napi_typeof(env, value, &type);
   NAPI_CHECK(status == napi_ok, "Object::CheckCast", "napi_typeof failed");
-  NAPI_CHECK(
-      type == napi_object, "Object::CheckCast", "value is not napi_object");
+  NAPI_INTERNAL_CHECK_EQ(type, napi_object, "%d", "Object::CheckCast");
 }
 
 inline Object::Object() : TypeTaggable() {}
@@ -1814,9 +1820,7 @@ inline void External<T>::CheckCast(napi_env env, napi_value value) {
   napi_valuetype type;
   napi_status status = napi_typeof(env, value, &type);
   NAPI_CHECK(status == napi_ok, "External::CheckCast", "napi_typeof failed");
-  NAPI_CHECK(type == napi_external,
-             "External::CheckCast",
-             "value is not napi_external");
+  NAPI_INTERNAL_CHECK_EQ(type, napi_external, "%d", "External::CheckCast");
 }
 
 template <typename T>
@@ -2270,12 +2274,13 @@ inline void TypedArrayOf<T>::CheckCast(napi_env env, napi_value value) {
              "TypedArrayOf::CheckCast",
              "napi_is_typedarray failed");
 
-  NAPI_CHECK(
+  NAPI_INTERNAL_CHECK(
       (type == TypedArrayTypeForPrimitiveType<T>() ||
        (type == napi_uint8_clamped_array && std::is_same<T, uint8_t>::value)),
       "TypedArrayOf::CheckCast",
-      "Array type must match the template parameter. (Uint8 arrays may "
-      "optionally have the \"clamped\" array type.)");
+      "Array type must match the template parameter, (Uint8 arrays may "
+      "optionally have the \"clamped\" array type.), got %d.",
+      type);
 }
 
 template <typename T>
@@ -2456,9 +2461,7 @@ inline void Function::CheckCast(napi_env env, napi_value value) {
   napi_valuetype type;
   napi_status status = napi_typeof(env, value, &type);
   NAPI_CHECK(status == napi_ok, "Function::CheckCast", "napi_typeof failed");
-  NAPI_CHECK(type == napi_function,
-             "Function::CheckCast",
-             "value is not napi_function");
+  NAPI_INTERNAL_CHECK_EQ(type, napi_function, "%d", "Function::CheckCast");
 }
 
 inline Function::Function() : Object() {}

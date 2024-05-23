@@ -142,6 +142,23 @@ static_assert(sizeof(char16_t) == sizeof(wchar_t),
     }                                                                          \
   } while (0)
 
+// Internal check helper. Be careful that the formatted message length should be
+// max 255 size and null terminated.
+#define NAPI_INTERNAL_CHECK(expr, location, ...)                               \
+  do {                                                                         \
+    if (!(expr)) {                                                             \
+      std::string msg = Napi::details::SPrintF(__VA_ARGS__);                   \
+      Napi::Error::Fatal(location " " #expr, msg.c_str());                     \
+    }                                                                          \
+  } while (0)
+
+#define NAPI_INTERNAL_CHECK_EQ(actual, expected, value_format, location)       \
+  NAPI_INTERNAL_CHECK((actual) == (expected),                                  \
+                      location,                                                \
+                      "Expected " #actual " to be equal to " #expected         \
+                      ", but got " value_format ".",                           \
+                      actual)
+
 #define NAPI_FATAL_IF_FAILED(status, location, message)                        \
   NAPI_CHECK((status) == napi_ok, location, message)
 
