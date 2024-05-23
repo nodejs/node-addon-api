@@ -18,6 +18,7 @@ jobs:
         os:
           - windows-2019
           - windows-2022
+      fail-fast: false  # Don't cancel other jobs when one job fails
     runs-on: ${{ matrix.os }}
     steps:
     - uses: actions/checkout@a5ac7e51b41094c92402da3b24376905380afc29 # v4.1.6
