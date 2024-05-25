@@ -51,11 +51,14 @@ Value CreateExternalBufferWithFinalize(const CallbackInfo& info) {
 
   uint16_t* data = new uint16_t[testLength];
 
-  Buffer<uint16_t> buffer = Buffer<uint16_t>::New(
-      info.Env(), data, testLength, [](Env /*env*/, uint16_t* finalizeData) {
-        delete[] finalizeData;
-        finalizeCount++;
-      });
+  Buffer<uint16_t> buffer =
+      Buffer<uint16_t>::New(info.Env(),
+                            data,
+                            testLength,
+                            [](NogcEnv /*env*/, uint16_t* finalizeData) {
+                              delete[] finalizeData;
+                              finalizeCount++;
+                            });
 
   if (buffer.Length() != testLength) {
     Error::New(info.Env(), "Incorrect buffer length.")
@@ -83,7 +86,7 @@ Value CreateExternalBufferWithFinalizeHint(const CallbackInfo& info) {
       info.Env(),
       data,
       testLength,
-      [](Env /*env*/, uint16_t* finalizeData, char* /*finalizeHint*/) {
+      [](NogcEnv /*env*/, uint16_t* finalizeData, char* /*finalizeHint*/) {
         delete[] finalizeData;
         finalizeCount++;
       },

@@ -14,10 +14,11 @@ Value CreateExternal(const CallbackInfo& info) {
 
 Value CreateExternalWithFinalize(const CallbackInfo& info) {
   finalizeCount = 0;
-  return External<int>::New(info.Env(), new int(1), [](Env /*env*/, int* data) {
-    delete data;
-    finalizeCount++;
-  });
+  return External<int>::New(
+      info.Env(), new int(1), [](NogcEnv /*env*/, int* data) {
+        delete data;
+        finalizeCount++;
+      });
 }
 
 Value CreateExternalWithFinalizeHint(const CallbackInfo& info) {
@@ -26,7 +27,7 @@ Value CreateExternalWithFinalizeHint(const CallbackInfo& info) {
   return External<int>::New(
       info.Env(),
       new int(1),
-      [](Env /*env*/, int* data, char* /*hint*/) {
+      [](NogcEnv /*env*/, int* data, char* /*hint*/) {
         delete data;
         finalizeCount++;
       },
@@ -55,6 +56,21 @@ Value GetFinalizeCount(const CallbackInfo& info) {
 }
 
 Value CreateExternalWithFinalizeException(const CallbackInfo& info) {
+#ifdef NODE_API_EXPERIMENTAL_HAS_POST_FINALIZER
+  auto o = External<int>::New(
+      info.Env(), new int(1), [](NogcEnv /*env*/, int* data) { delete data; });
+
+  info.Env().AddPostFinalizer([](Env env) {
+    Error error = Error::New(env, "Finalizer exception");
+#ifdef NAPI_CPP_EXCEPTIONS
+    throw error;
+#else
+    error.ThrowAsJavaScriptException();
+#endif
+  });
+
+  return o;
+#else
   return External<int>::New(info.Env(), new int(1), [](Env env, int* data) {
     Error error = Error::New(env, "Finalizer exception");
     delete data;
@@ -64,8 +80,8 @@ Value CreateExternalWithFinalizeException(const CallbackInfo& info) {
       error.ThrowAsJavaScriptException();
 #endif
   });
+#endif
 }
-
 }  // end anonymous namespace
 
 Object InitExternal(Env env) {
