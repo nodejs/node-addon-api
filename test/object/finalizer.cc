@@ -7,7 +7,11 @@ static int dummy;
 Value AddFinalizer(const CallbackInfo& info) {
   ObjectReference* ref = new ObjectReference;
   *ref = Persistent(Object::New(info.Env()));
+#ifdef NODE_API_EXPERIMENTAL_HAS_POST_FINALIZER
+  info.Env().AddPostFinalizer(
+#else
   info[0].As<Object>().AddFinalizer(
+#endif
       [](Napi::Env /*env*/, ObjectReference* ref) {
         ref->Set("finalizerCalled", true);
         delete ref;
@@ -19,7 +23,11 @@ Value AddFinalizer(const CallbackInfo& info) {
 Value AddFinalizerWithHint(const CallbackInfo& info) {
   ObjectReference* ref = new ObjectReference;
   *ref = Persistent(Object::New(info.Env()));
+#ifdef NODE_API_EXPERIMENTAL_HAS_POST_FINALIZER
+  info.Env().AddPostFinalizer(
+#else
   info[0].As<Object>().AddFinalizer(
+#endif
       [](Napi::Env /*env*/, ObjectReference* ref, int* dummy_p) {
         ref->Set("finalizerCalledWithCorrectHint", dummy_p == &dummy);
         delete ref;

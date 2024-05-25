@@ -30,7 +30,22 @@ class Test : public Napi::ObjectWrap<Test> {
  public:
   Test(const Napi::CallbackInfo& info) : Napi::ObjectWrap<Test>(info) {
     if (info.Length() > 0) {
+#ifdef NODE_API_EXPERIMENTAL_HAS_POST_FINALIZER
+      info.Env().AddPostFinalizer(
+          [](Napi::Env env, Napi::FunctionReference* finalizeCb) {
+            if (finalizeCb->IsEmpty()) {
+              return;
+            }
+
+            finalizeCb->Call(env.Global(), {Napi::Boolean::New(env, true)});
+            finalizeCb->Unref();
+            delete finalizeCb;
+          },
+          new Napi::FunctionReference(
+              Napi::Persistent(info[0].As<Napi::Function>())));
+#else
       finalizeCb_ = Napi::Persistent(info[0].As<Napi::Function>());
+#endif
     }
     // Create an own instance property.
     info.This().As<Napi::Object>().DefineProperty(
@@ -50,7 +65,7 @@ class Test : public Napi::ObjectWrap<Test> {
         Env(),
         static_cast<uint8_t*>(malloc(1)),
         1,
-        [](Napi::Env, uint8_t* bufaddr) { free(bufaddr); }));
+        [](Napi::NogcEnv, uint8_t* bufaddr) { free(bufaddr); }));
   }
 
   static Napi::Value OwnPropertyGetter(const Napi::CallbackInfo& info) {
@@ -265,7 +280,12 @@ class Test : public Napi::ObjectWrap<Test> {
             }));
   }
 
-  void Finalize(Napi::Env env) {
+#ifdef NODE_API_EXPERIMENTAL_HAS_POST_FINALIZER
+  void Finalize(NODE_ADDON_API_NOGC_ENV_CLASS /*env*/) override {
+    // Intentionally blank to ensure `override` works correctly.
+  }
+#else
+  void Finalize(NODE_ADDON_API_NOGC_ENV_CLASS env) override {
     if (finalizeCb_.IsEmpty()) {
       return;
     }
@@ -273,6 +293,7 @@ class Test : public Napi::ObjectWrap<Test> {
     finalizeCb_.Call(env.Global(), {Napi::Boolean::New(env, true)});
     finalizeCb_.Unref();
   }
+#endif
 
  private:
   std::string value_;
