@@ -154,7 +154,10 @@ napi_value TemplatedCallback(napi_env env,
                              napi_callback_info info) NAPI_NOEXCEPT {
   return details::WrapCallback([&] {
     CallbackInfo cbInfo(env, info);
-    return Callback(cbInfo);
+    // MSVC requires to copy 'Callback' function pointer to a local variable
+    // before invoking it.
+    auto callback = Callback;
+    return callback(cbInfo);
   });
 }
 
