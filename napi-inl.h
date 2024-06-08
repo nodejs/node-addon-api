@@ -3244,15 +3244,19 @@ inline Reference<T>::Reference(napi_env env, napi_ref ref)
 
 template <typename T>
 inline Reference<T>::~Reference() {
-#ifndef NODE_API_EXPERIMENTAL_HAS_POST_FINALIZER
   if (_ref != nullptr) {
     if (!_suppressDestruct) {
+#ifdef NODE_API_EXPERIMENTAL_HAS_POST_FINALIZER
+      Env().AddPostFinalizer(
+          [](Napi::Env env, napi_ref ref) { napi_delete_reference(env, ref); },
+          _ref);
+#else
       napi_delete_reference(_env, _ref);
+#endif
     }
 
     _ref = nullptr;
   }
-#endif  // NODE_API_EXPERIMENTAL_HAS_POST_FINALIZER
 }
 
 template <typename T>

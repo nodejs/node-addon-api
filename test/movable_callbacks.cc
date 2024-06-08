@@ -1,4 +1,3 @@
-#include <iostream>
 #include "napi.h"
 
 using namespace Napi;
