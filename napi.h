@@ -345,7 +345,7 @@ class NogcEnv {
   bool operator==(const NogcEnv& other) const {
     return _env == other._env;
   };
-  bool operator==(const std::nullptr_t& /*other*/) const {
+  bool operator==(std::nullptr_t /*other*/) const {
     return _env == nullptr;
   };
 
