@@ -12,13 +12,16 @@ jobs:
   test:
     timeout-minutes: 30
     strategy:
+      fail-fast: false
       matrix:
-        node-version: [ 18.x, 20.x, 21.x, 22.x ]
+        node-version:
+          - 18.x
+          - 20.x
+          - 22.x
         architecture: [x64, x86]
         os:
           - windows-2019
           - windows-2022
-      fail-fast: false  # Don't cancel other jobs when one job fails
     runs-on: ${{ matrix.os }}
     steps:
     - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
