@@ -13,6 +13,7 @@
 #include "napi.h"
 
 #include <algorithm>
+#include <cstdarg>
 #include <cstring>
 #if NAPI_HAS_THREADS
 #include <mutex>
@@ -340,12 +341,15 @@ struct AccessorCallbackData {
 };
 
 // Debugging-purpose C++-style variant of sprintf().
-template <typename... Args>
-inline std::string SPrintF(const char* format, Args&&... args) {
-  char buf[256];
-  int ret = snprintf(buf, 256, format, args...);
-  NAPI_CHECK(ret >= 0, "SPrintF", "Malformed format");
-  return buf;
+inline std::string StringFormat(const char* format, ...) {
+  std::string result;
+  va_list args;
+  va_start(args, format);
+  int len = vsnprintf(nullptr, 0, format, args);
+  result.resize(len);
+  vsnprintf(&result[0], len + 1, format, args);
+  va_end(args);
+  return result;
 }
 
 }  // namespace details

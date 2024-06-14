@@ -147,17 +147,20 @@ static_assert(sizeof(char16_t) == sizeof(wchar_t),
 #define NAPI_INTERNAL_CHECK(expr, location, ...)                               \
   do {                                                                         \
     if (!(expr)) {                                                             \
-      std::string msg = Napi::details::SPrintF(__VA_ARGS__);                   \
-      Napi::Error::Fatal(location " " #expr, msg.c_str());                     \
+      std::string msg = Napi::details::StringFormat(__VA_ARGS__);              \
+      Napi::Error::Fatal(location, msg.c_str());                               \
     }                                                                          \
   } while (0)
 
 #define NAPI_INTERNAL_CHECK_EQ(actual, expected, value_format, location)       \
-  NAPI_INTERNAL_CHECK((actual) == (expected),                                  \
-                      location,                                                \
-                      "Expected " #actual " to be equal to " #expected         \
-                      ", but got " value_format ".",                           \
-                      actual)
+  do {                                                                         \
+    auto actual_value = (actual);                                              \
+    NAPI_INTERNAL_CHECK(actual_value == (expected),                            \
+                        location,                                              \
+                        "Expected " #actual " to be equal to " #expected       \
+                        ", but got " value_format ".",                         \
+                        actual_value);                                         \
+  } while (0)
 
 #define NAPI_FATAL_IF_FAILED(status, location, message)                        \
   NAPI_CHECK((status) == napi_ok, location, message)
