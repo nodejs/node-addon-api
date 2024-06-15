@@ -426,6 +426,34 @@ inline std::string StringFormat(const char* format, ...) {
   return result;
 }
 
+template <typename T>
+class HasGcFinalize {
+ private:
+  template <typename U, void (U::*)(Napi::Env)>
+  struct SFINAE {};
+  template <typename U>
+  static char test(SFINAE<U, &U::Finalize>*);
+  template <typename U>
+  static int test(...);
+
+ public:
+  static constexpr bool value = sizeof(test<T>(0)) == sizeof(char);
+};
+
+template <typename T>
+class HasNogcFinalize {
+ private:
+  template <typename U, void (U::*)(Napi::NogcEnv)>
+  struct SFINAE {};
+  template <typename U>
+  static char test(SFINAE<U, &U::Finalize>*);
+  template <typename U>
+  static int test(...);
+
+ public:
+  static constexpr bool value = sizeof(test<T>(0)) == sizeof(char);
+};
+
 }  // namespace details
 
 #ifndef NODE_ADDON_API_DISABLE_DEPRECATED
@@ -2821,7 +2849,7 @@ inline Buffer<T> Buffer<T>::NewOrCopy(napi_env env,
 #endif  // NODE_API_NO_EXTERNAL_BUFFERS_ALLOWED
     // If we can't create an external buffer, we'll just copy the data.
     Buffer<T> ret = Buffer<T>::Copy(env, data, length);
-    details::FinalizeData<T, Finalizer>::Wrapper(env, data, finalizeData);
+    details::FinalizeData<T, Finalizer>::WrapperGC(env, data, finalizeData);
     return ret;
 #ifndef NODE_API_NO_EXTERNAL_BUFFERS_ALLOWED
   }
@@ -2856,7 +2884,7 @@ inline Buffer<T> Buffer<T>::NewOrCopy(napi_env env,
 #endif
     // If we can't create an external buffer, we'll just copy the data.
     Buffer<T> ret = Buffer<T>::Copy(env, data, length);
-    details::FinalizeData<T, Finalizer, Hint>::WrapperWithHint(
+    details::FinalizeData<T, Finalizer, Hint>::WrapperGCWithHint(
         env, data, finalizeData);
     return ret;
 #ifndef NODE_API_NO_EXTERNAL_BUFFERS_ALLOWED
@@ -4890,7 +4918,10 @@ inline Value ObjectWrap<T>::OnCalledAsFunction(
 }
 
 template <typename T>
-inline void ObjectWrap<T>::Finalize(NODE_ADDON_API_NOGC_ENV_CLASS /*env*/) {}
+inline void ObjectWrap<T>::Finalize(Napi::Env /*env*/) {}
+
+template <typename T>
+inline void ObjectWrap<T>::Finalize(NogcEnv /*env*/) {}
 
 template <typename T>
 inline napi_value ObjectWrap<T>::ConstructorCallbackWrapper(
@@ -4980,16 +5011,41 @@ template <typename T>
 inline void ObjectWrap<T>::FinalizeCallback(NODE_ADDON_API_NOGC_ENV env,
                                             void* data,
                                             void* /*hint*/) {
-#ifndef NODE_API_EXPERIMENTAL_HAS_POST_FINALIZER
-  HandleScope scope(env);
-#endif
-
   T* instance = static_cast<T*>(data);
-  instance->Finalize(env);
 
   // Prevent ~ObjectWrap from calling napi_remove_wrap
   instance->_ref = nullptr;
 
+  if constexpr (details::HasNogcFinalize<T>::value) {
+#ifndef NODE_API_EXPERIMENTAL_HAS_POST_FINALIZER
+    HandleScope scope(env);
+#endif
+
+    instance->Finalize(Napi::NogcEnv(env));
+  }
+
+  if constexpr (details::HasGcFinalize<T>::value) {
+#ifdef NODE_API_EXPERIMENTAL_HAS_POST_FINALIZER
+    napi_status status =
+        node_api_post_finalizer(env, PostFinalizeCallback, data, nullptr);
+    NAPI_FATAL_IF_FAILED(status,
+                         "ObjectWrap<T>::FinalizeCallback",
+                         "node_api_post_finalizer failed");
+#else
+    HandleScope scope(env);
+    PostFinalizeCallback(env, data, static_cast<void*>(nullptr));
+#endif
+  } else {
+    delete instance;
+  }
+}
+
+template <typename T>
+inline void ObjectWrap<T>::PostFinalizeCallback(napi_env env,
+                                                void* data,
+                                                void* /*hint*/) {
+  T* instance = static_cast<T*>(data);
+  instance->Finalize(Napi::Env(env));
   delete instance;
 }
 

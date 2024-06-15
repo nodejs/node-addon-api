@@ -302,11 +302,9 @@ using MaybeOrValue = T;
 
 #if defined(NODE_API_EXPERIMENTAL_HAS_POST_FINALIZER)
 #define NODE_ADDON_API_NOGC_ENV node_api_nogc_env
-#define NODE_ADDON_API_NOGC_ENV_CLASS Napi::NogcEnv
 #define NODE_ADDON_API_NOGC_FINALIZER node_api_nogc_finalize
 #else
 #define NODE_ADDON_API_NOGC_ENV napi_env
-#define NODE_ADDON_API_NOGC_ENV_CLASS Napi::Env
 #define NODE_ADDON_API_NOGC_FINALIZER napi_finalize
 #endif
 
@@ -2457,7 +2455,8 @@ class ObjectWrap : public InstanceWrap<T>, public Reference<Object> {
       Napi::Value value,
       napi_property_attributes attributes = napi_default);
   static Napi::Value OnCalledAsFunction(const Napi::CallbackInfo& callbackInfo);
-  virtual void Finalize(NODE_ADDON_API_NOGC_ENV_CLASS env);
+  virtual void Finalize(Napi::Env env);
+  virtual void Finalize(NogcEnv env);
 
  private:
   using This = ObjectWrap<T>;
@@ -2475,6 +2474,9 @@ class ObjectWrap : public InstanceWrap<T>, public Reference<Object> {
   static void FinalizeCallback(NODE_ADDON_API_NOGC_ENV env,
                                void* data,
                                void* hint);
+
+  static void PostFinalizeCallback(napi_env env, void* data, void* hint);
+
   static Function DefineClass(Napi::Env env,
                               const char* utf8name,
                               const size_t props_count,
