@@ -190,6 +190,11 @@ napi_value TemplatedInstanceVoidCallback(napi_env env, napi_callback_info info)
 
 template <typename T, typename Finalizer, typename Hint = void>
 struct FinalizeData {
+#ifdef NODE_API_EXPERIMENTAL_HAS_POST_FINALIZER
+  template <typename F = Finalizer,
+            typename =
+                std::enable_if_t<std::is_invocable_v<F, node_api_nogc_env, T*>>>
+#endif
   static inline void Wrapper(NODE_ADDON_API_NOGC_ENV env,
                              void* data,
                              void* finalizeHint) NAPI_NOEXCEPT {
@@ -200,6 +205,26 @@ struct FinalizeData {
     });
   }
 
+#ifdef NODE_API_EXPERIMENTAL_HAS_POST_FINALIZER
+  template <typename F = Finalizer,
+            typename = std::enable_if_t<
+                !std::is_invocable_v<F, node_api_nogc_env, T*>>,
+            typename = void>
+  static inline void Wrapper(NODE_ADDON_API_NOGC_ENV env,
+                             void* data,
+                             void* finalizeHint) NAPI_NOEXCEPT {
+    napi_status status =
+        node_api_post_finalizer(env, WrapperGC, data, finalizeHint);
+    NAPI_FATAL_IF_FAILED(
+        status, "PostFinalizerWrapper", "node_api_post_finalizer failed");
+  }
+#endif
+
+#ifdef NODE_API_EXPERIMENTAL_HAS_POST_FINALIZER
+  template <typename F = Finalizer,
+            typename = std::enable_if_t<
+                std::is_invocable_v<F, node_api_nogc_env, T*, Hint*>>>
+#endif
   static inline void WrapperWithHint(NODE_ADDON_API_NOGC_ENV env,
                                      void* data,
                                      void* finalizeHint) NAPI_NOEXCEPT {
@@ -209,6 +234,21 @@ struct FinalizeData {
       delete finalizeData;
     });
   }
+
+#ifdef NODE_API_EXPERIMENTAL_HAS_POST_FINALIZER
+  template <typename F = Finalizer,
+            typename = std::enable_if_t<
+                !std::is_invocable_v<F, node_api_nogc_env, T*, Hint*>>,
+            typename = void>
+  static inline void WrapperWithHint(NODE_ADDON_API_NOGC_ENV env,
+                                     void* data,
+                                     void* finalizeHint) NAPI_NOEXCEPT {
+    napi_status status =
+        node_api_post_finalizer(env, WrapperGCWithHint, data, finalizeHint);
+    NAPI_FATAL_IF_FAILED(
+        status, "PostFinalizerWrapper", "node_api_post_finalizer failed");
+  }
+#endif
 
   static inline void WrapperGCWithoutData(napi_env env,
                                           void* /*data*/,
