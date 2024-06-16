@@ -300,14 +300,6 @@ template <typename T>
 using MaybeOrValue = T;
 #endif
 
-#if defined(NODE_API_EXPERIMENTAL_HAS_POST_FINALIZER)
-#define NODE_ADDON_API_NOGC_ENV node_api_nogc_env
-#define NODE_ADDON_API_NOGC_FINALIZER node_api_nogc_finalize
-#else
-#define NODE_ADDON_API_NOGC_ENV napi_env
-#define NODE_ADDON_API_NOGC_FINALIZER napi_finalize
-#endif
-
 /// Environment for Node-API values and operations.
 ///
 /// All Node-API values and operations must be associated with an environment.
@@ -323,7 +315,7 @@ using MaybeOrValue = T;
 /// corresponds to an Isolate.
 class NogcEnv {
  protected:
-  NODE_ADDON_API_NOGC_ENV _env;
+  node_api_nogc_env _env;
 #if NAPI_VERSION > 5
   template <typename T>
   static void DefaultGcFini(Env, T* data);
@@ -331,8 +323,8 @@ class NogcEnv {
   static void DefaultGcFiniWithHint(Env, DataType* data, HintType* hint);
 #endif  // NAPI_VERSION > 5
  public:
-  NogcEnv(NODE_ADDON_API_NOGC_ENV env);
-  operator NODE_ADDON_API_NOGC_ENV() const;
+  NogcEnv(node_api_nogc_env env);
+  operator node_api_nogc_env() const;
 
   // Without these operator overloads, the error:
   //
@@ -368,10 +360,10 @@ class NogcEnv {
   void SetInstanceData(T* data) const;
 
   template <typename DataType, typename HintType>
-  using FinalizerWithHint = void (*)(Env, DataType*, HintType*);
+  using GcFinalizerWithHint = void (*)(Env, DataType*, HintType*);
   template <typename DataType,
             typename HintType,
-            FinalizerWithHint<DataType, HintType> fini =
+            GcFinalizerWithHint<DataType, HintType> fini =
                 NogcEnv::DefaultGcFiniWithHint<DataType, HintType>>
   void SetInstanceData(DataType* data, HintType* hint) const;
 #endif  // NAPI_VERSION > 5
@@ -2471,9 +2463,7 @@ class ObjectWrap : public InstanceWrap<T>, public Reference<Object> {
                                                 napi_callback_info info);
   static napi_value StaticSetterCallbackWrapper(napi_env env,
                                                 napi_callback_info info);
-  static void FinalizeCallback(NODE_ADDON_API_NOGC_ENV env,
-                               void* data,
-                               void* hint);
+  static void FinalizeCallback(node_api_nogc_env env, void* data, void* hint);
 
   static void PostFinalizeCallback(napi_env env, void* data, void* hint);
 

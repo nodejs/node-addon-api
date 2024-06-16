@@ -35,7 +35,7 @@ namespace details {
 constexpr int napi_no_external_buffers_allowed = 22;
 
 template <typename FreeType>
-inline void default_finalizer(NODE_ADDON_API_NOGC_ENV /*env*/,
+inline void default_finalizer(node_api_nogc_env /*env*/,
                               void* data,
                               void* /*hint*/) {
   delete static_cast<FreeType*>(data);
@@ -46,7 +46,7 @@ inline void default_finalizer(NODE_ADDON_API_NOGC_ENV /*env*/,
 // TODO: Replace this code with `napi_add_finalizer()` whenever it becomes
 // available on all supported versions of Node.js.
 template <typename FreeType,
-          NODE_ADDON_API_NOGC_FINALIZER finalizer = default_finalizer<FreeType>>
+          node_api_nogc_finalize finalizer = default_finalizer<FreeType>>
 inline napi_status AttachData(napi_env env,
                               napi_value obj,
                               FreeType* data,
@@ -195,7 +195,7 @@ struct FinalizeData {
             typename =
                 std::enable_if_t<std::is_invocable_v<F, node_api_nogc_env, T*>>>
 #endif
-  static inline void Wrapper(NODE_ADDON_API_NOGC_ENV env,
+  static inline void Wrapper(node_api_nogc_env env,
                              void* data,
                              void* finalizeHint) NAPI_NOEXCEPT {
     WrapVoidCallback([&] {
@@ -210,13 +210,13 @@ struct FinalizeData {
             typename = std::enable_if_t<
                 !std::is_invocable_v<F, node_api_nogc_env, T*>>,
             typename = void>
-  static inline void Wrapper(NODE_ADDON_API_NOGC_ENV env,
+  static inline void Wrapper(node_api_nogc_env env,
                              void* data,
                              void* finalizeHint) NAPI_NOEXCEPT {
     napi_status status =
         node_api_post_finalizer(env, WrapperGC, data, finalizeHint);
     NAPI_FATAL_IF_FAILED(
-        status, "PostFinalizerWrapper", "node_api_post_finalizer failed");
+        status, "FinalizeData::Wrapper", "node_api_post_finalizer failed");
   }
 #endif
 
@@ -225,7 +225,7 @@ struct FinalizeData {
             typename = std::enable_if_t<
                 std::is_invocable_v<F, node_api_nogc_env, T*, Hint*>>>
 #endif
-  static inline void WrapperWithHint(NODE_ADDON_API_NOGC_ENV env,
+  static inline void WrapperWithHint(node_api_nogc_env env,
                                      void* data,
                                      void* finalizeHint) NAPI_NOEXCEPT {
     WrapVoidCallback([&] {
@@ -240,13 +240,13 @@ struct FinalizeData {
             typename = std::enable_if_t<
                 !std::is_invocable_v<F, node_api_nogc_env, T*, Hint*>>,
             typename = void>
-  static inline void WrapperWithHint(NODE_ADDON_API_NOGC_ENV env,
+  static inline void WrapperWithHint(node_api_nogc_env env,
                                      void* data,
                                      void* finalizeHint) NAPI_NOEXCEPT {
     napi_status status =
         node_api_post_finalizer(env, WrapperGCWithHint, data, finalizeHint);
     NAPI_FATAL_IF_FAILED(
-        status, "PostFinalizerWrapper", "node_api_post_finalizer failed");
+        status, "FinalizeData::Wrapper", "node_api_post_finalizer failed");
   }
 #endif
 
@@ -566,9 +566,9 @@ inline Maybe<T> Just(const T& t) {
 // NogcEnv / Env class
 ////////////////////////////////////////////////////////////////////////////////
 
-inline NogcEnv::NogcEnv(NODE_ADDON_API_NOGC_ENV env) : _env(env) {}
+inline NogcEnv::NogcEnv(node_api_nogc_env env) : _env(env) {}
 
-inline NogcEnv::operator NODE_ADDON_API_NOGC_ENV() const {
+inline NogcEnv::operator node_api_nogc_env() const {
   return _env;
 }
 
@@ -668,7 +668,7 @@ inline void NogcEnv::SetInstanceData(T* data) const {
 
 template <typename DataType,
           typename HintType,
-          Napi::NogcEnv::FinalizerWithHint<DataType, HintType> fini>
+          Napi::NogcEnv::GcFinalizerWithHint<DataType, HintType> fini>
 inline void NogcEnv::SetInstanceData(DataType* data, HintType* hint) const {
   napi_status status = napi_set_instance_data(
       _env,
@@ -5008,7 +5008,7 @@ inline napi_value ObjectWrap<T>::StaticSetterCallbackWrapper(
 }
 
 template <typename T>
-inline void ObjectWrap<T>::FinalizeCallback(NODE_ADDON_API_NOGC_ENV env,
+inline void ObjectWrap<T>::FinalizeCallback(node_api_nogc_env env,
                                             void* data,
                                             void* /*hint*/) {
   T* instance = static_cast<T*>(data);
