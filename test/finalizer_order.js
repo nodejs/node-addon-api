@@ -3,6 +3,7 @@
 /* eslint-disable no-unused-vars */
 
 const assert = require('assert');
+const common = require('./common');
 const testUtil = require('./testUtil');
 
 module.exports = require('./common').runTest(test);
@@ -12,7 +13,7 @@ function test (binding) {
 
   let isCallbackCalled = false;
 
-  return testUtil.runGCTests([
+  const tests = [
     'Finalizer Order - ObjectWrap',
     () => {
       let test = new binding.finalizer_order.Test(() => { isCallbackCalled = true; });
@@ -62,5 +63,36 @@ function test (binding) {
     () => {
       assert.strictEqual(binding.finalizer_order.isExternalGcFinalizerCalled(), true, 'Expected External gc finalizer to be called [after ticking]');
     }
-  ]);
+  ];
+
+  if (binding.isExperimental) {
+    tests.push(...[
+      'AddPostFinalizer',
+      () => {
+        binding.finalizer_order.AddPostFinalizer(common.mustCall());
+      },
+
+      'AddPostFinalizerWithData',
+      () => {
+        const data = {};
+        const callback = (callbackData) => {
+          assert.strictEqual(callbackData, data);
+        };
+        binding.finalizer_order.AddPostFinalizerWithData(common.mustCall(callback), data);
+      },
+
+      'AddPostFinalizerWithDataAndHint',
+      () => {
+        const data = {};
+        const hint = {};
+        const callback = (callbackData, callbackHint) => {
+          assert.strictEqual(callbackData, data);
+          assert.strictEqual(callbackHint, hint);
+        };
+        binding.finalizer_order.AddPostFinalizerWithDataAndHint(common.mustCall(callback), data, hint);
+      }
+    ]);
+  }
+
+  return testUtil.runGCTests(tests);
 }
