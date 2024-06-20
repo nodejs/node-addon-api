@@ -84,6 +84,48 @@ Napi::Value IsExternalGcFinalizerCalled(const Napi::CallbackInfo& info) {
   return Napi::Boolean::New(info.Env(), externalGcFinalizerCalled);
 }
 
+#ifdef NODE_API_EXPERIMENTAL_HAS_POST_FINALIZER
+Napi::Value AddPostFinalizer(const Napi::CallbackInfo& info) {
+  auto env = info.Env();
+
+  env.AddPostFinalizer(
+      [callback = Napi::Persistent(info[0].As<Napi::Function>())](
+          Napi::Env /*env*/) { callback.Call({}); });
+
+  return env.Undefined();
+}
+
+Napi::Value AddPostFinalizerWithData(const Napi::CallbackInfo& info) {
+  auto env = info.Env();
+
+  env.AddPostFinalizer(
+      [callback = Napi::Persistent(info[0].As<Napi::Function>())](
+          Napi::Env /*env*/, Napi::Reference<Napi::Value>* data) {
+        callback.Call({data->Value()});
+        delete data;
+      },
+      new Napi::Reference<Napi::Value>(Napi::Persistent(info[1])));
+  return env.Undefined();
+}
+
+Napi::Value AddPostFinalizerWithDataAndHint(const Napi::CallbackInfo& info) {
+  auto env = info.Env();
+
+  env.AddPostFinalizer(
+      [callback = Napi::Persistent(info[0].As<Napi::Function>())](
+          Napi::Env /*env*/,
+          Napi::Reference<Napi::Value>* data,
+          Napi::Reference<Napi::Value>* hint) {
+        callback.Call({data->Value(), hint->Value()});
+        delete data;
+        delete hint;
+      },
+      new Napi::Reference<Napi::Value>(Napi::Persistent(info[1])),
+      new Napi::Reference<Napi::Value>(Napi::Persistent(info[2])));
+  return env.Undefined();
+}
+#endif
+
 }  // namespace
 
 Napi::Object InitFinalizerOrder(Napi::Env env) {
@@ -95,5 +137,13 @@ Napi::Object InitFinalizerOrder(Napi::Env env) {
       Napi::Function::New(env, IsExternalNogcFinalizerCalled);
   exports["isExternalGcFinalizerCalled"] =
       Napi::Function::New(env, IsExternalGcFinalizerCalled);
+
+#ifdef NODE_API_EXPERIMENTAL_HAS_POST_FINALIZER
+  exports["AddPostFinalizer"] = Napi::Function::New(env, AddPostFinalizer);
+  exports["AddPostFinalizerWithData"] =
+      Napi::Function::New(env, AddPostFinalizerWithData);
+  exports["AddPostFinalizerWithDataAndHint"] =
+      Napi::Function::New(env, AddPostFinalizerWithDataAndHint);
+#endif
   return exports;
 }
