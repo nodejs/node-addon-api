@@ -187,6 +187,7 @@ namespace NAPI_CPP_CUSTOM_NAMESPACE {
 #endif
 
 // Forward declarations
+class NogcEnv;
 class Env;
 class Value;
 class Boolean;
@@ -312,30 +313,31 @@ using MaybeOrValue = T;
 ///
 /// In the V8 JavaScript engine, a Node-API environment approximately
 /// corresponds to an Isolate.
-class Env {
- private:
-  napi_env _env;
+class NogcEnv {
+ protected:
+  node_api_nogc_env _env;
 #if NAPI_VERSION > 5
   template <typename T>
-  static void DefaultFini(Env, T* data);
+  static void DefaultGcFini(Env, T* data);
   template <typename DataType, typename HintType>
-  static void DefaultFiniWithHint(Env, DataType* data, HintType* hint);
+  static void DefaultGcFiniWithHint(Env, DataType* data, HintType* hint);
 #endif  // NAPI_VERSION > 5
  public:
-  Env(napi_env env);
+  NogcEnv(node_api_nogc_env env);
+  operator node_api_nogc_env() const;
 
-  operator napi_env() const;
-
-  Object Global() const;
-  Value Undefined() const;
-  Value Null() const;
-
-  bool IsExceptionPending() const;
-  Error GetAndClearPendingException() const;
-
-  MaybeOrValue<Value> RunScript(const char* utf8script) const;
-  MaybeOrValue<Value> RunScript(const std::string& utf8script) const;
-  MaybeOrValue<Value> RunScript(String script) const;
+  // Without these operator overloads, the error:
+  //
+  //    Use of overloaded operator '==' is ambiguous (with operand types
+  //    'Napi::Env' and 'Napi::Env')
+  //
+  // ... occurs when comparing foo.Env() == bar.Env() or foo.Env() == nullptr
+  bool operator==(const NogcEnv& other) const {
+    return _env == other._env;
+  };
+  bool operator==(std::nullptr_t /*other*/) const {
+    return _env == nullptr;
+  };
 
 #if NAPI_VERSION > 2
   template <typename Hook, typename Arg = void>
@@ -353,16 +355,16 @@ class Env {
   T* GetInstanceData() const;
 
   template <typename T>
-  using Finalizer = void (*)(Env, T*);
-  template <typename T, Finalizer<T> fini = Env::DefaultFini<T>>
+  using GcFinalizer = void (*)(Env, T*);
+  template <typename T, GcFinalizer<T> gc_fini = NogcEnv::DefaultGcFini<T>>
   void SetInstanceData(T* data) const;
 
   template <typename DataType, typename HintType>
-  using FinalizerWithHint = void (*)(Env, DataType*, HintType*);
+  using GcFinalizerWithHint = void (*)(Env, DataType*, HintType*);
   template <typename DataType,
             typename HintType,
-            FinalizerWithHint<DataType, HintType> fini =
-                Env::DefaultFiniWithHint<DataType, HintType>>
+            GcFinalizerWithHint<DataType, HintType> fini =
+                NogcEnv::DefaultGcFiniWithHint<DataType, HintType>>
   void SetInstanceData(DataType* data, HintType* hint) const;
 #endif  // NAPI_VERSION > 5
 
@@ -371,9 +373,9 @@ class Env {
   class CleanupHook {
    public:
     CleanupHook();
-    CleanupHook(Env env, Hook hook, Arg* arg);
-    CleanupHook(Env env, Hook hook);
-    bool Remove(Env env);
+    CleanupHook(NogcEnv env, Hook hook, Arg* arg);
+    CleanupHook(NogcEnv env, Hook hook);
+    bool Remove(NogcEnv env);
     bool IsEmpty() const;
 
    private:
@@ -391,6 +393,37 @@ class Env {
 #if NAPI_VERSION > 8
   const char* GetModuleFileName() const;
 #endif  // NAPI_VERSION > 8
+
+#ifdef NODE_API_EXPERIMENTAL_HAS_POST_FINALIZER
+  template <typename Finalizer>
+  inline void AddPostFinalizer(Finalizer finalizeCallback) const;
+
+  template <typename Finalizer, typename T>
+  inline void AddPostFinalizer(Finalizer finalizeCallback, T* data) const;
+
+  template <typename Finalizer, typename T, typename Hint>
+  inline void AddPostFinalizer(Finalizer finalizeCallback,
+                               T* data,
+                               Hint* finalizeHint) const;
+#endif  // NODE_API_EXPERIMENTAL_HAS_POST_FINALIZER
+};
+
+class Env : public NogcEnv {
+ public:
+  Env(napi_env env);
+
+  operator napi_env() const;
+
+  Object Global() const;
+  Value Undefined() const;
+  Value Null() const;
+
+  bool IsExceptionPending() const;
+  Error GetAndClearPendingException() const;
+
+  MaybeOrValue<Value> RunScript(const char* utf8script) const;
+  MaybeOrValue<Value> RunScript(const std::string& utf8script) const;
+  MaybeOrValue<Value> RunScript(String script) const;
 };
 
 /// A JavaScript value of unknown type.
@@ -2415,6 +2448,7 @@ class ObjectWrap : public InstanceWrap<T>, public Reference<Object> {
       napi_property_attributes attributes = napi_default);
   static Napi::Value OnCalledAsFunction(const Napi::CallbackInfo& callbackInfo);
   virtual void Finalize(Napi::Env env);
+  virtual void Finalize(NogcEnv env);
 
  private:
   using This = ObjectWrap<T>;
@@ -2429,7 +2463,10 @@ class ObjectWrap : public InstanceWrap<T>, public Reference<Object> {
                                                 napi_callback_info info);
   static napi_value StaticSetterCallbackWrapper(napi_env env,
                                                 napi_callback_info info);
-  static void FinalizeCallback(napi_env env, void* data, void* hint);
+  static void FinalizeCallback(node_api_nogc_env env, void* data, void* hint);
+
+  static void PostFinalizeCallback(napi_env env, void* data, void* hint);
+
   static Function DefineClass(Napi::Env env,
                               const char* utf8name,
                               const size_t props_count,
