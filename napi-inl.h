@@ -427,7 +427,7 @@ inline std::string StringFormat(const char* format, ...) {
 }
 
 template <typename T>
-class HasGcFinalize {
+class HasAsyncFinalizer {
  private:
   template <typename U, void (U::*)(Napi::Env)>
   struct SFINAE {};
@@ -441,9 +441,9 @@ class HasGcFinalize {
 };
 
 template <typename T>
-class HasNogcFinalize {
+class HasSyncFinalizer {
  private:
-  template <typename U, void (U::*)(Napi::NogcEnv)>
+  template <typename U, void (U::*)(Napi::BasicEnv)>
   struct SFINAE {};
   template <typename U>
   static char test(SFINAE<U, &U::Finalize>*);
@@ -563,16 +563,16 @@ inline Maybe<T> Just(const T& t) {
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-// NogcEnv / Env class
+// BasicEnv / Env class
 ////////////////////////////////////////////////////////////////////////////////
 
-inline NogcEnv::NogcEnv(node_api_nogc_env env) : _env(env) {}
+inline BasicEnv::BasicEnv(node_api_nogc_env env) : _env(env) {}
 
-inline NogcEnv::operator node_api_nogc_env() const {
+inline BasicEnv::operator node_api_nogc_env() const {
   return _env;
 }
 
-inline Env::Env(napi_env env) : NogcEnv(env) {}
+inline Env::Env(napi_env env) : BasicEnv(env) {}
 
 inline Env::operator napi_env() const {
   return const_cast<napi_env>(_env);
@@ -635,41 +635,41 @@ inline MaybeOrValue<Value> Env::RunScript(String script) const {
 
 #if NAPI_VERSION > 2
 template <typename Hook, typename Arg>
-void NogcEnv::CleanupHook<Hook, Arg>::Wrapper(void* data) NAPI_NOEXCEPT {
-  auto* cleanupData =
-      static_cast<typename Napi::NogcEnv::CleanupHook<Hook, Arg>::CleanupData*>(
-          data);
+void BasicEnv::CleanupHook<Hook, Arg>::Wrapper(void* data) NAPI_NOEXCEPT {
+  auto* cleanupData = static_cast<
+      typename Napi::BasicEnv::CleanupHook<Hook, Arg>::CleanupData*>(data);
   cleanupData->hook();
   delete cleanupData;
 }
 
 template <typename Hook, typename Arg>
-void NogcEnv::CleanupHook<Hook, Arg>::WrapperWithArg(void* data) NAPI_NOEXCEPT {
-  auto* cleanupData =
-      static_cast<typename Napi::NogcEnv::CleanupHook<Hook, Arg>::CleanupData*>(
-          data);
+void BasicEnv::CleanupHook<Hook, Arg>::WrapperWithArg(void* data)
+    NAPI_NOEXCEPT {
+  auto* cleanupData = static_cast<
+      typename Napi::BasicEnv::CleanupHook<Hook, Arg>::CleanupData*>(data);
   cleanupData->hook(static_cast<Arg*>(cleanupData->arg));
   delete cleanupData;
 }
 #endif  // NAPI_VERSION > 2
 
 #if NAPI_VERSION > 5
-template <typename T, NogcEnv::GcFinalizer<T> gc_fini>
-inline void NogcEnv::SetInstanceData(T* data) const {
+template <typename T, BasicEnv::AsyncFinalizer<T> async_fini>
+inline void BasicEnv::SetInstanceData(T* data) const {
   napi_status status = napi_set_instance_data(
       _env,
       data,
       [](napi_env env, void* data, void*) {
-        gc_fini(env, static_cast<T*>(data));
+        async_fini(env, static_cast<T*>(data));
       },
       nullptr);
-  NAPI_FATAL_IF_FAILED(status, "NogcEnv::SetInstanceData", "invalid arguments");
+  NAPI_FATAL_IF_FAILED(
+      status, "BasicEnv::SetInstanceData", "invalid arguments");
 }
 
 template <typename DataType,
           typename HintType,
-          Napi::NogcEnv::GcFinalizerWithHint<DataType, HintType> fini>
-inline void NogcEnv::SetInstanceData(DataType* data, HintType* hint) const {
+          Napi::BasicEnv::AsyncFinalizerWithHint<DataType, HintType> fini>
+inline void BasicEnv::SetInstanceData(DataType* data, HintType* hint) const {
   napi_status status = napi_set_instance_data(
       _env,
       data,
@@ -677,36 +677,38 @@ inline void NogcEnv::SetInstanceData(DataType* data, HintType* hint) const {
         fini(env, static_cast<DataType*>(data), static_cast<HintType*>(hint));
       },
       hint);
-  NAPI_FATAL_IF_FAILED(status, "NogcEnv::SetInstanceData", "invalid arguments");
+  NAPI_FATAL_IF_FAILED(
+      status, "BasicEnv::SetInstanceData", "invalid arguments");
 }
 
 template <typename T>
-inline T* NogcEnv::GetInstanceData() const {
+inline T* BasicEnv::GetInstanceData() const {
   void* data = nullptr;
 
   napi_status status = napi_get_instance_data(_env, &data);
-  NAPI_FATAL_IF_FAILED(status, "NogcEnv::GetInstanceData", "invalid arguments");
+  NAPI_FATAL_IF_FAILED(
+      status, "BasicEnv::GetInstanceData", "invalid arguments");
 
   return static_cast<T*>(data);
 }
 
 template <typename T>
-void NogcEnv::DefaultGcFini(Env, T* data) {
+void BasicEnv::DefaultAsyncFini(Env, T* data) {
   delete data;
 }
 
 template <typename DataType, typename HintType>
-void NogcEnv::DefaultGcFiniWithHint(Env, DataType* data, HintType*) {
+void BasicEnv::DefaultAsyncFiniWithHint(Env, DataType* data, HintType*) {
   delete data;
 }
 #endif  // NAPI_VERSION > 5
 
 #if NAPI_VERSION > 8
-inline const char* NogcEnv::GetModuleFileName() const {
+inline const char* BasicEnv::GetModuleFileName() const {
   const char* result;
   napi_status status = node_api_get_module_file_name(_env, &result);
   NAPI_FATAL_IF_FAILED(
-      status, "NogcEnv::GetModuleFileName", "invalid arguments");
+      status, "BasicEnv::GetModuleFileName", "invalid arguments");
   return result;
 }
 #endif  // NAPI_VERSION > 8
@@ -3315,7 +3317,7 @@ inline Reference<T>::~Reference() {
   if (_ref != nullptr) {
     if (!_suppressDestruct) {
 #ifdef NODE_API_EXPERIMENTAL_HAS_POST_FINALIZER
-      Env().AddPostFinalizer(
+      Env().PostFinalizer(
           [](Napi::Env env, napi_ref ref) { napi_delete_reference(env, ref); },
           _ref);
 #else
@@ -4921,7 +4923,7 @@ template <typename T>
 inline void ObjectWrap<T>::Finalize(Napi::Env /*env*/) {}
 
 template <typename T>
-inline void ObjectWrap<T>::Finalize(NogcEnv /*env*/) {}
+inline void ObjectWrap<T>::Finalize(BasicEnv /*env*/) {}
 
 template <typename T>
 inline napi_value ObjectWrap<T>::ConstructorCallbackWrapper(
@@ -5016,26 +5018,39 @@ inline void ObjectWrap<T>::FinalizeCallback(node_api_nogc_env env,
   // Prevent ~ObjectWrap from calling napi_remove_wrap
   instance->_ref = nullptr;
 
-  if constexpr (details::HasNogcFinalize<T>::value) {
+  // If class overrides the synchronous finalizer, execute it.
+  if constexpr (details::HasSyncFinalizer<T>::value) {
 #ifndef NODE_API_EXPERIMENTAL_HAS_POST_FINALIZER
     HandleScope scope(env);
 #endif
 
-    instance->Finalize(Napi::NogcEnv(env));
+    instance->Finalize(Napi::BasicEnv(env));
   }
 
-  if constexpr (details::HasGcFinalize<T>::value) {
+  // If class overrides the asynchronous finalizer, either schedule it or
+  // execute it immediately (depending on experimental features enabled).
+  if constexpr (details::HasAsyncFinalizer<T>::value) {
 #ifdef NODE_API_EXPERIMENTAL_HAS_POST_FINALIZER
+    // In experimental, attach via node_api_post_finalizer.
+    // `PostFinalizeCallback` is responsible for deleting the `T* instance`,
+    // after calling the user-provided finalizer.
     napi_status status =
         node_api_post_finalizer(env, PostFinalizeCallback, data, nullptr);
     NAPI_FATAL_IF_FAILED(status,
                          "ObjectWrap<T>::FinalizeCallback",
                          "node_api_post_finalizer failed");
 #else
+    // In non-experimental, this `FinalizeCallback` already executes from
+    // outside the garbage collector. Execute the override directly.
+    // `PostFinalizeCallback` is responsible for deleting the `T* instance`,
+    // after calling the user-provided finalizer.
     HandleScope scope(env);
     PostFinalizeCallback(env, data, static_cast<void*>(nullptr));
 #endif
-  } else {
+  }
+  // If the instance does _not_ have an asynchronous finalizer, delete the `T*
+  // instance` immediately.
+  else {
     delete instance;
   }
 }
@@ -6723,12 +6738,12 @@ inline Napi::Object Addon<T>::DefineProperties(
 
 #if NAPI_VERSION > 2
 template <typename Hook, typename Arg>
-Env::CleanupHook<Hook, Arg> NogcEnv::AddCleanupHook(Hook hook, Arg* arg) {
+Env::CleanupHook<Hook, Arg> BasicEnv::AddCleanupHook(Hook hook, Arg* arg) {
   return CleanupHook<Hook, Arg>(*this, hook, arg);
 }
 
 template <typename Hook>
-Env::CleanupHook<Hook> NogcEnv::AddCleanupHook(Hook hook) {
+Env::CleanupHook<Hook> BasicEnv::AddCleanupHook(Hook hook) {
   return CleanupHook<Hook>(*this, hook);
 }
 
@@ -6738,7 +6753,7 @@ Env::CleanupHook<Hook, Arg>::CleanupHook() {
 }
 
 template <typename Hook, typename Arg>
-Env::CleanupHook<Hook, Arg>::CleanupHook(Napi::NogcEnv env, Hook hook)
+Env::CleanupHook<Hook, Arg>::CleanupHook(Napi::BasicEnv env, Hook hook)
     : wrapper(Env::CleanupHook<Hook, Arg>::Wrapper) {
   data = new CleanupData{std::move(hook), nullptr};
   napi_status status = napi_add_env_cleanup_hook(env, wrapper, data);
@@ -6749,7 +6764,9 @@ Env::CleanupHook<Hook, Arg>::CleanupHook(Napi::NogcEnv env, Hook hook)
 }
 
 template <typename Hook, typename Arg>
-Env::CleanupHook<Hook, Arg>::CleanupHook(Napi::NogcEnv env, Hook hook, Arg* arg)
+Env::CleanupHook<Hook, Arg>::CleanupHook(Napi::BasicEnv env,
+                                         Hook hook,
+                                         Arg* arg)
     : wrapper(Env::CleanupHook<Hook, Arg>::WrapperWithArg) {
   data = new CleanupData{std::move(hook), arg};
   napi_status status = napi_add_env_cleanup_hook(env, wrapper, data);
@@ -6760,7 +6777,7 @@ Env::CleanupHook<Hook, Arg>::CleanupHook(Napi::NogcEnv env, Hook hook, Arg* arg)
 }
 
 template <class Hook, class Arg>
-bool Env::CleanupHook<Hook, Arg>::Remove(NogcEnv env) {
+bool Env::CleanupHook<Hook, Arg>::Remove(BasicEnv env) {
   napi_status status = napi_remove_env_cleanup_hook(env, wrapper, data);
   delete data;
   data = nullptr;
@@ -6775,7 +6792,7 @@ bool Env::CleanupHook<Hook, Arg>::IsEmpty() const {
 
 #ifdef NODE_API_EXPERIMENTAL_HAS_POST_FINALIZER
 template <typename Finalizer>
-inline void NogcEnv::AddPostFinalizer(Finalizer finalizeCallback) const {
+inline void BasicEnv::PostFinalizer(Finalizer finalizeCallback) const {
   using T = void*;
   details::FinalizeData<T, Finalizer>* finalizeData =
       new details::FinalizeData<T, Finalizer>(
@@ -6789,13 +6806,12 @@ inline void NogcEnv::AddPostFinalizer(Finalizer finalizeCallback) const {
   if (status != napi_ok) {
     delete finalizeData;
     NAPI_FATAL_IF_FAILED(
-        status, "NogcEnv::AddPostFinalizer", "invalid arguments");
+        status, "BasicEnv::PostFinalizer", "invalid arguments");
   }
 }
 
 template <typename Finalizer, typename T>
-inline void NogcEnv::AddPostFinalizer(Finalizer finalizeCallback,
-                                      T* data) const {
+inline void BasicEnv::PostFinalizer(Finalizer finalizeCallback, T* data) const {
   details::FinalizeData<T, Finalizer>* finalizeData =
       new details::FinalizeData<T, Finalizer>(
           {std::move(finalizeCallback), nullptr});
@@ -6805,14 +6821,14 @@ inline void NogcEnv::AddPostFinalizer(Finalizer finalizeCallback,
   if (status != napi_ok) {
     delete finalizeData;
     NAPI_FATAL_IF_FAILED(
-        status, "NogcEnv::AddPostFinalizer", "invalid arguments");
+        status, "BasicEnv::PostFinalizer", "invalid arguments");
   }
 }
 
 template <typename Finalizer, typename T, typename Hint>
-inline void NogcEnv::AddPostFinalizer(Finalizer finalizeCallback,
-                                      T* data,
-                                      Hint* finalizeHint) const {
+inline void BasicEnv::PostFinalizer(Finalizer finalizeCallback,
+                                    T* data,
+                                    Hint* finalizeHint) const {
   details::FinalizeData<T, Finalizer, Hint>* finalizeData =
       new details::FinalizeData<T, Finalizer, Hint>(
           {std::move(finalizeCallback), finalizeHint});
@@ -6824,7 +6840,7 @@ inline void NogcEnv::AddPostFinalizer(Finalizer finalizeCallback,
   if (status != napi_ok) {
     delete finalizeData;
     NAPI_FATAL_IF_FAILED(
-        status, "NogcEnv::AddPostFinalizer", "invalid arguments");
+        status, "BasicEnv::PostFinalizer", "invalid arguments");
   }
 }
 #endif  // NODE_API_EXPERIMENTAL_HAS_POST_FINALIZER

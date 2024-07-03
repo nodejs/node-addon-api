@@ -22,66 +22,67 @@ function test (binding) {
       global.gc();
 
       if (isExperimental) {
-        assert.strictEqual(binding.finalizer_order.Test.isNogcFinalizerCalled, true, 'Expected nogc finalizer to be called [before ticking]');
-        assert.strictEqual(binding.finalizer_order.Test.isGcFinalizerCalled, false, 'Expected gc finalizer to not be called [before ticking]');
-        assert.strictEqual(isCallbackCalled, false, 'Expected callback not be called [before ticking]');
+        assert.strictEqual(binding.finalizer_order.Test.isSyncFinalizerCalled, true, 'Expected sync finalizer to be called [before ticking]');
+        assert.strictEqual(binding.finalizer_order.Test.isAsyncFinalizerCalled, false, 'Expected async finalizer to not be called [before ticking]');
+        assert.strictEqual(isCallbackCalled, false, 'Expected callback to not be called [before ticking]');
       } else {
-        assert.strictEqual(binding.finalizer_order.Test.isNogcFinalizerCalled, false, 'Expected nogc finalizer to not be called [before ticking]');
-        assert.strictEqual(binding.finalizer_order.Test.isGcFinalizerCalled, false, 'Expected gc finalizer to not be called [before ticking]');
-        assert.strictEqual(isCallbackCalled, false, 'Expected callback not be called [before ticking]');
+        assert.strictEqual(binding.finalizer_order.Test.isSyncFinalizerCalled, false, 'Expected sync finalizer to not be called [before ticking]');
+        assert.strictEqual(binding.finalizer_order.Test.isAsyncFinalizerCalled, false, 'Expected async finalizer to not be called [before ticking]');
+        assert.strictEqual(isCallbackCalled, false, 'Expected callback to not be called [before ticking]');
       }
     },
     () => {
-      assert.strictEqual(binding.finalizer_order.Test.isNogcFinalizerCalled, true, 'Expected nogc finalizer to be called [after ticking]');
-      assert.strictEqual(binding.finalizer_order.Test.isGcFinalizerCalled, true, 'Expected gc finalizer to be called [after ticking]');
+      assert.strictEqual(binding.finalizer_order.Test.isSyncFinalizerCalled, true, 'Expected sync finalizer to be called [after ticking]');
+      assert.strictEqual(binding.finalizer_order.Test.isAsyncFinalizerCalled, true, 'Expected async finalizer to be called [after ticking]');
       assert.strictEqual(isCallbackCalled, true, 'Expected callback to be called [after ticking]');
     },
 
-    'Finalizer Order - External with Nogc Finalizer',
+    'Finalizer Order - External with Sync Finalizer',
     () => {
-      let ext = new binding.finalizer_order.CreateExternalNogc();
+      console.log(binding.finalizer_order);
+      let ext = binding.finalizer_order.createExternalSyncFinalizer();
       ext = null;
       global.gc();
 
       if (isExperimental) {
-        assert.strictEqual(binding.finalizer_order.isExternalNogcFinalizerCalled(), true, 'Expected External nogc finalizer to be called [before ticking]');
+        assert.strictEqual(binding.finalizer_order.isExternalSyncFinalizerCalled(), true, 'Expected External sync finalizer to be called [before ticking]');
       } else {
-        assert.strictEqual(binding.finalizer_order.isExternalNogcFinalizerCalled(), false, 'Expected External nogc finalizer to not be called [before ticking]');
+        assert.strictEqual(binding.finalizer_order.isExternalSyncFinalizerCalled(), false, 'Expected External sync finalizer to not be called [before ticking]');
       }
     },
     () => {
-      assert.strictEqual(binding.finalizer_order.isExternalNogcFinalizerCalled(), true, 'Expected External nogc finalizer to be called [after ticking]');
+      assert.strictEqual(binding.finalizer_order.isExternalSyncFinalizerCalled(), true, 'Expected External sync finalizer to be called [after ticking]');
     },
 
-    'Finalizer Order - External with Gc Finalizer',
+    'Finalizer Order - External with Async Finalizer',
     () => {
-      let ext = new binding.finalizer_order.CreateExternalGc();
+      let ext = binding.finalizer_order.createExternalAsyncFinalizer();
       ext = null;
       global.gc();
-      assert.strictEqual(binding.finalizer_order.isExternalGcFinalizerCalled(), false, 'Expected External gc finalizer to not be called [before ticking]');
+      assert.strictEqual(binding.finalizer_order.isExternalAsyncFinalizerCalled(), false, 'Expected External async finalizer to not be called [before ticking]');
     },
     () => {
-      assert.strictEqual(binding.finalizer_order.isExternalGcFinalizerCalled(), true, 'Expected External gc finalizer to be called [after ticking]');
+      assert.strictEqual(binding.finalizer_order.isExternalAsyncFinalizerCalled(), true, 'Expected External async finalizer to be called [after ticking]');
     }
   ];
 
   if (binding.isExperimental) {
     tests.push(...[
-      'AddPostFinalizer',
+      'PostFinalizer',
       () => {
-        binding.finalizer_order.AddPostFinalizer(common.mustCall());
+        binding.finalizer_order.PostFinalizer(common.mustCall());
       },
 
-      'AddPostFinalizerWithData',
+      'PostFinalizerWithData',
       () => {
         const data = {};
         const callback = (callbackData) => {
           assert.strictEqual(callbackData, data);
         };
-        binding.finalizer_order.AddPostFinalizerWithData(common.mustCall(callback), data);
+        binding.finalizer_order.PostFinalizerWithData(common.mustCall(callback), data);
       },
 
-      'AddPostFinalizerWithDataAndHint',
+      'PostFinalizerWithDataAndHint',
       () => {
         const data = {};
         const hint = {};
@@ -89,7 +90,7 @@ function test (binding) {
           assert.strictEqual(callbackData, data);
           assert.strictEqual(callbackHint, hint);
         };
-        binding.finalizer_order.AddPostFinalizerWithDataAndHint(common.mustCall(callback), data, hint);
+        binding.finalizer_order.PostFinalizerWithDataAndHint(common.mustCall(callback), data, hint);
       }
     ]);
   }

@@ -187,7 +187,7 @@ namespace NAPI_CPP_CUSTOM_NAMESPACE {
 #endif
 
 // Forward declarations
-class NogcEnv;
+class BasicEnv;
 class Env;
 class Value;
 class Boolean;
@@ -313,17 +313,17 @@ using MaybeOrValue = T;
 ///
 /// In the V8 JavaScript engine, a Node-API environment approximately
 /// corresponds to an Isolate.
-class NogcEnv {
- protected:
+class BasicEnv {
+ private:
   node_api_nogc_env _env;
 #if NAPI_VERSION > 5
   template <typename T>
-  static void DefaultGcFini(Env, T* data);
+  static void DefaultAsyncFini(Env, T* data);
   template <typename DataType, typename HintType>
-  static void DefaultGcFiniWithHint(Env, DataType* data, HintType* hint);
+  static void DefaultAsyncFiniWithHint(Env, DataType* data, HintType* hint);
 #endif  // NAPI_VERSION > 5
  public:
-  NogcEnv(node_api_nogc_env env);
+  BasicEnv(node_api_nogc_env env);
   operator node_api_nogc_env() const;
 
   // Without these operator overloads, the error:
@@ -332,7 +332,7 @@ class NogcEnv {
   //    'Napi::Env' and 'Napi::Env')
   //
   // ... occurs when comparing foo.Env() == bar.Env() or foo.Env() == nullptr
-  bool operator==(const NogcEnv& other) const {
+  bool operator==(const BasicEnv& other) const {
     return _env == other._env;
   };
   bool operator==(std::nullptr_t /*other*/) const {
@@ -355,16 +355,17 @@ class NogcEnv {
   T* GetInstanceData() const;
 
   template <typename T>
-  using GcFinalizer = void (*)(Env, T*);
-  template <typename T, GcFinalizer<T> gc_fini = NogcEnv::DefaultGcFini<T>>
+  using AsyncFinalizer = void (*)(Env, T*);
+  template <typename T,
+            AsyncFinalizer<T> async_fini = BasicEnv::DefaultAsyncFini<T>>
   void SetInstanceData(T* data) const;
 
   template <typename DataType, typename HintType>
-  using GcFinalizerWithHint = void (*)(Env, DataType*, HintType*);
+  using AsyncFinalizerWithHint = void (*)(Env, DataType*, HintType*);
   template <typename DataType,
             typename HintType,
-            GcFinalizerWithHint<DataType, HintType> fini =
-                NogcEnv::DefaultGcFiniWithHint<DataType, HintType>>
+            AsyncFinalizerWithHint<DataType, HintType> fini =
+                BasicEnv::DefaultAsyncFiniWithHint<DataType, HintType>>
   void SetInstanceData(DataType* data, HintType* hint) const;
 #endif  // NAPI_VERSION > 5
 
@@ -373,9 +374,9 @@ class NogcEnv {
   class CleanupHook {
    public:
     CleanupHook();
-    CleanupHook(NogcEnv env, Hook hook, Arg* arg);
-    CleanupHook(NogcEnv env, Hook hook);
-    bool Remove(NogcEnv env);
+    CleanupHook(BasicEnv env, Hook hook, Arg* arg);
+    CleanupHook(BasicEnv env, Hook hook);
+    bool Remove(BasicEnv env);
     bool IsEmpty() const;
 
    private:
@@ -396,19 +397,21 @@ class NogcEnv {
 
 #ifdef NODE_API_EXPERIMENTAL_HAS_POST_FINALIZER
   template <typename Finalizer>
-  inline void AddPostFinalizer(Finalizer finalizeCallback) const;
+  inline void PostFinalizer(Finalizer finalizeCallback) const;
 
   template <typename Finalizer, typename T>
-  inline void AddPostFinalizer(Finalizer finalizeCallback, T* data) const;
+  inline void PostFinalizer(Finalizer finalizeCallback, T* data) const;
 
   template <typename Finalizer, typename T, typename Hint>
-  inline void AddPostFinalizer(Finalizer finalizeCallback,
-                               T* data,
-                               Hint* finalizeHint) const;
+  inline void PostFinalizer(Finalizer finalizeCallback,
+                            T* data,
+                            Hint* finalizeHint) const;
 #endif  // NODE_API_EXPERIMENTAL_HAS_POST_FINALIZER
+
+  friend class Env;
 };
 
-class Env : public NogcEnv {
+class Env : public BasicEnv {
  public:
   Env(napi_env env);
 
@@ -2448,7 +2451,7 @@ class ObjectWrap : public InstanceWrap<T>, public Reference<Object> {
       napi_property_attributes attributes = napi_default);
   static Napi::Value OnCalledAsFunction(const Napi::CallbackInfo& callbackInfo);
   virtual void Finalize(Napi::Env env);
-  virtual void Finalize(NogcEnv env);
+  virtual void Finalize(BasicEnv env);
 
  private:
   using This = ObjectWrap<T>;

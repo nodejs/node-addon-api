@@ -4,8 +4,8 @@ namespace {
 class Test : public Napi::ObjectWrap<Test> {
  public:
   Test(const Napi::CallbackInfo& info) : Napi::ObjectWrap<Test>(info) {
-    nogcFinalizerCalled = false;
-    gcFinalizerCalled = false;
+    syncFinalizerCalled = false;
+    asyncFinalizerCalled = false;
 
     if (info.Length() > 0) {
       finalizeCb_ = Napi::Persistent(info[0].As<Napi::Function>());
@@ -17,101 +17,101 @@ class Test : public Napi::ObjectWrap<Test> {
                 DefineClass(env,
                             "Test",
                             {
-                                StaticAccessor("isNogcFinalizerCalled",
-                                               &IsNogcFinalizerCalled,
+                                StaticAccessor("isSyncFinalizerCalled",
+                                               &IsSyncFinalizerCalled,
                                                nullptr,
                                                napi_default),
-                                StaticAccessor("isGcFinalizerCalled",
-                                               &IsGcFinalizerCalled,
+                                StaticAccessor("isAsyncFinalizerCalled",
+                                               &IsAsyncFinalizerCalled,
                                                nullptr,
                                                napi_default),
                             }));
   }
 
-  void Finalize(Napi::NogcEnv /*env*/) { nogcFinalizerCalled = true; }
+  void Finalize(Napi::BasicEnv /*env*/) { syncFinalizerCalled = true; }
 
   void Finalize(Napi::Env /*env*/) {
-    gcFinalizerCalled = true;
+    asyncFinalizerCalled = true;
     if (!finalizeCb_.IsEmpty()) {
       finalizeCb_.Call({});
     }
   }
 
-  static Napi::Value IsNogcFinalizerCalled(const Napi::CallbackInfo& info) {
-    return Napi::Boolean::New(info.Env(), nogcFinalizerCalled);
+  static Napi::Value IsSyncFinalizerCalled(const Napi::CallbackInfo& info) {
+    return Napi::Boolean::New(info.Env(), syncFinalizerCalled);
   }
 
-  static Napi::Value IsGcFinalizerCalled(const Napi::CallbackInfo& info) {
-    return Napi::Boolean::New(info.Env(), gcFinalizerCalled);
+  static Napi::Value IsAsyncFinalizerCalled(const Napi::CallbackInfo& info) {
+    return Napi::Boolean::New(info.Env(), asyncFinalizerCalled);
   }
 
  private:
   Napi::FunctionReference finalizeCb_;
 
-  static bool nogcFinalizerCalled;
-  static bool gcFinalizerCalled;
+  static bool syncFinalizerCalled;
+  static bool asyncFinalizerCalled;
 };
 
-bool Test::nogcFinalizerCalled = false;
-bool Test::gcFinalizerCalled = false;
+bool Test::syncFinalizerCalled = false;
+bool Test::asyncFinalizerCalled = false;
 
-bool externalNogcFinalizerCalled = false;
-bool externalGcFinalizerCalled = false;
+bool externalSyncFinalizerCalled = false;
+bool externalAsyncFinalizerCalled = false;
 
-Napi::Value CreateExternalNogc(const Napi::CallbackInfo& info) {
-  externalNogcFinalizerCalled = false;
+Napi::Value CreateExternalSyncFinalizer(const Napi::CallbackInfo& info) {
+  externalSyncFinalizerCalled = false;
   return Napi::External<int>::New(
-      info.Env(), new int(1), [](Napi::NogcEnv /*env*/, int* data) {
-        externalNogcFinalizerCalled = true;
+      info.Env(), new int(1), [](Napi::BasicEnv /*env*/, int* data) {
+        externalSyncFinalizerCalled = true;
         delete data;
       });
 }
 
-Napi::Value CreateExternalGc(const Napi::CallbackInfo& info) {
-  externalGcFinalizerCalled = false;
+Napi::Value CreateExternalAsyncFinalizer(const Napi::CallbackInfo& info) {
+  externalAsyncFinalizerCalled = false;
   return Napi::External<int>::New(
       info.Env(), new int(1), [](Napi::Env /*env*/, int* data) {
-        externalGcFinalizerCalled = true;
+        externalAsyncFinalizerCalled = true;
         delete data;
       });
 }
 
-Napi::Value IsExternalNogcFinalizerCalled(const Napi::CallbackInfo& info) {
-  return Napi::Boolean::New(info.Env(), externalNogcFinalizerCalled);
+Napi::Value IsExternalSyncFinalizerCalled(const Napi::CallbackInfo& info) {
+  return Napi::Boolean::New(info.Env(), externalSyncFinalizerCalled);
 }
 
-Napi::Value IsExternalGcFinalizerCalled(const Napi::CallbackInfo& info) {
-  return Napi::Boolean::New(info.Env(), externalGcFinalizerCalled);
+Napi::Value IsExternalAsyncFinalizerCalled(const Napi::CallbackInfo& info) {
+  return Napi::Boolean::New(info.Env(), externalAsyncFinalizerCalled);
 }
 
 #ifdef NODE_API_EXPERIMENTAL_HAS_POST_FINALIZER
-Napi::Value AddPostFinalizer(const Napi::CallbackInfo& info) {
+Napi::Value PostFinalizer(const Napi::CallbackInfo& info) {
   auto env = info.Env();
 
-  env.AddPostFinalizer(
-      [callback = Napi::Persistent(info[0].As<Napi::Function>())](
-          Napi::Env /*env*/) { callback.Call({}); });
+  env.PostFinalizer([callback = Napi::Persistent(info[0].As<Napi::Function>())](
+                        Napi::Env /*env*/) { callback.Call({}); });
 
   return env.Undefined();
 }
 
-Napi::Value AddPostFinalizerWithData(const Napi::CallbackInfo& info) {
+Napi::Value PostFinalizerWithData(const Napi::CallbackInfo& info) {
   auto env = info.Env();
 
-  env.AddPostFinalizer(
+  env.PostFinalizer(
       [callback = Napi::Persistent(info[0].As<Napi::Function>())](
           Napi::Env /*env*/, Napi::Reference<Napi::Value>* data) {
         callback.Call({data->Value()});
         delete data;
       },
       new Napi::Reference<Napi::Value>(Napi::Persistent(info[1])));
+
   return env.Undefined();
 }
 
-Napi::Value AddPostFinalizerWithDataAndHint(const Napi::CallbackInfo& info) {
+Napi::Value PostFinalizerWithDataAndHint(const Napi::CallbackInfo& info) {
   auto env = info.Env();
 
-  env.AddPostFinalizer(
+  env.PostFinalizer(
       [callback = Napi::Persistent(info[0].As<Napi::Function>())](
           Napi::Env /*env*/,
           Napi::Reference<Napi::Value>* data,
@@ -122,6 +122,7 @@ Napi::Value AddPostFinalizerWithDataAndHint(const Napi::CallbackInfo& info) {
       },
       new Napi::Reference<Napi::Value>(Napi::Persistent(info[1])),
       new Napi::Reference<Napi::Value>(Napi::Persistent(info[2])));
+
   return env.Undefined();
 }
 #endif
@@ -131,19 +132,21 @@ Napi::Value AddPostFinalizerWithDataAndHint(const Napi::CallbackInfo& info) {
 Napi::Object InitFinalizerOrder(Napi::Env env) {
   Napi::Object exports = Napi::Object::New(env);
   Test::Initialize(env, exports);
-  exports["CreateExternalNogc"] = Napi::Function::New(env, CreateExternalNogc);
-  exports["CreateExternalGc"] = Napi::Function::New(env, CreateExternalGc);
-  exports["isExternalNogcFinalizerCalled"] =
-      Napi::Function::New(env, IsExternalNogcFinalizerCalled);
-  exports["isExternalGcFinalizerCalled"] =
-      Napi::Function::New(env, IsExternalGcFinalizerCalled);
+  exports["createExternalSyncFinalizer"] =
+      Napi::Function::New(env, CreateExternalSyncFinalizer);
+  exports["createExternalAsyncFinalizer"] =
+      Napi::Function::New(env, CreateExternalAsyncFinalizer);
+  exports["isExternalSyncFinalizerCalled"] =
+      Napi::Function::New(env, IsExternalSyncFinalizerCalled);
+  exports["isExternalAsyncFinalizerCalled"] =
+      Napi::Function::New(env, IsExternalAsyncFinalizerCalled);
 
 #ifdef NODE_API_EXPERIMENTAL_HAS_POST_FINALIZER
-  exports["AddPostFinalizer"] = Napi::Function::New(env, AddPostFinalizer);
-  exports["AddPostFinalizerWithData"] =
-      Napi::Function::New(env, AddPostFinalizerWithData);
-  exports["AddPostFinalizerWithDataAndHint"] =
-      Napi::Function::New(env, AddPostFinalizerWithDataAndHint);
+  exports["PostFinalizer"] = Napi::Function::New(env, PostFinalizer);
+  exports["PostFinalizerWithData"] =
+      Napi::Function::New(env, PostFinalizerWithData);
+  exports["PostFinalizerWithDataAndHint"] =
+      Napi::Function::New(env, PostFinalizerWithDataAndHint);
 #endif
   return exports;
 }
