@@ -1,0 +1,6 @@
+{
+  "pull-request-title-pattern": "chore: release v${version}",
+  "extra-files": [
+    "README.md"
+  ]
+}

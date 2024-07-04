@@ -6,7 +6,17 @@ collaborators to add you. If necessary you can ask the build
 Working Group who manages the Node.js npm user to add you if
 there are no other active collaborators.
 
-## Prerequisites
+Generally, the release is handled by the
+[release-please](https://github.com/nodejs/node-addon-api/blob/main/.github/workflows/release-please.yml)
+GitHub action. It will bump the version in `package.json` and publish
+node-addon-api to npm.
+
+In cases that the release-please action is not working, please follow the steps
+below to publish node-addon-api manually.
+
+## Publish new release manually
+
+### Prerequisites
 
 Before to start creating a new release check if you have installed the following
 tools:
@@ -16,7 +26,7 @@ tools:
 If not please follow the instruction reported in the tool's documentation to
 install it.
 
-## Publish new release
+### Steps
 
 These are the steps to follow to create a new release:
 
