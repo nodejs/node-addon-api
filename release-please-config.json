@@ -1,0 +1,14 @@
+{
+  "$schema": "https://raw.githubusercontent.com/googleapis/release-please/main/schemas/config.json",
+  "release-type": "node",
+  "pull-request-title-pattern": "chore: release v${version}",
+  "bootstrap-sha": "d1ba547e91b192152bfc314ab85436de1538b4ec",
+  "packages": {
+    ".": {
+      "extra-files": [
+        "README.md"
+      ],
+      "changelog-path": "CHANGELOG.md"
+    }
+  }
+}
