@@ -1,5 +1,19 @@
 # node-addon-api Changelog
 
+## [8.1.0](https://github.com/nodejs/node-addon-api/compare/node-addon-api-v8.0.0...node-addon-api-v8.1.0) (2024-07-05)
+
+
+### Features
+
+* Expose version property in public API ([#1479](https://github.com/nodejs/node-addon-api/issues/1479)) ([23bb42b](https://github.com/nodejs/node-addon-api/commit/23bb42b5e47630c9082dddbabea555626571926e))
+* improve messages on CheckCast ([#1507](https://github.com/nodejs/node-addon-api/issues/1507)) ([bf49519](https://github.com/nodejs/node-addon-api/commit/bf49519a4ce08ee5320327c9a0199cd89d5b87b3))
+
+
+### Bug Fixes
+
+* fix compilation for Visual Studio 2022 ([#1492](https://github.com/nodejs/node-addon-api/issues/1492)) ([e011720](https://github.com/nodejs/node-addon-api/commit/e011720010af26ed66638ceac822e5f1c5e43cde))
+* restore ability to run under NAPI_EXPERIMENTAL ([#1409](https://github.com/nodejs/node-addon-api/issues/1409)) ([40bcb09](https://github.com/nodejs/node-addon-api/commit/40bcb09e6b82e7a1164cb3de56cb503d9b5a3d37))
+
 ## 2024-03-01 Version 8.0.0, @legendecas
 
 ### Notable changes
@@ -1198,5 +1212,3 @@ yet backported in the previous Node.js version.
 * [0a899bf1c5] - doc: update indication of latest version (Michael Dawson) https://github.com/nodejs/node-addon-api/pull/211
 * [17c74e5a5e] - n-api: RangeError in napi_create_dataview() (Jinho Bang) https://github.com/nodejs/node-addon-api/pull/214
 * [4058a29989] - n-api: fix memory leak in napi_async_destroy() (Jinho Bang) https://github.com/nodejs/node-addon-api/pull/213
-
-

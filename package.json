@@ -374,7 +374,6 @@
     {
       "name": "Vladimir Morozov",
       "url": "https://github.com/vmoroz"
-
     },
     {
       "name": "WenheLI",
@@ -479,7 +478,7 @@
     "lint:fix": "node tools/clang-format --fix && node tools/eslint-format --fix"
   },
   "pre-commit": "lint",
-  "version": "8.0.0",
+  "version": "8.1.0",
   "support": true,
   "engines": {
     "node": "^18 || ^20 || >= 21"
