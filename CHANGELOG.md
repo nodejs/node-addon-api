@@ -1,5 +1,11 @@
 # node-addon-api Changelog
 
+## 2024-07-08 Version 7.1.1, @legendecas
+
+### Commits
+
+* \[[`16882e7da2`](https://github.com/nodejs/node-addon-api/commit/16882e7da2)] - _**Revert**_ "Add Node.js version restrictions (#1340)" (Chengzhong Wu)
+
 ## 2024-01-18 Version 7.1.0, @legendecas
 
 ### Notable changes
