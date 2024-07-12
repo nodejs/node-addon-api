@@ -2,9 +2,10 @@
   "$schema": "https://raw.githubusercontent.com/googleapis/release-please/main/schemas/config.json",
   "release-type": "node",
   "pull-request-title-pattern": "chore: release v${version}",
-  "bootstrap-sha": "d1ba547e91b192152bfc314ab85436de1538b4ec",
+  "bootstrap-sha": "bc5acef9dd5298cbbcabd5c01c9590ada683951d",
   "packages": {
     ".": {
+      "include-component-in-tag": false,
       "extra-files": [
         "README.md"
       ],
