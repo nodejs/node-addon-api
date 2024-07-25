@@ -4,8 +4,8 @@ namespace {
 class Test : public Napi::ObjectWrap<Test> {
  public:
   Test(const Napi::CallbackInfo& info) : Napi::ObjectWrap<Test>(info) {
-    syncFinalizerCalled = false;
-    asyncFinalizerCalled = false;
+    basicFinalizerCalled = false;
+    finalizerCalled = false;
 
     if (info.Length() > 0) {
       finalizeCb_ = Napi::Persistent(info[0].As<Napi::Function>());
@@ -17,71 +17,71 @@ class Test : public Napi::ObjectWrap<Test> {
                 DefineClass(env,
                             "Test",
                             {
-                                StaticAccessor("isSyncFinalizerCalled",
-                                               &IsSyncFinalizerCalled,
+                                StaticAccessor("isBasicFinalizerCalled",
+                                               &IsBasicFinalizerCalled,
                                                nullptr,
                                                napi_default),
-                                StaticAccessor("isAsyncFinalizerCalled",
-                                               &IsAsyncFinalizerCalled,
+                                StaticAccessor("isFinalizerCalled",
+                                               &IsFinalizerCalled,
                                                nullptr,
                                                napi_default),
                             }));
   }
 
-  void Finalize(Napi::BasicEnv /*env*/) { syncFinalizerCalled = true; }
+  void Finalize(Napi::BasicEnv /*env*/) { basicFinalizerCalled = true; }
 
   void Finalize(Napi::Env /*env*/) {
-    asyncFinalizerCalled = true;
+    finalizerCalled = true;
     if (!finalizeCb_.IsEmpty()) {
       finalizeCb_.Call({});
     }
   }
 
-  static Napi::Value IsSyncFinalizerCalled(const Napi::CallbackInfo& info) {
-    return Napi::Boolean::New(info.Env(), syncFinalizerCalled);
+  static Napi::Value IsBasicFinalizerCalled(const Napi::CallbackInfo& info) {
+    return Napi::Boolean::New(info.Env(), basicFinalizerCalled);
   }
 
-  static Napi::Value IsAsyncFinalizerCalled(const Napi::CallbackInfo& info) {
-    return Napi::Boolean::New(info.Env(), asyncFinalizerCalled);
+  static Napi::Value IsFinalizerCalled(const Napi::CallbackInfo& info) {
+    return Napi::Boolean::New(info.Env(), finalizerCalled);
   }
 
  private:
   Napi::FunctionReference finalizeCb_;
 
-  static bool syncFinalizerCalled;
-  static bool asyncFinalizerCalled;
+  static bool basicFinalizerCalled;
+  static bool finalizerCalled;
 };
 
-bool Test::syncFinalizerCalled = false;
-bool Test::asyncFinalizerCalled = false;
+bool Test::basicFinalizerCalled = false;
+bool Test::finalizerCalled = false;
 
-bool externalSyncFinalizerCalled = false;
-bool externalAsyncFinalizerCalled = false;
+bool externalBasicFinalizerCalled = false;
+bool externalFinalizerCalled = false;
 
-Napi::Value CreateExternalSyncFinalizer(const Napi::CallbackInfo& info) {
-  externalSyncFinalizerCalled = false;
+Napi::Value CreateExternalBasicFinalizer(const Napi::CallbackInfo& info) {
+  externalBasicFinalizerCalled = false;
   return Napi::External<int>::New(
       info.Env(), new int(1), [](Napi::BasicEnv /*env*/, int* data) {
-        externalSyncFinalizerCalled = true;
+        externalBasicFinalizerCalled = true;
         delete data;
       });
 }
 
-Napi::Value CreateExternalAsyncFinalizer(const Napi::CallbackInfo& info) {
-  externalAsyncFinalizerCalled = false;
+Napi::Value CreateExternalFinalizer(const Napi::CallbackInfo& info) {
+  externalFinalizerCalled = false;
   return Napi::External<int>::New(
       info.Env(), new int(1), [](Napi::Env /*env*/, int* data) {
-        externalAsyncFinalizerCalled = true;
+        externalFinalizerCalled = true;
         delete data;
       });
 }
 
-Napi::Value IsExternalSyncFinalizerCalled(const Napi::CallbackInfo& info) {
-  return Napi::Boolean::New(info.Env(), externalSyncFinalizerCalled);
+Napi::Value isExternalBasicFinalizerCalled(const Napi::CallbackInfo& info) {
+  return Napi::Boolean::New(info.Env(), externalBasicFinalizerCalled);
 }
 
-Napi::Value IsExternalAsyncFinalizerCalled(const Napi::CallbackInfo& info) {
-  return Napi::Boolean::New(info.Env(), externalAsyncFinalizerCalled);
+Napi::Value IsExternalFinalizerCalled(const Napi::CallbackInfo& info) {
+  return Napi::Boolean::New(info.Env(), externalFinalizerCalled);
 }
 
 #ifdef NODE_API_EXPERIMENTAL_HAS_POST_FINALIZER
@@ -132,14 +132,14 @@ Napi::Value PostFinalizerWithDataAndHint(const Napi::CallbackInfo& info) {
 Napi::Object InitFinalizerOrder(Napi::Env env) {
   Napi::Object exports = Napi::Object::New(env);
   Test::Initialize(env, exports);
-  exports["createExternalSyncFinalizer"] =
-      Napi::Function::New(env, CreateExternalSyncFinalizer);
-  exports["createExternalAsyncFinalizer"] =
-      Napi::Function::New(env, CreateExternalAsyncFinalizer);
-  exports["isExternalSyncFinalizerCalled"] =
-      Napi::Function::New(env, IsExternalSyncFinalizerCalled);
-  exports["isExternalAsyncFinalizerCalled"] =
-      Napi::Function::New(env, IsExternalAsyncFinalizerCalled);
+  exports["createExternalBasicFinalizer"] =
+      Napi::Function::New(env, CreateExternalBasicFinalizer);
+  exports["createExternalFinalizer"] =
+      Napi::Function::New(env, CreateExternalFinalizer);
+  exports["isExternalBasicFinalizerCalled"] =
+      Napi::Function::New(env, isExternalBasicFinalizerCalled);
+  exports["isExternalFinalizerCalled"] =
+      Napi::Function::New(env, IsExternalFinalizerCalled);
 
 #ifdef NODE_API_EXPERIMENTAL_HAS_POST_FINALIZER
   exports["PostFinalizer"] = Napi::Function::New(env, PostFinalizer);

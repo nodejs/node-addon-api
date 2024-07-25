@@ -318,9 +318,9 @@ class BasicEnv {
   node_api_nogc_env _env;
 #if NAPI_VERSION > 5
   template <typename T>
-  static void DefaultAsyncFini(Env, T* data);
+  static void DefaultFini(Env, T* data);
   template <typename DataType, typename HintType>
-  static void DefaultAsyncFiniWithHint(Env, DataType* data, HintType* hint);
+  static void DefaultFiniWithHint(Env, DataType* data, HintType* hint);
 #endif  // NAPI_VERSION > 5
  public:
   BasicEnv(node_api_nogc_env env);
@@ -355,17 +355,16 @@ class BasicEnv {
   T* GetInstanceData() const;
 
   template <typename T>
-  using AsyncFinalizer = void (*)(Env, T*);
-  template <typename T,
-            AsyncFinalizer<T> async_fini = BasicEnv::DefaultAsyncFini<T>>
+  using Finalizer = void (*)(Env, T*);
+  template <typename T, Finalizer<T> fini = BasicEnv::DefaultFini<T>>
   void SetInstanceData(T* data) const;
 
   template <typename DataType, typename HintType>
-  using AsyncFinalizerWithHint = void (*)(Env, DataType*, HintType*);
+  using FinalizerWithHint = void (*)(Env, DataType*, HintType*);
   template <typename DataType,
             typename HintType,
-            AsyncFinalizerWithHint<DataType, HintType> fini =
-                BasicEnv::DefaultAsyncFiniWithHint<DataType, HintType>>
+            FinalizerWithHint<DataType, HintType> fini =
+                BasicEnv::DefaultFiniWithHint<DataType, HintType>>
   void SetInstanceData(DataType* data, HintType* hint) const;
 #endif  // NAPI_VERSION > 5
 

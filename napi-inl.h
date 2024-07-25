@@ -35,9 +35,9 @@ namespace details {
 constexpr int napi_no_external_buffers_allowed = 22;
 
 template <typename FreeType>
-inline void default_finalizer(node_api_nogc_env /*env*/,
-                              void* data,
-                              void* /*hint*/) {
+inline void default_basic_finalizer(node_api_nogc_env /*env*/,
+                                    void* data,
+                                    void* /*hint*/) {
   delete static_cast<FreeType*>(data);
 }
 
@@ -46,7 +46,7 @@ inline void default_finalizer(node_api_nogc_env /*env*/,
 // TODO: Replace this code with `napi_add_finalizer()` whenever it becomes
 // available on all supported versions of Node.js.
 template <typename FreeType,
-          node_api_nogc_finalize finalizer = default_finalizer<FreeType>>
+          node_api_nogc_finalize finalizer = default_basic_finalizer<FreeType>>
 inline napi_status AttachData(napi_env env,
                               napi_value obj,
                               FreeType* data,
@@ -427,7 +427,7 @@ inline std::string StringFormat(const char* format, ...) {
 }
 
 template <typename T>
-class HasAsyncFinalizer {
+class HasExtendedFinalizer {
  private:
   template <typename U, void (U::*)(Napi::Env)>
   struct SFINAE {};
@@ -441,7 +441,7 @@ class HasAsyncFinalizer {
 };
 
 template <typename T>
-class HasSyncFinalizer {
+class HasBasicFinalizer {
  private:
   template <typename U, void (U::*)(Napi::BasicEnv)>
   struct SFINAE {};
@@ -653,14 +653,12 @@ void BasicEnv::CleanupHook<Hook, Arg>::WrapperWithArg(void* data)
 #endif  // NAPI_VERSION > 2
 
 #if NAPI_VERSION > 5
-template <typename T, BasicEnv::AsyncFinalizer<T> async_fini>
+template <typename T, BasicEnv::Finalizer<T> fini>
 inline void BasicEnv::SetInstanceData(T* data) const {
   napi_status status = napi_set_instance_data(
       _env,
       data,
-      [](napi_env env, void* data, void*) {
-        async_fini(env, static_cast<T*>(data));
-      },
+      [](napi_env env, void* data, void*) { fini(env, static_cast<T*>(data)); },
       nullptr);
   NAPI_FATAL_IF_FAILED(
       status, "BasicEnv::SetInstanceData", "invalid arguments");
@@ -668,7 +666,7 @@ inline void BasicEnv::SetInstanceData(T* data) const {
 
 template <typename DataType,
           typename HintType,
-          Napi::BasicEnv::AsyncFinalizerWithHint<DataType, HintType> fini>
+          Napi::BasicEnv::FinalizerWithHint<DataType, HintType> fini>
 inline void BasicEnv::SetInstanceData(DataType* data, HintType* hint) const {
   napi_status status = napi_set_instance_data(
       _env,
@@ -693,12 +691,12 @@ inline T* BasicEnv::GetInstanceData() const {
 }
 
 template <typename T>
-void BasicEnv::DefaultAsyncFini(Env, T* data) {
+void BasicEnv::DefaultFini(Env, T* data) {
   delete data;
 }
 
 template <typename DataType, typename HintType>
-void BasicEnv::DefaultAsyncFiniWithHint(Env, DataType* data, HintType*) {
+void BasicEnv::DefaultFiniWithHint(Env, DataType* data, HintType*) {
   delete data;
 }
 #endif  // NAPI_VERSION > 5
@@ -5018,8 +5016,8 @@ inline void ObjectWrap<T>::FinalizeCallback(node_api_nogc_env env,
   // Prevent ~ObjectWrap from calling napi_remove_wrap
   instance->_ref = nullptr;
 
-  // If class overrides the synchronous finalizer, execute it.
-  if constexpr (details::HasSyncFinalizer<T>::value) {
+  // If class overrides the basic finalizer, execute it.
+  if constexpr (details::HasBasicFinalizer<T>::value) {
 #ifndef NODE_API_EXPERIMENTAL_HAS_POST_FINALIZER
     HandleScope scope(env);
 #endif
@@ -5027,9 +5025,9 @@ inline void ObjectWrap<T>::FinalizeCallback(node_api_nogc_env env,
     instance->Finalize(Napi::BasicEnv(env));
   }
 
-  // If class overrides the asynchronous finalizer, either schedule it or
+  // If class overrides the (extended) finalizer, either schedule it or
   // execute it immediately (depending on experimental features enabled).
-  if constexpr (details::HasAsyncFinalizer<T>::value) {
+  if constexpr (details::HasExtendedFinalizer<T>::value) {
 #ifdef NODE_API_EXPERIMENTAL_HAS_POST_FINALIZER
     // In experimental, attach via node_api_post_finalizer.
     // `PostFinalizeCallback` is responsible for deleting the `T* instance`,
@@ -5040,16 +5038,16 @@ inline void ObjectWrap<T>::FinalizeCallback(node_api_nogc_env env,
                          "ObjectWrap<T>::FinalizeCallback",
                          "node_api_post_finalizer failed");
 #else
-    // In non-experimental, this `FinalizeCallback` already executes from
-    // outside the garbage collector. Execute the override directly.
+    // In non-experimental, this `FinalizeCallback` already executes from a
+    // non-basic environment. Execute the override directly.
     // `PostFinalizeCallback` is responsible for deleting the `T* instance`,
     // after calling the user-provided finalizer.
     HandleScope scope(env);
     PostFinalizeCallback(env, data, static_cast<void*>(nullptr));
 #endif
   }
-  // If the instance does _not_ have an asynchronous finalizer, delete the `T*
-  // instance` immediately.
+  // If the instance does _not_ override the (extended) finalizer, delete the
+  // `T* instance` immediately.
   else {
     delete instance;
   }
