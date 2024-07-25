@@ -395,18 +395,16 @@ class BasicEnv {
 #endif  // NAPI_VERSION > 8
 
 #ifdef NODE_API_EXPERIMENTAL_HAS_POST_FINALIZER
-  using FinalizerWithoutData = void (*)(Env);
-  inline void PostFinalizer(FinalizerWithoutData finalizeCallback) const;
+  template <typename FinalizerType>
+  inline void PostFinalizer(FinalizerType finalizeCallback) const;
 
-  template <typename DataType>
-  inline void PostFinalizer(Finalizer<DataType> finalizeCallback,
-                            DataType* data) const;
+  template <typename FinalizerType, typename T>
+  inline void PostFinalizer(FinalizerType finalizeCallback, T* data) const;
 
-  template <typename DataType, typename HintType>
-  inline void PostFinalizer(
-      FinalizerWithHint<DataType, HintType> finalizeCallback,
-      DataType* data,
-      HintType* finalizeHint) const;
+  template <typename FinalizerType, typename T, typename Hint>
+  inline void PostFinalizer(FinalizerType finalizeCallback,
+                            T* data,
+                            Hint* finalizeHint) const;
 #endif  // NODE_API_EXPERIMENTAL_HAS_POST_FINALIZER
 
   friend class Env;
