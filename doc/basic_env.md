@@ -117,8 +117,9 @@ its `Remove()` method.
 ### PostFinalizer
 
 ```cpp
-template <typename Finalizer>
-inline void PostFinalizer(Finalizer finalizeCallback) const;
+using FinalizerWithoutData = void (*)(Env);
+
+inline void PostFinalizer(FinalizerWithoutData finalizeCallback) const;
 ```
 
 - `[in] finalizeCallback`: The function to queue for execution outside of the GC
@@ -128,28 +129,34 @@ inline void PostFinalizer(Finalizer finalizeCallback) const;
 ### PostFinalizer
 
 ```cpp
-template <typename Finalizer, typename T>
-inline void PostFinalizer(Finalizer finalizeCallback, T* data) const;
+template <typename T>
+using Finalizer = void (*)(Napi::Env, T*);
+
+template <typename DataType>
+inline void PostFinalizer(Finalizer<DataType> finalizeCallback, DataType* data) const;
 ```
 
 - `[in] finalizeCallback`: The function to queue for execution outside of the GC
-  finalization, implementing `operator()(Napi::Env, T*)`. See [Finalization]()
+  finalization, implementing `operator()(Napi::Env, DataType*)`. See [Finalization]()
   for more details.
-- `[in] data`: The data to associate with the object.
+- `[in] data`: The data value passed to the `finalizeCallback` function.
 
 ### PostFinalizer
 
 ```cpp
-template <typename Finalizer, typename T, typename Hint>
-inline void PostFinalizer(Finalizer finalizeCallback,
-                          T* data,
+template <typename DataType, typename HintType>
+using FinalizerWithHint = void (*)(Napi::Env, DataType*, HintType*);
+
+template <typename DataType, typename HintType>
+inline void PostFinalizer(FinalizerWithHint<DataType, HintType> finalizeCallback,
+                          DataType* data,
                           Hint* finalizeHint) const;
 ```
 
 - `[in] finalizeCallback`: The function to queue for execution outside of the GC
-  finalization, implementing `operator()(Napi::Env, T*, Hint*)`. See
+  finalization, implementing `operator()(Napi::Env, DataType*, HintType*)`. See
   [Finalization]() for more details.
-- `[in] data`: The data to associate with the object.
+- `[in] data`: The data value passed to the `finalizeCallback` function.
 - `[in] finalizeHint`: The hint value passed to the `finalizeCallback` function.
 
 ### AddCleanupHook

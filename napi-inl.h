@@ -6789,16 +6789,16 @@ bool Env::CleanupHook<Hook, Arg>::IsEmpty() const {
 #endif  // NAPI_VERSION > 2
 
 #ifdef NODE_API_EXPERIMENTAL_HAS_POST_FINALIZER
-template <typename Finalizer>
-inline void BasicEnv::PostFinalizer(Finalizer finalizeCallback) const {
+inline void BasicEnv::PostFinalizer(
+    FinalizerWithoutData finalizeCallback) const {
   using T = void*;
-  details::FinalizeData<T, Finalizer>* finalizeData =
-      new details::FinalizeData<T, Finalizer>(
+  details::FinalizeData<T, FinalizerWithoutData>* finalizeData =
+      new details::FinalizeData<T, FinalizerWithoutData>(
           {std::move(finalizeCallback), nullptr});
 
   napi_status status = node_api_post_finalizer(
       _env,
-      details::FinalizeData<T, Finalizer>::WrapperGCWithoutData,
+      details::FinalizeData<T, FinalizerWithoutData>::WrapperGCWithoutData,
       static_cast<void*>(nullptr),
       finalizeData);
   if (status != napi_ok) {
@@ -6808,14 +6808,18 @@ inline void BasicEnv::PostFinalizer(Finalizer finalizeCallback) const {
   }
 }
 
-template <typename Finalizer, typename T>
-inline void BasicEnv::PostFinalizer(Finalizer finalizeCallback, T* data) const {
-  details::FinalizeData<T, Finalizer>* finalizeData =
-      new details::FinalizeData<T, Finalizer>(
+template <typename DataType>
+inline void BasicEnv::PostFinalizer(Finalizer<DataType> finalizeCallback,
+                                    DataType* data) const {
+  details::FinalizeData<DataType, Finalizer<DataType>>* finalizeData =
+      new details::FinalizeData<DataType, Finalizer<DataType>>(
           {std::move(finalizeCallback), nullptr});
 
   napi_status status = node_api_post_finalizer(
-      _env, details::FinalizeData<T, Finalizer>::WrapperGC, data, finalizeData);
+      _env,
+      details::FinalizeData<DataType, Finalizer<DataType>>::WrapperGC,
+      data,
+      finalizeData);
   if (status != napi_ok) {
     delete finalizeData;
     NAPI_FATAL_IF_FAILED(
@@ -6823,16 +6827,21 @@ inline void BasicEnv::PostFinalizer(Finalizer finalizeCallback, T* data) const {
   }
 }
 
-template <typename Finalizer, typename T, typename Hint>
-inline void BasicEnv::PostFinalizer(Finalizer finalizeCallback,
-                                    T* data,
-                                    Hint* finalizeHint) const {
-  details::FinalizeData<T, Finalizer, Hint>* finalizeData =
-      new details::FinalizeData<T, Finalizer, Hint>(
+template <typename DataType, typename HintType>
+inline void BasicEnv::PostFinalizer(
+    FinalizerWithHint<DataType, HintType> finalizeCallback,
+    DataType* data,
+    HintType* finalizeHint) const {
+  details::FinalizeData<DataType,
+                        FinalizerWithHint<DataType, HintType>,
+                        HintType>* finalizeData = new details::
+      FinalizeData<DataType, FinalizerWithHint<DataType, HintType>, HintType>(
           {std::move(finalizeCallback), finalizeHint});
   napi_status status = node_api_post_finalizer(
       _env,
-      details::FinalizeData<T, Finalizer, Hint>::WrapperGCWithHint,
+      details::FinalizeData<DataType,
+                            FinalizerWithHint<DataType, HintType>,
+                            HintType>::WrapperGCWithHint,
       data,
       finalizeData);
   if (status != napi_ok) {
