@@ -9,11 +9,6 @@ provide optimizations, improved execution, or other benefits.
 In general, it is best to use basic finalizers whenever possible (eg. when
 access to JavaScript is _not_ needed).
 
-*NOTE*: Optimizations via basic finalizers will only occur if using
-`NAPI_EXPERIMENTAL` and the `NODE_API_EXPERIMENTAL_NOGC_ENV_OPT_OUT` define flag
-has _not_ been set. Otherwise, the engine will not differentiate between basic
-and (extended) finalizers.
-
 ## Finalizers
 
 The callback takes `Napi::Env` as its first argument:
