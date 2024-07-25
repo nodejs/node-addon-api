@@ -242,7 +242,7 @@ request being made.
 ### Finalize
 
 Provides an opportunity to run cleanup code that only utilizes basic Node APIs, if any.
-Override to implement. See [Finalization]() for more details.
+Override to implement. See [Finalization][] for more details.
 
 ```cpp
 virtual void Finalize(Napi::BasicEnv env);

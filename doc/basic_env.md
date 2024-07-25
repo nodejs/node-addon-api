@@ -8,7 +8,7 @@ or node-addon-api infrastructure.
 
 The `Napi::BasicEnv` object represents an environment that has a limited subset
 of APIs when compared to `Napi::Env` and can be used in basic finalizers. See
-[Finalization]() for more details.
+[Finalization][] for more details.
 
 ## Methods
 
@@ -122,7 +122,7 @@ inline void PostFinalizer(FinalizerType finalizeCallback) const;
 ```
 
 - `[in] finalizeCallback`: The function to queue for execution outside of the GC
-  finalization, implementing `operator()(Napi::Env)`. See [Finalization]() for
+  finalization, implementing `operator()(Napi::Env)`. See [Finalization][] for
   more details.
 
 ### PostFinalizer
@@ -133,7 +133,7 @@ inline void PostFinalizer(FinalizerType finalizeCallback, T* data) const;
 ```
 
 - `[in] finalizeCallback`: The function to queue for execution outside of the GC
-  finalization, implementing `operator()(Napi::Env, T*)`. See [Finalization]()
+  finalization, implementing `operator()(Napi::Env, T*)`. See [Finalization][]
   for more details.
 - `[in] data`: The data to associate with the object.
 
@@ -148,7 +148,7 @@ inline void PostFinalizer(FinalizerType finalizeCallback,
 
 - `[in] finalizeCallback`: The function to queue for execution outside of the GC
   finalization, implementing `operator()(Napi::Env, T*, Hint*)`. See
-  [Finalization]() for more details.
+  [Finalization][] for more details.
 - `[in] data`: The data to associate with the object.
 - `[in] finalizeHint`: The hint value passed to the `finalizeCallback` function.
 

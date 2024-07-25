@@ -35,7 +35,7 @@ with an opportunity to free the data when the `Napi::Buffer` gets
 garbage-collected. If you need to free the data retained by the `Napi::Buffer`
 object please use other variants of the `Napi::Buffer::New` factory method that
 accept `Finalizer`, which is a function that will be invoked when the
-`Napi::Buffer` object has been destroyed. See [Finalization]() for more details.
+`Napi::Buffer` object has been destroyed. See [Finalization][] for more details.
 
 ```cpp
 static Napi::Buffer<T> Napi::Buffer::New(napi_env env, T* data, size_t length);
@@ -71,7 +71,7 @@ static Napi::Buffer<T> Napi::Buffer::New(napi_env env,
 - `[in] length`: The number of `T` elements in the external data.
 - `[in] finalizeCallback`: The function called when the engine destroys the
   `Napi::Buffer` object, implementing `operator()(Napi::BasicEnv, T*)`. See
-  [Finalization]() for more details.
+  [Finalization][] for more details.
 
 Returns a new `Napi::Buffer` object.
 
@@ -100,7 +100,7 @@ static Napi::Buffer<T> Napi::Buffer::New(napi_env env,
 - `[in] length`: The number of `T` elements in the external data.
 - `[in] finalizeCallback`: The function called when the engine destroys the
   `Napi::Buffer` object, implementing `operator()(Napi::BasicEnv, T*, Hint*)`.
-  See [Finalization]() for more details.
+  See [Finalization][] for more details.
 - `[in] finalizeHint`: The hint value passed to the `finalizeCallback` function.
 
 Returns a new `Napi::Buffer` object.
@@ -157,7 +157,7 @@ static Napi::Buffer<T> Napi::Buffer::NewOrCopy(napi_env env,
 - `[in] length`: The number of `T` elements in the external data.
 - `[in] finalizeCallback`: The function called when the engine destroys the
   `Napi::Buffer` object, implementing `operator()(Napi::BasicEnv, T*)`. See
-  [Finalization]() for more details.
+  [Finalization][] for more details.
 
 Returns a new `Napi::Buffer` object.
 
@@ -186,7 +186,7 @@ static Napi::Buffer<T> Napi::Buffer::NewOrCopy(napi_env env,
 - `[in] length`: The number of `T` elements in the external data.
 - `[in] finalizeCallback`: The function called when the engine destroys the
   `Napi::Buffer` object, implementing `operator()(Napi::BasicEnv, T*, Hint*)`.
-  See [Finalization]() for more details.
+  See [Finalization][] for more details.
 - `[in] finalizeHint`: The hint value passed to the `finalizeCallback` function.
 
 Returns a new `Napi::Buffer` object.

@@ -7,7 +7,8 @@ The `Napi::Env` object is usually created and passed by the Node.js runtime or
 node-addon-api infrastructure.
 
 The `Napi::Env` object represents an environment that has a superset of APIs
-when compared to `Napi::BasicEnv` and therefore _cannot_ be used in basic finalizers.
+when compared to `Napi::BasicEnv` and therefore _cannot_ be used in basic
+finalizers. See [Finalization][] for more details.
 
 ## Methods
 
@@ -81,3 +82,4 @@ The `script` can be any of the following types:
 - `const char *`
 - `const std::string &`
 
+[Finalization]: ./finalization.md

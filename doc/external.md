@@ -8,7 +8,7 @@ The `Napi::External` template class implements the ability to create a `Napi::Va
 optional Hint value. The `Finalizer` function, if specified, is called when your
 `Napi::External` object is released by Node's garbage collector. It gives your
 code the opportunity to free any dynamically created data. If you specify a Hint
-value, it is passed to your `Finalizer` function. See [Finalization]() for more details.
+value, it is passed to your `Finalizer` function. See [Finalization][] for more details.
 
 Note that `Napi::Value::IsExternal()` will return `true` for any external value.
 It does not differentiate between the templated parameter `T` in
@@ -44,7 +44,7 @@ static Napi::External Napi::External::New(napi_env env,
 - `[in] data`: The arbitrary C++ data to be held by the `Napi::External` object.
 - `[in] finalizeCallback`: The function called when the engine destroys the
   `Napi::External` object, implementing `operator()(Napi::BasicEnv, T*)`. See
-  [Finalization]() for more details.
+  [Finalization][] for more details.
 
 Returns the created `Napi::External<T>` object.
 
@@ -62,7 +62,7 @@ static Napi::External Napi::External::New(napi_env env,
 - `[in] data`: The arbitrary C++ data to be held by the `Napi::External` object.
 - `[in] finalizeCallback`: The function called when the engine destroys the
   `Napi::External` object, implementing `operator()(Napi::BasicEnv, T*, Hint*)`.
-  See [Finalization]() for more details.
+  See [Finalization][] for more details.
 - `[in] finalizeHint`: The hint value passed to the `finalizeCallback` function.
 
 Returns the created `Napi::External<T>` object.
