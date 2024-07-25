@@ -241,9 +241,24 @@ request being made.
 
 ### Finalize
 
-Provides an opportunity to run cleanup code that requires access to the
-`Napi::Env` before the wrapped native object instance is freed.  Override to
-implement.
+Provides an opportunity to run cleanup code that only utilizes basic Node APIs, if any.
+Override to implement. See [Finalization]() for more details.
+
+```cpp
+virtual void Finalize(Napi::BasicEnv env);
+```
+
+- `[in] env`: `Napi::Env`.
+
+### Finalize
+
+Provides an opportunity to run cleanup code that utilizes non-basic Node APIs.
+Override to implement.
+
+*NOTE*: Defining this method causes the deletion of the underlying `T* data` to
+be postponed until _after_ the garbage collection cycle. Since an `Napi::Env`
+has access to non-basic Node APIs, it cannot run in the same current tick as the
+garbage collector.
 
 ```cpp
 virtual void Finalize(Napi::Env env);
@@ -586,3 +601,4 @@ Returns `Napi::PropertyDescriptor` object that represents an static value
 property of a JavaScript class
 
 [`Napi::InstanceWrap<T>`]: ./instance_wrap.md
+[Finalization]: ./finalization.md
