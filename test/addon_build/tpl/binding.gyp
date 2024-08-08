@@ -4,7 +4,7 @@
         "<!(node -p \"require('node-addon-api').include_dir\")"
     ],
     'variables': {
-      'NAPI_VERSION%': "<!(node -p \"process.versions.napi\")",
+      'NAPI_VERSION%': "<!(node -p \"process.env.NAPI_VERSION || process.versions.napi\")",
       'disable_deprecated': "<!(node -p \"process.env['npm_config_disable_deprecated']\")"
     },
     'conditions': [
