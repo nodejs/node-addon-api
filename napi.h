@@ -187,7 +187,6 @@ namespace NAPI_CPP_CUSTOM_NAMESPACE {
 #endif
 
 // Forward declarations
-class BasicEnv;
 class Env;
 class Value;
 class Boolean;

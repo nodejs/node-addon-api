@@ -1,7 +1,6 @@
 # BasicEnv
 
-The opaque data structure containing the environment in which the request is
-being run.
+The data structure containing the environment in which the request is being run.
 
 The `Napi::BasicEnv` object is usually created and passed by the Node.js runtime
 or node-addon-api infrastructure.
@@ -50,13 +49,13 @@ void SetInstanceData(T* data) const;
 - `[template] fini`: A function to call when the instance data is to be deleted.
 Accepts a function of the form `void CleanupData(Napi::Env env, T* data)`. If
 not given, the default finalizer will be used, which simply uses the `delete`
-operator to destroy `T*` when the addon instance is unloaded.
+operator to destroy `T*` when the add-on instance is unloaded.
 - `[in] data`: A pointer to data that will be associated with the instance of
-the addon for the duration of its lifecycle.
+the add-on for the duration of its lifecycle.
 
 Associates a data item stored at `T* data` with the current instance of the
-addon. The item will be passed to the function `fini` which gets called when an
-instance of the addon is unloaded.
+add-on. The item will be passed to the function `fini` which gets called when an
+instance of the add-on is unloaded.
 
 ### SetInstanceData
 
@@ -73,16 +72,16 @@ void SetInstanceData(DataType* data, HintType* hint) const;
 - `[template] fini`: A function to call when the instance data is to be deleted.
 Accepts a function of the form `void CleanupData(Napi::Env env, DataType* data,
 HintType* hint)`. If not given, the default finalizer will be used, which simply
-uses the `delete` operator to destroy `T*` when the addon instance is unloaded.
+uses the `delete` operator to destroy `T*` when the add-on instance is unloaded.
 - `[in] data`: A pointer to data that will be associated with the instance of
-the addon for the duration of its lifecycle.
+the add-on for the duration of its lifecycle.
 - `[in] hint`: A pointer to data that will be associated with the instance of
-the addon for the duration of its lifecycle and will be passed as a hint to
-`fini` when the addon instance is unloaded.
+the add-on for the duration of its lifecycle and will be passed as a hint to
+`fini` when the add-on instance is unloaded.
 
 Associates a data item stored at `T* data` with the current instance of the
-addon. The item will be passed to the function `fini` which gets called when an
-instance of the addon is unloaded. This overload accepts an additional hint to
+add-on. The item will be passed to the function `fini` which gets called when an
+instance of the add-on is unloaded. This overload accepts an additional hint to
 be passed to `fini`.
 
 ### GetModuleFileName
@@ -91,10 +90,10 @@ be passed to `fini`.
 const char* Napi::Env::GetModuleFileName() const;
 ```
 
-Returns a A URL containing the absolute path of the location from which the
-add-on was loaded. For a file on the local file system it will start with
-`file://`. The string is null-terminated and owned by env and must thus not be
-modified or freed. It is only valid while the add-on is loaded.
+Returns a URL containing the absolute path of the location from which the add-on
+was loaded. For a file on the local file system it will start with `file://`.
+The string is null-terminated and owned by env and must thus not be modified or
+freed. It is only valid while the add-on is loaded.
 
 ### AddCleanupHook
 

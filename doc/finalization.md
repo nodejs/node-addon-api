@@ -4,7 +4,8 @@ Various node-addon-api methods accept a templated `Finalizer finalizeCallback`
 parameter. This parameter represents a native callback function that runs in
 response to a garbage collection event. A finalizer is considered a _basic_
 finalizer if the callback only utilizes a certain subset of APIs, which may
-provide optimizations, improved execution, or other benefits.
+provide more efficient memory management, optimizations, improved execution, or
+other benefits.
 
 In general, it is best to use basic finalizers whenever possible (eg. when
 access to JavaScript is _not_ needed).
@@ -28,7 +29,7 @@ Use of basic finalizers may allow the engine to perform optimizations when
 scheduling or executing the callback. For example, V8 does not allow access to
 the engine heap during garbage collection. Restricting finalizers from accessing
 the engine heap allows the callback to execute during garbage collection,
-providing a chance to free native memory on the current tick.
+providing a chance to free native memory eagerly.
 
 In general, APIs that access engine heap are not allowed in basic finalizers.
 
@@ -46,12 +47,13 @@ Napi::ArrayBuffer::New(
 ## Scheduling Finalizers
 
 In addition to passing finalizers to `Napi::External`s and other Node-API
-constructs, use `Napi::BasicEnv::PostFinalize(Napi::BasicEnv, Finalizer)` to
-schedule a callback to run outside of the garbage collector finalization. Since
-the associated native memory may already be freed by the basic finalizer, any
-additional data may be passed eg. via the finalizer's parameters (`T data*`,
-`Hint hint*`) or via lambda capture. This allows for freeing native data in a
-basic finalizer, while executing any JavaScript code in an additional finalizer.
+constructs, `Napi::BasicEnv::PostFinalize(Napi::BasicEnv, Finalizer)` can be
+used to schedule a callback to run outside of the garbage collector
+finalization. Since the associated native memory may already be freed by the
+basic finalizer, any additional data may be passed eg. via the finalizer's
+parameters (`T data*`, `Hint hint*`) or via lambda capture. This allows for
+freeing native data in a basic finalizer, while executing any JavaScript code in
+an additional finalizer.
 
 ### Example
 

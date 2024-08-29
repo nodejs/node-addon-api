@@ -1,7 +1,8 @@
 # Env
 
-The opaque data structure containing the environment in which the request is
-being run.
+Class `Napi::Env` inherits from class [`Napi::BasicEnv`][].
+
+The data structure containing the environment in which the request is being run.
 
 The `Napi::Env` object is usually created and passed by the Node.js runtime or
 node-addon-api infrastructure.
@@ -82,4 +83,5 @@ The `script` can be any of the following types:
 - `const char *`
 - `const std::string &`
 
+[`Napi::BasicEnv`]: ./basic_env.md
 [Finalization]: ./finalization.md
