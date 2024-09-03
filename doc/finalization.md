@@ -8,7 +8,9 @@ provide more efficient memory management, optimizations, improved execution, or
 other benefits.
 
 In general, it is best to use basic finalizers whenever possible (eg. when
-access to JavaScript is _not_ needed).
+access to JavaScript is _not_ needed). To ensure that all finalizers are basic
+finalizers at compile-time, define the `NODE_ADDON_API_REQUIRE_BASIC_FINALIZERS`
+preprocessor directive.
 
 ## Finalizers
 

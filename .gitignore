@@ -3,6 +3,7 @@
 /benchmark/build
 /benchmark/src
 /test/addon_build/addons
+/test/require_basic_finalizers/addons
 /.vscode
 
 # ignore node-gyp generated files outside its build directory

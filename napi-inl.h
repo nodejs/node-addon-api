@@ -205,7 +205,7 @@ struct FinalizeData {
     });
   }
 
-#ifdef NODE_API_EXPERIMENTAL_HAS_POST_FINALIZER
+#if defined(NODE_API_EXPERIMENTAL_HAS_POST_FINALIZER)
   template <typename F = Finalizer,
             typename = std::enable_if_t<
                 !std::is_invocable_v<F, node_api_nogc_env, T*>>,
@@ -213,6 +213,11 @@ struct FinalizeData {
   static inline void Wrapper(node_api_nogc_env env,
                              void* data,
                              void* finalizeHint) NAPI_NOEXCEPT {
+#ifdef NODE_ADDON_API_REQUIRE_BASIC_FINALIZERS
+    static_assert(false,
+                  "NODE_ADDON_API_REQUIRE_BASIC_FINALIZERS defined: Finalizer "
+                  "must be basic.");
+#endif
     napi_status status =
         node_api_post_finalizer(env, WrapperGC, data, finalizeHint);
     NAPI_FATAL_IF_FAILED(
@@ -235,7 +240,7 @@ struct FinalizeData {
     });
   }
 
-#ifdef NODE_API_EXPERIMENTAL_HAS_POST_FINALIZER
+#if defined(NODE_API_EXPERIMENTAL_HAS_POST_FINALIZER)
   template <typename F = Finalizer,
             typename = std::enable_if_t<
                 !std::is_invocable_v<F, node_api_nogc_env, T*, Hint*>>,
@@ -243,6 +248,11 @@ struct FinalizeData {
   static inline void WrapperWithHint(node_api_nogc_env env,
                                      void* data,
                                      void* finalizeHint) NAPI_NOEXCEPT {
+#ifdef NODE_ADDON_API_REQUIRE_BASIC_FINALIZERS
+    static_assert(false,
+                  "NODE_ADDON_API_REQUIRE_BASIC_FINALIZERS defined: Finalizer "
+                  "must be basic.");
+#endif
     napi_status status =
         node_api_post_finalizer(env, WrapperGCWithHint, data, finalizeHint);
     NAPI_FATAL_IF_FAILED(

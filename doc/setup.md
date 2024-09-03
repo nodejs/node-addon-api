@@ -90,3 +90,13 @@ provide feedback to the user of the runtime error, as it is impossible to pass
 the error to JavaScript when the environment is terminating. In order to bypass
 this behavior such that the Node process will not terminate, define the
 preprocessor directive `NODE_API_SWALLOW_UNTHROWABLE_EXCEPTIONS`.
+
+Various Node-API constructs provide a mechanism to run a callback in response to
+a garbage collection event of that object. These callbacks are called
+[_finalizers_]. Some finalizers have restrictions on the type of Node-APIs
+available within the callback. node-addon-api provides convenience helpers that
+bypass this limitation, but may cause the add-on to run less efficiently. To
+disable the convenience helpers, define the preprocessor directive
+`NODE_ADDON_API_REQUIRE_BASIC_FINALIZERS`.
+
+[_finalizers_]: ./finalization.md
