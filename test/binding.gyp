@@ -30,6 +30,7 @@
         'error.cc',
         'error_handling_for_primitives.cc',
         'external.cc',
+        'finalizer_order.cc',
         'function.cc',
         'function_reference.cc',
         'handlescope.cc',

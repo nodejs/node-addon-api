@@ -37,6 +37,7 @@ The following is the documentation for node-addon-api.
  - [Full Class Hierarchy](hierarchy.md)
  - [Addon Structure](addon.md)
  - Data Types:
+    - [BasicEnv](basic_env.md)
     - [Env](env.md)
     - [CallbackInfo](callbackinfo.md)
     - [Reference](reference.md)
@@ -70,6 +71,7 @@ The following is the documentation for node-addon-api.
  - [Object Lifetime Management](object_lifetime_management.md)
     - [HandleScope](handle_scope.md)
     - [EscapableHandleScope](escapable_handle_scope.md)
+    - [Finalization](finalization.md)
  - [Memory Management](memory_management.md)
  - [Async Operations](async_operations.md)
     - [AsyncWorker](async_worker.md)

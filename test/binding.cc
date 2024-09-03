@@ -86,6 +86,7 @@ Object InitEnvMiscellaneous(Env env);
 #if defined(NODE_ADDON_API_ENABLE_MAYBE)
 Object InitMaybeCheck(Env env);
 #endif
+Object InitFinalizerOrder(Env env);
 
 Object Init(Env env, Object exports) {
 #if (NAPI_VERSION > 5)
@@ -186,6 +187,13 @@ Object Init(Env env, Object exports) {
 #if defined(NODE_ADDON_API_ENABLE_MAYBE)
   exports.Set("maybe_check", InitMaybeCheck(env));
 #endif
+
+  exports.Set("finalizer_order", InitFinalizerOrder(env));
+
+  exports.Set(
+      "isExperimental",
+      Napi::Boolean::New(env, NAPI_VERSION == NAPI_VERSION_EXPERIMENTAL));
+
   return exports;
 }
 
