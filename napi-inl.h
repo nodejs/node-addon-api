@@ -5023,6 +5023,11 @@ inline void ObjectWrap<T>::FinalizeCallback(node_api_nogc_env env,
 #endif
 
     instance->Finalize(Napi::BasicEnv(env));
+  } else {
+    // The child class may override Finalize but _not_ with a BasicEnv. Calling
+    // via `instance->Finalize()` would then give a compile error. Explicitly
+    // use the ObjectWrap<T>'s Finalize, which has BasicEnv override.
+    instance->ObjectWrap<T>::Finalize(Napi::BasicEnv(env));
   }
 
   // If class overrides the (extended) finalizer, either schedule it or
