@@ -5011,6 +5011,10 @@ template <typename T>
 inline void ObjectWrap<T>::FinalizeCallback(node_api_nogc_env env,
                                             void* data,
                                             void* /*hint*/) {
+  // If the child class does not override _any_ Finalize() method, `env` will be
+  // unused because of the constexpr guards. Explicitly reference it here to
+  // bypass compiler warnings.
+  (void)env;
   T* instance = static_cast<T*>(data);
 
   // Prevent ~ObjectWrap from calling napi_remove_wrap
@@ -5023,11 +5027,6 @@ inline void ObjectWrap<T>::FinalizeCallback(node_api_nogc_env env,
 #endif
 
     instance->Finalize(Napi::BasicEnv(env));
-  } else {
-    // The child class may override Finalize but _not_ with a BasicEnv. Calling
-    // via `instance->Finalize()` would then give a compile error. Explicitly
-    // use the ObjectWrap<T>'s Finalize, which has BasicEnv override.
-    instance->ObjectWrap<T>::Finalize(Napi::BasicEnv(env));
   }
 
   // If class overrides the (extended) finalizer, either schedule it or
