@@ -5011,6 +5011,10 @@ template <typename T>
 inline void ObjectWrap<T>::FinalizeCallback(node_api_nogc_env env,
                                             void* data,
                                             void* /*hint*/) {
+  // If the child class does not override _any_ Finalize() method, `env` will be
+  // unused because of the constexpr guards. Explicitly reference it here to
+  // bypass compiler warnings.
+  (void)env;
   T* instance = static_cast<T*>(data);
 
   // Prevent ~ObjectWrap from calling napi_remove_wrap
