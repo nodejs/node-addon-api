@@ -205,7 +205,7 @@ struct FinalizeData {
     });
   }
 
-#if defined(NODE_API_EXPERIMENTAL_HAS_POST_FINALIZER)
+#ifdef NODE_API_EXPERIMENTAL_HAS_POST_FINALIZER
   template <typename F = Finalizer,
             typename = std::enable_if_t<
                 !std::is_invocable_v<F, node_api_nogc_env, T*>>,
@@ -240,7 +240,7 @@ struct FinalizeData {
     });
   }
 
-#if defined(NODE_API_EXPERIMENTAL_HAS_POST_FINALIZER)
+#ifdef NODE_API_EXPERIMENTAL_HAS_POST_FINALIZER
   template <typename F = Finalizer,
             typename = std::enable_if_t<
                 !std::is_invocable_v<F, node_api_nogc_env, T*, Hint*>>,
