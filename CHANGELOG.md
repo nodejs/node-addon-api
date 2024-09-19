@@ -1,5 +1,18 @@
 # node-addon-api Changelog
 
+## [8.2.0](https://github.com/nodejs/node-addon-api/compare/v8.1.0...v8.2.0) (2024-09-19)
+
+
+### Features
+
+* add support for nogc types via `BasicEnv`  ([#1514](https://github.com/nodejs/node-addon-api/issues/1514)) ([b4aeecb](https://github.com/nodejs/node-addon-api/commit/b4aeecb046480eeaaf1c578a140f71ac0e77094f))
+* add support for requiring basic finalizers ([#1568](https://github.com/nodejs/node-addon-api/issues/1568)) ([7bcb826](https://github.com/nodejs/node-addon-api/commit/7bcb826aa4323f450b3c58f9c7fb34243ff13f77))
+
+
+### Bug Fixes
+
+* call base basic finalizer if none defined ([#1574](https://github.com/nodejs/node-addon-api/issues/1574)) ([294a43f](https://github.com/nodejs/node-addon-api/commit/294a43f8c6a4c79b3295a8f1b83d4782d44cfe74))
+
 ## [8.1.0](https://github.com/nodejs/node-addon-api/compare/node-addon-api-v8.0.0...node-addon-api-v8.1.0) (2024-07-05)
 
 
