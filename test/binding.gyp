@@ -106,7 +106,8 @@
     {
       'target_name': 'binding',
       'dependencies': ['../node_addon_api.gyp:node_addon_api_except'],
-      'sources': ['>@(build_sources)']
+      'sources': ['>@(build_sources)'],
+      'defines': ['NODE_ADDON_API_ENABLE_TYPE_CHECK_ON_AS']
     },
     {
       'target_name': 'binding_noexcept',

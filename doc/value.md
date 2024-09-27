@@ -86,6 +86,19 @@ In order to enforce expected type, use `Napi::Value::Is*()` methods to check
 the type before calling `Napi::Value::As()`, or compile with definition
 `NODE_ADDON_API_ENABLE_TYPE_CHECK_ON_AS` to enforce type checks.
 
+### UnsafeAs
+
+```cpp
+template <typename T> T Napi::Value::UnsafeAs() const;
+```
+
+Casts to another type of `Napi::Value`, when the actual type is known or
+assumed.
+
+This conversion does not coerce the type. This does not check the type even if
+`NODE_ADDON_API_ENABLE_TYPE_CHECK_ON_AS` is defined. This indicates intentional
+unsafe type cast. Use `Napi::Value::As()` if possible.
+
 ### Env
 
 ```cpp

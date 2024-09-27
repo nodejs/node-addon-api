@@ -21,19 +21,21 @@ Value EchoString(const CallbackInfo& info) {
 
 Value CreateString(const CallbackInfo& info) {
   String encoding = info[0].As<String>();
-  Number length = info[1].As<Number>();
+  Value length = info[1];
 
   if (encoding.Utf8Value() == "utf8") {
     if (length.IsUndefined()) {
       return String::New(info.Env(), testValueUtf8);
     } else {
-      return String::New(info.Env(), testValueUtf8, length.Uint32Value());
+      return String::New(
+          info.Env(), testValueUtf8, length.As<Number>().Uint32Value());
     }
   } else if (encoding.Utf8Value() == "utf16") {
     if (length.IsUndefined()) {
       return String::New(info.Env(), testValueUtf16);
     } else {
-      return String::New(info.Env(), testValueUtf16, length.Uint32Value());
+      return String::New(
+          info.Env(), testValueUtf16, length.As<Number>().Uint32Value());
     }
   } else {
     Error::New(info.Env(), "Invalid encoding.").ThrowAsJavaScriptException();
@@ -44,12 +46,12 @@ Value CreateString(const CallbackInfo& info) {
 Value CheckString(const CallbackInfo& info) {
   String value = info[0].As<String>();
   String encoding = info[1].As<String>();
-  Number length = info[2].As<Number>();
+  Value length = info[2];
 
   if (encoding.Utf8Value() == "utf8") {
     std::string testValue = testValueUtf8;
     if (!length.IsUndefined()) {
-      testValue = testValue.substr(0, length.Uint32Value());
+      testValue = testValue.substr(0, length.As<Number>().Uint32Value());
     }
 
     std::string stringValue = value;
@@ -57,7 +59,7 @@ Value CheckString(const CallbackInfo& info) {
   } else if (encoding.Utf8Value() == "utf16") {
     std::u16string testValue = testValueUtf16;
     if (!length.IsUndefined()) {
-      testValue = testValue.substr(0, length.Uint32Value());
+      testValue = testValue.substr(0, length.As<Number>().Uint32Value());
     }
 
     std::u16string stringValue = value;
@@ -69,10 +71,10 @@ Value CheckString(const CallbackInfo& info) {
 }
 
 Value CreateSymbol(const CallbackInfo& info) {
-  String description = info[0].As<String>();
+  Value description = info[0];
 
   if (!description.IsUndefined()) {
-    return Symbol::New(info.Env(), description);
+    return Symbol::New(info.Env(), description.As<String>());
   } else {
     return Symbol::New(info.Env());
   }

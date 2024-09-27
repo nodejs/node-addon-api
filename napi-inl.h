@@ -896,6 +896,16 @@ inline T Value::As() const {
   return T(_env, _value);
 }
 
+template <typename T>
+inline T Value::UnsafeAs() const {
+  return T(_env, _value);
+}
+
+// static
+inline void Value::CheckCast(napi_env /* env */, napi_value value) {
+  NAPI_CHECK(value != nullptr, "Value::CheckCast", "empty value");
+}
+
 inline MaybeOrValue<Boolean> Value::ToBoolean() const {
   napi_value result;
   napi_status status = napi_coerce_to_bool(_env, _value, &result);
@@ -1303,12 +1313,15 @@ inline Symbol Symbol::New(napi_env env, napi_value description) {
 
 inline MaybeOrValue<Symbol> Symbol::WellKnown(napi_env env,
                                               const std::string& name) {
+  // No need to check if the return value is a symbol or undefined.
+  // Well known symbols are definite and it is an develop time error
+  // if the symbol does not exist.
 #if defined(NODE_ADDON_API_ENABLE_MAYBE)
   Value symbol_obj;
   Value symbol_value;
   if (Napi::Env(env).Global().Get("Symbol").UnwrapTo(&symbol_obj) &&
       symbol_obj.As<Object>().Get(name).UnwrapTo(&symbol_value)) {
-    return Just<Symbol>(symbol_value.As<Symbol>());
+    return Just<Symbol>(symbol_value.UnsafeAs<Symbol>());
   }
   return Nothing<Symbol>();
 #else
@@ -1317,7 +1330,7 @@ inline MaybeOrValue<Symbol> Symbol::WellKnown(napi_env env,
       .Get("Symbol")
       .As<Object>()
       .Get(name)
-      .As<Symbol>();
+      .UnsafeAs<Symbol>();
 #endif
 }
 
@@ -1535,7 +1548,10 @@ inline void Object::CheckCast(napi_env env, napi_value value) {
   napi_valuetype type;
   napi_status status = napi_typeof(env, value, &type);
   NAPI_CHECK(status == napi_ok, "Object::CheckCast", "napi_typeof failed");
-  NAPI_INTERNAL_CHECK_EQ(type, napi_object, "%d", "Object::CheckCast");
+  NAPI_INTERNAL_CHECK(type == napi_object || type == napi_function,
+                      "Object::CheckCast",
+                      "Expect napi_object or napi_function, but got %d.",
+                      type);
 }
 
 inline Object::Object() : TypeTaggable() {}

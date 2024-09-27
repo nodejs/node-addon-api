@@ -18,7 +18,7 @@ Value RunStdString(const CallbackInfo& info) {
 
 Value RunJsString(const CallbackInfo& info) {
   Env env = info.Env();
-  return MaybeUnwrapOr(env.RunScript(info[0].As<String>()), Value());
+  return MaybeUnwrapOr(env.RunScript(info[0].UnsafeAs<String>()), Value());
 }
 
 Value RunWithContext(const CallbackInfo& info) {

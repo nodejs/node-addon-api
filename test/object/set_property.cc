@@ -4,7 +4,7 @@
 using namespace Napi;
 
 Value SetPropertyWithNapiValue(const CallbackInfo& info) {
-  Object obj = info[0].As<Object>();
+  Object obj = info[0].UnsafeAs<Object>();
   Name key = info[1].As<Name>();
   Value value = info[2];
   return Boolean::New(
@@ -13,14 +13,14 @@ Value SetPropertyWithNapiValue(const CallbackInfo& info) {
 }
 
 Value SetPropertyWithNapiWrapperValue(const CallbackInfo& info) {
-  Object obj = info[0].As<Object>();
+  Object obj = info[0].UnsafeAs<Object>();
   Name key = info[1].As<Name>();
   Value value = info[2];
   return Boolean::New(info.Env(), MaybeUnwrapOr(obj.Set(key, value), false));
 }
 
 Value SetPropertyWithUint32(const CallbackInfo& info) {
-  Object obj = info[0].As<Object>();
+  Object obj = info[0].UnsafeAs<Object>();
   Number key = info[1].As<Number>();
   Value value = info[2];
   return Boolean::New(info.Env(),
@@ -28,7 +28,7 @@ Value SetPropertyWithUint32(const CallbackInfo& info) {
 }
 
 Value SetPropertyWithCStyleString(const CallbackInfo& info) {
-  Object obj = info[0].As<Object>();
+  Object obj = info[0].UnsafeAs<Object>();
   String jsKey = info[1].As<String>();
   Value value = info[2];
   return Boolean::New(
@@ -37,7 +37,7 @@ Value SetPropertyWithCStyleString(const CallbackInfo& info) {
 }
 
 Value SetPropertyWithCppStyleString(const CallbackInfo& info) {
-  Object obj = info[0].As<Object>();
+  Object obj = info[0].UnsafeAs<Object>();
   String jsKey = info[1].As<String>();
   Value value = info[2];
   return Boolean::New(info.Env(),

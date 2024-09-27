@@ -26,7 +26,7 @@ class TestTypeTaggable {
 
   static Value CheckTypeTag(const CallbackInfo& info) {
     uint32_t type_index = info[0].As<Number>().Int32Value();
-    TypeTaggable instance = info[1].As<NodeApiClass>();
+    TypeTaggable instance = info[1].UnsafeAs<NodeApiClass>();
 
     return Boolean::New(info.Env(),
                         instance.CheckTypeTag(&type_tags[type_index]));
