@@ -5,25 +5,25 @@ using namespace Napi;
 
 Value GetPropertyWithNapiValueAsKey(const CallbackInfo& info) {
   Object globalObject = info.Env().Global();
-  Name key = info[0].As<Name>();
+  Name key = info[0].UnsafeAs<Name>();
   return MaybeUnwrap(globalObject.Get(key));
 }
 
 Value GetPropertyWithInt32AsKey(const CallbackInfo& info) {
   Object globalObject = info.Env().Global();
-  Number key = info[0].As<Napi::Number>();
+  Number key = info[0].UnsafeAs<Napi::Number>();
   return MaybeUnwrapOr(globalObject.Get(key.Uint32Value()), Value());
 }
 
 Value GetPropertyWithCStyleStringAsKey(const CallbackInfo& info) {
   Object globalObject = info.Env().Global();
-  String cStrkey = info[0].As<String>();
+  String cStrkey = info[0].UnsafeAs<String>();
   return MaybeUnwrapOr(globalObject.Get(cStrkey.Utf8Value().c_str()), Value());
 }
 
 Value GetPropertyWithCppStyleStringAsKey(const CallbackInfo& info) {
   Object globalObject = info.Env().Global();
-  String cppStrKey = info[0].As<String>();
+  String cppStrKey = info[0].UnsafeAs<String>();
   return MaybeUnwrapOr(globalObject.Get(cppStrKey.Utf8Value()), Value());
 }
 

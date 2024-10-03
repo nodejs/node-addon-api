@@ -89,7 +89,7 @@ function test (binding) {
   assert.deepStrictEqual(args, [7, 8, 9]);
 
   assert.throws(() => {
-    binding.callWithInvalidReceiver();
+    binding.callWithInvalidReceiver(() => {});
   }, /Invalid (pointer passed as )?argument/);
 
   obj = binding.callConstructorWithArgs(testConstructor, 5, 6, 7);

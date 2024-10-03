@@ -21,7 +21,7 @@ namespace {
 Value CreateTypedArray(const CallbackInfo& info) {
   std::string arrayType = info[0].As<String>();
   size_t length = info[1].As<Number>().Uint32Value();
-  ArrayBuffer buffer = info[2].As<ArrayBuffer>();
+  Value buffer = info[2];
   size_t bufferOffset =
       info[3].IsUndefined() ? 0 : info[3].As<Number>().Uint32Value();
 
@@ -32,7 +32,7 @@ Value CreateTypedArray(const CallbackInfo& info) {
                : NAPI_TYPEDARRAY_NEW_BUFFER(Int8Array,
                                             info.Env(),
                                             length,
-                                            buffer,
+                                            buffer.As<ArrayBuffer>(),
                                             bufferOffset,
                                             napi_int8_array);
   } else if (arrayType == "uint8") {
@@ -42,7 +42,7 @@ Value CreateTypedArray(const CallbackInfo& info) {
                : NAPI_TYPEDARRAY_NEW_BUFFER(Uint8Array,
                                             info.Env(),
                                             length,
-                                            buffer,
+                                            buffer.As<ArrayBuffer>(),
                                             bufferOffset,
                                             napi_uint8_array);
   } else if (arrayType == "uint8_clamped") {
@@ -50,7 +50,7 @@ Value CreateTypedArray(const CallbackInfo& info) {
                ? Uint8Array::New(info.Env(), length, napi_uint8_clamped_array)
                : Uint8Array::New(info.Env(),
                                  length,
-                                 buffer,
+                                 buffer.As<ArrayBuffer>(),
                                  bufferOffset,
                                  napi_uint8_clamped_array);
   } else if (arrayType == "int16") {
@@ -60,7 +60,7 @@ Value CreateTypedArray(const CallbackInfo& info) {
                : NAPI_TYPEDARRAY_NEW_BUFFER(Int16Array,
                                             info.Env(),
                                             length,
-                                            buffer,
+                                            buffer.As<ArrayBuffer>(),
                                             bufferOffset,
                                             napi_int16_array);
   } else if (arrayType == "uint16") {
@@ -70,7 +70,7 @@ Value CreateTypedArray(const CallbackInfo& info) {
                : NAPI_TYPEDARRAY_NEW_BUFFER(Uint16Array,
                                             info.Env(),
                                             length,
-                                            buffer,
+                                            buffer.As<ArrayBuffer>(),
                                             bufferOffset,
                                             napi_uint16_array);
   } else if (arrayType == "int32") {
@@ -80,7 +80,7 @@ Value CreateTypedArray(const CallbackInfo& info) {
                : NAPI_TYPEDARRAY_NEW_BUFFER(Int32Array,
                                             info.Env(),
                                             length,
-                                            buffer,
+                                            buffer.As<ArrayBuffer>(),
                                             bufferOffset,
                                             napi_int32_array);
   } else if (arrayType == "uint32") {
@@ -90,7 +90,7 @@ Value CreateTypedArray(const CallbackInfo& info) {
                : NAPI_TYPEDARRAY_NEW_BUFFER(Uint32Array,
                                             info.Env(),
                                             length,
-                                            buffer,
+                                            buffer.As<ArrayBuffer>(),
                                             bufferOffset,
                                             napi_uint32_array);
   } else if (arrayType == "float32") {
@@ -100,7 +100,7 @@ Value CreateTypedArray(const CallbackInfo& info) {
                : NAPI_TYPEDARRAY_NEW_BUFFER(Float32Array,
                                             info.Env(),
                                             length,
-                                            buffer,
+                                            buffer.As<ArrayBuffer>(),
                                             bufferOffset,
                                             napi_float32_array);
   } else if (arrayType == "float64") {
@@ -110,7 +110,7 @@ Value CreateTypedArray(const CallbackInfo& info) {
                : NAPI_TYPEDARRAY_NEW_BUFFER(Float64Array,
                                             info.Env(),
                                             length,
-                                            buffer,
+                                            buffer.As<ArrayBuffer>(),
                                             bufferOffset,
                                             napi_float64_array);
 #if (NAPI_VERSION > 5)
@@ -121,7 +121,7 @@ Value CreateTypedArray(const CallbackInfo& info) {
                : NAPI_TYPEDARRAY_NEW_BUFFER(BigInt64Array,
                                             info.Env(),
                                             length,
-                                            buffer,
+                                            buffer.As<ArrayBuffer>(),
                                             bufferOffset,
                                             napi_bigint64_array);
   } else if (arrayType == "biguint64") {
@@ -131,7 +131,7 @@ Value CreateTypedArray(const CallbackInfo& info) {
                : NAPI_TYPEDARRAY_NEW_BUFFER(BigUint64Array,
                                             info.Env(),
                                             length,
-                                            buffer,
+                                            buffer.As<ArrayBuffer>(),
                                             bufferOffset,
                                             napi_biguint64_array);
 #endif
@@ -208,8 +208,8 @@ Value CheckBufferContent(const CallbackInfo& info) {
     case napi_uint8_array:
       return Boolean::New(
           info.Env(),
-          TypedArrayDataIsEquivalent<int8_t>(info[0].As<Int8Array>(),
-                                             info[1].As<Int8Array>()));
+          TypedArrayDataIsEquivalent<uint8_t>(info[0].As<Uint8Array>(),
+                                              info[1].As<Uint8Array>()));
 
     case napi_uint8_clamped_array:
       return Boolean::New(
@@ -335,35 +335,39 @@ Value GetTypedArrayElement(const CallbackInfo& info) {
 void SetTypedArrayElement(const CallbackInfo& info) {
   TypedArray array = info[0].As<TypedArray>();
   size_t index = info[1].As<Number>().Uint32Value();
-  Number value = info[2].As<Number>();
+  Value value = info[2];
   switch (array.TypedArrayType()) {
     case napi_int8_array:
-      array.As<Int8Array>()[index] = static_cast<int8_t>(value.Int32Value());
+      array.As<Int8Array>()[index] =
+          static_cast<int8_t>(value.As<Number>().Int32Value());
       break;
     case napi_uint8_array:
-      array.As<Uint8Array>()[index] = static_cast<uint8_t>(value.Uint32Value());
+      array.As<Uint8Array>()[index] =
+          static_cast<uint8_t>(value.As<Number>().Uint32Value());
       break;
     case napi_uint8_clamped_array:
-      array.As<Uint8Array>()[index] = static_cast<uint8_t>(value.Uint32Value());
+      array.As<Uint8Array>()[index] =
+          static_cast<uint8_t>(value.As<Number>().Uint32Value());
       break;
     case napi_int16_array:
-      array.As<Int16Array>()[index] = static_cast<int16_t>(value.Int32Value());
+      array.As<Int16Array>()[index] =
+          static_cast<int16_t>(value.As<Number>().Int32Value());
       break;
     case napi_uint16_array:
       array.As<Uint16Array>()[index] =
-          static_cast<uint16_t>(value.Uint32Value());
+          static_cast<uint16_t>(value.As<Number>().Uint32Value());
       break;
     case napi_int32_array:
-      array.As<Int32Array>()[index] = value.Int32Value();
+      array.As<Int32Array>()[index] = value.As<Number>().Int32Value();
       break;
     case napi_uint32_array:
-      array.As<Uint32Array>()[index] = value.Uint32Value();
+      array.As<Uint32Array>()[index] = value.As<Number>().Uint32Value();
       break;
     case napi_float32_array:
-      array.As<Float32Array>()[index] = value.FloatValue();
+      array.As<Float32Array>()[index] = value.As<Number>().FloatValue();
       break;
     case napi_float64_array:
-      array.As<Float64Array>()[index] = value.DoubleValue();
+      array.As<Float64Array>()[index] = value.As<Number>().DoubleValue();
       break;
 #if (NAPI_VERSION > 5)
     case napi_bigint64_array: {

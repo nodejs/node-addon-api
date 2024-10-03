@@ -8,7 +8,7 @@ Value SubscriptGetWithCStyleString(const CallbackInfo& info) {
 
   // make sure const case compiles
   const Object obj2 = info[0].As<Object>();
-  MaybeUnwrap(obj2[jsKey.Utf8Value().c_str()]).As<Boolean>();
+  MaybeUnwrap(obj2[jsKey.Utf8Value().c_str()]).As<Value>();
 
   Object obj = info[0].As<Object>();
   return obj[jsKey.Utf8Value().c_str()];
@@ -19,7 +19,7 @@ Value SubscriptGetWithCppStyleString(const CallbackInfo& info) {
 
   // make sure const case compiles
   const Object obj2 = info[0].As<Object>();
-  MaybeUnwrap(obj2[jsKey.Utf8Value()]).As<Boolean>();
+  MaybeUnwrap(obj2[jsKey.Utf8Value()]).As<Value>();
 
   Object obj = info[0].As<Object>();
   return obj[jsKey.Utf8Value()];
@@ -30,7 +30,7 @@ Value SubscriptGetAtIndex(const CallbackInfo& info) {
 
   // make sure const case compiles
   const Object obj2 = info[0].As<Object>();
-  MaybeUnwrap(obj2[index]).As<Boolean>();
+  MaybeUnwrap(obj2[index]).As<Value>();
 
   Object obj = info[0].As<Object>();
   return obj[index];

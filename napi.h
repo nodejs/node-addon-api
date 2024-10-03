@@ -461,6 +461,8 @@ class Value {
   template <typename T>
   static Value From(napi_env env, const T& value);
 
+  static void CheckCast(napi_env env, napi_value value);
+
   /// Converts to a Node-API value primitive.
   ///
   /// If the instance is _empty_, this returns `nullptr`.
@@ -526,6 +528,10 @@ class Value {
   /// asserts that the actual type is the expected type.
   template <typename T>
   T As() const;
+
+  // Unsafe Value::As(), should be avoided.
+  template <typename T>
+  T UnsafeAs() const;
 
   MaybeOrValue<Boolean> ToBoolean()
       const;  ///< Coerces a value to a JavaScript boolean.

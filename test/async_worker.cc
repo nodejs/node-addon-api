@@ -20,14 +20,14 @@ class TestWorkerWithUserDefRecv : public AsyncWorker {
   static void DoWorkWithAsyncRes(const CallbackInfo& info) {
     Object recv = info[0].As<Object>();
     Function cb = info[1].As<Function>();
-    Object resource = info[2].As<Object>();
+    Value resource = info[2];
 
     TestWorkerWithUserDefRecv* worker = nullptr;
     if (resource == info.Env().Null()) {
       worker = new TestWorkerWithUserDefRecv(recv, cb, "TestResource");
     } else {
-      worker =
-          new TestWorkerWithUserDefRecv(recv, cb, "TestResource", resource);
+      worker = new TestWorkerWithUserDefRecv(
+          recv, cb, "TestResource", resource.As<Object>());
     }
 
     worker->Queue();

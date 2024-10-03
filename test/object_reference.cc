@@ -224,13 +224,13 @@ void SetCastedObjects(const CallbackInfo& info) {
 Value GetFromValue(const CallbackInfo& info) {
   Env env = info.Env();
 
-  if (info[0].As<String>() == String::New(env, "weak")) {
+  if (info[0] == String::New(env, "weak")) {
     if (weak.IsEmpty()) {
       return String::New(env, "No Referenced Value");
     } else {
       return weak.Value();
     }
-  } else if (info[0].As<String>() == String::New(env, "persistent")) {
+  } else if (info[0] == String::New(env, "persistent")) {
     return persistent.Value();
   } else {
     return reference.Value();
@@ -290,7 +290,7 @@ Value GetFromGetters(const CallbackInfo& info) {
 Value GetFromGetter(const CallbackInfo& info) {
   Env env = info.Env();
 
-  if (info[0].As<String>() == String::New(env, "weak")) {
+  if (info[0] == String::New(env, "weak")) {
     if (weak.IsEmpty()) {
       return String::New(env, "No Referenced Value");
     } else {
@@ -300,7 +300,7 @@ Value GetFromGetter(const CallbackInfo& info) {
         return MaybeUnwrap(weak.Get(info[1].As<Number>().Uint32Value()));
       }
     }
-  } else if (info[0].As<String>() == String::New(env, "persistent")) {
+  } else if (info[0] == String::New(env, "persistent")) {
     if (info[1].IsString()) {
       return MaybeUnwrap(persistent.Get(info[1].As<String>().Utf8Value()));
     } else if (info[1].IsNumber()) {
@@ -322,13 +322,13 @@ Value GetFromGetter(const CallbackInfo& info) {
 Value GetCastedFromValue(const CallbackInfo& info) {
   Env env = info.Env();
 
-  if (info[0].As<String>() == String::New(env, "weak")) {
+  if (info[0] == String::New(env, "weak")) {
     if (casted_weak.IsEmpty()) {
       return String::New(env, "No Referenced Value");
     } else {
       return casted_weak.Value();
     }
-  } else if (info[0].As<String>() == String::New(env, "persistent")) {
+  } else if (info[0] == String::New(env, "persistent")) {
     return casted_persistent.Value();
   } else {
     return casted_reference.Value();
@@ -341,13 +341,13 @@ Value GetCastedFromValue(const CallbackInfo& info) {
 Value GetCastedFromGetter(const CallbackInfo& info) {
   Env env = info.Env();
 
-  if (info[0].As<String>() == String::New(env, "weak")) {
+  if (info[0] == String::New(env, "weak")) {
     if (casted_weak.IsEmpty()) {
       return String::New(env, "No Referenced Value");
     } else {
       return MaybeUnwrap(casted_weak.Get(info[1].As<Number>()));
     }
-  } else if (info[0].As<String>() == String::New(env, "persistent")) {
+  } else if (info[0] == String::New(env, "persistent")) {
     return MaybeUnwrap(casted_persistent.Get(info[1].As<Number>()));
   } else {
     return MaybeUnwrap(casted_reference.Get(info[1].As<Number>()));
@@ -360,15 +360,15 @@ Number UnrefObjects(const CallbackInfo& info) {
   Env env = info.Env();
   uint32_t num;
 
-  if (info[0].As<String>() == String::New(env, "weak")) {
+  if (info[0] == String::New(env, "weak")) {
     num = weak.Unref();
-  } else if (info[0].As<String>() == String::New(env, "persistent")) {
+  } else if (info[0] == String::New(env, "persistent")) {
     num = persistent.Unref();
-  } else if (info[0].As<String>() == String::New(env, "references")) {
+  } else if (info[0] == String::New(env, "references")) {
     num = reference.Unref();
-  } else if (info[0].As<String>() == String::New(env, "casted weak")) {
+  } else if (info[0] == String::New(env, "casted weak")) {
     num = casted_weak.Unref();
-  } else if (info[0].As<String>() == String::New(env, "casted persistent")) {
+  } else if (info[0] == String::New(env, "casted persistent")) {
     num = casted_persistent.Unref();
   } else {
     num = casted_reference.Unref();
@@ -383,15 +383,15 @@ Number RefObjects(const CallbackInfo& info) {
   Env env = info.Env();
   uint32_t num;
 
-  if (info[0].As<String>() == String::New(env, "weak")) {
+  if (info[0] == String::New(env, "weak")) {
     num = weak.Ref();
-  } else if (info[0].As<String>() == String::New(env, "persistent")) {
+  } else if (info[0] == String::New(env, "persistent")) {
     num = persistent.Ref();
-  } else if (info[0].As<String>() == String::New(env, "references")) {
+  } else if (info[0] == String::New(env, "references")) {
     num = reference.Ref();
-  } else if (info[0].As<String>() == String::New(env, "casted weak")) {
+  } else if (info[0] == String::New(env, "casted weak")) {
     num = casted_weak.Ref();
-  } else if (info[0].As<String>() == String::New(env, "casted persistent")) {
+  } else if (info[0] == String::New(env, "casted persistent")) {
     num = casted_persistent.Ref();
   } else {
     num = casted_reference.Ref();

@@ -4,7 +4,7 @@
 using namespace Napi;
 
 Value HasOwnPropertyWithNapiValue(const CallbackInfo& info) {
-  Object obj = info[0].As<Object>();
+  Object obj = info[0].UnsafeAs<Object>();
   Name key = info[1].As<Name>();
   return Boolean::New(
       info.Env(),
@@ -12,14 +12,14 @@ Value HasOwnPropertyWithNapiValue(const CallbackInfo& info) {
 }
 
 Value HasOwnPropertyWithNapiWrapperValue(const CallbackInfo& info) {
-  Object obj = info[0].As<Object>();
+  Object obj = info[0].UnsafeAs<Object>();
   Name key = info[1].As<Name>();
   return Boolean::New(info.Env(),
                       MaybeUnwrapOr(obj.HasOwnProperty(key), false));
 }
 
 Value HasOwnPropertyWithCStyleString(const CallbackInfo& info) {
-  Object obj = info[0].As<Object>();
+  Object obj = info[0].UnsafeAs<Object>();
   String jsKey = info[1].As<String>();
   return Boolean::New(
       info.Env(),
@@ -27,7 +27,7 @@ Value HasOwnPropertyWithCStyleString(const CallbackInfo& info) {
 }
 
 Value HasOwnPropertyWithCppStyleString(const CallbackInfo& info) {
-  Object obj = info[0].As<Object>();
+  Object obj = info[0].UnsafeAs<Object>();
   String jsKey = info[1].As<String>();
   return Boolean::New(
       info.Env(), MaybeUnwrapOr(obj.HasOwnProperty(jsKey.Utf8Value()), false));
