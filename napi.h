@@ -299,6 +299,14 @@ template <typename T>
 using MaybeOrValue = T;
 #endif
 
+#ifdef NODE_API_EXPERIMENTAL_HAS_POST_FINALIZER
+using node_addon_api_basic_env = node_api_nogc_env;
+using node_addon_api_basic_finalize = node_api_nogc_finalize;
+#else
+using node_addon_api_basic_env = napi_env;
+using node_addon_api_basic_finalize = napi_finalize;
+#endif
+
 /// Environment for Node-API values and operations.
 ///
 /// All Node-API values and operations must be associated with an environment.
@@ -314,7 +322,7 @@ using MaybeOrValue = T;
 /// corresponds to an Isolate.
 class BasicEnv {
  private:
-  node_api_nogc_env _env;
+  node_addon_api_basic_env _env;
 #if NAPI_VERSION > 5
   template <typename T>
   static void DefaultFini(Env, T* data);
@@ -322,8 +330,12 @@ class BasicEnv {
   static void DefaultFiniWithHint(Env, DataType* data, HintType* hint);
 #endif  // NAPI_VERSION > 5
  public:
-  BasicEnv(node_api_nogc_env env);
+  BasicEnv(node_addon_api_basic_env env);
+#ifdef NODE_API_EXPERIMENTAL_HAS_POST_FINALIZER
   operator node_api_nogc_env() const;
+#else
+  operator napi_env() const;
+#endif
 
   // Without these operator overloads, the error:
   //
@@ -2470,7 +2482,9 @@ class ObjectWrap : public InstanceWrap<T>, public Reference<Object> {
                                                 napi_callback_info info);
   static napi_value StaticSetterCallbackWrapper(napi_env env,
                                                 napi_callback_info info);
-  static void FinalizeCallback(node_api_nogc_env env, void* data, void* hint);
+  static void FinalizeCallback(node_addon_api_basic_env env,
+                               void* data,
+                               void* hint);
 
   static void PostFinalizeCallback(napi_env env, void* data, void* hint);
 

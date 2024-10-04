@@ -89,6 +89,7 @@
         'value_type_cast.cc'
       ],
       'want_coverage': '<!(node -p process.env.npm_config_coverage)',
+      'use_node_api_headers': '<!(node -p process.env.use_node_api_headers)',
       'conditions': [
         ['disable_deprecated!="true"', {
           'build_sources': ['object/object_deprecated.cc']
@@ -99,7 +100,11 @@
       ['want_coverage=="true" and OS=="linux"', {
         'cflags_cc': ['--coverage'],
         'ldflags': ['--coverage'],
-      }]
+      }],
+      ['use_node_api_headers=="true"', {
+        # prepend to the include_dirs list
+        'include_dirs+': ["<!(node -p \"require('node-api-headers').include_dir\")"],
+      }],
     ],
   },
   'targets': [
