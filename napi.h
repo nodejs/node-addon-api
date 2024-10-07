@@ -307,8 +307,7 @@ using MaybeOrValue = T;
 /// Node-API operations within the callback. (Many methods infer the
 /// environment from the `this` instance that the method is called on.)
 ///
-/// In the future, multiple environments per process may be supported,
-/// although current implementations only support one environment per process.
+/// Multiple environments may co-exist in a single process or a thread.
 ///
 /// In the V8 JavaScript engine, a Node-API environment approximately
 /// corresponds to an Isolate.
