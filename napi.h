@@ -331,11 +331,8 @@ class BasicEnv {
 #endif  // NAPI_VERSION > 5
  public:
   BasicEnv(node_addon_api_basic_env env);
-#ifdef NODE_API_EXPERIMENTAL_HAS_POST_FINALIZER
-  operator node_api_nogc_env() const;
-#else
-  operator napi_env() const;
-#endif
+
+  operator node_addon_api_basic_env() const;
 
   // Without these operator overloads, the error:
   //

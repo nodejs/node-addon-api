@@ -579,15 +579,9 @@ inline Maybe<T> Just(const T& t) {
 
 inline BasicEnv::BasicEnv(node_addon_api_basic_env env) : _env(env) {}
 
-#ifdef NODE_API_EXPERIMENTAL_HAS_POST_FINALIZER
-inline BasicEnv::operator node_api_nogc_env() const {
+inline BasicEnv::operator node_addon_api_basic_env() const {
   return _env;
 }
-#else
-inline BasicEnv::operator napi_env() const {
-  return _env;
-}
-#endif
 
 inline Env::Env(napi_env env) : BasicEnv(env) {}
 
