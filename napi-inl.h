@@ -35,7 +35,7 @@ namespace details {
 constexpr int napi_no_external_buffers_allowed = 22;
 
 template <typename FreeType>
-inline void default_basic_finalizer(node_api_nogc_env /*env*/,
+inline void default_basic_finalizer(node_addon_api_basic_env /*env*/,
                                     void* data,
                                     void* /*hint*/) {
   delete static_cast<FreeType*>(data);
@@ -45,8 +45,9 @@ inline void default_basic_finalizer(node_api_nogc_env /*env*/,
 // garbage-collected.
 // TODO: Replace this code with `napi_add_finalizer()` whenever it becomes
 // available on all supported versions of Node.js.
-template <typename FreeType,
-          node_api_nogc_finalize finalizer = default_basic_finalizer<FreeType>>
+template <
+    typename FreeType,
+    node_addon_api_basic_finalize finalizer = default_basic_finalizer<FreeType>>
 inline napi_status AttachData(napi_env env,
                               napi_value obj,
                               FreeType* data,
@@ -192,10 +193,10 @@ template <typename T, typename Finalizer, typename Hint = void>
 struct FinalizeData {
 #ifdef NODE_API_EXPERIMENTAL_HAS_POST_FINALIZER
   template <typename F = Finalizer,
-            typename =
-                std::enable_if_t<std::is_invocable_v<F, node_api_nogc_env, T*>>>
+            typename = std::enable_if_t<
+                std::is_invocable_v<F, node_addon_api_basic_env, T*>>>
 #endif
-  static inline void Wrapper(node_api_nogc_env env,
+  static inline void Wrapper(node_addon_api_basic_env env,
                              void* data,
                              void* finalizeHint) NAPI_NOEXCEPT {
     WrapVoidCallback([&] {
@@ -208,9 +209,9 @@ struct FinalizeData {
 #ifdef NODE_API_EXPERIMENTAL_HAS_POST_FINALIZER
   template <typename F = Finalizer,
             typename = std::enable_if_t<
-                !std::is_invocable_v<F, node_api_nogc_env, T*>>,
+                !std::is_invocable_v<F, node_addon_api_basic_env, T*>>,
             typename = void>
-  static inline void Wrapper(node_api_nogc_env env,
+  static inline void Wrapper(node_addon_api_basic_env env,
                              void* data,
                              void* finalizeHint) NAPI_NOEXCEPT {
 #ifdef NODE_ADDON_API_REQUIRE_BASIC_FINALIZERS
@@ -228,9 +229,9 @@ struct FinalizeData {
 #ifdef NODE_API_EXPERIMENTAL_HAS_POST_FINALIZER
   template <typename F = Finalizer,
             typename = std::enable_if_t<
-                std::is_invocable_v<F, node_api_nogc_env, T*, Hint*>>>
+                std::is_invocable_v<F, node_addon_api_basic_env, T*, Hint*>>>
 #endif
-  static inline void WrapperWithHint(node_api_nogc_env env,
+  static inline void WrapperWithHint(node_addon_api_basic_env env,
                                      void* data,
                                      void* finalizeHint) NAPI_NOEXCEPT {
     WrapVoidCallback([&] {
@@ -243,9 +244,9 @@ struct FinalizeData {
 #ifdef NODE_API_EXPERIMENTAL_HAS_POST_FINALIZER
   template <typename F = Finalizer,
             typename = std::enable_if_t<
-                !std::is_invocable_v<F, node_api_nogc_env, T*, Hint*>>,
+                !std::is_invocable_v<F, node_addon_api_basic_env, T*, Hint*>>,
             typename = void>
-  static inline void WrapperWithHint(node_api_nogc_env env,
+  static inline void WrapperWithHint(node_addon_api_basic_env env,
                                      void* data,
                                      void* finalizeHint) NAPI_NOEXCEPT {
 #ifdef NODE_ADDON_API_REQUIRE_BASIC_FINALIZERS
@@ -576,9 +577,9 @@ inline Maybe<T> Just(const T& t) {
 // BasicEnv / Env class
 ////////////////////////////////////////////////////////////////////////////////
 
-inline BasicEnv::BasicEnv(node_api_nogc_env env) : _env(env) {}
+inline BasicEnv::BasicEnv(node_addon_api_basic_env env) : _env(env) {}
 
-inline BasicEnv::operator node_api_nogc_env() const {
+inline BasicEnv::operator node_addon_api_basic_env() const {
   return _env;
 }
 
@@ -5034,7 +5035,7 @@ inline napi_value ObjectWrap<T>::StaticSetterCallbackWrapper(
 }
 
 template <typename T>
-inline void ObjectWrap<T>::FinalizeCallback(node_api_nogc_env env,
+inline void ObjectWrap<T>::FinalizeCallback(node_addon_api_basic_env env,
                                             void* data,
                                             void* /*hint*/) {
   // If the child class does not override _any_ Finalize() method, `env` will be

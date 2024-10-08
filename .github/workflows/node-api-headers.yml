@@ -1,0 +1,71 @@
+name: Node.js CI with node-api-headers
+
+on: [push, pull_request]
+
+env:
+  PYTHON_VERSION: '3.11'
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        api_version:
+          - '9'
+        node-version:
+          - 22.x
+        node-api-headers-version:
+          - '1.1.0'
+          - '1.2.0'
+          - '1.3.0'
+        os:
+          - ubuntu-latest
+        compiler:
+          - gcc
+          - clang
+    runs-on: ${{ matrix.os }}
+    steps:
+    - name: Harden Runner
+      uses: step-security/harden-runner@91182cccc01eb5e619899d80e4e971d6181294a7 # v2.10.1
+      with:
+        egress-policy: audit
+
+    - uses: actions/checkout@d632683dd7b4114ad314bca15554477dd762a938 # v4.2.0
+    - name: Set up Python ${{ env.PYTHON_VERSION }}
+      uses: actions/setup-python@f677139bbe7f9c59b41e40162b753c062f5d49a3  # v5.2.0
+      with:
+        python-version: ${{ env.PYTHON_VERSION }}
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@0a44ba7841725637a19e28fa30b79a866c81b0a6 # v4.0.4
+      with:
+        node-version: ${{ matrix.node-version }}
+    - name: Check Node.js installation
+      run: |
+        node --version
+        npm --version
+    - name: Install dependencies
+      run: |
+        npm install
+        npm install "node-api-headers@${{ matrix.node-api-headers-version }}"
+    - name: npm test
+      run: |
+        export NAPI_VERSION=${{ matrix.api_version }}
+        if [ "${{ matrix.compiler }}" = "gcc" ]; then
+          export CC="gcc" CXX="g++"
+        fi
+        if [ "${{ matrix.compiler }}" = "clang" ]; then
+          export CC="clang" CXX="clang++"
+        fi
+        echo "CC=\"$CC\" CXX=\"$CXX\""
+        echo "$CC --version"
+        $CC --version
+        echo "$CXX --version"
+        $CXX --version
+        export CFLAGS="$CFLAGS -O3 --coverage" LDFLAGS="$LDFLAGS --coverage"
+        export use_node_api_headers=true
+        echo "CFLAGS=\"$CFLAGS\" LDFLAGS=\"$LDFLAGS\""
+        npm run pretest -- --verbose
