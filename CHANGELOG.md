@@ -1,5 +1,13 @@
 # node-addon-api Changelog
 
+## [8.2.1](https://github.com/nodejs/node-addon-api/compare/v8.2.0...v8.2.1) (2024-10-09)
+
+
+### Bug Fixes
+
+* failed type cast checks in Symbol::WellKnown ([#1581](https://github.com/nodejs/node-addon-api/issues/1581)) ([d8523a7](https://github.com/nodejs/node-addon-api/commit/d8523a708030a0a3abb9d7832051c70e2dafac3d))
+* missing node_api_nogc_env definition ([#1585](https://github.com/nodejs/node-addon-api/issues/1585)) ([6ba3891](https://github.com/nodejs/node-addon-api/commit/6ba3891954d8b56215d133e54a86cb621e476b9e))
+
 ## [8.2.0](https://github.com/nodejs/node-addon-api/compare/v8.1.0...v8.2.0) (2024-09-19)
 
 
