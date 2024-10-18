@@ -38,11 +38,23 @@ To use **Node-API** in a native module:
        ],
      ```
 
-     To enable that capability, add an alternative dependency in `binding.gyp`:
+     To enable that capability, add an alternative dependency in `binding.gyp`
+     depending on if you want to integrate C++ exception handling for exceptions
+     derived from `Napi::Error` or all C++ exceptions. To catch only
+     `Napi::Error` exceptions, use:
 
      ```gyp
        'dependencies': [
          "<!(node -p \"require('node-addon-api').targets\"):node_addon_api_except",
+       ],
+     ```
+
+     Or, to allow catching all native C++ exceptions, use the
+     `node_addon_api_except_all` dependency:
+
+     ```gyp
+       'dependencies': [
+         "<!(node -p \"require('node-addon-api').targets\"):node_addon_api_except_all",
        ],
      ```
 

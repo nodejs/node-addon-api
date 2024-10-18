@@ -45,6 +45,25 @@ The following line in the `CMakeLists.txt` file will enable Node-API experimenta
 add_definitions(-DNAPI_EXPERIMENTAL)
 ```
 
+### Exception Handling
+
+To enable C++ exception handling (for more info see: [Setup](setup.md)), define
+the corresponding preprocessor directives depending on which exception handling
+behavior is desired.
+
+To enable C++ exception handling with `Napi::Error` objects only:
+
+```
+add_definitions(-DNAPI_EXPERIMENTAL)
+```
+
+To enable C++ exception handling for all exceptions thrown:
+
+```
+add_definitions(-DNODE_ADDON_API_CPP_EXCEPTIONS)
+add_definitions(-DNODE_ADDON_API_CPP_EXCEPTIONS_ALL)
+```
+
 ### node-addon-api
 
 If your Node-API native add-on uses the optional [**node-addon-api**](https://github.com/nodejs/node-addon-api#node-addon-api-module) C++ wrapper, the `CMakeLists.txt` file requires additional configuration information as described on the [CMake.js README file](https://github.com/cmake-js/cmake-js#node-api-and-node-addon-api).

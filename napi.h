@@ -37,22 +37,40 @@ static_assert(sizeof(char16_t) == sizeof(wchar_t),
 #define NAPI_WIDE_TEXT(x) u##x
 #endif
 
+// Backwards-compatibility to handle the rename of this macro definition, in
+// case they are used within userland code.
+#ifdef NAPI_CPP_EXCEPTIONS
+#define NODE_ADDON_API_CPP_EXCEPTIONS
+#endif
+#if defined(NODE_ADDON_API_CPP_EXCEPTIONS) && !defined(NAPI_CPP_EXCEPTIONS)
+#define NAPI_CPP_EXCEPTIONS
+#endif
+#ifdef NAPI_DISABLE_CPP_EXCEPTIONS
+#define NODE_ADDON_API_DISABLE_CPP_EXCEPTIONS
+#endif
+#if defined(NODE_ADDON_API_DISABLE_CPP_EXCEPTIONS) &&                          \
+    !defined(NAPI_DISABLE_CPP_EXCEPTIONS)
+#define NAPI_DISABLE_CPP_EXCEPTIONS
+#endif
+
 // If C++ exceptions are not explicitly enabled or disabled, enable them
 // if exceptions were enabled in the compiler settings.
-#if !defined(NAPI_CPP_EXCEPTIONS) && !defined(NAPI_DISABLE_CPP_EXCEPTIONS)
+#if !defined(NODE_ADDON_API_CPP_EXCEPTIONS) &&                                 \
+    !defined(NODE_ADDON_API_DISABLE_CPP_EXCEPTIONS)
 #if defined(_CPPUNWIND) || defined(__EXCEPTIONS)
-#define NAPI_CPP_EXCEPTIONS
+#define NODE_ADDON_API_CPP_EXCEPTIONS
 #else
 #error Exception support not detected. \
-      Define either NAPI_CPP_EXCEPTIONS or NAPI_DISABLE_CPP_EXCEPTIONS.
+      Define either NODE_ADDON_API_CPP_EXCEPTIONS or NODE_ADDON_API_DISABLE_CPP_EXCEPTIONS.
 #endif
 #endif
 
-// If C++ NAPI_CPP_EXCEPTIONS are enabled, NODE_ADDON_API_ENABLE_MAYBE should
-// not be set
-#if defined(NAPI_CPP_EXCEPTIONS) && defined(NODE_ADDON_API_ENABLE_MAYBE)
+// If C++ NODE_ADDON_API_CPP_EXCEPTIONS are enabled, NODE_ADDON_API_ENABLE_MAYBE
+// should not be set
+#if defined(NODE_ADDON_API_CPP_EXCEPTIONS) &&                                  \
+    defined(NODE_ADDON_API_ENABLE_MAYBE)
 #error NODE_ADDON_API_ENABLE_MAYBE should not be set when \
-    NAPI_CPP_EXCEPTIONS is defined.
+    NODE_ADDON_API_CPP_EXCEPTIONS is defined.
 #endif
 
 #ifdef _NOEXCEPT
@@ -61,7 +79,7 @@ static_assert(sizeof(char16_t) == sizeof(wchar_t),
 #define NAPI_NOEXCEPT noexcept
 #endif
 
-#ifdef NAPI_CPP_EXCEPTIONS
+#ifdef NODE_ADDON_API_CPP_EXCEPTIONS
 
 // When C++ exceptions are enabled, Errors are thrown directly. There is no need
 // to return anything after the throw statements. The variadic parameter is an
@@ -78,7 +96,7 @@ static_assert(sizeof(char16_t) == sizeof(wchar_t),
 #define NAPI_THROW_IF_FAILED_VOID(env, status)                                 \
   if ((status) != napi_ok) throw Napi::Error::New(env);
 
-#else  // NAPI_CPP_EXCEPTIONS
+#else  // NODE_ADDON_API_CPP_EXCEPTIONS
 
 // When C++ exceptions are disabled, Errors are thrown as JavaScript exceptions,
 // which are pending until the callback returns to JS.  The variadic parameter
@@ -110,7 +128,7 @@ static_assert(sizeof(char16_t) == sizeof(wchar_t),
     return;                                                                    \
   }
 
-#endif  // NAPI_CPP_EXCEPTIONS
+#endif  // NODE_ADDON_API_CPP_EXCEPTIONS
 
 #ifdef NODE_ADDON_API_ENABLE_MAYBE
 #define NAPI_MAYBE_THROW_IF_FAILED(env, status, type)                          \
@@ -1068,7 +1086,7 @@ class Object : public TypeTaggable {
                            T* data,
                            Hint* finalizeHint) const;
 
-#ifdef NAPI_CPP_EXCEPTIONS
+#ifdef NODE_ADDON_API_CPP_EXCEPTIONS
   class const_iterator;
 
   inline const_iterator begin() const;
@@ -1080,7 +1098,7 @@ class Object : public TypeTaggable {
   inline iterator begin();
 
   inline iterator end();
-#endif  // NAPI_CPP_EXCEPTIONS
+#endif  // NODE_ADDON_API_CPP_EXCEPTIONS
 
 #if NAPI_VERSION >= 8
   /// This operation can fail in case of Proxy.[[GetPrototypeOf]] calling into
@@ -1132,7 +1150,7 @@ class Array : public Object {
   uint32_t Length() const;
 };
 
-#ifdef NAPI_CPP_EXCEPTIONS
+#ifdef NODE_ADDON_API_CPP_EXCEPTIONS
 class Object::const_iterator {
  private:
   enum class Type { BEGIN, END };
@@ -1179,7 +1197,7 @@ class Object::iterator {
 
   friend class Object;
 };
-#endif  // NAPI_CPP_EXCEPTIONS
+#endif  // NODE_ADDON_API_CPP_EXCEPTIONS
 
 /// A JavaScript array buffer value.
 class ArrayBuffer : public Object {
@@ -1811,14 +1829,15 @@ FunctionReference Persistent(Function value);
 ///
 /// ### Handling Errors Without C++ Exceptions
 ///
-/// If C++ exceptions are disabled (by defining `NAPI_DISABLE_CPP_EXCEPTIONS`)
-/// then this class does not extend `std::exception`, and APIs in the `Napi`
-/// namespace do not throw C++ exceptions when they fail. Instead, they raise
-/// _pending_ JavaScript exceptions and return _empty_ `Value`s. Calling code
-/// should check `Value::IsEmpty()` before attempting to use a returned value,
-/// and may use methods on the `Env` class to check for, get, and clear a
-/// pending JavaScript exception. If the pending exception is not cleared, it
-/// will be thrown when the native callback returns to JavaScript.
+/// If C++ exceptions are disabled (by defining
+/// `NODE_ADDON_API_DISABLE_CPP_EXCEPTIONS`) then this class does not extend
+/// `std::exception`, and APIs in the `Napi` namespace do not throw C++
+/// exceptions when they fail. Instead, they raise _pending_ JavaScript
+/// exceptions and return _empty_ `Value`s. Calling code should check
+/// `Value::IsEmpty()` before attempting to use a returned value, and may use
+/// methods on the `Env` class to check for, get, and clear a pending JavaScript
+/// exception. If the pending exception is not cleared, it will be thrown when
+/// the native callback returns to JavaScript.
 ///
 /// #### Example 1B - Throwing a JS exception
 ///
@@ -1853,10 +1872,10 @@ FunctionReference Persistent(Function value);
 /// Since the exception was cleared here, it will not be propagated as a
 /// JavaScript exception after the native callback returns.
 class Error : public ObjectReference
-#ifdef NAPI_CPP_EXCEPTIONS
+#ifdef NODE_ADDON_API_CPP_EXCEPTIONS
     ,
               public std::exception
-#endif  // NAPI_CPP_EXCEPTIONS
+#endif  // NODE_ADDON_API_CPP_EXCEPTIONS
 {
  public:
   static Error New(napi_env env);
@@ -1879,9 +1898,9 @@ class Error : public ObjectReference
 
   Object Value() const;
 
-#ifdef NAPI_CPP_EXCEPTIONS
+#ifdef NODE_ADDON_API_CPP_EXCEPTIONS
   const char* what() const NAPI_NOEXCEPT override;
-#endif  // NAPI_CPP_EXCEPTIONS
+#endif  // NODE_ADDON_API_CPP_EXCEPTIONS
 
  protected:
   /// !cond INTERNAL
