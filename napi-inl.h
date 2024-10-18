@@ -79,43 +79,61 @@ inline napi_status AttachData(napi_env env,
 // For use in JS to C++ callback wrappers to catch any Napi::Error exceptions
 // and rethrow them as JavaScript exceptions before returning from the callback.
 template <typename Callable>
-inline napi_value WrapCallback(Callable callback) {
-#ifdef NAPI_CPP_EXCEPTIONS
+inline napi_value WrapCallback(napi_env env, Callable callback) {
+#if defined(NAPI_CPP_EXCEPTIONS) || defined(NAPI_CPP_EXCEPTIONS_ALL)
   try {
     return callback();
   } catch (const Error& e) {
     e.ThrowAsJavaScriptException();
     return nullptr;
   }
-#else   // NAPI_CPP_EXCEPTIONS
+#ifdef NAPI_CPP_EXCEPTIONS_ALL
+  catch (const std::exception& e) {
+    Napi::Error::New(env, e.what()).ThrowAsJavaScriptException();
+    return nullptr;
+  } catch (...) {
+    Napi::Error::New(env, "A native exception was thrown")
+        .ThrowAsJavaScriptException();
+    return nullptr;
+  }
+#endif  // NAPI_CPP_EXCEPTIONS_ALL
+#else   // defined(NAPI_CPP_EXCEPTIONS) || defined(NAPI_CPP_EXCEPTIONS_ALL)
   // When C++ exceptions are disabled, errors are immediately thrown as JS
   // exceptions, so there is no need to catch and rethrow them here.
   return callback();
-#endif  // NAPI_CPP_EXCEPTIONS
+#endif  // defined(NAPI_CPP_EXCEPTIONS) || defined(NAPI_CPP_EXCEPTIONS_ALL)
 }
 
 // For use in JS to C++ void callback wrappers to catch any Napi::Error
 // exceptions and rethrow them as JavaScript exceptions before returning from
 // the callback.
 template <typename Callable>
-inline void WrapVoidCallback(Callable callback) {
-#ifdef NAPI_CPP_EXCEPTIONS
+inline void WrapVoidCallback(napi_env env, Callable callback) {
+#if defined(NAPI_CPP_EXCEPTIONS) || defined(NAPI_CPP_EXCEPTIONS_ALL)
   try {
     callback();
   } catch (const Error& e) {
     e.ThrowAsJavaScriptException();
   }
-#else   // NAPI_CPP_EXCEPTIONS
+#ifdef NAPI_CPP_EXCEPTIONS_ALL
+  catch (const std::exception& e) {
+    Napi::Error::New(env, e.what()).ThrowAsJavaScriptException();
+  } catch (...) {
+    Napi::Error::New(env, "A native exception was thrown")
+        .ThrowAsJavaScriptException();
+  }
+#endif  // NAPI_CPP_EXCEPTIONS_ALL
+#else   // defined(NAPI_CPP_EXCEPTIONS) || defined(NAPI_CPP_EXCEPTIONS_ALL)
   // When C++ exceptions are disabled, errors are immediately thrown as JS
   // exceptions, so there is no need to catch and rethrow them here.
   callback();
-#endif  // NAPI_CPP_EXCEPTIONS
+#endif  // defined(NAPI_CPP_EXCEPTIONS) || defined(NAPI_CPP_EXCEPTIONS_ALL)
 }
 
 template <typename Callable, typename Return>
 struct CallbackData {
   static inline napi_value Wrapper(napi_env env, napi_callback_info info) {
-    return details::WrapCallback([&] {
+    return details::WrapCallback(env, [&] {
       CallbackInfo callbackInfo(env, info);
       CallbackData* callbackData =
           static_cast<CallbackData*>(callbackInfo.Data());
@@ -131,7 +149,7 @@ struct CallbackData {
 template <typename Callable>
 struct CallbackData<Callable, void> {
   static inline napi_value Wrapper(napi_env env, napi_callback_info info) {
-    return details::WrapCallback([&] {
+    return details::WrapCallback(env, [&] {
       CallbackInfo callbackInfo(env, info);
       CallbackData* callbackData =
           static_cast<CallbackData*>(callbackInfo.Data());
@@ -148,7 +166,7 @@ struct CallbackData<Callable, void> {
 template <void (*Callback)(const CallbackInfo& info)>
 napi_value TemplatedVoidCallback(napi_env env,
                                  napi_callback_info info) NAPI_NOEXCEPT {
-  return details::WrapCallback([&] {
+  return details::WrapCallback(env, [&] {
     CallbackInfo cbInfo(env, info);
     Callback(cbInfo);
     return nullptr;
@@ -158,7 +176,7 @@ napi_value TemplatedVoidCallback(napi_env env,
 template <Napi::Value (*Callback)(const CallbackInfo& info)>
 napi_value TemplatedCallback(napi_env env,
                              napi_callback_info info) NAPI_NOEXCEPT {
-  return details::WrapCallback([&] {
+  return details::WrapCallback(env, [&] {
     CallbackInfo cbInfo(env, info);
     // MSVC requires to copy 'Callback' function pointer to a local variable
     // before invoking it.
@@ -171,7 +189,7 @@ template <typename T,
           Napi::Value (T::*UnwrapCallback)(const CallbackInfo& info)>
 napi_value TemplatedInstanceCallback(napi_env env,
                                      napi_callback_info info) NAPI_NOEXCEPT {
-  return details::WrapCallback([&] {
+  return details::WrapCallback(env, [&] {
     CallbackInfo cbInfo(env, info);
     T* instance = T::Unwrap(cbInfo.This().As<Object>());
     return instance ? (instance->*UnwrapCallback)(cbInfo) : Napi::Value();
@@ -181,7 +199,7 @@ napi_value TemplatedInstanceCallback(napi_env env,
 template <typename T, void (T::*UnwrapCallback)(const CallbackInfo& info)>
 napi_value TemplatedInstanceVoidCallback(napi_env env, napi_callback_info info)
     NAPI_NOEXCEPT {
-  return details::WrapCallback([&] {
+  return details::WrapCallback(env, [&] {
     CallbackInfo cbInfo(env, info);
     T* instance = T::Unwrap(cbInfo.This().As<Object>());
     if (instance) (instance->*UnwrapCallback)(cbInfo);
@@ -199,7 +217,7 @@ struct FinalizeData {
   static inline void Wrapper(node_addon_api_basic_env env,
                              void* data,
                              void* finalizeHint) NAPI_NOEXCEPT {
-    WrapVoidCallback([&] {
+    WrapVoidCallback(env, [&] {
       FinalizeData* finalizeData = static_cast<FinalizeData*>(finalizeHint);
       finalizeData->callback(env, static_cast<T*>(data));
       delete finalizeData;
@@ -234,7 +252,7 @@ struct FinalizeData {
   static inline void WrapperWithHint(node_addon_api_basic_env env,
                                      void* data,
                                      void* finalizeHint) NAPI_NOEXCEPT {
-    WrapVoidCallback([&] {
+    WrapVoidCallback(env, [&] {
       FinalizeData* finalizeData = static_cast<FinalizeData*>(finalizeHint);
       finalizeData->callback(env, static_cast<T*>(data), finalizeData->hint);
       delete finalizeData;
@@ -264,7 +282,7 @@ struct FinalizeData {
   static inline void WrapperGCWithoutData(napi_env env,
                                           void* /*data*/,
                                           void* finalizeHint) NAPI_NOEXCEPT {
-    WrapVoidCallback([&] {
+    WrapVoidCallback(env, [&] {
       FinalizeData* finalizeData = static_cast<FinalizeData*>(finalizeHint);
       finalizeData->callback(env);
       delete finalizeData;
@@ -274,7 +292,7 @@ struct FinalizeData {
   static inline void WrapperGC(napi_env env,
                                void* data,
                                void* finalizeHint) NAPI_NOEXCEPT {
-    WrapVoidCallback([&] {
+    WrapVoidCallback(env, [&] {
       FinalizeData* finalizeData = static_cast<FinalizeData*>(finalizeHint);
       finalizeData->callback(env, static_cast<T*>(data));
       delete finalizeData;
@@ -284,7 +302,7 @@ struct FinalizeData {
   static inline void WrapperGCWithHint(napi_env env,
                                        void* data,
                                        void* finalizeHint) NAPI_NOEXCEPT {
-    WrapVoidCallback([&] {
+    WrapVoidCallback(env, [&] {
       FinalizeData* finalizeData = static_cast<FinalizeData*>(finalizeHint);
       finalizeData->callback(env, static_cast<T*>(data), finalizeData->hint);
       delete finalizeData;
@@ -351,7 +369,7 @@ struct ThreadSafeFinalize {
 template <typename ContextType, typename DataType, typename CallJs, CallJs call>
 inline typename std::enable_if<call != static_cast<CallJs>(nullptr)>::type
 CallJsWrapper(napi_env env, napi_value jsCallback, void* context, void* data) {
-  details::WrapVoidCallback([&]() {
+  details::WrapVoidCallback(env, [&]() {
     call(env,
          Function(env, jsCallback),
          static_cast<ContextType*>(context),
@@ -365,7 +383,7 @@ CallJsWrapper(napi_env env,
               napi_value jsCallback,
               void* /*context*/,
               void* /*data*/) {
-  details::WrapVoidCallback([&]() {
+  details::WrapVoidCallback(env, [&]() {
     if (jsCallback != nullptr) {
       Function(env, jsCallback).Call(0, nullptr);
     }
@@ -399,7 +417,7 @@ template <typename Getter, typename Setter>
 struct AccessorCallbackData {
   static inline napi_value GetterWrapper(napi_env env,
                                          napi_callback_info info) {
-    return details::WrapCallback([&] {
+    return details::WrapCallback(env, [&] {
       CallbackInfo callbackInfo(env, info);
       AccessorCallbackData* callbackData =
           static_cast<AccessorCallbackData*>(callbackInfo.Data());
@@ -410,7 +428,7 @@ struct AccessorCallbackData {
 
   static inline napi_value SetterWrapper(napi_env env,
                                          napi_callback_info info) {
-    return details::WrapCallback([&] {
+    return details::WrapCallback(env, [&] {
       CallbackInfo callbackInfo(env, info);
       AccessorCallbackData* callbackData =
           static_cast<AccessorCallbackData*>(callbackInfo.Data());
@@ -501,7 +519,7 @@ class HasBasicFinalizer {
 inline napi_value RegisterModule(napi_env env,
                                  napi_value exports,
                                  ModuleRegisterCallback registerCallback) {
-  return details::WrapCallback([&] {
+  return details::WrapCallback(env, [&] {
     return napi_value(
         registerCallback(Napi::Env(env), Napi::Object(env, exports)));
   });
@@ -4506,7 +4524,7 @@ inline ClassPropertyDescriptor<T> InstanceWrap<T>::InstanceValue(
 template <typename T>
 inline napi_value InstanceWrap<T>::InstanceVoidMethodCallbackWrapper(
     napi_env env, napi_callback_info info) {
-  return details::WrapCallback([&] {
+  return details::WrapCallback(env, [&] {
     CallbackInfo callbackInfo(env, info);
     InstanceVoidMethodCallbackData* callbackData =
         reinterpret_cast<InstanceVoidMethodCallbackData*>(callbackInfo.Data());
@@ -4521,7 +4539,7 @@ inline napi_value InstanceWrap<T>::InstanceVoidMethodCallbackWrapper(
 template <typename T>
 inline napi_value InstanceWrap<T>::InstanceMethodCallbackWrapper(
     napi_env env, napi_callback_info info) {
-  return details::WrapCallback([&] {
+  return details::WrapCallback(env, [&] {
     CallbackInfo callbackInfo(env, info);
     InstanceMethodCallbackData* callbackData =
         reinterpret_cast<InstanceMethodCallbackData*>(callbackInfo.Data());
@@ -4535,7 +4553,7 @@ inline napi_value InstanceWrap<T>::InstanceMethodCallbackWrapper(
 template <typename T>
 inline napi_value InstanceWrap<T>::InstanceGetterCallbackWrapper(
     napi_env env, napi_callback_info info) {
-  return details::WrapCallback([&] {
+  return details::WrapCallback(env, [&] {
     CallbackInfo callbackInfo(env, info);
     InstanceAccessorCallbackData* callbackData =
         reinterpret_cast<InstanceAccessorCallbackData*>(callbackInfo.Data());
@@ -4549,7 +4567,7 @@ inline napi_value InstanceWrap<T>::InstanceGetterCallbackWrapper(
 template <typename T>
 inline napi_value InstanceWrap<T>::InstanceSetterCallbackWrapper(
     napi_env env, napi_callback_info info) {
-  return details::WrapCallback([&] {
+  return details::WrapCallback(env, [&] {
     CallbackInfo callbackInfo(env, info);
     InstanceAccessorCallbackData* callbackData =
         reinterpret_cast<InstanceAccessorCallbackData*>(callbackInfo.Data());
@@ -4565,7 +4583,7 @@ template <typename T>
 template <typename InstanceWrap<T>::InstanceSetterCallback method>
 inline napi_value InstanceWrap<T>::WrappedMethod(
     napi_env env, napi_callback_info info) NAPI_NOEXCEPT {
-  return details::WrapCallback([&] {
+  return details::WrapCallback(env, [&] {
     const CallbackInfo cbInfo(env, info);
     T* instance = T::Unwrap(cbInfo.This().As<Object>());
     if (instance) (instance->*method)(cbInfo, cbInfo[0]);
@@ -4960,10 +4978,10 @@ inline napi_value ObjectWrap<T>::ConstructorCallbackWrapper(
   bool isConstructCall = (new_target != nullptr);
   if (!isConstructCall) {
     return details::WrapCallback(
-        [&] { return T::OnCalledAsFunction(CallbackInfo(env, info)); });
+        env, [&] { return T::OnCalledAsFunction(CallbackInfo(env, info)); });
   }
 
-  napi_value wrapper = details::WrapCallback([&] {
+  napi_value wrapper = details::WrapCallback(env, [&] {
     CallbackInfo callbackInfo(env, info);
     T* instance = new T(callbackInfo);
 #ifdef NAPI_CPP_EXCEPTIONS
@@ -4987,7 +5005,7 @@ inline napi_value ObjectWrap<T>::ConstructorCallbackWrapper(
 template <typename T>
 inline napi_value ObjectWrap<T>::StaticVoidMethodCallbackWrapper(
     napi_env env, napi_callback_info info) {
-  return details::WrapCallback([&] {
+  return details::WrapCallback(env, [&] {
     CallbackInfo callbackInfo(env, info);
     StaticVoidMethodCallbackData* callbackData =
         reinterpret_cast<StaticVoidMethodCallbackData*>(callbackInfo.Data());
@@ -5000,7 +5018,7 @@ inline napi_value ObjectWrap<T>::StaticVoidMethodCallbackWrapper(
 template <typename T>
 inline napi_value ObjectWrap<T>::StaticMethodCallbackWrapper(
     napi_env env, napi_callback_info info) {
-  return details::WrapCallback([&] {
+  return details::WrapCallback(env, [&] {
     CallbackInfo callbackInfo(env, info);
     StaticMethodCallbackData* callbackData =
         reinterpret_cast<StaticMethodCallbackData*>(callbackInfo.Data());
@@ -5012,7 +5030,7 @@ inline napi_value ObjectWrap<T>::StaticMethodCallbackWrapper(
 template <typename T>
 inline napi_value ObjectWrap<T>::StaticGetterCallbackWrapper(
     napi_env env, napi_callback_info info) {
-  return details::WrapCallback([&] {
+  return details::WrapCallback(env, [&] {
     CallbackInfo callbackInfo(env, info);
     StaticAccessorCallbackData* callbackData =
         reinterpret_cast<StaticAccessorCallbackData*>(callbackInfo.Data());
@@ -5024,7 +5042,7 @@ inline napi_value ObjectWrap<T>::StaticGetterCallbackWrapper(
 template <typename T>
 inline napi_value ObjectWrap<T>::StaticSetterCallbackWrapper(
     napi_env env, napi_callback_info info) {
-  return details::WrapCallback([&] {
+  return details::WrapCallback(env, [&] {
     CallbackInfo callbackInfo(env, info);
     StaticAccessorCallbackData* callbackData =
         reinterpret_cast<StaticAccessorCallbackData*>(callbackInfo.Data());
@@ -5097,7 +5115,7 @@ template <typename T>
 template <typename ObjectWrap<T>::StaticSetterCallback method>
 inline napi_value ObjectWrap<T>::WrappedMethod(
     napi_env env, napi_callback_info info) NAPI_NOEXCEPT {
-  return details::WrapCallback([&] {
+  return details::WrapCallback(env, [&] {
     const CallbackInfo cbInfo(env, info);
     // MSVC requires to copy 'method' function pointer to a local variable
     // before invoking it.
@@ -5415,10 +5433,10 @@ inline void AsyncWorker::OnAsyncWorkComplete(napi_env env,
   AsyncWorker* self = static_cast<AsyncWorker*>(asyncworker);
   self->OnWorkComplete(env, status);
 }
-inline void AsyncWorker::OnWorkComplete(Napi::Env /*env*/, napi_status status) {
+inline void AsyncWorker::OnWorkComplete(Napi::Env env, napi_status status) {
   if (status != napi_cancelled) {
     HandleScope scope(_env);
-    details::WrapCallback([&] {
+    details::WrapCallback(env, [&] {
       if (_error.size() == 0) {
         OnOK();
       } else {
@@ -6330,7 +6348,7 @@ inline void ThreadSafeFunction::CallJS(napi_env env,
     return;
   }
 
-  details::WrapVoidCallback([&]() {
+  details::WrapVoidCallback(env, [&]() {
     if (data != nullptr) {
       auto* callbackWrapper = static_cast<CallbackWrapper*>(data);
       (*callbackWrapper)(env, Function(env, jsCallback));
