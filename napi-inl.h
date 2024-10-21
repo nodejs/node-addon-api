@@ -6699,12 +6699,14 @@ inline void AsyncProgressQueueWorker<T>::ExecutionProgress::Send(
 // Memory Management class
 ////////////////////////////////////////////////////////////////////////////////
 
-inline int64_t MemoryManagement::AdjustExternalMemory(Env env,
+inline int64_t MemoryManagement::AdjustExternalMemory(BasicEnv env,
                                                       int64_t change_in_bytes) {
   int64_t result;
   napi_status status =
       napi_adjust_external_memory(env, change_in_bytes, &result);
-  NAPI_THROW_IF_FAILED(env, status, 0);
+  NAPI_FATAL_IF_FAILED(status,
+                       "MemoryManagement::AdjustExternalMemory",
+                       "napi_adjust_external_memory");
   return result;
 }
 
@@ -6712,17 +6714,20 @@ inline int64_t MemoryManagement::AdjustExternalMemory(Env env,
 // Version Management class
 ////////////////////////////////////////////////////////////////////////////////
 
-inline uint32_t VersionManagement::GetNapiVersion(Env env) {
+inline uint32_t VersionManagement::GetNapiVersion(BasicEnv env) {
   uint32_t result;
   napi_status status = napi_get_version(env, &result);
-  NAPI_THROW_IF_FAILED(env, status, 0);
+  NAPI_FATAL_IF_FAILED(
+      status, "VersionManagement::GetNapiVersion", "napi_get_version");
   return result;
 }
 
-inline const napi_node_version* VersionManagement::GetNodeVersion(Env env) {
+inline const napi_node_version* VersionManagement::GetNodeVersion(
+    BasicEnv env) {
   const napi_node_version* result;
   napi_status status = napi_get_node_version(env, &result);
-  NAPI_THROW_IF_FAILED(env, status, 0);
+  NAPI_FATAL_IF_FAILED(
+      status, "VersionManagement::GetNodeVersion", "napi_get_node_version");
   return result;
 }
 

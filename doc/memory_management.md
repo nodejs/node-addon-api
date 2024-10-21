@@ -17,7 +17,7 @@ more often than it would otherwise in an attempt to garbage collect the JavaScri
 objects that keep the externally allocated memory alive.
 
 ```cpp
-static int64_t Napi::MemoryManagement::AdjustExternalMemory(Napi::Env env, int64_t change_in_bytes);
+static int64_t Napi::MemoryManagement::AdjustExternalMemory(Napi::BasicEnv env, int64_t change_in_bytes);
 ```
 
 - `[in] env`: The environment in which the API is invoked under.
