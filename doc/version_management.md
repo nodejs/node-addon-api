@@ -11,7 +11,7 @@ important to make decisions based on different versions of the system.
 Retrieves the highest Node-API version supported by Node.js runtime.
 
 ```cpp
-static uint32_t Napi::VersionManagement::GetNapiVersion(Env env);
+static uint32_t Napi::VersionManagement::GetNapiVersion(Napi::BasicEnv env);
 ```
 
 - `[in] env`: The environment in which the API is invoked under.
@@ -34,7 +34,7 @@ typedef struct {
 ````
 
 ```cpp
-static const napi_node_version* Napi::VersionManagement::GetNodeVersion(Env env);
+static const napi_node_version* Napi::VersionManagement::GetNodeVersion(Napi::BasicEnv env);
 ```
 
 - `[in] env`: The environment in which the API is invoked under.

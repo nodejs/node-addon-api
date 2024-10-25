@@ -3234,14 +3234,14 @@ class AsyncProgressQueueWorker
 // Memory management.
 class MemoryManagement {
  public:
-  static int64_t AdjustExternalMemory(Env env, int64_t change_in_bytes);
+  static int64_t AdjustExternalMemory(BasicEnv env, int64_t change_in_bytes);
 };
 
 // Version management
 class VersionManagement {
  public:
-  static uint32_t GetNapiVersion(Env env);
-  static const napi_node_version* GetNodeVersion(Env env);
+  static uint32_t GetNapiVersion(BasicEnv env);
+  static const napi_node_version* GetNodeVersion(BasicEnv env);
 };
 
 #if NAPI_VERSION > 5
