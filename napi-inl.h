@@ -3341,6 +3341,8 @@ template <typename T>
 inline Reference<T>::~Reference() {
   if (_ref != nullptr) {
     if (!_suppressDestruct) {
+      // TODO(legendecas): napi_delete_reference should be invoked immediately.
+      // Fix this when https://github.com/nodejs/node/pull/55620 lands.
 #ifdef NODE_API_EXPERIMENTAL_HAS_POST_FINALIZER
       Env().PostFinalizer(
           [](Napi::Env env, napi_ref ref) { napi_delete_reference(env, ref); },
@@ -4595,7 +4597,7 @@ template <typename T>
 inline ObjectWrap<T>::~ObjectWrap() {
   // If the JS object still exists at this point, remove the finalizer added
   // through `napi_wrap()`.
-  if (!IsEmpty()) {
+  if (!IsEmpty() && !_finalized) {
     Object object = Value();
     // It is not valid to call `napi_remove_wrap()` with an empty `object`.
     // This happens e.g. during garbage collection.
@@ -5044,8 +5046,10 @@ inline void ObjectWrap<T>::FinalizeCallback(node_addon_api_basic_env env,
   (void)env;
   T* instance = static_cast<T*>(data);
 
-  // Prevent ~ObjectWrap from calling napi_remove_wrap
-  instance->_ref = nullptr;
+  // Prevent ~ObjectWrap from calling napi_remove_wrap.
+  // The instance->_ref should be deleted with napi_delete_reference in
+  // ~Reference.
+  instance->_finalized = true;
 
   // If class overrides the basic finalizer, execute it.
   if constexpr (details::HasBasicFinalizer<T>::value) {

@@ -2514,6 +2514,7 @@ class ObjectWrap : public InstanceWrap<T>, public Reference<Object> {
   }
 
   bool _construction_failed = true;
+  bool _finalized = false;
 };
 
 class HandleScope {
