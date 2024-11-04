@@ -2,7 +2,6 @@
 
 const assert = require('assert');
 const testUtil = require('./testUtil');
-const safeBuffer = require('safe-buffer');
 
 module.exports = require('./common').runTest(test);
 
@@ -14,7 +13,7 @@ function test (binding) {
       binding.buffer.checkBuffer(test);
       assert.ok(test instanceof Buffer);
 
-      const test2 = safeBuffer.Buffer.alloc(test.length);
+      const test2 = Buffer.alloc(test.length);
       test.copy(test2);
       binding.buffer.checkBuffer(test2);
     },
