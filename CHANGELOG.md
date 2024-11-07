@@ -1,5 +1,13 @@
 # node-addon-api Changelog
 
+## [8.2.2](https://github.com/nodejs/node-addon-api/compare/v8.2.1...v8.2.2) (2024-11-07)
+
+
+### Bug Fixes
+
+* mark external memory and version APIs as basic ([#1597](https://github.com/nodejs/node-addon-api/issues/1597)) ([78da4fa](https://github.com/nodejs/node-addon-api/commit/78da4fa2251af1e4de16efac94d92388f117ae6e))
+* missing napi_delete_reference on ObjectWrap ref ([#1607](https://github.com/nodejs/node-addon-api/issues/1607)) ([98aae33](https://github.com/nodejs/node-addon-api/commit/98aae3343c3af36b4befd6b67c4cb19ba49b8d20))
+
 ## [8.2.1](https://github.com/nodejs/node-addon-api/compare/v8.2.0...v8.2.1) (2024-10-09)
 
 
