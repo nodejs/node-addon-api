@@ -150,8 +150,9 @@ inline void WrapVoidCallback(napi_env, Callable callback) {
   }
 #endif  // NODE_ADDON_API_CPP_EXCEPTIONS_ALL
 #else
-  // When C++ exceptions are disabled, errors are immediately thrown as JS
-  // exceptions, so there is no need to catch and rethrow them here.
+  // When C++ exceptions are disabled, there is no need to catch and rethrow C++
+  // exceptions. JS errors should be thrown with
+  // `Error::ThrowAsJavaScriptException`.
   callback();
 #endif  // NODE_ADDON_API_CPP_EXCEPTIONS
 }
