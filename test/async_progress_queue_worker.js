@@ -42,7 +42,7 @@ async function asyncProgressWorkerCallbackOverloads (bindingFunction) {
         {
           eventName: 'init',
           type: 'cbResources',
-          triggerAsyncId: triggerAsyncId,
+          triggerAsyncId,
           resource: {}
         },
         { eventName: 'before' },
@@ -90,7 +90,7 @@ async function asyncProgressWorkerRecvOverloads (bindingFunction) {
           {
             eventName: 'init',
             type: asyncResName,
-            triggerAsyncId: triggerAsyncId,
+            triggerAsyncId,
             resource: asyncResObject
           },
           { eventName: 'before' },
@@ -131,7 +131,7 @@ async function asyncProgressWorkerNoCbOverloads (bindingFunction) {
           {
             eventName: 'init',
             type: asyncResName,
-            triggerAsyncId: triggerAsyncId,
+            triggerAsyncId,
             resource: asyncResObject
           },
           { eventName: 'before' },

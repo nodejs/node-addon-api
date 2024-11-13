@@ -58,7 +58,7 @@ function test (binding) {
     'ArrayBuffer updates data pointer and length when detached',
     () => {
       // Detach the ArrayBuffer in JavaScript.
-      // eslint-disable-next-line no-undef
+
       const mem = new WebAssembly.Memory({ initial: 1 });
       binding.arraybuffer.checkDetachUpdatesData(mem.buffer, () => mem.grow(1));
 

@@ -53,8 +53,7 @@ function testTypeTaggable ({ typeTaggedInstance, checkTypeTag }) {
   assert.strictEqual(checkTypeTag(4, obj3), false);
 }
 
-// eslint-disable-next-line camelcase
-function test ({ type_taggable }) {
-  testTypeTaggable(type_taggable.external);
-  testTypeTaggable(type_taggable.object);
+function test (binding) {
+  testTypeTaggable(binding.type_taggable.external);
+  testTypeTaggable(binding.type_taggable.object);
 }
