@@ -85,6 +85,9 @@
         'binding-swallowexcept.cc',
         'error.cc',
       ],
+      'build_sources_except_all': [
+        'except_all.cc',
+      ],
       'build_sources_type_check': [
         'value_type_cast.cc'
       ],
@@ -113,6 +116,11 @@
       'dependencies': ['../node_addon_api.gyp:node_addon_api_except'],
       'sources': ['>@(build_sources)'],
       'defines': ['NODE_ADDON_API_ENABLE_TYPE_CHECK_ON_AS']
+    },
+    {
+      'target_name': 'binding_except_all',
+      'dependencies': ['../node_addon_api.gyp:node_addon_api_except_all'],
+      'sources': [ '>@(build_sources_except_all)']
     },
     {
       'target_name': 'binding_noexcept',
