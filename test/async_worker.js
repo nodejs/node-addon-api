@@ -139,7 +139,7 @@ async function test (binding) {
         {
           eventName: 'init',
           type: 'TestResource',
-          triggerAsyncId: triggerAsyncId,
+          triggerAsyncId,
           resource: { foo: 'fooBar' }
         },
         { eventName: 'before' },
@@ -167,7 +167,7 @@ async function test (binding) {
         {
           eventName: 'init',
           type: 'TestResource',
-          triggerAsyncId: triggerAsyncId,
+          triggerAsyncId,
           resource: { }
         },
         { eventName: 'before' },
@@ -194,7 +194,7 @@ async function test (binding) {
         {
           eventName: 'init',
           type: 'TestResource',
-          triggerAsyncId: triggerAsyncId,
+          triggerAsyncId,
           resource: { foo: 'foo' }
         },
         { eventName: 'before' },
@@ -224,7 +224,7 @@ async function test (binding) {
         {
           eventName: 'init',
           type: 'TestResource',
-          triggerAsyncId: triggerAsyncId,
+          triggerAsyncId,
           resource: { foo: 'foo' }
         },
         { eventName: 'before' },
@@ -252,7 +252,7 @@ async function test (binding) {
         {
           eventName: 'init',
           type: 'TestResource',
-          triggerAsyncId: triggerAsyncId,
+          triggerAsyncId,
           resource: { foo: 'foo' }
         },
         { eventName: 'before' },

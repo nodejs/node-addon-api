@@ -95,7 +95,7 @@ async function canCallAsyncFunctionWithDifferentOverloads (binding) {
     {
       eventName: 'init',
       type: 'func_ref_resources',
-      triggerAsyncId: triggerAsyncId,
+      triggerAsyncId,
       resource: {}
     },
     { eventName: 'before' },
@@ -113,7 +113,7 @@ async function canCallAsyncFunctionWithDifferentOverloads (binding) {
     {
       eventName: 'init',
       type: 'func_ref_resources',
-      triggerAsyncId: triggerAsyncId,
+      triggerAsyncId,
       resource: {}
     },
     { eventName: 'before' },

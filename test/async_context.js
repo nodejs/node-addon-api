@@ -73,7 +73,7 @@ async function makeCallbackWithResource (binding) {
         {
           eventName: 'init',
           type: 'async_context_test',
-          triggerAsyncId: triggerAsyncId,
+          triggerAsyncId,
           resource: { foo: 'foo' }
         },
         { eventName: 'before' },
@@ -95,7 +95,7 @@ async function makeCallbackWithoutResource (binding) {
         {
           eventName: 'init',
           type: 'async_context_no_res_test',
-          triggerAsyncId: triggerAsyncId,
+          triggerAsyncId,
           resource: { }
         },
         { eventName: 'before' },

@@ -468,8 +468,8 @@
     "predev:incremental": "node-gyp configure build -C test --debug",
     "dev:incremental": "node test",
     "doc": "doxygen doc/Doxyfile",
-    "lint": "node tools/eslint-format && node tools/clang-format",
-    "lint:fix": "node tools/clang-format --fix && node tools/eslint-format --fix"
+    "lint": "eslint && node tools/clang-format",
+    "lint:fix": "eslint --fix && node tools/clang-format --fix"
   },
   "pre-commit": "lint",
   "version": "8.2.2",
