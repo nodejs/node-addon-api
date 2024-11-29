@@ -1,5 +1,12 @@
 # node-addon-api Changelog
 
+## [8.3.0](https://github.com/nodejs/node-addon-api/compare/v8.2.2...v8.3.0) (2024-11-29)
+
+
+### Features
+
+* allow catching all exceptions ([#1593](https://github.com/nodejs/node-addon-api/issues/1593)) ([c679f6f](https://github.com/nodejs/node-addon-api/commit/c679f6f4c9dc6bf9fc0d99cbe5982bd24a5e2c7b))
+
 ## [8.2.2](https://github.com/nodejs/node-addon-api/compare/v8.2.1...v8.2.2) (2024-11-07)
 
 
