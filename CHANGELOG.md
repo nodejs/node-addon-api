@@ -1,5 +1,12 @@
 # node-addon-api Changelog
 
+## [8.3.1](https://github.com/nodejs/node-addon-api/compare/v8.3.0...v8.3.1) (2025-02-10)
+
+
+### Bug Fixes
+
+* add missing `stdexcept` include to test ([#1634](https://github.com/nodejs/node-addon-api/issues/1634)) ([14c1a4f](https://github.com/nodejs/node-addon-api/commit/14c1a4f28278c5b02d0ea910061aad4312bb701e))
+
 ## [8.3.0](https://github.com/nodejs/node-addon-api/compare/v8.2.2...v8.3.0) (2024-11-29)
 
 
