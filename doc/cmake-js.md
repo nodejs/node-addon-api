@@ -54,7 +54,7 @@ behavior is desired.
 To enable C++ exception handling with `Napi::Error` objects only:
 
 ```
-add_definitions(-DNAPI_EXPERIMENTAL)
+add_definitions(-DNODE_ADDON_API_CPP_EXCEPTIONS)
 ```
 
 To enable C++ exception handling for all exceptions thrown:
