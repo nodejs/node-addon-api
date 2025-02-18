@@ -3244,7 +3244,7 @@ inline void Error::ThrowAsJavaScriptException() const {
 
       status = napi_throw(_env, Value());
 
-#ifdef NAPI_EXPERIMENTAL
+#if (NAPI_VERSION >= 10)
       napi_status expected_failure_mode = napi_cannot_run_js;
 #else
       napi_status expected_failure_mode = napi_pending_exception;
