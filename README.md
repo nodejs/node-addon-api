@@ -92,4 +92,4 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for more details on our philosophy around
 
 Licensed under [MIT](./LICENSE.md)
 
-[Node-API support matrix]: https://nodejs.org/dist/latest/docs/api/n-api.html#n_api_n_api_version_matrix
+[Node-API support matrix]: https://nodejs.org/dist/latest/docs/api/n-api.html#node-api-version-matrix
