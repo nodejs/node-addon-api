@@ -20,7 +20,7 @@ jobs:
         with:
           egress-policy: audit
 
-      - uses: googleapis/release-please-action@d1a8f221d7723166f48a584aebba00ef3f6febec # v4.1.4
+      - uses: googleapis/release-please-action@a02a34c4d625f9be7cb89156071d8567266a2445 # v4.2.0
         id: release
         with:
           config-file: release-please-config.json
