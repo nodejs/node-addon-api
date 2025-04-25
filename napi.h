@@ -860,6 +860,9 @@ class Object : public TypeTaggable {
     template <typename ValueType>
     PropertyLValue& operator=(ValueType value);
 
+    /// Converts an L-value to a value. For convenience.
+    Value AsValue() const;
+
    private:
     PropertyLValue() = delete;
     PropertyLValue(Object object, Key key);
