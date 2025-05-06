@@ -128,6 +128,11 @@ static Value ToObject(const CallbackInfo& info) {
   return MaybeUnwrap(info[0].ToObject());
 }
 
+static Value AccessProp(const CallbackInfo& info) {
+  Object obj = MaybeUnwrap(info[0].ToObject());
+  return obj[info[1]].AsValue();
+}
+
 Object InitBasicTypesValue(Env env) {
   Object exports = Object::New(env);
 
@@ -150,6 +155,7 @@ Object InitBasicTypesValue(Env env) {
   exports["toNumber"] = Function::New(env, ToNumber);
   exports["toString"] = Function::New(env, ToString);
   exports["toObject"] = Function::New(env, ToObject);
+  exports["accessProp"] = Function::New(env, AccessProp);
 
   exports["strictlyEquals"] = Function::New(env, StrictlyEquals);
   exports["strictlyEqualsOverload"] = Function::New(env, StrictEqualsOverload);
