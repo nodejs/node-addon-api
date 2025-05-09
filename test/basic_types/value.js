@@ -117,6 +117,21 @@ function test (binding) {
     assert(value.assertNonEmptyReturnValOnCast());
   }
 
+  function accessPropTest (value) {
+    const testObject = { key: '123' };
+    const testSymbol = Symbol('123');
+    const testNumber = 123;
+    const destObj = {
+      testObject,
+      testSymbol,
+      [testNumber]: testNumber
+    };
+    assert.strictEqual(value.accessProp(destObj, 'testObject'), testObject);
+    assert.strictEqual(value.accessProp(destObj, 'testSymbol'), testSymbol);
+    assert.strictEqual(value.accessProp(destObj, testNumber), testNumber);
+    assert.strictEqual(value.accessProp(destObj, 'invalidKey'), undefined);
+  }
+
   const value = binding.basic_types_value;
 
   assertValueStrictlyEqual(value);
@@ -153,4 +168,6 @@ function test (binding) {
   assert.strictEqual(value.toString(null), 'null');
 
   typeConverterTest(value.toObject, Object);
+
+  accessPropTest(value);
 }

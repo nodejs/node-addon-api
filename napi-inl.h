@@ -1578,6 +1578,11 @@ inline Object::PropertyLValue<Key>& Object::PropertyLValue<Key>::operator=(
 }
 
 template <typename Key>
+inline Value Object::PropertyLValue<Key>::AsValue() const {
+  return Value(*this);
+}
+
+template <typename Key>
 inline Object::PropertyLValue<Key>::PropertyLValue(Object object, Key key)
     : _env(object.Env()), _object(object), _key(key) {}
 
