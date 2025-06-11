@@ -1,5 +1,12 @@
 # node-addon-api Changelog
 
+## [8.4.0](https://github.com/nodejs/node-addon-api/compare/v8.3.1...v8.4.0) (2025-06-11)
+
+
+### Features
+
+* add sugar method for PropertyLValue ([#1651](https://github.com/nodejs/node-addon-api/issues/1651)) ([#1655](https://github.com/nodejs/node-addon-api/issues/1655)) ([1e57a0a](https://github.com/nodejs/node-addon-api/commit/1e57a0ae82786c320c784ec6b67f357c85733132))
+
 ## [8.3.1](https://github.com/nodejs/node-addon-api/compare/v8.3.0...v8.3.1) (2025-02-18)
 
 
