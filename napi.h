@@ -1579,6 +1579,7 @@ class Promise : public Object {
 
   MaybeOrValue<Promise> Then(napi_value onFulfilled) const;
   MaybeOrValue<Promise> Then(napi_value onFulfilled, napi_value onRejected) const;
+  MaybeOrValue<Promise> Catch(napi_value onRejected) const;
 };
 
 template <typename T>

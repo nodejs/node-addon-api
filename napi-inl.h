@@ -2857,6 +2857,28 @@ inline MaybeOrValue<Promise> Promise::Then(napi_value onFulfilled, napi_value on
 #endif
 }
 
+inline MaybeOrValue<Promise> Promise::Catch(napi_value onRejected) const {
+  EscapableHandleScope scope(_env);
+#ifdef NODE_ADDON_API_ENABLE_MAYBE
+  MaybeOrValue<Value> catchMethodMaybe = Get("catch");
+  Function catchMethod = catchMethodMaybe.Unwrap().As<Function>();
+#else
+  Function catchMethod = Get("catch").As<Function>();
+#endif
+  MaybeOrValue<Value> result = catchMethod.Call(*this, {onRejected});
+#ifdef NODE_ADDON_API_ENABLE_MAYBE
+  if (result.IsJust()) {
+    return Just(scope.Escape(result.Unwrap()).As<Promise>());
+  }
+  return Nothing<Promise>();
+#else
+  if (scope.Env().IsExceptionPending()) {
+    return Promise();
+  }
+  return scope.Escape(result).As<Promise>();
+#endif
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 // Buffer<T> class
 ////////////////////////////////////////////////////////////////////////////////

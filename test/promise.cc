@@ -74,6 +74,22 @@ Value ThenMethodOnFulfilledOnRejectedReject(const CallbackInfo& info) {
   return result;
 }
 
+Value CatchMethod(const CallbackInfo& info) {
+  auto deferred = Promise::Deferred::New(info.Env());
+  Function onRejected = info[0].As<Function>();
+
+  Promise resultPromise = MaybeUnwrap(deferred.Promise().Catch(onRejected));
+
+  bool isPromise = resultPromise.IsPromise();
+  deferred.Reject(String::New(info.Env(), "Rejected"));
+
+  Object result = Object::New(info.Env());
+  result["isPromise"] = Boolean::New(info.Env(), isPromise);
+  result["promise"] = resultPromise;
+
+  return result;
+}
+
 Object InitPromise(Env env) {
   Object exports = Object::New(env);
 
@@ -87,6 +103,7 @@ Object InitPromise(Env env) {
       Function::New(env, ThenMethodOnFulfilledOnRejectedResolve);
   exports["thenMethodOnFulfilledOnRejectedReject"] =
       Function::New(env, ThenMethodOnFulfilledOnRejectedReject);
+  exports["catchMethod"] = Function::New(env, CatchMethod);
 
   return exports;
 }
