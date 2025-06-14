@@ -75,5 +75,56 @@ Rejects the Promise object held by the `Napi::Promise::Deferred` object.
 
 * `[in] value`: The Node-API primitive value with which to reject the `Napi::Promise`.
 
+## Promise Methods
+
+### Then
+
+```cpp
+Napi::Promise Napi::Promise::Then(napi_value onFulfilled) const;
+Napi::Promise Napi::Promise::Then(const Function& onFulfilled) const;
+```
+
+Attaches a fulfillment handler to the promise and returns a new promise.
+
+**Parameters:**
+* `[in] onFulfilled`: The fulfillment handler for the promise. May be any of:
+  - `napi_value` – a JavaScript function to be called when the promise is fulfilled.
+  - `const Function&` – the [`Napi::Function`](function.md) to be called when the promise is fulfilled.
+
+**Returns:** A new `Napi::Promise` that resolves or rejects based on the handler's result.
+
+### Then
+
+```cpp
+Napi::Promise Napi::Promise::Then(napi_value onFulfilled, napi_value onRejected) const;
+Napi::Promise Napi::Promise::Then(const Function& onFulfilled,
+                                  const Function& onRejected) const;
+```
+
+Attaches a fulfillment and rejection handlers to the promise and returns a new promise.
+
+**Parameters:**
+* `[in] onFulfilled`: The fulfillment handler for the promise. May be any of:
+  - `napi_value` – a JavaScript function to be called when the promise is fulfilled.
+  - `const Function&` – the [`Napi::Function`](function.md) to be called when the promise is fulfilled.
+* `[in] onRejected` (optional): The rejection handler for the promise. May be any of:
+  - `napi_value` – a JavaScript function to be called when the promise is rejected.
+  - `const Function&` – the [`Napi::Function`](function.md) to be called when the promise is rejected.
+
+### Catch
+```cpp
+Napi::Promise Napi::Promise::Catch(napi_value onRejected) const;
+Napi::Promise Napi::Promise::Catch(const Function& onRejected) const;
+```
+
+Attaches a rejection handler to the promise and returns a new promise.
+
+**Parameters:**
+* `[in] onRejected`: The rejection handler for the promise. May be any of:
+  - `napi_value` – a JavaScript function to be called when the promise is rejected.
+  - `const Function&` – the [`Napi::Function`](function.md) to be called when the promise is rejected.
+
+**Returns:** A new `Napi::Promise` that handles rejection cases.
 
 [`Napi::Object`]: ./object.md
+[`Napi::Function`]: ./function.md

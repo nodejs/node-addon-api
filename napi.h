@@ -1574,7 +1574,18 @@ class Promise : public Object {
 
   static void CheckCast(napi_env env, napi_value value);
 
+  Promise();
   Promise(napi_env env, napi_value value);
+
+  MaybeOrValue<Promise> Then(napi_value onFulfilled) const;
+  MaybeOrValue<Promise> Then(napi_value onFulfilled,
+                             napi_value onRejected) const;
+  MaybeOrValue<Promise> Catch(napi_value onRejected) const;
+
+  MaybeOrValue<Promise> Then(const Function& onFulfilled) const;
+  MaybeOrValue<Promise> Then(const Function& onFulfilled,
+                             const Function& onRejected) const;
+  MaybeOrValue<Promise> Catch(const Function& onRejected) const;
 };
 
 template <typename T>
