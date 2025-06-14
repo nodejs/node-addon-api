@@ -40,6 +40,40 @@ Value ThenMethodOnFulfilled(const CallbackInfo& info) {
   return result;
 }
 
+Value ThenMethodOnFulfilledOnRejectedResolve(const CallbackInfo& info) {
+  auto deferred = Promise::Deferred::New(info.Env());
+  Function onFulfilled = info[0].As<Function>();
+  Function onRejected = info[1].As<Function>();
+
+  Promise resultPromise = MaybeUnwrap(deferred.Promise().Then(onFulfilled, onRejected));
+
+  bool isPromise = resultPromise.IsPromise();
+  deferred.Resolve(Number::New(info.Env(), 42));
+
+  Object result = Object::New(info.Env());
+  result["isPromise"] = Boolean::New(info.Env(), isPromise);
+  result["promise"] = resultPromise;
+
+  return result;
+}
+
+Value ThenMethodOnFulfilledOnRejectedReject(const CallbackInfo& info) {
+  auto deferred = Promise::Deferred::New(info.Env());
+  Function onFulfilled = info[0].As<Function>();
+  Function onRejected = info[1].As<Function>();
+
+  Promise resultPromise = MaybeUnwrap(deferred.Promise().Then(onFulfilled, onRejected));
+
+  bool isPromise = resultPromise.IsPromise();
+  deferred.Reject(String::New(info.Env(), "Rejected"));
+
+  Object result = Object::New(info.Env());
+  result["isPromise"] = Boolean::New(info.Env(), isPromise);
+  result["promise"] = resultPromise;
+
+  return result;
+}
+
 Object InitPromise(Env env) {
   Object exports = Object::New(env);
 
@@ -48,7 +82,11 @@ Object InitPromise(Env env) {
   exports["rejectPromise"] = Function::New(env, RejectPromise);
   exports["promiseReturnsCorrectEnv"] =
       Function::New(env, PromiseReturnsCorrectEnv);
-  exports["ThenMethodOnFulfilled"] = Function::New(env, ThenMethodOnFulfilled);
+  exports["thenMethodOnFulfilled"] = Function::New(env, ThenMethodOnFulfilled);
+  exports["thenMethodOnFulfilledOnRejectedResolve"] =
+      Function::New(env, ThenMethodOnFulfilledOnRejectedResolve);
+  exports["thenMethodOnFulfilledOnRejectedReject"] =
+      Function::New(env, ThenMethodOnFulfilledOnRejectedReject);
 
   return exports;
 }

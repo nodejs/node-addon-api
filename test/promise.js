@@ -19,8 +19,20 @@ async function test (binding) {
   assert(binding.promise.promiseReturnsCorrectEnv());
 
   const onFulfilled = (value) => value * 2;
-  const result = binding.promise.thenMethodOnFulfilled(onFulfilled);
-  assert.strictEqual(result.isPromise, true);
-  const finalValue = await result.promise;
-  assert.strictEqual(finalValue, 84);
+  const onRejected = (reason) => reason + '!';
+
+  const thenOnFulfilled = binding.promise.thenMethodOnFulfilled(onFulfilled);
+  assert.strictEqual(thenOnFulfilled.isPromise, true);
+  const onFulfilledValue = await thenOnFulfilled.promise;
+  assert.strictEqual(onFulfilledValue, 84);
+
+  const thenResolve = binding.promise.thenMethodOnFulfilledOnRejectedResolve(onFulfilled, onRejected);
+  assert.strictEqual(thenResolve.isPromise, true);
+  const thenResolveValue = await thenResolve.promise;
+  assert.strictEqual(thenResolveValue, 84);
+
+  const thenRejected = binding.promise.thenMethodOnFulfilledOnRejectedReject(onFulfilled, onRejected);
+  assert.strictEqual(thenRejected.isPromise, true);
+  const rejectedValue = await thenRejected.promise;
+  assert.strictEqual(rejectedValue, 'Rejected!');
 }
