@@ -35,4 +35,9 @@ async function test (binding) {
   assert.strictEqual(thenRejected.isPromise, true);
   const rejectedValue = await thenRejected.promise;
   assert.strictEqual(rejectedValue, 'Rejected!');
+
+  const catchMethod = binding.promise.catchMethod(onRejected);
+  assert.strictEqual(catchMethod.isPromise, true);
+  const catchValue = await catchMethod.promise;
+  assert.strictEqual(catchValue, 'Rejected!');
 }
