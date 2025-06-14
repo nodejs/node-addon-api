@@ -2818,16 +2818,14 @@ inline MaybeOrValue<Promise> Promise::Then(napi_value onFulfilled) const {
 #ifdef NODE_ADDON_API_ENABLE_MAYBE
   MaybeOrValue<Value> thenMethodMaybe = Get("then");
   Function thenMethod = thenMethodMaybe.Unwrap().As<Function>();
-#else
-  Function thenMethod = Get("then").As<Function>();
-#endif
   MaybeOrValue<Value> result = thenMethod.Call(*this, {onFulfilled});
-#ifdef NODE_ADDON_API_ENABLE_MAYBE
   if (result.IsJust()) {
     return Just(scope.Escape(result.Unwrap()).As<Promise>());
   }
   return Nothing<Promise>();
 #else
+  Function thenMethod = Get("then").As<Function>();
+  MaybeOrValue<Value> result = thenMethod.Call(*this, {onFulfilled});
   if (scope.Env().IsExceptionPending()) {
     return Promise();
   }
@@ -2840,16 +2838,14 @@ inline MaybeOrValue<Promise> Promise::Then(napi_value onFulfilled, napi_value on
 #ifdef NODE_ADDON_API_ENABLE_MAYBE
   MaybeOrValue<Value> thenMethodMaybe = Get("then");
   Function thenMethod = thenMethodMaybe.Unwrap().As<Function>();
-#else
-  Function thenMethod = Get("then").As<Function>();
-#endif
   MaybeOrValue<Value> result = thenMethod.Call(*this, {onFulfilled, onRejected});
-#ifdef NODE_ADDON_API_ENABLE_MAYBE
   if (result.IsJust()) {
     return Just(scope.Escape(result.Unwrap()).As<Promise>());
   }
   return Nothing<Promise>();
 #else
+  Function thenMethod = Get("then").As<Function>();
+  MaybeOrValue<Value> result = thenMethod.Call(*this, {onFulfilled, onRejected});
   if (scope.Env().IsExceptionPending()) {
     return Promise();
   }
@@ -2862,16 +2858,14 @@ inline MaybeOrValue<Promise> Promise::Catch(napi_value onRejected) const {
 #ifdef NODE_ADDON_API_ENABLE_MAYBE
   MaybeOrValue<Value> catchMethodMaybe = Get("catch");
   Function catchMethod = catchMethodMaybe.Unwrap().As<Function>();
-#else
-  Function catchMethod = Get("catch").As<Function>();
-#endif
   MaybeOrValue<Value> result = catchMethod.Call(*this, {onRejected});
-#ifdef NODE_ADDON_API_ENABLE_MAYBE
   if (result.IsJust()) {
     return Just(scope.Escape(result.Unwrap()).As<Promise>());
   }
   return Nothing<Promise>();
 #else
+  Function catchMethod = Get("catch").As<Function>();
+  MaybeOrValue<Value> result = catchMethod.Call(*this, {onRejected});
   if (scope.Env().IsExceptionPending()) {
     return Promise();
   }
