@@ -75,5 +75,47 @@ Rejects the Promise object held by the `Napi::Promise::Deferred` object.
 
 * `[in] value`: The Node-API primitive value with which to reject the `Napi::Promise`.
 
+## Promise Methods
+
+### Then
+
+```cpp
+<Promise> Napi::Promise::Then(napi_value onFulfilled, napi_value onRejected) const;
+```
+
+Attaches fulfillment and/or rejection handlers to the promise and returns a new promise.
+
+**Parameters:**
+* `[in] onFulfilled`: A function to be called when the promise is fulfilled
+* `[in] onRejected`: A function to be called when the promise is rejected (optional)
+
+**Returns:** A new `<Promise>` that resolves or rejects based on the handler's result.
+
+**Example:**
+```cpp
+// Single fulfillment handler
+Promise newPromise = existingPromise.Then(fulfillmentHandler);
+
+// Both fulfillment and rejection handlers
+Promise chainedPromise = existingPromise.Then(onFulfilled, onRejected);
+```
+
+### Catch
+
+```cpp
+<Promise> Napi::Promise::Catch(napi_value onRejected) const;
+```
+
+Attaches a rejection handler to the promise and returns a new promise.
+
+**Parameters:**
+* `[in] onRejected`: A function to be called when the promise is rejected
+
+**Returns:** A new `<Promise>` that handles rejection cases.
+
+**Example:**
+```cpp
+Promise handledPromise = existingPromise.Catch(rejectionHandler);
+```
 
 [`Napi::Object`]: ./object.md
