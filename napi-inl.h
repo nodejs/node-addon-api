@@ -4630,9 +4630,11 @@ inline napi_value InstanceWrap<T>::WrappedMethod(
 ////////////////////////////////////////////////////////////////////////////////
 
 template <typename T>
-inline ObjectWrap<T>::ObjectWrap(const Napi::CallbackInfo& callbackInfo) {
+template <typename ConstructorTraitTag>
+inline ObjectWrap<T>::ObjectWrap(const Napi::CallbackInfo& callbackInfo,
+                                 ConstructorTraitTag) {
   napi_env env = callbackInfo.Env();
-  napi_value wrapper = callbackInfo.This();
+  napi_value wrapper = ConstructorTraitTag::GetThis(callbackInfo);
   napi_status status;
   napi_ref ref;
   T* instance = static_cast<T*>(this);
@@ -5026,11 +5028,12 @@ inline napi_value ObjectWrap<T>::ConstructorCallbackWrapper(
       Error e = callbackInfo.Env().GetAndClearPendingException();
       delete instance;
       e.ThrowAsJavaScriptException();
+      return Object();
     } else {
       instance->_construction_failed = false;
     }
 #endif  // NODE_ADDON_API_CPP_EXCEPTIONS
-    return callbackInfo.This();
+    return instance->Value();
   });
 
   return wrapper;

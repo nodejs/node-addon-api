@@ -2359,6 +2359,10 @@ class InstanceWrap {
   }
 };
 
+struct ConstructorTraitTag {
+  static napi_value GetThis(const CallbackInfo& info) { return info.This(); }
+};
+
 /// Base class to be extended by C++ classes exposed to JavaScript; each C++
 /// class instance gets "wrapped" by a JavaScript object that is managed by this
 /// class.
@@ -2389,7 +2393,9 @@ class InstanceWrap {
 template <typename T>
 class ObjectWrap : public InstanceWrap<T>, public Reference<Object> {
  public:
-  ObjectWrap(const CallbackInfo& callbackInfo);
+  template <typename ConstructorTraitTag = struct ConstructorTraitTag>
+  ObjectWrap(const CallbackInfo& callbackInfo,
+             ConstructorTraitTag = ConstructorTraitTag());
   virtual ~ObjectWrap();
 
   static T* Unwrap(Object wrapper);
