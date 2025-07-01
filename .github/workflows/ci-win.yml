@@ -23,8 +23,8 @@ jobs:
           - 22.x
         architecture: [x64, x86]
         os:
-          - windows-2019
           - windows-2022
+          - windows-2025
     runs-on: ${{ matrix.os }}
     steps:
     - name: Harden Runner
