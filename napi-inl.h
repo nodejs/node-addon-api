@@ -2811,7 +2811,94 @@ inline void Promise::CheckCast(napi_env env, napi_value value) {
   NAPI_CHECK(result, "Promise::CheckCast", "value is not promise");
 }
 
+inline Promise::Promise() : Object() {}
+
 inline Promise::Promise(napi_env env, napi_value value) : Object(env, value) {}
+
+inline MaybeOrValue<Promise> Promise::Then(napi_value onFulfilled) const {
+  EscapableHandleScope scope(_env);
+#ifdef NODE_ADDON_API_ENABLE_MAYBE
+  Value thenMethod;
+  if (!Get("then").UnwrapTo(&thenMethod)) {
+    return Nothing<Promise>();
+  }
+  MaybeOrValue<Value> result =
+      thenMethod.As<Function>().Call(*this, {onFulfilled});
+  if (result.IsJust()) {
+    return Just(scope.Escape(result.Unwrap()).As<Promise>());
+  }
+  return Nothing<Promise>();
+#else
+  Function thenMethod = Get("then").As<Function>();
+  MaybeOrValue<Value> result = thenMethod.Call(*this, {onFulfilled});
+  if (scope.Env().IsExceptionPending()) {
+    return Promise();
+  }
+  return scope.Escape(result).As<Promise>();
+#endif
+}
+
+inline MaybeOrValue<Promise> Promise::Then(napi_value onFulfilled,
+                                           napi_value onRejected) const {
+  EscapableHandleScope scope(_env);
+#ifdef NODE_ADDON_API_ENABLE_MAYBE
+  Value thenMethod;
+  if (!Get("then").UnwrapTo(&thenMethod)) {
+    return Nothing<Promise>();
+  }
+  MaybeOrValue<Value> result =
+      thenMethod.As<Function>().Call(*this, {onFulfilled, onRejected});
+  if (result.IsJust()) {
+    return Just(scope.Escape(result.Unwrap()).As<Promise>());
+  }
+  return Nothing<Promise>();
+#else
+  Function thenMethod = Get("then").As<Function>();
+  MaybeOrValue<Value> result =
+      thenMethod.Call(*this, {onFulfilled, onRejected});
+  if (scope.Env().IsExceptionPending()) {
+    return Promise();
+  }
+  return scope.Escape(result).As<Promise>();
+#endif
+}
+
+inline MaybeOrValue<Promise> Promise::Catch(napi_value onRejected) const {
+  EscapableHandleScope scope(_env);
+#ifdef NODE_ADDON_API_ENABLE_MAYBE
+  Value catchMethod;
+  if (!Get("catch").UnwrapTo(&catchMethod)) {
+    return Nothing<Promise>();
+  }
+  MaybeOrValue<Value> result =
+      catchMethod.As<Function>().Call(*this, {onRejected});
+  if (result.IsJust()) {
+    return Just(scope.Escape(result.Unwrap()).As<Promise>());
+  }
+  return Nothing<Promise>();
+#else
+  Function catchMethod = Get("catch").As<Function>();
+  MaybeOrValue<Value> result = catchMethod.Call(*this, {onRejected});
+  if (scope.Env().IsExceptionPending()) {
+    return Promise();
+  }
+  return scope.Escape(result).As<Promise>();
+#endif
+}
+
+inline MaybeOrValue<Promise> Promise::Then(const Function& onFulfilled) const {
+  return Then(static_cast<napi_value>(onFulfilled));
+}
+
+inline MaybeOrValue<Promise> Promise::Then(const Function& onFulfilled,
+                                           const Function& onRejected) const {
+  return Then(static_cast<napi_value>(onFulfilled),
+              static_cast<napi_value>(onRejected));
+}
+
+inline MaybeOrValue<Promise> Promise::Catch(const Function& onRejected) const {
+  return Catch(static_cast<napi_value>(onRejected));
+}
 
 ////////////////////////////////////////////////////////////////////////////////
 // Buffer<T> class
