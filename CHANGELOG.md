@@ -1,5 +1,12 @@
 # node-addon-api Changelog
 
+## [8.5.0](https://github.com/nodejs/node-addon-api/compare/v8.4.0...v8.5.0) (2025-07-04)
+
+
+### Features
+
+* add Then and Catch methods to Promise ([#1668](https://github.com/nodejs/node-addon-api/issues/1668)) ([ab3e5fe](https://github.com/nodejs/node-addon-api/commit/ab3e5fe59570cbb5ed7cc9891b3f25fe373f028f))
+
 ## [8.4.0](https://github.com/nodejs/node-addon-api/compare/v8.3.1...v8.4.0) (2025-06-11)
 
 
