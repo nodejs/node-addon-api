@@ -472,7 +472,7 @@
     "lint:fix": "eslint --fix && node tools/clang-format --fix"
   },
   "pre-commit": "lint",
-  "version": "8.4.0",
+  "version": "8.5.0",
   "support": true,
   "engines": {
     "node": "^18 || ^20 || >= 21"
