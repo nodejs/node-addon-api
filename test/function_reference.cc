@@ -30,17 +30,17 @@ class FuncRefObject : public Napi::ObjectWrap<FuncRefObject> {
 namespace {
 
 Value ConstructRefFromExisitingRef(const CallbackInfo& info) {
-  HandleScope scope(info.Env());
+  EscapableHandleScope scope(info.Env());
   FunctionReference ref;
   FunctionReference movedRef;
   ref.Reset(info[0].As<Function>());
   movedRef = std::move(ref);
 
-  return MaybeUnwrap(movedRef({}));
+  return scope.Escape(MaybeUnwrap(movedRef({})));
 }
 
 Value CallWithVectorArgs(const CallbackInfo& info) {
-  HandleScope scope(info.Env());
+  EscapableHandleScope scope(info.Env());
   std::vector<napi_value> newVec;
   FunctionReference ref;
   ref.Reset(info[0].As<Function>());
@@ -48,27 +48,28 @@ Value CallWithVectorArgs(const CallbackInfo& info) {
   for (int i = 1; i < (int)info.Length(); i++) {
     newVec.push_back(info[i]);
   }
-  return MaybeUnwrap(ref.Call(newVec));
+  return scope.Escape(MaybeUnwrap(ref.Call(newVec)));
 }
 
 Value CallWithInitList(const CallbackInfo& info) {
-  HandleScope scope(info.Env());
+  EscapableHandleScope scope(info.Env());
   FunctionReference ref;
   ref.Reset(info[0].As<Function>());
 
-  return MaybeUnwrap(ref.Call({info[1], info[2], info[3]}));
+  return scope.Escape(MaybeUnwrap(ref.Call({info[1], info[2], info[3]})));
 }
 
 Value CallWithRecvInitList(const CallbackInfo& info) {
-  HandleScope scope(info.Env());
+  EscapableHandleScope scope(info.Env());
   FunctionReference ref;
   ref.Reset(info[0].As<Function>());
 
-  return MaybeUnwrap(ref.Call(info[1], {info[2], info[3], info[4]}));
+  return scope.Escape(
+      MaybeUnwrap(ref.Call(info[1], {info[2], info[3], info[4]})));
 }
 
 Value CallWithRecvVector(const CallbackInfo& info) {
-  HandleScope scope(info.Env());
+  EscapableHandleScope scope(info.Env());
   FunctionReference ref;
   std::vector<napi_value> newVec;
   ref.Reset(info[0].As<Function>());
@@ -76,11 +77,11 @@ Value CallWithRecvVector(const CallbackInfo& info) {
   for (int i = 2; i < (int)info.Length(); i++) {
     newVec.push_back(info[i]);
   }
-  return MaybeUnwrap(ref.Call(info[1], newVec));
+  return scope.Escape(MaybeUnwrap(ref.Call(info[1], newVec)));
 }
 
 Value CallWithRecvArgc(const CallbackInfo& info) {
-  HandleScope scope(info.Env());
+  EscapableHandleScope scope(info.Env());
   FunctionReference ref;
   ref.Reset(info[0].As<Function>());
 
@@ -91,7 +92,7 @@ Value CallWithRecvArgc(const CallbackInfo& info) {
     args[i] = info[i + 2];
   }
 
-  return MaybeUnwrap(ref.Call(info[1], argLength, args.get()));
+  return scope.Escape(MaybeUnwrap(ref.Call(info[1], argLength, args.get())));
 }
 
 Value MakeAsyncCallbackWithInitList(const Napi::CallbackInfo& info) {
@@ -163,19 +164,19 @@ Value CreateFunctionReferenceUsingNewVec(const Napi::CallbackInfo& info) {
 }
 
 Value Call(const CallbackInfo& info) {
-  HandleScope scope(info.Env());
+  EscapableHandleScope scope(info.Env());
   FunctionReference ref;
   ref.Reset(info[0].As<Function>());
 
-  return MaybeUnwrapOr(ref.Call({}), Value());
+  return scope.Escape(MaybeUnwrapOr(ref.Call({}), Value()));
 }
 
 Value Construct(const CallbackInfo& info) {
-  HandleScope scope(info.Env());
+  EscapableHandleScope scope(info.Env());
   FunctionReference ref;
   ref.Reset(info[0].As<Function>());
 
-  return MaybeUnwrapOr(ref.New({}), Object());
+  return scope.Escape(MaybeUnwrapOr(ref.New({}), Object()));
 }
 }  // namespace
 
