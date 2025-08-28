@@ -11,10 +11,10 @@ Until now **node-gyp** is the **de-facto** standard build tool for writing
 Node.js addons. It's based on Google's **gyp** build tool, which abstract away
 many of the tedious issues related to cross platform building.
 
-**node-gyp** uses a file called ```binding.gyp``` that is located on the root of
+**node-gyp** uses a file called `binding.gyp` that is located on the root of
 your addon project.
 
-```binding.gyp``` file, contains all building configurations organized with a
+`binding.gyp` file, contains all building configurations organized with a
 JSON like syntax. The most important parameter is the  **target** that must be
 set to the same value used on the initialization code of the addon as in the
 examples reported below:
@@ -75,7 +75,7 @@ NODE_API_MODULE(NODE_GYP_MODULE_NAME, Init)
   - [Command options](https://www.npmjs.com/package/node-gyp#command-options)
   - [Configuration](https://www.npmjs.com/package/node-gyp#configuration)
 
-Sometimes finding the right settings for ```binding.gyp``` is not easy so to
+Sometimes finding the right settings for `binding.gyp` is not easy so to
 accomplish at most complicated task please refer to:
 
 - [GYP documentation](https://gyp.gsrc.io/index.md)
