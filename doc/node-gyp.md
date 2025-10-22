@@ -27,8 +27,8 @@ examples reported below:
     {
       # myModule is the name of your native addon
       "target_name": "myModule",
-      "sources": ["src/my_module.cc", …],
-      …
+      "sources": ["src/my_module.cc", ...],
+      ...
   ]
 }
 ```
@@ -38,7 +38,7 @@ examples reported below:
 ```cpp
 #include <napi.h>
 
-// …
+// ...
 
 /**
 * This code is our entry point. We receive two arguments here: the first is the
@@ -50,7 +50,7 @@ examples reported below:
 */
 Napi::Object Init(Napi::Env env, Napi::Object exports) {
 
-  // …
+  // ...
 
   return exports;
 }
