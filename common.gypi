@@ -5,7 +5,7 @@
   },
   'conditions': [
     ['NAPI_VERSION!=""', { 'defines': ['NAPI_VERSION=<@(NAPI_VERSION)'] } ],
-    ['NAPI_VERSION==2147483647', { 'defines': ['NAPI_EXPERIMENTAL'] } ],
+    ['NAPI_VERSION==2147483647', { 'defines': ['NAPI_EXPERIMENTAL', 'NODE_API_EXPERIMENTAL_NO_WARNING'] } ],
     ['disable_deprecated=="true"', {
       'defines': ['NODE_ADDON_API_DISABLE_DEPRECATED']
     }],
