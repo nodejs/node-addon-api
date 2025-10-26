@@ -18,9 +18,10 @@ jobs:
           - standard
           - experimental
         node-version:
-          - 18.x
           - 20.x
           - 22.x
+          - 24.x
+          - 25.x
         os:
           - macos-latest
           - ubuntu-latest
