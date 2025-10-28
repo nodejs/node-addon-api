@@ -18,13 +18,21 @@ jobs:
           - standard
           - experimental
         node-version:
-          - 18.x
           - 20.x
           - 22.x
+          - 24.x
+          - 25.x
         architecture: [x64, x86]
         os:
           - windows-2022
           - windows-2025
+        exclude:
+          # Skip when node 24.x or 25.x AND architecture is x86 since there is
+          # no published Node.js x86 build for those versions.
+          - node-version: 24.x
+            architecture: x86
+          - node-version: 25.x
+            architecture: x86
     runs-on: ${{ matrix.os }}
     steps:
     - name: Harden Runner
