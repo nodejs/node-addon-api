@@ -1,6 +1,6 @@
 # ArrayBuffer
 
-Class `Napi::ArrayBuffer` inherits from class [`Napi::Object`][].
+Class `Napi::ArrayBuffer` inherits from class [`Napi::ArrayBufferLike`][].
 
 The `Napi::ArrayBuffer` class corresponds to the
 [JavaScript `ArrayBuffer`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/ArrayBuffer)
@@ -128,22 +128,6 @@ Napi::ArrayBuffer::ArrayBuffer(napi_env env, napi_value value);
 - `[in] env`: The environment in which to create the `Napi::ArrayBuffer` instance.
 - `[in] value`: The `Napi::ArrayBuffer` reference to wrap.
 
-### ByteLength
-
-```cpp
-size_t Napi::ArrayBuffer::ByteLength() const;
-```
-
-Returns the length of the wrapped data, in bytes.
-
-### Data
-
-```cpp
-void* Napi::ArrayBuffer::Data() const;
-```
-
-Returns a pointer the wrapped data.
-
 ### Detach
 
 ```cpp
@@ -160,6 +144,6 @@ bool Napi::ArrayBuffer::IsDetached() const;
 
 Returns `true` if this `ArrayBuffer` has been detached.
 
-[`Napi::Object`]: ./object.md
+[`Napi::ArrayBufferLike`]: ./array_buffer_like.md
 [External Buffer]: ./external_buffer.md
 [Finalization]: ./finalization.md

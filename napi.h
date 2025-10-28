@@ -543,6 +543,9 @@ class Value {
   bool IsDataView() const;    ///< Tests if a value is a JavaScript data view.
   bool IsBuffer() const;      ///< Tests if a value is a Node buffer.
   bool IsExternal() const;  ///< Tests if a value is a pointer to external data.
+#ifdef NODE_API_EXPERIMENTAL_HAS_SHAREDARRAYBUFFER
+  bool IsSharedArrayBuffer() const;
+#endif
 
   /// Casts to another type of `Napi::Value`, when the actual type is known or
   /// assumed.
@@ -1202,8 +1205,30 @@ class Object::iterator {
 };
 #endif  // NODE_ADDON_API_CPP_EXCEPTIONS
 
+class ArrayBufferLike : public Object {
+ public:
+  void* Data();
+  size_t ByteLength();
+
+ protected:
+  ArrayBufferLike();
+  ArrayBufferLike(napi_env env, napi_value value);
+};
+
+#ifdef NODE_API_EXPERIMENTAL_HAS_SHAREDARRAYBUFFER
+class SharedArrayBuffer : public ArrayBufferLike {
+ public:
+  SharedArrayBuffer();
+  SharedArrayBuffer(napi_env env, napi_value value);
+
+  static SharedArrayBuffer New(napi_env env, size_t byteLength);
+
+  static void CheckCast(napi_env env, napi_value value);
+};
+#endif
+
 /// A JavaScript array buffer value.
-class ArrayBuffer : public Object {
+class ArrayBuffer : public ArrayBufferLike {
  public:
   /// Creates a new ArrayBuffer instance over a new automatically-allocated
   /// buffer.
@@ -1263,9 +1288,6 @@ class ArrayBuffer : public Object {
   ArrayBuffer();  ///< Creates a new _empty_ ArrayBuffer instance.
   ArrayBuffer(napi_env env,
               napi_value value);  ///< Wraps a Node-API value primitive.
-
-  void* Data();         ///< Gets a pointer to the data buffer.
-  size_t ByteLength();  ///< Gets the length of the array buffer in bytes.
 
 #if NAPI_VERSION >= 7
   bool IsDetached() const;
