@@ -2081,35 +2081,15 @@ inline uint32_t Array::Length() const {
   return result;
 }
 
-inline ArrayBufferLike::ArrayBufferLike() : Object() {}
-
-inline ArrayBufferLike::ArrayBufferLike(napi_env env, napi_value value)
-    : Object(env, value) {}
-
-inline void* ArrayBufferLike::Data() {
-  void* data;
-  napi_status status = napi_get_arraybuffer_info(_env, _value, &data, nullptr);
-  NAPI_THROW_IF_FAILED(_env, status, nullptr);
-  return data;
-}
-
-inline size_t ArrayBufferLike::ByteLength() {
-  size_t length;
-  napi_status status =
-      napi_get_arraybuffer_info(_env, _value, nullptr, &length);
-  NAPI_THROW_IF_FAILED(_env, status, 0);
-  return length;
-}
-
 #ifdef NODE_API_EXPERIMENTAL_HAS_SHAREDARRAYBUFFER
 ////////////////////////////////////////////////////////////////////////////////
 // SharedArrayBuffer class
 ////////////////////////////////////////////////////////////////////////////////
 
-inline SharedArrayBuffer::SharedArrayBuffer() : ArrayBufferLike() {}
+inline SharedArrayBuffer::SharedArrayBuffer() : Object() {}
 
 inline SharedArrayBuffer::SharedArrayBuffer(napi_env env, napi_value value)
-    : ArrayBufferLike(env, value) {}
+    : Object(env, value) {}
 
 inline void SharedArrayBuffer::CheckCast(napi_env env, napi_value value) {
   NAPI_CHECK(value != nullptr, "SharedArrayBuffer::CheckCast", "empty value");
@@ -2132,6 +2112,21 @@ inline SharedArrayBuffer SharedArrayBuffer::New(napi_env env,
   NAPI_THROW_IF_FAILED(env, status, SharedArrayBuffer());
 
   return SharedArrayBuffer(env, value);
+}
+
+inline void* SharedArrayBuffer::Data() {
+  void* data;
+  napi_status status = napi_get_arraybuffer_info(_env, _value, &data, nullptr);
+  NAPI_THROW_IF_FAILED(_env, status, nullptr);
+  return data;
+}
+
+inline size_t SharedArrayBuffer::ByteLength() {
+  size_t length;
+  napi_status status =
+      napi_get_arraybuffer_info(_env, _value, nullptr, &length);
+  NAPI_THROW_IF_FAILED(_env, status, 0);
+  return length;
 }
 #endif  // NODE_API_EXPERIMENTAL_HAS_SHAREDARRAYBUFFER
 
@@ -2221,10 +2216,25 @@ inline void ArrayBuffer::CheckCast(napi_env env, napi_value value) {
   NAPI_CHECK(result, "ArrayBuffer::CheckCast", "value is not arraybuffer");
 }
 
-inline ArrayBuffer::ArrayBuffer() : ArrayBufferLike() {}
+inline ArrayBuffer::ArrayBuffer() : Object() {}
 
 inline ArrayBuffer::ArrayBuffer(napi_env env, napi_value value)
-    : ArrayBufferLike(env, value) {}
+    : Object(env, value) {}
+
+inline void* ArrayBuffer::Data() {
+  void* data;
+  napi_status status = napi_get_arraybuffer_info(_env, _value, &data, nullptr);
+  NAPI_THROW_IF_FAILED(_env, status, nullptr);
+  return data;
+}
+
+inline size_t ArrayBuffer::ByteLength() {
+  size_t length;
+  napi_status status =
+      napi_get_arraybuffer_info(_env, _value, nullptr, &length);
+  NAPI_THROW_IF_FAILED(_env, status, 0);
+  return length;
+}
 
 #if NAPI_VERSION >= 7
 inline bool ArrayBuffer::IsDetached() const {

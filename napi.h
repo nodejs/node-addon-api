@@ -1205,18 +1205,8 @@ class Object::iterator {
 };
 #endif  // NODE_ADDON_API_CPP_EXCEPTIONS
 
-class ArrayBufferLike : public Object {
- public:
-  void* Data();
-  size_t ByteLength();
-
- protected:
-  ArrayBufferLike();
-  ArrayBufferLike(napi_env env, napi_value value);
-};
-
 #ifdef NODE_API_EXPERIMENTAL_HAS_SHAREDARRAYBUFFER
-class SharedArrayBuffer : public ArrayBufferLike {
+class SharedArrayBuffer : public Object {
  public:
   SharedArrayBuffer();
   SharedArrayBuffer(napi_env env, napi_value value);
@@ -1224,11 +1214,14 @@ class SharedArrayBuffer : public ArrayBufferLike {
   static SharedArrayBuffer New(napi_env env, size_t byteLength);
 
   static void CheckCast(napi_env env, napi_value value);
+
+  void* Data();
+  size_t ByteLength();
 };
 #endif
 
 /// A JavaScript array buffer value.
-class ArrayBuffer : public ArrayBufferLike {
+class ArrayBuffer : public Object {
  public:
   /// Creates a new ArrayBuffer instance over a new automatically-allocated
   /// buffer.
@@ -1288,6 +1281,9 @@ class ArrayBuffer : public ArrayBufferLike {
   ArrayBuffer();  ///< Creates a new _empty_ ArrayBuffer instance.
   ArrayBuffer(napi_env env,
               napi_value value);  ///< Wraps a Node-API value primitive.
+
+  void* Data();         ///< Gets a pointer to the data buffer.
+  size_t ByteLength();  ///< Gets the length of the array buffer in bytes.
 
 #if NAPI_VERSION >= 7
   bool IsDetached() const;

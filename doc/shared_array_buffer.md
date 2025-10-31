@@ -1,6 +1,6 @@
 # SharedArrayBuffer
 
-Class `Napi::SharedArrayBuffer` inherits from class [`Napi::ArrayBufferLike`][].
+Class `Napi::SharedArrayBuffer` inherits from class [`Napi::Object`][].
 
 The `Napi::SharedArrayBuffer` class corresponds to the
 [JavaScript `SharedArrayBuffer`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/SharedArrayBuffer)
@@ -46,4 +46,20 @@ Napi::SharedArrayBuffer::SharedArrayBuffer(napi_env env, napi_value value);
   instance.
 - `[in] value`: The `Napi::SharedArrayBuffer` reference to wrap.
 
-[`Napi::ArrayBufferLike`]: ./array_buffer_like.md
+### ByteLength
+
+```cpp
+size_t Napi::SharedArrayBuffer::ByteLength() const;
+```
+
+Returns the length of the wrapped data, in bytes.
+
+### Data
+
+```cpp
+void* Napi::SharedArrayBuffer::Data() const;
+```
+
+Returns a pointer the wrapped data.
+
+[`Napi::Object`]: ./object.md
