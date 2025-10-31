@@ -543,6 +543,9 @@ class Value {
   bool IsDataView() const;    ///< Tests if a value is a JavaScript data view.
   bool IsBuffer() const;      ///< Tests if a value is a Node buffer.
   bool IsExternal() const;  ///< Tests if a value is a pointer to external data.
+#ifdef NODE_API_EXPERIMENTAL_HAS_SHAREDARRAYBUFFER
+  bool IsSharedArrayBuffer() const;
+#endif
 
   /// Casts to another type of `Napi::Value`, when the actual type is known or
   /// assumed.
@@ -1201,6 +1204,21 @@ class Object::iterator {
   friend class Object;
 };
 #endif  // NODE_ADDON_API_CPP_EXCEPTIONS
+
+#ifdef NODE_API_EXPERIMENTAL_HAS_SHAREDARRAYBUFFER
+class SharedArrayBuffer : public Object {
+ public:
+  SharedArrayBuffer();
+  SharedArrayBuffer(napi_env env, napi_value value);
+
+  static SharedArrayBuffer New(napi_env env, size_t byteLength);
+
+  static void CheckCast(napi_env env, napi_value value);
+
+  void* Data();
+  size_t ByteLength();
+};
+#endif
 
 /// A JavaScript array buffer value.
 class ArrayBuffer : public Object {

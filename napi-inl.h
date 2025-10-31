@@ -934,6 +934,19 @@ inline bool Value::IsExternal() const {
   return Type() == napi_external;
 }
 
+#ifdef NODE_API_EXPERIMENTAL_HAS_SHAREDARRAYBUFFER
+inline bool Value::IsSharedArrayBuffer() const {
+  if (IsEmpty()) {
+    return false;
+  }
+
+  bool result;
+  napi_status status = node_api_is_sharedarraybuffer(_env, _value, &result);
+  NAPI_THROW_IF_FAILED(_env, status, false);
+  return result;
+}
+#endif
+
 template <typename T>
 inline T Value::As() const {
 #ifdef NODE_ADDON_API_ENABLE_TYPE_CHECK_ON_AS
@@ -2067,6 +2080,55 @@ inline uint32_t Array::Length() const {
   NAPI_THROW_IF_FAILED(_env, status, 0);
   return result;
 }
+
+#ifdef NODE_API_EXPERIMENTAL_HAS_SHAREDARRAYBUFFER
+////////////////////////////////////////////////////////////////////////////////
+// SharedArrayBuffer class
+////////////////////////////////////////////////////////////////////////////////
+
+inline SharedArrayBuffer::SharedArrayBuffer() : Object() {}
+
+inline SharedArrayBuffer::SharedArrayBuffer(napi_env env, napi_value value)
+    : Object(env, value) {}
+
+inline void SharedArrayBuffer::CheckCast(napi_env env, napi_value value) {
+  NAPI_CHECK(value != nullptr, "SharedArrayBuffer::CheckCast", "empty value");
+
+  bool result;
+  napi_status status = node_api_is_sharedarraybuffer(env, value, &result);
+  NAPI_CHECK(status == napi_ok,
+             "SharedArrayBuffer::CheckCast",
+             "node_api_is_sharedarraybuffer failed");
+  NAPI_CHECK(
+      result, "SharedArrayBuffer::CheckCast", "value is not sharedarraybuffer");
+}
+
+inline SharedArrayBuffer SharedArrayBuffer::New(napi_env env,
+                                                size_t byteLength) {
+  napi_value value;
+  void* data;
+  napi_status status =
+      node_api_create_sharedarraybuffer(env, byteLength, &data, &value);
+  NAPI_THROW_IF_FAILED(env, status, SharedArrayBuffer());
+
+  return SharedArrayBuffer(env, value);
+}
+
+inline void* SharedArrayBuffer::Data() {
+  void* data;
+  napi_status status = napi_get_arraybuffer_info(_env, _value, &data, nullptr);
+  NAPI_THROW_IF_FAILED(_env, status, nullptr);
+  return data;
+}
+
+inline size_t SharedArrayBuffer::ByteLength() {
+  size_t length;
+  napi_status status =
+      napi_get_arraybuffer_info(_env, _value, nullptr, &length);
+  NAPI_THROW_IF_FAILED(_env, status, 0);
+  return length;
+}
+#endif  // NODE_API_EXPERIMENTAL_HAS_SHAREDARRAYBUFFER
 
 ////////////////////////////////////////////////////////////////////////////////
 // ArrayBuffer class

@@ -64,6 +64,7 @@ Object InitTypedThreadSafeFunctionSum(Env env);
 Object InitTypedThreadSafeFunctionUnref(Env env);
 Object InitTypedThreadSafeFunction(Env env);
 #endif
+Object InitSharedArrayBuffer(Env env);
 Object InitSymbol(Env env);
 Object InitTypedArray(Env env);
 Object InitGlobalObject(Env env);
@@ -140,6 +141,7 @@ Object Init(Env env, Object exports) {
   exports.Set("promise", InitPromise(env));
   exports.Set("run_script", InitRunScript(env));
   exports.Set("symbol", InitSymbol(env));
+  exports.Set("sharedarraybuffer", InitSharedArrayBuffer(env));
 #if (NAPI_VERSION > 3)
   exports.Set("threadsafe_function_ctx", InitThreadSafeFunctionCtx(env));
   exports.Set("threadsafe_function_exception",
@@ -193,6 +195,12 @@ Object Init(Env env, Object exports) {
   exports.Set(
       "isExperimental",
       Napi::Boolean::New(env, NAPI_VERSION == NAPI_VERSION_EXPERIMENTAL));
+
+#ifdef NODE_API_EXPERIMENTAL_HAS_SHAREDARRAYBUFFER
+  exports.Set("hasSharedArrayBuffer", Napi::Boolean::New(env, true));
+#else
+  exports.Set("hasSharedArrayBuffer", Napi::Boolean::New(env, false));
+#endif
 
   return exports;
 }

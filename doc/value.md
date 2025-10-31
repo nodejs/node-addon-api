@@ -268,6 +268,19 @@ bool Napi::Value::IsPromise() const;
 Returns `true` if the underlying value is a JavaScript `Napi::Promise` or
 `false` otherwise.
 
+### IsSharedArrayBuffer
+
+```cpp
+bool Napi::Value::IsSharedArrayBuffer() const;
+```
+
+Returns `true` if the underlying value is a JavaScript
+`Napi::IsSharedArrayBuffer` or `false` otherwise.
+
+**NOTE**: The support for `Napi::SharedArrayBuffer` is only available when using
+`NAPI_EXPERIMENTAL` and building against Node.js headers that support this
+feature.
+
 ### IsString
 
 ```cpp

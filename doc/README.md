@@ -60,6 +60,7 @@ The following is the documentation for node-addon-api.
         - [ClassPropertyDescriptor](class_property_descriptor.md)
     - [Buffer](buffer.md)
     - [ArrayBuffer](array_buffer.md)
+    - [SharedArrayBuffer](shared_array_buffer.md)
     - [TypedArray](typed_array.md)
       - [TypedArrayOf](typed_array_of.md)
     - [DataView](dataview.md)
