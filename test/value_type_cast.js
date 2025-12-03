@@ -42,7 +42,7 @@ function test (buildType) {
     },
     typeCastArrayBuffer: {
       positiveValues: [new ArrayBuffer(0)],
-      negativeValues: [new Uint8Array(1), {}, [], null, undefined]
+      negativeValues: [new Uint8Array(1), new SharedArrayBuffer(0), {}, [], null, undefined]
     },
     typeCastTypedArray: {
       positiveValues: [new Uint8Array(0)],
@@ -76,6 +76,13 @@ function test (buildType) {
       negativeValues: [new Int8Array(1), null, undefined]
     }
   };
+
+  if ('typeCastSharedArrayBuffer' in binding) {
+    testTable.typeCastSharedArrayBuffer = {
+      positiveValues: [new SharedArrayBuffer(0)],
+      negativeValues: [new Uint8Array(1), new ArrayBuffer(0), {}, [], null, undefined]
+    };
+  }
 
   if (process.argv[2] === 'child') {
     child(binding, testTable, process.argv[3], process.argv[4], parseInt(process.argv[5]));
