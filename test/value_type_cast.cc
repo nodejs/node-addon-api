@@ -27,6 +27,11 @@ namespace {
 #define V(Type)                                                                \
   void TypeCast##Type(const CallbackInfo& info) { USE(info[0].As<Type>()); }
 TYPE_CAST_TYPES(V)
+
+#ifdef NODE_API_EXPERIMENTAL_HAS_SHAREDARRAYBUFFER
+V(SharedArrayBuffer)
+#endif
+
 #undef V
 
 void TypeCastBuffer(const CallbackInfo& info) {
@@ -47,6 +52,11 @@ Object InitValueTypeCast(Env env, Object exports) {
 
 #define V(Type) exports["typeCast" #Type] = Function::New(env, TypeCast##Type);
   TYPE_CAST_TYPES(V)
+
+#ifdef NODE_API_EXPERIMENTAL_HAS_SHAREDARRAYBUFFER
+  V(SharedArrayBuffer)
+#endif
+
 #undef V
 
   exports["typeCastBuffer"] = Function::New(env, TypeCastBuffer);

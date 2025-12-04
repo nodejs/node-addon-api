@@ -54,6 +54,7 @@
         'object/subscript_operator.cc',
         'promise.cc',
         'run_script.cc',
+        'shared_array_buffer.cc',
         'symbol.cc',
         'threadsafe_function/threadsafe_function_ctx.cc',
         'threadsafe_function/threadsafe_function_exception.cc',
