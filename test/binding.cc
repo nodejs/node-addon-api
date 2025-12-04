@@ -70,6 +70,7 @@ Object InitTypedArray(Env env);
 Object InitGlobalObject(Env env);
 Object InitObjectWrap(Env env);
 Object InitObjectWrapConstructorException(Env env);
+Object InitObjectWrapConstructorTraitTag(Env env);
 Object InitObjectWrapFunction(Env env);
 Object InitObjectWrapRemoveWrap(Env env);
 Object InitObjectWrapMultipleInheritance(Env env);
@@ -170,6 +171,8 @@ Object Init(Env env, Object exports) {
   exports.Set("objectwrap", InitObjectWrap(env));
   exports.Set("objectwrapConstructorException",
               InitObjectWrapConstructorException(env));
+  exports.Set("objectwrap_constructor_trait_tag",
+              InitObjectWrapConstructorTraitTag(env));
   exports.Set("objectwrap_function", InitObjectWrapFunction(env));
   exports.Set("objectwrap_removewrap", InitObjectWrapRemoveWrap(env));
   exports.Set("objectwrap_multiple_inheritance",
