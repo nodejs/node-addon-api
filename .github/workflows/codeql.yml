@@ -50,7 +50,7 @@ jobs:
 
       # Initializes the CodeQL tools for scanning.
       - name: Initialize CodeQL
-        uses: github/codeql-action/init@1b168cd39490f61582a9beae412bb7057a6b2c4e # v4.31.8
+        uses: github/codeql-action/init@cdefb33c0f6224e58673d9004f47f7cb3e328b89 # v4.31.10
         with:
           languages: ${{ matrix.language }}
           # If you wish to specify custom queries, you can do so here or in a config file.
@@ -70,7 +70,7 @@ jobs:
 
       - name: Use Node.js v18.x
         if: matrix.language == 'cpp'
-        uses: actions/setup-node@395ad3262231945c25e8478fd5baf05154b1d79f # v6.1.0
+        uses: actions/setup-node@6044e13b5dc448c55e2357c09f80417699197238 # v6.2.0
         with:
           node-version: 18.x
 
@@ -80,6 +80,6 @@ jobs:
           npx node-gyp rebuild -C test
 
       - name: Perform CodeQL Analysis
-        uses: github/codeql-action/analyze@1b168cd39490f61582a9beae412bb7057a6b2c4e # v4.31.8
+        uses: github/codeql-action/analyze@cdefb33c0f6224e58673d9004f47f7cb3e328b89 # v4.31.10
         with:
           category: "/language:${{matrix.language}}"
