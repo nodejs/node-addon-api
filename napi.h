@@ -19,6 +19,9 @@
 #endif  // NAPI_HAS_THREADS
 #include <string>
 #include <vector>
+#if __cplusplus >= 201703L
+#include <string_view>
+#endif
 
 // VS2015 RTM has bugs with constexpr, so require min of VS2015 Update 3 (known
 // good version)
@@ -717,6 +720,14 @@ class String : public Name {
   static String New(napi_env env,                ///< Node-API environment
                     const std::u16string& value  ///< UTF-16 encoded C++ string
   );
+
+#if __cplusplus >= 201703L
+  /// Creates a new String value from a UTF-8 encoded C++ string view.
+  static String New(
+      napi_env env,                  ///< Node-API environment
+      const std::string_view& value  ///< UTF-8 encoded C++ string view
+  );
+#endif
 
   /// Creates a new String value from a UTF-8 encoded C string.
   static String New(

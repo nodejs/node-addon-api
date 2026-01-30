@@ -20,6 +20,9 @@
 #endif  // NAPI_HAS_THREADS
 #include <type_traits>
 #include <utility>
+#if __cplusplus >= 201703L
+#include <string_view>
+#endif
 
 #if defined(__clang__) || defined(__GNUC__)
 #define NAPI_NO_SANITIZE_VPTR __attribute__((no_sanitize("vptr")))
@@ -1254,6 +1257,12 @@ inline String String::New(napi_env env, const std::string& val) {
 inline String String::New(napi_env env, const std::u16string& val) {
   return String::New(env, val.c_str(), val.size());
 }
+
+#if __cplusplus >= 201703L
+inline String String::New(napi_env env, const std::string_view& val) {
+  return String::New(env, val.data(), val.size());
+}
+#endif
 
 inline String String::New(napi_env env, const char* val) {
   // TODO(@gabrielschulhof) Remove if-statement when core's error handling is
