@@ -723,9 +723,8 @@ class String : public Name {
 
 #if __cplusplus >= 201703L
   /// Creates a new String value from a UTF-8 encoded C++ string view.
-  static String New(
-      napi_env env,                  ///< Node-API environment
-      const std::string_view& value  ///< UTF-8 encoded C++ string view
+  static String New(napi_env env,           ///< Node-API environment
+                    std::string_view value  ///< UTF-8 encoded C++ string view
   );
 #endif
 
@@ -801,6 +800,15 @@ class Symbol : public Name {
       const std::string&
           description  ///< UTF-8 encoded C++ string describing the symbol
   );
+
+#if __cplusplus >= 201703L
+  /// Creates a new Symbol value with a description.
+  static Symbol New(
+      napi_env env,  ///< Node-API environment
+      std::string_view
+          description  ///< UTF-8 encoded C++ string view describing the symbol
+  );
+#endif
 
   /// Creates a new Symbol value with a description.
   static Symbol New(napi_env env,       ///< Node-API environment

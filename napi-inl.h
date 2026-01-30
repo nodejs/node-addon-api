@@ -1259,7 +1259,7 @@ inline String String::New(napi_env env, const std::u16string& val) {
 }
 
 #if __cplusplus >= 201703L
-inline String String::New(napi_env env, const std::string_view& val) {
+inline String String::New(napi_env env, std::string_view val) {
   return String::New(env, val.data(), val.size());
 }
 #endif
@@ -1372,6 +1372,13 @@ inline Symbol Symbol::New(napi_env env, const std::string& description) {
   napi_value descriptionValue = String::New(env, description);
   return Symbol::New(env, descriptionValue);
 }
+
+#if __cplusplus >= 201703L
+inline Symbol Symbol::New(napi_env env, std::string_view description) {
+  napi_value descriptionValue = String::New(env, description);
+  return Symbol::New(env, descriptionValue);
+}
+#endif
 
 inline Symbol Symbol::New(napi_env env, String description) {
   napi_value descriptionValue = description;
