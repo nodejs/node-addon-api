@@ -685,6 +685,12 @@ class Date : public Value {
                   double value   ///< Number value
   );
 
+  /// Creates a new Date value from a std::chrono::system_clock::time_point.
+  static Date New(
+      napi_env env,                             ///< Node-API environment
+      std::chrono::system_clock::time_point tp  ///< Time point value
+  );
+
   static void CheckCast(napi_env env, napi_value value);
 
   Date();  ///< Creates a new _empty_ Date instance.
