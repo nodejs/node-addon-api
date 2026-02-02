@@ -1,5 +1,13 @@
 # node-addon-api Changelog
 
+## [8.6.0](https://github.com/nodejs/node-addon-api/compare/v8.5.0...v8.6.0) (2026-01-30)
+
+
+### Features
+
+* add SharedArrayBuffer ([#1688](https://github.com/nodejs/node-addon-api/issues/1688)) ([220bee2](https://github.com/nodejs/node-addon-api/commit/220bee244fae2e36405bf2bda33cb3985a846912))
+* silence a legitimate vfptr sanitizer warning that is on by default in Android NDK 29 ([#1692](https://github.com/nodejs/node-addon-api/issues/1692)) ([46673f4](https://github.com/nodejs/node-addon-api/commit/46673f403adf799cc73419427dd3cf166badff22))
+
 ## [8.5.0](https://github.com/nodejs/node-addon-api/compare/v8.4.0...v8.5.0) (2025-07-04)
 
 
