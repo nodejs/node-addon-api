@@ -19,6 +19,9 @@
 #endif  // NAPI_HAS_THREADS
 #include <string>
 #include <vector>
+#if __cplusplus >= 201103L
+#include <chrono>
+#endif
 
 // VS2015 RTM has bugs with constexpr, so require min of VS2015 Update 3 (known
 // good version)
