@@ -19,6 +19,9 @@
 #endif  // NAPI_HAS_THREADS
 #include <string>
 #include <vector>
+#if __cplusplus >= 201103L
+#include <chrono>
+#endif
 
 // VS2015 RTM has bugs with constexpr, so require min of VS2015 Update 3 (known
 // good version)
@@ -683,6 +686,12 @@ class Date : public Value {
   /// Creates a new Date value from a double primitive.
   static Date New(napi_env env,  ///< Node-API environment
                   double value   ///< Number value
+  );
+
+  /// Creates a new Date value from a std::chrono::system_clock::time_point.
+  static Date New(
+      napi_env env,                             ///< Node-API environment
+      std::chrono::system_clock::time_point tp  ///< Time point value
   );
 
   static void CheckCast(napi_env env, napi_value value);
