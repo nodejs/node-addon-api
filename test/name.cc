@@ -1,5 +1,7 @@
 #include "napi.h"
 
+#include <string_view>
+
 using namespace Napi;
 
 const char* testValueUtf8 = "123456789";
@@ -43,6 +45,10 @@ Value CreateString(const CallbackInfo& info) {
   }
 }
 
+Value CreateStringFromStringView(const CallbackInfo& info) {
+  return String::New(info.Env(), std::string_view("hello1"));
+}
+
 Value CheckString(const CallbackInfo& info) {
   String value = info[0].As<String>();
   String encoding = info[1].As<String>();
@@ -80,6 +86,10 @@ Value CreateSymbol(const CallbackInfo& info) {
   }
 }
 
+Value CreateSymbolFromStringView(const CallbackInfo& info) {
+  return Symbol::New(info.Env(), std::string_view("hello2"));
+}
+
 Value CheckSymbol(const CallbackInfo& info) {
   return Boolean::New(info.Env(), info[0].Type() == napi_symbol);
 }
@@ -99,11 +109,15 @@ Object InitName(Env env) {
 
   exports["echoString"] = Function::New(env, EchoString);
   exports["createString"] = Function::New(env, CreateString);
+  exports["createStringFromStringView"] =
+      Function::New(env, CreateStringFromStringView);
   exports["nullStringShouldThrow"] = Function::New(env, NullStringShouldThrow);
   exports["nullString16ShouldThrow"] =
       Function::New(env, NullString16ShouldThrow);
   exports["checkString"] = Function::New(env, CheckString);
   exports["createSymbol"] = Function::New(env, CreateSymbol);
+  exports["createSymbolFromStringView"] =
+      Function::New(env, CreateSymbolFromStringView);
   exports["checkSymbol"] = Function::New(env, CheckSymbol);
 
   return exports;

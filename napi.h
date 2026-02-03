@@ -18,10 +18,8 @@
 #include <mutex>
 #endif  // NAPI_HAS_THREADS
 #include <string>
-#include <vector>
-#if __cplusplus >= 201703L
 #include <string_view>
-#endif
+#include <vector>
 
 // VS2015 RTM has bugs with constexpr, so require min of VS2015 Update 3 (known
 // good version)
@@ -721,12 +719,10 @@ class String : public Name {
                     const std::u16string& value  ///< UTF-16 encoded C++ string
   );
 
-#if __cplusplus >= 201703L
   /// Creates a new String value from a UTF-8 encoded C++ string view.
   static String New(napi_env env,           ///< Node-API environment
                     std::string_view value  ///< UTF-8 encoded C++ string view
   );
-#endif
 
   /// Creates a new String value from a UTF-8 encoded C string.
   static String New(
@@ -801,14 +797,12 @@ class Symbol : public Name {
           description  ///< UTF-8 encoded C++ string describing the symbol
   );
 
-#if __cplusplus >= 201703L
   /// Creates a new Symbol value with a description.
   static Symbol New(
       napi_env env,  ///< Node-API environment
       std::string_view
           description  ///< UTF-8 encoded C++ string view describing the symbol
   );
-#endif
 
   /// Creates a new Symbol value with a description.
   static Symbol New(napi_env env,       ///< Node-API environment

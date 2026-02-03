@@ -56,4 +56,9 @@ function test (binding) {
     assert.strictEqual(binding.name.echoString(str, 'utf8'), str);
     assert.strictEqual(binding.name.echoString(str, 'utf16'), str);
   }
+
+  assert.strictEqual(binding.name.createStringFromStringView(), 'hello1');
+  const symFromStringView = binding.name.createSymbolFromStringView();
+  assert.strictEqual(typeof symFromStringView, 'symbol');
+  assert.strictEqual(symFromStringView.description, 'hello2');
 }
