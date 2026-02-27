@@ -56,4 +56,7 @@ function test (binding) {
     assert.strictEqual(binding.name.echoString(str, 'utf8'), str);
     assert.strictEqual(binding.name.echoString(str, 'utf16'), str);
   }
+
+  assert.strictEqual(binding.name.createStringFromStringView(), "hello1")
+  assert.strictEqual(binding.name.createSymbolFromStringView(), "hello2")
 }
