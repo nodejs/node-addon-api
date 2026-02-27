@@ -92,6 +92,9 @@ Multiple filter conditions can be joined to broaden the test selection
  compile and run all tests under folders threadsafe_function and typed_threadsafe_function and also the objectwrap.cc file
     npm run unit --filter='*function objectwrap'
 
+As an alternative, `ninja` can be used to build the tests. Please
+follow the instructions in [Build with ninja](doc/contributing/build_with_ninja.md).
+
 ## Debug
 
 To run the **node-addon-api** tests with `--debug` option:
