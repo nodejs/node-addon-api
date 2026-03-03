@@ -6,6 +6,11 @@ The `Napi::DataView` class corresponds to the
 [JavaScript `DataView`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/DataView)
 class.
 
+**NOTE**: The support for `Napi::DataView::New()` overloads accepting an
+`Napi::SharedArrayBuffer` parameter is only available when using
+`NAPI_EXPERIMENTAL` and building against Node.js headers that support this
+feature.
+
 ## Methods
 
 ### New
@@ -50,6 +55,48 @@ static Napi::DataView Napi::DataView::New(napi_env env, Napi::ArrayBuffer arrayB
 
 Returns a new `Napi::DataView` instance.
 
+### New
+
+Allocates a new `Napi::DataView` instance with a given `Napi::SharedArrayBuffer`.
+
+```cpp
+static Napi::DataView Napi::DataView::New(napi_env env, Napi::SharedArrayBuffer sharedArrayBuffer);
+```
+
+- `[in] env`: The environment in which to create the `Napi::DataView` instance.
+- `[in] sharedArrayBuffer` : `Napi::SharedArrayBuffer` underlying the `Napi::DataView`.
+
+Returns a new `Napi::DataView` instance.
+
+### New
+
+Allocates a new `Napi::DataView` instance with a given `Napi::SharedArrayBuffer`.
+
+```cpp
+static Napi::DataView Napi::DataView::New(napi_env env, Napi::SharedArrayBuffer sharedArrayBuffer, size_t byteOffset);
+```
+
+- `[in] env`: The environment in which to create the `Napi::DataView` instance.
+- `[in] sharedArrayBuffer` : `Napi::SharedArrayBuffer` underlying the `Napi::DataView`.
+- `[in] byteOffset` : The byte offset within the `Napi::SharedArrayBuffer` from which to start projecting the `Napi::DataView`.
+
+Returns a new `Napi::DataView` instance.
+
+### New
+
+Allocates a new `Napi::DataView` instance with a given `Napi::SharedArrayBuffer`.
+
+```cpp
+static Napi::DataView Napi::DataView::New(napi_env env, Napi::SharedArrayBuffer sharedArrayBuffer, size_t byteOffset, size_t byteLength);
+```
+
+- `[in] env`: The environment in which to create the `Napi::DataView` instance.
+- `[in] sharedArrayBuffer` : `Napi::SharedArrayBuffer` underlying the `Napi::DataView`.
+- `[in] byteOffset` : The byte offset within the `Napi::SharedArrayBuffer` from which to start projecting the `Napi::DataView`.
+- `[in] byteLength` : Number of elements in the `Napi::DataView`.
+
+Returns a new `Napi::DataView` instance.
+
 ### Constructor
 
 Initializes an empty instance of the `Napi::DataView` class.
@@ -75,7 +122,21 @@ Napi::DataView(napi_env env, napi_value value);
 Napi::ArrayBuffer Napi::DataView::ArrayBuffer() const;
 ```
 
-Returns the backing array buffer.
+Returns the backing array buffer as an `Napi::ArrayBuffer`.
+
+**NOTE**: If the `Napi::DataView` is not backed by an `Napi::ArrayBuffer`, this
+method will terminate the process with a fatal error when using
+`NODE_ADDON_API_ENABLE_TYPE_CHECK_ON_AS` or exhibit undefined behavior
+otherwise.
+
+### Buffer
+
+```cpp
+Napi::Value Napi::DataView::Buffer() const;
+```
+
+Returns the backing array buffer as a generic `Napi::Value`, allowing optional
+type-checking with `Is*()` and type-casting with `As<>()` methods.
 
 ### ByteOffset
 
