@@ -2289,6 +2289,39 @@ inline DataView DataView::New(napi_env env,
   return DataView(env, value);
 }
 
+#ifdef NODE_API_EXPERIMENTAL_HAS_SHAREDARRAYBUFFER
+inline DataView DataView::New(napi_env env,
+                              Napi::SharedArrayBuffer arrayBuffer) {
+  return New(env, arrayBuffer, 0, arrayBuffer.ByteLength());
+}
+
+inline DataView DataView::New(napi_env env,
+                              Napi::SharedArrayBuffer arrayBuffer,
+                              size_t byteOffset) {
+  if (byteOffset > arrayBuffer.ByteLength()) {
+    NAPI_THROW(RangeError::New(
+                   env, "Start offset is outside the bounds of the buffer"),
+               DataView());
+  }
+  return New(
+      env, arrayBuffer, byteOffset, arrayBuffer.ByteLength() - byteOffset);
+}
+
+inline DataView DataView::New(napi_env env,
+                              Napi::SharedArrayBuffer arrayBuffer,
+                              size_t byteOffset,
+                              size_t byteLength) {
+  if (byteOffset + byteLength > arrayBuffer.ByteLength()) {
+    NAPI_THROW(RangeError::New(env, "Invalid DataView length"), DataView());
+  }
+  napi_value value;
+  napi_status status =
+      napi_create_dataview(env, byteLength, arrayBuffer, byteOffset, &value);
+  NAPI_THROW_IF_FAILED(env, status, DataView());
+  return DataView(env, value);
+}
+#endif  // NODE_API_EXPERIMENTAL_HAS_SHAREDARRAYBUFFER
+
 inline void DataView::CheckCast(napi_env env, napi_value value) {
   NAPI_CHECK(value != nullptr, "DataView::CheckCast", "empty value");
 
@@ -2312,6 +2345,10 @@ inline DataView::DataView(napi_env env, napi_value value) : Object(env, value) {
 }
 
 inline Napi::ArrayBuffer DataView::ArrayBuffer() const {
+  return Buffer().As<Napi::ArrayBuffer>();
+}
+
+inline Napi::Value DataView::Buffer() const {
   napi_value arrayBuffer;
   napi_status status = napi_get_dataview_info(_env,
                                               _value /* dataView */,
@@ -2319,8 +2356,8 @@ inline Napi::ArrayBuffer DataView::ArrayBuffer() const {
                                               nullptr /* data */,
                                               &arrayBuffer /* arrayBuffer */,
                                               nullptr /* byteOffset */);
-  NAPI_THROW_IF_FAILED(_env, status, Napi::ArrayBuffer());
-  return Napi::ArrayBuffer(_env, arrayBuffer);
+  NAPI_THROW_IF_FAILED(_env, status, Napi::Value());
+  return Napi::Value(_env, arrayBuffer);
 }
 
 inline size_t DataView::ByteOffset() const {
