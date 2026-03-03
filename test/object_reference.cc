@@ -28,6 +28,25 @@ ObjectReference casted_reference;
 
 enum VAL_TYPES { JS = 0, C_STR, CPP_STR, BOOL, INT, DOUBLE, JS_CAST };
 
+// Test that Set() with std::string key and value accepts temporaries (rvalues).
+// This verifies that the parameter is `const std::string&` rather than
+// `std::string&`.
+void SetWithTempString(const Napi::CallbackInfo& info) {
+  Env env = info.Env();
+  HandleScope scope(env);
+
+  Napi::ObjectReference ref = Persistent(Object::New(env));
+  ref.SuppressDestruct();
+
+  ref.Set(std::string("tempKey"), std::string("tempValue"));
+  ref.Set(std::string("anotherKey"), info[0].As<Napi::String>().Utf8Value());
+
+  assert(MaybeUnwrap(ref.Get("tempKey")).As<Napi::String>().Utf8Value() ==
+         "tempValue");
+  assert(MaybeUnwrap(ref.Get("anotherKey")).As<Napi::String>().Utf8Value() ==
+         info[0].As<Napi::String>().Utf8Value());
+}
+
 void MoveOperatorsTest(const Napi::CallbackInfo& info) {
   Napi::ObjectReference existingRef;
   Napi::ObjectReference existingRef2;
@@ -412,6 +431,7 @@ Object InitObjectReference(Env env) {
   exports["unrefObjects"] = Function::New(env, UnrefObjects);
   exports["refObjects"] = Function::New(env, RefObjects);
   exports["moveOpTest"] = Function::New(env, MoveOperatorsTest);
+  exports["setWithTempString"] = Function::New(env, SetWithTempString);
 
   return exports;
 }

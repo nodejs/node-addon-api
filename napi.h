@@ -1733,7 +1733,7 @@ class ObjectReference : public Reference<Object> {
   MaybeOrValue<bool> Set(const std::string& utf8name, napi_value value) const;
   MaybeOrValue<bool> Set(const std::string& utf8name, Napi::Value value) const;
   MaybeOrValue<bool> Set(const std::string& utf8name,
-                         std::string& utf8value) const;
+                         const std::string& utf8value) const;
   MaybeOrValue<bool> Set(const std::string& utf8name, bool boolValue) const;
   MaybeOrValue<bool> Set(const std::string& utf8name, double numberValue) const;
 
