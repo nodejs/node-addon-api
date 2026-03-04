@@ -1118,6 +1118,12 @@ class Object : public TypeTaggable {
   /// https://tc39.es/ecma262/#sec-proxy-object-internal-methods-and-internal-slots-getprototypeof
   MaybeOrValue<bool> Seal() const;
 #endif  // NAPI_VERSION >= 8
+
+  MaybeOrValue<Object> GetPrototype() const;
+
+#ifdef NODE_API_EXPERIMENTAL_HAS_SET_PROTOTYPE
+  MaybeOrValue<bool> SetPrototype(const Object& value) const;
+#endif
 };
 
 template <typename T>
