@@ -3809,8 +3809,8 @@ inline MaybeOrValue<bool> ObjectReference::Set(const std::string& utf8name,
   return Value().Set(utf8name, value);
 }
 
-inline MaybeOrValue<bool> ObjectReference::Set(const std::string& utf8name,
-                                               std::string& utf8value) const {
+inline MaybeOrValue<bool> ObjectReference::Set(
+    const std::string& utf8name, const std::string& utf8value) const {
   HandleScope scope(_env);
   return Value().Set(utf8name, utf8value);
 }
