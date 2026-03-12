@@ -359,10 +359,10 @@ class BasicEnv {
   // ... occurs when comparing foo.Env() == bar.Env() or foo.Env() == nullptr
   bool operator==(const BasicEnv& other) const {
     return _env == other._env;
-  };
+  }
   bool operator==(std::nullptr_t /*other*/) const {
     return _env == nullptr;
-  };
+  }
 
 #if NAPI_VERSION > 2
   template <typename Hook, typename Arg = void>
@@ -3126,8 +3126,8 @@ class AsyncProgressWorkerBase : public AsyncWorker {
 
     AsyncProgressWorkerBase* asyncprogressworker() {
       return _asyncprogressworker;
-    };
-    DataType* data() { return _data; };
+    }
+    DataType* data() { return _data; }
 
    private:
     AsyncProgressWorkerBase* _asyncprogressworker;
