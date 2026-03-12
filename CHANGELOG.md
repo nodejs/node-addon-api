@@ -1,5 +1,13 @@
 # node-addon-api Changelog
 
+## [8.6.1](https://github.com/nodejs/node-addon-api/compare/v8.6.0...v8.6.1) (2026-03-12)
+
+
+### Bug Fixes
+
+* add missing const to ObjectReference::Set string parameter ([#1713](https://github.com/nodejs/node-addon-api/issues/1713)) ([845ba8e](https://github.com/nodejs/node-addon-api/commit/845ba8e4b0888ca20ed3f7c95f9d461cbce338c5))
+* fix -Wextra-semi ([#1718](https://github.com/nodejs/node-addon-api/issues/1718)) ([7fef973](https://github.com/nodejs/node-addon-api/commit/7fef9739166ebb89263459e9f4c3363678cd6367))
+
 ## [8.6.0](https://github.com/nodejs/node-addon-api/compare/v8.5.0...v8.6.0) (2026-01-30)
 
 
