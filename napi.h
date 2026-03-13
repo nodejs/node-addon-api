@@ -1450,13 +1450,36 @@ class DataView : public Object {
                       size_t byteOffset,
                       size_t byteLength);
 
+#ifdef NODE_API_EXPERIMENTAL_HAS_SHAREDARRAYBUFFER
+  static DataView New(napi_env env, Napi::SharedArrayBuffer arrayBuffer);
+  static DataView New(napi_env env,
+                      Napi::SharedArrayBuffer arrayBuffer,
+                      size_t byteOffset);
+  static DataView New(napi_env env,
+                      Napi::SharedArrayBuffer arrayBuffer,
+                      size_t byteOffset,
+                      size_t byteLength);
+#endif
+
   static void CheckCast(napi_env env, napi_value value);
 
   DataView();  ///< Creates a new _empty_ DataView instance.
   DataView(napi_env env,
            napi_value value);  ///< Wraps a Node-API value primitive.
 
-  Napi::ArrayBuffer ArrayBuffer() const;  ///< Gets the backing array buffer.
+  // Gets the backing `ArrayBuffer`.
+  //
+  // If this `DataView` is not backed by an `ArrayBuffer`, this method will
+  // terminate the process with a fatal error when using
+  // `NODE_ADDON_API_ENABLE_TYPE_CHECK_ON_AS` or exhibit undefined behavior
+  // otherwise.
+  Napi::ArrayBuffer ArrayBuffer() const;
+
+  // Gets the backing buffer (an `ArrayBuffer` or `SharedArrayBuffer`).
+  //
+  // Use `IsArrayBuffer()` or `IsSharedArrayBuffer()` to check the type of the
+  // backing buffer prior to casting with `As<T>()`.
+  Napi::Value Buffer() const;
   size_t ByteOffset()
       const;  ///< Gets the offset into the buffer where the array starts.
   size_t ByteLength() const;  ///< Gets the length of the array in bytes.
