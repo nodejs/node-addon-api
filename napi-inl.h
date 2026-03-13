@@ -1966,6 +1966,19 @@ inline MaybeOrValue<bool> Object::Seal() const {
 }
 #endif  // NAPI_VERSION >= 8
 
+inline MaybeOrValue<Object> Object::GetPrototype() const {
+  napi_value result;
+  napi_status status = napi_get_prototype(_env, _value, &result);
+  NAPI_RETURN_OR_THROW_IF_FAILED(_env, status, Object(_env, result), Object);
+}
+
+#ifdef NODE_API_EXPERIMENTAL_HAS_SET_PROTOTYPE
+inline MaybeOrValue<bool> Object::SetPrototype(const Object& value) const {
+  napi_status status = node_api_set_prototype(_env, _value, value);
+  NAPI_RETURN_OR_THROW_IF_FAILED(_env, status, status == napi_ok, bool);
+}
+#endif
+
 ////////////////////////////////////////////////////////////////////////////////
 // External class
 ////////////////////////////////////////////////////////////////////////////////

@@ -343,6 +343,19 @@ Value InstanceOf(const CallbackInfo& info) {
   return Boolean::New(info.Env(), MaybeUnwrap(obj.InstanceOf(constructor)));
 }
 
+Value GetPrototype(const CallbackInfo& info) {
+  Object obj = info[0].UnsafeAs<Object>();
+  return MaybeUnwrap(obj.GetPrototype());
+}
+
+#ifdef NODE_API_EXPERIMENTAL_HAS_SET_PROTOTYPE
+Value SetPrototype(const CallbackInfo& info) {
+  Object obj = info[0].UnsafeAs<Object>();
+  Object prototype = info[1].UnsafeAs<Object>();
+  return Boolean::New(info.Env(), MaybeUnwrap(obj.SetPrototype(prototype)));
+}
+#endif  // NODE_API_EXPERIMENTAL_HAS_SET_PROTOTYPE
+
 Object InitObject(Env env) {
   Object exports = Object::New(env);
 
@@ -425,6 +438,11 @@ Object InitObject(Env env) {
   exports["subscriptSetWithCppStyleString"] =
       Function::New(env, SubscriptSetWithCppStyleString);
   exports["subscriptSetAtIndex"] = Function::New(env, SubscriptSetAtIndex);
+
+  exports["getPrototype"] = Function::New(env, GetPrototype);
+#ifdef NODE_API_EXPERIMENTAL_HAS_SET_PROTOTYPE
+  exports["setPrototype"] = Function::New(env, SetPrototype);
+#endif  // NODE_API_EXPERIMENTAL_HAS_SET_PROTOTYPE
 
   return exports;
 }

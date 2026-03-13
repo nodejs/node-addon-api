@@ -215,4 +215,16 @@ function test (binding) {
       c: 3
     });
   }
+
+  for (const prototype of [null, {}, Object.prototype]) {
+    const obj = Object.create(prototype);
+    assert.strictEqual(binding.object.getPrototype(obj), prototype);
+  }
+
+  if ('setPrototype' in binding.object) {
+    const prototype = {};
+    const obj = Object.create(null);
+    assert.strictEqual(binding.object.setPrototype(obj, prototype), true);
+    assert.strictEqual(Object.getPrototypeOf(obj), prototype);
+  }
 }

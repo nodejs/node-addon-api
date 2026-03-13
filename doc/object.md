@@ -241,6 +241,28 @@ from being added to it and marking all existing properties as non-configurable.
 Values of present properties can still be changed as long as they are
 writable.
 
+### GetPrototype()
+
+```cpp
+Napi::Object Napi::Object::GetPrototype() const;
+```
+
+The `Napi::Object::GetPrototype()` method returns the prototype of the object.
+
+### SetPrototype()
+
+```cpp
+bool Napi::Object::SetPrototype(const Napi::Object& value) const;
+```
+
+- `[in] value`: The prototype value.
+
+The `Napi::Object::SetPrototype()` method sets the prototype of the object.
+
+**NOTE**: The support for `Napi::Object::SetPrototype` is only available when
+using `NAPI_EXPERIMENTAL` and building against Node.js headers that support this
+feature.
+
 ### operator\[\]()
 
 ```cpp
