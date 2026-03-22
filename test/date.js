@@ -9,7 +9,8 @@ function test (binding) {
     CreateDate,
     IsDate,
     ValueOf,
-    OperatorValue
+    OperatorValue,
+    CreateDateFromTimePoint
   } = binding.date;
   assert.deepStrictEqual(CreateDate(0), new Date(0));
   assert.deepStrictEqual(CreateDateFromTimePoint(), new Date(0));

@@ -1,7 +1,3 @@
-#if __cplusplus >= 201103L
-#include <chrono>
-#endif
-
 #include "napi.h"
 
 using namespace Napi;
@@ -15,12 +11,10 @@ Value CreateDate(const CallbackInfo& info) {
   return Date::New(info.Env(), input);
 }
 
-#if __cplusplus >= 201103L
 Value CreateDateFromTimePoint(const CallbackInfo& info) {
   auto input = std::chrono::system_clock::time_point{};
   return Date::New(info.Env(), input);
 }
-#endif
 
 Value IsDate(const CallbackInfo& info) {
   Date input = info[0].As<Date>();
@@ -46,7 +40,8 @@ Value OperatorValue(const CallbackInfo& info) {
 Object InitDate(Env env) {
   Object exports = Object::New(env);
   exports["CreateDate"] = Function::New(env, CreateDate);
-  exports["CreateDateFromTimePoint"] = Function::New(env, CreateDate);
+  exports["CreateDateFromTimePoint"] =
+      Function::New(env, CreateDateFromTimePoint);
   exports["IsDate"] = Function::New(env, IsDate);
   exports["ValueOf"] = Function::New(env, ValueOf);
   exports["OperatorValue"] = Function::New(env, OperatorValue);

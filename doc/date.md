@@ -37,6 +37,20 @@ static Napi::Date Napi::Date::New(Napi::Env env, double value);
 
 Returns a new instance of `Napi::Date` object.
 
+### New
+
+Creates a new instance of a `Napi::Date` object.
+
+```cpp
+static Napi::Date Napi::Date::New(napi_env env, std::chrono::system_clock::time_point time_point);
+```
+
+ - `[in] env`: The environment in which to construct the `Napi::Date` object.
+ - `[in] value`: The point in time, represented by an
+   `std::chrono::system_clock::time_point`.
+
+Returns a new instance of `Napi::Date` object.
+
 ### ValueOf
 
 ```cpp

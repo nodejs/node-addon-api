@@ -20,9 +20,6 @@
 #endif  // NAPI_HAS_THREADS
 #include <type_traits>
 #include <utility>
-#if __cplusplus >= 201103L
-#include <chrono>
-#endif
 
 #if defined(__clang__) || defined(__GNUC__)
 #define NAPI_NO_SANITIZE_VPTR __attribute__((no_sanitize("vptr")))
@@ -1202,14 +1199,12 @@ inline Date Date::New(napi_env env, double val) {
   return Date(env, value);
 }
 
-#if __cplusplus >= 201103L
 inline Date Date::New(napi_env env, std::chrono::system_clock::time_point tp) {
   using namespace std::chrono;
   auto ms = static_cast<double>(
       duration_cast<milliseconds>(tp.time_since_epoch()).count());
   return Date::New(env, ms);
 }
-#endif
 
 inline void Date::CheckCast(napi_env env, napi_value value) {
   NAPI_CHECK(value != nullptr, "Date::CheckCast", "empty value");
