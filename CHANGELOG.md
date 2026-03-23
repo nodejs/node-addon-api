@@ -1,5 +1,20 @@
 # node-addon-api Changelog
 
+## [8.7.0](https://github.com/nodejs/node-addon-api/compare/v8.6.0...v8.7.0) (2026-03-23)
+
+
+### Features
+
+* add Date::New overload for a std::chrono::system_clock::time_point ([#1705](https://github.com/nodejs/node-addon-api/issues/1705)) ([7fb063d](https://github.com/nodejs/node-addon-api/commit/7fb063d95ff5ef816d1616f9acf4afac854cfd4c))
+* add Object::GetPrototype and Object::SetPrototype ([#1715](https://github.com/nodejs/node-addon-api/issues/1715)) ([967bbd5](https://github.com/nodejs/node-addon-api/commit/967bbd5911c7e90b428d4769b9ab1b1a0cee4451)), closes [#1691](https://github.com/nodejs/node-addon-api/issues/1691)
+* add support for SharedArrayBuffer in DataViews ([#1714](https://github.com/nodejs/node-addon-api/issues/1714)) ([7b8d69e](https://github.com/nodejs/node-addon-api/commit/7b8d69e0ba912291aea0b337f7f1814b1032f7f0))
+
+
+### Bug Fixes
+
+* add missing const to ObjectReference::Set string parameter ([#1713](https://github.com/nodejs/node-addon-api/issues/1713)) ([845ba8e](https://github.com/nodejs/node-addon-api/commit/845ba8e4b0888ca20ed3f7c95f9d461cbce338c5))
+* fix -Wextra-semi ([#1718](https://github.com/nodejs/node-addon-api/issues/1718)) ([7fef973](https://github.com/nodejs/node-addon-api/commit/7fef9739166ebb89263459e9f4c3363678cd6367))
+
 ## [8.6.0](https://github.com/nodejs/node-addon-api/compare/v8.5.0...v8.6.0) (2026-01-30)
 
 
