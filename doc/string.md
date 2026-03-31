@@ -60,6 +60,7 @@ Napi::String::New(napi_env env, const char* value);
 Napi::String::New(napi_env env, const char16_t* value);
 Napi::String::New(napi_env env, const char* value, size_t length);
 Napi::String::New(napi_env env, const char16_t* value, size_t length);
+Napi::String::New(napi_env env, std::string_view value);
 ```
 
 - `[in] env`: The `napi_env` environment in which to construct the `Napi::Value` object.
@@ -68,6 +69,7 @@ Napi::String::New(napi_env env, const char16_t* value, size_t length);
   - `std::u16string&` - represents a UTF16-LE string.
   - `const char*` - represents a UTF8 string.
   - `const char16_t*` - represents a UTF16-LE string.
+  - `std::string_view` - represents a UTF8 string view.
 - `[in] length`: The length of the string (not necessarily null-terminated) in code units.
 
 Returns a new `Napi::String` that represents the passed in C++ string.

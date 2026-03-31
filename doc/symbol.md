@@ -18,6 +18,7 @@ Returns a new empty `Napi::Symbol`.
 ```cpp
 Napi::Symbol::New(napi_env env, const std::string& description);
 Napi::Symbol::New(napi_env env, const char* description);
+Napi::Symbol::New(napi_env env, std::string_view description);
 Napi::Symbol::New(napi_env env, Napi::String description);
 Napi::Symbol::New(napi_env env, napi_value description);
 ```
@@ -27,6 +28,7 @@ Napi::Symbol::New(napi_env env, napi_value description);
   `description` may be any of:
   - `std::string&` - UTF8 string description.
   - `const char*` - represents a UTF8 string description.
+  - `std::string_view` - represents a UTF8 string view.
   - `String` - Node addon API String description.
   - `napi_value` - Node-API `napi_value` description.
 
