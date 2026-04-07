@@ -828,6 +828,9 @@ class Symbol : public Name {
   // Create a symbol in the global registry, UTF-8 Encoded cpp string
   static MaybeOrValue<Symbol> For(napi_env env, const std::string& description);
 
+  // Create a symbol in the global registry, UTF-8 encoded cpp string view
+  static MaybeOrValue<Symbol> For(napi_env env, std::string_view description);
+
   // Create a symbol in the global registry, C style string (null terminated)
   static MaybeOrValue<Symbol> For(napi_env env, const char* description);
 

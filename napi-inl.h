@@ -1422,6 +1422,12 @@ inline MaybeOrValue<Symbol> Symbol::For(napi_env env,
   return Symbol::For(env, descriptionValue);
 }
 
+inline MaybeOrValue<Symbol> Symbol::For(napi_env env,
+                                        std::string_view description) {
+  napi_value descriptionValue = String::New(env, description);
+  return Symbol::For(env, descriptionValue);
+}
+
 inline MaybeOrValue<Symbol> Symbol::For(napi_env env, const char* description) {
   napi_value descriptionValue = String::New(env, description);
   return Symbol::For(env, descriptionValue);
