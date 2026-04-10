@@ -26,7 +26,7 @@ Napi::Symbol::New(napi_env env, napi_value description);
 - `[in] env`: The `napi_env` environment in which to construct the `Napi::Symbol` object.
 - `[in] value`: The C++ primitive which represents the description hint for the `Napi::Symbol`.
   `description` may be any of:
-  - `std::string&` - UTF8 string description.
+  - `const std::string&` - UTF8 string description.
   - `const char*` - represents a UTF8 string description.
   - `std::string_view` - represents a UTF8 string view.
   - `String` - Node addon API String description.
