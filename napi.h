@@ -1339,7 +1339,21 @@ class TypedArray : public Object {
 
   napi_typedarray_type TypedArrayType()
       const;  ///< Gets the type of this typed-array.
-  Napi::ArrayBuffer ArrayBuffer() const;  ///< Gets the backing array buffer.
+
+  // Gets the backing `ArrayBuffer`.
+  //
+  // If this `TypedArray` is not backed by an `ArrayBuffer`, this method will
+  // terminate the process with a fatal error when using
+  // `NODE_ADDON_API_ENABLE_TYPE_CHECK_ON_AS` or exhibit undefined behavior
+  // otherwise. Use `Buffer()` instead to get the backing buffer without
+  // assuming its type.
+  Napi::ArrayBuffer ArrayBuffer() const;
+
+  // Gets the backing buffer (an `ArrayBuffer` or `SharedArrayBuffer`).
+  //
+  // Use `IsArrayBuffer()` or `IsSharedArrayBuffer()` to check the type of the
+  // backing buffer prior to casting with `As<T>()`.
+  Napi::Value Buffer() const;
 
   uint8_t ElementSize()
       const;  ///< Gets the size in bytes of one element in the array.
@@ -1432,6 +1446,32 @@ class TypedArrayOf : public TypedArray {
       ///< Type of array, if different from the default array type for the
       ///< template parameter T.
   );
+
+#ifdef NODE_API_EXPERIMENTAL_HAS_SHAREDARRAYBUFFER
+  /// Creates a new TypedArray instance over a provided SharedArrayBuffer.
+  ///
+  /// The array type parameter can normally be omitted (because it is inferred
+  /// from the template parameter T), except when creating a "clamped" array:
+  ///
+  ///     Uint8Array::New(env, length, buffer, 0, napi_uint8_clamped_array)
+  static TypedArrayOf New(
+      napi_env env,          ///< Node-API environment
+      size_t elementLength,  ///< Length of the created array, as a number of
+                             ///< elements
+      Napi::SharedArrayBuffer
+          arrayBuffer,      ///< Backing shared array buffer instance to use
+      size_t bufferOffset,  ///< Offset into the array buffer where the
+                            ///< typed-array starts
+#if defined(NAPI_HAS_CONSTEXPR)
+      napi_typedarray_type type =
+          TypedArray::TypedArrayTypeForPrimitiveType<T>()
+#else
+      napi_typedarray_type type
+#endif
+      ///< Type of array, if different from the default array type for the
+      ///< template parameter T.
+  );
+#endif
 
   static void CheckCast(napi_env env, napi_value value);
 
