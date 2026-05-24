@@ -22,6 +22,7 @@ jobs:
           - 22.x
           - 24.x
           - 25.x
+          - 26.x
         architecture: [x64, x86]
         os:
           - windows-2022
@@ -32,6 +33,8 @@ jobs:
           - node-version: 24.x
             architecture: x86
           - node-version: 25.x
+            architecture: x86
+          - node-version: 26.x
             architecture: x86
     runs-on: ${{ matrix.os }}
     steps:
