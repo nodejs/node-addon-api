@@ -2594,6 +2594,14 @@ inline Napi::ArrayBuffer TypedArray::ArrayBuffer() const {
   return Napi::ArrayBuffer(_env, arrayBuffer);
 }
 
+inline Napi::Value TypedArray::Buffer() const {
+  napi_value arrayBuffer;
+  napi_status status = napi_get_typedarray_info(
+      _env, _value, nullptr, nullptr, nullptr, &arrayBuffer, nullptr);
+  NAPI_THROW_IF_FAILED(_env, status, Napi::Value());
+  return Napi::Value(_env, arrayBuffer);
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 // TypedArrayOf<T> class
 ////////////////////////////////////////////////////////////////////////////////
@@ -2644,6 +2652,28 @@ inline TypedArrayOf<T> TypedArrayOf<T>::New(napi_env env,
       reinterpret_cast<T*>(reinterpret_cast<uint8_t*>(arrayBuffer.Data()) +
                            bufferOffset));
 }
+
+#ifdef NODE_API_EXPERIMENTAL_HAS_SHAREDARRAYBUFFER
+template <typename T>
+inline TypedArrayOf<T> TypedArrayOf<T>::New(napi_env env,
+                                            size_t elementLength,
+                                            Napi::SharedArrayBuffer arrayBuffer,
+                                            size_t bufferOffset,
+                                            napi_typedarray_type type) {
+  napi_value value;
+  napi_status status = napi_create_typedarray(
+      env, type, elementLength, arrayBuffer, bufferOffset, &value);
+  NAPI_THROW_IF_FAILED(env, status, TypedArrayOf<T>());
+
+  return TypedArrayOf<T>(
+      env,
+      value,
+      type,
+      elementLength,
+      reinterpret_cast<T*>(reinterpret_cast<uint8_t*>(arrayBuffer.Data()) +
+                           bufferOffset));
+}
+#endif
 
 template <typename T>
 inline TypedArrayOf<T>::TypedArrayOf() : TypedArray(), _data(nullptr) {}
