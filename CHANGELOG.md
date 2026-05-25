@@ -1,5 +1,12 @@
 # node-addon-api Changelog
 
+## [8.9.0](https://github.com/nodejs/node-addon-api/compare/v8.8.0...v8.9.0) (2026-05-24)
+
+
+### Features
+
+* add support for SharedArrayBuffer in TypedArray and TypedArrayOf&lt;T&gt; ([#1731](https://github.com/nodejs/node-addon-api/issues/1731)) ([00b95ef](https://github.com/nodejs/node-addon-api/commit/00b95efea6522980e9661a729a59b926ecf5c6b6))
+
 ## [8.8.0](https://github.com/nodejs/node-addon-api/compare/v8.7.0...v8.8.0) (2026-05-13)
 
 
