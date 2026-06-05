@@ -356,6 +356,40 @@ Value SetPrototype(const CallbackInfo& info) {
 }
 #endif  // NODE_API_EXPERIMENTAL_HAS_SET_PROTOTYPE
 
+#ifdef NODE_API_EXPERIMENTAL_HAS_CREATE_OBJECT_WITH_PROPERTIES
+Value CreateObjectWithProperties(const CallbackInfo& info) {
+  Env env = info.Env();
+  Value prototype = info.Length() > 0 ? info[0] : Value();
+  Array propertyNames =
+      info.Length() > 1 ? info[1].As<Array>() : Array::New(env);
+  Array propertyValues =
+      info.Length() > 2 ? info[2].As<Array>() : Array::New(env);
+
+  std::vector<napi_value> names;
+  std::vector<napi_value> values;
+
+#ifdef NODE_ADDON_API_ENABLE_MAYBE
+  for (uint32_t i = 0; i < propertyNames.Length(); ++i) {
+    names.push_back(propertyNames.Get(i).Unwrap());
+  }
+
+  for (uint32_t i = 0; i < propertyValues.Length(); ++i) {
+    values.push_back(propertyValues.Get(i).Unwrap());
+  }
+#else
+  for (uint32_t i = 0; i < propertyNames.Length(); ++i) {
+    names.push_back(propertyNames.Get(i));
+  }
+
+  for (uint32_t i = 0; i < propertyValues.Length(); ++i) {
+    values.push_back(propertyValues.Get(i));
+  }
+#endif
+
+  return Object::New(env, prototype, names, values);
+}
+#endif
+
 Object InitObject(Env env) {
   Object exports = Object::New(env);
 
@@ -443,6 +477,11 @@ Object InitObject(Env env) {
 #ifdef NODE_API_EXPERIMENTAL_HAS_SET_PROTOTYPE
   exports["setPrototype"] = Function::New(env, SetPrototype);
 #endif  // NODE_API_EXPERIMENTAL_HAS_SET_PROTOTYPE
+
+#ifdef NODE_API_EXPERIMENTAL_HAS_CREATE_OBJECT_WITH_PROPERTIES
+  exports["createObjectWithProperties"] =
+      Function::New(env, CreateObjectWithProperties);
+#endif  // NODE_API_EXPERIMENTAL_HAS_CREATE_OBJECT_WITH_PROPERTIES
 
   return exports;
 }

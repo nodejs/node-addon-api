@@ -903,6 +903,16 @@ class Object : public TypeTaggable {
   static Object New(napi_env env  ///< Node-API environment
   );
 
+#ifdef NODE_API_EXPERIMENTAL_HAS_CREATE_OBJECT_WITH_PROPERTIES
+  /// Creates a new Object value with the given property names and values.
+  static Object New(
+      napi_env env,                ///< Node-API environment
+      napi_value prototypeOrNull,  ///< Prototype (Object) or null / empty Value
+      std::vector<napi_value>& propertyNames,  ///< Property names
+      std::vector<napi_value>& propertyValues  ///< Property values
+  );
+#endif
+
   static void CheckCast(napi_env env, napi_value value);
 
   Object();  ///< Creates a new _empty_ Object instance.
