@@ -69,6 +69,33 @@ Napi::Object Napi::Object::New(napi_env env);
 
 Creates a new `Napi::Object` value.
 
+### New()
+
+```cpp
+Napi::Object Napi::Object::New(
+      napi_env env,
+      napi_value prototypeOrNull,
+      std::vector<napi_value>& propertyNames,
+      std::vector<napi_value>& propertyValues);
+```
+- `[in] env`: The `napi_env` environment in which to construct the `Napi::Value`
+  object.
+- `[in] prototypeOrNull`: The prototype object for the new object. Can be an
+  `napi_value` representing a JavaScript object to use as the prototype, an
+  `napi_value` representing JavaScript `null`, or `nullptr` that will be
+  converted to `null`.
+- `[in] propertyNames`: Array of `napi_value`s representing the property names.
+- `[in] propertyValues`: Array of `napi_value`s representing the property
+  values.
+
+Creates a new `Napi::Object` with the specified prototype and properties. This
+is more efficient than calling `Napi::Object::New()` followed by multiple
+`Set()` calls, as it can create the object with all properties atomically.
+
+**NOTE**: The support for this overload of `Napi::Object::New()` is only
+available when using `NAPI_EXPERIMENTAL` and building against Node.js headers
+that supports this feature.
+
 ### Set()
 
 ```cpp
