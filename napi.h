@@ -422,12 +422,16 @@ class BasicEnv {
 #endif  // NAPI_VERSION > 8
 
 #ifdef NODE_API_EXPERIMENTAL_HAS_POST_FINALIZER
+  // FinalizerType must implement `void operator()(Env env)`.
   template <typename FinalizerType>
   inline void PostFinalizer(FinalizerType finalizeCallback) const;
 
+  // FinalizerType must implement `void operator()(Env env, T* data)`.
   template <typename FinalizerType, typename T>
   inline void PostFinalizer(FinalizerType finalizeCallback, T* data) const;
 
+  // FinalizerType must implement `void operator()(Env env, T* data,
+  // Hint* hint)`.
   template <typename FinalizerType, typename T, typename Hint>
   inline void PostFinalizer(FinalizerType finalizeCallback,
                             T* data,
@@ -1107,9 +1111,12 @@ class Object : public TypeTaggable {
       const Function& constructor  ///< Constructor function
   ) const;
 
+  // Finalizer must implement `void operator()(Env env, T* data)`.
   template <typename Finalizer, typename T>
   inline void AddFinalizer(Finalizer finalizeCallback, T* data) const;
 
+  // Finalizer must implement `void operator()(Env env, T* data,
+  // Hint* hint)`.
   template <typename Finalizer, typename T, typename Hint>
   inline void AddFinalizer(Finalizer finalizeCallback,
                            T* data,
@@ -1157,7 +1164,8 @@ class External : public TypeTaggable {
   // Finalizer must implement `void operator()(Env env, T* data)`.
   template <typename Finalizer>
   static External New(napi_env env, T* data, Finalizer finalizeCallback);
-  // Finalizer must implement `void operator()(Env env, T* data, Hint* hint)`.
+  // Finalizer must implement `void operator()(Env env, T* data,
+  // Hint* hint)`.
   template <typename Finalizer, typename Hint>
   static External New(napi_env env,
                       T* data,
@@ -1712,7 +1720,8 @@ class Buffer : public Uint8Array {
                        T* data,
                        size_t length,
                        Finalizer finalizeCallback);
-  // Finalizer must implement `void operator()(Env env, T* data, Hint* hint)`.
+  // Finalizer must implement `void operator()(Env env, T* data,
+  // Hint* hint)`.
   template <typename Finalizer, typename Hint>
   static Buffer<T> New(napi_env env,
                        T* data,
@@ -1728,7 +1737,8 @@ class Buffer : public Uint8Array {
                              T* data,
                              size_t length,
                              Finalizer finalizeCallback);
-  // Finalizer must implement `void operator()(Env env, T* data, Hint* hint)`.
+  // Finalizer must implement `void operator()(Env env, T* data,
+  // Hint* hint)`.
   template <typename Finalizer, typename Hint>
   static Buffer<T> NewOrCopy(napi_env env,
                              T* data,
@@ -2825,6 +2835,7 @@ class ThreadSafeFunction {
                                 ContextType* context);
 
   // This API may only be called from the main thread.
+  // Finalizer must implement `void operator()(Env env)`.
   template <typename ResourceString, typename Finalizer>
   static ThreadSafeFunction New(napi_env env,
                                 const Function& callback,
@@ -2834,6 +2845,8 @@ class ThreadSafeFunction {
                                 Finalizer finalizeCallback);
 
   // This API may only be called from the main thread.
+  // Finalizer must implement
+  // `void operator()(Env env, FinalizerDataType* data)`.
   template <typename ResourceString,
             typename Finalizer,
             typename FinalizerDataType>
@@ -2846,6 +2859,8 @@ class ThreadSafeFunction {
                                 FinalizerDataType* data);
 
   // This API may only be called from the main thread.
+  // Finalizer must implement
+  // `void operator()(Env env, ContextType* context)`.
   template <typename ResourceString, typename ContextType, typename Finalizer>
   static ThreadSafeFunction New(napi_env env,
                                 const Function& callback,
@@ -2856,6 +2871,8 @@ class ThreadSafeFunction {
                                 Finalizer finalizeCallback);
 
   // This API may only be called from the main thread.
+  // Finalizer must implement `void operator()(Env env,
+  // FinalizerDataType* data, ContextType* context)`.
   template <typename ResourceString,
             typename ContextType,
             typename Finalizer,
@@ -2889,6 +2906,7 @@ class ThreadSafeFunction {
                                 ContextType* context);
 
   // This API may only be called from the main thread.
+  // Finalizer must implement `void operator()(Env env)`.
   template <typename ResourceString, typename Finalizer>
   static ThreadSafeFunction New(napi_env env,
                                 const Function& callback,
@@ -2899,6 +2917,8 @@ class ThreadSafeFunction {
                                 Finalizer finalizeCallback);
 
   // This API may only be called from the main thread.
+  // Finalizer must implement
+  // `void operator()(Env env, FinalizerDataType* data)`.
   template <typename ResourceString,
             typename Finalizer,
             typename FinalizerDataType>
@@ -2912,6 +2932,8 @@ class ThreadSafeFunction {
                                 FinalizerDataType* data);
 
   // This API may only be called from the main thread.
+  // Finalizer must implement
+  // `void operator()(Env env, ContextType* context)`.
   template <typename ResourceString, typename ContextType, typename Finalizer>
   static ThreadSafeFunction New(napi_env env,
                                 const Function& callback,
@@ -2923,6 +2945,8 @@ class ThreadSafeFunction {
                                 Finalizer finalizeCallback);
 
   // This API may only be called from the main thread.
+  // Finalizer must implement `void operator()(Env env,
+  // FinalizerDataType* data, ContextType* context)`.
   template <typename ResourceString,
             typename ContextType,
             typename Finalizer,
@@ -3067,6 +3091,8 @@ class TypedThreadSafeFunction {
   // This API may only be called from the main thread.
   // Creates a new threadsafe function with:
   //   Callback [missing] Resource [missing] Finalizer [passed]
+  // Finalizer must implement `void operator()(Env env,
+  // FinalizerDataType* data, ContextType* context)`.
   template <typename ResourceString,
             typename Finalizer,
             typename FinalizerDataType = void>
@@ -3082,6 +3108,8 @@ class TypedThreadSafeFunction {
   // This API may only be called from the main thread.
   // Creates a new threadsafe function with:
   //   Callback [missing] Resource [passed] Finalizer [passed]
+  // Finalizer must implement `void operator()(Env env,
+  // FinalizerDataType* data, ContextType* context)`.
   template <typename ResourceString,
             typename Finalizer,
             typename FinalizerDataType = void>
@@ -3124,6 +3152,8 @@ class TypedThreadSafeFunction {
   // This API may only be called from the main thread.
   // Creates a new threadsafe function with:
   //   Callback [passed] Resource [missing] Finalizer [passed]
+  // Finalizer must implement `void operator()(Env env,
+  // FinalizerDataType* data, ContextType* context)`.
   template <typename ResourceString,
             typename Finalizer,
             typename FinalizerDataType = void>
@@ -3140,6 +3170,8 @@ class TypedThreadSafeFunction {
   // This API may only be called from the main thread.
   // Creates a new threadsafe function with:
   //   Callback [passed] Resource [passed] Finalizer [passed]
+  // Finalizer must implement `void operator()(Env env,
+  // FinalizerDataType* data, ContextType* context)`.
   template <typename CallbackType,
             typename ResourceString,
             typename Finalizer,
