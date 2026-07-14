@@ -60,6 +60,13 @@ jobs:
     - name: Install dependencies
       run: |
         npm install
+    # node-gyp@12 (from package.json) supports Visual Studio 2026, but only
+    # node-gyp@13 emits the linker options that Node.js 26 builds require
+    # (older node-gyp trips LNK1117 on '/opt:lldltojobs'). Upgrade in place for
+    # Node.js >= 26; other versions keep node-gyp@12.
+    - name: Use node-gyp@13 for Node.js >= 26
+      if: matrix.node-version == '26.x'
+      run: npm install --no-save node-gyp@13
     - name: npm test
       shell: bash
       run: |
