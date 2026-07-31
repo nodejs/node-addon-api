@@ -1,5 +1,12 @@
 # node-addon-api Changelog
 
+## [8.9.1](https://github.com/nodejs/node-addon-api/compare/v8.9.0...v8.9.1) (2026-07-31)
+
+
+### Bug Fixes
+
+* fix vs2026 ICE compatibility ([#1739](https://github.com/nodejs/node-addon-api/issues/1739)) ([7223518](https://github.com/nodejs/node-addon-api/commit/722351807e21eaada1df16de1e959006c907a031))
+
 ## [8.9.0](https://github.com/nodejs/node-addon-api/compare/v8.8.0...v8.9.0) (2026-05-24)
 
 
