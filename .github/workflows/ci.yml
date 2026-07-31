@@ -10,7 +10,7 @@ permissions:
 
 jobs:
   test:
-    timeout-minutes: 30
+    timeout-minutes: 60
     strategy:
       fail-fast: false
       matrix:
@@ -55,6 +55,11 @@ jobs:
     - name: Install dependencies
       run: |
         npm install
+    # Node.js >= 26 requires node-gyp@13; older versions keep node-gyp@12
+    # (from package.json).
+    - name: Use node-gyp@13 for Node.js >= 26
+      if: matrix.node-version == '26.x'
+      run: npm install --no-save node-gyp@13
     - name: npm test
       run: |
         if [ "${{ matrix.api_version }}" = "experimental" ]; then

@@ -4681,48 +4681,71 @@ template <typename T>
 template <typename InstanceWrap<T>::InstanceVoidMethodCallback method>
 inline ClassPropertyDescriptor<T> InstanceWrap<T>::InstanceMethod(
     const char* utf8name, napi_property_attributes attributes, void* data) {
+#ifdef _MSC_VER
+  // MSVC (as of v145 / Visual Studio 2026) raises an internal compiler error
+  // (C1001) when a pointer-to-member-function is used as a non-type template
+  // parameter, as the static compile-time dispatch below does. On MSVC, fall
+  // back to the runtime overload, which passes `method` as a value instead.
+  return InstanceMethod(utf8name, method, attributes, data);
+#else
   napi_property_descriptor desc = napi_property_descriptor();
   desc.utf8name = utf8name;
   desc.method = details::TemplatedInstanceVoidCallback<T, method>;
   desc.data = data;
   desc.attributes = attributes;
   return desc;
+#endif
 }
 
 template <typename T>
 template <typename InstanceWrap<T>::InstanceMethodCallback method>
 inline ClassPropertyDescriptor<T> InstanceWrap<T>::InstanceMethod(
     const char* utf8name, napi_property_attributes attributes, void* data) {
+#ifdef _MSC_VER
+  // See the note in the InstanceMethod overload above.
+  return InstanceMethod(utf8name, method, attributes, data);
+#else
   napi_property_descriptor desc = napi_property_descriptor();
   desc.utf8name = utf8name;
   desc.method = details::TemplatedInstanceCallback<T, method>;
   desc.data = data;
   desc.attributes = attributes;
   return desc;
+#endif
 }
 
 template <typename T>
 template <typename InstanceWrap<T>::InstanceVoidMethodCallback method>
 inline ClassPropertyDescriptor<T> InstanceWrap<T>::InstanceMethod(
     Symbol name, napi_property_attributes attributes, void* data) {
+#ifdef _MSC_VER
+  // See the note in the InstanceMethod overload above.
+  return InstanceMethod(name, method, attributes, data);
+#else
   napi_property_descriptor desc = napi_property_descriptor();
   desc.name = name;
   desc.method = details::TemplatedInstanceVoidCallback<T, method>;
   desc.data = data;
   desc.attributes = attributes;
   return desc;
+#endif
 }
 
 template <typename T>
 template <typename InstanceWrap<T>::InstanceMethodCallback method>
 inline ClassPropertyDescriptor<T> InstanceWrap<T>::InstanceMethod(
     Symbol name, napi_property_attributes attributes, void* data) {
+#ifdef _MSC_VER
+  // See the note in the InstanceMethod overload above.
+  return InstanceMethod(name, method, attributes, data);
+#else
   napi_property_descriptor desc = napi_property_descriptor();
   desc.name = name;
   desc.method = details::TemplatedInstanceCallback<T, method>;
   desc.data = data;
   desc.attributes = attributes;
   return desc;
+#endif
 }
 
 template <typename T>
@@ -4768,6 +4791,10 @@ template <typename InstanceWrap<T>::InstanceGetterCallback getter,
           typename InstanceWrap<T>::InstanceSetterCallback setter>
 inline ClassPropertyDescriptor<T> InstanceWrap<T>::InstanceAccessor(
     const char* utf8name, napi_property_attributes attributes, void* data) {
+#ifdef _MSC_VER
+  // See the note in the InstanceMethod overload above.
+  return InstanceAccessor(utf8name, getter, setter, attributes, data);
+#else
   napi_property_descriptor desc = napi_property_descriptor();
   desc.utf8name = utf8name;
   desc.getter = details::TemplatedInstanceCallback<T, getter>;
@@ -4775,6 +4802,7 @@ inline ClassPropertyDescriptor<T> InstanceWrap<T>::InstanceAccessor(
   desc.data = data;
   desc.attributes = attributes;
   return desc;
+#endif
 }
 
 template <typename T>
@@ -4782,6 +4810,10 @@ template <typename InstanceWrap<T>::InstanceGetterCallback getter,
           typename InstanceWrap<T>::InstanceSetterCallback setter>
 inline ClassPropertyDescriptor<T> InstanceWrap<T>::InstanceAccessor(
     Symbol name, napi_property_attributes attributes, void* data) {
+#ifdef _MSC_VER
+  // See the note in the InstanceMethod overload above.
+  return InstanceAccessor(name, getter, setter, attributes, data);
+#else
   napi_property_descriptor desc = napi_property_descriptor();
   desc.name = name;
   desc.getter = details::TemplatedInstanceCallback<T, getter>;
@@ -4789,6 +4821,7 @@ inline ClassPropertyDescriptor<T> InstanceWrap<T>::InstanceAccessor(
   desc.data = data;
   desc.attributes = attributes;
   return desc;
+#endif
 }
 
 template <typename T>
