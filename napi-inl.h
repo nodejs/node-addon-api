@@ -1417,12 +1417,6 @@ inline MaybeOrValue<Symbol> Symbol::WellKnown(napi_env env,
 }
 
 inline MaybeOrValue<Symbol> Symbol::For(napi_env env,
-                                        const std::string& description) {
-  napi_value descriptionValue = String::New(env, description);
-  return Symbol::For(env, descriptionValue);
-}
-
-inline MaybeOrValue<Symbol> Symbol::For(napi_env env,
                                         std::string_view description) {
   napi_value descriptionValue = String::New(env, description);
   return Symbol::For(env, descriptionValue);

@@ -5,6 +5,21 @@
 #include "test_helper.h"
 using namespace Napi;
 
+namespace {
+
+class StringLike {
+ public:
+  explicit StringLike(const std::string& value) : _value(value) {}
+
+  operator std::string() const { return _value; }
+  operator std::string_view() const { return _value; }
+
+ private:
+  std::string _value;
+};
+
+}  // namespace
+
 Symbol CreateNewSymbolWithNoArgs(const Napi::CallbackInfo&) {
   return Napi::Symbol();
 }
@@ -47,6 +62,12 @@ Symbol FetchSymbolFromGlobalRegistryWithStringViewKey(
   return MaybeUnwrap(Napi::Symbol::For(info.Env(), std::string_view(key)));
 }
 
+Symbol FetchSymbolFromGlobalRegistryWithStringLikeKey(
+    const Napi::CallbackInfo& info) {
+  StringLike key(info[0].As<String>().Utf8Value());
+  return MaybeUnwrap(Napi::Symbol::For(info.Env(), key));
+}
+
 Symbol FetchSymbolFromGlobalRegistryWithCKey(const Napi::CallbackInfo& info) {
   String cppStringKey = info[0].As<String>();
   return MaybeUnwrap(
@@ -83,6 +104,8 @@ Object InitSymbol(Env env) {
       Function::New(env, FetchSymbolFromGlobalRegistryWithCppKey);
   exports["getSymbolFromGlobalRegistryWithStringViewKey"] =
       Function::New(env, FetchSymbolFromGlobalRegistryWithStringViewKey);
+  exports["getSymbolFromGlobalRegistryWithStringLikeKey"] =
+      Function::New(env, FetchSymbolFromGlobalRegistryWithStringLikeKey);
   exports["testUndefinedSymbolCanBeCreated"] =
       Function::New(env, TestUndefinedSymbolsCanBeCreated);
   exports["testNullSymbolCanBeCreated"] =

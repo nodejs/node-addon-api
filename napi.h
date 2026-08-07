@@ -825,9 +825,6 @@ class Symbol : public Name {
   /// Get a public Symbol (e.g. Symbol.iterator).
   static MaybeOrValue<Symbol> WellKnown(napi_env, const std::string& name);
 
-  // Create a symbol in the global registry, UTF-8 Encoded cpp string
-  static MaybeOrValue<Symbol> For(napi_env env, const std::string& description);
-
   // Create a symbol in the global registry, UTF-8 encoded cpp string view
   static MaybeOrValue<Symbol> For(napi_env env, std::string_view description);
 

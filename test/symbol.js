@@ -55,6 +55,7 @@ function test (binding) {
   assertCanCreateOrFetchGlobalSymbols('data', binding.symbol.getSymbolFromGlobalRegistry);
   assertCanCreateOrFetchGlobalSymbols('CppKey', binding.symbol.getSymbolFromGlobalRegistryWithCppKey);
   assertCanCreateOrFetchGlobalSymbols('StringViewKey', binding.symbol.getSymbolFromGlobalRegistryWithStringViewKey);
+  assertCanCreateOrFetchGlobalSymbols('StringLikeKey', binding.symbol.getSymbolFromGlobalRegistryWithStringLikeKey);
   assertCanCreateOrFetchGlobalSymbols('CKey', binding.symbol.getSymbolFromGlobalRegistryWithCKey);
 
   assert(binding.symbol.createNewSymbolWithNoArgs() === undefined);
