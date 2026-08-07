@@ -1,11 +1,17 @@
 
 # Enable running tests with specific filter conditions:
 
+The `--filter` option limits which test modules are executed by `node test`.
+The default `pretest` step is still `node-gyp rebuild -C test`, so
+`npm test --filter=...` still performs a full rebuild of the test addon
+targets before the filtered tests run.
+
 ### Example:
 
-  - compile and run only tests on objectwrap.cc and objectwrap.js
+  - perform the default test rebuild, then run only the `objectwrap`
+    test module
 ```
-    npm run test --filter=objectwrap
+    npm test --filter=objectwrap
 ```
 
 
@@ -13,16 +19,20 @@
 
 ### Example:
 
-  - compile and run all tests files ending with reference -> function_reference.cc object_reference.cc reference.cc
+  - perform the default test rebuild, then run all test modules ending
+    with `reference`
+    (`function_reference`, `object_reference`, and `reference`)
 ```
-    npm run test --filter=*reference
+    npm test --filter=*reference
 ```
 
 # Multiple filter conditions are also allowed
 
 ### Example:
 
-  - compile and run all tests under folders threadsafe_function and typed_threadsafe_function and also the objectwrap.cc file
+  - perform the default test rebuild, then run all tests under
+    `threadsafe_function` and `typed_threadsafe_function`, and also the
+    `objectwrap` test module
 ```
-    npm run test --filter='*function objectwrap'
+    npm test --filter='*function objectwrap'
 ```

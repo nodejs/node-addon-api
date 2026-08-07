@@ -2,6 +2,8 @@
 
 const assert = require('assert');
 
+let runSharedArrayBufferTests = true;
+
 module.exports = require('./common').runTest(test);
 
 function test (binding) {
@@ -61,6 +63,9 @@ function test (binding) {
 
       const b = binding.typedarray.getTypedArrayBuffer(t);
       assert.ok(b instanceof ArrayBuffer);
+      const bAsValue = binding.typedarray.getTypedArrayBufferValue(t);
+      assert.ok(bAsValue instanceof ArrayBuffer);
+      assert.strictEqual(b, bAsValue);
     } catch (e) {
       console.log(data);
       throw e;
@@ -100,4 +105,35 @@ function test (binding) {
   assert.throws(() => {
     binding.typedarray.createInvalidTypedArray();
   }, /Invalid (pointer passed as )?argument/);
+
+  if (binding.hasSharedArrayBuffer && runSharedArrayBufferTests) {
+    const length = 4;
+    const sab = new SharedArrayBuffer(length);
+    /** @type {Int8Array<SharedArrayBuffer>} */
+    let t;
+
+    try {
+      t = binding.typedarray.createInt8TypedArrayFromSharedArrayBuffer(sab);
+    } catch (ex) {
+      if (ex.message === 'Invalid argument') {
+        console.warn(`The current version of Node.js (${process.version}) does not support creating TypedArrays on SharedArrayBuffers; skipping tests.`);
+        runSharedArrayBufferTests = false;
+        return;
+      }
+
+      throw ex;
+    }
+
+    assert.ok(t instanceof Int8Array);
+    assert.strictEqual(binding.typedarray.getTypedArrayType(t), 'int8');
+    assert.strictEqual(binding.typedarray.getTypedArrayLength(t), length);
+    for (let i = 0; i < length; i++) {
+      const value = 2 ** (i + 1);
+      t[i] = value;
+      assert.strictEqual(binding.typedarray.getTypedArrayElement(t, i), value);
+    }
+    const bAsValue = binding.typedarray.getTypedArrayBufferValue(t);
+    assert.ok(bAsValue instanceof SharedArrayBuffer);
+    assert.strictEqual(bAsValue, sab);
+  }
 }

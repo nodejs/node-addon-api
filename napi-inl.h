@@ -1422,6 +1422,12 @@ inline MaybeOrValue<Symbol> Symbol::For(napi_env env,
   return Symbol::For(env, descriptionValue);
 }
 
+inline MaybeOrValue<Symbol> Symbol::For(napi_env env,
+                                        std::string_view description) {
+  napi_value descriptionValue = String::New(env, description);
+  return Symbol::For(env, descriptionValue);
+}
+
 inline MaybeOrValue<Symbol> Symbol::For(napi_env env, const char* description) {
   napi_value descriptionValue = String::New(env, description);
   return Symbol::For(env, descriptionValue);
@@ -2588,6 +2594,14 @@ inline Napi::ArrayBuffer TypedArray::ArrayBuffer() const {
   return Napi::ArrayBuffer(_env, arrayBuffer);
 }
 
+inline Napi::Value TypedArray::Buffer() const {
+  napi_value arrayBuffer;
+  napi_status status = napi_get_typedarray_info(
+      _env, _value, nullptr, nullptr, nullptr, &arrayBuffer, nullptr);
+  NAPI_THROW_IF_FAILED(_env, status, Napi::Value());
+  return Napi::Value(_env, arrayBuffer);
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 // TypedArrayOf<T> class
 ////////////////////////////////////////////////////////////////////////////////
@@ -2638,6 +2652,28 @@ inline TypedArrayOf<T> TypedArrayOf<T>::New(napi_env env,
       reinterpret_cast<T*>(reinterpret_cast<uint8_t*>(arrayBuffer.Data()) +
                            bufferOffset));
 }
+
+#ifdef NODE_API_EXPERIMENTAL_HAS_SHAREDARRAYBUFFER
+template <typename T>
+inline TypedArrayOf<T> TypedArrayOf<T>::New(napi_env env,
+                                            size_t elementLength,
+                                            Napi::SharedArrayBuffer arrayBuffer,
+                                            size_t bufferOffset,
+                                            napi_typedarray_type type) {
+  napi_value value;
+  napi_status status = napi_create_typedarray(
+      env, type, elementLength, arrayBuffer, bufferOffset, &value);
+  NAPI_THROW_IF_FAILED(env, status, TypedArrayOf<T>());
+
+  return TypedArrayOf<T>(
+      env,
+      value,
+      type,
+      elementLength,
+      reinterpret_cast<T*>(reinterpret_cast<uint8_t*>(arrayBuffer.Data()) +
+                           bufferOffset));
+}
+#endif
 
 template <typename T>
 inline TypedArrayOf<T>::TypedArrayOf() : TypedArray(), _data(nullptr) {}
@@ -4645,48 +4681,71 @@ template <typename T>
 template <typename InstanceWrap<T>::InstanceVoidMethodCallback method>
 inline ClassPropertyDescriptor<T> InstanceWrap<T>::InstanceMethod(
     const char* utf8name, napi_property_attributes attributes, void* data) {
+#ifdef _MSC_VER
+  // MSVC (as of v145 / Visual Studio 2026) raises an internal compiler error
+  // (C1001) when a pointer-to-member-function is used as a non-type template
+  // parameter, as the static compile-time dispatch below does. On MSVC, fall
+  // back to the runtime overload, which passes `method` as a value instead.
+  return InstanceMethod(utf8name, method, attributes, data);
+#else
   napi_property_descriptor desc = napi_property_descriptor();
   desc.utf8name = utf8name;
   desc.method = details::TemplatedInstanceVoidCallback<T, method>;
   desc.data = data;
   desc.attributes = attributes;
   return desc;
+#endif
 }
 
 template <typename T>
 template <typename InstanceWrap<T>::InstanceMethodCallback method>
 inline ClassPropertyDescriptor<T> InstanceWrap<T>::InstanceMethod(
     const char* utf8name, napi_property_attributes attributes, void* data) {
+#ifdef _MSC_VER
+  // See the note in the InstanceMethod overload above.
+  return InstanceMethod(utf8name, method, attributes, data);
+#else
   napi_property_descriptor desc = napi_property_descriptor();
   desc.utf8name = utf8name;
   desc.method = details::TemplatedInstanceCallback<T, method>;
   desc.data = data;
   desc.attributes = attributes;
   return desc;
+#endif
 }
 
 template <typename T>
 template <typename InstanceWrap<T>::InstanceVoidMethodCallback method>
 inline ClassPropertyDescriptor<T> InstanceWrap<T>::InstanceMethod(
     Symbol name, napi_property_attributes attributes, void* data) {
+#ifdef _MSC_VER
+  // See the note in the InstanceMethod overload above.
+  return InstanceMethod(name, method, attributes, data);
+#else
   napi_property_descriptor desc = napi_property_descriptor();
   desc.name = name;
   desc.method = details::TemplatedInstanceVoidCallback<T, method>;
   desc.data = data;
   desc.attributes = attributes;
   return desc;
+#endif
 }
 
 template <typename T>
 template <typename InstanceWrap<T>::InstanceMethodCallback method>
 inline ClassPropertyDescriptor<T> InstanceWrap<T>::InstanceMethod(
     Symbol name, napi_property_attributes attributes, void* data) {
+#ifdef _MSC_VER
+  // See the note in the InstanceMethod overload above.
+  return InstanceMethod(name, method, attributes, data);
+#else
   napi_property_descriptor desc = napi_property_descriptor();
   desc.name = name;
   desc.method = details::TemplatedInstanceCallback<T, method>;
   desc.data = data;
   desc.attributes = attributes;
   return desc;
+#endif
 }
 
 template <typename T>
@@ -4732,6 +4791,10 @@ template <typename InstanceWrap<T>::InstanceGetterCallback getter,
           typename InstanceWrap<T>::InstanceSetterCallback setter>
 inline ClassPropertyDescriptor<T> InstanceWrap<T>::InstanceAccessor(
     const char* utf8name, napi_property_attributes attributes, void* data) {
+#ifdef _MSC_VER
+  // See the note in the InstanceMethod overload above.
+  return InstanceAccessor(utf8name, getter, setter, attributes, data);
+#else
   napi_property_descriptor desc = napi_property_descriptor();
   desc.utf8name = utf8name;
   desc.getter = details::TemplatedInstanceCallback<T, getter>;
@@ -4739,6 +4802,7 @@ inline ClassPropertyDescriptor<T> InstanceWrap<T>::InstanceAccessor(
   desc.data = data;
   desc.attributes = attributes;
   return desc;
+#endif
 }
 
 template <typename T>
@@ -4746,6 +4810,10 @@ template <typename InstanceWrap<T>::InstanceGetterCallback getter,
           typename InstanceWrap<T>::InstanceSetterCallback setter>
 inline ClassPropertyDescriptor<T> InstanceWrap<T>::InstanceAccessor(
     Symbol name, napi_property_attributes attributes, void* data) {
+#ifdef _MSC_VER
+  // See the note in the InstanceMethod overload above.
+  return InstanceAccessor(name, getter, setter, attributes, data);
+#else
   napi_property_descriptor desc = napi_property_descriptor();
   desc.name = name;
   desc.getter = details::TemplatedInstanceCallback<T, getter>;
@@ -4753,6 +4821,7 @@ inline ClassPropertyDescriptor<T> InstanceWrap<T>::InstanceAccessor(
   desc.data = data;
   desc.attributes = attributes;
   return desc;
+#endif
 }
 
 template <typename T>

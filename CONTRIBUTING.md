@@ -70,27 +70,37 @@ npm test --NAPI_VERSION=X
 
 where X is the version of Node-API you want to target.
 
-To run a specific unit test, filter conditions are available
+To run a subset of the test suite, filter conditions are available.
+The `--filter` option limits which JavaScript test modules are executed by
+`node test`. The default `pretest` step is still `node-gyp rebuild -C test`,
+so `npm test --filter=...` still performs a full rebuild of the test addon
+targets before the filtered tests run.
 
 **Example:**
-  compile and run only tests on objectwrap.cc and objectwrap.js
+  perform the default test rebuild, then run only the `objectwrap` test module
   ```
-    npm run unit --filter=objectwrap
+    npm test --filter=objectwrap
   ```
 
-Multiple unit tests cane be selected with wildcards
+Multiple test modules can be selected with wildcards.
 
 **Example:**
-compile and run all test files ending with "reference" -> function_reference.cc, object_reference.cc, reference.cc
+perform the default test rebuild, then run all test modules ending with
+`reference`:
+`function_reference`, `object_reference`, and `reference`
  ```
-    npm run unit --filter=*reference
+    npm test --filter=*reference
  ```
 
-Multiple filter conditions can be joined to broaden the test selection
+Multiple filter conditions can be joined to broaden the test selection.
 
 **Example:**
- compile and run all tests under folders threadsafe_function and typed_threadsafe_function and also the objectwrap.cc file
-    npm run unit --filter='*function objectwrap'
+ perform the default test rebuild, then run all tests under
+ `threadsafe_function` and `typed_threadsafe_function`, and also the
+ `objectwrap` test module
+ ```
+    npm test --filter='*function objectwrap'
+ ```
 
 As an alternative, `ninja` can be used to build the tests. Please
 follow the instructions in [Build with ninja](doc/contributing/build_with_ninja.md).
@@ -203,4 +213,3 @@ The downside of this approach is the following:
 authors might not find the right patterns and instead implement things themselves
 - There might be greater friction for the Node-API WG in evolving APIs since the
 ecosystem would have taken dependencies on the API shape of **node-addon-api**
-

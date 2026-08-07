@@ -77,6 +77,34 @@ static Napi::TypedArrayOf Napi::TypedArrayOf::New(napi_env env,
 
 Returns a new `Napi::TypedArrayOf` instance.
 
+### New
+
+Wraps the provided `Napi::SharedArrayBuffer` into a new `Napi::TypedArray` instance.
+
+The array `type` parameter can normally be omitted (because it is inferred from
+the template parameter `T`), except when creating a "clamped" array.
+
+```cpp
+static Napi::TypedArrayOf Napi::TypedArrayOf::New(napi_env env,
+                        size_t elementLength,
+                        Napi::SharedArrayBuffer arrayBuffer,
+                        size_t bufferOffset,
+                        napi_typedarray_type type);
+```
+
+- `[in] env`: The environment in which to create the `Napi::TypedArrayOf` instance.
+- `[in] elementLength`: The length to array, in elements.
+- `[in] arrayBuffer`: The backing `Napi::SharedArrayBuffer` instance.
+- `[in] bufferOffset`: The offset into the `Napi::SharedArrayBuffer` where the array starts,
+                       in bytes.
+- `[in] type`: The type of array to allocate (optional).
+
+Returns a new `Napi::TypedArrayOf` instance.
+
+**NOTE**: The support for this overload of `Napi::TypedArrayOf::New()` is only
+available when using `NAPI_EXPERIMENTAL` and building against Node.js headers
+that supports this feature.
+
 ### Constructor
 
 Initializes an empty instance of the `Napi::TypedArrayOf` class.

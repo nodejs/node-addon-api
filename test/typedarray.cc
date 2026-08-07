@@ -297,6 +297,11 @@ Value GetTypedArrayBuffer(const CallbackInfo& info) {
   return array.ArrayBuffer();
 }
 
+Value GetTypedArrayBufferValue(const CallbackInfo& info) {
+  TypedArray array = info[0].As<TypedArray>();
+  return array.Buffer();
+}
+
 Value GetTypedArrayElement(const CallbackInfo& info) {
   TypedArray array = info[0].As<TypedArray>();
   size_t index = info[1].As<Number>().Uint32Value();
@@ -389,12 +394,30 @@ void SetTypedArrayElement(const CallbackInfo& info) {
   }
 }
 
+#ifdef NODE_API_EXPERIMENTAL_HAS_SHAREDARRAYBUFFER
+Value CreateInt8TypedArrayFromSharedArrayBuffer(const CallbackInfo& info) {
+  auto buffer = info[0].As<SharedArrayBuffer>();
+  size_t length = buffer.ByteLength();
+
+  return NAPI_TYPEDARRAY_NEW_BUFFER(Int8Array,
+                                    info.Env(),
+                                    length,
+                                    buffer.As<SharedArrayBuffer>(),
+                                    0,
+                                    napi_int8_array);
+}
+#endif
+
 }  // end anonymous namespace
 
 Object InitTypedArray(Env env) {
   Object exports = Object::New(env);
 
   exports["createTypedArray"] = Function::New(env, CreateTypedArray);
+#ifdef NODE_API_EXPERIMENTAL_HAS_SHAREDARRAYBUFFER
+  exports["createInt8TypedArrayFromSharedArrayBuffer"] =
+      Function::New(env, CreateInt8TypedArrayFromSharedArrayBuffer);
+#endif
   exports["createInvalidTypedArray"] =
       Function::New(env, CreateInvalidTypedArray);
   exports["getTypedArrayType"] = Function::New(env, GetTypedArrayType);
@@ -405,6 +428,8 @@ Object InitTypedArray(Env env) {
   exports["getTypedArrayByteLength"] =
       Function::New(env, GetTypedArrayByteLength);
   exports["getTypedArrayBuffer"] = Function::New(env, GetTypedArrayBuffer);
+  exports["getTypedArrayBufferValue"] =
+      Function::New(env, GetTypedArrayBufferValue);
   exports["getTypedArrayElement"] = Function::New(env, GetTypedArrayElement);
   exports["setTypedArrayElement"] = Function::New(env, SetTypedArrayElement);
   exports["checkBufferContent"] = Function::New(env, CheckBufferContent);

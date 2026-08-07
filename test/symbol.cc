@@ -1,4 +1,7 @@
 #include <napi.h>
+
+#include <string_view>
+
 #include "test_helper.h"
 using namespace Napi;
 
@@ -37,6 +40,13 @@ Symbol FetchSymbolFromGlobalRegistryWithCppKey(const Napi::CallbackInfo& info) {
   return MaybeUnwrap(Napi::Symbol::For(info.Env(), cppStringKey.Utf8Value()));
 }
 
+Symbol FetchSymbolFromGlobalRegistryWithStringViewKey(
+    const Napi::CallbackInfo& info) {
+  String cppStringKey = info[0].As<String>();
+  std::string key = cppStringKey.Utf8Value();
+  return MaybeUnwrap(Napi::Symbol::For(info.Env(), std::string_view(key)));
+}
+
 Symbol FetchSymbolFromGlobalRegistryWithCKey(const Napi::CallbackInfo& info) {
   String cppStringKey = info[0].As<String>();
   return MaybeUnwrap(
@@ -71,6 +81,8 @@ Object InitSymbol(Env env) {
       Function::New(env, FetchSymbolFromGlobalRegistryWithCKey);
   exports["getSymbolFromGlobalRegistryWithCppKey"] =
       Function::New(env, FetchSymbolFromGlobalRegistryWithCppKey);
+  exports["getSymbolFromGlobalRegistryWithStringViewKey"] =
+      Function::New(env, FetchSymbolFromGlobalRegistryWithStringViewKey);
   exports["testUndefinedSymbolCanBeCreated"] =
       Function::New(env, TestUndefinedSymbolsCanBeCreated);
   exports["testNullSymbolCanBeCreated"] =

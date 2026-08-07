@@ -1,5 +1,27 @@
 # node-addon-api Changelog
 
+## [8.9.1](https://github.com/nodejs/node-addon-api/compare/v8.9.0...v8.9.1) (2026-07-31)
+
+
+### Bug Fixes
+
+* fix vs2026 ICE compatibility ([#1739](https://github.com/nodejs/node-addon-api/issues/1739)) ([7223518](https://github.com/nodejs/node-addon-api/commit/722351807e21eaada1df16de1e959006c907a031))
+
+## [8.9.0](https://github.com/nodejs/node-addon-api/compare/v8.8.0...v8.9.0) (2026-05-24)
+
+
+### Features
+
+* add support for SharedArrayBuffer in TypedArray and TypedArrayOf&lt;T&gt; ([#1731](https://github.com/nodejs/node-addon-api/issues/1731)) ([00b95ef](https://github.com/nodejs/node-addon-api/commit/00b95efea6522980e9661a729a59b926ecf5c6b6))
+
+## [8.8.0](https://github.com/nodejs/node-addon-api/compare/v8.7.0...v8.8.0) (2026-05-13)
+
+
+### Features
+
+* add std::string_view overload for Symbol::For ([#1722](https://github.com/nodejs/node-addon-api/issues/1722)) ([f65113b](https://github.com/nodejs/node-addon-api/commit/f65113b6ce54271b0a26f97fc624b5574b64a048))
+* add String::New overload for string_view ([#1706](https://github.com/nodejs/node-addon-api/issues/1706)) ([0add130](https://github.com/nodejs/node-addon-api/commit/0add1306f60b81432da94d13683aa0b06aa52925))
+
 ## [8.7.0](https://github.com/nodejs/node-addon-api/compare/v8.6.0...v8.7.0) (2026-03-23)
 
 

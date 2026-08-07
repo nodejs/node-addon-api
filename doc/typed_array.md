@@ -43,6 +43,21 @@ Napi::ArrayBuffer Napi::TypedArray::ArrayBuffer() const;
 
 Returns the backing array buffer.
 
+**NOTE**: If the `Napi::TypedArray` is not backed by an `Napi::ArrayBuffer`,
+this method will terminate the process with a fatal error when using
+`NODE_ADDON_API_ENABLE_TYPE_CHECK_ON_AS` or exhibit undefined behavior
+otherwise. Use `Buffer()` instead to get the backing buffer without assuming its
+type.
+
+### Buffer
+
+```cpp
+Napi::Value Napi::TypedArray::Buffer() const;
+```
+
+Returns the backing array buffer as a generic `Napi::Value`, allowing optional
+type-checking with `Is*()` and type-casting with `As<>()` methods.
+
 ### ElementSize
 
 ```cpp
