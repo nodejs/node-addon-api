@@ -70,9 +70,9 @@ New(napi_env env,
   opportunity for cleaning up after the threads e.g. by calling
   `uv_thread_join()`. It is important that, aside from the main loop thread,
   there be no threads left using the thread-safe function after the finalize
-  callback completes. Must implement `void operator()(Env env, DataType* data,
-  ContextType* hint)`, skipping `data` or `hint` if they are not provided. Can
-  be retrieved via `GetContext()`.
+  callback completes. Must implement `void operator()(Env env,
+  FinalizerDataType* data, ContextType* context)`, skipping `data` or `context`
+  if they are not provided. Can be retrieved via `GetContext()`.
 - `[optional] data`: Data to be passed to `finalizeCallback`.
 
 Returns a non-empty `Napi::ThreadSafeFunction` instance.
