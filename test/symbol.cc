@@ -41,21 +41,18 @@ struct StringReferenceLike {
   std::string_view viewValue;
 };
 
-struct ImplicitStringViewLike {
-  operator std::string_view() const { return value; }
-
-  std::string_view value;
-};
-
-struct ExplicitStringViewLike {
-  explicit operator std::string_view() const { return value; }
-
-  std::string_view value;
-};
-
-struct ImplicitAndExplicitStringViewLike : ImplicitStringViewLike,
-                                           ExplicitStringViewLike {
+struct ImplicitAndExplicitStringViewLike {
   operator std::string() const { return "unexpected-string-key"; }
+
+  // Copy-initialization must ignore the explicit conversion below.
+  // Direct-initialization would prefer it for a non-const lvalue.
+  operator std::string_view() const& { return value; }
+
+  explicit operator std::string_view() & {
+    return "unexpected-explicit-string-view-key";
+  }
+
+  std::string_view value;
 };
 
 }  // namespace
@@ -150,10 +147,7 @@ Symbol FetchSymbolFromGlobalRegistryWithStringReferenceKey(
 Symbol FetchSymbolFromGlobalRegistryWithImplicitViewKey(
     const Napi::CallbackInfo& info) {
   std::string value = info[0].As<String>().Utf8Value();
-  ImplicitAndExplicitStringViewLike key;
-  static_cast<ImplicitStringViewLike&>(key).value = value;
-  static_cast<ExplicitStringViewLike&>(key).value =
-      "unexpected-explicit-string-view-key";
+  ImplicitAndExplicitStringViewLike key{value};
   return MaybeUnwrap(Symbol::For(info.Env(), key));
 }
 
