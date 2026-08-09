@@ -42,6 +42,7 @@ function test (binding) {
     const symbTwo = fetchFunction(symbol);
     assert(symbOne && symbTwo);
     assert(symbOne === symbTwo);
+    assert(symbOne === Symbol.for(symbol));
   }
 
   assertCanCreateSymbol('testing');
@@ -55,7 +56,27 @@ function test (binding) {
   assertCanCreateOrFetchGlobalSymbols('data', binding.symbol.getSymbolFromGlobalRegistry);
   assertCanCreateOrFetchGlobalSymbols('CppKey', binding.symbol.getSymbolFromGlobalRegistryWithCppKey);
   assertCanCreateOrFetchGlobalSymbols('StringViewKey', binding.symbol.getSymbolFromGlobalRegistryWithStringViewKey);
-  assertCanCreateOrFetchGlobalSymbols('StringLikeKey', binding.symbol.getSymbolFromGlobalRegistryWithStringLikeKey);
+  assertCanCreateOrFetchGlobalSymbols(
+    'StringLikeKey',
+    binding.symbol.getSymbolFromGlobalRegistryWithStringLikeKey);
+  assertCanCreateOrFetchGlobalSymbols(
+    'RvalueStringLikeKey',
+    binding.symbol.getSymbolFromGlobalRegistryWithRvalueStringLikeKey);
+  assertCanCreateOrFetchGlobalSymbols(
+    'StringOnlyLikeKey',
+    binding.symbol.getSymbolFromGlobalRegistryWithStringOnlyLikeKey);
+  assertCanCreateOrFetchGlobalSymbols(
+    'BothBasesKey',
+    binding.symbol.getSymbolFromGlobalRegistryWithBothBasesKey);
+  assertCanCreateOrFetchGlobalSymbols(
+    'ViewAndNapiStringKey',
+    binding.symbol.getSymbolFromGlobalRegistryWithViewAndNapiStringKey);
+  assertCanCreateOrFetchGlobalSymbols(
+    'StringReferenceKey',
+    binding.symbol.getSymbolFromGlobalRegistryWithStringReferenceKey);
+  assertCanCreateOrFetchGlobalSymbols(
+    'ImplicitViewKey',
+    binding.symbol.getSymbolFromGlobalRegistryWithImplicitViewKey);
   assertCanCreateOrFetchGlobalSymbols('CKey', binding.symbol.getSymbolFromGlobalRegistryWithCKey);
 
   assert(binding.symbol.createNewSymbolWithNoArgs() === undefined);

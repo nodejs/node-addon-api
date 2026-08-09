@@ -1,21 +1,61 @@
 #include <napi.h>
 
 #include <string_view>
+#include <utility>
 
 #include "test_helper.h"
 using namespace Napi;
 
 namespace {
 
-class StringLike {
- public:
-  explicit StringLike(const std::string& value) : _value(value) {}
+struct StringLike {
+  operator std::string() const { return "unexpected-string-key"; }
+  operator std::string_view() const { return value; }
 
-  operator std::string() const { return _value; }
-  operator std::string_view() const { return _value; }
+  std::string value;
+};
 
- private:
-  std::string _value;
+struct RvalueStringLike {
+  operator std::string() && { return "unexpected-rvalue-string-key"; }
+  operator std::string_view() && { return value; }
+
+  std::string value;
+};
+
+struct StringOnlyLike {
+  operator std::string() const { return value; }
+
+  std::string value;
+};
+
+struct BothBases : std::string, std::string_view {};
+
+struct ViewAndNapiString : std::string_view, Napi::String {};
+
+struct StringReferenceLike {
+  operator std::string&() const { return stringValue; }
+  operator std::string&&() const { return std::move(stringValue); }
+  operator std::string_view() const { return viewValue; }
+
+  mutable std::string stringValue;
+  std::string_view viewValue;
+};
+
+struct ImplicitStringViewLike {
+  operator std::string_view() const { return value; }
+
+  std::string_view value;
+};
+
+struct ExplicitStringViewLike {
+  explicit operator std::string_view() const { return value; }
+
+  std::string_view value;
+};
+
+struct ImplicitAndExplicitStringViewLike : ImplicitStringViewLike,
+                                           ExplicitStringViewLike {
+  operator std::string() const { return "unexpected-string-key"; }
 };
 
 }  // namespace
@@ -64,8 +104,57 @@ Symbol FetchSymbolFromGlobalRegistryWithStringViewKey(
 
 Symbol FetchSymbolFromGlobalRegistryWithStringLikeKey(
     const Napi::CallbackInfo& info) {
-  StringLike key(info[0].As<String>().Utf8Value());
+  StringLike key{info[0].As<String>().Utf8Value()};
   return MaybeUnwrap(Napi::Symbol::For(info.Env(), key));
+}
+
+Symbol FetchSymbolFromGlobalRegistryWithRvalueStringLikeKey(
+    const Napi::CallbackInfo& info) {
+  return MaybeUnwrap(Napi::Symbol::For(
+      info.Env(), RvalueStringLike{info[0].As<String>().Utf8Value()}));
+}
+
+Symbol FetchSymbolFromGlobalRegistryWithStringOnlyLikeKey(
+    const Napi::CallbackInfo& info) {
+  StringOnlyLike key{info[0].As<String>().Utf8Value()};
+  return MaybeUnwrap(Napi::Symbol::For(info.Env(), key));
+}
+
+Symbol FetchSymbolFromGlobalRegistryWithBothBasesKey(
+    const Napi::CallbackInfo& info) {
+  std::string value = info[0].As<String>().Utf8Value();
+  BothBases key;
+  static_cast<std::string&>(key) = "unexpected-string-key";
+  static_cast<std::string_view&>(key) = value;
+  return MaybeUnwrap(Symbol::For(info.Env(), key));
+}
+
+Symbol FetchSymbolFromGlobalRegistryWithViewAndNapiStringKey(
+    const Napi::CallbackInfo& info) {
+  Env env = info.Env();
+  std::string value = info[0].As<String>().Utf8Value();
+  ViewAndNapiString key;
+  static_cast<std::string_view&>(key) = value;
+  static_cast<Napi::String&>(key) =
+      Napi::String::New(env, "unexpected-napi-string-key");
+  return MaybeUnwrap(Symbol::For(env, key));
+}
+
+Symbol FetchSymbolFromGlobalRegistryWithStringReferenceKey(
+    const Napi::CallbackInfo& info) {
+  std::string value = info[0].As<String>().Utf8Value();
+  StringReferenceLike key{"unexpected-string-reference-key", value};
+  return MaybeUnwrap(Symbol::For(info.Env(), key));
+}
+
+Symbol FetchSymbolFromGlobalRegistryWithImplicitViewKey(
+    const Napi::CallbackInfo& info) {
+  std::string value = info[0].As<String>().Utf8Value();
+  ImplicitAndExplicitStringViewLike key;
+  static_cast<ImplicitStringViewLike&>(key).value = value;
+  static_cast<ExplicitStringViewLike&>(key).value =
+      "unexpected-explicit-string-view-key";
+  return MaybeUnwrap(Symbol::For(info.Env(), key));
 }
 
 Symbol FetchSymbolFromGlobalRegistryWithCKey(const Napi::CallbackInfo& info) {
@@ -106,6 +195,18 @@ Object InitSymbol(Env env) {
       Function::New(env, FetchSymbolFromGlobalRegistryWithStringViewKey);
   exports["getSymbolFromGlobalRegistryWithStringLikeKey"] =
       Function::New(env, FetchSymbolFromGlobalRegistryWithStringLikeKey);
+  exports["getSymbolFromGlobalRegistryWithRvalueStringLikeKey"] =
+      Function::New(env, FetchSymbolFromGlobalRegistryWithRvalueStringLikeKey);
+  exports["getSymbolFromGlobalRegistryWithStringOnlyLikeKey"] =
+      Function::New(env, FetchSymbolFromGlobalRegistryWithStringOnlyLikeKey);
+  exports["getSymbolFromGlobalRegistryWithBothBasesKey"] =
+      Function::New(env, FetchSymbolFromGlobalRegistryWithBothBasesKey);
+  exports["getSymbolFromGlobalRegistryWithViewAndNapiStringKey"] =
+      Function::New(env, FetchSymbolFromGlobalRegistryWithViewAndNapiStringKey);
+  exports["getSymbolFromGlobalRegistryWithStringReferenceKey"] =
+      Function::New(env, FetchSymbolFromGlobalRegistryWithStringReferenceKey);
+  exports["getSymbolFromGlobalRegistryWithImplicitViewKey"] =
+      Function::New(env, FetchSymbolFromGlobalRegistryWithImplicitViewKey);
   exports["testUndefinedSymbolCanBeCreated"] =
       Function::New(env, TestUndefinedSymbolsCanBeCreated);
   exports["testNullSymbolCanBeCreated"] =
