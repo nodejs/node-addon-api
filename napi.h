@@ -791,7 +791,7 @@ class String : public Name {
 namespace details {
 
 // This overload set must mirror the non-template Symbol::For overloads.
-struct symbol_for_overload_probe {
+struct string_convertible_probe {
   static void select(const std::string&);
   static void select(std::string_view);
   static void select(const char*);
@@ -805,7 +805,7 @@ struct has_unambiguous_symbol_for_overload : std::false_type {};
 template <typename T>
 struct has_unambiguous_symbol_for_overload<
     T,
-    std::void_t<decltype(symbol_for_overload_probe::select(std::declval<T>()))>>
+    std::void_t<decltype(string_convertible_probe::select(std::declval<T>()))>>
     : std::true_type {};
 
 // Enable the template overload only for string-like arguments that have no
