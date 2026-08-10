@@ -20,6 +20,8 @@
 #include <chrono>
 #include <string>
 #include <string_view>
+#include <type_traits>
+#include <utility>
 #include <vector>
 
 // VS2015 RTM has bugs with constexpr, so require min of VS2015 Update 3 (known
@@ -786,6 +788,41 @@ class String : public Name {
       const;  ///< Converts a String value to a UTF-16 encoded C++ string.
 };
 
+namespace details {
+
+// This overload set must mirror the non-template Symbol::For overloads.
+struct string_convertible_probe {
+  static void select(const std::string&);
+  static void select(std::string_view);
+  static void select(const char*);
+  static void select(String);
+  static void select(napi_value);
+};
+
+template <typename T, typename = void>
+struct has_unambiguous_string_convertible_overload : std::false_type {};
+
+template <typename T>
+struct has_unambiguous_string_convertible_overload<
+    T,
+    std::void_t<decltype(string_convertible_probe::select(std::declval<T>()))>>
+    : std::true_type {};
+
+// Enable the template overload only for string-like arguments that have no
+// unique best match among the non-template Symbol::For overloads.
+//
+// Exclude nullptr because it matches the pointer overloads equally well and
+// cannot safely initialize a std::string_view.
+template <typename T>
+using enable_if_ambiguous_string_convertible_t =
+    std::enable_if_t<!std::is_null_pointer_v<std::decay_t<T>> &&
+                         std::is_convertible_v<T, const std::string&> &&
+                         std::is_convertible_v<T, std::string_view> &&
+                         !has_unambiguous_string_convertible_overload<T>::value,
+                     int>;
+
+}  // namespace details
+
 /// A JavaScript symbol value.
 class Symbol : public Name {
  public:
@@ -830,6 +867,12 @@ class Symbol : public Name {
 
   // Create a symbol in the global registry, UTF-8 encoded cpp string view
   static MaybeOrValue<Symbol> For(napi_env env, std::string_view description);
+
+  // Resolve otherwise ambiguous string-like arguments through the
+  // std::string_view overload
+  template <typename T,
+            details::enable_if_ambiguous_string_convertible_t<T&&> = 0>
+  static MaybeOrValue<Symbol> For(napi_env env, T&& description);
 
   // Create a symbol in the global registry, C style string (null terminated)
   static MaybeOrValue<Symbol> For(napi_env env, const char* description);
