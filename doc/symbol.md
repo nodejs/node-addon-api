@@ -51,8 +51,10 @@ Returns a `Napi::Symbol` representing a well-known `Symbol` from the
 ```cpp
 static Napi::Symbol Napi::Symbol::For(napi_env env, const std::string& description);
 static Napi::Symbol Napi::Symbol::For(napi_env env, std::string_view description);
+template <typename T>
+static Napi::Symbol Napi::Symbol::For(napi_env env, T&& description);
 static Napi::Symbol Napi::Symbol::For(napi_env env, const char* description);
-static Napi::Symbol Napi::Symbol::For(napi_env env, String description);
+static Napi::Symbol Napi::Symbol::For(napi_env env, Napi::String description);
 static Napi::Symbol Napi::Symbol::For(napi_env env, napi_value description);
 ```
 
@@ -61,8 +63,8 @@ static Napi::Symbol Napi::Symbol::For(napi_env env, napi_value description);
   `description` may be any of:
   - `const std::string&` - represents a UTF-8 string.
   - `std::string_view` - represents a UTF-8 string view.
-  - `const char*` - represents a UTF8 string description.
-  - `String` - Node addon API String description.
+  - `const char*` - represents a UTF-8 string description.
+  - `Napi::String` - Node-API string description.
   - `napi_value` - Node-API `napi_value` description.
 
 String-like arguments implicitly convertible to both `const std::string&` and

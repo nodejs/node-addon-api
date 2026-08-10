@@ -1428,7 +1428,7 @@ inline MaybeOrValue<Symbol> Symbol::For(napi_env env,
   return Symbol::For(env, descriptionValue);
 }
 
-template <typename T, details::enable_if_ambiguous_symbol_for_t<T&&>>
+template <typename T, details::enable_if_ambiguous_string_convertible_t<T&&>>
 inline MaybeOrValue<Symbol> Symbol::For(napi_env env, T&& description) {
   std::string_view descriptionView = std::forward<T>(description);
   return Symbol::For(env, descriptionView);

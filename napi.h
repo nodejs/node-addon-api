@@ -800,10 +800,10 @@ struct string_convertible_probe {
 };
 
 template <typename T, typename = void>
-struct has_unambiguous_symbol_for_overload : std::false_type {};
+struct has_unambiguous_string_convertible_overload : std::false_type {};
 
 template <typename T>
-struct has_unambiguous_symbol_for_overload<
+struct has_unambiguous_string_convertible_overload<
     T,
     std::void_t<decltype(string_convertible_probe::select(std::declval<T>()))>>
     : std::true_type {};
@@ -814,11 +814,11 @@ struct has_unambiguous_symbol_for_overload<
 // Exclude nullptr because it matches the pointer overloads equally well and
 // cannot safely initialize a std::string_view.
 template <typename T>
-using enable_if_ambiguous_symbol_for_t =
+using enable_if_ambiguous_string_convertible_t =
     std::enable_if_t<!std::is_null_pointer_v<std::decay_t<T>> &&
                          std::is_convertible_v<T, const std::string&> &&
                          std::is_convertible_v<T, std::string_view> &&
-                         !has_unambiguous_symbol_for_overload<T>::value,
+                         !has_unambiguous_string_convertible_overload<T>::value,
                      int>;
 
 }  // namespace details
@@ -870,7 +870,8 @@ class Symbol : public Name {
 
   // Resolve otherwise ambiguous string-like arguments through the
   // std::string_view overload
-  template <typename T, details::enable_if_ambiguous_symbol_for_t<T&&> = 0>
+  template <typename T,
+            details::enable_if_ambiguous_string_convertible_t<T&&> = 0>
   static MaybeOrValue<Symbol> For(napi_env env, T&& description);
 
   // Create a symbol in the global registry, C style string (null terminated)
