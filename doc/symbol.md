@@ -51,19 +51,25 @@ Returns a `Napi::Symbol` representing a well-known `Symbol` from the
 ```cpp
 static Napi::Symbol Napi::Symbol::For(napi_env env, const std::string& description);
 static Napi::Symbol Napi::Symbol::For(napi_env env, std::string_view description);
+template <typename T>
+static Napi::Symbol Napi::Symbol::For(napi_env env, T&& description);
 static Napi::Symbol Napi::Symbol::For(napi_env env, const char* description);
-static Napi::Symbol Napi::Symbol::For(napi_env env, String description);
+static Napi::Symbol Napi::Symbol::For(napi_env env, Napi::String description);
 static Napi::Symbol Napi::Symbol::For(napi_env env, napi_value description);
 ```
 
 - `[in] env`: The `napi_env` environment in which to construct the `Napi::Symbol` object.
 - `[in] description`: The C++ string representing the `Napi::Symbol` in the global registry to retrieve.
   `description` may be any of:
-  - `const std::string&` - UTF8 string description.
-  - `std::string_view` - represents a UTF8 string view.
-  - `const char*` - represents a UTF8 string description.
-  - `String` - Node addon API String description.
+  - `const std::string&` - represents a UTF-8 string.
+  - `std::string_view` - represents a UTF-8 string view.
+  - `const char*` - represents a UTF-8 string description.
+  - `Napi::String` - Node-API string description.
   - `napi_value` - Node-API `napi_value` description.
+
+String-like arguments implicitly convertible to both `const std::string&` and
+`std::string_view` that do not have a unique best match among the non-template
+overloads are resolved through `std::string_view`.
 
 Searches in the global registry for existing symbol with the given name. If the symbol already exist it will be returned, otherwise a new symbol will be created in the registry. It's equivalent to Symbol.for() called from JavaScript.
 
