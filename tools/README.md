@@ -4,6 +4,11 @@
 
 The clang-format checking tools is designed to check changed lines of code compared to given git-refs.
 
+The tool requires Python 3 to run `git-clang-format`. It first tries the
+executable specified by the `PYTHON` environment variable, when set. On
+Windows it then tries the Python launcher (`py -3`), followed by `python3` and
+`python`. On other platforms it tries `python3` and then `python`.
+
 ## Migration Script
 
 The migration tool is designed to reduce repetitive work in the migration process. However, the script is not aiming to convert every thing for you. There are usually some small fixes and major reconstruction required.
