@@ -1,5 +1,12 @@
 # node-addon-api Changelog
 
+## [8.9.2](https://github.com/nodejs/node-addon-api/compare/v8.9.1...v8.9.2) (2026-08-10)
+
+
+### Bug Fixes
+
+* resolve Symbol::For overload ambiguity ([#1742](https://github.com/nodejs/node-addon-api/issues/1742)) ([13c854a](https://github.com/nodejs/node-addon-api/commit/13c854a1f57e754e5082a1961e0d32e8f0f96543))
+
 ## [8.9.1](https://github.com/nodejs/node-addon-api/compare/v8.9.0...v8.9.1) (2026-07-31)
 
 
