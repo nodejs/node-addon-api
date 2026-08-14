@@ -72,17 +72,18 @@ void SetInstanceData(DataType* data, HintType* hint) const;
 - `[template] fini`: A function to call when the instance data is to be deleted.
 Accepts a function of the form `void CleanupData(Napi::Env env, DataType* data,
 HintType* hint)`. If not given, the default finalizer will be used, which simply
-uses the `delete` operator to destroy `T*` when the add-on instance is unloaded.
+uses the `delete` operator to destroy `DataType*` when the add-on instance is
+unloaded.
 - `[in] data`: A pointer to data that will be associated with the instance of
 the add-on for the duration of its lifecycle.
 - `[in] hint`: A pointer to data that will be associated with the instance of
 the add-on for the duration of its lifecycle and will be passed as a hint to
 `fini` when the add-on instance is unloaded.
 
-Associates a data item stored at `T* data` with the current instance of the
-add-on. The item will be passed to the function `fini` which gets called when an
-instance of the add-on is unloaded. This overload accepts an additional hint to
-be passed to `fini`.
+Associates a data item stored at `DataType* data` with the current instance of
+the add-on. The item will be passed to the function `fini` which gets called
+when an instance of the add-on is unloaded. This overload accepts an additional
+hint to be passed to `fini`.
 
 ### GetModuleFileName
 

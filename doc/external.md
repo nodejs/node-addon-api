@@ -35,9 +35,8 @@ Returns the created `Napi::External<T>` object.
 
 ```cpp
 template <typename T>
-static Napi::External Napi::External::New(napi_env env,
-                    T* data,
-                    Finalizer finalizeCallback);
+template <typename Finalizer>
+static External New(napi_env env, T* data, Finalizer finalizeCallback);
 ```
 
 - `[in] env`: The `napi_env` environment in which to construct the `Napi::External` object.
@@ -52,7 +51,8 @@ Returns the created `Napi::External<T>` object.
 
 ```cpp
 template <typename T>
-static Napi::External Napi::External::New(napi_env env,
+template <typename Finalizer, typename Hint>
+static External New(napi_env env,
                     T* data,
                     Finalizer finalizeCallback,
                     Hint* finalizeHint);
