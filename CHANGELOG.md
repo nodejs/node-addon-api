@@ -1,5 +1,16 @@
 # node-addon-api Changelog
 
+## [9.0.0](https://github.com/nodejs/node-addon-api/compare/v8.9.2...v9.0.0) (2026-08-21)
+
+
+### ⚠ BREAKING CHANGES
+
+* bump minimum supported Node.js version to 22 ([#1751](https://github.com/nodejs/node-addon-api/issues/1751))
+
+### Features
+
+* bump minimum supported Node.js version to 22 ([#1751](https://github.com/nodejs/node-addon-api/issues/1751)) ([3075ace](https://github.com/nodejs/node-addon-api/commit/3075ace9f154006d03c0b8f68850d54b55398eca))
+
 ## [8.9.2](https://github.com/nodejs/node-addon-api/compare/v8.9.1...v8.9.2) (2026-08-10)
 
 
