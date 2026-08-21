@@ -1,11 +1,25 @@
 # Contributing to **node-addon-api**
 
+* [AI Use Policy and Guidelines](#ai-use-policy-and-guidelines)
 * [Code of Conduct](#code-of-conduct)
 * [Developer's Certificate of Origin 1.1](#developers-certificate-of-origin)
 * [Tests](#tests)
 * [Debug](#debug)
 * [Benchmarks](#benchmarks)
 * [node-addon-api Contribution Philosophy](#node-addon-api-contribution-philosophy)
+
+## AI Use Policy and Guidelines
+
+Node.js requires contributors to understand and take full responsibility for
+every change they propose. Pull requests containing AI-generated code the
+contributor has not personally understood, tested, and verified will likely be closed
+without review.
+
+Be respectful when using AI in communication. Inappropriate or spamming use of
+AI in communication would fall under moderation enforcement.
+
+See [details on our AI use policy and guidelines](https://github.com/nodejs/node/blob/main/doc/contributing/ai-guidelines.md)
+and [Code of Conduct](#code-of-conduct) for guidance.
 
 ## Code of Conduct
 
