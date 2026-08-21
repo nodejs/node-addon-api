@@ -30,6 +30,8 @@ This allows addons built with it to run with Node.js versions which support the 
 every year there will be a new major which drops support for the Node.js LTS version which has gone out of service.
 
 The oldest Node.js version supported by the current version of node-addon-api is Node.js 22.x.
+The minimum supported C++ standard follows that of the oldest supported
+Node.js release line. The current version therefore requires C++17 or later.
 
 ## Badges
 
