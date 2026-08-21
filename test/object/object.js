@@ -227,4 +227,53 @@ function test (binding) {
     assert.strictEqual(binding.object.setPrototype(obj, prototype), true);
     assert.strictEqual(Object.getPrototypeOf(obj), prototype);
   }
+
+  if ('createObjectWithProperties' in binding.object) {
+    {
+      const prototype = {};
+      const names = ['name', 'age', 'active', Symbol.for('id')];
+      const values = ['Foo', 42, true, 12345];
+      const obj = binding.object.createObjectWithProperties(prototype, names, values);
+      const descriptors = Object.getOwnPropertyDescriptors(obj);
+
+      assert.strictEqual(Object.getPrototypeOf(obj), prototype);
+
+      assert.equal(Reflect.ownKeys(descriptors).length, names.length);
+
+      for (let i = 0; i < names.length; i++) {
+        const expectedName = names[i];
+        const expectedValue = values[i];
+
+        assert.ok(expectedName in descriptors);
+        assert.strictEqual(descriptors[expectedName].value, expectedValue);
+      }
+    }
+
+    {
+      // Test `null` Napi::Value passed as prototype
+      const prototype = null;
+      const obj = binding.object.createObjectWithProperties(prototype);
+      assert.strictEqual(Object.getPrototypeOf(obj), prototype);
+    }
+
+    {
+      // Test empty Napi::Value passed as prototype
+      const obj = binding.object.createObjectWithProperties();
+      assert.strictEqual(Object.getPrototypeOf(obj), null);
+    }
+
+    {
+      // Test mismatch in length between property names and values
+      const expectedErrorMessage = 'Mismatch in size of property names and values';
+
+      try {
+        binding.object.createObjectWithProperties(null, ['foo'], []);
+        throw new Error(`Expected error "${expectedErrorMessage}" was not thrown`);
+      } catch (e) {
+        if (e.message !== expectedErrorMessage) {
+          throw e;
+        }
+      }
+    }
+  }
 }
