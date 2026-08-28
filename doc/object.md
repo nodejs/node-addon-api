@@ -75,8 +75,8 @@ Creates a new `Napi::Object` value.
 Napi::Object Napi::Object::New(
       napi_env env,
       napi_value prototypeOrNull,
-      std::vector<napi_value>& propertyNames,
-      std::vector<napi_value>& propertyValues);
+      const std::vector<napi_value>& propertyNames,
+      const std::vector<napi_value>& propertyValues);
 ```
 - `[in] env`: The `napi_env` environment in which to construct the `Napi::Value`
   object.
