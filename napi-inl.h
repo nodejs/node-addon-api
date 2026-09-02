@@ -1644,8 +1644,8 @@ inline Object Object::New(napi_env env) {
 #ifdef NODE_API_EXPERIMENTAL_HAS_CREATE_OBJECT_WITH_PROPERTIES
 inline Object Object::New(napi_env env,
                           napi_value prototypeOrNull,
-                          std::vector<napi_value>& propertyNames,
-                          std::vector<napi_value>& propertyValues) {
+                          const std::vector<napi_value>& propertyNames,
+                          const std::vector<napi_value>& propertyValues) {
   if (propertyNames.size() != propertyValues.size()) {
     NAPI_THROW(
         Napi::Error::New(env, "Mismatch in size of property names and values"),
@@ -1653,13 +1653,15 @@ inline Object Object::New(napi_env env,
   }
 
   napi_value value;
-  napi_status status =
-      node_api_create_object_with_properties(env,
-                                             prototypeOrNull,
-                                             propertyNames.data(),
-                                             propertyValues.data(),
-                                             propertyNames.size(),
-                                             &value);
+  // TODO(@KevinEady): remove const_cast when
+  // https://github.com/nodejs/node/pull/65621 is fully backported.
+  napi_status status = node_api_create_object_with_properties(
+      env,
+      prototypeOrNull,
+      const_cast<napi_value*>(propertyNames.data()),
+      const_cast<napi_value*>(propertyValues.data()),
+      propertyNames.size(),
+      &value);
 
   NAPI_THROW_IF_FAILED(env, status, Object());
   return Object(env, value);

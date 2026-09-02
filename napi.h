@@ -955,8 +955,8 @@ class Object : public TypeTaggable {
   static Object New(
       napi_env env,                ///< Node-API environment
       napi_value prototypeOrNull,  ///< Prototype (Object) or null / empty Value
-      std::vector<napi_value>& propertyNames,  ///< Property names
-      std::vector<napi_value>& propertyValues  ///< Property values
+      const std::vector<napi_value>& propertyNames,  ///< Property names
+      const std::vector<napi_value>& propertyValues  ///< Property values
   );
 #endif
 
