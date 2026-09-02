@@ -1,5 +1,22 @@
 # node-addon-api Changelog
 
+## [9.0.0](https://github.com/nodejs/node-addon-api/compare/v8.9.2...v9.0.0) (2026-09-02)
+
+
+### ⚠ BREAKING CHANGES
+
+* bump minimum supported Node.js version to 22 ([#1751](https://github.com/nodejs/node-addon-api/issues/1751))
+
+### Features
+
+* add Object::New overload utilizing node_api_create_object_with_properties ([#1735](https://github.com/nodejs/node-addon-api/issues/1735)) ([06d56f7](https://github.com/nodejs/node-addon-api/commit/06d56f74e1dc34166fed174b6e747bcd835ba684))
+* bump minimum supported Node.js version to 22 ([#1751](https://github.com/nodejs/node-addon-api/issues/1751)) ([3075ace](https://github.com/nodejs/node-addon-api/commit/3075ace9f154006d03c0b8f68850d54b55398eca))
+
+
+### Bug Fixes
+
+* allow const vectors with Object::New overload utilizing node_api_create_object_with_properties ([#1755](https://github.com/nodejs/node-addon-api/issues/1755)) ([25c6b21](https://github.com/nodejs/node-addon-api/commit/25c6b211f0395b38a3a1230f15e9c523dca50fdb))
+
 ## [8.9.2](https://github.com/nodejs/node-addon-api/compare/v8.9.1...v8.9.2) (2026-08-10)
 
 
