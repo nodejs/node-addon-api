@@ -6746,6 +6746,24 @@ inline AsyncProgressWorkerBase<DataType>::AsyncProgressWorkerBase(
                                   /** context */ this,
                                   OnThreadSafeFunctionFinalize,
                                   /** finalizeData */ this);
+
+  #if NAPI_VERSION > 2
+    // FIX: Force registration of the environment cleanup hook out of the box
+    // FIX: Explicitly supply <void(*)(void*), void> template variables and cast 'this' to void*
+    _cleanup_hook = Env().AddCleanupHook(
+        OnEnvironmentTeardown, static_cast<void*>(this));
+  #endif
+}
+
+template <typename DataType>
+inline void AsyncProgressWorkerBase<DataType>::OnEnvironmentTeardown(void* arg) NAPI_NOEXCEPT {
+  auto* self = static_cast<AsyncProgressWorkerBase<DataType>*>(arg);
+  
+  if (self != nullptr && self->_tsfn) {
+    // FIX: Emergency execution path. The environment is actively vanishing.
+    // Call Abort() instantly to invalidate internal libuv event-loop queues
+    self->_tsfn.Abort();
+  }
 }
 
 #if NAPI_VERSION > 4
@@ -6771,6 +6789,14 @@ inline AsyncProgressWorkerBase<DataType>::AsyncProgressWorkerBase(
                                   /** context */ this,
                                   OnThreadSafeFunctionFinalize,
                                   /** finalizeData */ this);
+
+  #if NAPI_VERSION > 2
+    // FIX: Attach an active environment cleanup hook handle instantly on creation.
+    // This ensures a hot-reload intercepts the worker before memory corruption hits.
+    // FIX: Explicitly supply <void(*)(void*), void> template variables and cast 'this' to void*
+    _cleanup_hook = env.AddCleanupHook(
+        OnEnvironmentTeardown, static_cast<void*>(this));
+  #endif
 }
 #endif
 

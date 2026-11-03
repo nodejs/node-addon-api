@@ -3338,10 +3338,19 @@ class AsyncProgressWorkerBase : public AsyncWorker {
 
  private:
   ThreadSafeFunction _tsfn;
+
+  // FIX: Track the environment teardown loop handle to catch unexpected reloads
+  #if NAPI_VERSION > 2
+    BasicEnv::CleanupHook<void(*)(void*) NAPI_NOEXCEPT, void> _cleanup_hook;
+  #endif
+
   bool _work_completed = false;
   napi_status _complete_status;
   static inline void OnThreadSafeFunctionFinalize(
       Napi::Env env, void* data, AsyncProgressWorkerBase* context);
+
+  // FIX: Internal static wrapper that executes when the hot reload triggers
+  static inline void OnEnvironmentTeardown(void* arg) NAPI_NOEXCEPT;
 };
 
 template <class T>
