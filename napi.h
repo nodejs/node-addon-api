@@ -2863,7 +2863,9 @@ class AsyncWorker {
   ObjectReference _receiver;
   FunctionReference _callback;
   std::string _error;
-  bool _suppress_destruct;
+
+ protected:
+  bool _suppress_destruct = false;
 };
 #endif  // NAPI_HAS_THREADS
 
@@ -3338,19 +3340,14 @@ class AsyncProgressWorkerBase : public AsyncWorker {
 
  private:
   ThreadSafeFunction _tsfn;
-
-  // FIX: Track the environment teardown loop handle to catch unexpected reloads
-  #if NAPI_VERSION > 2
-    BasicEnv::CleanupHook<void(*)(void*) NAPI_NOEXCEPT, void> _cleanup_hook;
-  #endif
-
+  BasicEnv::CleanupHook<void (*)(void*), void> _cleanup_hook;
   bool _work_completed = false;
+  bool _tsfn_finalized = false;
+  bool _teardown_called = false;
   napi_status _complete_status;
   static inline void OnThreadSafeFunctionFinalize(
       Napi::Env env, void* data, AsyncProgressWorkerBase* context);
-
-  // FIX: Internal static wrapper that executes when the hot reload triggers
-  static inline void OnEnvironmentTeardown(void* arg) NAPI_NOEXCEPT;
+  static inline void OnEnvironmentTeardown(void* arg);
 };
 
 template <class T>
