@@ -2278,6 +2278,33 @@ inline ArrayBuffer ArrayBuffer::New(napi_env env,
 
   return ArrayBuffer(env, value);
 }
+
+#if defined(__cpp_lib_span)
+template <typename T, size_t Extent>
+inline ArrayBuffer ArrayBuffer::New(napi_env env, std::span<T, Extent> span) {
+  return ArrayBuffer::New(env, span.data(), span.size_bytes());
+}
+
+template <typename T, size_t Extent, typename Finalizer>
+inline ArrayBuffer ArrayBuffer::New(napi_env env,
+                                    std::span<T, Extent> span,
+                                    Finalizer finalizeCallback) {
+  return ArrayBuffer::New(
+      env, span.data(), span.size_bytes(), std::move(finalizeCallback));
+}
+
+template <typename T, size_t Extent, typename Finalizer, typename Hint>
+inline ArrayBuffer ArrayBuffer::New(napi_env env,
+                                    std::span<T, Extent> span,
+                                    Finalizer finalizeCallback,
+                                    Hint* finalizeHint) {
+  return ArrayBuffer::New(env,
+                          span.data(),
+                          span.size_bytes(),
+                          std::move(finalizeCallback),
+                          finalizeHint);
+}
+#endif  // defined(__cpp_lib_span)
 #endif  // NODE_API_NO_EXTERNAL_BUFFERS_ALLOWED
 
 inline void ArrayBuffer::CheckCast(napi_env env, napi_value value) {
@@ -2310,6 +2337,13 @@ inline size_t ArrayBuffer::ByteLength() {
   NAPI_THROW_IF_FAILED(_env, status, 0);
   return length;
 }
+
+#if defined(__cpp_lib_span)
+template <typename T>
+inline std::span<T> ArrayBuffer::Span() {
+  return std::span<T>(reinterpret_cast<T*>(Data()), ByteLength() / sizeof(T));
+}
+#endif  // defined(__cpp_lib_span)
 
 #if NAPI_VERSION >= 7
 inline bool ArrayBuffer::IsDetached() const {
@@ -2764,6 +2798,18 @@ inline const T* TypedArrayOf<T>::Data() const {
   return _data;
 }
 
+#if defined(__cpp_lib_span)
+template <typename T>
+inline std::span<T> TypedArrayOf<T>::Span() {
+  return std::span<T>(Data(), ElementLength());
+}
+
+template <typename T>
+inline std::span<const T> TypedArrayOf<T>::Span() const {
+  return std::span<const T>(Data(), ElementLength());
+}
+#endif  // defined(__cpp_lib_span)
+
 ////////////////////////////////////////////////////////////////////////////////
 // Function class
 ////////////////////////////////////////////////////////////////////////////////
@@ -3176,6 +3222,34 @@ inline Buffer<T> Buffer<T>::New(napi_env env,
   }
   return Buffer(env, value);
 }
+
+#if defined(__cpp_lib_span)
+template <typename T>
+template <size_t Extent>
+inline Buffer<T> Buffer<T>::New(napi_env env, std::span<T, Extent> span) {
+  return Buffer<T>::New(env, span.data(), span.size());
+}
+
+template <typename T>
+template <size_t Extent, typename Finalizer>
+inline Buffer<T> Buffer<T>::New(napi_env env,
+                                std::span<T, Extent> span,
+                                Finalizer finalizeCallback) {
+  return Buffer<T>::New(
+      env, span.data(), span.size(), std::move(finalizeCallback));
+}
+
+template <typename T>
+template <size_t Extent, typename Finalizer, typename Hint>
+inline Buffer<T> Buffer<T>::New(napi_env env,
+                                std::span<T, Extent> span,
+                                Finalizer finalizeCallback,
+                                Hint* finalizeHint) {
+  return Buffer<T>::New(
+      env, span.data(), span.size(), std::move(finalizeCallback), finalizeHint);
+}
+#endif  // defined(__cpp_lib_span)
+
 #endif  // NODE_API_NO_EXTERNAL_BUFFERS_ALLOWED
 
 template <typename T>
@@ -3274,6 +3348,46 @@ inline Buffer<T> Buffer<T>::Copy(napi_env env, const T* data, size_t length) {
   return Buffer<T>(env, value);
 }
 
+#if defined(__cpp_lib_span)
+template <typename T>
+template <size_t Extent>
+inline Buffer<T> Buffer<T>::NewOrCopy(napi_env env, std::span<T, Extent> span) {
+  return Buffer<T>::NewOrCopy(env, span.data(), span.size());
+}
+
+template <typename T>
+template <size_t Extent, typename Finalizer>
+inline Buffer<T> Buffer<T>::NewOrCopy(napi_env env,
+                                      std::span<T, Extent> span,
+                                      Finalizer finalizeCallback) {
+  return Buffer<T>::NewOrCopy(
+      env, span.data(), span.size(), std::move(finalizeCallback));
+}
+
+template <typename T>
+template <size_t Extent, typename Finalizer, typename Hint>
+inline Buffer<T> Buffer<T>::NewOrCopy(napi_env env,
+                                      std::span<T, Extent> span,
+                                      Finalizer finalizeCallback,
+                                      Hint* finalizeHint) {
+  return Buffer<T>::NewOrCopy(
+      env, span.data(), span.size(), std::move(finalizeCallback), finalizeHint);
+}
+
+template <typename T>
+template <size_t Extent>
+inline Buffer<T> Buffer<T>::Copy(napi_env env,
+                                 std::span<const T, Extent> span) {
+  return Buffer<T>::Copy(env, span.data(), span.size());
+}
+
+template <typename T>
+template <size_t Extent>
+inline Buffer<T> Buffer<T>::Copy(napi_env env, std::span<T, Extent> span) {
+  return Buffer<T>::Copy(env, span.data(), span.size());
+}
+#endif  // defined(__cpp_lib_span)
+
 template <typename T>
 inline void Buffer<T>::CheckCast(napi_env env, napi_value value) {
   NAPI_CHECK(value != nullptr, "Buffer::CheckCast", "empty value");
@@ -3300,6 +3414,13 @@ template <typename T>
 inline T* Buffer<T>::Data() const {
   return reinterpret_cast<T*>(const_cast<uint8_t*>(Uint8Array::Data()));
 }
+
+#if defined(__cpp_lib_span)
+template <typename T>
+inline std::span<T> Buffer<T>::Span() const {
+  return std::span<T>(Data(), Length());
+}
+#endif  // defined(__cpp_lib_span)
 
 ////////////////////////////////////////////////////////////////////////////////
 // Error class

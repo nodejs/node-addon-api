@@ -220,6 +220,42 @@ void CheckDetachUpdatesData(const CallbackInfo& info) {
   }
 }
 
+#if defined(__cpp_lib_span)
+Value CreateBufferFromSpan(const CallbackInfo& info) {
+  std::span<uint8_t> span(testData, testLength);
+  ArrayBuffer buffer = ArrayBuffer::New(info.Env(), span);
+  if (buffer.ByteLength() != testLength || buffer.Data() != testData) {
+    Error::New(info.Env(), "Incorrect array buffer created from span.")
+        .ThrowAsJavaScriptException();
+    return Value();
+  }
+  InitData(testData, testLength);
+  return buffer;
+}
+
+Value CheckArrayBufferSpan(const CallbackInfo& info) {
+  ArrayBuffer buffer = info[0].As<ArrayBuffer>();
+  std::span<uint8_t> span = buffer.Span();
+  if (span.size() != testLength || span.data() != buffer.Data()) {
+    Error::New(info.Env(), "Incorrect array buffer span.")
+        .ThrowAsJavaScriptException();
+    return Boolean::New(info.Env(), false);
+  }
+  return Boolean::New(info.Env(), true);
+}
+
+Value CheckTypedArraySpan(const CallbackInfo& info) {
+  Uint8Array array = info[0].As<Uint8Array>();
+  std::span<uint8_t> span = array.Span();
+  if (span.size() != testLength || span.data() != array.Data()) {
+    Error::New(info.Env(), "Incorrect typed array span.")
+        .ThrowAsJavaScriptException();
+    return Boolean::New(info.Env(), false);
+  }
+  return Boolean::New(info.Env(), true);
+}
+#endif  // defined(__cpp_lib_span)
+
 }  // end anonymous namespace
 
 Object InitArrayBuffer(Env env) {
@@ -238,6 +274,15 @@ Object InitArrayBuffer(Env env) {
   exports["checkEmptyBuffer"] = Function::New(env, CheckEmptyBuffer);
   exports["checkDetachUpdatesData"] =
       Function::New(env, CheckDetachUpdatesData);
+
+#if defined(__cpp_lib_span)
+  exports["hasSpanSupport"] = Boolean::New(env, true);
+  exports["createBufferFromSpan"] = Function::New(env, CreateBufferFromSpan);
+  exports["checkArrayBufferSpan"] = Function::New(env, CheckArrayBufferSpan);
+  exports["checkTypedArraySpan"] = Function::New(env, CheckTypedArraySpan);
+#else
+  exports["hasSpanSupport"] = Boolean::New(env, false);
+#endif
 
   return exports;
 }

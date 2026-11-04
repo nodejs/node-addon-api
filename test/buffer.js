@@ -25,6 +25,26 @@ function test (binding) {
       assert.ok(test instanceof Buffer);
     },
 
+    'std::span Buffer tests',
+    () => {
+      if (!binding.buffer.hasSpanSupport) return;
+
+      const fromSpan = binding.buffer.createBufferFromSpan();
+      binding.buffer.checkBuffer(fromSpan);
+      assert.ok(fromSpan instanceof Buffer);
+      assert.ok(binding.buffer.checkBufferSpan(fromSpan));
+
+      const copyFromSpan = binding.buffer.createBufferCopyFromSpan();
+      binding.buffer.checkBuffer(copyFromSpan);
+      assert.ok(copyFromSpan instanceof Buffer);
+      assert.ok(binding.buffer.checkBufferSpan(copyFromSpan));
+
+      const newOrCopySpan = binding.buffer.createBufferNewOrCopyFromSpan();
+      binding.buffer.checkBuffer(newOrCopySpan);
+      assert.ok(newOrCopySpan instanceof Buffer);
+      assert.ok(binding.buffer.checkBufferSpan(newOrCopySpan));
+    },
+
     'External Buffer',
     () => {
       const test = binding.buffer.createExternalBuffer();

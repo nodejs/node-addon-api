@@ -160,6 +160,55 @@ Value GetFinalizeCount(const CallbackInfo& info) {
   return Number::New(info.Env(), finalizeCount);
 }
 
+#if defined(__cpp_lib_span)
+Value CreateBufferFromSpan(const CallbackInfo& info) {
+  std::span<uint16_t> span(testData, testLength);
+  Buffer<uint16_t> buffer = Buffer<uint16_t>::New(info.Env(), span);
+  if (buffer.Length() != testLength || buffer.Data() != testData) {
+    Error::New(info.Env(), "Incorrect buffer created from span.")
+        .ThrowAsJavaScriptException();
+    return Value();
+  }
+  InitData(testData, testLength);
+  return buffer;
+}
+
+Value CreateBufferCopyFromSpan(const CallbackInfo& info) {
+  InitData(testData, testLength);
+  std::span<const uint16_t> span(testData, testLength);
+  Buffer<uint16_t> buffer = Buffer<uint16_t>::Copy(info.Env(), span);
+  if (buffer.Length() != testLength) {
+    Error::New(info.Env(), "Incorrect buffer length from span copy.")
+        .ThrowAsJavaScriptException();
+    return Value();
+  }
+  return buffer;
+}
+
+Value CreateBufferNewOrCopyFromSpan(const CallbackInfo& info) {
+  std::span<uint16_t> span(testData, testLength);
+  Buffer<uint16_t> buffer = Buffer<uint16_t>::NewOrCopy(info.Env(), span);
+  if (buffer.Length() != testLength) {
+    Error::New(info.Env(), "Incorrect buffer length from NewOrCopy span.")
+        .ThrowAsJavaScriptException();
+    return Value();
+  }
+  InitData(testData, testLength);
+  return buffer;
+}
+
+Value CheckBufferSpan(const CallbackInfo& info) {
+  Buffer<uint16_t> buffer = info[0].As<Buffer<uint16_t>>();
+  std::span<uint16_t> span = buffer.Span();
+  if (span.size() != testLength || span.data() != buffer.Data()) {
+    Error::New(info.Env(), "Incorrect buffer span.")
+        .ThrowAsJavaScriptException();
+    return Boolean::New(info.Env(), false);
+  }
+  return Boolean::New(info.Env(), true);
+}
+#endif  // defined(__cpp_lib_span)
+
 }  // end anonymous namespace
 
 Object InitBuffer(Env env) {
@@ -180,6 +229,18 @@ Object InitBuffer(Env env) {
   exports["createBufferCopy"] = Function::New(env, CreateBufferCopy);
   exports["checkBuffer"] = Function::New(env, CheckBuffer);
   exports["getFinalizeCount"] = Function::New(env, GetFinalizeCount);
+
+#if defined(__cpp_lib_span)
+  exports["hasSpanSupport"] = Boolean::New(env, true);
+  exports["createBufferFromSpan"] = Function::New(env, CreateBufferFromSpan);
+  exports["createBufferCopyFromSpan"] =
+      Function::New(env, CreateBufferCopyFromSpan);
+  exports["createBufferNewOrCopyFromSpan"] =
+      Function::New(env, CreateBufferNewOrCopyFromSpan);
+  exports["checkBufferSpan"] = Function::New(env, CheckBufferSpan);
+#else
+  exports["hasSpanSupport"] = Boolean::New(env, false);
+#endif
 
   return exports;
 }

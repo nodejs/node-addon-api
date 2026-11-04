@@ -23,6 +23,11 @@
 #include <type_traits>
 #include <utility>
 #include <vector>
+#if defined(__has_include)
+#if __has_include(<span>) && (__cplusplus >= 202002L || (defined(_MSVC_LANG) && _MSVC_LANG >= 202002L))
+#include <span>
+#endif
+#endif
 
 // VS2015 RTM has bugs with constexpr, so require min of VS2015 Update 3 (known
 // good version)
@@ -1364,6 +1369,22 @@ class ArrayBuffer : public Object {
       Hint* finalizeHint  ///< Hint (second parameter) to be passed to the
                           ///< finalize callback
   );
+
+#if defined(__cpp_lib_span)
+  template <typename T, size_t Extent = std::dynamic_extent>
+  static ArrayBuffer New(napi_env env, std::span<T, Extent> span);
+
+  template <typename T, size_t Extent, typename Finalizer>
+  static ArrayBuffer New(napi_env env,
+                         std::span<T, Extent> span,
+                         Finalizer finalizeCallback);
+
+  template <typename T, size_t Extent, typename Finalizer, typename Hint>
+  static ArrayBuffer New(napi_env env,
+                         std::span<T, Extent> span,
+                         Finalizer finalizeCallback,
+                         Hint* finalizeHint);
+#endif  // defined(__cpp_lib_span)
 #endif  // NODE_API_NO_EXTERNAL_BUFFERS_ALLOWED
 
   static void CheckCast(napi_env env, napi_value value);
@@ -1374,6 +1395,11 @@ class ArrayBuffer : public Object {
 
   void* Data();         ///< Gets a pointer to the data buffer.
   size_t ByteLength();  ///< Gets the length of the array buffer in bytes.
+
+#if defined(__cpp_lib_span)
+  template <typename T = uint8_t>
+  std::span<T> Span();
+#endif  // defined(__cpp_lib_span)
 
 #if NAPI_VERSION >= 7
   bool IsDetached() const;
@@ -1556,6 +1582,11 @@ class TypedArrayOf : public TypedArray {
   /// because the typed-array may have a non-zero `ByteOffset()` into the
   /// `ArrayBuffer`.
   const T* Data() const;
+
+#if defined(__cpp_lib_span)
+  std::span<T> Span();
+  std::span<const T> Span() const;
+#endif  // defined(__cpp_lib_span)
 
  private:
   T* _data;
@@ -1781,6 +1812,22 @@ class Buffer : public Uint8Array {
                        size_t length,
                        Finalizer finalizeCallback,
                        Hint* finalizeHint);
+
+#if defined(__cpp_lib_span)
+  template <size_t Extent = std::dynamic_extent>
+  static Buffer<T> New(napi_env env, std::span<T, Extent> span);
+
+  template <size_t Extent, typename Finalizer>
+  static Buffer<T> New(napi_env env,
+                       std::span<T, Extent> span,
+                       Finalizer finalizeCallback);
+
+  template <size_t Extent, typename Finalizer, typename Hint>
+  static Buffer<T> New(napi_env env,
+                       std::span<T, Extent> span,
+                       Finalizer finalizeCallback,
+                       Hint* finalizeHint);
+#endif  // defined(__cpp_lib_span)
 #endif  // NODE_API_NO_EXTERNAL_BUFFERS_ALLOWED
 
   static Buffer<T> NewOrCopy(napi_env env, T* data, size_t length);
@@ -1799,6 +1846,28 @@ class Buffer : public Uint8Array {
                              Finalizer finalizeCallback,
                              Hint* finalizeHint);
 
+#if defined(__cpp_lib_span)
+  template <size_t Extent = std::dynamic_extent>
+  static Buffer<T> NewOrCopy(napi_env env, std::span<T, Extent> span);
+
+  template <size_t Extent, typename Finalizer>
+  static Buffer<T> NewOrCopy(napi_env env,
+                             std::span<T, Extent> span,
+                             Finalizer finalizeCallback);
+
+  template <size_t Extent, typename Finalizer, typename Hint>
+  static Buffer<T> NewOrCopy(napi_env env,
+                             std::span<T, Extent> span,
+                             Finalizer finalizeCallback,
+                             Hint* finalizeHint);
+
+  template <size_t Extent = std::dynamic_extent>
+  static Buffer<T> Copy(napi_env env, std::span<const T, Extent> span);
+
+  template <size_t Extent = std::dynamic_extent>
+  static Buffer<T> Copy(napi_env env, std::span<T, Extent> span);
+#endif  // defined(__cpp_lib_span)
+
   static Buffer<T> Copy(napi_env env, const T* data, size_t length);
 
   static void CheckCast(napi_env env, napi_value value);
@@ -1807,6 +1876,10 @@ class Buffer : public Uint8Array {
   Buffer(napi_env env, napi_value value);
   size_t Length() const;
   T* Data() const;
+
+#if defined(__cpp_lib_span)
+  std::span<T> Span() const;
+#endif  // defined(__cpp_lib_span)
 
  private:
 };
