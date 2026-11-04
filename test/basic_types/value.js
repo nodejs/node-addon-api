@@ -137,6 +137,8 @@ function test (binding) {
   assertValueStrictlyEqual(value);
   assertValueStrictlyNonEqual(value);
   assertValueReturnsCorrectEnv(value);
+  assert(value.assertEnvComparisons());
+  assert(value.assertMaybeComparisons());
   assertEmptyValueNullPtrOnCast(value);
   assertNonEmptyReturnValOnCast(value);
 
