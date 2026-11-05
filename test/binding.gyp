@@ -23,6 +23,7 @@
         'buffer_no_external.cc',
         'buffer.cc',
         'callbackscope.cc',
+        'concepts.cc',
         'dataview/dataview.cc',
         'dataview/dataview_read_write.cc',
         'env_cleanup.cc',
@@ -117,6 +118,21 @@
       'dependencies': ['../node_addon_api.gyp:node_addon_api_except'],
       'sources': ['>@(build_sources)'],
       'defines': ['NODE_ADDON_API_ENABLE_TYPE_CHECK_ON_AS']
+    },
+    {
+      'target_name': 'binding_cpp20',
+      'dependencies': ['../node_addon_api.gyp:node_addon_api_except'],
+      'sources': ['>@(build_sources)'],
+      'defines': ['NODE_ADDON_API_ENABLE_TYPE_CHECK_ON_AS'],
+      'cflags_cc': ['-std=c++20'],
+      'msvs_settings': {
+        'VCCLCompilerTool': {
+          'AdditionalOptions': ['/std:c++20']
+        }
+      },
+      'xcode_settings': {
+        'CLANG_CXX_LANGUAGE_STANDARD': 'c++20'
+      }
     },
     {
       'target_name': 'binding_except_all',
