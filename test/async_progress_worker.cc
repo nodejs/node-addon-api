@@ -362,7 +362,7 @@ class TerminatingWorker : public AsyncProgressWorker<ProgressData> {
 
     // Wait until parent thread initiates termination
     std::future<void> future = promise_for_parent_thread_.get_future();
-    std::future_status status = future.wait_for(std::chrono::seconds(5));
+    std::future_status status = future.wait_for(std::chrono::seconds(30));
     if (status != std::future_status::ready) {
       Error::Fatal("TerminatingWorker::Execute",
                    "status != std::future_status::ready");
@@ -390,7 +390,7 @@ void ResetPromises(const CallbackInfo&) {
 
 void WaitForWorkerThread(const CallbackInfo&) {
   std::future<void> future = promise_for_worker_thread_.get_future();
-  std::future_status status = future.wait_for(std::chrono::seconds(5));
+  std::future_status status = future.wait_for(std::chrono::seconds(30));
   if (status != std::future_status::ready) {
     Error::Fatal("WaitForWorkerThread", "status != std::future_status::ready");
   }

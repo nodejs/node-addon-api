@@ -6849,6 +6849,16 @@ inline void AsyncProgressWorkerBase<DataType>::OnThreadSafeFunctionFinalize(
   if (context->_work_completed) {
     napi_status status =
         context->_teardown_called ? napi_cancelled : context->_complete_status;
+    if (status != napi_cancelled) {
+      napi_value test_script, test_result;
+      napi_status s = napi_create_string_utf8(env, "0", 1, &test_script);
+      if (s == napi_ok) {
+        s = napi_run_script(env, test_script, &test_result);
+      }
+      if (s != napi_ok) {
+        status = napi_cancelled;
+      }
+    }
 #ifdef NODE_ADDON_API_CPP_EXCEPTIONS
     try {
       context->AsyncWorker::OnWorkComplete(env, status);

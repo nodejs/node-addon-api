@@ -30,11 +30,8 @@ if (process.argv[2] === 'runInChildProcess') {
   if (testCase === 0) {
     // Test case 0: Environment teardown occurs while worker is actively running
     binding.asyncprogressworker.waitForWorkerThread();
-    const terminatePromise = worker.terminate();
+    worker.terminate();
     binding.asyncprogressworker.releaseWorkerThread();
-    terminatePromise.then(() => {
-      process.exit(0);
-    });
   } else if (testCase === 1) {
     // Test case 1: Worker finishes normally, then environment is torn down
     // (Verifies cleanup hook was safely removed and does not trigger use-after-free on teardown)
