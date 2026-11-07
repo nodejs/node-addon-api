@@ -4,6 +4,8 @@ on: [push, pull_request]
 
 env:
   PYTHON_VERSION: '3.11'
+  # Work around Node.js 26 leaking its PGO settings into addon builds.
+  npm_package_config_node_gyp_enable_pgo_use: 'false'
 
 permissions:
   contents: read
