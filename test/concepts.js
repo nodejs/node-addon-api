@@ -1,8 +1,23 @@
 'use strict';
 
 const assert = require('assert');
+const fs = require('fs');
+const path = require('path');
+const common = require('./common');
 
-module.exports = require('./common').runTest(test);
+module.exports = common.runTestWithBuildType(async (buildType) => {
+  await common.runTest(test, buildType);
+
+  const cpp20BindingPath = path.resolve(
+    __dirname,
+    `../build/${buildType}/binding_cpp20.node`
+  );
+  if (fs.existsSync(cpp20BindingPath)) {
+    await Promise.resolve(
+      test(require(cpp20BindingPath), { bindingPath: cpp20BindingPath })
+    ).finally(common.mustCall());
+  }
+});
 
 function test (binding, context) {
   assert.ok(binding.concepts);
