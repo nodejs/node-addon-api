@@ -39,12 +39,26 @@ static Value ValueReturnsCorrectEnv(const CallbackInfo& info) {
 static Value TestEnvComparisons(const CallbackInfo& info) {
   Env env = info.Env();
   Env env2 = info.Env();
-  bool result = (env == env2) && !(env != env2) && (env != nullptr) &&
-                !(env == nullptr) && (nullptr != env) && !(nullptr == env);
+  bool eq = (env == env2);
+  bool ne = (env != env2);
+  bool eqNull = (env == nullptr);
+  bool neNull = (env != nullptr);
+  bool nullEq = (nullptr == env);
+  bool nullNe = (nullptr != env);
+
+  bool result = eq && !ne && !eqNull && neNull && !nullEq && nullNe;
 #if defined(NAPI_HAS_CPP20_COMPARISONS)
   result = result && ((env <=> env2) == 0);
 #endif
   return Boolean::New(info.Env(), result);
+}
+
+static Value HasCpp20Comparisons(const CallbackInfo& info) {
+#if defined(NAPI_HAS_CPP20_COMPARISONS)
+  return Boolean::New(info.Env(), true);
+#else
+  return Boolean::New(info.Env(), false);
+#endif
 }
 
 static Value TestMaybeComparisons(const CallbackInfo& info) {
@@ -201,6 +215,7 @@ Object InitBasicTypesValue(Env env) {
       Function::New(env, ValueReturnsCorrectEnv);
   exports["assertEnvComparisons"] = Function::New(env, TestEnvComparisons);
   exports["assertMaybeComparisons"] = Function::New(env, TestMaybeComparisons);
+  exports["hasCpp20Comparisons"] = Function::New(env, HasCpp20Comparisons);
 
   exports["assertEmptyValReturnNullPtrOnCast"] =
       Function::New(env, EmptyValueReturnNullPtrOnCast);
@@ -212,3 +227,12 @@ Object InitBasicTypesValue(Env env) {
 
   return exports;
 }
+
+#if defined(BUILDING_CPP20_MODULE)
+static Object InitValueModule(Env env, Object exports) {
+  exports.Set("basic_types_value", InitBasicTypesValue(env));
+  return exports;
+}
+
+NODE_API_MODULE(addon, InitValueModule)
+#endif

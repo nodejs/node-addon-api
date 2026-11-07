@@ -390,10 +390,24 @@ class BasicEnv {
   bool operator==(const BasicEnv& other) const {
     return _env == other._env;
   }
+  bool operator!=(const BasicEnv& other) const {
+    return !(*this == other);
+  }
 #endif
   bool operator==(std::nullptr_t /*other*/) const {
     return _env == nullptr;
   }
+#if !defined(NAPI_HAS_CPP20_COMPARISONS)
+  bool operator!=(std::nullptr_t /*other*/) const {
+    return !(*this == nullptr);
+  }
+  friend bool operator==(std::nullptr_t, const BasicEnv& other) {
+    return other == nullptr;
+  }
+  friend bool operator!=(std::nullptr_t, const BasicEnv& other) {
+    return !(other == nullptr);
+  }
+#endif
 
 #if NAPI_VERSION > 2
   template <typename Hook, typename Arg = void>
