@@ -161,15 +161,12 @@ exports.whichBuildType = whichBuildType;
 
 exports.runTest = async function (test, buildType, buildPathRoot = process.env.BUILD_PATH || '') {
   buildType = buildType || await whichBuildType();
-  const fs = require('fs');
   const bindings = [
     path.join(buildPathRoot, `../build/${buildType}/binding.node`),
     path.join(buildPathRoot, `../build/${buildType}/binding_noexcept.node`),
     path.join(buildPathRoot, `../build/${buildType}/binding_noexcept_maybe.node`),
-    path.join(buildPathRoot, `../build/${buildType}/binding_custom_namespace.node`),
-    path.join(buildPathRoot, `../build/${buildType}/binding_cpp20.node`)
-  ].filter(it => fs.existsSync(path.resolve(__dirname, it)))
-    .map(it => require.resolve(it));
+    path.join(buildPathRoot, `../build/${buildType}/binding_custom_namespace.node`)
+  ].map(it => require.resolve(it));
 
   for (const item of bindings) {
     await Promise.resolve(test(require(item), { bindingPath: item }))
@@ -180,15 +177,12 @@ exports.runTest = async function (test, buildType, buildPathRoot = process.env.B
 exports.runTestWithBindingPath = async function (test, buildType, buildPathRoot = process.env.BUILD_PATH || '') {
   buildType = buildType || await whichBuildType();
 
-  const fs = require('fs');
   const bindings = [
     path.join(buildPathRoot, `../build/${buildType}/binding.node`),
     path.join(buildPathRoot, `../build/${buildType}/binding_noexcept.node`),
     path.join(buildPathRoot, `../build/${buildType}/binding_noexcept_maybe.node`),
-    path.join(buildPathRoot, `../build/${buildType}/binding_custom_namespace.node`),
-    path.join(buildPathRoot, `../build/${buildType}/binding_cpp20.node`)
-  ].filter(it => fs.existsSync(path.resolve(__dirname, it)))
-    .map(it => require.resolve(it));
+    path.join(buildPathRoot, `../build/${buildType}/binding_custom_namespace.node`)
+  ].map(it => require.resolve(it));
 
   for (const item of bindings) {
     await test(item);

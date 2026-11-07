@@ -1,11 +1,27 @@
 'use strict';
 
 const assert = require('assert');
+const fs = require('fs');
+const path = require('path');
+const common = require('./common');
 const testUtil = require('./testUtil');
 
-module.exports = require('./common').runTest(test);
+module.exports = common.runTestWithBuildType(async (buildType) => {
+  await common.runTest(test, buildType);
 
-function test (binding) {
+  const cpp20BindingPath = [
+    path.resolve(__dirname, `build/${buildType}/binding_cpp20.node`),
+    path.resolve(__dirname, `../build/${buildType}/binding_cpp20.node`)
+  ].find(p => fs.existsSync(p));
+
+  if (cpp20BindingPath) {
+    await Promise.resolve(
+      test(require(cpp20BindingPath), { bindingPath: cpp20BindingPath })
+    ).finally(common.mustCall());
+  }
+});
+
+function test (binding, context) {
   return testUtil.runGCTests([
     'Internal Buffer',
     () => {
@@ -27,6 +43,9 @@ function test (binding) {
 
     'std::span Buffer tests',
     () => {
+      if (context && context.bindingPath && context.bindingPath.includes('binding_cpp20')) {
+        assert.strictEqual(binding.buffer.hasSpanSupport, true);
+      }
       if (!binding.buffer.hasSpanSupport) return;
 
       const fromSpan = binding.buffer.createBufferFromSpan();
