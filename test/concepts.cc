@@ -145,4 +145,3 @@ static Object InitConceptsModule(Env env, Object exports) {
 
 NODE_API_MODULE(addon, InitConceptsModule)
 #endif
-
