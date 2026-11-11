@@ -23,6 +23,14 @@ static Boolean AssertAsyncContextReturnCorrectEnv(const CallbackInfo& info) {
   AsyncContext context(info.Env(), "empty_context_test");
   return Boolean::New(info.Env(), context.Env() == info.Env());
 }
+
+static Boolean AssertDefaultConstructor(const CallbackInfo& info) {
+  AsyncContext context;
+  AsyncContext move_target = std::move(context);
+  AsyncContext initialized(info.Env(), "test");
+  move_target = std::move(initialized);
+  return Boolean::New(info.Env(), move_target.Env() == info.Env());
+}
 }  // end anonymous namespace
 
 Object InitAsyncContext(Env env) {
@@ -32,5 +40,6 @@ Object InitAsyncContext(Env env) {
       Function::New(env, MakeCallbackNoResource);
   exports["asyncCxtReturnCorrectEnv"] =
       Function::New(env, AssertAsyncContextReturnCorrectEnv);
+  exports["defaultConstructor"] = Function::New(env, AssertDefaultConstructor);
   return exports;
 }
