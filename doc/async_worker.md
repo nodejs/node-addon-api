@@ -111,6 +111,13 @@ The default implementation runs the `Callback` optionally provided when the
 arguments. The arguments to the `Callback` can be provided by overriding the
 `GetResult()` method.
 
+> [!NOTE]
+> `Napi::AsyncWorker` is backed by Node-API's `napi_create_async_work`. Node.js
+> automatically wraps the completion phase in an asynchronous callback scope
+> (`node::CallbackScope`), ensuring that microtasks (e.g. Promises) and
+> `process.nextTick` handlers scheduled inside `OnOK` or `OnError` are
+> deterministically drained upon completion.
+
 ```cpp
 virtual void Napi::AsyncWorker::OnOK();
 ```
