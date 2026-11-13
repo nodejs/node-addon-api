@@ -109,6 +109,89 @@ static Napi::ArrayBuffer Napi::ArrayBuffer::New(napi_env env,
 
 Returns a new `Napi::ArrayBuffer` instance.
 
+### New
+
+> When `NODE_API_NO_EXTERNAL_BUFFERS_ALLOWED` is defined or when C++20 `std::span` is not available, this method is not available.
+> See [External Buffer][] for more information.
+
+Wraps the provided external data span into a new `Napi::ArrayBuffer` instance.
+
+The `Napi::ArrayBuffer` instance does not assume ownership for the data and
+expects it to be valid for the lifetime of the instance. Since the
+`Napi::ArrayBuffer` is subject to garbage collection this overload is only
+suitable for data which is static and never needs to be freed. This factory
+method will not provide the caller with an opportunity to free the data when the
+`Napi::ArrayBuffer` gets garbage-collected. If you need to free the data
+retained by the `Napi::ArrayBuffer` object please use other variants of the
+`Napi::ArrayBuffer::New` factory method that accept `Napi::Finalizer`.
+See [Finalization][] for more details.
+
+```cpp
+template <typename T, size_t Extent = std::dynamic_extent>
+static Napi::ArrayBuffer Napi::ArrayBuffer::New(napi_env env, std::span<T, Extent> span);
+```
+
+- `[in] env`: The environment in which to create the `Napi::ArrayBuffer` instance.
+- `[in] span`: The `std::span` referencing the external data to wrap.
+
+Returns a new `Napi::ArrayBuffer` instance.
+
+### New
+
+> When `NODE_API_NO_EXTERNAL_BUFFERS_ALLOWED` is defined or when C++20 `std::span` is not available, this method is not available.
+> See [External Buffer][] for more information.
+
+Wraps the provided external data span into a new `Napi::ArrayBuffer` instance.
+
+The `Napi::ArrayBuffer` instance does not assume ownership for the data and
+expects it to be valid for the lifetime of the instance. The data can only be
+freed once the `finalizeCallback` is invoked to indicate that the
+`Napi::ArrayBuffer` has been released.
+
+```cpp
+template <typename T, size_t Extent, typename Finalizer>
+static Napi::ArrayBuffer Napi::ArrayBuffer::New(napi_env env,
+                       std::span<T, Extent> span,
+                       Finalizer finalizeCallback);
+```
+
+- `[in] env`: The environment in which to create the `Napi::ArrayBuffer` instance.
+- `[in] span`: The `std::span` referencing the external data to wrap.
+- `[in] finalizeCallback`: A function called when the engine destroys the
+  `Napi::ArrayBuffer` object, implementing `operator()(Napi::BasicEnv, void*)`.
+  See [Finalization][] for more details.
+
+Returns a new `Napi::ArrayBuffer` instance.
+
+### New
+
+> When `NODE_API_NO_EXTERNAL_BUFFERS_ALLOWED` is defined or when C++20 `std::span` is not available, this method is not available.
+> See [External Buffer][] for more information.
+
+Wraps the provided external data span into a new `Napi::ArrayBuffer` instance.
+
+The `Napi::ArrayBuffer` instance does not assume ownership for the data and expects it
+to be valid for the lifetime of the instance. The data can only be freed once
+the `finalizeCallback` is invoked to indicate that the `Napi::ArrayBuffer` has been
+released.
+
+```cpp
+template <typename T, size_t Extent, typename Finalizer, typename Hint>
+static Napi::ArrayBuffer Napi::ArrayBuffer::New(napi_env env,
+                       std::span<T, Extent> span,
+                       Finalizer finalizeCallback,
+                       Hint* finalizeHint);
+```
+
+- `[in] env`: The environment in which to create the `Napi::ArrayBuffer` instance.
+- `[in] span`: The `std::span` referencing the external data to wrap.
+- `[in] finalizeCallback`: A function called when the engine destroys the
+  `Napi::ArrayBuffer` object, implementing `operator()(Napi::BasicEnv, void*,
+  Hint*)`. See [Finalization][] for more details.
+- `[in] finalizeHint`: The hint value passed to the `finalizeCallback` function.
+
+Returns a new `Napi::ArrayBuffer` instance.
+
 ### Constructor
 
 Initializes an empty instance of the `Napi::ArrayBuffer` class.
@@ -143,6 +226,17 @@ void* Napi::ArrayBuffer::Data() const;
 ```
 
 Returns a pointer the wrapped data.
+
+### Span
+
+> When C++20 `std::span` is not available, this method is not available.
+
+```cpp
+template <typename T = uint8_t>
+std::span<T> Napi::ArrayBuffer::Span();
+```
+
+Returns a `std::span<T>` view over the wrapped data.
 
 ### Detach
 

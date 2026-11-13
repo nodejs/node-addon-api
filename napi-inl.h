@@ -2203,6 +2203,13 @@ inline size_t SharedArrayBuffer::ByteLength() {
   NAPI_THROW_IF_FAILED(_env, status, 0);
   return length;
 }
+
+#if defined(__cpp_lib_span)
+template <typename T>
+inline std::span<T> SharedArrayBuffer::Span() {
+  return std::span<T>(reinterpret_cast<T*>(Data()), ByteLength() / sizeof(T));
+}
+#endif  // defined(__cpp_lib_span)
 #endif  // NODE_API_EXPERIMENTAL_HAS_SHAREDARRAYBUFFER
 
 ////////////////////////////////////////////////////////////////////////////////

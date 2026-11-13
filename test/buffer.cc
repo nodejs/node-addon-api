@@ -246,8 +246,11 @@ Object InitBuffer(Env env) {
 }
 
 #if defined(BUILDING_CPP20_MODULE)
+Object InitBufferNoExternal(Env env);
+
 static Object InitBufferModule(Env env, Object exports) {
   exports.Set("buffer", InitBuffer(env));
+  exports.Set("bufferNoExternal", InitBufferNoExternal(env));
   return exports;
 }
 

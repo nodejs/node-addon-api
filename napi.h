@@ -1312,6 +1312,11 @@ class SharedArrayBuffer : public Object {
 
   void* Data();
   size_t ByteLength();
+
+#if defined(__cpp_lib_span)
+  template <typename T = uint8_t>
+  std::span<T> Span();
+#endif  // defined(__cpp_lib_span)
 };
 #endif
 
