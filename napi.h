@@ -2863,7 +2863,9 @@ class AsyncWorker {
   ObjectReference _receiver;
   FunctionReference _callback;
   std::string _error;
-  bool _suppress_destruct;
+
+ protected:
+  bool _suppress_destruct = false;
 };
 #endif  // NAPI_HAS_THREADS
 
@@ -3338,10 +3340,14 @@ class AsyncProgressWorkerBase : public AsyncWorker {
 
  private:
   ThreadSafeFunction _tsfn;
+  BasicEnv::CleanupHook<void (*)(void*), void> _cleanup_hook;
   bool _work_completed = false;
+  bool _tsfn_finalized = false;
+  bool _teardown_called = false;
   napi_status _complete_status;
   static inline void OnThreadSafeFunctionFinalize(
       Napi::Env env, void* data, AsyncProgressWorkerBase* context);
+  static inline void OnEnvironmentTeardown(void* arg);
 };
 
 template <class T>
