@@ -6835,9 +6835,8 @@ inline void AsyncProgressWorkerBase<DataType>::OnWorkComplete(
     Napi::Env env, napi_status status) {
   _work_completed = true;
   _complete_status = status;
-  if (_tsfn_finalized) {
-    AsyncWorker::OnWorkComplete(env,
-                                _teardown_called ? napi_cancelled : status);
+  if (_tsfn_finalized || _teardown_called) {
+    AsyncWorker::OnWorkComplete(env, napi_cancelled);
   } else {
     _tsfn.Release();
   }
