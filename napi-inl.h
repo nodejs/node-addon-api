@@ -2205,9 +2205,12 @@ inline size_t SharedArrayBuffer::ByteLength() {
 }
 
 #if defined(__cpp_lib_span)
-template <typename T>
-inline std::span<T> SharedArrayBuffer::Span() {
-  return std::span<T>(reinterpret_cast<T*>(Data()), ByteLength() / sizeof(T));
+inline std::span<uint8_t> SharedArrayBuffer::Span() const {
+  void* data;
+  size_t length;
+  napi_status status = napi_get_arraybuffer_info(_env, _value, &data, &length);
+  NAPI_THROW_IF_FAILED(_env, status, std::span<uint8_t>());
+  return std::span<uint8_t>(static_cast<uint8_t*>(data), length);
 }
 #endif  // defined(__cpp_lib_span)
 #endif  // NODE_API_EXPERIMENTAL_HAS_SHAREDARRAYBUFFER
@@ -2346,9 +2349,12 @@ inline size_t ArrayBuffer::ByteLength() {
 }
 
 #if defined(__cpp_lib_span)
-template <typename T>
-inline std::span<T> ArrayBuffer::Span() {
-  return std::span<T>(reinterpret_cast<T*>(Data()), ByteLength() / sizeof(T));
+inline std::span<uint8_t> ArrayBuffer::Span() const {
+  void* data;
+  size_t length;
+  napi_status status = napi_get_arraybuffer_info(_env, _value, &data, &length);
+  NAPI_THROW_IF_FAILED(_env, status, std::span<uint8_t>());
+  return std::span<uint8_t>(static_cast<uint8_t*>(data), length);
 }
 #endif  // defined(__cpp_lib_span)
 

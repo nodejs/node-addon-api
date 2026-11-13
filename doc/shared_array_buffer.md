@@ -67,10 +67,9 @@ Returns a pointer the wrapped data.
 > When C++20 `std::span` is not available, this method is not available.
 
 ```cpp
-template <typename T = uint8_t>
-std::span<T> Napi::SharedArrayBuffer::Span();
+std::span<uint8_t> Napi::SharedArrayBuffer::Span() const;
 ```
 
-Returns a `std::span<T>` view over the wrapped data.
+Returns a `std::span<uint8_t>` view over the raw byte data.
 
 [`Napi::Object`]: ./object.md

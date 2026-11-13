@@ -1314,8 +1314,7 @@ class SharedArrayBuffer : public Object {
   size_t ByteLength();
 
 #if defined(__cpp_lib_span)
-  template <typename T = uint8_t>
-  std::span<T> Span();
+  std::span<uint8_t> Span() const;
 #endif  // defined(__cpp_lib_span)
 };
 #endif
@@ -1402,8 +1401,7 @@ class ArrayBuffer : public Object {
   size_t ByteLength();  ///< Gets the length of the array buffer in bytes.
 
 #if defined(__cpp_lib_span)
-  template <typename T = uint8_t>
-  std::span<T> Span();
+  std::span<uint8_t> Span() const;
 #endif  // defined(__cpp_lib_span)
 
 #if NAPI_VERSION >= 7
