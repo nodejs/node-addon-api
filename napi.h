@@ -24,14 +24,14 @@
 #include <utility>
 #include <vector>
 
-#if (defined(__cpp_concepts) && __cpp_concepts >= 201907L) ||                  \
-    (__cplusplus >= 202002L) || (defined(_MSVC_LANG) && _MSVC_LANG >= 202002L)
 #if defined(__has_include)
-#if __has_include(<concepts>)
+#if __has_include(<version>)
+#include <version>
+#endif
+#endif
+#if defined(__cpp_lib_concepts) && __cpp_lib_concepts >= 202002L
 #include <concepts>
 #define NAPI_HAS_CPP20_CONCEPTS 1
-#endif
-#endif
 #endif
 
 // VS2015 RTM has bugs with constexpr, so require min of VS2015 Update 3 (known
