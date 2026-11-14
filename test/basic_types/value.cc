@@ -36,6 +36,55 @@ static Value ValueReturnsCorrectEnv(const CallbackInfo& info) {
   return Boolean::New(info.Env(), testValue.Env() == info.Env());
 }
 
+static Value TestEnvComparisons(const CallbackInfo& info) {
+  Env env = info.Env();
+  Env env2 = info.Env();
+  bool eq = (env == env2);
+  bool ne = (env != env2);
+  bool eqNull = (env == nullptr);
+  bool neNull = (env != nullptr);
+  bool nullEq = (nullptr == env);
+  bool nullNe = (nullptr != env);
+
+  bool result = eq && !ne && !eqNull && neNull && !nullEq && nullNe;
+#if defined(NAPI_HAS_CPP20_COMPARISONS)
+  result = result && ((env <=> env2) == 0);
+#endif
+  return Boolean::New(info.Env(), result);
+}
+
+static Value HasCpp20Comparisons(const CallbackInfo& info) {
+#if defined(NAPI_HAS_CPP20_COMPARISONS)
+  return Boolean::New(info.Env(), true);
+#else
+  return Boolean::New(info.Env(), false);
+#endif
+}
+
+static Value TestMaybeComparisons(const CallbackInfo& info) {
+  Maybe<int> m_none1 = Nothing<int>();
+  Maybe<int> m_none2 = Nothing<int>();
+  Maybe<int> m_one = Just<int>(1);
+  Maybe<int> m_two = Just<int>(2);
+
+  bool ok = (m_none1 == m_none2) && (m_none1 != m_one) && (m_one == m_one) &&
+            (m_one != m_two);
+#if defined(NAPI_HAS_CPP20_COMPARISONS)
+  ok = ok && (m_none1 < m_one) && (m_one > m_none1) && (m_one < m_two) &&
+       (m_two > m_one) && (m_one <= m_two) && (m_two >= m_one) &&
+       (m_one <= m_one) && (m_one >= m_one) && ((m_none1 <=> m_none2) == 0) &&
+       ((m_none1 <=> m_one) < 0) && ((m_one <=> m_none1) > 0) &&
+       ((m_one <=> m_two) < 0) && ((m_two <=> m_one) > 0);
+
+  Maybe<double> md_none = Nothing<double>();
+  Maybe<double> md_one = Just<double>(1.5);
+  Maybe<double> md_two = Just<double>(2.5);
+  ok = ok && (md_none < md_one) && (md_one < md_two) &&
+       ((md_one <=> md_two) < 0);
+#endif
+  return Boolean::New(info.Env(), ok);
+}
+
 static Value EmptyValueReturnNullPtrOnCast(const CallbackInfo& info) {
   Value emptyValue;
   bool isNullPtr = static_cast<napi_value>(emptyValue) == nullptr;
@@ -164,6 +213,9 @@ Object InitBasicTypesValue(Env env) {
 
   exports["assertValueReturnsCorrectEnv"] =
       Function::New(env, ValueReturnsCorrectEnv);
+  exports["assertEnvComparisons"] = Function::New(env, TestEnvComparisons);
+  exports["assertMaybeComparisons"] = Function::New(env, TestMaybeComparisons);
+  exports["hasCpp20Comparisons"] = Function::New(env, HasCpp20Comparisons);
 
   exports["assertEmptyValReturnNullPtrOnCast"] =
       Function::New(env, EmptyValueReturnNullPtrOnCast);
@@ -175,3 +227,12 @@ Object InitBasicTypesValue(Env env) {
 
   return exports;
 }
+
+#if defined(BUILDING_CPP20_MODULE)
+static Object InitValueModule(Env env, Object exports) {
+  exports.Set("basic_types_value", InitBasicTypesValue(env));
+  return exports;
+}
+
+NODE_API_MODULE(addon, InitValueModule)
+#endif

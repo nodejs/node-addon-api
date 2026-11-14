@@ -30,6 +30,28 @@ void TestMaybeOperatorOverload(const CallbackInfo& info) {
 
   assert(fn_a.Call({}) == fn_a.Call({}));
   assert(fn_a.Call({}) != fn_b.Call({}));
+#if defined(NAPI_HAS_CPP20_COMPARISONS)
+  Maybe<int> m_none1 = Nothing<int>();
+  Maybe<int> m_none2 = Nothing<int>();
+  Maybe<int> m_one = Just<int>(1);
+  Maybe<int> m_two = Just<int>(2);
+
+  assert(m_none1 == m_none2);
+  assert(m_none1 != m_one);
+  assert(m_none1 < m_one);
+  assert(m_one > m_none1);
+  assert(m_one < m_two);
+  assert(m_two > m_one);
+  assert(m_one <= m_two);
+  assert(m_two >= m_one);
+  assert(m_one <= m_one);
+  assert(m_one >= m_one);
+  assert((m_none1 <=> m_none2) == 0);
+  assert((m_none1 <=> m_one) < 0);
+  assert((m_one <=> m_none1) > 0);
+  assert((m_one <=> m_two) < 0);
+  assert((m_two <=> m_one) > 0);
+#endif
 }
 
 void NormalJsCallback(const CallbackInfo& info) {
