@@ -5585,6 +5585,8 @@ inline Napi::Env CallbackScope::Env() const {
 // AsyncContext class
 ////////////////////////////////////////////////////////////////////////////////
 
+inline AsyncContext::AsyncContext() : _env(nullptr), _context(nullptr) {}
+
 inline AsyncContext::AsyncContext(napi_env env, const char* resource_name)
     : AsyncContext(env, resource_name, Object::New(env)) {}
 
