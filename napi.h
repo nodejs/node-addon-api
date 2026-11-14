@@ -24,15 +24,14 @@
 #include <utility>
 #include <vector>
 
-#if (defined(__cpp_impl_three_way_comparison) &&                               \
-     __cpp_impl_three_way_comparison >= 201907L) ||                            \
-    (__cplusplus >= 202002L) || (defined(_MSVC_LANG) && _MSVC_LANG >= 202002L)
 #if defined(__has_include)
-#if __has_include(<compare>)
+#if __has_include(<version>)
+#include <version>
+#endif
+#endif
+#if defined(__cpp_lib_three_way_comparison) && __cpp_lib_three_way_comparison >= 202002L
 #include <compare>
 #define NAPI_HAS_CPP20_COMPARISONS 1
-#endif
-#endif
 #endif
 
 // VS2015 RTM has bugs with constexpr, so require min of VS2015 Update 3 (known
