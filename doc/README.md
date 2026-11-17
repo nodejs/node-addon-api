@@ -143,4 +143,4 @@ Quick links to NPM searches: [keywords:node-addon-api](https://www.npmjs.com/sea
 
 - [napi-rs](https://napi.rs) - (`Rust`)
 
-[ABI stability guide]: https://nodejs.org/en/docs/guides/abi-stability/
+[ABI stability guide]: https://nodejs.org/en/learn/modules/abi-stability
