@@ -6835,8 +6835,20 @@ inline void AsyncProgressWorkerBase<DataType>::OnWorkComplete(
     Napi::Env env, napi_status status) {
   _work_completed = true;
   _complete_status = status;
-  if (_tsfn_finalized || _teardown_called) {
-    AsyncWorker::OnWorkComplete(env, napi_cancelled);
+  if (_tsfn_finalized) {
+    napi_status final_status =
+        _teardown_called ? napi_cancelled : _complete_status;
+#ifdef NODE_ADDON_API_CPP_EXCEPTIONS
+    try {
+      AsyncWorker::OnWorkComplete(env, final_status);
+    } catch (const Error&) {
+      if (!_suppress_destruct) {
+        Destroy();
+      }
+    }
+#else
+    AsyncWorker::OnWorkComplete(env, final_status);
+#endif
   } else {
     _tsfn.Release();
   }
