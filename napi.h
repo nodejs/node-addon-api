@@ -29,7 +29,7 @@
 #include <version>
 #endif
 #endif
-#if defined(__cpp_lib_three_way_comparison) && __cpp_lib_three_way_comparison >= 202002L
+#if defined(__cpp_lib_three_way_comparison) && __cpp_lib_three_way_comparison >= 201907L
 #include <compare>
 #define NAPI_HAS_CPP20_COMPARISONS 1
 #endif
@@ -384,7 +384,6 @@ class BasicEnv {
   // ... occurs when comparing foo.Env() == bar.Env() or foo.Env() == nullptr
 #if defined(NAPI_HAS_CPP20_COMPARISONS)
   bool operator==(const BasicEnv& other) const = default;
-  auto operator<=>(const BasicEnv& other) const = default;
 #else
   bool operator==(const BasicEnv& other) const {
     return _env == other._env;

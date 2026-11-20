@@ -47,9 +47,6 @@ static Value TestEnvComparisons(const CallbackInfo& info) {
   bool nullNe = (nullptr != env);
 
   bool result = eq && !ne && !eqNull && neNull && !nullEq && nullNe;
-#if defined(NAPI_HAS_CPP20_COMPARISONS)
-  result = result && ((env <=> env2) == 0);
-#endif
   return Boolean::New(info.Env(), result);
 }
 
