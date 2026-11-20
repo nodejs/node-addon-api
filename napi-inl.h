@@ -604,10 +604,12 @@ bool Maybe<T>::operator==(const Maybe& other) const {
          (!IsJust() || Unwrap() == other.Unwrap());
 }
 
+#if !defined(NAPI_HAS_CPP20_COMPARISONS)
 template <class T>
 bool Maybe<T>::operator!=(const Maybe& other) const {
   return !operator==(other);
 }
+#endif
 
 template <class T>
 Maybe<T>::Maybe() : _has_value(false) {}
@@ -790,9 +792,11 @@ inline bool Value::operator==(const Value& other) const {
   return StrictEquals(other);
 }
 
+#if !defined(NAPI_HAS_CPP20_COMPARISONS)
 inline bool Value::operator!=(const Value& other) const {
   return !this->operator==(other);
 }
+#endif
 
 inline bool Value::StrictEquals(const Value& other) const {
   bool result;
@@ -1961,10 +1965,12 @@ inline bool Object::const_iterator::operator==(
   return _index == other._index;
 }
 
+#if !defined(NAPI_HAS_CPP20_COMPARISONS)
 inline bool Object::const_iterator::operator!=(
     const const_iterator& other) const {
   return _index != other._index;
 }
+#endif
 
 inline const std::pair<Value, Object::PropertyLValue<Value>>
 Object::const_iterator::operator*() const {
@@ -1998,9 +2004,11 @@ inline bool Object::iterator::operator==(const iterator& other) const {
   return _index == other._index;
 }
 
+#if !defined(NAPI_HAS_CPP20_COMPARISONS)
 inline bool Object::iterator::operator!=(const iterator& other) const {
   return _index != other._index;
 }
+#endif
 
 inline std::pair<Value, Object::PropertyLValue<Value>>
 Object::iterator::operator*() {
@@ -3746,10 +3754,12 @@ inline bool Reference<T>::operator==(const Reference<T>& other) const {
   return this->Value().StrictEquals(other.Value());
 }
 
+#if !defined(NAPI_HAS_CPP20_COMPARISONS)
 template <typename T>
 inline bool Reference<T>::operator!=(const Reference<T>& other) const {
   return !this->operator==(other);
 }
+#endif
 
 template <typename T>
 inline Napi::Env Reference<T>::Env() const {

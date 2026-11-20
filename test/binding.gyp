@@ -92,6 +92,9 @@
       'build_sources_type_check': [
         'value_type_cast.cc'
       ],
+      'build_sources_cpp20': [
+        'basic_types/value.cc'
+      ],
       'want_coverage': '<!(node -p process.env.npm_config_coverage)',
       'use_node_api_headers': '<!(node -p process.env.use_node_api_headers)',
       'conditions': [
@@ -117,6 +120,21 @@
       'dependencies': ['../node_addon_api.gyp:node_addon_api_except'],
       'sources': ['>@(build_sources)'],
       'defines': ['NODE_ADDON_API_ENABLE_TYPE_CHECK_ON_AS']
+    },
+    {
+      'target_name': 'binding_cpp20',
+      'dependencies': ['../node_addon_api.gyp:node_addon_api_except'],
+      'sources': ['>@(build_sources_cpp20)'],
+      'defines': ['BUILDING_CPP20_MODULE'],
+      'cflags_cc': ['-std=c++20'],
+      'msvs_settings': {
+        'VCCLCompilerTool': {
+          'AdditionalOptions': ['/std:c++20', '/Zc:__cplusplus']
+        }
+      },
+      'xcode_settings': {
+        'CLANG_CXX_LANGUAGE_STANDARD': 'c++20'
+      }
     },
     {
       'target_name': 'binding_except_all',
