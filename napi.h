@@ -29,7 +29,7 @@
 #include <version>
 #endif
 #endif
-#if defined(__cpp_lib_three_way_comparison) && __cpp_lib_three_way_comparison >= 202002L
+#if defined(__cpp_lib_three_way_comparison) && __cpp_lib_three_way_comparison >= 201907L
 #include <compare>
 #define NAPI_HAS_CPP20_COMPARISONS 1
 #endif
