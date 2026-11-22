@@ -30,9 +30,9 @@ if (process.argv[2] === 'runInChildProcess') {
   if (testCase === 0) {
     // Test case 0: Environment teardown occurs while worker is actively running
     binding.asyncprogressworker.waitForWorkerThread();
-    const terminatePromise = worker.terminate();
+    worker.terminate();
     binding.asyncprogressworker.releaseWorkerThread();
-    terminatePromise.then(() => {
+    worker.on('exit', () => {
       process.exit(0);
     });
   } else if (testCase === 1) {
@@ -81,7 +81,8 @@ if (process.argv[2] === 'runInChildProcess') {
           'runInChildProcess',
           bindingPath,
           i
-        ]
+        ],
+        { timeout: 30000 }
       );
 
       assert.strictEqual(

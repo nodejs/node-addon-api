@@ -6804,11 +6804,10 @@ inline AsyncProgressWorkerBase<DataType>::~AsyncProgressWorkerBase() {
   if (!_cleanup_hook.IsEmpty()) {
     _cleanup_hook.Remove(Env());
   }
-  // Abort pending tsfn call.
-  // Don't send progress events after we've already completed.
-  // It's ok to call ThreadSafeFunction::Abort and ThreadSafeFunction::Release
-  // duplicated.
-  _tsfn.Abort();
+  // Abort pending tsfn call if it hasn't been finalized or aborted yet.
+  if (!_tsfn_finalized && !_teardown_called) {
+    _tsfn.Abort();
+  }
 }
 
 template <typename DataType>
@@ -6847,7 +6846,7 @@ inline void AsyncProgressWorkerBase<DataType>::OnWorkComplete(
 #else
     AsyncWorker::OnWorkComplete(env, _complete_status);
 #endif
-  } else {
+  } else if (!_teardown_called) {
     _tsfn.Release();
   }
 }
