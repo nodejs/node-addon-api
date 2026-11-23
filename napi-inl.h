@@ -6864,10 +6864,15 @@ inline void AsyncProgressWorkerBase<DataType>::OnThreadSafeFunctionFinalize(
       if (s == napi_ok) {
         napi_value ignored;
         s = napi_call_function(env, undefined, undefined, 0, nullptr, &ignored);
-        if (s == napi_cannot_run_js || s == napi_pending_exception ||
-            s == static_cast<napi_status>(23)) {
+#if (NAPI_VERSION >= 10)
+        if (s == napi_cannot_run_js || s == napi_pending_exception) {
           status = napi_cancelled;
         }
+#else
+        if (s == napi_pending_exception) {
+          status = napi_cancelled;
+        }
+#endif
       }
     }
 #ifdef NODE_ADDON_API_CPP_EXCEPTIONS
