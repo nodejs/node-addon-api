@@ -29,6 +29,9 @@ function test (binding, context) {
 
   // Verify function created with concept-constrained CallbackCallable
   assert.strictEqual(binding.concepts.testFunction(), 'concept callback ok');
+  assert.strictEqual(binding.concepts.testNamedLambda(), 'named lambda ok');
+  assert.strictEqual(binding.concepts.testMutableLambda(), 1);
+  assert.strictEqual(binding.concepts.testMutableLambda(), 2);
 
   // Verify property descriptor created with concept-constrained GetterCallable & SetterCallable
   assert.strictEqual(binding.concepts.testAccessor.testProp, 42);

@@ -87,6 +87,73 @@ static_assert(!concepts::FinalizerWithHint<
               int,
               char>);
 
+// Callables that can only be called on a named object, not a temporary, are
+// accepted, since the library keeps the callable and calls it from storage.
+struct LvalueOnlyCallback {
+  Value operator()(const CallbackInfo& info) & {
+    return info.Env().Undefined();
+  }
+};
+struct LvalueOnlySetter {
+  void operator()(const CallbackInfo& /*info*/) & {}
+};
+struct LvalueOnlyFinalizer {
+  void operator()(Env /*env*/) & {}
+  void operator()(Env /*env*/, int* /*data*/) & {}
+  void operator()(Env /*env*/, int* /*data*/, char* /*hint*/) & {}
+};
+static_assert(concepts::CallbackCallable<LvalueOnlyCallback>);
+static_assert(concepts::GetterCallable<LvalueOnlyCallback>);
+static_assert(concepts::SetterCallable<LvalueOnlySetter>);
+static_assert(concepts::Finalizer<LvalueOnlyFinalizer>);
+static_assert(concepts::FinalizerWithData<LvalueOnlyFinalizer, int>);
+static_assert(concepts::FinalizerWithHint<LvalueOnlyFinalizer, int, char>);
+
+// Callables that can only be called on a temporary, so they may use up their
+// own state, are rejected, since the library calls the copy it keeps and
+// never lets it be used up.
+struct RvalueOnlyCallback {
+  Value operator()(const CallbackInfo& info) && {
+    return info.Env().Undefined();
+  }
+};
+struct RvalueOnlySetter {
+  void operator()(const CallbackInfo& /*info*/) && {}
+};
+struct RvalueOnlyFinalizer {
+  void operator()(Env /*env*/) && {}
+  void operator()(Env /*env*/, int* /*data*/) && {}
+  void operator()(Env /*env*/, int* /*data*/, char* /*hint*/) && {}
+};
+static_assert(!concepts::CallbackCallable<RvalueOnlyCallback>);
+static_assert(!concepts::GetterCallable<RvalueOnlyCallback>);
+static_assert(!concepts::SetterCallable<RvalueOnlySetter>);
+static_assert(!concepts::Finalizer<RvalueOnlyFinalizer>);
+static_assert(!concepts::FinalizerWithData<RvalueOnlyFinalizer, int>);
+static_assert(!concepts::FinalizerWithHint<RvalueOnlyFinalizer, int, char>);
+
+// Check that the APIs themselves accept or reject these callables, not just the
+// concepts.
+template <typename F>
+constexpr bool CanCreateFunction =
+    requires(Env env, F f) { Function::New(env, f); };
+template <typename Getter, typename Setter>
+constexpr bool CanCreateAccessor =
+    requires(Env env, Object obj, Getter getter, Setter setter) {
+      PropertyDescriptor::Accessor(env, obj, "x", getter, setter);
+    };
+template <typename F>
+constexpr bool CanAddFinalizer =
+    requires(Object obj, F f, int* data) { obj.AddFinalizer(f, data); };
+
+static_assert(CanCreateFunction<LvalueOnlyCallback>);
+static_assert(!CanCreateFunction<RvalueOnlyCallback>);
+static_assert(CanCreateAccessor<LvalueOnlyCallback, LvalueOnlySetter>);
+static_assert(!CanCreateAccessor<RvalueOnlyCallback, LvalueOnlySetter>);
+static_assert(!CanCreateAccessor<LvalueOnlyCallback, RvalueOnlySetter>);
+static_assert(CanAddFinalizer<LvalueOnlyFinalizer>);
+static_assert(!CanAddFinalizer<RvalueOnlyFinalizer>);
+
 #endif  // defined(NAPI_HAS_CPP20_CONCEPTS)
 
 Object InitConcepts(Env env) {
@@ -101,6 +168,18 @@ Object InitConcepts(Env env) {
   exports["testFunction"] = Function::New(env, [](const CallbackInfo& info) {
     return String::New(info.Env(), "concept callback ok");
   });
+
+  auto namedLambda = [](const CallbackInfo& info) {
+    return String::New(info.Env(), "named lambda ok");
+  };
+  exports["testNamedLambda"] = Function::New(env, namedLambda);
+
+  // The counter lives in the library's stored copy of the lambda, so it keeps
+  // counting across calls from JavaScript.
+  exports["testMutableLambda"] =
+      Function::New(env, [count = 0](const CallbackInfo& info) mutable {
+        return Number::New(info.Env(), ++count);
+      });
 
   Object obj = Object::New(env);
   obj.DefineProperty(PropertyDescriptor::Accessor(

@@ -271,32 +271,35 @@ using ModuleRegisterCallback = Object (*)(Env env, Object exports);
 #if defined(NAPI_HAS_CPP20_CONCEPTS)
 namespace concepts {
 
+// The callables are checked as `F&` because the library stores them and
+// always invokes them as lvalues.
+
 template <typename F>
 concept CallbackCallable =
-    std::invocable<F, const CallbackInfo&> &&
-    (std::same_as<std::invoke_result_t<F, const CallbackInfo&>, void> ||
-     std::convertible_to<std::invoke_result_t<F, const CallbackInfo&>,
+    std::invocable<F&, const CallbackInfo&> &&
+    (std::same_as<std::invoke_result_t<F&, const CallbackInfo&>, void> ||
+     std::convertible_to<std::invoke_result_t<F&, const CallbackInfo&>,
                          napi_value>);
 
 template <typename F>
 concept GetterCallable =
-    std::invocable<F, const CallbackInfo&> &&
-    (std::convertible_to<std::invoke_result_t<F, const CallbackInfo&>,
+    std::invocable<F&, const CallbackInfo&> &&
+    (std::convertible_to<std::invoke_result_t<F&, const CallbackInfo&>,
                          napi_value>);
 
 template <typename F>
 concept SetterCallable =
-    std::invocable<F, const CallbackInfo&> &&
-    (std::same_as<std::invoke_result_t<F, const CallbackInfo&>, void>);
+    std::invocable<F&, const CallbackInfo&> &&
+    (std::same_as<std::invoke_result_t<F&, const CallbackInfo&>, void>);
 
 template <typename F>
-concept Finalizer = std::invocable<F, Env>;
+concept Finalizer = std::invocable<F&, Env>;
 
 template <typename F, typename T>
-concept FinalizerWithData = std::invocable<F, Env, T*>;
+concept FinalizerWithData = std::invocable<F&, Env, T*>;
 
 template <typename F, typename T, typename Hint>
-concept FinalizerWithHint = std::invocable<F, Env, T*, Hint*>;
+concept FinalizerWithHint = std::invocable<F&, Env, T*, Hint*>;
 
 }  // namespace concepts
 
