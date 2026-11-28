@@ -65,6 +65,19 @@ function test (binding) {
       // Let C++ detach the ArrayBuffer.
       const extBuffer = binding.arraybuffer.createExternalBuffer();
       binding.arraybuffer.checkDetachUpdatesData(extBuffer);
+    },
+
+    'std::span ArrayBuffer and TypedArray tests',
+    () => {
+      if (!binding.arraybuffer.hasSpanSupport) return;
+
+      const fromSpan = binding.arraybuffer.createBufferFromSpan();
+      binding.arraybuffer.checkBuffer(fromSpan);
+      assert.ok(fromSpan instanceof ArrayBuffer);
+      assert.ok(binding.arraybuffer.checkArrayBufferSpan(fromSpan));
+
+      const uint8 = new Uint8Array(fromSpan);
+      assert.ok(binding.arraybuffer.checkTypedArraySpan(uint8));
     }
   ]);
 }

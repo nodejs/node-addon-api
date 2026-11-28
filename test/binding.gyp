@@ -94,6 +94,9 @@
         'value_type_cast.cc'
       ],
       'build_sources_cpp20': [
+        'binding_cpp20.cc',
+        'buffer.cc',
+        'buffer_no_external.cc',
         'concepts.cc'
       ],
       'want_coverage': '<!(node -p process.env.npm_config_coverage)',

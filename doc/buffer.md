@@ -105,6 +105,86 @@ static Napi::Buffer<T> Napi::Buffer::New(napi_env env,
 
 Returns a new `Napi::Buffer` object.
 
+### New
+
+> When `NODE_API_NO_EXTERNAL_BUFFERS_ALLOWED` is defined or when C++20 `std::span` is not available, this method is not available.
+> See [External Buffer][] for more information.
+
+Wraps the provided external data span into a new `Napi::Buffer` object.
+
+The `Napi::Buffer` object does not assume ownership for the data and expects it
+to be valid for the lifetime of the object. Since the `Napi::Buffer` is subject
+to garbage collection this overload is only suitable for data which is static
+and never needs to be freed. This factory method will not provide the caller
+with an opportunity to free the data when the `Napi::Buffer` gets
+garbage-collected. If you need to free the data retained by the `Napi::Buffer`
+object please use other variants of the `Napi::Buffer::New` factory method that
+accept `Finalizer`. See [Finalization][] for more details.
+
+```cpp
+template <size_t Extent = std::dynamic_extent>
+static Napi::Buffer<T> Napi::Buffer::New(napi_env env, std::span<T, Extent> span);
+```
+
+- `[in] env`: The environment in which to create the `Napi::Buffer` object.
+- `[in] span`: The `std::span` referencing the external data to expose.
+
+Returns a new `Napi::Buffer` object.
+
+### New
+
+> When `NODE_API_NO_EXTERNAL_BUFFERS_ALLOWED` is defined or when C++20 `std::span` is not available, this method is not available.
+> See [External Buffer][] for more information.
+
+Wraps the provided external data span into a new `Napi::Buffer` object.
+
+The `Napi::Buffer` object does not assume ownership for the data and expects it
+to be valid for the lifetime of the object. The data can only be freed once the
+`finalizeCallback` is invoked to indicate that the `Napi::Buffer` has been released.
+
+```cpp
+template <size_t Extent, typename Finalizer>
+static Napi::Buffer<T> Napi::Buffer::New(napi_env env,
+                     std::span<T, Extent> span,
+                     Finalizer finalizeCallback);
+```
+
+- `[in] env`: The environment in which to create the `Napi::Buffer` object.
+- `[in] span`: The `std::span` referencing the external data to expose.
+- `[in] finalizeCallback`: The function called when the engine destroys the
+  `Napi::Buffer` object, implementing `operator()(Napi::BasicEnv, T*)`. See
+  [Finalization][] for more details.
+
+Returns a new `Napi::Buffer` object.
+
+### New
+
+> When `NODE_API_NO_EXTERNAL_BUFFERS_ALLOWED` is defined or when C++20 `std::span` is not available, this method is not available.
+> See [External Buffer][] for more information.
+
+Wraps the provided external data span into a new `Napi::Buffer` object.
+
+The `Napi::Buffer` object does not assume ownership for the data and expects it to be
+valid for the lifetime of the object. The data can only be freed once the
+`finalizeCallback` is invoked to indicate that the `Napi::Buffer` has been released.
+
+```cpp
+template <size_t Extent, typename Finalizer, typename Hint>
+static Napi::Buffer<T> Napi::Buffer::New(napi_env env,
+                     std::span<T, Extent> span,
+                     Finalizer finalizeCallback,
+                     Hint* finalizeHint);
+```
+
+- `[in] env`: The environment in which to create the `Napi::Buffer` object.
+- `[in] span`: The `std::span` referencing the external data to expose.
+- `[in] finalizeCallback`: The function called when the engine destroys the
+  `Napi::Buffer` object, implementing `operator()(Napi::BasicEnv, T*, Hint*)`.
+  See [Finalization][] for more details.
+- `[in] finalizeHint`: The hint value passed to the `finalizeCallback` function.
+
+Returns a new `Napi::Buffer` object.
+
 ### NewOrCopy
 
 Wraps the provided external data into a new `Napi::Buffer` object. When the
@@ -191,6 +271,87 @@ static Napi::Buffer<T> Napi::Buffer::NewOrCopy(napi_env env,
 
 Returns a new `Napi::Buffer` object.
 
+### NewOrCopy
+
+> When C++20 `std::span` is not available, this method is not available.
+
+Wraps the provided external data span into a new `Napi::Buffer` object. When the
+[external buffer][] is not supported, allocates a new `Napi::Buffer` object and
+copies the provided external data into it.
+
+The `Napi::Buffer` object does not assume ownership for the data and expects it to be
+valid for the lifetime of the object. Since the `Napi::Buffer` is subject to garbage
+collection this overload is only suitable for data which is static and never
+needs to be freed.
+
+```cpp
+template <size_t Extent = std::dynamic_extent>
+static Napi::Buffer<T> Napi::Buffer::NewOrCopy(napi_env env, std::span<T, Extent> span);
+```
+
+- `[in] env`: The environment in which to create the `Napi::Buffer` object.
+- `[in] span`: The `std::span` referencing the external data to expose.
+
+Returns a new `Napi::Buffer` object.
+
+### NewOrCopy
+
+> When C++20 `std::span` is not available, this method is not available.
+
+Wraps the provided external data span into a new `Napi::Buffer` object. When the
+[external buffer][] is not supported, allocates a new `Napi::Buffer` object and
+copies the provided external data into it and the `finalizeCallback` is invoked
+immediately.
+
+The `Napi::Buffer` object does not assume ownership for the data and expects it
+to be valid for the lifetime of the object. The data can only be freed once the
+`finalizeCallback` is invoked to indicate that the `Napi::Buffer` has been released.
+
+```cpp
+template <size_t Extent, typename Finalizer>
+static Napi::Buffer<T> Napi::Buffer::NewOrCopy(napi_env env,
+                                               std::span<T, Extent> span,
+                                               Finalizer finalizeCallback);
+```
+
+- `[in] env`: The environment in which to create the `Napi::Buffer` object.
+- `[in] span`: The `std::span` referencing the external data to expose.
+- `[in] finalizeCallback`: The function called when the engine destroys the
+  `Napi::Buffer` object, implementing `operator()(Napi::BasicEnv, T*)`. See
+  [Finalization][] for more details.
+
+Returns a new `Napi::Buffer` object.
+
+### NewOrCopy
+
+> When C++20 `std::span` is not available, this method is not available.
+
+Wraps the provided external data span into a new `Napi::Buffer` object. When the
+[external buffer][] is not supported, allocates a new `Napi::Buffer` object and
+copies the provided external data into it and the `finalizeCallback` is invoked
+immediately.
+
+The `Napi::Buffer` object does not assume ownership for the data and expects it to be
+valid for the lifetime of the object. The data can only be freed once the
+`finalizeCallback` is invoked to indicate that the `Napi::Buffer` has been released.
+
+```cpp
+template <size_t Extent, typename Finalizer, typename Hint>
+static Napi::Buffer<T> Napi::Buffer::NewOrCopy(napi_env env,
+                                               std::span<T, Extent> span,
+                                               Finalizer finalizeCallback,
+                                               Hint* finalizeHint);
+```
+
+- `[in] env`: The environment in which to create the `Napi::Buffer` object.
+- `[in] span`: The `std::span` referencing the external data to expose.
+- `[in] finalizeCallback`: The function called when the engine destroys the
+  `Napi::Buffer` object, implementing `operator()(Napi::BasicEnv, T*, Hint*)`.
+  See [Finalization][] for more details.
+- `[in] finalizeHint`: The hint value passed to the `finalizeCallback` function.
+
+Returns a new `Napi::Buffer` object.
+
 ### Copy
 
 Allocates a new `Napi::Buffer` object and copies the provided external data into it.
@@ -202,6 +363,25 @@ static Napi::Buffer<T> Napi::Buffer::Copy(napi_env env, const T* data, size_t le
 - `[in] env`: The environment in which to create the `Napi::Buffer` object.
 - `[in] data`: The pointer to the external data to copy.
 - `[in] length`: The number of `T` elements in the external data.
+
+Returns a new `Napi::Buffer` object containing a copy of the data.
+
+### Copy
+
+> When C++20 `std::span` is not available, this method is not available.
+
+Allocates a new `Napi::Buffer` object and copies the provided external data span into it.
+
+```cpp
+template <size_t Extent = std::dynamic_extent>
+static Napi::Buffer<T> Napi::Buffer::Copy(napi_env env, std::span<const T, Extent> span);
+
+template <size_t Extent = std::dynamic_extent>
+static Napi::Buffer<T> Napi::Buffer::Copy(napi_env env, std::span<T, Extent> span);
+```
+
+- `[in] env`: The environment in which to create the `Napi::Buffer` object.
+- `[in] span`: The `std::span` referencing the external data to copy.
 
 Returns a new `Napi::Buffer` object containing a copy of the data.
 
@@ -239,6 +419,16 @@ size_t Napi::Buffer::Length() const;
 ```
 
 Returns the number of `T` elements in the external data.
+
+### Span
+
+> When C++20 `std::span` is not available, this method is not available.
+
+```cpp
+std::span<T> Napi::Buffer::Span() const;
+```
+
+Returns a `std::span<T>` view over the buffer data.
 
 [`Napi::Uint8Array`]: ./typed_array_of.md
 [External Buffer]: ./external_buffer.md

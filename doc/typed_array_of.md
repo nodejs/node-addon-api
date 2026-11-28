@@ -162,4 +162,15 @@ const T* Napi::TypedArrayOf::Data() const
 Returns a pointer into the backing `Napi::ArrayBuffer` which is offset to point to the
 start of the array.
 
+### Span
+
+> When C++20 `std::span` is not available, this method is not available.
+
+```cpp
+std::span<T> Napi::TypedArrayOf::Span();
+std::span<const T> Napi::TypedArrayOf::Span() const;
+```
+
+Returns a `std::span` view over the typed array data.
+
 [`Napi::TypedArray`]: ./typed_array.md
