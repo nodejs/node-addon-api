@@ -5748,16 +5748,40 @@ inline void AsyncWorker::SuppressDestruct() {
   _suppress_destruct = true;
 }
 
+namespace details {
+inline void CallAsyncWorkerCallback(napi_env env,
+                                    napi_value recv,
+                                    napi_value func,
+                                    size_t argc,
+                                    const napi_value* argv) {
+  napi_value result;
+  napi_status status = napi_call_function(env, recv, func, argc, argv, &result);
+#if (NAPI_VERSION >= 10)
+  if (status == napi_cannot_run_js) {
+    return;
+  }
+#endif
+  NAPI_THROW_IF_FAILED_VOID(env, status);
+}
+}  // namespace details
+
 inline void AsyncWorker::OnOK() {
   if (!_callback.IsEmpty()) {
-    _callback.Call(_receiver.Value(), GetResult(_callback.Env()));
+    napi_env env = _callback.Env();
+    HandleScope scope(env);
+    std::vector<napi_value> args = GetResult(env);
+    details::CallAsyncWorkerCallback(
+        env, _receiver.Value(), _callback.Value(), args.size(), args.data());
   }
 }
 
 inline void AsyncWorker::OnError(const Error& e) {
-  if (!_callback.IsEmpty()) {
-    _callback.Call(_receiver.Value(),
-                   std::initializer_list<napi_value>{e.Value()});
+  if (!_callback.IsEmpty() && !e.IsEmpty()) {
+    napi_env env = _callback.Env();
+    HandleScope scope(env);
+    napi_value arg = e.Value();
+    details::CallAsyncWorkerCallback(
+        env, _receiver.Value(), _callback.Value(), 1, &arg);
   }
 }
 
@@ -5805,7 +5829,16 @@ inline void AsyncWorker::OnWorkComplete(Napi::Env env, napi_status status) {
       if (_error.size() == 0) {
         OnOK();
       } else {
-        OnError(Error::New(_env, _error));
+        Error err;
+        napi_value str;
+        if (napi_create_string_utf8(_env, _error.data(), _error.size(), &str) ==
+            napi_ok) {
+          napi_value error;
+          if (napi_create_error(_env, nullptr, str, &error) == napi_ok) {
+            err = Error(_env, error);
+          }
+        }
+        OnError(err);
       }
       return nullptr;
     });
@@ -6858,23 +6891,6 @@ inline void AsyncProgressWorkerBase<DataType>::OnThreadSafeFunctionFinalize(
   if (context->_work_completed) {
     napi_status status =
         context->_teardown_called ? napi_cancelled : context->_complete_status;
-    if (status != napi_cancelled) {
-      napi_value undefined;
-      napi_status s = napi_get_undefined(env, &undefined);
-      if (s == napi_ok) {
-        napi_value ignored;
-        s = napi_call_function(env, undefined, undefined, 0, nullptr, &ignored);
-#if (NAPI_VERSION >= 10)
-        if (s == napi_cannot_run_js || s == napi_pending_exception) {
-          status = napi_cancelled;
-        }
-#else
-        if (s == napi_pending_exception) {
-          status = napi_cancelled;
-        }
-#endif
-      }
-    }
 #ifdef NODE_ADDON_API_CPP_EXCEPTIONS
     try {
       context->AsyncWorker::OnWorkComplete(env, status);
