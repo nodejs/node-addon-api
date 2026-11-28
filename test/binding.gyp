@@ -94,6 +94,7 @@
         'value_type_cast.cc'
       ],
       'build_sources_cpp20': [
+        'binding_cpp20.cc',
         'basic_types/value.cc',
         'concepts.cc',
       ],

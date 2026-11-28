@@ -224,12 +224,3 @@ Object InitBasicTypesValue(Env env) {
 
   return exports;
 }
-
-#if defined(BUILDING_CPP20_MODULE)
-static Object InitValueModule(Env env, Object exports) {
-  exports.Set("basic_types_value", InitBasicTypesValue(env));
-  return exports;
-}
-
-NODE_API_MODULE(addon, InitValueModule)
-#endif
