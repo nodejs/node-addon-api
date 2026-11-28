@@ -12,4 +12,3 @@ static Object InitCpp20(Env env, Object exports) {
 }
 
 NODE_API_MODULE(addon, InitCpp20)
-
