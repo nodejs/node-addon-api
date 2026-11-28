@@ -2,6 +2,7 @@
 
 #include <chrono>
 #include <condition_variable>
+#include <future>
 #include <iostream>
 #include <mutex>
 #include <thread>
@@ -340,6 +341,65 @@ class SignalAfterProgressTestWorker : public AsyncProgressWorker<ProgressData> {
   }
   FunctionReference _progress;
 };
+
+std::promise<void> promise_for_worker_thread_;
+std::promise<void> promise_for_parent_thread_;
+
+class TerminatingWorker : public AsyncProgressWorker<ProgressData> {
+ public:
+  static void DoWork(const CallbackInfo& info) {
+    Function cb = info[0].As<Function>();
+    Function progress = info[1].As<Function>();
+
+    TerminatingWorker* worker = new TerminatingWorker(cb, progress);
+    worker->Queue();
+  }
+
+ protected:
+  void Execute(const ExecutionProgress& progress) override {
+    // Notify the parent thread that we are executing
+    promise_for_worker_thread_.set_value();
+
+    // Wait until parent thread initiates termination
+    std::future<void> future = promise_for_parent_thread_.get_future();
+    std::future_status status = future.wait_for(std::chrono::seconds(5));
+    if (status != std::future_status::ready) {
+      Error::Fatal("TerminatingWorker::Execute",
+                   "status != std::future_status::ready");
+    }
+
+    // Try to send progress during/after termination
+    ProgressData data{1};
+    progress.Send(&data, 1);
+  }
+
+  void OnProgress(const ProgressData* /* data */, size_t /* count */) override {
+  }
+
+ private:
+  TerminatingWorker(Function cb, Function progress) : AsyncProgressWorker(cb) {
+    _progress.Reset(progress, 1);
+  }
+  FunctionReference _progress;
+};
+
+void ResetPromises(const CallbackInfo&) {
+  promise_for_worker_thread_ = std::promise<void>();
+  promise_for_parent_thread_ = std::promise<void>();
+}
+
+void WaitForWorkerThread(const CallbackInfo&) {
+  std::future<void> future = promise_for_worker_thread_.get_future();
+  std::future_status status = future.wait_for(std::chrono::seconds(5));
+  if (status != std::future_status::ready) {
+    Error::Fatal("WaitForWorkerThread", "status != std::future_status::ready");
+  }
+}
+
+void ReleaseWorkerThread(const CallbackInfo&) {
+  promise_for_parent_thread_.set_value();
+}
+
 }  // namespace
 
 Object InitAsyncProgressWorker(Env env) {
@@ -351,6 +411,10 @@ Object InitAsyncProgressWorker(Env env) {
   exports["runWorkerNoCb"] = Function::New(env, TestWorkerWithNoCb::DoWork);
   exports["runWorkerWithRecv"] = Function::New(env, TestWorkerWithRecv::DoWork);
   exports["runWorkerWithCb"] = Function::New(env, TestWorkerWithCb::DoWork);
+  exports["resetPromises"] = Function::New(env, ResetPromises);
+  exports["waitForWorkerThread"] = Function::New(env, WaitForWorkerThread);
+  exports["releaseWorkerThread"] = Function::New(env, ReleaseWorkerThread);
+  exports["doTerminatingWork"] = Function::New(env, TerminatingWorker::DoWork);
   return exports;
 }
 

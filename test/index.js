@@ -109,6 +109,7 @@ if (napiVersion < 3) {
 if (napiVersion < 4 && !filterConditionsProvided) {
   testModules.splice(testModules.indexOf('asyncprogressqueueworker'), 1);
   testModules.splice(testModules.indexOf('asyncprogressworker'), 1);
+  testModules.splice(testModules.indexOf('async_progress_worker_terminating_environment'), 1);
   testModules.splice(testModules.indexOf('threadsafe_function/threadsafe_function_ctx'), 1);
   testModules.splice(testModules.indexOf('threadsafe_function/threadsafe_function_existing_tsfn'), 1);
   testModules.splice(testModules.indexOf('threadsafe_function/threadsafe_function_ptr'), 1);
@@ -131,6 +132,7 @@ if (napiVersion < 6 && !filterConditionsProvided) {
 if (majorNodeVersion < 12 && !filterConditionsProvided) {
   testModules.splice(testModules.indexOf('objectwrap_worker_thread'), 1);
   testModules.splice(testModules.indexOf('error_terminating_environment'), 1);
+  testModules.splice(testModules.indexOf('async_progress_worker_terminating_environment'), 1);
 }
 
 if (napiVersion < 8 && !filterConditionsProvided) {

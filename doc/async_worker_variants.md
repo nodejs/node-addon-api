@@ -45,6 +45,12 @@ The default implementation runs the `Callback` optionally provided when the
 arguments. Arguments to the callback can be provided by overriding the `GetResult()`
 method.
 
+Note that `OnOK()` (and `OnError()`) may be called when the environment is
+terminating and JavaScript execution is no longer possible (`napi_cannot_run_js`).
+The default implementations do nothing in that case (and `OnError()` receives an
+empty `Napi::Error` with `e.IsEmpty() == true`). Overridden implementations that
+call into JavaScript should handle `napi_cannot_run_js` accordingly.
+
 ```cpp
 virtual void Napi::AsyncProgressWorker::OnOK();
 ```

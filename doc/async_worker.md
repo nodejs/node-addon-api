@@ -111,6 +111,11 @@ The default implementation runs the `Callback` optionally provided when the
 arguments. The arguments to the `Callback` can be provided by overriding the
 `GetResult()` method.
 
+Note that `OnOK()` may be called when the environment is terminating and
+JavaScript execution is no longer possible (`napi_cannot_run_js`). The default
+implementation does nothing in that case; overridden implementations that call
+into JavaScript should handle `napi_cannot_run_js` accordingly.
+
 ```cpp
 virtual void Napi::AsyncWorker::OnOK();
 ```
@@ -131,6 +136,13 @@ occurs while `Napi::AsyncWorker::Execute` is running and C++ exceptions are
 enabled or if an error was set through a call to `Napi::AsyncWorker::SetError`.
 The default implementation calls the `Callback` provided when the `Napi::AsyncWorker`
 class was created, passing in the error as the first parameter.
+
+Note that `OnError()` may be called when the environment is terminating and
+JavaScript execution is no longer possible (`napi_cannot_run_js`). In that case,
+the `Napi::Error` passed to `OnError()` will be empty (`e.IsEmpty() == true`),
+and the default implementation does nothing. Overridden implementations that call
+into JavaScript should check `e.IsEmpty()` and handle `napi_cannot_run_js`
+accordingly.
 
 ```cpp
 virtual void Napi::AsyncWorker::OnError(const Napi::Error& e);

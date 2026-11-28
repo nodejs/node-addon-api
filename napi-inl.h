@@ -5772,16 +5772,40 @@ inline void AsyncWorker::SuppressDestruct() {
   _suppress_destruct = true;
 }
 
+namespace details {
+inline void CallAsyncWorkerCallback(napi_env env,
+                                    napi_value recv,
+                                    napi_value func,
+                                    size_t argc,
+                                    const napi_value* argv) {
+  napi_value result;
+  napi_status status = napi_call_function(env, recv, func, argc, argv, &result);
+#if (NAPI_VERSION >= 10)
+  if (status == napi_cannot_run_js) {
+    return;
+  }
+#endif
+  NAPI_THROW_IF_FAILED_VOID(env, status);
+}
+}  // namespace details
+
 inline void AsyncWorker::OnOK() {
   if (!_callback.IsEmpty()) {
-    _callback.Call(_receiver.Value(), GetResult(_callback.Env()));
+    napi_env env = _callback.Env();
+    HandleScope scope(env);
+    std::vector<napi_value> args = GetResult(env);
+    details::CallAsyncWorkerCallback(
+        env, _receiver.Value(), _callback.Value(), args.size(), args.data());
   }
 }
 
 inline void AsyncWorker::OnError(const Error& e) {
-  if (!_callback.IsEmpty()) {
-    _callback.Call(_receiver.Value(),
-                   std::initializer_list<napi_value>{e.Value()});
+  if (!_callback.IsEmpty() && !e.IsEmpty()) {
+    napi_env env = _callback.Env();
+    HandleScope scope(env);
+    napi_value arg = e.Value();
+    details::CallAsyncWorkerCallback(
+        env, _receiver.Value(), _callback.Value(), 1, &arg);
   }
 }
 
@@ -5829,7 +5853,16 @@ inline void AsyncWorker::OnWorkComplete(Napi::Env env, napi_status status) {
       if (_error.size() == 0) {
         OnOK();
       } else {
-        OnError(Error::New(_env, _error));
+        Error err;
+        napi_value str;
+        if (napi_create_string_utf8(_env, _error.data(), _error.size(), &str) ==
+            napi_ok) {
+          napi_value error;
+          if (napi_create_error(_env, nullptr, str, &error) == napi_ok) {
+            err = Error(_env, error);
+          }
+        }
+        OnError(err);
       }
       return nullptr;
     });
@@ -6780,6 +6813,25 @@ inline AsyncProgressWorkerBase<DataType>::AsyncProgressWorkerBase(
                                   /** context */ this,
                                   OnThreadSafeFunctionFinalize,
                                   /** finalizeData */ this);
+
+  // Register an environment cleanup hook to abort the thread-safe function and
+  // prevent event-loop hangs or running JavaScript if the environment
+  // terminates while the worker is active.
+  _cleanup_hook =
+      Env().AddCleanupHook(OnEnvironmentTeardown, static_cast<void*>(this));
+}
+
+template <typename DataType>
+inline void AsyncProgressWorkerBase<DataType>::OnEnvironmentTeardown(
+    void* arg) {
+  auto* self = static_cast<AsyncProgressWorkerBase<DataType>*>(arg);
+  if (self != nullptr) {
+    self->_teardown_called = true;
+    self->_cleanup_hook = BasicEnv::CleanupHook<void (*)(void*), void>();
+    if (self->_tsfn) {
+      self->_tsfn.Abort();
+    }
+  }
 }
 
 #if NAPI_VERSION > 4
@@ -6805,16 +6857,24 @@ inline AsyncProgressWorkerBase<DataType>::AsyncProgressWorkerBase(
                                   /** context */ this,
                                   OnThreadSafeFunctionFinalize,
                                   /** finalizeData */ this);
+
+  // Register an environment cleanup hook to abort the thread-safe function and
+  // prevent event-loop hangs or running JavaScript if the environment
+  // terminates while the worker is active.
+  _cleanup_hook =
+      env.AddCleanupHook(OnEnvironmentTeardown, static_cast<void*>(this));
 }
 #endif
 
 template <typename DataType>
 inline AsyncProgressWorkerBase<DataType>::~AsyncProgressWorkerBase() {
-  // Abort pending tsfn call.
-  // Don't send progress events after we've already completed.
-  // It's ok to call ThreadSafeFunction::Abort and ThreadSafeFunction::Release
-  // duplicated.
-  _tsfn.Abort();
+  if (!_cleanup_hook.IsEmpty()) {
+    _cleanup_hook.Remove(Env());
+  }
+  // Abort pending tsfn call if it hasn't been finalized or aborted yet.
+  if (!_tsfn_finalized && !_teardown_called) {
+    _tsfn.Abort();
+  }
 }
 
 template <typename DataType>
@@ -6838,17 +6898,44 @@ inline napi_status AsyncProgressWorkerBase<DataType>::NonBlockingCall(
 
 template <typename DataType>
 inline void AsyncProgressWorkerBase<DataType>::OnWorkComplete(
-    Napi::Env /* env */, napi_status status) {
+    Napi::Env env, napi_status status) {
   _work_completed = true;
-  _complete_status = status;
-  _tsfn.Release();
+  _complete_status = _teardown_called ? napi_cancelled : status;
+  if (_tsfn_finalized) {
+#ifdef NODE_ADDON_API_CPP_EXCEPTIONS
+    try {
+      AsyncWorker::OnWorkComplete(env, _complete_status);
+    } catch (const Error&) {
+      if (!_suppress_destruct) {
+        Destroy();
+      }
+    }
+#else
+    AsyncWorker::OnWorkComplete(env, _complete_status);
+#endif
+  } else if (!_teardown_called) {
+    _tsfn.Release();
+  }
 }
 
 template <typename DataType>
 inline void AsyncProgressWorkerBase<DataType>::OnThreadSafeFunctionFinalize(
     Napi::Env env, void* /* data */, AsyncProgressWorkerBase* context) {
+  context->_tsfn_finalized = true;
   if (context->_work_completed) {
-    context->AsyncWorker::OnWorkComplete(env, context->_complete_status);
+    napi_status status =
+        context->_teardown_called ? napi_cancelled : context->_complete_status;
+#ifdef NODE_ADDON_API_CPP_EXCEPTIONS
+    try {
+      context->AsyncWorker::OnWorkComplete(env, status);
+    } catch (const Error&) {
+      if (!context->_suppress_destruct) {
+        context->Destroy();
+      }
+    }
+#else
+    context->AsyncWorker::OnWorkComplete(env, status);
+#endif
   }
 }
 
@@ -7085,7 +7172,10 @@ inline void AsyncProgressQueueWorker<T>::SendProgress_(const T* data,
   std::copy(data, data + count, new_data);
 
   auto pair = new std::pair<T*, size_t>(new_data, count);
-  this->NonBlockingCall(pair);
+  if (this->NonBlockingCall(pair) != napi_ok) {
+    delete[] new_data;
+    delete pair;
+  }
 }
 
 template <class T>
