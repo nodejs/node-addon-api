@@ -29,6 +29,11 @@
 #include <version>
 #endif
 #endif
+#if defined(__cpp_lib_three_way_comparison) &&                                 \
+    __cpp_lib_three_way_comparison >= 201907L
+#include <compare>
+#define NAPI_HAS_CPP20_COMPARISONS 1
+#endif
 #if defined(__cpp_lib_concepts) && __cpp_lib_concepts >= 202002L
 #include <concepts>
 #define NAPI_HAS_CPP20_CONCEPTS 1
@@ -339,7 +344,18 @@ class Maybe {
   bool UnwrapTo(T* out) const;
 
   bool operator==(const Maybe& other) const;
+#if !defined(NAPI_HAS_CPP20_COMPARISONS)
   bool operator!=(const Maybe& other) const;
+#else
+  template <typename U = T>
+  constexpr auto operator<=>(const Maybe<U>& other) const
+      -> std::compare_three_way_result_t<U> {
+    if (_has_value && other._has_value) {
+      return _value <=> other._value;
+    }
+    return _has_value <=> other._has_value;
+  }
+#endif
 
  private:
   Maybe();
@@ -408,12 +424,30 @@ class BasicEnv {
   //    'Napi::Env' and 'Napi::Env')
   //
   // ... occurs when comparing foo.Env() == bar.Env() or foo.Env() == nullptr
+#if defined(NAPI_HAS_CPP20_COMPARISONS)
+  bool operator==(const BasicEnv& other) const = default;
+#else
   bool operator==(const BasicEnv& other) const {
     return _env == other._env;
   }
+  bool operator!=(const BasicEnv& other) const {
+    return !(*this == other);
+  }
+#endif
   bool operator==(std::nullptr_t /*other*/) const {
     return _env == nullptr;
   }
+#if !defined(NAPI_HAS_CPP20_COMPARISONS)
+  bool operator!=(std::nullptr_t /*other*/) const {
+    return !(*this == nullptr);
+  }
+  friend bool operator==(std::nullptr_t, const BasicEnv& other) {
+    return other == nullptr;
+  }
+  friend bool operator!=(std::nullptr_t, const BasicEnv& other) {
+    return !(other == nullptr);
+  }
+#endif
 
 #if NAPI_VERSION > 2
   template <typename Hook, typename Arg = void>
@@ -555,8 +589,10 @@ class Value {
   /// Tests if this value strictly equals another value.
   bool operator==(const Value& other) const;
 
+#if !defined(NAPI_HAS_CPP20_COMPARISONS)
   /// Tests if this value does not strictly equal another value.
   bool operator!=(const Value& other) const;
+#endif
 
   /// Tests if this value strictly equals another value.
   bool StrictEquals(const Value& other) const;
@@ -1312,7 +1348,9 @@ class Object::const_iterator {
 
   inline bool operator==(const const_iterator& other) const;
 
+#if !defined(NAPI_HAS_CPP20_COMPARISONS)
   inline bool operator!=(const const_iterator& other) const;
+#endif
 
   inline const std::pair<Value, Object::PropertyLValue<Value>> operator*()
       const;
@@ -1336,7 +1374,9 @@ class Object::iterator {
 
   inline bool operator==(const iterator& other) const;
 
+#if !defined(NAPI_HAS_CPP20_COMPARISONS)
   inline bool operator!=(const iterator& other) const;
+#endif
 
   inline std::pair<Value, Object::PropertyLValue<Value>> operator*();
 
@@ -1896,7 +1936,9 @@ class Reference {
 
   operator napi_ref() const;
   bool operator==(const Reference<T>& other) const;
+#if !defined(NAPI_HAS_CPP20_COMPARISONS)
   bool operator!=(const Reference<T>& other) const;
+#endif
 
   Napi::Env Env() const;
   bool IsEmpty() const;

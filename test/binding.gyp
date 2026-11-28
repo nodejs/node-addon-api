@@ -94,7 +94,9 @@
         'value_type_cast.cc'
       ],
       'build_sources_cpp20': [
-        'concepts.cc'
+        'binding_cpp20.cc',
+        'basic_types/value.cc',
+        'concepts.cc',
       ],
       'want_coverage': '<!(node -p process.env.npm_config_coverage)',
       'use_node_api_headers': '<!(node -p process.env.use_node_api_headers)',

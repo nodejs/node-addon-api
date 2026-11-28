@@ -1,10 +1,25 @@
 'use strict';
 
 const assert = require('assert');
+const fs = require('fs');
+const path = require('path');
+const common = require('../common');
 
-module.exports = require('../common').runTest(test);
+module.exports = common.runTestWithBuildType(async (buildType) => {
+  await common.runTest(test, buildType);
 
-function test (binding) {
+  const cpp20BindingPath = path.resolve(
+    __dirname,
+    `../build/${buildType}/binding_cpp20.node`
+  );
+  if (fs.existsSync(cpp20BindingPath)) {
+    await Promise.resolve(
+      test(require(cpp20BindingPath), { bindingPath: cpp20BindingPath })
+    ).finally(common.mustCall());
+  }
+});
+
+function test (binding, context) {
   const externalValue = binding.basic_types_value.createExternal();
 
   function isObject (value) {
@@ -134,9 +149,15 @@ function test (binding) {
 
   const value = binding.basic_types_value;
 
+  if (context && context.bindingPath && context.bindingPath.includes('binding_cpp20')) {
+    assert.strictEqual(value.hasCpp20Comparisons(), true);
+  }
+
   assertValueStrictlyEqual(value);
   assertValueStrictlyNonEqual(value);
   assertValueReturnsCorrectEnv(value);
+  assert(value.assertEnvComparisons());
+  assert(value.assertMaybeComparisons());
   assertEmptyValueNullPtrOnCast(value);
   assertNonEmptyReturnValOnCast(value);
 
