@@ -23,6 +23,7 @@
         'buffer_no_external.cc',
         'buffer.cc',
         'callbackscope.cc',
+        'concepts.cc',
         'dataview/dataview.cc',
         'dataview/dataview_read_write.cc',
         'env_cleanup.cc',
@@ -93,7 +94,8 @@
         'value_type_cast.cc'
       ],
       'build_sources_cpp20': [
-        'basic_types/value.cc'
+        'basic_types/value.cc',
+        'concepts.cc',
       ],
       'want_coverage': '<!(node -p process.env.npm_config_coverage)',
       'use_node_api_headers': '<!(node -p process.env.use_node_api_headers)',

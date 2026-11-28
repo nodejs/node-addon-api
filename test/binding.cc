@@ -26,6 +26,7 @@ Object InitBufferNoExternal(Env env);
 #if (NAPI_VERSION > 2)
 Object InitCallbackScope(Env env);
 #endif
+Object InitConcepts(Env env);
 #if (NAPI_VERSION > 4)
 Object InitDate(Env env);
 #endif
@@ -118,6 +119,7 @@ Object Init(Env env, Object exports) {
 #if (NAPI_VERSION > 2)
   exports.Set("callbackscope", InitCallbackScope(env));
 #endif
+  exports.Set("concepts", InitConcepts(env));
   exports.Set("callbackInfo", InitCallbackInfo(env));
   exports.Set("dataview", InitDataView(env));
   exports.Set("dataview_read_write", InitDataView(env));

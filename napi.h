@@ -34,6 +34,10 @@
 #include <compare>
 #define NAPI_HAS_CPP20_COMPARISONS 1
 #endif
+#if defined(__cpp_lib_concepts) && __cpp_lib_concepts >= 202002L
+#include <concepts>
+#define NAPI_HAS_CPP20_CONCEPTS 1
+#endif
 
 // VS2015 RTM has bugs with constexpr, so require min of VS2015 Update 3 (known
 // good version)
@@ -269,6 +273,43 @@ using BigUint64Array =
 /// (init) function.
 using ModuleRegisterCallback = Object (*)(Env env, Object exports);
 
+#if defined(NAPI_HAS_CPP20_CONCEPTS)
+namespace concepts {
+
+template <typename F>
+concept CallbackCallable =
+    std::invocable<F, const CallbackInfo&> &&
+    (std::same_as<std::invoke_result_t<F, const CallbackInfo&>, void> ||
+     std::convertible_to<std::invoke_result_t<F, const CallbackInfo&>,
+                         napi_value>);
+
+template <typename F>
+concept GetterCallable =
+    std::invocable<F, const CallbackInfo&> &&
+    (std::convertible_to<std::invoke_result_t<F, const CallbackInfo&>,
+                         napi_value>);
+
+template <typename F>
+concept SetterCallable =
+    std::invocable<F, const CallbackInfo&> &&
+    (std::same_as<std::invoke_result_t<F, const CallbackInfo&>, void>);
+
+template <typename F>
+concept Finalizer = std::invocable<F, Env>;
+
+template <typename F, typename T>
+concept FinalizerWithData = std::invocable<F, Env, T*>;
+
+template <typename F, typename T, typename Hint>
+concept FinalizerWithHint = std::invocable<F, Env, T*, Hint*>;
+
+}  // namespace concepts
+
+#define NAPI_REQUIRES(...) requires __VA_ARGS__
+#else
+#define NAPI_REQUIRES(...)
+#endif
+
 class MemoryManagement;
 
 /// A simple Maybe type, representing an object which may or may not have a
@@ -466,15 +507,18 @@ class BasicEnv {
 #ifdef NODE_API_EXPERIMENTAL_HAS_POST_FINALIZER
   // FinalizerType must implement `void operator()(Env env)`.
   template <typename FinalizerType>
+  NAPI_REQUIRES(concepts::Finalizer<FinalizerType>)
   inline void PostFinalizer(FinalizerType finalizeCallback) const;
 
   // FinalizerType must implement `void operator()(Env env, T* data)`.
   template <typename FinalizerType, typename T>
+  NAPI_REQUIRES(concepts::FinalizerWithData<FinalizerType, T>)
   inline void PostFinalizer(FinalizerType finalizeCallback, T* data) const;
 
   // FinalizerType must implement `void operator()(Env env, T* data,
   // Hint* hint)`.
   template <typename FinalizerType, typename T, typename Hint>
+  NAPI_REQUIRES(concepts::FinalizerWithHint<FinalizerType, T, Hint>)
   inline void PostFinalizer(FinalizerType finalizeCallback,
                             T* data,
                             Hint* finalizeHint) const;
@@ -1208,11 +1252,13 @@ class Object : public TypeTaggable {
 
   // Finalizer must implement `void operator()(Env env, T* data)`.
   template <typename Finalizer, typename T>
+  NAPI_REQUIRES(concepts::FinalizerWithData<Finalizer, T>)
   inline void AddFinalizer(Finalizer finalizeCallback, T* data) const;
 
   // Finalizer must implement `void operator()(Env env, T* data,
   // Hint* hint)`.
   template <typename Finalizer, typename T, typename Hint>
+  NAPI_REQUIRES(concepts::FinalizerWithHint<Finalizer, T, Hint>)
   inline void AddFinalizer(Finalizer finalizeCallback,
                            T* data,
                            Hint* finalizeHint) const;
@@ -1258,10 +1304,12 @@ class External : public TypeTaggable {
 
   // Finalizer must implement `void operator()(Env env, T* data)`.
   template <typename Finalizer>
+  NAPI_REQUIRES(concepts::FinalizerWithData<Finalizer, T>)
   static External New(napi_env env, T* data, Finalizer finalizeCallback);
   // Finalizer must implement `void operator()(Env env, T* data,
   // Hint* hint)`.
   template <typename Finalizer, typename Hint>
+  NAPI_REQUIRES(concepts::FinalizerWithHint<Finalizer, T, Hint>)
   static External New(napi_env env,
                       T* data,
                       Finalizer finalizeCallback,
@@ -1380,22 +1428,24 @@ class ArrayBuffer : public Object {
   /// Creates a new ArrayBuffer instance, using an external buffer with
   /// specified byte length.
   template <typename Finalizer>
-  static ArrayBuffer New(
-      napi_env env,        ///< Node-API environment
-      void* externalData,  ///< Pointer to the external buffer to be used by
-                           ///< the array
-      size_t byteLength,   ///< Length of the external buffer to be used by the
-                           ///< array,
-                           ///  in bytes
-      Finalizer finalizeCallback  ///< Function to be called when the array
-                                  ///< buffer is destroyed;
-                                  ///  must implement `void operator()(Env env,
-                                  ///  void* externalData)`
-  );
+  NAPI_REQUIRES(concepts::FinalizerWithData<Finalizer, void>)
+  static ArrayBuffer
+      New(napi_env env,        ///< Node-API environment
+          void* externalData,  ///< Pointer to the external buffer to be used by
+                               ///< the array
+          size_t byteLength,   ///< Length of the external buffer to be used by
+                               ///< the array,
+                               ///  in bytes
+          Finalizer finalizeCallback  ///< Function to be called when the array
+                                      ///< buffer is destroyed;
+                                      ///  must implement `void operator()(Env
+                                      ///  env, void* externalData)`
+      );
 
   /// Creates a new ArrayBuffer instance, using an external buffer with
   /// specified byte length.
   template <typename Finalizer, typename Hint>
+  NAPI_REQUIRES(concepts::FinalizerWithHint<Finalizer, void, Hint>)
   static ArrayBuffer New(
       napi_env env,        ///< Node-API environment
       void* externalData,  ///< Pointer to the external buffer to be used by
@@ -1720,6 +1770,7 @@ class Function : public Object {
   /// Callable must implement operator() accepting a const CallbackInfo&
   /// and return either void or Value.
   template <typename Callable>
+  NAPI_REQUIRES(concepts::CallbackCallable<Callable>)
   static Function New(napi_env env,
                       Callable cb,
                       const char* utf8name = nullptr,
@@ -1727,6 +1778,7 @@ class Function : public Object {
   /// Callable must implement operator() accepting a const CallbackInfo&
   /// and return either void or Value.
   template <typename Callable>
+  NAPI_REQUIRES(concepts::CallbackCallable<Callable>)
   static Function New(napi_env env,
                       Callable cb,
                       const std::string& utf8name,
@@ -1815,6 +1867,7 @@ class Buffer : public Uint8Array {
 
   // Finalizer must implement `void operator()(Env env, T* data)`.
   template <typename Finalizer>
+  NAPI_REQUIRES(concepts::FinalizerWithData<Finalizer, T>)
   static Buffer<T> New(napi_env env,
                        T* data,
                        size_t length,
@@ -1822,6 +1875,7 @@ class Buffer : public Uint8Array {
   // Finalizer must implement `void operator()(Env env, T* data,
   // Hint* hint)`.
   template <typename Finalizer, typename Hint>
+  NAPI_REQUIRES(concepts::FinalizerWithHint<Finalizer, T, Hint>)
   static Buffer<T> New(napi_env env,
                        T* data,
                        size_t length,
@@ -1832,6 +1886,7 @@ class Buffer : public Uint8Array {
   static Buffer<T> NewOrCopy(napi_env env, T* data, size_t length);
   // Finalizer must implement `void operator()(Env env, T* data)`.
   template <typename Finalizer>
+  NAPI_REQUIRES(concepts::FinalizerWithData<Finalizer, T>)
   static Buffer<T> NewOrCopy(napi_env env,
                              T* data,
                              size_t length,
@@ -1839,6 +1894,7 @@ class Buffer : public Uint8Array {
   // Finalizer must implement `void operator()(Env env, T* data,
   // Hint* hint)`.
   template <typename Finalizer, typename Hint>
+  NAPI_REQUIRES(concepts::FinalizerWithHint<Finalizer, T, Hint>)
   static Buffer<T> NewOrCopy(napi_env env,
                              T* data,
                              size_t length,
@@ -2223,81 +2279,97 @@ class PropertyDescriptor {
 
 #ifndef NODE_ADDON_API_DISABLE_DEPRECATED
   template <typename Getter>
-  static PropertyDescriptor Accessor(
-      const char* utf8name,
-      Getter getter,
-      napi_property_attributes attributes = napi_default,
-      void* data = nullptr);
+  NAPI_REQUIRES(concepts::GetterCallable<Getter>)
+  static PropertyDescriptor
+      Accessor(const char* utf8name,
+               Getter getter,
+               napi_property_attributes attributes = napi_default,
+               void* data = nullptr);
   template <typename Getter>
-  static PropertyDescriptor Accessor(
-      const std::string& utf8name,
-      Getter getter,
-      napi_property_attributes attributes = napi_default,
-      void* data = nullptr);
+  NAPI_REQUIRES(concepts::GetterCallable<Getter>)
+  static PropertyDescriptor
+      Accessor(const std::string& utf8name,
+               Getter getter,
+               napi_property_attributes attributes = napi_default,
+               void* data = nullptr);
   template <typename Getter>
-  static PropertyDescriptor Accessor(
-      napi_value name,
-      Getter getter,
-      napi_property_attributes attributes = napi_default,
-      void* data = nullptr);
+  NAPI_REQUIRES(concepts::GetterCallable<Getter>)
+  static PropertyDescriptor
+      Accessor(napi_value name,
+               Getter getter,
+               napi_property_attributes attributes = napi_default,
+               void* data = nullptr);
   template <typename Getter>
-  static PropertyDescriptor Accessor(
-      Name name,
-      Getter getter,
-      napi_property_attributes attributes = napi_default,
-      void* data = nullptr);
+  NAPI_REQUIRES(concepts::GetterCallable<Getter>)
+  static PropertyDescriptor
+      Accessor(Name name,
+               Getter getter,
+               napi_property_attributes attributes = napi_default,
+               void* data = nullptr);
   template <typename Getter, typename Setter>
-  static PropertyDescriptor Accessor(
-      const char* utf8name,
-      Getter getter,
-      Setter setter,
-      napi_property_attributes attributes = napi_default,
-      void* data = nullptr);
+  NAPI_REQUIRES(
+      concepts::GetterCallable<Getter>&& concepts::SetterCallable<Setter>)
+  static PropertyDescriptor
+      Accessor(const char* utf8name,
+               Getter getter,
+               Setter setter,
+               napi_property_attributes attributes = napi_default,
+               void* data = nullptr);
   template <typename Getter, typename Setter>
-  static PropertyDescriptor Accessor(
-      const std::string& utf8name,
-      Getter getter,
-      Setter setter,
-      napi_property_attributes attributes = napi_default,
-      void* data = nullptr);
+  NAPI_REQUIRES(
+      concepts::GetterCallable<Getter>&& concepts::SetterCallable<Setter>)
+  static PropertyDescriptor
+      Accessor(const std::string& utf8name,
+               Getter getter,
+               Setter setter,
+               napi_property_attributes attributes = napi_default,
+               void* data = nullptr);
   template <typename Getter, typename Setter>
-  static PropertyDescriptor Accessor(
-      napi_value name,
-      Getter getter,
-      Setter setter,
-      napi_property_attributes attributes = napi_default,
-      void* data = nullptr);
+  NAPI_REQUIRES(
+      concepts::GetterCallable<Getter>&& concepts::SetterCallable<Setter>)
+  static PropertyDescriptor
+      Accessor(napi_value name,
+               Getter getter,
+               Setter setter,
+               napi_property_attributes attributes = napi_default,
+               void* data = nullptr);
   template <typename Getter, typename Setter>
-  static PropertyDescriptor Accessor(
-      Name name,
-      Getter getter,
-      Setter setter,
-      napi_property_attributes attributes = napi_default,
-      void* data = nullptr);
+  NAPI_REQUIRES(
+      concepts::GetterCallable<Getter>&& concepts::SetterCallable<Setter>)
+  static PropertyDescriptor
+      Accessor(Name name,
+               Getter getter,
+               Setter setter,
+               napi_property_attributes attributes = napi_default,
+               void* data = nullptr);
   template <typename Callable>
-  static PropertyDescriptor Function(
-      const char* utf8name,
-      Callable cb,
-      napi_property_attributes attributes = napi_default,
-      void* data = nullptr);
+  NAPI_REQUIRES(concepts::CallbackCallable<Callable>)
+  static PropertyDescriptor
+      Function(const char* utf8name,
+               Callable cb,
+               napi_property_attributes attributes = napi_default,
+               void* data = nullptr);
   template <typename Callable>
-  static PropertyDescriptor Function(
-      const std::string& utf8name,
-      Callable cb,
-      napi_property_attributes attributes = napi_default,
-      void* data = nullptr);
+  NAPI_REQUIRES(concepts::CallbackCallable<Callable>)
+  static PropertyDescriptor
+      Function(const std::string& utf8name,
+               Callable cb,
+               napi_property_attributes attributes = napi_default,
+               void* data = nullptr);
   template <typename Callable>
-  static PropertyDescriptor Function(
-      napi_value name,
-      Callable cb,
-      napi_property_attributes attributes = napi_default,
-      void* data = nullptr);
+  NAPI_REQUIRES(concepts::CallbackCallable<Callable>)
+  static PropertyDescriptor
+      Function(napi_value name,
+               Callable cb,
+               napi_property_attributes attributes = napi_default,
+               void* data = nullptr);
   template <typename Callable>
-  static PropertyDescriptor Function(
-      Name name,
-      Callable cb,
-      napi_property_attributes attributes = napi_default,
-      void* data = nullptr);
+  NAPI_REQUIRES(concepts::CallbackCallable<Callable>)
+  static PropertyDescriptor
+      Function(Name name,
+               Callable cb,
+               napi_property_attributes attributes = napi_default,
+               void* data = nullptr);
 #endif  // !NODE_ADDON_API_DISABLE_DEPRECATED
 
   template <GetterCallback Getter>
@@ -2337,80 +2409,92 @@ class PropertyDescriptor {
       void* data = nullptr);
 
   template <typename Getter>
-  static PropertyDescriptor Accessor(
-      Napi::Env env,
-      Napi::Object object,
-      const char* utf8name,
-      Getter getter,
-      napi_property_attributes attributes = napi_default,
-      void* data = nullptr);
+  NAPI_REQUIRES(concepts::GetterCallable<Getter>)
+  static PropertyDescriptor
+      Accessor(Napi::Env env,
+               Napi::Object object,
+               const char* utf8name,
+               Getter getter,
+               napi_property_attributes attributes = napi_default,
+               void* data = nullptr);
   template <typename Getter>
-  static PropertyDescriptor Accessor(
-      Napi::Env env,
-      Napi::Object object,
-      const std::string& utf8name,
-      Getter getter,
-      napi_property_attributes attributes = napi_default,
-      void* data = nullptr);
+  NAPI_REQUIRES(concepts::GetterCallable<Getter>)
+  static PropertyDescriptor
+      Accessor(Napi::Env env,
+               Napi::Object object,
+               const std::string& utf8name,
+               Getter getter,
+               napi_property_attributes attributes = napi_default,
+               void* data = nullptr);
   template <typename Getter>
-  static PropertyDescriptor Accessor(
-      Napi::Env env,
-      Napi::Object object,
-      Name name,
-      Getter getter,
-      napi_property_attributes attributes = napi_default,
-      void* data = nullptr);
+  NAPI_REQUIRES(concepts::GetterCallable<Getter>)
+  static PropertyDescriptor
+      Accessor(Napi::Env env,
+               Napi::Object object,
+               Name name,
+               Getter getter,
+               napi_property_attributes attributes = napi_default,
+               void* data = nullptr);
   template <typename Getter, typename Setter>
-  static PropertyDescriptor Accessor(
-      Napi::Env env,
-      Napi::Object object,
-      const char* utf8name,
-      Getter getter,
-      Setter setter,
-      napi_property_attributes attributes = napi_default,
-      void* data = nullptr);
+  NAPI_REQUIRES(
+      concepts::GetterCallable<Getter>&& concepts::SetterCallable<Setter>)
+  static PropertyDescriptor
+      Accessor(Napi::Env env,
+               Napi::Object object,
+               const char* utf8name,
+               Getter getter,
+               Setter setter,
+               napi_property_attributes attributes = napi_default,
+               void* data = nullptr);
   template <typename Getter, typename Setter>
-  static PropertyDescriptor Accessor(
-      Napi::Env env,
-      Napi::Object object,
-      const std::string& utf8name,
-      Getter getter,
-      Setter setter,
-      napi_property_attributes attributes = napi_default,
-      void* data = nullptr);
+  NAPI_REQUIRES(
+      concepts::GetterCallable<Getter>&& concepts::SetterCallable<Setter>)
+  static PropertyDescriptor
+      Accessor(Napi::Env env,
+               Napi::Object object,
+               const std::string& utf8name,
+               Getter getter,
+               Setter setter,
+               napi_property_attributes attributes = napi_default,
+               void* data = nullptr);
   template <typename Getter, typename Setter>
-  static PropertyDescriptor Accessor(
-      Napi::Env env,
-      Napi::Object object,
-      Name name,
-      Getter getter,
-      Setter setter,
-      napi_property_attributes attributes = napi_default,
-      void* data = nullptr);
+  NAPI_REQUIRES(
+      concepts::GetterCallable<Getter>&& concepts::SetterCallable<Setter>)
+  static PropertyDescriptor
+      Accessor(Napi::Env env,
+               Napi::Object object,
+               Name name,
+               Getter getter,
+               Setter setter,
+               napi_property_attributes attributes = napi_default,
+               void* data = nullptr);
   template <typename Callable>
-  static PropertyDescriptor Function(
-      Napi::Env env,
-      Napi::Object object,
-      const char* utf8name,
-      Callable cb,
-      napi_property_attributes attributes = napi_default,
-      void* data = nullptr);
+  NAPI_REQUIRES(concepts::CallbackCallable<Callable>)
+  static PropertyDescriptor
+      Function(Napi::Env env,
+               Napi::Object object,
+               const char* utf8name,
+               Callable cb,
+               napi_property_attributes attributes = napi_default,
+               void* data = nullptr);
   template <typename Callable>
-  static PropertyDescriptor Function(
-      Napi::Env env,
-      Napi::Object object,
-      const std::string& utf8name,
-      Callable cb,
-      napi_property_attributes attributes = napi_default,
-      void* data = nullptr);
+  NAPI_REQUIRES(concepts::CallbackCallable<Callable>)
+  static PropertyDescriptor
+      Function(Napi::Env env,
+               Napi::Object object,
+               const std::string& utf8name,
+               Callable cb,
+               napi_property_attributes attributes = napi_default,
+               void* data = nullptr);
   template <typename Callable>
-  static PropertyDescriptor Function(
-      Napi::Env env,
-      Napi::Object object,
-      Name name,
-      Callable cb,
-      napi_property_attributes attributes = napi_default,
-      void* data = nullptr);
+  NAPI_REQUIRES(concepts::CallbackCallable<Callable>)
+  static PropertyDescriptor
+      Function(Napi::Env env,
+               Napi::Object object,
+               Name name,
+               Callable cb,
+               napi_property_attributes attributes = napi_default,
+               void* data = nullptr);
   static PropertyDescriptor Value(
       const char* utf8name,
       napi_value value,
@@ -2938,6 +3022,7 @@ class ThreadSafeFunction {
   // This API may only be called from the main thread.
   // Finalizer must implement `void operator()(Env env)`.
   template <typename ResourceString, typename Finalizer>
+  NAPI_REQUIRES(concepts::Finalizer<Finalizer>)
   static ThreadSafeFunction New(napi_env env,
                                 const Function& callback,
                                 ResourceString resourceName,
@@ -2951,6 +3036,7 @@ class ThreadSafeFunction {
   template <typename ResourceString,
             typename Finalizer,
             typename FinalizerDataType>
+  NAPI_REQUIRES(concepts::FinalizerWithData<Finalizer, FinalizerDataType>)
   static ThreadSafeFunction New(napi_env env,
                                 const Function& callback,
                                 ResourceString resourceName,
@@ -2963,6 +3049,7 @@ class ThreadSafeFunction {
   // Finalizer must implement
   // `void operator()(Env env, ContextType* context)`.
   template <typename ResourceString, typename ContextType, typename Finalizer>
+  NAPI_REQUIRES(concepts::FinalizerWithData<Finalizer, ContextType>)
   static ThreadSafeFunction New(napi_env env,
                                 const Function& callback,
                                 ResourceString resourceName,
@@ -2978,6 +3065,8 @@ class ThreadSafeFunction {
             typename ContextType,
             typename Finalizer,
             typename FinalizerDataType>
+  NAPI_REQUIRES(
+      concepts::FinalizerWithHint<Finalizer, FinalizerDataType, ContextType>)
   static ThreadSafeFunction New(napi_env env,
                                 const Function& callback,
                                 ResourceString resourceName,
@@ -3009,6 +3098,7 @@ class ThreadSafeFunction {
   // This API may only be called from the main thread.
   // Finalizer must implement `void operator()(Env env)`.
   template <typename ResourceString, typename Finalizer>
+  NAPI_REQUIRES(concepts::Finalizer<Finalizer>)
   static ThreadSafeFunction New(napi_env env,
                                 const Function& callback,
                                 const Object& resource,
@@ -3023,6 +3113,7 @@ class ThreadSafeFunction {
   template <typename ResourceString,
             typename Finalizer,
             typename FinalizerDataType>
+  NAPI_REQUIRES(concepts::FinalizerWithData<Finalizer, FinalizerDataType>)
   static ThreadSafeFunction New(napi_env env,
                                 const Function& callback,
                                 const Object& resource,
@@ -3036,6 +3127,7 @@ class ThreadSafeFunction {
   // Finalizer must implement
   // `void operator()(Env env, ContextType* context)`.
   template <typename ResourceString, typename ContextType, typename Finalizer>
+  NAPI_REQUIRES(concepts::FinalizerWithData<Finalizer, ContextType>)
   static ThreadSafeFunction New(napi_env env,
                                 const Function& callback,
                                 const Object& resource,
@@ -3052,6 +3144,8 @@ class ThreadSafeFunction {
             typename ContextType,
             typename Finalizer,
             typename FinalizerDataType>
+  NAPI_REQUIRES(
+      concepts::FinalizerWithHint<Finalizer, FinalizerDataType, ContextType>)
   static ThreadSafeFunction New(napi_env env,
                                 const Function& callback,
                                 const Object& resource,
