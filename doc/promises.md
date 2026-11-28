@@ -65,6 +65,13 @@ Resolves the `Napi::Promise` object held by the `Napi::Promise::Deferred` object
 
 * `[in] value`: The Node-API primitive value with which to resolve the `Napi::Promise`.
 
+> [!NOTE]
+> If resolving or rejecting a `Promise::Deferred` asynchronously outside of a
+> JavaScript callback execution context (such as from a custom background thread
+> or libuv async handle), wrap the call in a `Napi::CallbackScope` with a
+> `Napi::AsyncContext` to ensure microtasks (e.g. `.then()` handlers) are
+> properly drained by the runtime.
+
 ### Reject
 
 ```cpp

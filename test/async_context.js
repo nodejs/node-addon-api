@@ -109,6 +109,7 @@ async function makeCallbackWithoutResource (binding) {
 
 function assertAsyncContextReturnsCorrectEnv (binding) {
   assert.strictEqual(binding.asynccontext.asyncCxtReturnCorrectEnv(), true);
+  assert.strictEqual(binding.asynccontext.defaultConstructor(), true);
 }
 
 async function test (binding) {

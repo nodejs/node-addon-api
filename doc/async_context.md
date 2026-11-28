@@ -11,6 +11,14 @@ correct async execution context.
 
 ### Constructor
 
+Creates a new uninitialized `Napi::AsyncContext`.
+
+```cpp
+Napi::AsyncContext::AsyncContext();
+```
+
+### Constructor
+
 Creates a new `Napi::AsyncContext`.
 
 ```cpp

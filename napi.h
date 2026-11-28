@@ -2873,6 +2873,7 @@ class CallbackScope {
 
 class AsyncContext {
  public:
+  AsyncContext();
   explicit AsyncContext(napi_env env, const char* resource_name);
   explicit AsyncContext(napi_env env,
                         const char* resource_name,

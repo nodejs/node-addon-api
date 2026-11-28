@@ -261,4 +261,24 @@ async function test (binding) {
       ]);
     }).catch(common.mustNotCall());
   }
+
+  // Verify that microtasks (Promise reactions) and process.nextTick scheduled
+  // in AsyncWorker completion callbacks are drained deterministically upon completion.
+  {
+    let microtaskRan = false;
+    let nextTickRan = false;
+    await new Promise((resolve) => {
+      binding.asyncworker.doWork(true, {}, function () {
+        Promise.resolve().then(() => {
+          microtaskRan = true;
+        });
+        process.nextTick(() => {
+          nextTickRan = true;
+        });
+        resolve();
+      }, 'test data');
+    });
+    assert.strictEqual(microtaskRan, true, 'Microtask should have run');
+    assert.strictEqual(nextTickRan, true, 'process.nextTick should have run');
+  }
 }
